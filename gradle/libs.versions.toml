@@ -1,32 +1,72 @@
 [versions]
-agp = "8.7.0-alpha07"
-kotlin = "2.0.0"
-coreKtx = "1.13.1"
-junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.8.4"
-activityCompose = "1.9.1"
-composeBom = "2024.04.01"
+agp = "8.7.0-alpha07"          # Android Gradle Plugin, used to build Android apps
+kotlin = "2.0.0"               # Kotlin programming language version
+coreKtx = "1.13.1"             # Core KTX, Kotlin extensions for Android core libraries
+junit = "4.13.2"               # JUnit, a framework for writing and running tests in Java
+junitVersion = "1.2.1"         # AndroidX JUnit extension, provides compatibility with JUnit
+espressoCore = "3.6.1"         # Espresso, a library for Android UI testing
+lifecycleRuntimeKtx = "2.8.4"  # AndroidX Lifecycle runtime KTX, provides Kotlin extensions for lifecycle management
+activityCompose = "1.9.1"      # Activity Compose, allows using Jetpack Compose in Activities
+composeBom = "2024.04.01"      # Compose BOM (Bill of Materials), ensures consistent Compose library versions
+
+# Additional Libraries
+hilt = "2.48"                  # Hilt, a dependency injection library for Android
+androidxCoreKtx = "1.12.0"     # AndroidX Core KTX, Kotlin extensions for Android core libraries
+appCompat = "1.7.0"            # AppCompat, backward-compatible versions of Android components
+material = "1.11.0"            # Material Components for Android, implements Material Design
+constraintLayout = "2.2.0"     # ConstraintLayout, a layout manager for complex layouts
+room = "2.6.0"                 # Room, an abstraction layer over SQLite to allow fluent database access
+work = "2.8.1"                 # WorkManager, manages background work with guaranteed execution
+lifecycle = "2.6.2"            # AndroidX Lifecycle components, manages UI-related data in a lifecycle-conscious way
+hiltLifecycleViewModel = "1.0.0-alpha03"  # Hilt ViewModel injection
+hiltNavigation = "1.0.0"       # Hilt support for Navigation component
+hiltNavigationCompose = "1.1.0" # Hilt support for Jetpack Compose Navigation
+hiltWork = "1.0.0"             # Hilt support for WorkManager
 
 [libraries]
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
-androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-androidx-ui = { group = "androidx.compose.ui", name = "ui" }
-androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
-androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
-androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }  # Core KTX library
+junit = { module = "junit:junit", version.ref = "junit" }  # JUnit testing library
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }  # AndroidX JUnit extension
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }  # Espresso UI testing
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }  # Lifecycle runtime KTX
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }  # Activity support for Compose
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }  # Compose BOM for consistent versions
+androidx-ui = { module = "androidx.compose.ui:ui" }  # Compose UI library
+androidx-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }  # Compose UI graphics library
+androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }  # Compose UI tooling library
+androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }  # Compose UI tooling preview
+androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }  # Compose UI test manifest
+androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }  # Compose UI test library for JUnit4
+androidx-material3 = { module = "androidx.compose.material3:material3" }  # Material Design 3 components for Compose
+
+# Hilt Libraries
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }  # Hilt core library for dependency injection
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }  # Hilt annotation processor
+# hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" } # Not used in Android
+hilt-lifecycle-viewmodel = { module = "androidx.hilt:hilt-lifecycle-viewmodel", version.ref = "hiltLifecycleViewModel" }  # Hilt integration for ViewModel
+hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }  # Hilt integration for Compose Navigation
+hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }  # Hilt integration for WorkManager
+
+# AppCompat and Material Libraries
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appCompat" }  # Backward-compatible versions of Android components
+material = { module = "com.google.android.material:material", version.ref = "material" }  # Material Design components for Android
+constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintLayout" }  # ConstraintLayout manager for complex layouts
+
+# Room Libraries
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }  # Room runtime library for database access
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }  # Kotlin extensions for Room
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room"}  # Room annotation processor
+
+# WorkManager Library
+work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }  # WorkManager runtime with Kotlin extensions
+
+# Lifecycle Libraries
+lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }  # ViewModel support with Kotlin extensions
+lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }  # LiveData support with Kotlin extensions
+lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }  # Lifecycle runtime with Kotlin extensions
 
 [plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-
+android-application = { id = "com.android.application", version.ref = "agp" }  # Android application plugin
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }  # Kotlin Android plugin
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }  # Kotlin Compose plugin
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" } # Kotlin annotation processing
