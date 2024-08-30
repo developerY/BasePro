@@ -1,11 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.ylabz.data"
+    namespace = "com.ylabz.twincam.cam"
     compileSdk = 34
 
     defaultConfig {
@@ -27,21 +26,11 @@ android {
 }
 
 dependencies {
-
+    implementation(project(":data"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-    // DI
-    implementation(libs.hilt.android)
-    implementation(libs.hilt.android.compiler)
-
-
-    // Room
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
-    ksp(libs.room.compiler)
 }

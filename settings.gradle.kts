@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "TwinCam"
 include(":app")
 include(":data")
+include(":feature:cam")
