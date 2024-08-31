@@ -1,15 +1,20 @@
 package com.ylabz.twincam.data.repository
 
-import com.ylabz.twincam.data.TwinCamDao
 import androidx.annotation.WorkerThread
+import com.ylabz.twincam.data.TwinCamDao
 import com.ylabz.twincam.data.TwinCamRepo
 import com.ylabz.twincam.data.mapper.TwinCam
 import com.ylabz.twincam.data.mapper.toTwinCam
 import com.ylabz.twincam.data.mapper.toTwinCamEntity
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-
-class TwinCamRepoImpl( // TwinCamRepositoryImpl
+/**
+ * Custom Provision: Since you provided the TwinCamDao and TwinCamRepoImpl via the @Provides
+ * methods in the DatabaseModule, Hilt doesn't need to rely on @Inject constructors for those classes.
+ * It uses the methods in the module to resolve and inject dependencies.
+ */
+class TwinCamRepoImpl @Inject constructor (  // NOTE: constructor injection is not needed
     private val TwinCamDao: TwinCamDao,
 ) : TwinCamRepo {
 
