@@ -1,4 +1,4 @@
-package com.ylabz.data.converter
+package com.ylabz.twincam.data.converter
 
 import android.net.Uri
 import androidx.room.TypeConverter

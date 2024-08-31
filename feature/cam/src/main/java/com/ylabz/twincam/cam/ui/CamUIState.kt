@@ -1,6 +1,6 @@
 package com.ylabz.twincam.cam.ui
 
-import com.ylabz.data.mapper.TwinCam
+import com.ylabz.twincam.data.mapper.TwinCam
 
 data class CamUIState(
     val isLoading: Boolean = false,

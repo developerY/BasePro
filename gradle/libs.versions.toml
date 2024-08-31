@@ -17,13 +17,14 @@ material = "1.11.0"            # Material Components for Android, implements Mat
 constraintLayout = "2.2.0"     # ConstraintLayout, a layout manager for complex layouts
 room = "2.6.0"                 # Room, an abstraction layer over SQLite to allow fluent database access
 work = "2.8.1"                 # WorkManager, manages background work with guaranteed execution
-lifecycle = "2.6.2"            # AndroidX Lifecycle components, manages UI-related data in a lifecycle-conscious way
+lifecycle = "2.8.4"            # AndroidX Lifecycle components, manages UI-related data in a lifecycle-conscious way
 hiltLifecycleViewModel = "1.0.0-alpha03"  # Hilt ViewModel injection
 hiltNavigation = "1.0.0"       # Hilt support for Navigation component
 hiltNavigationCompose = "1.1.0" # Hilt support for Jetpack Compose Navigation
 hiltWork = "1.0.0"             # Hilt support for WorkManager
 
 ksp = "2.0.20-1.0.24"
+
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }  # Core KTX library
@@ -64,8 +65,10 @@ work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "w
 
 # Lifecycle Libraries
 lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }  # ViewModel support with Kotlin extensions
-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }  # LiveData support with Kotlin extensions
+lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
+lifecycle-viewmodel-android = { module = "androidx.lifecycle:lifecycle-viewmodel-android", version.ref = "lifecycle" }  # LiveData support with Kotlin extensions
 # lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }  # Lifecycle runtime with Kotlin extensions
+lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }  # Android application plugin

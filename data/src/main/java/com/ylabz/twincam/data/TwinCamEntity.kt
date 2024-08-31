@@ -1,11 +1,10 @@
-package com.ylabz.data
+package com.ylabz.twincam.data
 
-import android.net.Uri
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.ylabz.data.converter.Converters
+import com.ylabz.twincam.data.converter.Converters
 
 @Entity(tableName = "twincam_table")
 @TypeConverters(Converters::class)

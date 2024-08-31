@@ -1,6 +1,6 @@
-package com.ylabz.data.mapper
+package com.ylabz.twincam.data.mapper
 
-import com.ylabz.data.TwinCamEntity
+import com.ylabz.twincam.data.TwinCamEntity
 
 typealias TwinCam = TwinCamEntity
 

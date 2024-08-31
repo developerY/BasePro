@@ -1,11 +1,11 @@
-package com.ylabz.data.repository
+package com.ylabz.twincam.data.repository
 
-import com.ylabz.data.TwinCamDao
+import com.ylabz.twincam.data.TwinCamDao
 import androidx.annotation.WorkerThread
-import com.ylabz.data.TwinCamRepo
-import com.ylabz.data.mapper.TwinCam
-import com.ylabz.data.mapper.toTwinCam
-import com.ylabz.data.mapper.toTwinCamEntity
+import com.ylabz.twincam.data.TwinCamRepo
+import com.ylabz.twincam.data.mapper.TwinCam
+import com.ylabz.twincam.data.mapper.toTwinCam
+import com.ylabz.twincam.data.mapper.toTwinCamEntity
 import kotlinx.coroutines.flow.Flow
 
 

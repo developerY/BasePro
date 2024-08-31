@@ -1,6 +1,6 @@
-package com.ylabz.data
+package com.ylabz.twincam.data
 
-import com.ylabz.data.mapper.TwinCam
+import com.ylabz.twincam.data.mapper.TwinCam
 import kotlinx.coroutines.flow.Flow
 
 interface TwinCamRepo {

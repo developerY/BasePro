@@ -1,11 +1,11 @@
-package com.ylabz.data.di
+package com.ylabz.twincam.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.ylabz.data.TwinCamDB
-import com.ylabz.data.TwinCamDao
-import com.ylabz.data.TwinCamRepo
-import com.ylabz.data.repository.TwinCamRepoImpl
+import com.ylabz.twincam.data.TwinCamDB
+import com.ylabz.twincam.data.TwinCamDao
+import com.ylabz.twincam.data.TwinCamRepo
+import com.ylabz.twincam.data.repository.TwinCamRepoImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,4 +1,4 @@
-package com.ylabz.data
+package com.ylabz.twincam.data
 
 import android.content.Context
 import androidx.room.Database

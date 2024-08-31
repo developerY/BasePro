@@ -1,4 +1,4 @@
-package com.ylabz.data
+package com.ylabz.twincam.data
 
 import androidx.room.Dao
 import androidx.room.Delete
