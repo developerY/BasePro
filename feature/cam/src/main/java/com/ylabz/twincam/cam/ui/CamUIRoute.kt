@@ -11,6 +11,7 @@ import com.ylabz.twincam.cam.ui.components.LoadingScreen
 @Composable
 fun CamUIRoute(
     modifier: Modifier = Modifier,
+    navTo: (String) -> Unit,
     viewModel: CamViewModel = hiltViewModel()
 ) {
    val uiState = viewModel.uiState.collectAsState().value

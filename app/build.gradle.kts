@@ -55,6 +55,7 @@ android {
 dependencies {
     implementation(project(":feature:cam"))  // feature module  dependency
     implementation(project(":feature:settings"))  // feature module  dependency
+    implementation(project(":core:ui"))  // feature module  dependency
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -67,6 +68,10 @@ dependencies {
 
     implementation(libs.hilt.android)  // Hilt dependency
     ksp(libs.hilt.android.compiler)   // Hilt compiler dependency for annotation processing
+
+    // Compose Navigation
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.hilt.navigation.compose)
 
 
     testImplementation(libs.junit)

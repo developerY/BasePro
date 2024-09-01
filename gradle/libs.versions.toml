@@ -22,7 +22,7 @@ hiltLifecycleViewModel = "1.0.0-alpha03"  # Hilt ViewModel injection
 hiltNavigation = "1.0.0"       # Hilt support for Navigation component
 hiltNavigationCompose = "1.2.0" # Hilt support for Jetpack Compose Navigation
 hiltWork = "1.2.0"             # Hilt support for WorkManager
-
+androidxNavigation = "2.7.5"
 ksp = "2.0.20-1.0.24"
 
 
@@ -41,6 +41,8 @@ androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview
 androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }  # Compose UI test manifest
 androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }  # Compose UI test library for JUnit4
 androidx-material3 = { module = "androidx.compose.material3:material3" }  # Material Design 3 components for Compose
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNavigation" }
+
 
 # Hilt Libraries
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }  # Hilt core library for dependency injection

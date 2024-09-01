@@ -11,6 +11,7 @@ import com.ylabz.twincam.settings.ui.components.SettingsCompose
 @Composable
 fun SettingsUiRoute(
     modifier: Modifier = Modifier,
+    navTo: (String) -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsState().value
