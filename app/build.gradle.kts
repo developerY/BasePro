@@ -54,6 +54,7 @@ android {
 
 dependencies {
     implementation(project(":feature:cam"))  // feature module  dependency
+    implementation(project(":feature:settings"))  // feature module  dependency
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

@@ -80,6 +80,8 @@ fun CamCompose(
     }
 }
 
+
+// These will be move to a common directory.
 @Composable
 fun LoadingScreen() {
     Text(text = "Loading...", modifier = Modifier.fillMaxSize())
