@@ -60,13 +60,13 @@ Follow these instructions to get the project up and running on your local machin
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/yourusername/probase.git
-   cd probase
+   git clone https://github.com/yourusername/basepro.git
+   cd basepro
    ```
 
 2. **Open the project in Android Studio**:
     - Open Android Studio and select "Open an existing project."
-    - Navigate to the `probase` directory and click "OK."
+    - Navigate to the `basepro` directory and click "OK."
 
 3. **Sync the project**:
     - Let Android Studio sync the project and download the necessary dependencies.

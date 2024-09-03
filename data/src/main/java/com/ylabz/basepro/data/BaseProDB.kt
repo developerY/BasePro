@@ -8,10 +8,10 @@ import androidx.room.RoomDatabase
 @Database(entities = [BaseProEntity::class], version = 1, exportSchema = false)
 abstract class BaseProDB : RoomDatabase() {
 
-    abstract val probaseDao: BaseProDao
+    abstract val baseproDao: BaseProDao
 
     companion object {
-        const val DATABASE_NAME = "probase_db"
+        const val DATABASE_NAME = "basepro_db"
 
         @JvmStatic
         fun getDatabase(context: Context): BaseProDB {

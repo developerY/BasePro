@@ -43,20 +43,20 @@ class BaseProRepoImpl @Inject constructor (  // NOTE: constructor injection is n
     // implement anything else to ensure we're not doing long running database work
     // off the main thread.
     @WorkerThread
-    override suspend fun insert(probase: BasePro) {
-        val probaseEnt = probase.toBaseProEntity()
+    override suspend fun insert(basepro: BasePro) {
+        val baseproEnt = basepro.toBaseProEntity()
         // Log.d(, "This is in todoDao --  ${photoEnt}")
-        BaseProDao.insert(probaseEnt)
+        BaseProDao.insert(baseproEnt)
     }
 
     @WorkerThread
-    override suspend fun delete(probase: BasePro) {
-        BaseProDao.delete(probase.toBaseProEntity())
+    override suspend fun delete(basepro: BasePro) {
+        BaseProDao.delete(basepro.toBaseProEntity())
     }
 
     @WorkerThread
-    override suspend fun getBaseProById(probaseId: Int): BasePro? {
-        return BaseProDao.findByPhotoTodoId(probaseId)?.toBasePro()
+    override suspend fun getBaseProById(baseproId: Int): BasePro? {
+        return BaseProDao.findByPhotoTodoId(baseproId)?.toBasePro()
     }
 
     @WorkerThread

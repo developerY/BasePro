@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.ylabz.probase.cam.test", appContext.packageName)
+        assertEquals("com.ylabz.basepro.cam.test", appContext.packageName)
     }
 }

@@ -31,7 +31,7 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideBaseProDao(BaseProDB: BaseProDB): BaseProDao {
-        return BaseProDB.probaseDao
+        return BaseProDB.baseproDao
     }
 
     @Provides

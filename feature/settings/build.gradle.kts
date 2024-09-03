@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.ylabz.probase.settings"
+    namespace = "com.ylabz.basepro.settings"
     compileSdk = 34
 
     defaultConfig {

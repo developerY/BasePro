@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.ylabz.probase.core.ui"
+    namespace = "com.ylabz.basepro.core.ui"
     compileSdk = 34
 
     defaultConfig {
