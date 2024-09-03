@@ -19,7 +19,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "TwinCam"
+rootProject.name = "BasePro"
 include(":app")
 include(":data")
 include(":feature:cam")

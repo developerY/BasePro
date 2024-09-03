@@ -1,6 +1,6 @@
-# TwinCam Project
+# BasePro Project
 
-Welcome to the TwinCam Project! This project is an Android application built with Jetpack Compose, Hilt, Room, and Navigation. It provides a modular, scalable, and maintainable architecture for building modern Android apps.
+Welcome to the BasePro Project! This project is an Android application built with Jetpack Compose, Hilt, Room, and Navigation. It provides a modular, scalable, and maintainable architecture for building modern Android apps.
 
 ## Table of Contents
 
@@ -26,7 +26,7 @@ Welcome to the TwinCam Project! This project is an Android application built wit
 ## Project Structure
 
 ```
-TwinCam/
+BasePro/
 │
 ├── app/                     # Main application module
 │   ├── src/
@@ -60,13 +60,13 @@ Follow these instructions to get the project up and running on your local machin
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/yourusername/twincam.git
-   cd twincam
+   git clone https://github.com/yourusername/probase.git
+   cd probase
    ```
 
 2. **Open the project in Android Studio**:
     - Open Android Studio and select "Open an existing project."
-    - Navigate to the `twincam` directory and click "OK."
+    - Navigate to the `probase` directory and click "OK."
 
 3. **Sync the project**:
     - Let Android Studio sync the project and download the necessary dependencies.
@@ -110,7 +110,7 @@ The app uses a modular navigation structure, with the `RootNavGraph` and `MainNa
 
 ## Contributing
 
-We welcome contributions to the TwinCam project! To contribute:
+We welcome contributions to the BasePro project! To contribute:
 
 1. **Fork the repository**.
 2. **Create a new branch**: `git checkout -b feature/your-feature-name`.

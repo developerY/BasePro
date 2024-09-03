@@ -9,11 +9,11 @@ plugins {
 }
 
 android {
-    namespace = "com.ylabz.twincam"
+    namespace = "com.ylabz.basepro"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.ylabz.twincam"
+        applicationId = "com.ylabz.basepro"
         minSdk = 31
         targetSdk = 34
         versionCode = 1

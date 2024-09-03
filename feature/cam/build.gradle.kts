@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.ylabz.twincam.cam"
+    namespace = "com.ylabz.probase.cam"
     compileSdk = 34
 
     defaultConfig {
