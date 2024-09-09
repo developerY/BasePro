@@ -29,7 +29,8 @@ fun SettingsUiRoute(
             SettingsCompose(
                 modifier = modifier,
                 settings = uiState.settings,
-                onEvent = { event -> viewModel.onEvent(event) }
+                onEvent = { event -> viewModel.onEvent(event) },
+                navTo = navTo
             )
         }
     }

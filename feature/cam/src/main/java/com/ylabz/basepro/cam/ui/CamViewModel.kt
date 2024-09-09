@@ -83,7 +83,7 @@ class CamViewModel @Inject constructor(
     private fun deleteItem(itemId: Int) {
         viewModelScope.launch {
             try {
-                repository.getBaseProById(itemId)
+                repository.deleteById(itemId)
                 onEvent(CamEvent.LoadData)  // Refresh the data after deleting
             } catch (e: Exception) {
                 _uiState.value = CamUIState.Error(message = e.localizedMessage ?: "Unknown error")

@@ -11,6 +11,7 @@ interface BaseProRepo {
 
     //suspend fun addTodoPhoto(BasePro: BasePro)
     suspend fun delete(basepro: BasePro)
+    suspend fun deleteById(baseproId: Int)
     suspend fun getBaseProById(baseproId: Int): BasePro? // NOTE: wrap in Flow<Resource<<>>>
     suspend fun deleteAll()
     //abstract fun insert(BasePro: BasePro)

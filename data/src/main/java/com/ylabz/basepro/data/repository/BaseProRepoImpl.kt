@@ -55,6 +55,11 @@ class BaseProRepoImpl @Inject constructor (  // NOTE: constructor injection is n
     }
 
     @WorkerThread
+    override suspend fun deleteById(baseproId: Int) {
+        BaseProDao.deleteById(baseproId)
+    }
+
+    @WorkerThread
     override suspend fun getBaseProById(baseproId: Int): BasePro? {
         return BaseProDao.findByPhotoTodoId(baseproId)?.toBasePro()
     }

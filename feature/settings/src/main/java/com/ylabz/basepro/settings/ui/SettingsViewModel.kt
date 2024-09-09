@@ -38,8 +38,11 @@ class SettingsViewModel @Inject constructor(
     private fun loadSettings() {
         viewModelScope.launch {
             // Simulate loading settings data
-            _uiState.value = SettingsUiState.Success(
-                settings = mapOf("Theme" to "Dark", "Notifications" to "Enabled")
+            _uiState.value = SettingsUiState.Success( settings = mapOf(
+                "Theme" to listOf("Light", "Dark", "System Default"),
+                "Language" to listOf("English", "Spanish", "French"),
+                "Notifications" to listOf("Enabled", "Disabled")
+                )
             )
         }
     }
@@ -49,7 +52,7 @@ class SettingsViewModel @Inject constructor(
             // Handle setting updates
             val currentSettings = (_uiState.value as? SettingsUiState.Success)?.settings ?: emptyMap()
             val updatedSettings = currentSettings.toMutableMap().apply {
-                this[key] = value
+                // this[key] = value
             }
             _uiState.value = SettingsUiState.Success(settings = updatedSettings)
         }

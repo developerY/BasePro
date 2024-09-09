@@ -24,6 +24,7 @@ hiltNavigationCompose = "1.2.0" # Hilt support for Jetpack Compose Navigation
 hiltWork = "1.2.0"             # Hilt support for WorkManager
 androidxNavigation = "2.7.5"
 ksp = "2.0.20-1.0.24"
+uiToolingPreviewAndroid = "1.7.0"
 
 
 [libraries]
@@ -71,6 +72,7 @@ lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx",
 lifecycle-viewmodel-android = { module = "androidx.lifecycle:lifecycle-viewmodel-android", version.ref = "lifecycle" }  # LiveData support with Kotlin extensions
 # lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }  # Lifecycle runtime with Kotlin extensions
 lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+androidx-ui-tooling-preview-android = { group = "androidx.compose.ui", name = "ui-tooling-preview-android", version.ref = "uiToolingPreviewAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }  # Android application plugin
