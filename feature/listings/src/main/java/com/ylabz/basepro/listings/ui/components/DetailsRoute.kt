@@ -1,9 +1,8 @@
-package com.ylabz.basepro.cam.ui.components
+package com.ylabz.basepro.listings.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.ylabz.basepro.cam.ui.CamViewModel
+import com.ylabz.basepro.listings.ui.CamViewModel
 
 @Composable
 fun DetailsRoute(

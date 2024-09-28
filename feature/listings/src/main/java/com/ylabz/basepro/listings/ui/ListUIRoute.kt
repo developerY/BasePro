@@ -1,15 +1,15 @@
-package com.ylabz.basepro.cam.ui
+package com.ylabz.basepro.listings.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ylabz.basepro.cam.ui.components.CamCompose
-import com.ylabz.basepro.cam.ui.components.ErrorScreen
-import com.ylabz.basepro.cam.ui.components.LoadingScreen
+import com.ylabz.basepro.listings.ui.components.CamCompose
+import com.ylabz.basepro.listings.ui.components.ErrorScreen
+import com.ylabz.basepro.listings.ui.components.LoadingScreen
 
 @Composable
-fun CamUIRoute(
+fun ListUIRoute(
     modifier: Modifier = Modifier,
     navTo: (String) -> Unit,
     viewModel: CamViewModel = hiltViewModel()

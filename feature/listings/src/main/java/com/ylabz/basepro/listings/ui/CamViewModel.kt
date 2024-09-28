@@ -1,4 +1,4 @@
-package com.ylabz.basepro.cam.ui
+package com.ylabz.basepro.listings.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

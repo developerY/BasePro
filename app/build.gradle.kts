@@ -53,7 +53,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":feature:cam"))  // feature module  dependency
+    implementation(project(":feature:listings"))
+    implementation(project(":feature:home"))
+    // feature module  dependency
     implementation(project(":feature:settings"))  // feature module  dependency
     implementation(project(":core:ui"))  // feature module  dependency
 

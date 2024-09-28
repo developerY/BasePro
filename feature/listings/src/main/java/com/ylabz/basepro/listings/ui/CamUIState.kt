@@ -1,4 +1,4 @@
-package com.ylabz.basepro.cam.ui
+package com.ylabz.basepro.listings.ui
 
 import com.ylabz.basepro.data.mapper.BasePro
 

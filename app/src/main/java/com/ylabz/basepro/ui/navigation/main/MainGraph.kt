@@ -14,10 +14,11 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.ylabz.basepro.cam.ui.CamUIRoute
-import com.ylabz.basepro.cam.ui.components.DetailsRoute
+import com.ylabz.basepro.listings.ui.ListUIRoute
+import com.ylabz.basepro.listings.ui.components.DetailsRoute
 import com.ylabz.basepro.core.ui.MAIN
 import com.ylabz.basepro.core.ui.Screen
+import com.ylabz.basepro.home.ui.HomeMainRoute
 import com.ylabz.basepro.settings.ui.SettingsUiRoute
 
 
@@ -63,31 +64,19 @@ fun MainNavGraph(
         composable(
             Screen.HomeScreen.route,
         ) {
-            CamUIRoute(
+            HomeMainRoute(
                 modifier = Modifier.padding(padding),
                 navTo = {path -> navController.navigate(path)}
             )
-            /*SailorWindRoute(
-                paddingValues = padding,
-                navTo = {path -> navController.navigate(path)}
-            )*/
-            /*SwipeableViewsRoute(
-                paddingValues = padding,
-                navTo = {path -> navController.navigate(path)}
-            )*/
         }
 
         composable(
             Screen.HoldScreen.route
         ) {
-            Column (
-                modifier = Modifier.padding(padding)
-            ) {
-                HoldCompose(
-                    modifier = Modifier.padding(padding),
-                    navTo = {path -> navController.navigate(path)}
-                )
-            }
+            ListUIRoute(
+                modifier = Modifier.padding(padding),
+                navTo = {path -> navController.navigate(path)}
+            )
         }
 
         composable(
