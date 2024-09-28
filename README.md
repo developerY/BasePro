@@ -14,14 +14,20 @@ Welcome to the BasePro Project! This project is an Android application built wit
 - [Contributing](#contributing)
 - [License](#license)
 
+## Article 
+[Zero to Compose: Room, Hilt, & Nav](https://medium.com/@zoewave/zero-to-compose-room-hilt-nav-da1bc0b5ab8c)
+
 ## Features
 
-- **Jetpack Compose UI**: Modern, declarative UI framework for Android.
+- **Jetpack Compose UI / Material 3**: Modern, declarative UI framework for Android.
 - **Hilt for Dependency Injection**: Simplifies dependency management across the app.
 - **Room Database Integration**: Provides a robust and easy-to-use abstraction over SQLite.
+- **Kotlin Coroutines & Kotlin Flow**: For concurrency & reactive approach
 - **Navigation Component**: Handles in-app navigation in a modular way.
 - **Stateless Composables**: Ensures that UI components are side-effect-free and easy to test.
 - **Modular Architecture**: Encourages clean code separation and reusability.
+- **TOML Version Catalog**: for dependency management
+- API keys stored in app’s BuildConfig
 
 ## Project Structure
 
