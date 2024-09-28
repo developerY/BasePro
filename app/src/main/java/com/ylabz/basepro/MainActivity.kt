@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,7 +29,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             BaseProTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AppUI()
+                    AppUI(innerPadding = innerPadding)
                     //TwinTabView(modifier = Modifier.padding(innerPadding))
                 }
             }
@@ -41,8 +42,9 @@ class MainActivity : ComponentActivity() {
     ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class
 )
 @Composable
-fun AppUI() {
+fun AppUI(innerPadding: PaddingValues) {
     val navController = rememberNavController()
+    // padding in scaffold.
     RootNavGraph(navHostController = navController )
 }
 

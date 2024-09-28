@@ -10,9 +10,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.ylabz.basepro.cam.ui.CamUIRoute
+import com.ylabz.basepro.cam.ui.components.DetailsRoute
 import com.ylabz.basepro.core.ui.MAIN
 import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.settings.ui.SettingsUiRoute
@@ -99,6 +102,21 @@ fun MainNavGraph(
                 //navTo = { path -> navController.navigate(path) }
             )*/
         }
+
+        // master / detail views for tasks
+        composable(
+            route = "details/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getInt("id")
+            itemId?.let {
+                DetailsRoute(
+                    modifier = Modifier.padding(padding),
+                    navController = navController,
+                    itemId = it)
+            }
+        }
+
     }
 }
 

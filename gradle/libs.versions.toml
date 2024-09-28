@@ -1,5 +1,5 @@
 [versions]
-agp = "8.7.0-alpha09"          # Android Gradle Plugin, used to build Android apps
+agp = "8.8.0-alpha03"          # Android Gradle Plugin, used to build Android apps
 kotlin = "2.0.20"               # Kotlin programming language version
 coreKtx = "1.13.1"             # Core KTX, Kotlin extensions for Android core libraries
 junit = "4.13.2"               # JUnit, a framework for writing and running tests in Java

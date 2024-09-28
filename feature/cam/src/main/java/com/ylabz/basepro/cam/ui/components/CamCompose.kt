@@ -36,13 +36,15 @@ import androidx.compose.ui.graphics.Color
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.tooling.preview.Preview
 
 
 @Composable
 fun CamCompose(
     modifier: Modifier = Modifier,
     data: List<BaseProEntity>,
-    onEvent: (CamEvent) -> Unit
+    onEvent: (CamEvent) -> Unit,
+    navTo: (String) -> Unit
 ) {
     var newItemName by remember { mutableStateOf("") }
 
@@ -78,7 +80,7 @@ fun CamCompose(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(data) { item ->
-                CamItemRow(item = item, onEvent = onEvent)
+                CamItemRow(item = item, onEvent = onEvent, navTo = navTo)
             }
         }
 
@@ -113,13 +115,15 @@ fun CamCompose(
 @Composable
 fun CamItemRow(
     item: BaseProEntity,
-    onEvent: (CamEvent) -> Unit
+    onEvent: (CamEvent) -> Unit,
+    navTo: (String) -> Unit
 ) {
-    // Each row in a card
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onEvent(CamEvent.OnItemClicked(item.todoId)) },
+            .clickable {
+                navTo("details/${item.todoId}")
+            },
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
@@ -137,12 +141,8 @@ fun CamItemRow(
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f)
             )
-            // Icon button for delete
             IconButton(
                 onClick = { onEvent(CamEvent.DeleteItem(item.todoId)) },
-                /*colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = MaterialTheme.colorScheme.error // Red for warning
-                )*/
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
@@ -192,4 +192,20 @@ fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
                 .padding(vertical = 8.dp)
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewCamCompose() {
+    val sampleData = listOf(
+        BaseProEntity(todoId = 1, title = "Sample Task 1", description = "Description for Task 1"),
+        BaseProEntity(todoId = 2, title = "Sample Task 2", description = "Description for Task 2"),
+        BaseProEntity(todoId = 3, title = "Sample Task 3", description = "Description for Task 3")
+    )
+
+    CamCompose(
+        data = sampleData,
+        onEvent = {},
+        navTo = {}
+    )
 }

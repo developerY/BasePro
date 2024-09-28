@@ -28,7 +28,8 @@ fun CamUIRoute(
             CamCompose(
                 modifier = modifier,
                 data = uiState.data,
-                onEvent = { event -> viewModel.onEvent(event) }
+                onEvent = { event -> viewModel.onEvent(event) },
+                navTo = navTo
             )
         }
     }

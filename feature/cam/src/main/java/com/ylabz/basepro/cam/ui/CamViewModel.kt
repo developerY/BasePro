@@ -2,6 +2,7 @@ package com.ylabz.basepro.cam.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ylabz.basepro.data.BaseProEntity
 import com.ylabz.basepro.data.BaseProRepo
 import com.ylabz.basepro.data.mapper.BasePro
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,29 +19,29 @@ class CamViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<CamUIState>(CamUIState.Loading)
     val uiState: StateFlow<CamUIState> = _uiState
 
+    private val _selectedItem = MutableStateFlow<BaseProEntity?>(null)
+    val selectedItem: StateFlow<BaseProEntity?> = _selectedItem
+
     init {
         onEvent(CamEvent.LoadData)
     }
 
     fun onEvent(event: CamEvent) {
         when (event) {
-            is CamEvent.LoadData -> {
-                loadData()
-            }
-            is CamEvent.AddItem -> {
-                addItem(event.name)
-            }
-            is CamEvent.DeleteItem -> {
-                deleteItem(event.itemId)
-            }
-            is CamEvent.DeleteAll -> {
-                deleteAll()
-            }
-            is CamEvent.OnRetry -> {
-                onEvent(CamEvent.LoadData)
-            }
-            is CamEvent.OnItemClicked -> {
-                // Handle item click if needed
+            is CamEvent.LoadData -> loadData()
+            is CamEvent.AddItem -> addItem(event.name)
+            is CamEvent.DeleteItem -> deleteItem(event.itemId)
+            is CamEvent.DeleteAll -> deleteAll()
+            is CamEvent.OnRetry -> onEvent(CamEvent.LoadData)
+            is CamEvent.OnItemClicked -> selectItem(event.itemId)
+        }
+    }
+
+    fun selectItem(itemId: Int) {
+        viewModelScope.launch {
+            // Fetch the item details only if they are not already loaded
+            if (_selectedItem.value?.todoId != itemId) {
+                _selectedItem.value = repository.getBaseProById(itemId)
             }
         }
     }
@@ -49,9 +50,10 @@ class CamViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 repository.deleteAll()
-                //onEvent(CamEvent.LoadData)  // Refresh the data after deleting
+                // Optionally refresh data after deletion
+                onEvent(CamEvent.LoadData)
             } catch (e: Exception) {
-                _uiState.value = CamUIState.Error(message = e.localizedMessage ?: "Unknown error")
+                handleError(e)
             }
         }
     }
@@ -64,7 +66,7 @@ class CamViewModel @Inject constructor(
                     _uiState.value = CamUIState.Success(data = data)
                 }
             } catch (e: Exception) {
-                _uiState.value = CamUIState.Error(message = e.localizedMessage ?: "Unknown error")
+                handleError(e)
             }
         }
     }
@@ -73,9 +75,9 @@ class CamViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 repository.insert(BasePro(title = name))
-                onEvent(CamEvent.LoadData)  // Refresh the data after adding
+                onEvent(CamEvent.LoadData)  // Refresh data after adding
             } catch (e: Exception) {
-                _uiState.value = CamUIState.Error(message = e.localizedMessage ?: "Unknown error")
+                handleError(e)
             }
         }
     }
@@ -84,10 +86,15 @@ class CamViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 repository.deleteById(itemId)
-                onEvent(CamEvent.LoadData)  // Refresh the data after deleting
+                onEvent(CamEvent.LoadData)  // Refresh data after deletion
             } catch (e: Exception) {
-                _uiState.value = CamUIState.Error(message = e.localizedMessage ?: "Unknown error")
+                handleError(e)
             }
         }
+    }
+
+    // Centralized error handling
+    private fun handleError(e: Exception) {
+        _uiState.value = CamUIState.Error(message = e.localizedMessage ?: "Unknown error")
     }
 }
