@@ -71,7 +71,7 @@ fun MainNavGraph(
         }
 
         composable(
-            Screen.HoldScreen.route
+            Screen.ListScreen.route
         ) {
             ListUIRoute(
                 modifier = Modifier.padding(padding),
@@ -86,10 +86,6 @@ fun MainNavGraph(
                 modifier = Modifier.padding(padding),
                 navTo = {path -> navController.navigate(path)}
             )
-            /*SettingsScreen(
-                paddingValues = padding,
-                //navTo = { path -> navController.navigate(path) }
-            )*/
         }
 
         // master / detail views for tasks
@@ -106,15 +102,5 @@ fun MainNavGraph(
             }
         }
 
-    }
-}
-
-@Composable
-fun HoldCompose(
-    modifier: Modifier = Modifier,
-    navTo: (String) -> Unit
-) {
-    Column {
-        Text("Hold")
     }
 }

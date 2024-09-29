@@ -3,12 +3,12 @@ package com.ylabz.basepro.ui.navigation.main
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.List
+import androidx.compose.material.icons.automirrored.twotone.List
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.twotone.Home
-import androidx.compose.material.icons.twotone.List
 import androidx.compose.material.icons.twotone.Settings
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -67,7 +67,7 @@ import kotlin.math.roundToInt
 private fun navigateTo(tabTitle: String, navController: NavHostController) {
     when (tabTitle) {
         "Home"-> navController.navigate(Screen.HomeScreen.route)
-        "Hold" -> navController.navigate(Screen.HoldScreen.route)
+        "List" -> navController.navigate(Screen.ListScreen.route)
         "Settings" -> navController.navigate(Screen.SettingsScreen.route)
     }
 }
@@ -88,9 +88,9 @@ val items = listOf(
         hasNews = false,
     ),
     BottomNavigationItem(
-        title = "Hold",
-        selectedIcon = Icons.TwoTone.List,
-        unselectedIcon = Icons.Outlined.List,
+        title = "List",
+        selectedIcon = Icons.AutoMirrored.TwoTone.List,
+        unselectedIcon = Icons.AutoMirrored.Outlined.List,
         hasNews = false,
         badgeCount = 0
     ),
