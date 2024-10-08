@@ -1,5 +1,7 @@
 package com.ylabz.basepro.core.ui
 
+import kotlinx.serialization.Serializable
+
 /**
  * This code defines a sealed class called `Screen` to represent the different screens in the app.
  * Each screen has a `route` property, which is a string that uniquely identifies the screen.
@@ -30,13 +32,25 @@ const val PHOTO = "photo"
 const val MAIN = "main"
 const val ROOT = "root"
 
+
 sealed class Screen(val route: String) {
+    data object HomeScreen : Screen("home_screen")
+    data object ListScreen : Screen("list_screen")
+    data object SettingsScreen : Screen("settings_screen")
 
-    // MAIN
-    data object HomeScreen: Screen(route = "home_screen")
-    data object ListScreen: Screen(route = "list_screen") // is a key that is not used anywhere
-    data object SettingsScreen : Screen(route = "settings_screen")
 
-    // data object CameraPhoto: Screen(route = "camera_photo_screen")
+    companion object {
+        fun CameraScreenRoute() = "camera_screen"
+        fun PicScreenRoute(name: String?, age: Int) = "pic_screen?name=${name ?: ""}&age=$age"
+    }
 
 }
+
+@Serializable
+object CameraScreen
+
+@Serializable
+data class PicScreen(
+    val name: String?,
+    val age: Int
+)

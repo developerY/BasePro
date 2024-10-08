@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.ylabz.basepro.ui.navigation.root.RootNavGraph
 import com.ylabz.basepro.ui.theme.BaseProTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.Serializable
 
 
 @AndroidEntryPoint

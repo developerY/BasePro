@@ -3,20 +3,28 @@ package com.ylabz.basepro.ui.navigation.main
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.toRoute
+import com.ylabz.basepro.camera.ui.SimpleCameraCaptureWithImagePreview
+import com.ylabz.basepro.core.ui.CameraScreen
 import com.ylabz.basepro.listings.ui.ListUIRoute
 import com.ylabz.basepro.listings.ui.components.DetailsRoute
 import com.ylabz.basepro.core.ui.MAIN
+import com.ylabz.basepro.core.ui.PicScreen
 import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.home.ui.HomeMainRoute
 import com.ylabz.basepro.settings.ui.SettingsUiRoute
@@ -61,13 +69,45 @@ fun MainNavGraph(
         route = MAIN,
         startDestination = Screen.HomeScreen.route
     ) {
+
+        composable<CameraScreen> {
+            SimpleCameraCaptureWithImagePreview(padding)
+        }
+
+        composable<PicScreen> {
+            val args = it.toRoute<PicScreen>()
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "${args.name}, ${args.age} years old")
+            }
+        }
+
         composable(
             Screen.HomeScreen.route,
         ) {
-            HomeMainRoute(
-                modifier = Modifier.padding(padding),
-                navTo = {path -> navController.navigate(path)}
-            )
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Button(onClick = {
+                    navController.navigate(
+                        CameraScreen
+                    )
+                }) {
+                    Text(text = "Go to screen B")
+                }
+
+                HomeMainRoute(
+                    modifier = Modifier.padding(padding),
+                    navTo = {path -> navController.navigate(path)},
+                    navToCam = { navController.navigate(CameraScreen) }
+                   // navPlay = {path -> navController.navigate(path)}
+                )
+            }
         }
 
         composable(

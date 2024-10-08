@@ -12,6 +12,7 @@ data class BaseProEntity(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val todoId: Int = 0,
     @ColumnInfo(name = "title") val title: String = "",
     @ColumnInfo(name = "description") val description: String = "",
+    @ColumnInfo(name = "image_path") val imgPath: String? = null // Store image path as a String
     // @ColumnInfo(name = "timestamp") val timestamp : ZonedDateTime = ZonedDateTime.now(),
     // @ColumnInfo(name = "date") val timestamp: kotlinx.datetime.LocalDateTime? = null,
     // kotlinx.datetime.Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),

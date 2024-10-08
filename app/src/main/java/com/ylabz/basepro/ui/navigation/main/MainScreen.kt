@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.ylabz.basepro.core.ui.CameraScreen
 import com.ylabz.basepro.core.ui.Screen
 import kotlin.math.roundToInt
 

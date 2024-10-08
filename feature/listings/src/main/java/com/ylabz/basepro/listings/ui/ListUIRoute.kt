@@ -1,8 +1,11 @@
 package com.ylabz.basepro.listings.ui
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ylabz.basepro.listings.ui.components.CamCompose
 import com.ylabz.basepro.listings.ui.components.ErrorScreen
@@ -25,12 +28,14 @@ fun ListUIRoute(
             }
         }
         is CamUIState.Success -> {
-            CamCompose(
-                modifier = modifier,
-                data = uiState.data,
-                onEvent = { event -> viewModel.onEvent(event) },
-                navTo = navTo
-            )
+            Column(modifier = modifier) {
+                CamCompose(
+                    modifier = modifier,
+                    data = uiState.data,
+                    onEvent = { event -> viewModel.onEvent(event) },
+                    navTo = navTo
+                )
+            }
         }
     }
 }

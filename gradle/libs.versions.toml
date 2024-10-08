@@ -1,5 +1,5 @@
 [versions]
-agp = "8.8.0-alpha03"          # Android Gradle Plugin, used to build Android apps
+agp = "8.8.0-alpha04"          # Android Gradle Plugin, used to build Android apps
 kotlin = "2.0.20"               # Kotlin programming language version
 coreKtx = "1.13.1"             # Core KTX, Kotlin extensions for Android core libraries
 junit = "4.13.2"               # JUnit, a framework for writing and running tests in Java
@@ -22,9 +22,13 @@ hiltLifecycleViewModel = "1.0.0-alpha03"  # Hilt ViewModel injection
 hiltNavigation = "1.0.0"       # Hilt support for Navigation component
 hiltNavigationCompose = "1.2.0" # Hilt support for Jetpack Compose Navigation
 hiltWork = "1.2.0"             # Hilt support for WorkManager
-androidxNavigation = "2.7.5"
+androidxNavigation = "2.8.2"
 ksp = "2.0.20-1.0.24"
 uiToolingPreviewAndroid = "1.7.0"
+serialization = "1.6.3"
+cameraX = "1.3.4"
+accompanistPermissions = "0.36.0"
+
 
 
 [libraries]
@@ -44,8 +48,10 @@ androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }  # C
 androidx-material3 = { module = "androidx.compose.material3:material3" }  # Material Design 3 components for Compose
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNavigation" }
 
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
 
-# Hilt Libraries
+
+# Hilt Librariesandroidx.navigation:navigation-compose
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }  # Hilt core library for dependency injection
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }  # Hilt annotation processor
 # hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" } # Not used in Android
@@ -74,6 +80,18 @@ lifecycle-viewmodel-android = { module = "androidx.lifecycle:lifecycle-viewmodel
 lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-ui-tooling-preview-android = { group = "androidx.compose.ui", name = "ui-tooling-preview-android", version.ref = "uiToolingPreviewAndroid" }
 
+# Permissions
+google-accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
+
+# CameraX core library
+androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "cameraX" }
+# CameraX Camera2 implementation
+androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraX" }
+# CameraX lifecycle support
+androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraX" }
+# CameraX View (needed for CameraX in Compose)
+androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraX" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }  # Android application plugin
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }  # Kotlin Android plugin
@@ -82,3 +100,4 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 hilt-gradle = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

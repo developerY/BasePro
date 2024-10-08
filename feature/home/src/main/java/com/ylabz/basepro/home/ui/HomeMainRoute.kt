@@ -17,6 +17,7 @@ import com.ylabz.basepro.home.ui.components.HomeMainScreen
 fun HomeMainRoute(
     modifier: Modifier = Modifier,
     navTo: (String) -> Unit,
+    navToCam: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsState().value
@@ -31,10 +32,11 @@ fun HomeMainRoute(
         }
         is HomeUiState.Success -> {
             HomeMainScreen(
-                /*modifier = modifier,
-                data = uiState.data,
+                modifier = modifier,
+                //data = uiState.data,
                 onEvent = { event -> viewModel.onEvent(event) },
-                navTo = navTo*/
+                navTo = navTo,
+                navToCam = navToCam
             )
         }
     }

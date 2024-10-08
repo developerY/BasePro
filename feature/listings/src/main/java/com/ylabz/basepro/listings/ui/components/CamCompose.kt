@@ -1,5 +1,8 @@
 package com.ylabz.basepro.listings.ui.components
 
+import android.graphics.BitmapFactory
+import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
@@ -35,7 +39,14 @@ import androidx.compose.ui.graphics.Color
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.net.toUri
 
 
 @Composable
@@ -140,6 +151,10 @@ fun CamItemRow(
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f)
             )
+            // Display the image using Coil's AsyncImage
+            if (item.imgPath?.isNotEmpty() == true) {
+                CapturedImagePreview(item.imgPath!!.toUri())
+            }
             IconButton(
                 onClick = { onEvent(CamEvent.DeleteItem(item.todoId)) },
             ) {
@@ -151,6 +166,31 @@ fun CamItemRow(
         }
     }
 }
+
+@Composable
+fun CapturedImagePreview(imageUri: Uri) {
+    val context = LocalContext.current
+    var bitmap by remember { mutableStateOf<android.graphics.Bitmap?>(null) }
+
+    // Load the image from the file
+    LaunchedEffect(imageUri) {
+        val inputStream = context.contentResolver.openInputStream(imageUri)
+        bitmap = BitmapFactory.decodeStream(inputStream)
+    }
+
+    bitmap?.let {
+        Image(
+            painter = BitmapPainter(it.asImageBitmap()),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp)
+                .padding(16.dp),
+            contentScale = ContentScale.Crop
+        )
+    }
+}
+
 
 
 // Helper function to get a pastel color based on the index

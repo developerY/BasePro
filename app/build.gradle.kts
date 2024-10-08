@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.ksp)  // Apply the KSP plugin
     alias(libs.plugins.hilt.gradle)  // Added Hilt plugin
     // alias(libs.plugins.kotlin.kapt) need to
+    alias(libs.plugins.kotlin.serialization)  // Added Kotlin serialization plugin)
 
 }
 
@@ -55,6 +56,7 @@ android {
 dependencies {
     implementation(project(":feature:listings"))
     implementation(project(":feature:home"))
+    implementation(project(":feature:camera"))
     // feature module  dependency
     implementation(project(":feature:settings"))  // feature module  dependency
     implementation(project(":core:ui"))  // feature module  dependency
@@ -72,7 +74,8 @@ dependencies {
     ksp(libs.hilt.android.compiler)   // Hilt compiler dependency for annotation processing
 
     // Compose Navigation
-    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.compose) // Added Compose Navigation dependency with safe args plugin
+    implementation(libs.kotlinx.serialization.json) // Added Kotlin serialization dependency
     implementation(libs.hilt.navigation.compose)
 
 
