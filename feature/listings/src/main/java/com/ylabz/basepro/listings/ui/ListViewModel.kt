@@ -12,28 +12,28 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CamViewModel @Inject constructor(
+class ListViewModel @Inject constructor(
     private val repository: BaseProRepo
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<CamUIState>(CamUIState.Loading)
-    val uiState: StateFlow<CamUIState> = _uiState
+    private val _uiState = MutableStateFlow<ListUIState>(ListUIState.Loading)
+    val uiState: StateFlow<ListUIState> = _uiState
 
     private val _selectedItem = MutableStateFlow<BaseProEntity?>(null)
     val selectedItem: StateFlow<BaseProEntity?> = _selectedItem
 
     init {
-        onEvent(CamEvent.LoadData)
+        onEvent(ListEvent.LoadData)
     }
 
-    fun onEvent(event: CamEvent) {
+    fun onEvent(event: ListEvent) {
         when (event) {
-            is CamEvent.LoadData -> loadData()
-            is CamEvent.AddItem -> addItem(event.name)
-            is CamEvent.DeleteItem -> deleteItem(event.itemId)
-            is CamEvent.DeleteAll -> deleteAll()
-            is CamEvent.OnRetry -> onEvent(CamEvent.LoadData)
-            is CamEvent.OnItemClicked -> selectItem(event.itemId)
+            is ListEvent.LoadData -> loadData()
+            is ListEvent.AddItem -> addItem(event.name)
+            is ListEvent.DeleteItem -> deleteItem(event.itemId)
+            is ListEvent.DeleteAll -> deleteAll()
+            is ListEvent.OnRetry -> onEvent(ListEvent.LoadData)
+            is ListEvent.OnItemClicked -> selectItem(event.itemId)
         }
     }
 
@@ -51,7 +51,7 @@ class CamViewModel @Inject constructor(
             try {
                 repository.deleteAll()
                 // Optionally refresh data after deletion
-                onEvent(CamEvent.LoadData)
+                onEvent(ListEvent.LoadData)
             } catch (e: Exception) {
                 handleError(e)
             }
@@ -61,9 +61,9 @@ class CamViewModel @Inject constructor(
     private fun loadData() {
         viewModelScope.launch {
             try {
-                _uiState.value = CamUIState.Loading
+                _uiState.value = ListUIState.Loading
                 repository.allGetBasePros().collect { data ->
-                    _uiState.value = CamUIState.Success(data = data)
+                    _uiState.value = ListUIState.Success(data = data)
                 }
             } catch (e: Exception) {
                 handleError(e)
@@ -75,7 +75,7 @@ class CamViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 repository.insert(BasePro(title = name))
-                onEvent(CamEvent.LoadData)  // Refresh data after adding
+                onEvent(ListEvent.LoadData)  // Refresh data after adding
             } catch (e: Exception) {
                 handleError(e)
             }
@@ -86,7 +86,7 @@ class CamViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 repository.deleteById(itemId)
-                onEvent(CamEvent.LoadData)  // Refresh data after deletion
+                onEvent(ListEvent.LoadData)  // Refresh data after deletion
             } catch (e: Exception) {
                 handleError(e)
             }
@@ -95,6 +95,6 @@ class CamViewModel @Inject constructor(
 
     // Centralized error handling
     private fun handleError(e: Exception) {
-        _uiState.value = CamUIState.Error(message = e.localizedMessage ?: "Unknown error")
+        _uiState.value = ListUIState.Error(message = e.localizedMessage ?: "Unknown error")
     }
 }

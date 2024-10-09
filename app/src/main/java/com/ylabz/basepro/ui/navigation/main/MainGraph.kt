@@ -19,7 +19,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.toRoute
-import com.ylabz.basepro.camera.ui.SimpleCameraCaptureWithImagePreview
+import com.ylabz.basepro.camera.ui.CameraUIRoute
+import com.ylabz.basepro.camera.ui.components.SimpleCameraCaptureWithImagePreview
 import com.ylabz.basepro.core.ui.CameraScreen
 import com.ylabz.basepro.listings.ui.ListUIRoute
 import com.ylabz.basepro.listings.ui.components.DetailsRoute
@@ -71,7 +72,10 @@ fun MainNavGraph(
     ) {
 
         composable<CameraScreen> {
-            SimpleCameraCaptureWithImagePreview(padding)
+            CameraUIRoute(
+                paddingValues = padding,
+                navTo = {path -> navController.navigate(path)},
+            )
         }
 
         composable<PicScreen> {

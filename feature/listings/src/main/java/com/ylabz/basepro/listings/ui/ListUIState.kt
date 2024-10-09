@@ -2,11 +2,11 @@ package com.ylabz.basepro.listings.ui
 
 import com.ylabz.basepro.data.mapper.BasePro
 
-sealed interface CamUIState {
-    object Loading : CamUIState
-    data class Error(val message: String) : CamUIState
+sealed interface ListUIState {
+    object Loading : ListUIState
+    data class Error(val message: String) : ListUIState
     data class Success(
         val data: List<BasePro> = emptyList(),
-    ) : CamUIState
+    ) : ListUIState
 }
 

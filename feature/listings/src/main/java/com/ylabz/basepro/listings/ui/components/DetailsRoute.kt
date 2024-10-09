@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -25,12 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.ylabz.basepro.listings.ui.CamViewModel
+import com.ylabz.basepro.listings.ui.ListViewModel
 
 @Composable
 fun DetailsRoute(
     modifier: Modifier = Modifier,
-    viewModel: CamViewModel = hiltViewModel(),
+    viewModel: ListViewModel = hiltViewModel(),
     navController: NavHostController,
     itemId: Int,
 ) {

@@ -1,13 +1,11 @@
 package com.ylabz.basepro.listings.ui
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ylabz.basepro.listings.ui.components.CamCompose
+import com.ylabz.basepro.listings.ui.components.ListCompose
 import com.ylabz.basepro.listings.ui.components.ErrorScreen
 import com.ylabz.basepro.listings.ui.components.LoadingScreen
 
@@ -15,21 +13,21 @@ import com.ylabz.basepro.listings.ui.components.LoadingScreen
 fun ListUIRoute(
     modifier: Modifier = Modifier,
     navTo: (String) -> Unit,
-    viewModel: CamViewModel = hiltViewModel()
+    viewModel: ListViewModel = hiltViewModel()
 ) {
    val uiState = viewModel.uiState.collectAsState().value
     when (uiState) {
-        is CamUIState.Loading -> {
+        is ListUIState.Loading -> {
             LoadingScreen()
         }
-        is CamUIState.Error -> {
+        is ListUIState.Error -> {
             ErrorScreen(errorMessage = uiState.message) {
-                viewModel.onEvent(CamEvent.OnRetry)
+                viewModel.onEvent(ListEvent.OnRetry)
             }
         }
-        is CamUIState.Success -> {
+        is ListUIState.Success -> {
             Column(modifier = modifier) {
-                CamCompose(
+                ListCompose(
                     modifier = modifier,
                     data = uiState.data,
                     onEvent = { event -> viewModel.onEvent(event) },
