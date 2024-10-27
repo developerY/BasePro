@@ -29,6 +29,7 @@ import com.ylabz.basepro.core.ui.PicScreen
 import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.home.ui.HomeMainRoute
 import com.ylabz.basepro.settings.ui.SettingsUiRoute
+import com.ylabz.basepro.ui.navigation.photo.photodoNavGraph
 
 
 /**
@@ -70,24 +71,7 @@ fun MainNavGraph(
         route = MAIN,
         startDestination = Screen.HomeScreen.route
     ) {
-
-        composable<CameraScreen> {
-            CameraUIRoute(
-                paddingValues = padding,
-                navTo = {path -> navController.navigate(path)},
-            )
-        }
-
-        composable<PicScreen> {
-            val args = it.toRoute<PicScreen>()
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "${args.name}, ${args.age} years old")
-            }
-        }
+        photodoNavGraph(navController, padding)
 
         composable(
             Screen.HomeScreen.route,

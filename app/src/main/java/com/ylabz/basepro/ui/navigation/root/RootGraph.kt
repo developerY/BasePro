@@ -29,7 +29,7 @@ fun RootNavGraph(
         startDestination = startDestination,
         route = ROOT,
     ) {
-        // mainNavGraph(navHostController)
+        //mainNavGraph(navHostController)
         //photoNavGraph(navHostController)
         composable(route = MAIN) {
             MainScreen()
