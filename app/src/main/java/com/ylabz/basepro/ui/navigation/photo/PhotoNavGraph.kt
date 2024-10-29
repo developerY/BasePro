@@ -45,9 +45,19 @@ import androidx.navigation.navigation
 @RequiresApi(Build.VERSION_CODES.S)
 fun NavGraphBuilder.photodoNavGraph(navController: NavHostController, paddingVals: PaddingValues) {
     navigation(
-        startDestination = Screen.CameraScreenRoute(),
+        startDestination = Screen.CameraScreen.route,
         route = PHOTO
     ) {
+
+        // We are using this ...
+        composable(route = Screen.CameraScreen.route) {
+            CameraUIRoute(
+                paddingValues = paddingVals,
+                navTo = { path -> navController.navigate(path) },
+            )
+        }
+
+        // We are not using type save navigation.
         composable<CameraScreen> {
             CameraUIRoute(
                 paddingValues = paddingVals,

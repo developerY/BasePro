@@ -31,23 +31,23 @@ import kotlinx.serialization.Serializable
 const val PHOTO = "photo"
 const val MAIN = "main"
 const val ROOT = "root"
+const val MAP = "maps"
 
 
 sealed class Screen(val route: String) {
-    data object HomeScreen : Screen("home_screen")
+    data object HomeScreen : Screen("home_screen") // These names are not used anywhere.
     data object ListScreen : Screen("list_screen")
     data object SettingsScreen : Screen("settings_screen")
-
-
-    companion object {
-        fun CameraScreenRoute() = "camera_screen"
-        fun PicScreenRoute(name: String?, age: Int) = "pic_screen?name=${name ?: ""}&age=$age"
-    }
+    data object MapScreen : Screen("map_screen")
+    data object CameraScreen : Screen("camera_screen")
 
 }
 
 @Serializable
 object CameraScreen
+
+/*@Serializable
+object MapScreen*/
 
 @Serializable
 data class PicScreen(

@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -29,6 +30,7 @@ import com.ylabz.basepro.core.ui.PicScreen
 import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.home.ui.HomeMainRoute
 import com.ylabz.basepro.settings.ui.SettingsUiRoute
+import com.ylabz.basepro.ui.navigation.maps.gmapNavGraph
 import com.ylabz.basepro.ui.navigation.photo.photodoNavGraph
 
 
@@ -72,7 +74,7 @@ fun MainNavGraph(
         startDestination = Screen.HomeScreen.route
     ) {
         photodoNavGraph(navController, padding)
-
+        gmapNavGraph(navController, padding)
         composable(
             Screen.HomeScreen.route,
         ) {
@@ -81,18 +83,26 @@ fun MainNavGraph(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Button(onClick = {
-                    navController.navigate(
-                        CameraScreen
-                    )
-                }) {
-                    Text(text = "Go to screen B")
-                }
+                Row {
+                    Button(onClick = {
+                        navController.navigate(
+                            "photo"
+                        )
+                    }) {
+                        Text(text = "Go to screen B")
+                    }
+                    Button(onClick = {
+                        navController.navigate(
+                            "maps"
+                        )
+                    }) {
+                        Text(text = "Go to Map")
+                    }
 
+                }
                 HomeMainRoute(
                     modifier = Modifier.padding(padding),
                     navTo = {path -> navController.navigate(path)},
-                    navToCam = { navController.navigate(CameraScreen) }
                    // navPlay = {path -> navController.navigate(path)}
                 )
             }

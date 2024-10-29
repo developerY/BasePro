@@ -65,6 +65,7 @@ import kotlin.math.roundToInt
  * with icons, labels, and optional badges, allowing users to switch between different tabs.
  */
 
+// only used by the bottom bar
 private fun navigateTo(tabTitle: String, navController: NavHostController) {
     when (tabTitle) {
         "Home"-> navController.navigate(Screen.HomeScreen.route)

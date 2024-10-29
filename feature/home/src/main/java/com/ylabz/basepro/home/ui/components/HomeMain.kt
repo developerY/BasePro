@@ -14,10 +14,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode.Companion.Screen
 import androidx.navigation.NavController
 import com.ylabz.basepro.core.ui.PicScreen
-import com.ylabz.basepro.core.ui.Screen.Companion.CameraScreenRoute
+import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.home.data.AndFrameworks
 import com.ylabz.basepro.home.ui.HomeEvent
 
@@ -28,7 +27,6 @@ fun HomeMainScreen(
     //data: List<AndFrameworks>,
     onEvent: (HomeEvent) -> Unit,
     navTo: (String) -> Unit,
-    navToCam: () -> Unit
 ) {
     val frameworkList = listOf(
         AndFrameworks("BLE", "Bluetooth Low Energy"),
@@ -49,7 +47,13 @@ fun HomeMainScreen(
             )
 
             Button(onClick = {
-                navToCam()
+                navTo("photo")
+            }) {
+                Text(text = "Navigate to Camera Screen")
+            }
+
+            Button(onClick = {
+                navTo("maps")
             }) {
                 Text(text = "Navigate to Camera Screen")
             }
