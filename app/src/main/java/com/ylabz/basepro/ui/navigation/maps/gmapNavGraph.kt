@@ -18,6 +18,8 @@ import com.ylabz.basepro.camera.ui.CameraUIRoute
 import com.ylabz.basepro.core.ui.CameraScreen
 import com.ylabz.basepro.core.ui.MAP
 import com.ylabz.basepro.core.ui.Screen
+import com.ylabz.basepro.listings.ui.ListUIRoute
+import com.ylabz.basepro.maps.MapsUI
 
 @RequiresApi(Build.VERSION_CODES.S)
 fun NavGraphBuilder.gmapNavGraph(navController: NavHostController, paddingVals: PaddingValues) {
@@ -30,6 +32,11 @@ fun NavGraphBuilder.gmapNavGraph(navController: NavHostController, paddingVals: 
         ) {
             Column(modifier = Modifier.padding(paddingVals)) {
                 Text("here")
+                MapsUI()
+                /*ListUIRoute(
+                    //paddingValues = paddingVals,
+                    navTo = { path -> navController.navigate(path) },
+                )*/
             }
         }
     }

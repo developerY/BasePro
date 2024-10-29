@@ -2,12 +2,11 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.ylabz.basepro.home"
+    namespace = "com.ylabz.basepro.maps"
     compileSdk = 34
 
     defaultConfig {
@@ -36,41 +35,18 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:ui"))
-    implementation(project(":data"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
 
-    // androidx-lifecycle-viewmodel-compose
-    implementation(libs.lifecycle.viewmodel.compose)
-    implementation(libs.lifecycle.viewmodel.android)
-
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.tooling.preview.android)
-
-    // Permissions
-    implementation(libs.google.accompanist.permissions)
-
-    // Add Camera
-    implementation(libs.androidx.camera.core)
-    implementation(libs.androidx.camera.camera2)
-    implementation(libs.androidx.camera.lifecycle)
-    implementation(libs.androidx.camera.view)
-
-    // Hilt Dependency Injection
-    implementation(libs.hilt.navigation.compose)
-    implementation(libs.hilt.android)
-
-    ksp(libs.hilt.android.compiler)
-    // kapt(libs.hilt.compiler)
+    
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-
 }
