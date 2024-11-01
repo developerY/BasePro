@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.hilt.gradle)  // Added Hilt plugin
     // alias(libs.plugins.kotlin.kapt) need to
     alias(libs.plugins.kotlin.serialization)  // Added Kotlin serialization plugin)
+    alias(libs.plugins.mapsplatform.secrets)
 
 }
 
@@ -41,6 +42,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     compileOptions {

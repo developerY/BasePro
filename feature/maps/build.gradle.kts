@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+
+    alias(libs.plugins.mapsplatform.secrets)
 }
 
 android {
@@ -32,6 +34,11 @@ android {
     kotlinOptions {
         jvmTarget = "21"
     }
+
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
 }
 
 dependencies {
@@ -40,11 +47,26 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
 
+    // viewmodel - hilt-lifecycle-viewmodel
+    // implementation(libs.hilt.lifecycle.viewmodel) // NOTE: not needed
+
+    // androidx-lifecycle-viewmodel-compose
+    implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.lifecycle.viewmodel.android)
+
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.tooling.preview.android)
-    
+
+    // Hilt Dependency Injection
+    implementation(libs.hilt.navigation.compose)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    // kapt(libs.hilt.compiler)
+
+    // maps
+    implementation(libs.google.maps.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
