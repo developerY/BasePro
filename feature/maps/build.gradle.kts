@@ -3,12 +3,10 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
-
-    alias(libs.plugins.mapsplatform.secrets)
 }
 
 android {
-    namespace = "com.ylabz.basepro.maps"
+    namespace = "com.ylabz.basepro.feature.maps"
     compileSdk = 34
 
     defaultConfig {
@@ -35,14 +33,10 @@ android {
         jvmTarget = "21"
     }
 
-    buildFeatures {
-        compose = true
-        buildConfig = true
-    }
 }
 
 dependencies {
-
+    implementation(project(":core:network"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

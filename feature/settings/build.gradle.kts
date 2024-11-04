@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.ylabz.basepro.settings"
+    namespace = "com.ylabz.basepro.feature.settings"
     compileSdk = 34
 
     defaultConfig {
@@ -36,7 +36,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":data"))
+    implementation(project(":core:data"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

@@ -12,13 +12,15 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/core/data" />
+            <option value="$PROJECT_DIR$/core/network" />
             <option value="$PROJECT_DIR$/core/ui" />
-            <option value="$PROJECT_DIR$/data" />
             <option value="$PROJECT_DIR$/feature" />
             <option value="$PROJECT_DIR$/feature/camera" />
             <option value="$PROJECT_DIR$/feature/home" />
             <option value="$PROJECT_DIR$/feature/listings" />
             <option value="$PROJECT_DIR$/feature/maps" />
+            <option value="$PROJECT_DIR$/feature/places" />
             <option value="$PROJECT_DIR$/feature/settings" />
           </set>
         </option>

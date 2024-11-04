@@ -19,19 +19,15 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import androidx.navigation.toRoute
-import com.ylabz.basepro.camera.ui.CameraUIRoute
-import com.ylabz.basepro.camera.ui.components.SimpleCameraCaptureWithImagePreview
-import com.ylabz.basepro.core.ui.CameraScreen
 import com.ylabz.basepro.listings.ui.ListUIRoute
 import com.ylabz.basepro.listings.ui.components.DetailsRoute
 import com.ylabz.basepro.core.ui.MAIN
-import com.ylabz.basepro.core.ui.PicScreen
 import com.ylabz.basepro.core.ui.Screen
-import com.ylabz.basepro.home.ui.HomeMainRoute
+import com.ylabz.basepro.feature.home.ui.HomeMainRoute
 import com.ylabz.basepro.settings.ui.SettingsUiRoute
-import com.ylabz.basepro.ui.navigation.maps.gmapNavGraph
-import com.ylabz.basepro.ui.navigation.photo.photodoNavGraph
+import com.ylabz.basepro.ui.navigation.graphs.gmapNavGraph
+import com.ylabz.basepro.ui.navigation.graphs.photodoNavGraph
+import com.ylabz.basepro.ui.navigation.graphs.placesNavGraph
 
 
 /**
@@ -75,6 +71,7 @@ fun MainNavGraph(
     ) {
         photodoNavGraph(navController, padding)
         gmapNavGraph(navController, padding)
+        placesNavGraph(navController, padding)
         composable(
             Screen.HomeScreen.route,
         ) {
@@ -97,6 +94,13 @@ fun MainNavGraph(
                         )
                     }) {
                         Text(text = "Go to Map")
+                    }
+                    Button(onClick = {
+                        navController.navigate(
+                            "places"
+                        )
+                    }) {
+                        Text(text = "Go to Places")
                     }
 
                 }

@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.ylabz.basepro.home"
+    namespace = "com.ylabz.basepro.feature.camera"
     compileSdk = 34
 
     defaultConfig {
@@ -37,7 +37,7 @@ android {
 
 dependencies {
     implementation(project(":core:ui"))
-    implementation(project(":data"))
+    implementation(project(":core:data"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

@@ -21,10 +21,12 @@ dependencyResolutionManagement {
 
 rootProject.name = "BasePro"
 include(":app")
-include(":data")
+include(":core:data")
 include(":feature:listings")
 include(":feature:settings")
 include(":core:ui")
 include(":feature:home")
 include(":feature:camera")
 include(":feature:maps")
+include(":core:network")
+include(":feature:places")

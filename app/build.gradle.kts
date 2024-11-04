@@ -53,12 +53,17 @@ android {
         jvmTarget = "21"
     }
 
+    secrets {
+        defaultPropertiesFileName = "secrets.defaults.properties"
+    }
+
 }
 
 dependencies {
     implementation(project(":feature:listings"))
     implementation(project(":feature:home"))
     implementation(project(":feature:camera"))
+    implementation(project(":feature:places"))
     // feature module  dependency
     implementation(project(":feature:settings"))  // feature module  dependency
     implementation(project(":core:ui"))  // feature module  dependency

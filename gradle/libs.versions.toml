@@ -30,7 +30,12 @@ cameraX = "1.3.4"
 accompanistPermissions = "0.36.0"
 mapsCompose = "4.4.1"
 mapsplatformSecretsPlugin = "2.0.1" # mapsplatform-secrets
+okhttp = "5.0.0-alpha.11" # OkHttp
 
+
+# plugins
+# Apollo GraphQL
+apollo = "3.8.5" # apollo-graphql
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }  # Core KTX library
@@ -93,6 +98,11 @@ androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", versi
 # CameraX View (needed for CameraX in Compose)
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraX" }
 
+# GraphQL
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+apollo-graphql = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apollo" }
+apollo-graphql-cache = { module = "com.apollographql.apollo3:apollo-normalized-cache", version.ref = "apollo" }
+
 # Map
 google-maps-compose = { module = 'com.google.maps.android:maps-compose', version.ref = 'mapsCompose' }
 
@@ -106,3 +116,5 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 mapsplatform-secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "mapsplatformSecretsPlugin" }
+
+apollo-graphql = { id = "com.apollographql.apollo3", version.ref = "apollo" }

@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.ylabz.basepro.home"
+    namespace = "com.ylabz.basepro.feature.home"
     compileSdk = 34
 
     defaultConfig {

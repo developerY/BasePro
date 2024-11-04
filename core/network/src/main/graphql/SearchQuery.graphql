@@ -1,0 +1,21 @@
+#latitude: 33.524155, longitude: -111.905792, radius : 1000, sort_by : "distance", categories : "fitness"
+query SearchYelp($latitude: Float!,$longitude: Float!, $radius : Float!, $sort_by : String!, $categories:String!) {
+    search(latitude: $latitude,longitude: $longitude, radius: $radius, sort_by: $sort_by, categories : $categories ) {
+        total
+        business {
+            id
+            name
+            url
+            rating
+            photos
+            price
+            coordinates {
+                latitude
+                longitude
+            }
+            categories {
+                title
+            }
+        }
+    }
+}

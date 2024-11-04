@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.ylabz.basepro.listings"
+    namespace = "com.ylabz.basepro.feature.listings"
     compileSdk = 34
 
     defaultConfig {
@@ -37,7 +37,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":data"))
+    implementation(project(":core:data"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
