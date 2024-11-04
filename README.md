@@ -30,7 +30,7 @@ Welcome to the BasePro Project! This project is an Android application built wit
 - API keys stored in app’s BuildConfig
 
 
-Here's a full file structure for your app based on what we've discussed so far, following **Modern Android Development** practices with a clean, modularized architecture. This structure includes all core layers and feature modules, showing directory organization, files, and naming conventions for clarity.
+Here's a full file structure for your app based on what we've discussed so far, following **Modern Android Development** practices with a clean, modularized architecture.
 
 ```plaintext
 BasePro/
@@ -131,7 +131,7 @@ BasePro/
 │   │   │   │   │   └── CamEvent.kt
 │   │   └── build.gradle.kts              # Build configuration for camera feature
 │   │
-│   ├── coffeeshop/                        # Feature module for Yelp Coffee Shop search
+│   ├── places/                        # Feature module for Yelp Coffee Shop search
 │   │   ├── src/
 │   │   │   ├── main/
 │   │   │   │   ├── AndroidManifest.xml
@@ -184,141 +184,7 @@ BasePro/
 - **build-logic**:
     - Centralized build logic with Gradle convention plugins to standardize configurations across modules.
 
-This structure is a robust, scalable, and modular approach, adhering to Google’s recommended **Modern Android Development** best practices!
-
-## Project Structure
-
-BasePro/
-│
-├── app/                                   # Main application module
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── AndroidManifest.xml
-│   │   │   ├── java/com/ylabz/basepro
-│   │   │   │   ├── MainActivity.kt       # Entry point of the app, initializes NavController
-│   │   │   └── res/                      # Resources for the app module (themes, layouts, etc.)
-│   └── build.gradle.kts                  # Build configuration for app module
-│
-├── core/
-│   ├── data/                              # Data layer (e.g., Room database, repositories)
-│   │   ├── src/
-│   │   │   ├── main/
-│   │   │   │   ├── AndroidManifest.xml
-│   │   │   │   ├── java/com/ylabz/basepro/core/data
-│   │   │   │   │   ├── converter/        # Converters for data transformations
-│   │   │   │   │   │   └── Converters.kt
-│   │   │   │   │   ├── di/               # Dependency injection for the data layer
-│   │   │   │   │   │   └── DatabaseModule.kt
-│   │   │   │   │   ├── mapper/           # Mappers for converting between entities and models
-│   │   │   │   │   │   └── TwinCamMapper.kt
-│   │   │   │   │   ├── model/            # Data models specific to the data layer (Room entities, etc.)
-│   │   │   │   │   │   ├── BaseProEntity.kt
-│   │   │   │   │   │   ├── BaseProDB.kt
-│   │   │   │   │   ├── repository/       # Data repositories
-│   │   │   │   │   │   ├── BaseProRepo.kt
-│   │   │   │   │   │   └── BaseProRepoImpl.kt
-│   │   └── build.gradle.kts              # Build configuration for core-data module
-│   │
-│   ├── network/                           # Network layer (e.g., Apollo, Retrofit clients, GraphQL)
-│   │   ├── src/
-│   │   │   ├── main/
-│   │   │   │   ├── graphql/              # GraphQL queries and schema files
-│   │   │   │   │   ├── SearchQuery.graphql
-│   │   │   │   │   └── schema.json
-│   │   │   │   ├── java/com/ylabz/basepro/core/network
-│   │   │   │   │   ├── api/              # API interfaces and DTOs
-│   │   │   │   │   │   ├── dto/
-│   │   │   │   │   │   │   ├── BusinessInfo.kt
-│   │   │   │   │   │   │   └── Coordinates.kt
-│   │   │   │   │   │   ├── interfaces/   # Interfaces for API access
-│   │   │   │   │   │   │   └── YelpAPI.kt
-│   │   │   │   │   │   ├── mappers/      # Mappers to convert API responses to domain models
-│   │   │   │   │   │   │   └── BusinessMappers.kt
-│   │   │   │   │   ├── apollo/           # Apollo client setup and GraphQL configuration
-│   │   │   │   │   │   └── Apollo.kt
-│   │   │   │   │   ├── client/           # Network clients
-│   │   │   │   │   │   ├── MapsClient.kt
-│   │   │   │   │   │   └── YelpClient.kt
-│   │   │   │   │   ├── di/               # Dependency injection for the network layer
-│   │   │   │   │   │   └── NetworkModule.kt
-│   │   │   │   │   ├── repository/       # Repository for network data handling
-│   │   │   │   │   │   ├── DrivingPtsRepository.kt
-│   │   │   │   │   │   └── DrivingPtsRepImpl.kt
-│   │   └── build.gradle.kts              # Build configuration for core-network module
-│   │
-│   ├── model/                             # (placeholder) Shared data models across modules
-│   │   ├── src/
-│   │   │   ├── main/
-│   │   │   │   ├── AndroidManifest.xml
-│   │   │   │   ├── java/com/ylabz/basepro/core/model
-│   │   │   │   │   ├── BusinessInfo.kt   # Domain model (used across features)
-│   │   │   │   │   └── Coordinates.kt
-│   │   └── build.gradle.kts              # Build configuration for core-model module
-│   │
-│   ├── ui/                                # Core UI components and themes
-│   │   ├── src/
-│   │   │   ├── main/
-│   │   │   │   ├── AndroidManifest.xml
-│   │   │   │   ├── java/com/ylabz/basepro/core/ui
-│   │   │   │   │   ├── components/       # Shared UI components
-│   │   │   │   │   └── theme/            # App themes and styling
-│   │   └── build.gradle.kts              # Build configuration for core-ui module
-│
-├── domain/                                # Domain layer (optional) for business logic
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── AndroidManifest.xml
-│   │   │   ├── java/com/ylabz/basepro/core/domain
-│   │   │   │   └── ExampleUseCase.kt     # Optional use cases for business logic
-│   └── build.gradle.kts                  # Build configuration for domain module
-│
-├── feature/                               # Feature-specific modules
-│   ├── camera/
-│   │   ├── src/
-│   │   │   ├── main/
-│   │   │   │   ├── AndroidManifest.xml
-│   │   │   │   ├── java/com/ylabz/basepro/feature/camera/ui
-│   │   │   │   │   ├── components/
-│   │   │   │   │   │   ├── SimpleCameraCaptureWithImagePreview.kt
-│   │   │   │   │   ├── CameraUIRoute.kt
-│   │   │   │   │   ├── CamViewModel.kt
-│   │   │   │   │   ├── CamUIState.kt
-│   │   │   │   │   └── CamEvent.kt
-│   │   └── build.gradle.kts              # Build configuration for camera feature
-│   │
-│   ├── palces/                        # Feature module for Yelp Coffee Shop search
-│   │   ├── src/
-│   │   │   ├── main/
-│   │   │   │   ├── AndroidManifest.xml
-│   │   │   │   ├── java/com/ylabz/basepro/feature/coffeeshop/ui
-│   │   │   │   │   ├── CoffeeShopUIRoute.kt
-│   │   │   │   │   ├── CoffeeShopViewModel.kt
-│   │   │   │   │   ├── CoffeeShopUIState.kt
-│   │   │   │   │   └── CoffeeShopEvent.kt
-│   │   └── build.gradle.kts              # Build configuration for coffee shop feature
-│
-│   ├── home/                              # Home feature module
-│   │   ├── src/
-│   │   │   ├── main/
-│   │   │   │   ├── AndroidManifest.xml
-│   │   │   │   ├── java/com/ylabz/basepro/feature/home/ui
-│   │   │   │   │   └── HomeUIRoute.kt
-│   │   └── build.gradle.kts              # Build configuration for home feature
-│
-│   └── maps/                              # Maps feature module
-│       ├── src/
-│       │   ├── main/
-│       │   │   ├── AndroidManifest.xml
-│       │   │   ├── java/com/ylabz/basepro/feature/maps/ui
-│       │   │   │   └── MapViewModel.kt
-│       │   └── build.gradle.kts          # Build configuration for maps feature
-│
-├── build-logic/                           # Unified Gradle build logic
-│   ├── conventions/                       # Custom Gradle convention plugins for shared configurations
-│   └── build.gradle.kts
-│
-├── settings.gradle.kts                    # Settings for module dependency management
-└── build.gradle.kts                       # Root build configuration for the project
+Again, this structure is a robust, scalable, and modular approach, adhering to Google’s recommended **Modern Android Development** best practices!
 
 
 **Directory Comments and Explanations:**
