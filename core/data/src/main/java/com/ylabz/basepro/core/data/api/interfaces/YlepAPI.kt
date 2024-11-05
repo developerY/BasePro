@@ -1,6 +1,6 @@
 package com.ylabz.basepro.core.data.api.interfaces
 
-import com.ylabz.basepro.core.model.ylep.BusinessInfo
+import com.ylabz.basepro.core.data.dto.ylep.BusinessInfo
 
 
 interface YelpAPI {
@@ -10,5 +10,5 @@ interface YelpAPI {
         radius: Double,
         sort_by: String,
         categories: String
-    ): List<com.ylabz.basepro.core.model.ylep.BusinessInfo?>?
+    ): List<BusinessInfo?>?
 }

@@ -1,4 +1,4 @@
-package com.ylabz.basepro.core.model.health
+package com.ylabz.basepro.core.data.dto.health
 
 
 import androidx.health.connect.client.records.SleepStageRecord

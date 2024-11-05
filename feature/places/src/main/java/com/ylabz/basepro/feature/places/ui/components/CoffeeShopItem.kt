@@ -8,10 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.core.model.ylep.BusinessInfo
+import com.ylabz.basepro.core.data.dto.ylep.BusinessInfo
 
 @Composable
-fun CoffeeShopItem(business: com.ylabz.basepro.core.model.ylep.BusinessInfo) {
+fun CoffeeShopItem(business: BusinessInfo) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -32,7 +32,7 @@ fun CoffeeShopItem(business: com.ylabz.basepro.core.model.ylep.BusinessInfo) {
 }
 
 @Composable
-fun CoffeeShopList(coffeeShops: List<com.ylabz.basepro.core.model.ylep.BusinessInfo>) {
+fun CoffeeShopList(coffeeShops: List<BusinessInfo>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()

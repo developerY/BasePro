@@ -1,7 +1,7 @@
 package com.ylabz.basepro.core.data.api.client
 
 import com.apollographql.apollo3.ApolloClient
-import com.ylabz.basepro.core.model.ylep.BusinessInfo
+import com.ylabz.basepro.core.data.dto.ylep.BusinessInfo
 import com.ylabz.basepro.core.data.api.interfaces.YelpAPI
 import com.ylabz.basepro.core.data.mappers.toBusinessInfo
 import com.ylabz.basepro.core.network.SearchYelpQuery
@@ -19,7 +19,7 @@ class YelpClient @Inject constructor(
         radius: Double,
         sort_by: String,
         categories: String
-    ): List<com.ylabz.basepro.core.model.ylep.BusinessInfo?>? {
+    ): List<BusinessInfo?>? {
         return apolloClient.query(
             SearchYelpQuery(
                 latitude = latitude,
@@ -33,6 +33,6 @@ class YelpClient @Inject constructor(
             ?.search
             ?.business
             ?.map { it?.toBusinessInfo() }
-            ?: emptyList<com.ylabz.basepro.core.model.ylep.BusinessInfo>()
+            ?: emptyList<BusinessInfo>()
     }
 }

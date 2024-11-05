@@ -1,4 +1,4 @@
-package com.ylabz.basepro.core.model.ylep
+package com.ylabz.basepro.core.data.dto.ylep
 
 // Date Transfer Object
 data class BusinessInfo(
