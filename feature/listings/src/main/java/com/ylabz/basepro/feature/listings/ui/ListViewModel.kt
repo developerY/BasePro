@@ -2,8 +2,8 @@ package com.ylabz.basepro.listings.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.core.data.BaseProEntity
-import com.ylabz.basepro.core.data.BaseProRepo
+import com.ylabz.basepro.core.database.BaseProEntity
+import com.ylabz.basepro.core.database.BaseProRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -73,7 +73,7 @@ class ListViewModel @Inject constructor(
     private fun addItem(name: String) {
         viewModelScope.launch {
             try {
-                repository.insert(com.ylabz.basepro.core.data.mapper.BasePro(title = name))
+                repository.insert(com.ylabz.basepro.core.database.mapper.BasePro(title = name))
                 onEvent(ListEvent.LoadData)  // Refresh data after adding
             } catch (e: Exception) {
                 handleError(e)

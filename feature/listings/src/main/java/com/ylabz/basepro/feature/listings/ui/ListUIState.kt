@@ -1,6 +1,6 @@
 package com.ylabz.basepro.listings.ui
 
-import com.ylabz.basepro.core.data.mapper.BasePro
+import com.ylabz.basepro.core.database.mapper.BasePro
 
 sealed interface ListUIState {
     object Loading : ListUIState

@@ -1,7 +1,7 @@
 # BasePro Project
-
+**README(s) are in active development**
 Welcome to the BasePro Project! This project is an Android application built with Jetpack Compose, Hilt, Room, and Navigation. It provides a modular, scalable, and maintainable architecture for building modern Android apps.
-
+**Readme -- needs to be udated**
 ## Table of Contents
 
 - [Features](#features)

@@ -2,7 +2,7 @@ package com.ylabz.basepro.feature.maps.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.core.network.repository.DrivingPtsRepository
+import com.ylabz.basepro.core.data.repository.DrivingPtsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

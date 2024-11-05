@@ -2,7 +2,7 @@ package com.ylabz.basepro.feature.places.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.core.network.api.interfaces.YelpAPI
+import com.ylabz.basepro.core.data.api.interfaces.YelpAPI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

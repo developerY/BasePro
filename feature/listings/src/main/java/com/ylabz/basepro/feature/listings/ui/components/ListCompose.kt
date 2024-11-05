@@ -32,7 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.listings.ui.ListEvent
-import com.ylabz.basepro.core.data.BaseProEntity
+import com.ylabz.basepro.core.database.BaseProEntity
 
 import androidx.compose.ui.graphics.Color
 

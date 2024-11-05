@@ -2,7 +2,7 @@ package com.ylabz.basepro.settings.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.core.data.BaseProRepo  // Import your repository
+import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

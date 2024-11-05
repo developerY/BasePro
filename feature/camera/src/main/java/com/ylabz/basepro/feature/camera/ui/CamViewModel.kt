@@ -2,8 +2,8 @@ package com.ylabz.basepro.feature.camera.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.core.data.BaseProEntity
-import com.ylabz.basepro.core.data.BaseProRepo
+import com.ylabz.basepro.core.database.BaseProEntity
+import com.ylabz.basepro.core.database.BaseProRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,7 +40,7 @@ class CamViewModel @Inject constructor(
     private fun addItem(name: String, description: String, imgPath: String) { // no image
         viewModelScope.launch {
             try {
-                val newItem = com.ylabz.basepro.core.data.mapper.BasePro(
+                val newItem = com.ylabz.basepro.core.database.mapper.BasePro(
                     title = name,
                     description = description,
                     imgPath = imgPath

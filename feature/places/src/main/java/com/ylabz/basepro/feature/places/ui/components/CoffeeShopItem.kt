@@ -1,16 +1,17 @@
 package com.ylabz.basepro.feature.places.ui.components
 
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.core.network.api.dto.BusinessInfo
+import com.ylabz.basepro.core.model.ylep.BusinessInfo
 
 @Composable
-fun CoffeeShopItem(business: BusinessInfo) {
+fun CoffeeShopItem(business: com.ylabz.basepro.core.model.ylep.BusinessInfo) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -31,12 +32,21 @@ fun CoffeeShopItem(business: BusinessInfo) {
 }
 
 @Composable
-fun CoffeeShopList(coffeeShops: List<BusinessInfo>) {
+fun CoffeeShopList(coffeeShops: List<com.ylabz.basepro.core.model.ylep.BusinessInfo>) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
         items(coffeeShops) { coffeeShop ->
             CoffeeShopItem(coffeeShop)
         }
     }
+}
+
+@Preview
+@Composable
+private fun CoffeeShopItemPreview() {
+    Text(text = "Hello, Coffee Shop!")
+    
 }
