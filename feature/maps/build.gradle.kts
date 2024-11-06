@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.ylabz.basepro.feature.maps"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 31

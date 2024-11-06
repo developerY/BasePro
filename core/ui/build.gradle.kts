@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.ylabz.basepro.core.ui"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 31

@@ -1,8 +1,9 @@
 package com.ylabz.basepro.core.data.mappers
 
-import com.ylabz.basepro.core.data.dto.ylep.BusinessInfo
-import com.ylabz.basepro.core.data.dto.ylep.Category
-import com.ylabz.basepro.core.data.dto.ylep.Coordinates
+
+import com.ylabz.basepro.core.model.yelp.BusinessInfo
+import com.ylabz.basepro.core.model.yelp.Category
+import com.ylabz.basepro.core.model.yelp.Coordinates
 import com.ylabz.basepro.core.network.SearchYelpQuery
 
 

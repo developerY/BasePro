@@ -1,7 +1,7 @@
-package com.ylabz.basepro.core.data.dto.health
+package com.ylabz.basepro.core.model.health
 
 
-import androidx.health.connect.client.records.SleepStageRecord
+import androidx.health.connect.client.records.SleepSessionRecord
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneOffset
@@ -19,5 +19,5 @@ data class SleepSessionData(
     val endTime: Instant,
     val endZoneOffset: ZoneOffset?,
     val duration: Duration?,
-    val stages: List<SleepStageRecord> = listOf()
+    val stages: List<SleepSessionRecord> = listOf()
 )

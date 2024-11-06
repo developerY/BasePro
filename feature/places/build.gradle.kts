@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.ylabz.basepro.feature.places"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 31
@@ -37,6 +37,7 @@ android {
 
 dependencies {
     implementation(project(":core:data"))
+    implementation(project(":core:model"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

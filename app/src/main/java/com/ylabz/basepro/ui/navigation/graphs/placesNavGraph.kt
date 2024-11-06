@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.ylabz.basepro.core.ui.PLACES
 import com.ylabz.basepro.core.ui.Screen
+import com.ylabz.basepro.feature.heatlh.ui.HealthRoute
 import com.ylabz.basepro.feature.maps.ui.MapUIRoute
 import com.ylabz.basepro.feature.places.ui.CoffeeShopUIRoute
 
@@ -19,8 +20,7 @@ fun NavGraphBuilder.placesNavGraph(navController: NavHostController, paddingVals
             Screen.PlacesScreen.route
         ) {
             CoffeeShopUIRoute(paddingValues = paddingVals,
-                navTo = { path -> navController.navigate(path) },
-            )
+                navTo = { path -> navController.navigate(path) })
         }
     }
 }

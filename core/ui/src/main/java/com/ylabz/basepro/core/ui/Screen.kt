@@ -33,6 +33,7 @@ const val MAIN = "main"
 const val ROOT = "root"
 const val MAP = "maps"
 const val PLACES = "places"
+const val HEALTH = "health"
 
 
 sealed class Screen(val route: String) {
@@ -42,6 +43,7 @@ sealed class Screen(val route: String) {
     data object MapScreen : Screen("map_screen")
     data object CameraScreen : Screen("camera_screen")
     data object PlacesScreen : Screen("places_screen")
+    data object HealthScreen : Screen("health_screen")
 
 }
 

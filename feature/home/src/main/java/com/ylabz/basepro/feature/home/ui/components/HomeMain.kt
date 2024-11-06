@@ -47,13 +47,19 @@ fun HomeMainScreen(
             Button(onClick = {
                 navTo("maps")
             }) {
-                Text(text = "Navigate to Camera Screen")
+                Text(text = "Navigate to Maps Screen")
             }
 
             Button(onClick = {
                 navTo("places")
             }) {
                 Text(text = "Navigate to Places Screen")
+            }
+
+            Button(onClick = {
+                navTo("health")
+            }) {
+                Text(text = "Navigate to Health Screen")
             }
 
 

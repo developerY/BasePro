@@ -12,7 +12,7 @@ plugins {
 
 android {
     namespace = "com.ylabz.basepro"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.ylabz.basepro"
@@ -64,6 +64,9 @@ dependencies {
     implementation(project(":feature:home"))
     implementation(project(":feature:camera"))
     implementation(project(":feature:places"))
+    implementation(project(":feature:heatlh"))
+    implementation(project(":feature:maps"))
+
     // feature module  dependency
     implementation(project(":feature:settings"))  // feature module  dependency
     implementation(project(":core:ui"))  // feature module  dependency
@@ -78,7 +81,6 @@ dependencies {
     implementation(libs.androidx.material3)
 
     implementation(libs.hilt.android)
-    implementation(project(":feature:maps"))  // Hilt dependency
     ksp(libs.hilt.android.compiler)   // Hilt compiler dependency for annotation processing
 
     // Compose Navigation

@@ -1,4 +1,4 @@
-package com.ylabz.basepro.core.data.dto.ylep
+package com.ylabz.basepro.core.model.yelp
 
 data class Coordinates(
     // The latitude of this business.

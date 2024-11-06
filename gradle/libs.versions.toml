@@ -31,7 +31,7 @@ accompanistPermissions = "0.36.0"
 mapsCompose = "4.4.1"
 mapsplatformSecretsPlugin = "2.0.1" # mapsplatform-secrets
 okhttp = "5.0.0-alpha.11" # OkHttp
-healthConnect = "1.0.0-alpha11"
+healthConnect = "1.1.0-alpha10" # Health Connect"
 
 # plugins
 # Apollo GraphQL
@@ -107,7 +107,7 @@ apollo-graphql-cache = { module = "com.apollographql.apollo3:apollo-normalized-c
 google-maps-compose = { module = 'com.google.maps.android:maps-compose', version.ref = 'mapsCompose' }
 
 # Health
-healthConnect = { module = "androidx.health.connect:connect-client", version.ref = "healthConnect" }
+healthConnect = { module = 'androidx.health.connect:connect-client', version.ref = "healthConnect" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }  # Android application plugin

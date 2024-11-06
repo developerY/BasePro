@@ -26,6 +26,7 @@ import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.feature.home.ui.HomeMainRoute
 import com.ylabz.basepro.settings.ui.SettingsUiRoute
 import com.ylabz.basepro.ui.navigation.graphs.gmapNavGraph
+import com.ylabz.basepro.ui.navigation.graphs.healthNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.photodoNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.placesNavGraph
 
@@ -72,44 +73,16 @@ fun MainNavGraph(
         photodoNavGraph(navController, padding)
         gmapNavGraph(navController, padding)
         placesNavGraph(navController, padding)
+        healthNavGraph(navController, padding)
         composable(
             Screen.HomeScreen.route,
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Row {
-                    Button(onClick = {
-                        navController.navigate(
-                            "photo"
-                        )
-                    }) {
-                        Text(text = "Go to screen B")
-                    }
-                    Button(onClick = {
-                        navController.navigate(
-                            "maps"
-                        )
-                    }) {
-                        Text(text = "Go to Map")
-                    }
-                    Button(onClick = {
-                        navController.navigate(
-                            "places"
-                        )
-                    }) {
-                        Text(text = "Go to Places")
-                    }
 
-                }
-                HomeMainRoute(
-                    modifier = Modifier.padding(padding),
-                    navTo = {path -> navController.navigate(path)},
-                   // navPlay = {path -> navController.navigate(path)}
-                )
-            }
+            HomeMainRoute(
+                modifier = Modifier.padding(padding),
+                navTo = { path -> navController.navigate(path) },
+            )
+
         }
 
         composable(
@@ -117,7 +90,7 @@ fun MainNavGraph(
         ) {
             ListUIRoute(
                 modifier = Modifier.padding(padding),
-                navTo = {path -> navController.navigate(path)}
+                navTo = { path -> navController.navigate(path) }
             )
         }
 
@@ -126,7 +99,7 @@ fun MainNavGraph(
         ) {
             SettingsUiRoute(
                 modifier = Modifier.padding(padding),
-                navTo = {path -> navController.navigate(path)}
+                navTo = { path -> navController.navigate(path) }
             )
         }
 
@@ -140,7 +113,8 @@ fun MainNavGraph(
                 DetailsRoute(
                     modifier = Modifier.padding(padding),
                     navController = navController,
-                    itemId = it)
+                    itemId = it
+                )
             }
         }
 

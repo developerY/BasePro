@@ -1,6 +1,6 @@
 package com.ylabz.basepro.feature.places.ui
 
-import com.ylabz.basepro.core.data.dto.ylep.BusinessInfo
+import com.ylabz.basepro.core.model.yelp.BusinessInfo
 
 
 sealed class CoffeeShopUIState {

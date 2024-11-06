@@ -1,6 +1,6 @@
 package com.ylabz.basepro.core.data.api.interfaces
 
-import com.ylabz.basepro.core.data.dto.ylep.BusinessInfo
+import com.ylabz.basepro.core.model.yelp.BusinessInfo
 
 
 interface YelpAPI {
