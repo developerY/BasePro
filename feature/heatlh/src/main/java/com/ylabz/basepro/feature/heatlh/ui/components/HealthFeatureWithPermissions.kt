@@ -23,7 +23,9 @@ fun HealthFeatureWithPermissions() {
         "android.permission.health.READ_HEART_RATE",
         "android.permission.health.WRITE_HEART_RATE",
         "android.permission.health.READ_STEPS",
-        "android.permission.health.WRITE_STEPS"
+        "android.permission.health.WRITE_STEPS",
+        "android.permission.health.READ_SLEEP",
+        "android.permission.health.WRITE_SLEEP"
     )
 
     // Remember multiple permission states for Health Connect permissions

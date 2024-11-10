@@ -39,6 +39,8 @@ class HealthSessionManager @Inject constructor(
             HealthPermissions.WRITE_HEART_RATE,
             HealthPermissions.READ_STEPS,
             HealthPermissions.WRITE_STEPS,
+            HealthPermissions.READ_SLEEP,
+            HealthPermissions.WRITE_SLEEP
         )
     }
 
