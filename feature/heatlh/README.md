@@ -1,6 +1,5 @@
 Structure
-[Example](https://github.com/android/health-samples/tree/main/health-connect/HealthConnectSample)
-
+[Hummingbird Fuel](https://bitbucket.org/developerY/rxspray/src/main/)
 #### Directory Structure
 
 ```plaintext
@@ -42,3 +41,8 @@ BasePro/
 3. **Clear Separation of Concerns**: UI code is isolated in feature modules, while data management logic is centralized, following Google’s guidance on a clean and modular architecture.
 
 This structure is particularly useful for larger applications where multiple features might interact with the same data sources or APIs. It simplifies testing, enhances maintainability, and aligns closely with Google’s sample project conventions.
+
+Permissions:
+[Example](https://github.com/android/health-samples/tree/main/health-connect/HealthConnectSample)
+[Health Connect Sample](https://www.droidcon.com/2024/01/17/exploring-health-connect-pt-1-setting-up-permissions/)
+[Example Project](https://proandroiddev.com/exploring-health-connect-pt-1-setting-up-permissions-8c7fa9869f38)
