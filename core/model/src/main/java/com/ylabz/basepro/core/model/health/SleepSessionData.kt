@@ -19,5 +19,5 @@ data class SleepSessionData(
     val endTime: Instant,
     val endZoneOffset: ZoneOffset?,
     val duration: Duration?,
-    val stages: List<SleepSessionRecord> = listOf()
+    val stages: List<SleepSessionRecord.Stage> = listOf()
 )

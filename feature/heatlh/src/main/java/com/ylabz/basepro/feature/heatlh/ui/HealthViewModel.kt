@@ -1,10 +1,8 @@
 package com.ylabz.basepro.feature.heatlh.ui
 
-
-import androidx.health.connect.client.HealthConnectClient
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.core.data.service.HealthSessionManager
+import com.ylabz.basepro.core.data.service.health.HealthSessionManager
 import com.ylabz.basepro.core.model.health.SleepSessionData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HealthViewModel @Inject constructor(
-    private val healthSessionManager: HealthSessionManager
+    //private val healthSessionManager: HealthSessionManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HealthUIState>(HealthUIState.Loading)
@@ -34,7 +32,7 @@ class HealthViewModel @Inject constructor(
 
     private fun checkPermissionsAndLoadData() {
         viewModelScope.launch {
-            if (healthSessionManager.isAvailable.value != HealthConnectClient.SDK_AVAILABLE) {
+            /*if (healthSessionManager.isAvailable.value != HealthConnectClient.SDK_AVAILABLE) {
                 _uiState.value = HealthUIState.Error("Health Connect is not available.")
                 return@launch
             }
@@ -45,7 +43,7 @@ class HealthViewModel @Inject constructor(
                 loadHealthData()
             } else {
                 _uiState.value = HealthUIState.PermissionsRequired("Health permissions are required.")
-            }
+            }*/
         }
     }
 
@@ -57,11 +55,11 @@ class HealthViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = HealthUIState.Loading
             try {
-                val healthData = healthSessionManager.getHealthData()
-                val sleepData :  List<SleepSessionData>  = healthSessionManager.readSleepSessions()
-                _uiState.value = HealthUIState.Success(sleepData)
+                //val healthData = healthSessionManager.getHealthData()
+                //val sleepData :  List<SleepSessionData>  = healthSessionManager.readSleepSessions()
+                //_uiState.value = HealthUIState.Success(sleepData)
             } catch (e: Exception) {
-                _uiState.value = HealthUIState.Error("Failed to load health data.")
+                //_uiState.value = HealthUIState.Error("Failed to load health data.")
             }
         }
     }

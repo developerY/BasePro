@@ -1,7 +1,7 @@
 package com.ylabz.basepro.core.data.di
 
 import android.content.Context
-import com.ylabz.basepro.core.data.service.HealthSessionManager
+import com.ylabz.basepro.core.data.service.health.HealthSessionManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,11 +13,11 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object HealthModule {
 
-    @Provides
+    /*@Provides
     @Singleton
-    fun provideHealthConnectManager(
+    fun provideHealthSessionManager(
         @ApplicationContext context: Context
     ): HealthSessionManager {
         return HealthSessionManager(context)
-    }
+    }*/
 }

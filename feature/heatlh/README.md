@@ -4,10 +4,11 @@ Structure
 
 
 Files:
-Do not name  -- https://developer.android.com/reference/android/health/connect/HealthConnectManager 
-We use **HealthSessionManager**
+Do not name  -- https://developer.android.com/reference/android/health/connect/HealthConnectManager
 **HealthConnectManager** - Health Connect integration manager
-This file, `HealthConnectManager`, is a comprehensive manager class that facilitates interactions 
+
+We use **HealthSessionManager**
+This file, `HealthSessionManager`, is a comprehensive manager class that facilitates interactions 
 with the Health Connect API for reading and writing health-related data. 
 Key features of the class include:
 1. **Availability Checking**: It checks if Health Connect is installed, supports the device, 
