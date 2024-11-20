@@ -13,11 +13,11 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object HealthModule {
 
-    /*@Provides
+    @Provides
     @Singleton
     fun provideHealthSessionManager(
         @ApplicationContext context: Context
     ): HealthSessionManager {
         return HealthSessionManager(context)
-    }*/
+    }
 }

@@ -38,6 +38,8 @@ import com.example.healthconnectsample.data.randomSleepStage
 import com.ylabz.basepro.core.model.health.SleepSessionData
 import com.ylabz.basepro.core.network.R
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import java.io.IOException
 import java.io.InvalidObjectException
@@ -87,14 +89,19 @@ class HealthSessionManager(private val context: Context) {
     }
 
     /*var availability = mutableStateOf(SDK_UNAVAILABLE)
-        private set
+        private set*/
+    // Replace mutableStateOf with MutableStateFlow
+    private val _availability = MutableStateFlow(SDK_UNAVAILABLE) // Mutable internal state
+    val availability: StateFlow<Int> get() = _availability // Expose as immutable
+
 
     fun checkAvailability() {
-        availability.value = HealthConnectClient.getSdkStatus(context)
-    }*/
+        val sdkStatus = HealthConnectClient.getSdkStatus(context)
+        _availability.value = sdkStatus // Properly modify the mutable state flow
+    }
 
     init {
-        //checkAvailability()
+        checkAvailability()
     }
 
     /**
