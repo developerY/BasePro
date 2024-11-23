@@ -27,6 +27,7 @@ import java.io.IOException
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -67,6 +68,9 @@ class HealthViewModel @Inject constructor(
     var healthUiState: HealthUiState by mutableStateOf(HealthUiState.Uninitialized)
         private set
 
+    var uiState: UiState by mutableStateOf(UiState.Uninitialized)
+        private set
+
     val permissionsLauncher = healthSessionManager.requestPermissionsActivityContract()
 
 
@@ -97,45 +101,39 @@ class HealthViewModel @Inject constructor(
 
     @OptIn(ExperimentalFeatureAvailabilityApi::class)
     private suspend fun tryWithPermissionsCheck(block: suspend () -> Unit) {
-        Log.d("HealthViewModel", "tryWithPermissionsCheck called")
-
-        // Logging permission checks
         permissionsGranted.value = healthSessionManager.hasAllPermissions(permissions)
-        Log.d("HealthViewModel", "Permissions granted: ${permissionsGranted.value}")
-
         backgroundReadAvailable.value = healthSessionManager.isFeatureAvailable(
             HealthConnectFeatures.FEATURE_READ_HEALTH_DATA_IN_BACKGROUND
         )
-        Log.d("HealthViewModel", "Background read available: ${backgroundReadAvailable.value}")
-
         backgroundReadGranted.value = healthSessionManager.hasAllPermissions(backgroundReadPermissions)
-        Log.d("HealthViewModel", "Background read permissions granted: ${backgroundReadGranted.value}")
 
-        healthUiState = try {
+        uiState = try {
             if (permissionsGranted.value) {
-                Log.d("HealthViewModel", "Permissions granted, executing block")
-                block() // Execute the provided block if permissions are granted
-            } else {
-                Log.d("HealthViewModel", "Permissions not granted, updating UI state to request permissions")
-                HealthUiState.PermissionsRequired("Permissions are required.")
+                block()
             }
-            HealthUiState.Done
+            UiState.Done
         } catch (remoteException: RemoteException) {
-            Log.e("HealthViewModel", "RemoteException caught: ${remoteException.message}", remoteException)
-            HealthUiState.Error(remoteException)
+            UiState.Error(remoteException)
         } catch (securityException: SecurityException) {
-            Log.e("HealthViewModel", "SecurityException caught: ${securityException.message}", securityException)
-            HealthUiState.Error(securityException)
+            UiState.Error(securityException)
         } catch (ioException: IOException) {
-            Log.e("HealthViewModel", "IOException caught: ${ioException.message}", ioException)
-            HealthUiState.Error(ioException)
+            UiState.Error(ioException)
         } catch (illegalStateException: IllegalStateException) {
-            Log.e("HealthViewModel", "IllegalStateException caught: ${illegalStateException.message}", illegalStateException)
-            HealthUiState.Error(illegalStateException)
+            UiState.Error(illegalStateException)
         }
     }
 
+    fun updatePermissionsState(grantedPermissions: Set<String>) {
+        permissionsGranted.value = permissions.all { it in grantedPermissions }
+        backgroundReadGranted.value = backgroundReadPermissions.all { it in grantedPermissions }
+    }
 
+
+    sealed class UiState {
+        object Uninitialized : UiState()
+        object Done : UiState()
+        data class Error(val exception: Throwable, val uuid: UUID = UUID.randomUUID()) : UiState()
+    }
 
     /*fun onEvent(event: HealthEvent) {
         when (event) {

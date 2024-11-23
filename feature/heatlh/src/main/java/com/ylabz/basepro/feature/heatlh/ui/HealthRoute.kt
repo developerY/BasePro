@@ -1,7 +1,5 @@
 package com.ylabz.basepro.feature.heatlh.ui
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,9 +12,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ylabz.basepro.core.model.health.SleepSessionData
+import com.ylabz.basepro.core.ui.Screen
+import com.ylabz.basepro.feature.heatlh.ui.components.HealthStartScreen
 
 @Composable
 fun HealthRoute(
+    navController: NavController,
+    paddingValues: PaddingValues,
+    viewModel: HealthViewModel = hiltViewModel()
+) {
+    HealthStartScreen(navController = navController)
+}
+
+@Composable
+fun HealthRouteHold(
     navController: NavController,
     paddingValues: PaddingValues,
     viewModel: HealthViewModel = hiltViewModel()
