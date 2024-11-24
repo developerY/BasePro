@@ -12,27 +12,32 @@ import androidx.health.connect.client.HealthConnectFeatures
 import androidx.health.connect.client.feature.ExperimentalFeatureAvailabilityApi
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.permission.HealthPermission.Companion.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND
+import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.TotalCaloriesBurnedRecord
+import androidx.health.connect.client.records.WeightRecord
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.data.service.health.HealthSessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.IOException
+import java.time.Duration
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 import javax.inject.Inject
+import kotlin.random.Random
 
 @HiltViewModel
 class HealthViewModel @Inject constructor(
-    private val healthSessionManager: HealthSessionManager
+    val healthSessionManager: HealthSessionManager
 ) : ViewModel() {
 
     private fun checkHealthConnectAvailability() {
@@ -47,8 +52,15 @@ class HealthViewModel @Inject constructor(
         HealthPermission.getReadPermission(ExerciseSessionRecord::class),
         HealthPermission.getWritePermission(StepsRecord::class),
         HealthPermission.getReadPermission(StepsRecord::class),
+        HealthPermission.getWritePermission(DistanceRecord::class),
+        HealthPermission.getReadPermission(DistanceRecord::class),
         HealthPermission.getWritePermission(TotalCaloriesBurnedRecord::class),
+        HealthPermission.getReadPermission(TotalCaloriesBurnedRecord::class),
         HealthPermission.getWritePermission(HeartRateRecord::class),
+        HealthPermission.getReadPermission(HeartRateRecord::class),
+        HealthPermission.getWritePermission(WeightRecord::class),
+        HealthPermission.getReadPermission(WeightRecord::class),
+        //HealthPermission.getReadPermission(PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND)
     )
 
     val backgroundReadPermissions = setOf(PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND)
@@ -65,11 +77,12 @@ class HealthViewModel @Inject constructor(
     var sessionsList: MutableState<List<ExerciseSessionRecord>> = mutableStateOf(listOf())
         private set
 
-    var healthUiState: HealthUiState by mutableStateOf(HealthUiState.Uninitialized)
-        private set
+    // var healthUiState: HealthUiState by mutableStateOf(HealthUiState.Uninitialized) private set
 
-    var uiState: UiState by mutableStateOf(UiState.Uninitialized)
-        private set
+    private val _uiState = MutableStateFlow<HealthUiState>(HealthUiState.Uninitialized)
+    var uiState = _uiState.asStateFlow()
+
+    //var uiState: HealthUiState by mutableStateOf(HealthUiState.Uninitialized)
 
     val permissionsLauncher = healthSessionManager.requestPermissionsActivityContract()
 
@@ -107,19 +120,19 @@ class HealthViewModel @Inject constructor(
         )
         backgroundReadGranted.value = healthSessionManager.hasAllPermissions(backgroundReadPermissions)
 
-        uiState = try {
+        _uiState.value = try {
             if (permissionsGranted.value) {
                 block()
             }
-            UiState.Done
+            HealthUiState.Done
         } catch (remoteException: RemoteException) {
-            UiState.Error(remoteException)
+            HealthUiState.Error(remoteException)
         } catch (securityException: SecurityException) {
-            UiState.Error(securityException)
+            HealthUiState.Error(securityException)
         } catch (ioException: IOException) {
-            UiState.Error(ioException)
+            HealthUiState.Error(ioException)
         } catch (illegalStateException: IllegalStateException) {
-            UiState.Error(illegalStateException)
+            HealthUiState.Error(illegalStateException)
         }
     }
 
@@ -129,11 +142,11 @@ class HealthViewModel @Inject constructor(
     }
 
 
-    sealed class UiState {
+    /*sealed class UiState {
         object Uninitialized : UiState()
         object Done : UiState()
         data class Error(val exception: Throwable, val uuid: UUID = UUID.randomUUID()) : UiState()
-    }
+    }*/
 
     /*fun onEvent(event: HealthEvent) {
         when (event) {
@@ -142,6 +155,33 @@ class HealthViewModel @Inject constructor(
             HealthEvent.Retry -> checkPermissionsAndLoadData()
         }
     }*/
+
+    fun insertExerciseSession() {
+        viewModelScope.launch {
+            tryWithPermissionsCheck {
+                val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
+                val latestStartOfSession = ZonedDateTime.now().minusMinutes(30)
+                val offset = Random.nextDouble()
+
+                // Generate random start time between the start of the day and (now - 30mins).
+                val startOfSession = startOfDay.plusSeconds(
+                    (Duration.between(startOfDay, latestStartOfSession).seconds * offset).toLong()
+                )
+                val endOfSession = startOfSession.plusMinutes(30)
+
+                healthSessionManager.writeExerciseSession(startOfSession, endOfSession)
+                readExerciseSessions()
+            }
+        }
+    }
+
+
+    private suspend fun readExerciseSessions() {
+        val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
+        val now = Instant.now()
+
+        sessionsList.value = healthSessionManager.readExerciseSessions(startOfDay.toInstant(), now)
+    }
 
     private fun checkPermissionsAndLoadData() {
         viewModelScope.launch {
