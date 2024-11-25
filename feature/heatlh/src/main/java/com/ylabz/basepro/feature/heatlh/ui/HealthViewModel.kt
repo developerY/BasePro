@@ -22,8 +22,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.data.service.health.HealthSessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -40,12 +42,8 @@ class HealthViewModel @Inject constructor(
     val healthSessionManager: HealthSessionManager
 ) : ViewModel() {
 
-    private fun checkHealthConnectAvailability() {
-        val availability = healthSessionManager.availability.value
-        if (availability != HealthConnectClient.SDK_AVAILABLE) {
-            //healthUiState = HealthUiState.Error("Health Connect is not available.")
-        }
-    }
+    private val _uiState = MutableStateFlow<HealthUiState>(HealthUiState.Uninitialized)
+    var uiState = _uiState.asStateFlow()
 
     val permissions = setOf(
         HealthPermission.getWritePermission(ExerciseSessionRecord::class),
@@ -59,8 +57,7 @@ class HealthViewModel @Inject constructor(
         HealthPermission.getWritePermission(HeartRateRecord::class),
         HealthPermission.getReadPermission(HeartRateRecord::class),
         HealthPermission.getWritePermission(WeightRecord::class),
-        HealthPermission.getReadPermission(WeightRecord::class),
-        //HealthPermission.getReadPermission(PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND)
+        HealthPermission.getReadPermission(WeightRecord::class)
     )
 
     val backgroundReadPermissions = setOf(PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND)
@@ -77,15 +74,27 @@ class HealthViewModel @Inject constructor(
     var sessionsList: MutableState<List<ExerciseSessionRecord>> = mutableStateOf(listOf())
         private set
 
-    // var healthUiState: HealthUiState by mutableStateOf(HealthUiState.Uninitialized) private set
-
-    private val _uiState = MutableStateFlow<HealthUiState>(HealthUiState.Uninitialized)
-    var uiState = _uiState.asStateFlow()
-
-    //var uiState: HealthUiState by mutableStateOf(HealthUiState.Uninitialized)
-
     val permissionsLauncher = healthSessionManager.requestPermissionsActivityContract()
 
+    init {
+        checkHealthConnectAvailability()
+        initialLoad()
+    }
+
+    fun onEvent(event: HealthEvent) {
+        when (event) {
+            is HealthEvent.LoadHealthData -> loadHealthData()
+            is HealthEvent.Retry -> checkPermissionsAndLoadData()
+        }
+    }
+
+
+    private fun checkHealthConnectAvailability() {
+        val availability = healthSessionManager.availability.value
+        if (availability != HealthConnectClient.SDK_AVAILABLE) {
+            _uiState.value = HealthUiState.Error.Message("Health Connect is not available.")
+        }
+    }
 
     fun initialLoad() {
         Log.d("HealthViewModel", "initialLoad() called") // Debug statement
@@ -102,14 +111,29 @@ class HealthViewModel @Inject constructor(
         }
     }
 
+    private fun loadHealthData() {
+        _uiState.value = HealthUiState.Loading
+        viewModelScope.launch {
+            try {
+                val weightInputs = readWeightInputs()
+                // You can include more data reading functions here
 
-    private suspend fun readWeightInputs() {
+                _uiState.value = HealthUiState.Success(weightInputs)
+            } catch (e: Exception) {
+                _uiState.value = HealthUiState.Error.Message("Failed to load health data: ${e.message}")
+            }
+        }
+    }
+
+
+    private suspend fun readWeightInputs(): List<WeightRecord> {
         val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
         val now = Instant.now()
         val endofWeek = startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
         val weightInputs = healthSessionManager.readWeightInputs(startOfDay.toInstant(), now)
         print("weightInputs: $weightInputs")
          Log.d("TAG","${healthSessionManager.readWeightInputs(startOfDay.toInstant(), now)}")
+        return weightInputs
     }
 
     @OptIn(ExperimentalFeatureAvailabilityApi::class)
@@ -126,13 +150,29 @@ class HealthViewModel @Inject constructor(
             }
             HealthUiState.Done
         } catch (remoteException: RemoteException) {
-            HealthUiState.Error(remoteException)
+            HealthUiState.Error.Exception(remoteException)
         } catch (securityException: SecurityException) {
-            HealthUiState.Error(securityException)
+            HealthUiState.Error.Exception(securityException)
         } catch (ioException: IOException) {
-            HealthUiState.Error(ioException)
+            HealthUiState.Error.Exception(ioException)
         } catch (illegalStateException: IllegalStateException) {
-            HealthUiState.Error(illegalStateException)
+            HealthUiState.Error.Exception(illegalStateException)
+        }
+    }
+
+    private fun checkPermissionsAndLoadData() {
+        viewModelScope.launch {
+            if (healthSessionManager.availability.value != HealthConnectClient.SDK_AVAILABLE) {
+                _uiState.value = HealthUiState.Error.Message("Health Connect is not available.")
+                return@launch
+            }
+
+            val permissionsGranted = healthSessionManager.hasAllPermissions(permissions)
+            if (permissionsGranted) {
+                loadHealthData()
+            } else {
+                _uiState.value = HealthUiState.PermissionsRequired("Health permissions are required.")
+            }
         }
     }
 
@@ -140,21 +180,6 @@ class HealthViewModel @Inject constructor(
         permissionsGranted.value = permissions.all { it in grantedPermissions }
         backgroundReadGranted.value = backgroundReadPermissions.all { it in grantedPermissions }
     }
-
-
-    /*sealed class UiState {
-        object Uninitialized : UiState()
-        object Done : UiState()
-        data class Error(val exception: Throwable, val uuid: UUID = UUID.randomUUID()) : UiState()
-    }*/
-
-    /*fun onEvent(event: HealthEvent) {
-        when (event) {
-            HealthEvent.RequestPermissions -> requestPermissions()
-            HealthEvent.LoadHealthData -> loadHealthData()
-            HealthEvent.Retry -> checkPermissionsAndLoadData()
-        }
-    }*/
 
     fun insertExerciseSession() {
         viewModelScope.launch {
@@ -183,22 +208,6 @@ class HealthViewModel @Inject constructor(
         sessionsList.value = healthSessionManager.readExerciseSessions(startOfDay.toInstant(), now)
     }
 
-    private fun checkPermissionsAndLoadData() {
-        viewModelScope.launch {
-            /*if (healthSessionManager.isAvailable.value != HealthConnectClient.SDK_AVAILABLE) {
-                _healthUiState.value = HealthhealthUiState.Error("Health Connect is not available.")
-                return@launch
-            }
-
-            val requiredPermissions = healthSessionManager.getRequiredPermissions()
-            val hasPermissions = healthSessionManager.hasAllPermissions(requiredPermissions)
-            if (hasPermissions) {
-                loadHealthData()
-            } else {
-                _healthUiState.value = HealthhealthUiState.PermissionsRequired("Health permissions are required.")
-            }*/
-        }
-    }
 
 
 }

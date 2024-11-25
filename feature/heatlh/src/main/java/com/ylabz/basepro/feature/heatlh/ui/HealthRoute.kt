@@ -11,6 +11,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.health.connect.client.records.WeightRecord
 import androidx.navigation.NavController
 import com.ylabz.basepro.core.model.health.SleepSessionData
 import com.ylabz.basepro.feature.heatlh.ui.components.ErrorScreen
@@ -93,14 +94,14 @@ fun HealthFeatureWithPermissions(onRequestPermissions: () -> Unit) {
 }
 
 @Composable
-fun HealthDataScreen(healthData: List<SleepSessionData>) {
+fun HealthDataScreen(healthData: List<WeightRecord>) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(healthData) { session ->
-            Text("Exercise Session: ${session.title}")
+            Text("Exercise Session: ${session.weight}")
         }
     }
 }

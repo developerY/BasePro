@@ -23,7 +23,7 @@ fun ErrorOverlay(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f)) // Semi-transparent background
+            .background(Color.LightGray.copy(alpha = 0.1f)) // Semi-transparent background
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
