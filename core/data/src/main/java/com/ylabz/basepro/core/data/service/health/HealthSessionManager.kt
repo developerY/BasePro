@@ -259,6 +259,14 @@ class HealthSessionManager(private val context: Context) {
     }
 
     /**
+     * Deletes all existing sleep data.
+     */
+    suspend fun deleteAllSessionData() {
+        val now = Instant.now()
+        healthConnectClient.deleteRecords(ExerciseSessionRecord::class, TimeRangeFilter.before(now))
+    }
+
+    /**
      * Generates a week's worth of sleep data using a [SleepSessionRecord] to describe the overall
      * period of sleep, with multiple [SleepSessionRecord.Stage] periods which cover the entire
      * [SleepSessionRecord]. For the purposes of this sample, the sleep stage data is generated randomly.

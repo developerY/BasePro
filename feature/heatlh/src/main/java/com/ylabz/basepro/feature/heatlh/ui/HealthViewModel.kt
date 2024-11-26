@@ -84,7 +84,20 @@ class HealthViewModel @Inject constructor(
     fun onEvent(event: HealthEvent) {
         when (event) {
             is HealthEvent.LoadHealthData -> loadHealthData()
+            is HealthEvent.DeleteAll -> {
+               delData()
+            }
             is HealthEvent.Retry -> checkPermissionsAndLoadData()
+        }
+    }
+
+
+    private fun delData() {
+        viewModelScope.launch {
+            tryWithPermissionsCheck {
+                healthSessionManager.deleteAllSessionData()
+                readExerciseSessions()
+            }
         }
     }
 
@@ -115,9 +128,9 @@ class HealthViewModel @Inject constructor(
         _uiState.value = HealthUiState.Loading
         viewModelScope.launch {
             try {
-                val weightInputs = readWeightInputs()
+                //val weightInputs = readWeightInputs()
                 // You can include more data reading functions here
-
+                val weightInputs = emptyList<WeightRecord>()
                 _uiState.value = HealthUiState.Success(weightInputs)
             } catch (e: Exception) {
                 _uiState.value = HealthUiState.Error.Message("Failed to load health data: ${e.message}")
@@ -200,6 +213,14 @@ class HealthViewModel @Inject constructor(
         }
     }
 
+    fun deleteStoredExerciseSession(uid: String) {
+        viewModelScope.launch {
+            tryWithPermissionsCheck {
+                healthSessionManager.deleteExerciseSession(uid)
+                readExerciseSessions()
+            }
+        }
+    }
 
     private suspend fun readExerciseSessions() {
         val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)

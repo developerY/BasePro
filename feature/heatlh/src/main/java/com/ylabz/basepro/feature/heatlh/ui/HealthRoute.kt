@@ -39,11 +39,6 @@ fun HealthRoute(
 
     Column {
         // Display the current UI state in a Text field for debugging purposes
-        Text(
-            text = "Current UI State: ${healthUiState}",
-            modifier = Modifier.padding(16.dp),
-            style = MaterialTheme.typography.bodyMedium
-        )
 
         when (healthUiState) {
             is HealthUiState.Success -> LoadingScreen()
@@ -63,7 +58,11 @@ fun HealthRoute(
             }
 
             is HealthUiState.Done -> {
-                HealthStartScreen(navController = navController)
+                HealthStartScreen(
+                    navController = navController,
+                    paddingValues = paddingValues,
+                    onEvent = { event -> viewModel.onEvent(event) }
+                )
             }
 
             HealthUiState.Loading -> TODO()

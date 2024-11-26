@@ -4,11 +4,14 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +27,7 @@ import androidx.health.connect.client.HealthConnectClient
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ylabz.basepro.feature.heatlh.R
+import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 import com.ylabz.basepro.feature.heatlh.ui.HealthViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -33,7 +37,9 @@ import java.time.ZonedDateTime
 fun HealthStartScreen(
     viewModel: HealthViewModel = hiltViewModel(),
     navController: NavController,
-    scope: CoroutineScope = rememberCoroutineScope()
+    paddingValues: PaddingValues,
+    scope: CoroutineScope = rememberCoroutineScope(),
+    onEvent: (HealthEvent) -> Unit
 ) {
     val isHealthConnectAvailable = remember { viewModel.healthSessionManager.availability.value == HealthConnectClient.SDK_AVAILABLE }
     val permissionsGranted by viewModel.permissionsGranted
@@ -52,6 +58,14 @@ fun HealthStartScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
+        // Delete All Button
+        Button(
+            onClick = { onEvent(HealthEvent.DeleteAll) },
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text("Delete All!")
+        }
         // Display Health Permissions Screen with a defined height
         Box(
             modifier = Modifier
