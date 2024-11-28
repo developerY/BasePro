@@ -71,10 +71,16 @@ class HealthViewModel @Inject constructor(
     var backgroundReadGranted = mutableStateOf(false)
         private set
 
-    var sessionsList: MutableState<List<ExerciseSessionRecord>> = mutableStateOf(listOf())
-        private set
 
     val permissionsLauncher = healthSessionManager.requestPermissionsActivityContract()
+
+
+    private fun checkHealthConnectAvailability() {
+        val availability = healthSessionManager.availability.value
+        if (availability != HealthConnectClient.SDK_AVAILABLE) {
+            _uiState.value = HealthUiState.Error.Message("Health Connect is not available.")
+        }
+    }
 
     init {
         checkHealthConnectAvailability()
@@ -84,10 +90,24 @@ class HealthViewModel @Inject constructor(
     fun onEvent(event: HealthEvent) {
         when (event) {
             is HealthEvent.LoadHealthData -> loadHealthData()
-            is HealthEvent.DeleteAll -> {
-               delData()
-            }
+            is HealthEvent.DeleteAll -> delData()
             is HealthEvent.Retry -> checkPermissionsAndLoadData()
+        }
+    }
+
+    private fun checkPermissionsAndLoadData() {
+        viewModelScope.launch {
+            if (healthSessionManager.availability.value != HealthConnectClient.SDK_AVAILABLE) {
+                _uiState.value = HealthUiState.Error.Message("Health Connect is not available.")
+                return@launch
+            }
+
+            val permissionsGranted = healthSessionManager.hasAllPermissions(permissions)
+            if (permissionsGranted) {
+                loadHealthData()
+            } else {
+                _uiState.value = HealthUiState.PermissionsRequired("Health permissions are required.")
+            }
         }
     }
 
@@ -102,12 +122,7 @@ class HealthViewModel @Inject constructor(
     }
 
 
-    private fun checkHealthConnectAvailability() {
-        val availability = healthSessionManager.availability.value
-        if (availability != HealthConnectClient.SDK_AVAILABLE) {
-            _uiState.value = HealthUiState.Error.Message("Health Connect is not available.")
-        }
-    }
+
 
     fun initialLoad() {
         Log.d("HealthViewModel", "initialLoad() called") // Debug statement
@@ -130,12 +145,21 @@ class HealthViewModel @Inject constructor(
             try {
                 //val weightInputs = readWeightInputs()
                 // You can include more data reading functions here
-                val weightInputs = emptyList<WeightRecord>()
-                _uiState.value = HealthUiState.Success(weightInputs)
+                _uiState.value = HealthUiState.Success(readSessionInputs())
             } catch (e: Exception) {
                 _uiState.value = HealthUiState.Error.Message("Failed to load health data: ${e.message}")
             }
         }
+    }
+
+    private suspend fun readSessionInputs(): List<ExerciseSessionRecord> {
+        val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
+        val now = Instant.now()
+        val endofWeek = startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
+        val sessionInputs = healthSessionManager.readExerciseSessions(startOfDay.toInstant(), now)
+        print("weightInputs: $sessionInputs")
+        Log.d("TAG","${healthSessionManager.readWeightInputs(startOfDay.toInstant(), now)}")
+        return sessionInputs
     }
 
 
@@ -161,7 +185,7 @@ class HealthViewModel @Inject constructor(
             if (permissionsGranted.value) {
                 block()
             }
-            HealthUiState.Done
+            HealthUiState.Success(readSessionInputs())
         } catch (remoteException: RemoteException) {
             HealthUiState.Error.Exception(remoteException)
         } catch (securityException: SecurityException) {
@@ -173,21 +197,7 @@ class HealthViewModel @Inject constructor(
         }
     }
 
-    private fun checkPermissionsAndLoadData() {
-        viewModelScope.launch {
-            if (healthSessionManager.availability.value != HealthConnectClient.SDK_AVAILABLE) {
-                _uiState.value = HealthUiState.Error.Message("Health Connect is not available.")
-                return@launch
-            }
 
-            val permissionsGranted = healthSessionManager.hasAllPermissions(permissions)
-            if (permissionsGranted) {
-                loadHealthData()
-            } else {
-                _uiState.value = HealthUiState.PermissionsRequired("Health permissions are required.")
-            }
-        }
-    }
 
     fun updatePermissionsState(grantedPermissions: Set<String>) {
         permissionsGranted.value = permissions.all { it in grantedPermissions }
@@ -226,7 +236,7 @@ class HealthViewModel @Inject constructor(
         val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
         val now = Instant.now()
 
-        sessionsList.value = healthSessionManager.readExerciseSessions(startOfDay.toInstant(), now)
+        //sessionsList.value = healthSessionManager.readExerciseSessions(startOfDay.toInstant(), now)
     }
 
 

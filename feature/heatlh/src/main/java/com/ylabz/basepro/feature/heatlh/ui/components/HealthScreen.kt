@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ylabz.basepro.feature.heatlh.R
@@ -39,11 +40,12 @@ fun HealthStartScreen(
     navController: NavController,
     paddingValues: PaddingValues,
     scope: CoroutineScope = rememberCoroutineScope(),
-    onEvent: (HealthEvent) -> Unit
+    onEvent: (HealthEvent) -> Unit,
+    sessionsList: List<ExerciseSessionRecord>,
 ) {
     val isHealthConnectAvailable = remember { viewModel.healthSessionManager.availability.value == HealthConnectClient.SDK_AVAILABLE }
     val permissionsGranted by viewModel.permissionsGranted
-    val sessionsList by viewModel.sessionsList
+    //val sessionsList by viewModel.sessionsList
     val permissions = viewModel.permissions
     val backgroundReadPermissions = viewModel.backgroundReadPermissions
     val backgroundReadAvailable by viewModel.backgroundReadAvailable

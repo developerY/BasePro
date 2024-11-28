@@ -1,14 +1,14 @@
 package com.ylabz.basepro.feature.heatlh.ui
 
+import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.WeightRecord
 import java.util.UUID
 
 sealed class HealthUiState {
     object Uninitialized : HealthUiState()
     object Loading : HealthUiState()
-    object Done : HealthUiState()
     data class PermissionsRequired(val message: String) : HealthUiState()
-    data class Success(val healthData: List<WeightRecord>) : HealthUiState()
+    data class Success(val healthData: List<ExerciseSessionRecord>) : HealthUiState()
     sealed class Error : HealthUiState() {
         data class Message(val message: String) : Error()
         data class Exception(val exception: Throwable, val uuid: UUID = UUID.randomUUID()) : Error()
