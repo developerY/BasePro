@@ -78,7 +78,7 @@ class HealthViewModel @Inject constructor(
     private fun checkHealthConnectAvailability() {
         val availability = healthSessionManager.availability.value
         if (availability != HealthConnectClient.SDK_AVAILABLE) {
-            _uiState.value = HealthUiState.Error.Message("Health Connect is not available.")
+            _uiState.value = HealthUiState.Error("Health Connect is not available.")
         }
     }
 
@@ -92,13 +92,15 @@ class HealthViewModel @Inject constructor(
             is HealthEvent.LoadHealthData -> loadHealthData()
             is HealthEvent.DeleteAll -> delData()
             is HealthEvent.Retry -> checkPermissionsAndLoadData()
+            is HealthEvent.Insert -> insertExerciseSession()
+            is HealthEvent.RequestPermissions -> checkPermissionsAndLoadData()
         }
     }
 
     private fun checkPermissionsAndLoadData() {
         viewModelScope.launch {
             if (healthSessionManager.availability.value != HealthConnectClient.SDK_AVAILABLE) {
-                _uiState.value = HealthUiState.Error.Message("Health Connect is not available.")
+                _uiState.value = HealthUiState.Error("Health Connect is not available.")
                 return@launch
             }
 
@@ -116,12 +118,9 @@ class HealthViewModel @Inject constructor(
         viewModelScope.launch {
             tryWithPermissionsCheck {
                 healthSessionManager.deleteAllSessionData()
-                readExerciseSessions()
             }
         }
     }
-
-
 
 
     fun initialLoad() {
@@ -131,7 +130,7 @@ class HealthViewModel @Inject constructor(
             try {
                 tryWithPermissionsCheck {
                     Log.d("HealthViewModel", "Permissions check passed, loading data") // Debug
-                    readWeightInputs()
+                    readSessionInputs()
                 }
             } catch (e: Exception) {
                 Log.e("HealthViewModel", "Exception in initialLoad: ${e.message}", e)
@@ -147,7 +146,7 @@ class HealthViewModel @Inject constructor(
                 // You can include more data reading functions here
                 _uiState.value = HealthUiState.Success(readSessionInputs())
             } catch (e: Exception) {
-                _uiState.value = HealthUiState.Error.Message("Failed to load health data: ${e.message}")
+                _uiState.value = HealthUiState.Error("Failed to load health data: ${e.message}")
             }
         }
     }
@@ -184,16 +183,18 @@ class HealthViewModel @Inject constructor(
         _uiState.value = try {
             if (permissionsGranted.value) {
                 block()
+                HealthUiState.Success(readSessionInputs())
+            } else {
+                HealthUiState.GetPermissions
             }
-            HealthUiState.Success(readSessionInputs())
         } catch (remoteException: RemoteException) {
-            HealthUiState.Error.Exception(remoteException)
+            HealthUiState.Error(Exception(remoteException).message.toString())
         } catch (securityException: SecurityException) {
-            HealthUiState.Error.Exception(securityException)
+            HealthUiState.Error(Exception(securityException).message.toString())
         } catch (ioException: IOException) {
-            HealthUiState.Error.Exception(ioException)
+            HealthUiState.Error(Exception(ioException).message.toString())
         } catch (illegalStateException: IllegalStateException) {
-            HealthUiState.Error.Exception(illegalStateException)
+            HealthUiState.Error(Exception(illegalStateException).message.toString())
         }
     }
 
@@ -218,7 +219,6 @@ class HealthViewModel @Inject constructor(
                 val endOfSession = startOfSession.plusMinutes(30)
 
                 healthSessionManager.writeExerciseSession(startOfSession, endOfSession)
-                readExerciseSessions()
             }
         }
     }
@@ -227,17 +227,11 @@ class HealthViewModel @Inject constructor(
         viewModelScope.launch {
             tryWithPermissionsCheck {
                 healthSessionManager.deleteExerciseSession(uid)
-                readExerciseSessions()
             }
         }
     }
 
-    private suspend fun readExerciseSessions() {
-        val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
-        val now = Instant.now()
 
-        //sessionsList.value = healthSessionManager.readExerciseSessions(startOfDay.toInstant(), now)
-    }
 
 
 

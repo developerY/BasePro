@@ -54,10 +54,10 @@ fun HealthPermissionScreen(
             onPermissionsResult()
         }
 
-        if (uiState is HealthUiState.Error.Exception && errorId.value != uiState.uuid) {
+        /*if (uiState is HealthUiState.Error.Exception && errorId.value != uiState.uuid) {
             onError(uiState.exception)
             errorId.value = uiState.uuid
-        }
+        }*/
     }
 
     if (uiState != HealthUiState.Uninitialized) {

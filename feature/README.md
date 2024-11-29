@@ -14,3 +14,7 @@ How To Code Following MAD Best Practices
    The ViewModel processes events in a centralized onEvent function, making the flow easy to trace and maintain.
 5. Error Handling
    Errors are represented in the HealthUiState sealed class, allowing the UI to react appropriately to different error scenarios.
+
+Loops:
+onEvent - ViewModel
+when(UiState) - ComposeRoute

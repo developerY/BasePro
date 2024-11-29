@@ -22,6 +22,7 @@ import com.ylabz.basepro.feature.heatlh.ui.components.HealthDataScreen
 import com.ylabz.basepro.feature.heatlh.ui.components.HealthFeatureWithPermissions
 import com.ylabz.basepro.feature.heatlh.ui.components.HealthStartScreen
 import com.ylabz.basepro.feature.heatlh.ui.components.LoadingScreen
+import com.ylabz.basepro.feature.heatlh.ui.components.PermissionScreen
 import java.util.UUID
 
 @Composable
@@ -49,15 +50,21 @@ fun HealthRoute(
             onPermissionsResult()
         }
 
+
     LaunchedEffect(healthUiState) {
+        // If the initial data load has not taken place, attempt to load the data.
         if (healthUiState is HealthUiState.Uninitialized) {
-            viewModel.initialLoad()
+            onPermissionsResult()
         }
 
-        /*if (healthUiState is HealthUiState.Error.Exception && errorId.value != healthUiState.uuid) {
+        // The [ExerciseSessionViewModel.UiState] provides details of whether the last action was a
+        // success or resulted in an error. Where an error occurred, for example in reading and
+        // writing to Health Connect, the user is notified, and where the error is one that can be
+        // recovered from, an attempt to do so is made.
+        if (healthUiState is HealthUiState.Error && errorId.value != (healthUiState as HealthUiState.Error).uuid) {
             //onError(healthUiState.exception)
-            errorId.value = healthUiState.uuid
-        }*/
+            //errorId.value = healthUiState.uuid
+        }
     }
 
     Column(
@@ -66,21 +73,11 @@ fun HealthRoute(
            .padding(paddingValues)
     ) {
         // Display the current UI state in a Text field for debugging purposes
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .padding(4.dp),
-            onClick = {
-                viewModel.insertExerciseSession()
-            }
-        ) {
-            Text("Insert Exercise Session")
-        }
+
         when (healthUiState) {
             is HealthUiState.PermissionsRequired -> HealthFeatureWithPermissions {
                 // Launch the permissions request
-                //permissionsLauncher.launch(viewModel.permissions.toTypedArray())
+                permissionsLauncher.launch(viewModel.permissions)
             }
 
             //is HealthUiState.Success -> HealthDataScreen((healthUiState as HealthUiState.Success).healthData)
@@ -90,18 +87,28 @@ fun HealthRoute(
                     navController = navController,
                     paddingValues = paddingValues,
                     onEvent = { event -> viewModel.onEvent(event) },
-                    sessionsList = (healthUiState as HealthUiState.Success).healthData
+                    sessionsList = (healthUiState as HealthUiState.Success).healthData,
+                    onPermissionsLaunch = { values ->
+                        permissionsLauncher.launch(values)
+                    }
                 )
             }
 
-
             is HealthUiState.Error -> ErrorScreen(
-                message = "Error: ",//(healthUiState as HealthUiState.Error).message,
-                onRetry = { viewModel.initialLoad() }
+                message = "Error: ${(healthUiState as HealthUiState.Error).message}",
+                onRetry = { viewModel.initialLoad() },
             )
 
             is HealthUiState.Uninitialized -> {
                 viewModel.initialLoad()
+            }
+
+            is HealthUiState.GetPermissions -> {
+                PermissionScreen(
+                    onPermissionsLaunch = { values ->
+                        permissionsLauncher.launch(values)
+                    }
+                )
             }
 
             is HealthUiState.Loading -> LoadingScreen()

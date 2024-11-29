@@ -1,12 +1,17 @@
 package com.ylabz.basepro.feature.heatlh.ui.components
 
+import android.content.Intent
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,7 +26,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.records.ExerciseSessionRecord
@@ -42,6 +50,7 @@ fun HealthStartScreen(
     scope: CoroutineScope = rememberCoroutineScope(),
     onEvent: (HealthEvent) -> Unit,
     sessionsList: List<ExerciseSessionRecord>,
+    onPermissionsLaunch: (Set<String>) -> Unit,
 ) {
     val isHealthConnectAvailable = remember { viewModel.healthSessionManager.availability.value == HealthConnectClient.SDK_AVAILABLE }
     val permissionsGranted by viewModel.permissionsGranted
@@ -51,22 +60,73 @@ fun HealthStartScreen(
     val backgroundReadAvailable by viewModel.backgroundReadAvailable
     val backgroundReadGranted by viewModel.backgroundReadGranted
     val onPermissionsResult = { viewModel.initialLoad() }
-    val permissionsLauncher =
-        rememberLauncherForActivityResult(viewModel.permissionsLauncher) {
-            onPermissionsResult()
-        }
     val healthUiState by viewModel.uiState.collectAsState()
+    val activity = LocalContext.current as? ComponentActivity
+
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Delete All Button
-        Button(
-            onClick = { onEvent(HealthEvent.DeleteAll) },
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text("Delete All!")
+        Row {
+            Text(
+                text = if (isHealthConnectAvailable) {
+                    "available"
+                } else {
+                    "not available"
+                },
+                color = if (isHealthConnectAvailable) Color.Green else Color.Red,
+                fontWeight = if (isHealthConnectAvailable) FontWeight.Bold else FontWeight.Normal,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .background(Color.LightGray)
+                    .padding(8.dp), // Extra padding inside the background for better spacing
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Button(
+                onClick = {
+                    val settingsIntent = Intent()
+                    settingsIntent.action = HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS
+                    activity?.startActivity(settingsIntent)
+                },
+                modifier = Modifier.padding(vertical = 8.dp)
+            ) {
+                Text("Settings")
+            }
+            if (!backgroundReadGranted) {
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .padding(4.dp),
+                    onClick = {
+                        onPermissionsLaunch(backgroundReadPermissions)
+                    },
+                    enabled = backgroundReadAvailable,
+                ) {
+                    if (backgroundReadAvailable) {
+                        Text("Request Background Read")
+                    } else {
+                        Text("Background Read Not Available")
+                    }
+                }
+            }
+        }
+        Row {
+            // Delete All Button
+            Button(
+                onClick = { onEvent(HealthEvent.Insert) },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text("Add")
+            }
+            Button(
+                onClick = { onEvent(HealthEvent.DeleteAll) },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text("Delete All!")
+            }
         }
         // Display Health Permissions Screen with a defined height
         Box(
@@ -98,9 +158,7 @@ fun HealthStartScreen(
                 onPermissionsResult = {
                     viewModel.initialLoad()
                 },
-                onPermissionsLaunch = { values ->
-                    permissionsLauncher.launch(values)
-                }
+                onPermissionsLaunch = onPermissionsLaunch
             )
         }
 
