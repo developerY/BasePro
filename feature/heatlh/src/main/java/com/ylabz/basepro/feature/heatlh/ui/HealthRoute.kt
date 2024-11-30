@@ -16,10 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.records.WeightRecord
 import androidx.navigation.NavController
-import com.ylabz.basepro.core.model.health.SleepSessionData
 import com.ylabz.basepro.feature.heatlh.ui.components.ErrorScreen
-import com.ylabz.basepro.feature.heatlh.ui.components.HealthDataScreen
-import com.ylabz.basepro.feature.heatlh.ui.components.HealthFeatureWithPermissions
 import com.ylabz.basepro.feature.heatlh.ui.components.HealthStartScreen
 import com.ylabz.basepro.feature.heatlh.ui.components.LoadingScreen
 import com.ylabz.basepro.feature.heatlh.ui.components.PermissionScreen
@@ -105,9 +102,7 @@ fun HealthRoute(
 
             is HealthUiState.GetPermissions -> {
                 PermissionScreen(
-                    onPermissionsLaunch = { values ->
-                        permissionsLauncher.launch(values)
-                    }
+                    onPermissionsLaunch = {permissionsLauncher.launch(permissions)}
                 )
             }
 

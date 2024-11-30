@@ -38,6 +38,7 @@ android {
 dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:model"))
+    implementation(project(":core:ui"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -55,15 +56,11 @@ dependencies {
     // Hilt Dependency Injection
     implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.android)
-    implementation(project(":core:ui"))
     ksp(libs.hilt.android.compiler)
     // kapt(libs.hilt.compiler)
 
     // Health Connect
     implementation(libs.healthConnect)
-
-    // Permissions
-    implementation(libs.google.accompanist.permissions)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

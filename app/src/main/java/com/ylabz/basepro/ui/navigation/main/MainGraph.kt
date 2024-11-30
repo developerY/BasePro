@@ -25,6 +25,7 @@ import com.ylabz.basepro.core.ui.MAIN
 import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.feature.home.ui.HomeMainRoute
 import com.ylabz.basepro.settings.ui.SettingsUiRoute
+import com.ylabz.basepro.ui.navigation.graphs.bluetoothLeNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.gmapNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.healthNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.photodoNavGraph
@@ -74,6 +75,7 @@ fun MainNavGraph(
         gmapNavGraph(navController, padding)
         placesNavGraph(navController, padding)
         healthNavGraph(navController, padding)
+        bluetoothLeNavGraph(navController, padding)
         composable(
             Screen.HomeScreen.route,
         ) {
