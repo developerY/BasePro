@@ -62,6 +62,13 @@ fun HomeMainScreen(
                 Text(text = "Navigate to Health Screen")
             }
 
+            Button(onClick = {
+                navTo("ble")
+            }) {
+                Text(text = "Navigate to BLE Screen")
+            }
+
+
 
         }
     }

@@ -18,6 +18,12 @@ class BluetoothLeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<BluetoothLeUiState>(BluetoothLeUiState.Loading)
     val uiState: StateFlow<BluetoothLeUiState> = _uiState.asStateFlow()
 
+    init {
+        fetchDevices() // Automatically load data when ViewModel is created
+    }
+
+
+
     fun handleEvent(event: BluetoothLeEvent) {
         when (event) {
             BluetoothLeEvent.FetchDevices -> fetchDevices()

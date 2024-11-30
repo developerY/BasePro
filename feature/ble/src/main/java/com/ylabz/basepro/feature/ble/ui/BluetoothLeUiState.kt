@@ -4,6 +4,6 @@ import com.ylabz.basepro.core.data.repository.BluetoothDeviceInfo
 
 sealed interface BluetoothLeUiState {
     object Loading : BluetoothLeUiState
-    data class Success(val devices: List<com.ylabz.basepro.core.data.repository.BluetoothDeviceInfo>) : BluetoothLeUiState
+    data class Success(val devices: List<BluetoothDeviceInfo>) : BluetoothLeUiState
     data class Error(val message: String) : BluetoothLeUiState
 }

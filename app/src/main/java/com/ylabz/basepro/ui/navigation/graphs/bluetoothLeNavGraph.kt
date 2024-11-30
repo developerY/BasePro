@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.ylabz.basepro.core.ui.BLE
 import com.ylabz.basepro.core.ui.MAP
 import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.feature.ble.ui.BluetoothLeRoute
@@ -12,11 +13,11 @@ import com.ylabz.basepro.feature.maps.ui.MapUIRoute
 
 fun NavGraphBuilder.bluetoothLeNavGraph(navController: NavHostController, paddingVals: PaddingValues) {
     navigation(
-        startDestination = Screen.MapScreen.route,
-        route = MAP
+        startDestination = Screen.BLEScreen.route,
+        route = BLE
     ) {
         composable(
-            Screen.MapScreen.route
+            Screen.BLEScreen.route
         ) {
             BluetoothLeRoute(paddingValues = paddingVals,
                 navTo = { path -> navController.navigate(path) },

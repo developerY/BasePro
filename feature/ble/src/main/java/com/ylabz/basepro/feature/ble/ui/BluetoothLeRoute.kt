@@ -25,7 +25,7 @@ fun BluetoothLeRoute(
 ) {
     //val healthUiState by remember { mutableStateOf(viewModel.uiState) }
     val uiState = viewModel.uiState.collectAsState().value
-
+    Text("BLE")
 
     when (uiState) {
         is BluetoothLeUiState.Loading -> LoadingScreen()

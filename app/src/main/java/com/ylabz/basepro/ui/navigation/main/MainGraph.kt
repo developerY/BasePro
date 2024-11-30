@@ -76,6 +76,7 @@ fun MainNavGraph(
         placesNavGraph(navController, padding)
         healthNavGraph(navController, padding)
         bluetoothLeNavGraph(navController, padding)
+
         composable(
             Screen.HomeScreen.route,
         ) {
