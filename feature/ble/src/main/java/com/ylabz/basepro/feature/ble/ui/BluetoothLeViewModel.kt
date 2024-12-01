@@ -2,7 +2,7 @@ package com.ylabz.basepro.feature.ble.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.core.data.repository.BluetoothLeRepository
+import com.ylabz.basepro.core.data.repository.ble.BluetoothLeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

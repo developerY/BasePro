@@ -1,25 +1,18 @@
 package com.ylabz.basepro.feature.ble.ui
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.ylabz.basepro.core.data.repository.BluetoothDeviceInfo
 import com.ylabz.basepro.feature.ble.ui.components.BluetoothLeSuccessScreen
 import com.ylabz.basepro.feature.ble.ui.components.ErrorScreen
 import com.ylabz.basepro.feature.ble.ui.components.LoadingScreen
@@ -77,7 +70,13 @@ fun BluetoothLeRoute(
             }
 
             is BluetoothLeUiState.Loading -> LoadingScreen()
-            is BluetoothLeUiState.Success -> BluetoothLeSuccessScreen(uiState.devices)
+
+            is BluetoothLeUiState.Success -> BluetoothLeSuccessScreen(
+                devices = uiState.devices,
+                onRescan = { viewModel.onEvent(BluetoothLeEvent.FetchDevices) } // Trigger rescan
+            )
+
+
             is BluetoothLeUiState.Error -> ErrorScreen(uiState.message)
         }
     }

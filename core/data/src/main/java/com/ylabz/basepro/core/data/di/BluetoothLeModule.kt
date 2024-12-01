@@ -1,10 +1,9 @@
 package com.ylabz.basepro.core.data.di
 
-import com.ylabz.basepro.core.data.repository.BluetoothLeRepImpl
-import com.ylabz.basepro.core.data.repository.BluetoothLeRepository
+import com.ylabz.basepro.core.data.repository.ble.BluetoothLeRepImpl
+import com.ylabz.basepro.core.data.repository.ble.BluetoothLeRepository
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -12,13 +11,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object BluetoothLeModule {
+abstract class BluetoothModule {
 
-
-    @Provides
+    @Binds
     @Singleton
-    fun bindsBluetoothLeRepository() : BluetoothLeRepository {
-        return BluetoothLeRepImpl()
-    }
-
+    abstract fun bindBluetoothLeRepository(
+        impl: BluetoothLeRepImpl
+    ): BluetoothLeRepository
 }

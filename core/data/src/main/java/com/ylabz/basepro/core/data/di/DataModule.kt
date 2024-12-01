@@ -1,7 +1,5 @@
 package com.ylabz.basepro.core.data.di
 
-import com.ylabz.basepro.core.data.repository.BluetoothLeRepImpl
-import com.ylabz.basepro.core.data.repository.BluetoothLeRepository
 import com.ylabz.basepro.core.data.repository.DrivingPtsRepImp
 import com.ylabz.basepro.core.data.repository.DrivingPtsRepository
 import dagger.Binds
