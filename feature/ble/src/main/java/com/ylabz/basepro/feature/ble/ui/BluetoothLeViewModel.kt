@@ -15,18 +15,20 @@ class BluetoothLeViewModel @Inject constructor(
     private val repository: BluetoothLeRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<BluetoothLeUiState>(BluetoothLeUiState.Loading)
+    private val _uiState = MutableStateFlow<BluetoothLeUiState>(BluetoothLeUiState.PermissionsRequired)
     val uiState: StateFlow<BluetoothLeUiState> = _uiState.asStateFlow()
 
-    init {
-        fetchDevices() // Automatically load data when ViewModel is created
-    }
+    // When the ViewModel is created, request permissions if not called from the composable
+    /*init {
+        onEvent(BluetoothLeEvent.RequestPermissions)
+    }*/
 
-
-
-    fun handleEvent(event: BluetoothLeEvent) {
+    fun onEvent(event: BluetoothLeEvent) {
         when (event) {
-            BluetoothLeEvent.FetchDevices -> fetchDevices()
+            is BluetoothLeEvent.RequestPermissions -> _uiState.value = BluetoothLeUiState.PermissionsRequired
+            is BluetoothLeEvent.PermissionsGranted -> fetchDevices()
+            is BluetoothLeEvent.PermissionsDenied -> _uiState.value = BluetoothLeUiState.PermissionsDenied
+            is BluetoothLeEvent.FetchDevices -> fetchDevices()
         }
     }
 

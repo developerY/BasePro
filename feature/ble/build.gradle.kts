@@ -59,6 +59,9 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     // kapt(libs.hilt.compiler)
 
+    // Permissions
+    implementation(libs.google.accompanist.permissions)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

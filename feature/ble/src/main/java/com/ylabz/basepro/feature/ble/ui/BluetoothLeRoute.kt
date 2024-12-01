@@ -1,6 +1,7 @@
 package com.ylabz.basepro.feature.ble.ui
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,13 +11,23 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.ylabz.basepro.core.data.repository.BluetoothDeviceInfo
+import com.ylabz.basepro.feature.ble.ui.components.BluetoothLeSuccessScreen
+import com.ylabz.basepro.feature.ble.ui.components.ErrorScreen
+import com.ylabz.basepro.feature.ble.ui.components.LoadingScreen
+import com.ylabz.basepro.feature.ble.ui.components.PermissionStatusUI
+import com.ylabz.basepro.feature.ble.ui.components.PermissionsDenied
+import com.ylabz.basepro.feature.ble.ui.components.PermissionsRationale
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun BluetoothLeRoute(
     paddingValues: PaddingValues,
@@ -27,35 +38,47 @@ fun BluetoothLeRoute(
     val uiState = viewModel.uiState.collectAsState().value
     Text("BLE")
 
-    when (uiState) {
-        is BluetoothLeUiState.Loading -> LoadingScreen()
-        is BluetoothLeUiState.Success -> BluetoothLeSuccessScreen(devices = uiState.devices)
-        is BluetoothLeUiState.Error -> ErrorScreen(message = uiState.message)
-    }
-}
 
-// Loading screen
-@Composable
-fun LoadingScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator()
-    }
-}
+    // Define BLE permissions
+    val blePermissions = listOf(
+        android.Manifest.permission.BLUETOOTH_SCAN,
+        android.Manifest.permission.BLUETOOTH_CONNECT,
+        android.Manifest.permission.BLUETOOTH_ADVERTISE
+    )
 
-// Success screen showing BLE devices
-@Composable
-fun BluetoothLeSuccessScreen(devices: List<com.ylabz.basepro.core.data.repository.BluetoothDeviceInfo>) {
-    LazyColumn {
-        items(devices) { device ->
-            Text(text = "${device.name} (${device.address})", modifier = Modifier.padding(16.dp))
+    // Remember permission state
+    val permissionState = rememberMultiplePermissionsState(permissions = blePermissions)
+
+    // Observe permission state and send events to the ViewModel
+    LaunchedEffect(permissionState.allPermissionsGranted) {
+        when {
+            permissionState.allPermissionsGranted -> viewModel.onEvent(BluetoothLeEvent.PermissionsGranted)
+            !permissionState.shouldShowRationale -> viewModel.onEvent(BluetoothLeEvent.PermissionsDenied)
         }
     }
-}
 
-// Error screen
-@Composable
-fun ErrorScreen(message: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = message, color = MaterialTheme.colorScheme.error)
+    // Render the UI based on the current state
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        PermissionStatusUI(permissionState) // Show BLE permission status visually
+
+
+        when (uiState) {
+            is BluetoothLeUiState.PermissionsRequired -> PermissionsRationale {
+                permissionState.launchMultiplePermissionRequest() // Trigger permission request
+            }
+
+            is BluetoothLeUiState.PermissionsDenied -> PermissionsDenied {
+                permissionState.launchMultiplePermissionRequest() // Trigger permission request
+                // viewModel.onEvent(BluetoothLeEvent.PermissionsDenied)
+            }
+
+            is BluetoothLeUiState.Loading -> LoadingScreen()
+            is BluetoothLeUiState.Success -> BluetoothLeSuccessScreen(uiState.devices)
+            is BluetoothLeUiState.Error -> ErrorScreen(uiState.message)
+        }
     }
 }
