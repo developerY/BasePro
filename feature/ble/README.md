@@ -1,6 +1,7 @@
 BLE Scanner written in Compose by Sarah
 [example](https://github.com/santansarah/ble-scanner)
 [KBLE](https://bitbucket.org/developerY/workspace/projects/KBEAUT)
+[Correct](https://github.com/JuulLabs/sensortag)
 
 ### How This Differs from Regular BLE Scanning
 
@@ -13,3 +14,6 @@ BLE Scanner written in Compose by Sarah
 | **Use Case**                        | Persistent trusted devices (e.g., fitness tracker)       | Ad hoc or dynamic connections (e.g., nearby devices) |
 
 ---
+
+Nordic database for BLE.
+Make SQL Database with DB Browser

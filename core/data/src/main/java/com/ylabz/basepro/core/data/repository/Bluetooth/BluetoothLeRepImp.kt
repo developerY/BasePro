@@ -1,4 +1,4 @@
-package com.ylabz.basepro.core.data.repository.ble
+package com.ylabz.basepro.core.data.repository.Bluetooth
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter

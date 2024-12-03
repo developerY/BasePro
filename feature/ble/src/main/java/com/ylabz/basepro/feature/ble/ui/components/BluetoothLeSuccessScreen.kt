@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.core.data.repository.ble.BluetoothDeviceInfo
+import com.ylabz.basepro.core.data.repository.Bluetooth.BluetoothDeviceInfo
 
 // Success screen showing BLE devices
 @Composable

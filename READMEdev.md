@@ -177,3 +177,18 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## Contact
 
 For questions or support, please contact us at developer@ylabz.com.
+
+
+
+### NOTES::
+### **Comparison: `LaunchedEffect` vs. State Variable**
+
+| **Feature**                     | **LaunchedEffect**                                     | **State Variable**                              |
+|----------------------------------|-------------------------------------------------------|------------------------------------------------|
+| **Tied to Lifecycle**            | Yes, automatically cancels when Composable is removed. | No, state persists unless explicitly reset.    |
+| **Side Effects**                 | Ideal for triggering effects (e.g., ViewModel events). | Not ideal for side effects; UI-only changes.   |
+| **Reactivity**                   | Reacts to external state changes like permission updates. | Reacts to internal state changes in the Composable. |
+| **Complexity**                   | Requires coroutines and lifecycle awareness.           | Simpler, no coroutine management needed.       |
+| **Example Use Case**             | Fetching data, observing external changes.             | Managing toggle states, simple UI logic.       |
+
+---
