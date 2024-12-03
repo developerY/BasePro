@@ -46,8 +46,7 @@ sealed class Screen(val route: String) {
     data object PlacesScreen : Screen("places_screen")
     data object HealthScreen : Screen("health_screen")
     data object BLEScreen : Screen("ble_screen")
-
-
+    data object BLEPermissionsScreen : Screen("ble_permissions_screen")
 }
 
 @Serializable

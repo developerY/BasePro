@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.automirrored.twotone.List
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
@@ -117,9 +118,9 @@ fun MainScreen(navController: NavHostController = rememberNavController()) { // 
     val bottomBarOffsetHeightPx = remember { mutableStateOf(0f) }
 
     Scaffold(
-        /*topBar = {
+        topBar = {
             AppTopBar()
-        },*/
+        },
         bottomBar = {
             AppBottomBar(
                 navController = navController,
@@ -148,7 +149,7 @@ fun AppTopBar() {
         },*/
         actions = {
             IconButton(onClick = {  }) {
-                Icon(Icons.Default.Search, contentDescription = "Search")
+                Icon(Icons.Default.Face, contentDescription = "Face")
             }
             /*IconButton(onClick = { /* Handle more icon press */ }) {
                 Icon(Icons.Filled.MoreVert, contentDescription = "More")

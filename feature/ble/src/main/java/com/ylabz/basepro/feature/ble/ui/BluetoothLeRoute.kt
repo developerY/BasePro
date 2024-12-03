@@ -22,6 +22,7 @@ import com.ylabz.basepro.feature.ble.ui.components.LoadingScreen
 import com.ylabz.basepro.feature.ble.ui.components.PermissionStatusUI
 import com.ylabz.basepro.feature.ble.ui.components.PermissionsDenied
 import com.ylabz.basepro.feature.ble.ui.components.PermissionsRationale
+import com.ylabz.basepro.feature.ble.ui.components.StatusBar
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -67,10 +68,17 @@ fun BluetoothLeRoute(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(paddingValues)
     ) {
-        PermissionStatusUI(permissionState) // Show BLE permission status visually
-
+        //PermissionStatusUI(permissionState) // Show BLE permission status visually
+        // Status Bar at the top of the screen
+        StatusBar(
+            permissionState = permissionState,
+            onManagePermissionsClick = {
+                // Navigate to BLE permissions settings or trigger permission request
+                permissionState.launchMultiplePermissionRequest()
+            }
+        )
 
         when (uiState) {
             is BluetoothLeUiState.PermissionsRequired -> PermissionsRationale {
