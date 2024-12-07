@@ -1,7 +1,27 @@
-BLE Scanner written in Compose by Sarah
+BLE Scanner Example
+No Flow:
 [example](https://github.com/santansarah/ble-scanner)
+Coroutines:
+[BLE-android-example](https://github.com/millerGrey/BLE-android-example/tree/master)
+Juul Labs:
+[Juul Labs](https://github.com/JuulLabs/sensortag)
+
+Correct:
+[Nortec](https://github.com/NordicSemiconductor/Android-BLE-Library)
 [KBLE](https://bitbucket.org/developerY/workspace/projects/KBEAUT)
-[Correct](https://github.com/JuulLabs/sensortag)
+### **Comparison: Which Uses Kotlin Better?**
+
+| Feature                     | **Nordic BLE Library**                                      | **KBeautifuLE**                                   |
+|-----------------------------|------------------------------------------------------------|--------------------------------------------------|
+| **Kotlin Coroutines**        | ✅ Fully supported for async operations                    | ✅ Fully supported                               |
+| **Kotlin Flows**             | ✅ Uses Flows for BLE streams                              | ✅ Explicitly uses Flows and Channels            |
+| **Ease of Use**              | ✅ High abstraction, easy to integrate                    | ❌ Requires more manual setup and understanding |
+| **Control over BLE**         | ❌ Abstracted away                                         | ✅ Fine-grained control                          |
+| **Production-Readiness**     | ✅ Well-tested and widely used in production               | ❌ Focused on demonstrating Kotlin features      |
+| **Learning Experience**      | ❌ Abstracts much of the Kotlin features                  | ✅ Hands-on with Kotlin features                 |
+| **Jetpack Compose Integration** | ✅ Works well with Compose but requires manual integration | ✅ Built from scratch for Compose                |
+
+---
 
 ### How This Differs from Regular BLE Scanning
 
