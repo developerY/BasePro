@@ -1,15 +1,13 @@
 package com.ylabz.basepro.feature.ble.ui
 
 import androidx.lifecycle.ViewModel
-import com.ylabz.basepro.core.data.repository.Bluetooth.BluetoothDeviceInfo
-import com.ylabz.basepro.core.data.repository.Bluetooth.BluetoothJuul
-import com.ylabz.basepro.core.data.repository.Bluetooth.BluetoothLeRepository
+import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothDeviceInfo
+import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothJuul
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -1,4 +1,4 @@
-package com.ylabz.basepro.core.data.repository.Bluetooth
+package com.ylabz.basepro.core.data.repository.bluetoothLE
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
@@ -16,7 +16,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import javax.inject.Inject
 
-class BluetoothLeRepImpl @Inject constructor(
+class BluetoothLeRepImplHOLD @Inject constructor(
     private val context: Context
 ) : BluetoothLeRepository {
 

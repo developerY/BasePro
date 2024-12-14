@@ -1,16 +1,17 @@
 package com.ylabz.basepro.core.data.di
 
-import com.ylabz.basepro.core.data.repository.Bluetooth.BluetoothJuul
-import com.ylabz.basepro.core.data.repository.Bluetooth.BluetoothJuulImpl
-import com.ylabz.basepro.core.data.repository.Bluetooth.BluetoothLeRepImpl
-import com.ylabz.basepro.core.data.repository.Bluetooth.BluetoothLeRepository
-import com.ylabz.basepro.core.data.repository.Bluetooth.BluetoothRepImpl
-import com.ylabz.basepro.core.data.repository.Bluetooth.BluetoothRepository
-import com.ylabz.basepro.core.data.repository.Bluetooth.CompanionDeviceRepository
-import com.ylabz.basepro.core.data.repository.Bluetooth.CompanionDeviceRepositoryImpl
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
+import android.content.Context
+import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothJuul
+import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothJuulImpl
+import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothLeRepImpl
+import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothLeRepository
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -25,21 +26,10 @@ abstract class BluetoothModule {
         impl: BluetoothLeRepImpl
     ): BluetoothLeRepository
 
-    @Binds
-    abstract fun bindBluetoothRepository(
-        impl: BluetoothRepImpl
-    ): BluetoothRepository
-
 
     @Binds
     abstract fun bindBluetoothJuulRepository(
         impl: BluetoothJuulImpl
     ): BluetoothJuul
-
-    @Binds
-    abstract fun bindCompanionDeviceRepository(
-        impl: CompanionDeviceRepositoryImpl
-    ): CompanionDeviceRepository
-
 
 }

@@ -1,7 +1,7 @@
 package com.ylabz.basepro.core.data.di
 
-import com.ylabz.basepro.core.data.repository.DrivingPtsRepImp
-import com.ylabz.basepro.core.data.repository.DrivingPtsRepository
+import com.ylabz.basepro.core.data.repository.drive.DrivingPtsRepImp
+import com.ylabz.basepro.core.data.repository.drive.DrivingPtsRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

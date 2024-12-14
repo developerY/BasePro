@@ -1,4 +1,4 @@
-package com.ylabz.basepro.core.data.repository.Bluetooth
+package com.ylabz.basepro.core.data.repository.bluetoothLE
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager

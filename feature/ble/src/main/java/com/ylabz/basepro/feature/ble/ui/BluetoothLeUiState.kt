@@ -1,6 +1,6 @@
 package com.ylabz.basepro.feature.ble.ui
 
-import com.ylabz.basepro.core.data.repository.Bluetooth.BluetoothDeviceInfo
+import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothDeviceInfo
 
 sealed interface BluetoothLeUiState {
     object Stopped : BluetoothLeUiState
