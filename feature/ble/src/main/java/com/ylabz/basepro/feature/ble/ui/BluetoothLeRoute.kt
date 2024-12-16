@@ -1,29 +1,31 @@
 package com.ylabz.basepro.feature.ble.ui
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.bluetooth.BluetoothAdapter
+import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key.Companion.Copy
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.ylabz.basepro.core.util.Logging
 import com.ylabz.basepro.feature.ble.ui.components.BluetoothLeSuccessScreen
 import com.ylabz.basepro.feature.ble.ui.components.ErrorScreen
 import com.ylabz.basepro.feature.ble.ui.components.LoadingScreen
-import com.ylabz.basepro.feature.ble.ui.components.PermissionStatusUI
 import com.ylabz.basepro.feature.ble.ui.components.PermissionsDenied
 import com.ylabz.basepro.feature.ble.ui.components.PermissionsRationale
 import com.ylabz.basepro.feature.ble.ui.components.StatusBar
 
+@SuppressLint("MissingPermission")
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun BluetoothLeRoute(
@@ -31,9 +33,10 @@ fun BluetoothLeRoute(
     navTo: (String) -> Unit,
     viewModel: BluetoothLeViewModel = hiltViewModel()
 ) {
+    val TAG = "BluetoothLeRoute"
     //val healthUiState by remember { mutableStateOf(viewModel.uiState) }
     val uiState = viewModel.uiState.collectAsState().value
-    Text("BLE")
+    val context = LocalContext.current
 
 
     // Define BLE permissions
@@ -45,7 +48,6 @@ fun BluetoothLeRoute(
 
     // Remember permission state
     val permissionState = rememberMultiplePermissionsState(permissions = blePermissions)
-
     // Observe the state of BLE permissions and notify the ViewModel of changes.
     // LaunchedEffect ensures this block of code is executed whenever the
     // 'permissionState.allPermissionsGranted' value changes. This effect runs
@@ -81,6 +83,15 @@ fun BluetoothLeRoute(
         )
 
         when (uiState) {
+            BluetoothLeUiState.ShowBluetoothDialog -> {
+                Logging.d(TAG, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ShowBluetoothDialog")
+                LaunchedEffect(Unit) {
+                    val enableBluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                    val activity = context as Activity
+                    activity.startActivityForResult(enableBluetoothIntent, 1)
+                }
+            } // Show Bluetooth dialog and trigger permission request
+
             is BluetoothLeUiState.PermissionsRequired -> PermissionsRationale {
                 permissionState.launchMultiplePermissionRequest() // Trigger permission request
             }

@@ -108,3 +108,5 @@ class BluetoothLeRepImpl @Inject constructor(
         }
     }
 }
+// Data Model for a BLE Device
+data class BluetoothDeviceInfo(val name: String, val address: String)
