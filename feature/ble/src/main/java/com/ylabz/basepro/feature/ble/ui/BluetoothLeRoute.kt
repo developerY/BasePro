@@ -1,5 +1,6 @@
 package com.ylabz.basepro.feature.ble.ui
 
+import android.Manifest.permission.BLUETOOTH_ADMIN
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
@@ -43,7 +44,9 @@ fun BluetoothLeRoute(
     val blePermissions = listOf(
         android.Manifest.permission.BLUETOOTH_SCAN,
         android.Manifest.permission.BLUETOOTH_CONNECT,
-        android.Manifest.permission.BLUETOOTH_ADVERTISE
+        android.Manifest.permission.BLUETOOTH_ADVERTISE,
+        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+        android.Manifest.permission.ACCESS_FINE_LOCATION,
     )
 
     // Remember permission state
@@ -84,7 +87,6 @@ fun BluetoothLeRoute(
 
         when (uiState) {
             BluetoothLeUiState.ShowBluetoothDialog -> {
-                Logging.d(TAG, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ShowBluetoothDialog")
                 LaunchedEffect(Unit) {
                     val enableBluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
                     val activity = context as Activity
@@ -95,6 +97,11 @@ fun BluetoothLeRoute(
             is BluetoothLeUiState.PermissionsRequired -> PermissionsRationale {
                 permissionState.launchMultiplePermissionRequest() // Trigger permission request
             }
+
+            /*is BluetoothLeUiState.PermissionsRequired -> BluetoothLeSuccessScreen(
+                devices = emptyList(),// uiState.devices,
+                onRescan = { viewModel.onEvent(BluetoothLeEvent.FetchDevices) } // Trigger rescan
+            )*/
 
             is BluetoothLeUiState.PermissionsDenied -> PermissionsDenied {
                 permissionState.launchMultiplePermissionRequest() // Trigger permission request
@@ -108,15 +115,10 @@ fun BluetoothLeRoute(
                 onRescan = { viewModel.onEvent(BluetoothLeEvent.FetchDevices) } // Trigger rescan
             )
 
-            is BluetoothLeUiState.ClassicSuccess -> BluetoothLeSuccessScreen(
-                devices = uiState.devices,
-                onRescan = { viewModel.onEvent(BluetoothLeEvent.FetchDevices) } // Trigger rescan
-            )
-
-
             is BluetoothLeUiState.Error -> ErrorScreen(uiState.message)
 
             is BluetoothLeUiState.Stopped -> {} // Handle stopped state if needed
+
         }
     }
 }

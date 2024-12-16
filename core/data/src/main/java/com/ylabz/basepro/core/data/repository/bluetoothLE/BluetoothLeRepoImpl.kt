@@ -57,16 +57,18 @@ class BluetoothLeRepImpl @Inject constructor(
             }
         }
 
+        @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
         override fun onScanFailed(errorCode: Int) {
             super.onScanFailed(errorCode)
             val errorMessage = when (errorCode) {
-                ScanCallback.SCAN_FAILED_ALREADY_STARTED -> "Scan already started."
-                ScanCallback.SCAN_FAILED_APPLICATION_REGISTRATION_FAILED -> "Application registration failed."
-                ScanCallback.SCAN_FAILED_INTERNAL_ERROR -> "Internal error occurred."
-                ScanCallback.SCAN_FAILED_FEATURE_UNSUPPORTED -> "Feature unsupported."
+                SCAN_FAILED_ALREADY_STARTED -> "Scan already started."
+                SCAN_FAILED_APPLICATION_REGISTRATION_FAILED -> "Application registration failed."
+                SCAN_FAILED_INTERNAL_ERROR -> "Internal error occurred."
+                SCAN_FAILED_FEATURE_UNSUPPORTED -> "Feature unsupported."
                 else -> "Unknown error code: $errorCode"
             }
             Log.e(TAG, "onScanFailed - Error: $errorMessage (code $errorCode)")
+            stopScan()
         }
 
         // Add additional logs to understand the flow better
