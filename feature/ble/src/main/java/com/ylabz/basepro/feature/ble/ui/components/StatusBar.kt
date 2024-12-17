@@ -86,22 +86,28 @@ fun StatusBar(
             if (isExpanded) {
                 permissionState.permissions.forEach { permission ->
                     val (friendlyName, icon, color) = when {
-                        permission.status.isGranted -> Triple(
-                            getFriendlyName(permission.permission),
-                            Icons.Default.CheckCircle, // Granted
-                            Color.Green
-                        )
-                        !permission.status.isGranted && !permission.status.shouldShowRationale -> Triple(
-                            getFriendlyName(permission.permission),
-                            Icons.Default.Warning, // Permanently Denied
-                            Color.Red
-                        )
-                        else -> Triple(
-                            getFriendlyName(permission.permission),
-                            Icons.Default.Info, // Not Yet Requested
-                            Color.Yellow
-                        )
-                    }
+                    !permission.status.isGranted && permission.status.shouldShowRationale -> Triple(
+                        getFriendlyName(permission.permission),
+                        Icons.Default.Info, // Not Yet Requested
+                        Color.Yellow
+                    )
+                    !permission.status.isGranted -> Triple(
+                        getFriendlyName(permission.permission),
+                        Icons.Default.Warning, // Permanently Denied
+                        Color.Red
+                    )
+                    permission.status.isGranted -> Triple(
+                        getFriendlyName(permission.permission),
+                        Icons.Default.CheckCircle, // Granted
+                        Color.Green
+                    )
+                    else -> Triple(
+                        getFriendlyName(permission.permission),
+                        Icons.Default.Info,
+                        Color.Yellow // Default fallback to yellow
+                    )
+                }
+
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -148,7 +154,7 @@ fun StatusBar(
 
 @Composable
 fun Legend() {
-    Divider(modifier = Modifier.padding(vertical = 8.dp))
+    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
     Column {
         Text(

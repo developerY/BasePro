@@ -40,6 +40,30 @@ class BluetoothLeViewModel @Inject constructor(
             //is BluetoothLeEvent.PermissionsGranted -> fetchDevices() Moved to BluetoothViewModel
             is BluetoothLeEvent.PermissionsDenied -> _uiState.value = BluetoothLeUiState.PermissionsDenied
             is BluetoothLeEvent.FetchDevices -> fetchBleDevices() // Handle BLE
+            BluetoothLeEvent.StartScan -> scanning()
+            BluetoothLeEvent.StopScan -> stopping()
+        }
+    }
+
+    private fun scanning() {
+        //_uiState.value = BluetoothLeUiState.Scanning
+        viewModelScope.launch {
+            try {
+                bleRepository.startScan()
+            } catch (e: Exception) {
+                _uiState.value = BluetoothLeUiState.Error("Failed to fetch BLE devices: ${e.message}")
+            }
+        }
+    }
+
+    private fun stopping() {
+        //_uiState.value = BluetoothLeUiState.Stopped
+        viewModelScope.launch {
+            try {
+                bleRepository.stopScan()
+            } catch (e: Exception) {
+                _uiState.value = BluetoothLeUiState.Error("Failed to fetch BLE devices: ${e.message}")
+            }
         }
     }
 

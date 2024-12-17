@@ -1,6 +1,7 @@
 package com.ylabz.basepro.feature.ble.ui.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,7 +20,8 @@ import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothDeviceInfo
 @Composable
 fun BluetoothLeSuccessScreen(
     devices: List<BluetoothDeviceInfo>,
-    onRescan: () -> Unit // Callback to trigger rescan
+    startScan: () -> Unit, // Callback to trigger rescan
+    stopScan: () -> Unit // Callback to trigger stop scan
 ) {
     Column(
         modifier = Modifier
@@ -54,11 +56,18 @@ fun BluetoothLeSuccessScreen(
             }
         }
 
-        Button(
-            onClick = { onRescan() },
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        ) {
-            Text("Rescan")
+        Row {
+            Button(
+                onClick = { startScan() },
+            ) {
+                Text("start")
+            }
+
+            Button(
+                onClick = { stopScan() },
+            ) {
+                Text("stop")
+            }
         }
     }
 }

@@ -25,7 +25,7 @@ fun PermissionsDenied(onPermissionsDenied: () -> Unit) {
         Text("Bluetooth permissions are denied. Please enable them in settings.")
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = onPermissionsDenied) {
-            Text("Go Back")
+            Text("Please enable permissions")
         }
     }
 }

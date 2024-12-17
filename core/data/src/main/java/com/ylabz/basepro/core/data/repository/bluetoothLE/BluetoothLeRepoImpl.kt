@@ -68,7 +68,6 @@ class BluetoothLeRepImpl @Inject constructor(
                 else -> "Unknown error code: $errorCode"
             }
             Log.e(TAG, "onScanFailed - Error: $errorMessage (code $errorCode)")
-            stopScan()
         }
 
         // Add additional logs to understand the flow better
@@ -96,7 +95,22 @@ class BluetoothLeRepImpl @Inject constructor(
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
-    fun stopScan() {
+    override suspend fun startScan() {
+        if (!isScanning) {
+            isScanning = true
+            try {
+                bleScanner.startScan(null, scanSettings, scanCallback)
+                Log.d(TAG, "startScan - Scan started successfully.")
+            } catch (e: Exception) {
+                Log.e(TAG, "startScan - Error starting scan: ${e.message}", e)
+            }
+        } else {
+            Log.d(TAG, "stopScan - No active scan to stop.")
+        }
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
+    override suspend fun stopScan() {
         if (isScanning) {
             try {
                 bleScanner.stopScan(scanCallback)
