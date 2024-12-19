@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,12 +26,14 @@ import com.ylabz.basepro.core.ui.MAIN
 import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.feature.home.ui.HomeMainRoute
 import com.ylabz.basepro.settings.ui.SettingsUiRoute
+import com.ylabz.basepro.ui.bar.AppScaffold
 import com.ylabz.basepro.ui.navigation.graphs.bluetoothLeNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.gmapNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.healthNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.photodoNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.placesNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.settingsNavGraph
+import kotlinx.coroutines.CoroutineScope
 
 
 /**
@@ -65,6 +68,8 @@ import com.ylabz.basepro.ui.navigation.graphs.settingsNavGraph
 @Composable
 fun MainNavGraph(
     navController: NavHostController,
+    drawerState: DrawerState,
+    scope: CoroutineScope,
     padding: PaddingValues,
 ) {
     NavHost(
@@ -73,7 +78,12 @@ fun MainNavGraph(
         startDestination = Screen.HomeScreen.route
     ) {
         photodoNavGraph(navController, padding)
-        gmapNavGraph(navController, padding)
+        gmapNavGraph(
+            drawerState,
+            navController,
+            padding,
+            scope
+        )
         placesNavGraph(navController, padding)
         healthNavGraph(navController, padding)
         bluetoothLeNavGraph(navController, padding)
@@ -83,10 +93,17 @@ fun MainNavGraph(
             Screen.HomeScreen.route,
         ) {
 
-            HomeMainRoute(
-                modifier = Modifier.padding(padding),
-                navTo = { path -> navController.navigate(path) },
-            )
+            AppScaffold(
+                route.toString(),
+                drawerState = drawerState,
+                scope = scope,
+                navController = navController
+            ) { innerPadding ->
+                HomeMainRoute(
+                    modifier = Modifier.padding(innerPadding),
+                    navTo = { path -> navController.navigate(path) },
+                )
+            }
 
         }
 

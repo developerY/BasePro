@@ -1,5 +1,6 @@
 package com.ylabz.basepro.ui.navigation.main
 
+import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -46,7 +47,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ylabz.basepro.core.ui.CameraScreen
 import com.ylabz.basepro.core.ui.Screen
+import com.ylabz.basepro.core.ui.Screen.BLEPermissionsScreen.route
 import com.ylabz.basepro.ui.DrawerContent
+import com.ylabz.basepro.ui.bar.AppScaffold
+import com.ylabz.basepro.ui.bar.AppTopBar
+import com.ylabz.basepro.ui.bar.HomeBottomBar
+import com.ylabz.basepro.ui.bar.MapBottomBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -77,15 +83,6 @@ import kotlin.math.roundToInt
  * with icons, labels, and optional badges, allowing users to switch between different tabs.
  */
 
-// only used by the bottom bar
-private fun navigateTo(tabTitle: String, navController: NavHostController) {
-    when (tabTitle) {
-        "Home"-> navController.navigate(Screen.HomeScreen.route)
-        "List" -> navController.navigate(Screen.ListScreen.route)
-        "Settings" -> navController.navigate(Screen.SettingsScreen.route)
-    }
-}
-
 data class BottomNavigationItem(
     val title: String,
     val selectedIcon: ImageVector,
@@ -94,43 +91,15 @@ data class BottomNavigationItem(
     val badgeCount: Int? = null
 )
 
-val items = listOf(
-    BottomNavigationItem(
-        title = "Home",
-        selectedIcon = Icons.TwoTone.Home,
-        unselectedIcon = Icons.Outlined.Home,
-        hasNews = false,
-    ),
-    BottomNavigationItem(
-        title = "List",
-        selectedIcon = Icons.AutoMirrored.TwoTone.List,
-        unselectedIcon = Icons.AutoMirrored.Outlined.List,
-        hasNews = false,
-        badgeCount = 0
-    ),
-    BottomNavigationItem(
-        title = "Settings", // Category -> Cat
-        selectedIcon = Icons.TwoTone.Settings,
-        unselectedIcon = Icons.Outlined.Settings,
-        hasNews = true,
-    ),
-)
-
 /**
  * Main Screen
  */
 @Composable
 fun MainScreen(
     navController: NavHostController = rememberNavController(),
-) { // Change to Animated
-
+) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    /**
-     * bottom bar variables for nested scroll
-     */
-    val bottomBarHeight = 56.dp
-    val bottomBarOffsetHeightPx = remember { mutableStateOf(0f) }
 
     ModalNavigationDrawer(
         drawerContent = {
@@ -148,26 +117,12 @@ fun MainScreen(
         drawerState = drawerState
     ) {
 
-    Scaffold(
-        topBar = {
-            AppTopBar(scope,drawerState)
-        },
-        bottomBar = {
-            AppBottomBar(
-                navController = navController,
-                //state = bottomBarVisibility(navController),
-                modifier = Modifier
-                    .height(bottomBarHeight)
-                    .offset {
-                        IntOffset(x = 0, y = -bottomBarOffsetHeightPx.value.roundToInt())
-                    }
-            )
-        }
-    ) { padding ->
         MainNavGraph(
             navController = navController,
-            padding = padding)
-    }
+            drawerState = drawerState,
+            scope = scope,
+            padding = PaddingValues(0.dp) // Provide initial padding
+        )
 }
 }
 
@@ -208,56 +163,6 @@ fun AppTopBar(
         },
         //backgroundColor = MaterialTheme.colorScheme.primary
     )
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AppBottomBar(
-    navController: NavHostController,
-    //state: MutableState<Boolean>,
-    modifier: Modifier = Modifier
-) {
-    var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
-
-    NavigationBar(
-        contentColor = Color.Blue
-    ) {
-        items.forEachIndexed { index, item ->
-            NavigationBarItem(
-                //colors = NavigationBarItemColors(),
-                selected = selectedItemIndex == index,
-                onClick = {
-                    selectedItemIndex = index
-                    navigateTo(item.title, navController = navController)
-                },
-                label = {
-                    Text(text = item.title)
-                },
-                alwaysShowLabel = false,
-                icon = {
-                    BadgedBox(
-                        badge = {
-                            if (item.badgeCount != null) {
-                                Badge {
-                                    Text(text = item.badgeCount.toString())
-                                }
-                            } else if (item.hasNews) {
-                                Badge()
-                            }
-                        }
-                    ) {
-                        Icon(
-                            imageVector = if (index == selectedItemIndex) {
-                                item.selectedIcon
-                            } else item.unselectedIcon,
-                            contentDescription = item.title
-                        )
-                    }
-                }
-            )
-        }
-    }
 }
 
 @Preview
