@@ -1,5 +1,6 @@
 package com.ylabz.basepro.settings.ui
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -11,6 +12,7 @@ import com.ylabz.basepro.settings.ui.components.SettingsCompose
 @Composable
 fun SettingsUiRoute(
     modifier: Modifier = Modifier,
+    paddingValues: PaddingValues,
     navTo: (String) -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {

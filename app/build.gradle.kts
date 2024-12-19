@@ -67,6 +67,7 @@ dependencies {
     implementation(project(":feature:heatlh"))
     implementation(project(":feature:maps"))
     implementation(project(":feature:ble"))
+    implementation(project(":feature:settings"))
 
     // feature module  dependency
     implementation(project(":feature:settings"))  // feature module  dependency

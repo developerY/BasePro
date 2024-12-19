@@ -35,6 +35,7 @@ const val MAP = "maps"
 const val PLACES = "places"
 const val HEALTH = "health"
 const val BLE = "ble"
+const val SETTINGS = "settings"
 
 
 sealed class Screen(val route: String) {
