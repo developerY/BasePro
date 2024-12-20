@@ -52,7 +52,7 @@ fun AppScaffold(
                 "main" -> HomeBottomBar(route = route, navController = navController)
                 "maps" ->  MapBottomBar(route = route, navController = navController)
                 "settings" -> HomeBottomBar(route = route,navController = navController)
-                else ->  MapBottomBar(route = route, navController = navController)
+                else ->  {}
             }
         }
     ) { padding ->

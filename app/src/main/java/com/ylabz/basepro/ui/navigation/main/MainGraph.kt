@@ -92,7 +92,11 @@ fun MainNavGraph(
             scope,
             navController
         )
-        healthNavGraph(navController, PaddingValues(0.dp))
+        healthNavGraph(
+            drawerState,
+            scope,
+            navController
+        )
 
         bluetoothLeNavGraph(
             drawerState,

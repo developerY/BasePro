@@ -58,9 +58,16 @@ fun DrawerContent(onNavigate: (String) -> Unit) {
             )
 
             NavigationDrawerItem(
-                label = { Text("BLE") },
+                label = { Text("Places") },
                 selected = false,
-                onClick = { onNavigate("ble") }
+                onClick = { onNavigate("places") }
+            )
+
+            //health
+            NavigationDrawerItem(
+                label = { Text("Health") },
+                selected = false,
+                onClick = { onNavigate("health") }
             )
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
