@@ -57,6 +57,12 @@ fun DrawerContent(onNavigate: (String) -> Unit) {
                 onClick = { onNavigate("photo") }
             )
 
+            NavigationDrawerItem(
+                label = { Text("BLE") },
+                selected = false,
+                onClick = { onNavigate("ble") }
+            )
+
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             Text(

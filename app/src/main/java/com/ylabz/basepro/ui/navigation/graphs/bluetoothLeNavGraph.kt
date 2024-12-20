@@ -1,6 +1,7 @@
 package com.ylabz.basepro.ui.navigation.graphs
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.DrawerState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -11,8 +12,14 @@ import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.feature.ble.ui.BluetoothLeRoute
 import com.ylabz.basepro.feature.ble.ui.components.PermissionsDenied
 import com.ylabz.basepro.feature.maps.ui.MapUIRoute
+import com.ylabz.basepro.ui.bar.AppScaffold
+import kotlinx.coroutines.CoroutineScope
 
-fun NavGraphBuilder.bluetoothLeNavGraph(navController: NavHostController, paddingVals: PaddingValues) {
+fun NavGraphBuilder.bluetoothLeNavGraph(
+    drawerState: DrawerState,
+    scope : CoroutineScope,
+    navController: NavHostController
+) {
     navigation(
         startDestination = Screen.BLEScreen.route,
         route = BLE
@@ -20,9 +27,17 @@ fun NavGraphBuilder.bluetoothLeNavGraph(navController: NavHostController, paddin
         composable(
             Screen.BLEScreen.route
         ) {
-            BluetoothLeRoute(paddingValues = paddingVals,
-                navTo = { path -> navController.navigate(path) },
-            )
+            AppScaffold(
+                route.toString(),
+                scope = scope,
+                drawerState = drawerState,
+                navController = navController
+            ) { innerPadding ->
+                BluetoothLeRoute(
+                    paddingValues = innerPadding,
+                    navTo = { path -> navController.navigate(path) },
+                )
+            }
         }
 
         /*composable(
