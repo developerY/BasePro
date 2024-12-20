@@ -18,17 +18,17 @@ import kotlinx.coroutines.CoroutineScope
 @Composable
 fun AppScaffold(
     route: String,
-    drawerState: DrawerState,
     scope: CoroutineScope,
+    drawerState: DrawerState,
     navController: NavHostController,
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
         topBar = {
             AppTopBar(
+                title = route,
                 scope = scope,
                 drawerState = drawerState,
-                title = route,
                 actions = {
                     when (route) {
                         Screen.HomeScreen.route -> IconButton(onClick = { /* Handle settings action */ }) {
@@ -51,7 +51,7 @@ fun AppScaffold(
             when (route) {
                 "main" -> HomeBottomBar(route = route, navController = navController)
                 "maps" ->  MapBottomBar(route = route, navController = navController)
-                Screen.HealthScreen.route -> HomeBottomBar(route = route,navController = navController)
+                "settings" -> HomeBottomBar(route = route,navController = navController)
                 else ->  MapBottomBar(route = route, navController = navController)
             }
         }

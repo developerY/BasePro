@@ -114,56 +114,18 @@ fun MainScreen(
                 )
             }
         },
-        drawerState = drawerState
+        drawerState = drawerState,
+        gesturesEnabled = false // Disable swipe gestures
     ) {
 
         MainNavGraph(
             navController = navController,
             drawerState = drawerState,
             scope = scope,
-            padding = PaddingValues(0.dp) // Provide initial padding
         )
-}
+    }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AppTopBar(
-    scope: CoroutineScope,
-    drawerState: DrawerState
-) {
-    TopAppBar(
-        title = { Text("BasePro") },
-        navigationIcon = {
-            IconButton(onClick = {
-                scope.launch {
-                    if (drawerState.isClosed) {
-                        drawerState.open()
-                    } else {
-                        drawerState.close()
-                    }
-                }
-            }) {
-                Icon(Icons.Default.Menu, contentDescription = "Menu")
-            }
-
-        },
-        /*navigationIcon = {
-            IconButton(onClick = { /* Handle navigation icon press */ }) {
-                Icon(Icons.Filled.Menu, contentDescription = "Menu")
-            }
-        },*/
-        actions = {
-            IconButton(onClick = {  }) {
-                Icon(Icons.Default.Face, contentDescription = "Face")
-            }
-            /*IconButton(onClick = { /* Handle more icon press */ }) {
-                Icon(Icons.Filled.MoreVert, contentDescription = "More")
-            }*/
-        },
-        //backgroundColor = MaterialTheme.colorScheme.primary
-    )
-}
 
 @Preview
 @Composable

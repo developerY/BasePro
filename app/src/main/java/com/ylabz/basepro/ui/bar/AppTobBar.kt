@@ -17,9 +17,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
+    title: String = "BasePro", // Dynamic title
     scope: CoroutineScope,
     drawerState: DrawerState,
-    title: String = "BasePro", // Dynamic title
     actions: @Composable RowScope.() -> Unit = {} // Slot for optional actions
 ) {
     TopAppBar(

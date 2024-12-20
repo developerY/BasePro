@@ -1,6 +1,9 @@
 package com.ylabz.basepro.ui.navigation.graphs
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.DrawerState
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -10,8 +13,14 @@ import com.ylabz.basepro.core.ui.SETTINGS
 import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.feature.places.ui.CoffeeShopUIRoute
 import com.ylabz.basepro.settings.ui.SettingsUiRoute
+import com.ylabz.basepro.ui.bar.AppScaffold
+import kotlinx.coroutines.CoroutineScope
 
-fun NavGraphBuilder.settingsNavGraph(navController: NavHostController, paddingVals: PaddingValues) {
+fun NavGraphBuilder.settingsNavGraph(
+    drawerState: DrawerState,
+    scope: CoroutineScope,
+    navController: NavHostController
+) {
     navigation(
         startDestination = Screen.SettingsScreen.route,
         route = SETTINGS
@@ -19,8 +28,17 @@ fun NavGraphBuilder.settingsNavGraph(navController: NavHostController, paddingVa
         composable(
             Screen.SettingsScreen.route
         ) {
-            SettingsUiRoute(paddingValues = paddingVals,
-                navTo = { path -> navController.navigate(path) })
+            AppScaffold(
+                route.toString(),
+                drawerState = drawerState,
+                scope = scope,
+                navController = navController
+            ) { padding ->
+                SettingsUiRoute(
+                modifier = Modifier.padding(padding),
+                navTo = { path -> navController.navigate(path) }
+                )
+            }
         }
     }
 }

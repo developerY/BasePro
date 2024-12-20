@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -19,6 +21,8 @@ import com.ylabz.basepro.core.ui.PHOTO
 import com.ylabz.basepro.core.ui.PicScreen
 import com.ylabz.basepro.core.ui.Screen
 import androidx.navigation.navigation
+import com.ylabz.basepro.ui.bar.AppScaffold
+import kotlinx.coroutines.CoroutineScope
 
 
 /**
@@ -37,7 +41,11 @@ import androidx.navigation.navigation
  * @param paddingVals The padding to apply to the navigation graph.
  */
 @RequiresApi(Build.VERSION_CODES.S)
-fun NavGraphBuilder.photodoNavGraph(navController: NavHostController, paddingVals: PaddingValues) {
+fun NavGraphBuilder.photodoNavGraph(
+    drawerState: DrawerState,
+    scope: CoroutineScope,
+    navController: NavHostController
+) {
     navigation(
         startDestination = Screen.CameraScreen.route,
         route = PHOTO
@@ -45,16 +53,23 @@ fun NavGraphBuilder.photodoNavGraph(navController: NavHostController, paddingVal
 
         // We are using this ...
         composable(route = Screen.CameraScreen.route) {
-            CameraUIRoute(
-                paddingValues = paddingVals,
-                navTo = { path -> navController.navigate(path) },
-            )
+            AppScaffold(
+                route.toString(),
+                scope = scope,
+                drawerState = drawerState,
+                navController = navController
+            ) { paddingVals ->
+                CameraUIRoute(
+                    paddingValues = paddingVals,
+                    navTo = { path -> navController.navigate(path) },
+                )
+            }
         }
 
         // We are not using type save navigation.
         composable<CameraScreen> {
             CameraUIRoute(
-                paddingValues = paddingVals,
+                paddingValues = PaddingValues(0.dp),
                 navTo = {path -> navController.navigate(path)},
             )
         }

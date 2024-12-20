@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -69,25 +70,35 @@ import kotlinx.coroutines.CoroutineScope
 fun MainNavGraph(
     navController: NavHostController,
     drawerState: DrawerState,
-    scope: CoroutineScope,
-    padding: PaddingValues,
+    scope: CoroutineScope
 ) {
     NavHost(
         navController = navController,
         route = MAIN,
         startDestination = Screen.HomeScreen.route
     ) {
-        photodoNavGraph(navController, padding)
+        photodoNavGraph(
+            drawerState,
+            scope,
+            navController
+        )
         gmapNavGraph(
             drawerState,
             navController,
-            padding,
             scope
         )
-        placesNavGraph(navController, padding)
-        healthNavGraph(navController, padding)
-        bluetoothLeNavGraph(navController, padding)
-        settingsNavGraph(navController,padding)
+        placesNavGraph(
+            drawerState,
+            scope,
+            navController
+        )
+        healthNavGraph(navController, PaddingValues(0.dp))
+        bluetoothLeNavGraph(navController, PaddingValues(0.dp))
+        settingsNavGraph(
+            drawerState,
+            scope,
+            navController
+        )
 
         composable(
             Screen.HomeScreen.route,
@@ -110,36 +121,33 @@ fun MainNavGraph(
         composable(
             Screen.ListScreen.route
         ) {
-            ListUIRoute(
-                modifier = Modifier.padding(padding),
-                navTo = { path -> navController.navigate(path) }
-            )
-        }
-
-        composable(
-            Screen.SettingsScreen.route
-        ) {
-            SettingsUiRoute(
-                modifier = Modifier.padding(padding),
-                paddingValues = padding,
-                navTo = { path -> navController.navigate(path) }
-            )
-        }
-
-        // master / detail views for tasks
-        composable(
-            route = "details/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val itemId = backStackEntry.arguments?.getInt("id")
-            itemId?.let {
-                DetailsRoute(
+            AppScaffold(
+                route.toString(),
+                drawerState = drawerState,
+                scope = scope,
+                navController = navController
+            ) { padding ->
+                ListUIRoute(
                     modifier = Modifier.padding(padding),
-                    navController = navController,
-                    itemId = it
+                    navTo = { path -> navController.navigate(path) }
                 )
             }
         }
 
-    }
+
+            // master / detail views for tasks
+            composable(
+                route = "details/{id}",
+                arguments = listOf(navArgument("id") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val itemId = backStackEntry.arguments?.getInt("id")
+                itemId?.let {
+                    DetailsRoute(
+                        navController = navController,
+                        itemId = it
+                    )
+                }
+            }
+        }
+
 }

@@ -14,7 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 
 
 fun NavGraphBuilder.gmapNavGraph(
-    drawerState: DrawerState, navController: NavHostController, paddingVals: PaddingValues,scope: CoroutineScope
+    drawerState: DrawerState, navController: NavHostController,scope: CoroutineScope
 ) {
     navigation(
         startDestination = Screen.MapScreen.route,
@@ -25,11 +25,11 @@ fun NavGraphBuilder.gmapNavGraph(
         ) {
             AppScaffold(
                 route.toString(),
-                drawerState = drawerState,
                 scope = scope,
+                drawerState = drawerState,
                 navController = navController
             ) { innerPadding ->
-                MapUIRoute(paddingValues = paddingVals,
+                MapUIRoute(paddingValues = innerPadding,
                     navTo = { path -> navController.navigate(path) },
                 )
             }

@@ -12,7 +12,6 @@ import com.ylabz.basepro.settings.ui.components.SettingsCompose
 @Composable
 fun SettingsUiRoute(
     modifier: Modifier = Modifier,
-    paddingValues: PaddingValues,
     navTo: (String) -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {

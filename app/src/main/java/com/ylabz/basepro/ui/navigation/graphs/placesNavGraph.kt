@@ -1,6 +1,7 @@
 package com.ylabz.basepro.ui.navigation.graphs
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.DrawerState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -10,8 +11,14 @@ import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.feature.heatlh.ui.HealthRoute
 import com.ylabz.basepro.feature.maps.ui.MapUIRoute
 import com.ylabz.basepro.feature.places.ui.CoffeeShopUIRoute
+import com.ylabz.basepro.ui.bar.AppScaffold
+import kotlinx.coroutines.CoroutineScope
 
-fun NavGraphBuilder.placesNavGraph(navController: NavHostController, paddingVals: PaddingValues) {
+fun NavGraphBuilder.placesNavGraph(
+    drawerState: DrawerState,
+    scope: CoroutineScope,
+    navController: NavHostController
+) {
     navigation(
         startDestination = Screen.PlacesScreen.route,
         route = PLACES
@@ -19,8 +26,16 @@ fun NavGraphBuilder.placesNavGraph(navController: NavHostController, paddingVals
         composable(
             Screen.PlacesScreen.route
         ) {
-            CoffeeShopUIRoute(paddingValues = paddingVals,
-                navTo = { path -> navController.navigate(path) })
+            AppScaffold(
+                route.toString(),
+                drawerState = drawerState,
+                scope = scope,
+                navController = navController
+            ) {paddingVals ->
+                CoffeeShopUIRoute(
+                    paddingValues = paddingVals,
+                    navTo = { path -> navController.navigate(path) })
+            }
         }
     }
 }
