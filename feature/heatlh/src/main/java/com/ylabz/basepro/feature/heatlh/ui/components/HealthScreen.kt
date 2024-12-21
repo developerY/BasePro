@@ -54,81 +54,36 @@ fun HealthStartScreen(
 ) {
     val isHealthConnectAvailable = remember { viewModel.healthSessionManager.availability.value == HealthConnectClient.SDK_AVAILABLE }
     val permissionsGranted by viewModel.permissionsGranted
-    //val sessionsList by viewModel.sessionsList
     val permissions = viewModel.permissions
     val backgroundReadPermissions = viewModel.backgroundReadPermissions
     val backgroundReadAvailable by viewModel.backgroundReadAvailable
     val backgroundReadGranted by viewModel.backgroundReadGranted
-    val onPermissionsResult = { viewModel.initialLoad() }
     val healthUiState by viewModel.uiState.collectAsState()
     val activity = LocalContext.current as? ComponentActivity
 
-
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        Row {
-            Text(
-                text = if (isHealthConnectAvailable) {
-                    "available"
-                } else {
-                    "not available"
-                },
-                color = if (isHealthConnectAvailable) Color.Green else Color.Red,
-                fontWeight = if (isHealthConnectAvailable) FontWeight.Bold else FontWeight.Normal,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .background(Color.LightGray)
-                    .padding(8.dp), // Extra padding inside the background for better spacing
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Button(
-                onClick = {
-                    val settingsIntent = Intent()
-                    settingsIntent.action = HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS
-                    activity?.startActivity(settingsIntent)
-                },
-                modifier = Modifier.padding(vertical = 8.dp)
-            ) {
-                Text("Settings")
-            }
-            if (!backgroundReadGranted) {
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp)
-                        .padding(4.dp),
-                    onClick = {
-                        onPermissionsLaunch(backgroundReadPermissions)
-                    },
-                    enabled = backgroundReadAvailable,
-                ) {
-                    if (backgroundReadAvailable) {
-                        Text("Request Background Read")
-                    } else {
-                        Text("Background Read Not Available")
-                    }
-                }
-            }
-        }
-        Row {
-            // Delete All Button
-            Button(
-                onClick = { onEvent(HealthEvent.Insert) },
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text("Add")
-            }
-            Button(
-                onClick = { onEvent(HealthEvent.DeleteAll) },
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text("Delete All!")
-            }
-        }
-        // Display Health Permissions Screen with a defined height
+        // Header: Availability and Settings
+        HealthHeader(
+            isHealthConnectAvailable = isHealthConnectAvailable,
+            backgroundReadGranted = backgroundReadGranted,
+            backgroundReadAvailable = backgroundReadAvailable,
+            onPermissionsLaunch = onPermissionsLaunch,
+            backgroundReadPermissions = backgroundReadPermissions,
+            activity = activity
+        )
+
+        // Action Buttons: Add and Delete
+        HealthActions(
+            onInsertClick = { onEvent(HealthEvent.Insert) },
+            onDeleteAllClick = { onEvent(HealthEvent.DeleteAll) }
+        )
+
+        // Health Permission Screen
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -141,28 +96,17 @@ fun HealthStartScreen(
                 backgroundReadAvailable = backgroundReadAvailable,
                 backgroundReadGranted = backgroundReadGranted,
                 backgroundReadPermissions = backgroundReadPermissions,
-                onReadClick = {
-                    //viewModel.enqueueReadStepWorker()
-                },
+                onInsertClick = { viewModel.insertExerciseSession() },
                 sessionsList = sessionsList,
                 uiState = healthUiState,
-                onInsertClick = {
-                    viewModel.insertExerciseSession()
-                },
                 onDetailsClick = { uid ->
                     navController.navigate("exercise_session_detail/$uid")
-                },
-                onError = { exception ->
-                    //showExceptionSnackbar(scaffoldState, scope, exception)
-                },
-                onPermissionsResult = {
-                    viewModel.initialLoad()
                 },
                 onPermissionsLaunch = onPermissionsLaunch
             )
         }
 
-        // Label showing the number of items in the list
+        // Session List Header
         Text(
             text = "Number of sessions: ${sessionsList.size}",
             modifier = Modifier
@@ -171,25 +115,13 @@ fun HealthStartScreen(
             style = MaterialTheme.typography.bodyMedium
         )
 
-        // Display session list with LazyColumn for a good scrollable UI
-        LazyColumn(
+        // Session List
+        SessionList(
             modifier = Modifier
                 .weight(2f)
                 .fillMaxWidth(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            items(sessionsList) { session ->
-                ExerciseSessionRow(
-                    ZonedDateTime.ofInstant(session.startTime, session.startZoneOffset),
-                    ZonedDateTime.ofInstant(session.endTime, session.endZoneOffset),
-                    session.metadata.id,
-                    session.title ?: "no title", //stringResource(R.string.no_title),
-                    onDetailsClick = { uid ->
-                        navController.navigate("exercise_session_detail/$uid")
-                    },
-                )
-            }
-        }
+            sessionsList = sessionsList,
+            navController = navController
+        )
     }
 }
