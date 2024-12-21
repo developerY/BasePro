@@ -10,7 +10,7 @@ sealed class HealthUiState {
     data class PermissionsRequired(val message: String) : HealthUiState()
     data class Success(val healthData: List<ExerciseSessionRecord>) : HealthUiState()
     //data class Error(val message: String) : HealthUiState()
-    object GetPermissions : HealthUiState()
+    //object GetPermissions : HealthUiState()
     data class Error(val message: String, val uuid: UUID = UUID.randomUUID()) : HealthUiState()
 
 

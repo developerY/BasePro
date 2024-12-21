@@ -37,18 +37,3 @@ fun SessionList(
         }
     }
 }
-
-/*
-{
-            items(sessionsList) { session ->
-                ExerciseSessionRow(
-                    ZonedDateTime.ofInstant(session.startTime, session.startZoneOffset),
-                    ZonedDateTime.ofInstant(session.endTime, session.endZoneOffset),
-                    session.metadata.id,
-                    session.title ?: "no title", //stringResource(R.string.no_title),
-                    onDetailsClick = { uid ->
-                        navController.navigate("exercise_session_detail/$uid")
-                    },
-                )
-            }
- */

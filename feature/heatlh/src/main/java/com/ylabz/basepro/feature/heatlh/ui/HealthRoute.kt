@@ -19,7 +19,6 @@ import androidx.navigation.NavController
 import com.ylabz.basepro.feature.heatlh.ui.components.ErrorScreen
 import com.ylabz.basepro.feature.heatlh.ui.components.HealthStartScreen
 import com.ylabz.basepro.feature.heatlh.ui.components.LoadingScreen
-import com.ylabz.basepro.feature.heatlh.ui.components.PermissionScreen
 import java.util.UUID
 
 @Composable
@@ -32,15 +31,6 @@ fun HealthRoute(
     //val healthUiState by remember { mutableStateOf(viewModel.uiState) }
     val healthUiState by viewModel.uiState.collectAsState()
     val errorId = rememberSaveable { mutableStateOf(UUID.randomUUID()) }
-
-
-    val isHealthConnectAvailable = remember { viewModel.healthSessionManager.availability.value == HealthConnectClient.SDK_AVAILABLE }
-    val permissionsGranted by viewModel.permissionsGranted
-    //val sessionsList by viewModel.sessionsList
-    val permissions = viewModel.permissions
-    val backgroundReadPermissions = viewModel.backgroundReadPermissions
-    val backgroundReadAvailable by viewModel.backgroundReadAvailable
-    val backgroundReadGranted by viewModel.backgroundReadGranted
     val onPermissionsResult = { viewModel.initialLoad() }
     val permissionsLauncher =
         rememberLauncherForActivityResult(viewModel.permissionsLauncher) {
@@ -100,11 +90,6 @@ fun HealthRoute(
                 viewModel.initialLoad()
             }
 
-            is HealthUiState.GetPermissions -> {
-                PermissionScreen(
-                    onPermissionsLaunch = {permissionsLauncher.launch(permissions)}
-                )
-            }
 
             is HealthUiState.Loading -> LoadingScreen()
         }
@@ -128,20 +113,6 @@ fun HealthFeatureWithPermissions(onRequestPermissions: () -> Unit) {
             Button(onClick = onRequestPermissions) {
                 Text("Grant Permissions")
             }
-        }
-    }
-}
-
-@Composable
-fun HealthDataScreen(healthData: List<WeightRecord>) {
-    Text("Here is the list of health data: ${healthData.size}")
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(healthData) { session ->
-            Text("Exercise Session: ${session.weight}")
         }
     }
 }

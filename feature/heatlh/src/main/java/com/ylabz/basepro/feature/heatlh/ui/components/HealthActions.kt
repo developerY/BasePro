@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun HealthActions(
     onInsertClick: () -> Unit,
-    onDeleteAllClick: () -> Unit
+    onDeleteAllClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier

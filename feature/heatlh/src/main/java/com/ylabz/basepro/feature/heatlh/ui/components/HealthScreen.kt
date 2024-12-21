@@ -72,6 +72,7 @@ fun HealthStartScreen(
             isHealthConnectAvailable = isHealthConnectAvailable,
             backgroundReadGranted = backgroundReadGranted,
             backgroundReadAvailable = backgroundReadAvailable,
+            permissions = permissions,
             onPermissionsLaunch = onPermissionsLaunch,
             backgroundReadPermissions = backgroundReadPermissions,
             activity = activity
@@ -80,31 +81,8 @@ fun HealthStartScreen(
         // Action Buttons: Add and Delete
         HealthActions(
             onInsertClick = { onEvent(HealthEvent.Insert) },
-            onDeleteAllClick = { onEvent(HealthEvent.DeleteAll) }
+            onDeleteAllClick = { onEvent(HealthEvent.DeleteAll) },
         )
-
-        // Health Permission Screen
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .padding(16.dp)
-        ) {
-            HealthPermissionScreen(
-                isHealthConnectAvailable = isHealthConnectAvailable,
-                permissionsGranted = permissionsGranted,
-                permissions = permissions,
-                backgroundReadAvailable = backgroundReadAvailable,
-                backgroundReadGranted = backgroundReadGranted,
-                backgroundReadPermissions = backgroundReadPermissions,
-                onInsertClick = { viewModel.insertExerciseSession() },
-                sessionsList = sessionsList,
-                uiState = healthUiState,
-                onDetailsClick = { uid ->
-                    navController.navigate("exercise_session_detail/$uid")
-                },
-                onPermissionsLaunch = onPermissionsLaunch
-            )
-        }
 
         // Session List Header
         Text(

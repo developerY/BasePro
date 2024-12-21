@@ -185,7 +185,7 @@ class HealthViewModel @Inject constructor(
                 block()
                 HealthUiState.Success(readSessionInputs())
             } else {
-                HealthUiState.GetPermissions
+                HealthUiState.PermissionsRequired("permissions")
             }
         } catch (remoteException: RemoteException) {
             HealthUiState.Error(Exception(remoteException).message.toString())
