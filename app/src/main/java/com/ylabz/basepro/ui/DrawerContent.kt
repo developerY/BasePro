@@ -52,6 +52,11 @@ fun DrawerContent(onNavigate: (String) -> Unit) {
                 onClick = { onNavigate("maps") }
             )
             NavigationDrawerItem(
+                label = { Text("BLE") },
+                selected = false,
+                onClick = { onNavigate("ble") }
+            )
+            NavigationDrawerItem(
                 label = { Text("Camera X") },
                 selected = false,
                 onClick = { onNavigate("photo") }

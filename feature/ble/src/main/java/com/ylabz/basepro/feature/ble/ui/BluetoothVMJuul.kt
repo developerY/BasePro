@@ -1,8 +1,8 @@
 package com.ylabz.basepro.feature.ble.ui
 
 import androidx.lifecycle.ViewModel
-import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothDeviceInfo
 import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothJuul
+import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +52,8 @@ class BluetoothVMJuul @Inject constructor(
                     .collect { advertisement ->
                         val deviceInfo = BluetoothDeviceInfo(
                             name = advertisement.name ?: "Unknown",
-                            address = advertisement.address
+                            address = advertisement.address,
+                            rssi = 0
                         )
                         foundDevices[advertisement.address] = deviceInfo
                         _devices.value = foundDevices.values.toList()

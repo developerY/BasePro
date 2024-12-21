@@ -13,6 +13,7 @@ import android.content.Context
 import android.provider.Settings.Global.DEVICE_NAME
 import android.util.Log
 import androidx.annotation.RequiresPermission
+import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -25,12 +26,27 @@ class BluetoothLeRepImpl @Inject constructor(
     private val context: Context
 ) : BluetoothLeRepository {
 
+    /*D
+    ID : 87:78:86:00:00:F2:F8:F0
+    CC2650 SensorTag
+
+    Device found - Name: CC2650 SensorTag, Address: F0:F8:F2:86:78:87, RSSI: -46
+    onScanResult - callbackType: 1, result: ScanResult{device=F0:F8:F2:86:78:87,
+    scanRecord=ScanRecord [mAdvertiseFlags=5, mServiceUuids=[0000aa80-0000-1000-8000-00805f9b34fb],
+    mServiceSolicitationUuids=[], mManufacturerSpecificData={13=[3, 0, 0]}, mServiceData={},
+    mTxPowerLevel=0, mDeviceName=CC2650 SensorTag], rssi=-46, timestampNanos=56301926474451,
+    eventType=27, primaryPhy=1, secondaryPhy=0, advertisingSid=255, txPower=127,
+    periodicAdvertisingInterval=0}
+     */
+
     private val TAG = "BluetoothLeRepImpl"
 
     private var gatt: BluetoothGatt? = null
     private var isScanning = false
-
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
+    private val currentFilter = "SensorTag"
+
+
 
     private val bleScanner by lazy {
         bluetoothAdapter.bluetoothLeScanner
@@ -40,10 +56,20 @@ class BluetoothLeRepImpl @Inject constructor(
 
         @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
         override fun onScanResult(callbackType: Int, result: ScanResult) {
-            Log.d(TAG, "onScanResult - callbackType: $callbackType, result: $result")
-            val deviceName = result.device.name ?: "Unknown Device"
-            val deviceAddress = result.device.address
-            Log.d(TAG, "Device found - Name: $deviceName, Address: $deviceAddress, RSSI: ${result.rssi}")
+            if (result.device.name?.contains(currentFilter, ignoreCase = true) == true) {
+                Log.d(TAG, "onScanResult - callbackType: $callbackType, result: $result")
+                val deviceName = result.device.name ?: "Unknown Device"
+                val deviceAddress = result.device.address
+                Log.d(TAG, "Device found - Name: $deviceName, Address: $deviceAddress, RSSI: ${result.rssi}")
+
+                if(result.device.name == DEVICE_NAME){
+                    coroutineScope.launch {
+
+                    }
+                }
+            } else {
+                Log.d(TAG, "$callbackType, result: ${result.device}")
+            }
         }
 
         @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
@@ -51,9 +77,14 @@ class BluetoothLeRepImpl @Inject constructor(
             super.onBatchScanResults(results)
             Log.d(TAG, "onBatchScanResults - Total devices found: ${results.size}")
             results.forEach { result ->
-                val deviceName = result.device.name ?: "Unknown Device"
-                val deviceAddress = result.device.address
-                Log.d(TAG, "Batch Device - Name: $deviceName, Address: $deviceAddress, RSSI: ${result.rssi}")
+                if (result.device.name != null) {
+                    val deviceName = result.device.name ?: "Unknown Device"
+                    val deviceAddress = result.device.address
+                    Log.d(
+                        TAG,
+                        "Batch Device - Name: $deviceName, Address: $deviceAddress, RSSI: ${result.rssi}"
+                    )
+                }
             }
         }
 
@@ -124,5 +155,3 @@ class BluetoothLeRepImpl @Inject constructor(
         }
     }
 }
-// Data Model for a BLE Device
-data class BluetoothDeviceInfo(val name: String, val address: String)

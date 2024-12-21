@@ -1,6 +1,7 @@
 package com.ylabz.basepro.feature.ble.ui
 
-import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothDeviceInfo
+import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
+
 
 sealed interface BluetoothLeUiState {
     object ShowBluetoothDialog : BluetoothLeUiState
