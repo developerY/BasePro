@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothLeRepository
+import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
 import com.ylabz.basepro.core.util.Logging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,10 @@ class BluetoothLeViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<BluetoothLeUiState>(BluetoothLeUiState.PermissionsRequired)
     val uiState = _uiState.asStateFlow()
+
+    // StateFlow for detecting the TI Tag Sensor
+    private val _isTiTagSensorFound = MutableStateFlow(false)
+    val isTiTagSensorFound = _isTiTagSensorFound.asStateFlow()
 
     private var isBluetoothDialogAlreadyShown = false
 
@@ -42,6 +47,43 @@ class BluetoothLeViewModel @Inject constructor(
             is BluetoothLeEvent.FetchDevices -> fetchBleDevices() // Handle BLE
             BluetoothLeEvent.StartScan -> scanning()
             BluetoothLeEvent.StopScan -> stopping()
+            is BluetoothLeEvent.TiTagSensorDetected -> {
+                _isTiTagSensorFound.value = true
+                _uiState.value = BluetoothLeUiState.TiTagSensorFound(event.device)
+            }
+        }
+    }
+
+    private fun startScanning() {
+        viewModelScope.launch {
+            try {
+                _uiState.value = BluetoothLeUiState.Scanning
+                bleRepository.startScan() /*{ result ->
+                    val deviceName = result.device.name ?: "Unknown Device"
+                    if (deviceName.contains("CC2650 SensorTag", ignoreCase = true)) {
+                        val device = BluetoothDeviceInfo(
+                            name = deviceName,
+                            address = result.device.address,
+                            rssi = result.rssi
+                        )
+                        onEvent(BluetoothLeEvent.TiTagSensorDetected(device))
+                        bleRepository.stopScan() // Optionally stop scanning after detecting the sensor
+                    }
+                }*/
+            } catch (e: Exception) {
+                _uiState.value = BluetoothLeUiState.Error("Failed to scan: ${e.message}")
+            }
+        }
+    }
+
+    private fun stopScanning() {
+        viewModelScope.launch {
+            try {
+                bleRepository.stopScan()
+                _uiState.value = BluetoothLeUiState.Stopped
+            } catch (e: Exception) {
+                _uiState.value = BluetoothLeUiState.Error("Failed to stop scanning: ${e.message}")
+            }
         }
     }
 

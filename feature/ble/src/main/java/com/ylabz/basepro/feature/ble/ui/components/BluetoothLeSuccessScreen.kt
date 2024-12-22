@@ -28,6 +28,26 @@ fun BluetoothLeSuccessScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        TiTagSensorScreen(
+            isSensorFound = true,
+            onStartScanning = {},
+            onStopScanning = {},
+            onConnect = {}
+        )
+        Row {
+            Button(
+                onClick = { startScan() },
+            ) {
+                Text("start")
+            }
+
+            Button(
+                onClick = { stopScan() },
+            ) {
+                Text("stop")
+            }
+        }
+
         Text(
             text = "Devices Found:",
             style = MaterialTheme.typography.titleMedium,
@@ -53,20 +73,6 @@ fun BluetoothLeSuccessScreen(
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
-            }
-        }
-
-        Row {
-            Button(
-                onClick = { startScan() },
-            ) {
-                Text("start")
-            }
-
-            Button(
-                onClick = { stopScan() },
-            ) {
-                Text("stop")
             }
         }
     }

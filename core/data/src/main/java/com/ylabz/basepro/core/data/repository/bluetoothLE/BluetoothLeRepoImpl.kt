@@ -17,6 +17,8 @@ import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
@@ -46,6 +48,10 @@ class BluetoothLeRepImpl @Inject constructor(
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
     private val currentFilter = "SensorTag"
 
+    private val _isTiTagSensorFound = MutableStateFlow(false)
+    val isTiTagSensorFound: StateFlow<Boolean> = _isTiTagSensorFound
+
+
 
 
     private val bleScanner by lazy {
@@ -56,21 +62,21 @@ class BluetoothLeRepImpl @Inject constructor(
 
         @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
         override fun onScanResult(callbackType: Int, result: ScanResult) {
-            if (result.device.name?.contains(currentFilter, ignoreCase = true) == true) {
+            val deviceName = result.device.name ?: "Unknown Device"
+
+            if (deviceName.contains(currentFilter, ignoreCase = true)) {
                 Log.d(TAG, "onScanResult - callbackType: $callbackType, result: $result")
                 val deviceName = result.device.name ?: "Unknown Device"
                 val deviceAddress = result.device.address
                 Log.d(TAG, "Device found - Name: $deviceName, Address: $deviceAddress, RSSI: ${result.rssi}")
-
-                if(result.device.name == DEVICE_NAME){
-                    coroutineScope.launch {
-
-                    }
+                coroutineScope.launch {
+                    _isTiTagSensorFound.emit(true)
                 }
             } else {
                 Log.d(TAG, "$callbackType, result: ${result.device}")
             }
         }
+
 
         @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
         override fun onBatchScanResults(results: MutableList<ScanResult>) {

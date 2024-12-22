@@ -98,11 +98,6 @@ fun BluetoothLeRoute(
                 permissionState.launchMultiplePermissionRequest() // Trigger permission request
             }
 
-            /*is BluetoothLeUiState.PermissionsRequired -> BluetoothLeSuccessScreen(
-                devices = emptyList(),// uiState.devices,
-                onRescan = { viewModel.onEvent(BluetoothLeEvent.FetchDevices) } // Trigger rescan
-            )*/
-
             is BluetoothLeUiState.PermissionsDenied -> PermissionsDenied {
                 permissionState.launchMultiplePermissionRequest() // Trigger permission request
                 // viewModel.onEvent(BluetoothLeEvent.PermissionsDenied)
@@ -129,6 +124,8 @@ fun BluetoothLeRoute(
                     viewModel.onEvent(BluetoothLeEvent.StopScan)
                 }
             } // Handle stopped state if needed
+
+            is BluetoothLeUiState.TiTagSensorFound -> {}
 
         }
     }
