@@ -7,6 +7,10 @@ import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanCallback.SCAN_FAILED_ALREADY_STARTED
+import android.bluetooth.le.ScanCallback.SCAN_FAILED_APPLICATION_REGISTRATION_FAILED
+import android.bluetooth.le.ScanCallback.SCAN_FAILED_FEATURE_UNSUPPORTED
+import android.bluetooth.le.ScanCallback.SCAN_FAILED_INTERNAL_ERROR
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
@@ -51,9 +55,8 @@ class BluetoothLeRepImpl @Inject constructor(
     private val _isTiTagSensorFound = MutableStateFlow(false)
     val isTiTagSensorFound: StateFlow<Boolean> = _isTiTagSensorFound
 
-    private val _devicesFound : MutableStateFlow<List<BluetoothDeviceInfo>>   = MutableStateFlow(emptyList())
-    val devicesFound: StateFlow<List<BluetoothDeviceInfo>> = _devicesFound
-
+    private val _devicesFound: MutableStateFlow<BluetoothDeviceInfo?> = MutableStateFlow(null)
+    val devicesFound: StateFlow<BluetoothDeviceInfo?> = _devicesFound
 
     private val bleScanner by lazy {
         bluetoothAdapter.bluetoothLeScanner
@@ -69,14 +72,10 @@ class BluetoothLeRepImpl @Inject constructor(
             Log.d(TAG, "Device found - Name: $deviceName, Address: $deviceAddress, RSSI: $deviceRssi")
             // Update the list reactively
             coroutineScope.launch {
-                val currentDevices = _devicesFound.value.toMutableList()
-
-                // Avoid adding duplicate devices based on address
-                if (currentDevices.none { it.address == deviceAddress }) {
-                    currentDevices.add(BluetoothDeviceInfo(name = deviceName, address = deviceAddress, rssi = deviceRssi))
-                    _devicesFound.emit(currentDevices) // Emit updated list
-                }
+                val newDevice = BluetoothDeviceInfo(name = deviceName, address = deviceAddress, rssi = deviceRssi)
+                _devicesFound.emit(newDevice)
             }
+
 
             // Check if the current device matches the TI Tag Sensor
             if (deviceName.contains(currentFilter, ignoreCase = true)) {
@@ -128,7 +127,7 @@ class BluetoothLeRepImpl @Inject constructor(
         .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
         .build()
 
-    override suspend fun fetchBluetoothDevices(): StateFlow<List<BluetoothDeviceInfo>> {
+    override suspend fun fetchBluetoothDevices(): StateFlow<BluetoothDeviceInfo?> {
         return devicesFound// Return devices if required
     }
 

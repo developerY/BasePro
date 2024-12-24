@@ -19,7 +19,7 @@ import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
 // Success screen showing BLE devices
 @Composable
 fun BluetoothLeSuccessScreen(
-    devices: List<BluetoothDeviceInfo>,
+    device: BluetoothDeviceInfo?,
     startScan: () -> Unit, // Callback to trigger rescan
     stopScan: () -> Unit // Callback to trigger stop scan
 ) {
@@ -54,26 +54,20 @@ fun BluetoothLeSuccessScreen(
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        if (devices.isEmpty()) {
+        if (device == null) {
             Text(
-                text = "No devices found. Try rescanning.",
+                text = "No devices found. Try (re)scanning.",
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
         } else {
-            LazyColumn(
-                modifier = Modifier.weight(1f)
-            ) {
-                items(devices) { device ->
-                    Text(
+                Text(
                         text = "${device.name} (${device.address})",
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
                         style = MaterialTheme.typography.bodyMedium
-                    )
-                }
+                )
             }
         }
     }
-}
