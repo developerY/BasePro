@@ -121,7 +121,7 @@ class BluetoothLeViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = BluetoothLeUiState.Loading
             // Collect devices reactively
-            bleRepository.fetchBluetoothDevices().collect { devices ->
+            bleRepository.fetchBluetoothDevice().collect { devices ->
                 _uiState.value = BluetoothLeUiState.ScanDevices(devices)
             }
         }

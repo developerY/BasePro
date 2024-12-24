@@ -29,7 +29,7 @@ fun BluetoothLeSuccessScreen(
             .padding(16.dp)
     ) {
         TiTagSensorScreen(
-            isSensorFound = true,
+            isSensorFound = device,
             onStartScanning = {},
             onStopScanning = {},
             onConnect = {}

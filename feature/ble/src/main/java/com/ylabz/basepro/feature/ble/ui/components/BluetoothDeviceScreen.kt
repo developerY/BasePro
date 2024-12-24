@@ -18,10 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
 
 @Composable
 fun TiTagSensorScreen(
-    isSensorFound: Boolean,
+    isSensorFound: BluetoothDeviceInfo?,
     onStartScanning: () -> Unit,
     onStopScanning: () -> Unit,
     onConnect: () -> Unit
@@ -33,7 +34,7 @@ fun TiTagSensorScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        if (isSensorFound) {
+        if (isSensorFound !=null && isSensorFound.name.contains("CC2650 SensorTag", ignoreCase = true)) {
             Text(
                 text = "TI Tag Sensor Found!",
                 color = Color.Green,
