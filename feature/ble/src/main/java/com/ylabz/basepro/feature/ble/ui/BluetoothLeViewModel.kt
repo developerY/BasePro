@@ -120,11 +120,9 @@ class BluetoothLeViewModel @Inject constructor(
     private fun fetchBleDevices() {
         viewModelScope.launch {
             _uiState.value = BluetoothLeUiState.Loading
-            try {
-                val devices = bleRepository.fetchBluetoothDevices()
-                _uiState.value = BluetoothLeUiState.Success(devices)
-            } catch (e: Exception) {
-                _uiState.value = BluetoothLeUiState.Error("Failed to fetch BLE devices: ${e.message}")
+            // Collect devices reactively
+            bleRepository.fetchBluetoothDevices().collect { devices ->
+                _uiState.value = BluetoothLeUiState.ScanDevices(devices)
             }
         }
     }

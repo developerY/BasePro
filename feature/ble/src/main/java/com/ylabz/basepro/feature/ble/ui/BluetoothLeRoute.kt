@@ -105,7 +105,7 @@ fun BluetoothLeRoute(
 
             is BluetoothLeUiState.Loading -> LoadingScreen()
 
-            is BluetoothLeUiState.Success -> BluetoothLeSuccessScreen(
+            is BluetoothLeUiState.ScanDevices -> BluetoothLeSuccessScreen(
                 devices = uiState.devices,
                 startScan = { viewModel.onEvent(BluetoothLeEvent.StartScan) },
                 stopScan = { viewModel.onEvent(BluetoothLeEvent.StopScan) } // Trigger rescan

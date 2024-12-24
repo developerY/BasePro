@@ -51,7 +51,8 @@ class BluetoothLeRepImpl @Inject constructor(
     private val _isTiTagSensorFound = MutableStateFlow(false)
     val isTiTagSensorFound: StateFlow<Boolean> = _isTiTagSensorFound
 
-
+    private val _devicesFound : MutableStateFlow<List<BluetoothDeviceInfo>>   = MutableStateFlow(emptyList())
+    val devicesFound: StateFlow<List<BluetoothDeviceInfo>> = _devicesFound
 
 
     private val bleScanner by lazy {
@@ -63,17 +64,26 @@ class BluetoothLeRepImpl @Inject constructor(
         @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             val deviceName = result.device.name ?: "Unknown Device"
+            val deviceAddress = result.device.address ?: "Unknown Address"
+            val deviceRssi = result.rssi // Include RSSI value from ScanResult
+            Log.d(TAG, "Device found - Name: $deviceName, Address: $deviceAddress, RSSI: $deviceRssi")
+            // Update the list reactively
+            coroutineScope.launch {
+                val currentDevices = _devicesFound.value.toMutableList()
 
+                // Avoid adding duplicate devices based on address
+                if (currentDevices.none { it.address == deviceAddress }) {
+                    currentDevices.add(BluetoothDeviceInfo(name = deviceName, address = deviceAddress, rssi = deviceRssi))
+                    _devicesFound.emit(currentDevices) // Emit updated list
+                }
+            }
+
+            // Check if the current device matches the TI Tag Sensor
             if (deviceName.contains(currentFilter, ignoreCase = true)) {
-                Log.d(TAG, "onScanResult - callbackType: $callbackType, result: $result")
-                val deviceName = result.device.name ?: "Unknown Device"
-                val deviceAddress = result.device.address
-                Log.d(TAG, "Device found - Name: $deviceName, Address: $deviceAddress, RSSI: ${result.rssi}")
+                Log.d(TAG, "TI Tag Sensor Found - Name: $deviceName, Address: $deviceAddress")
                 coroutineScope.launch {
                     _isTiTagSensorFound.emit(true)
                 }
-            } else {
-                Log.d(TAG, "$callbackType, result: ${result.device}")
             }
         }
 
@@ -118,17 +128,8 @@ class BluetoothLeRepImpl @Inject constructor(
         .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
         .build()
 
-    @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
-    override suspend fun fetchBluetoothDevices(): List<BluetoothDeviceInfo> {
-        Log.d(TAG, "fetchBluetoothDevices - Starting scan...")
-        try {
-            bleScanner.startScan(null, scanSettings, scanCallback)
-            isScanning = true
-            Log.d(TAG, "fetchBluetoothDevices - Scan initiated successfully.")
-        } catch (e: Exception) {
-            Log.e(TAG, "fetchBluetoothDevices - Error starting scan: ${e.message}", e)
-        }
-        return emptyList() // Return devices if required
+    override suspend fun fetchBluetoothDevices(): StateFlow<List<BluetoothDeviceInfo>> {
+        return devicesFound// Return devices if required
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
