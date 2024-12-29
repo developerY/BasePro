@@ -94,9 +94,9 @@ fun StatusBar(
                             ScanState.STOPPING -> "Stopping"
                         },
                         tint = when (scanState) {
-                            ScanState.NOT_SCANNING -> MaterialTheme.colorScheme.error
-                            ScanState.SCANNING -> MaterialTheme.colorScheme.secondary
-                            ScanState.STOPPING -> MaterialTheme.colorScheme.primary
+                            ScanState.NOT_SCANNING -> Color.Red //MaterialTheme.colorScheme.error
+                            ScanState.SCANNING -> Color.Green //MaterialTheme.colorScheme.secondary
+                            ScanState.STOPPING -> Color.Yellow // MaterialTheme.colorScheme.primary
                         },
                         modifier = Modifier.size(24.dp)
                     )
@@ -107,7 +107,12 @@ fun StatusBar(
                             ScanState.SCANNING -> "Scanning..."
                             ScanState.STOPPING -> "Stopping..."
                         },
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = //MaterialTheme.colorScheme.onPrimary,
+                            when (scanState) {
+                                ScanState.NOT_SCANNING -> Color(0xFFE91E63) //MaterialTheme.colorScheme.error
+                                ScanState.SCANNING -> Color(0xFF009688) //MaterialTheme.colorScheme.secondary
+                                ScanState.STOPPING -> Color.Yellow // MaterialTheme.colorScheme.primary
+                            },
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
