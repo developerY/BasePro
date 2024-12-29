@@ -26,6 +26,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.UUID
 import javax.inject.Inject
 
@@ -64,7 +66,12 @@ class BluetoothLeRepImpl @Inject constructor(
         bluetoothAdapter.bluetoothLeScanner
     }
 
+    var tagSensorFound: BluetoothDeviceInfo? = null
+    private val scanStateMutex = Mutex()
+
     private val scanCallback = object : ScanCallback() {
+
+
 
         @RequiresPermission(allOf = [Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN])
         override fun onScanResult(callbackType: Int, result: ScanResult) {
@@ -72,35 +79,47 @@ class BluetoothLeRepImpl @Inject constructor(
             val deviceAddress = result.device.address ?: "Unknown Address"
             val deviceRssi = result.rssi
 
-            // Create the device info object
-            val deviceInfo = BluetoothDeviceInfo(
-                name = deviceName,
-                address = deviceAddress,
-                rssi = deviceRssi
-            )
-
             coroutineScope.launch {
-                // Ignore updates if scan is stopping
-                if (_scanState.value == ScanState.STOPPING) {
-                    return@launch
+                var shouldStopScan = false
+                var deviceToEmit: BluetoothDeviceInfo? = null
+
+                scanStateMutex.withLock {
+                    if (deviceName.contains("CC2650 SensorTag", ignoreCase = true) &&
+                        _scanState.value != ScanState.STOPPING) {
+                        // Update the state and store the SensorTag device
+                        _scanState.value = ScanState.STOPPING
+                        tagSensorFound = BluetoothDeviceInfo(
+                            name = deviceName,
+                            address = deviceAddress,
+                            rssi = deviceRssi
+                        )
+                        shouldStopScan = true
+                    }
+
+                    // Prepare the device to emit
+                    deviceToEmit = tagSensorFound ?: BluetoothDeviceInfo(
+                        name = deviceName,
+                        address = deviceAddress,
+                        rssi = deviceRssi
+                    )
                 }
 
-                // Emit every device to indicate activity
-                _currentDevice.emit(deviceInfo) // emit
-
-                // Stop scanning if the SensorTag is detected
-                if (deviceName.contains("CC2650 SensorTag", ignoreCase = true)) {
-                    Log.d(TAG, "TI Tag Sensor Found - Name: $deviceName, Address: $deviceAddress")
-                    _scanState.value = ScanState.STOPPING
+                // Execute suspend functions outside the critical section
+                if (shouldStopScan) {
                     try {
                         stopScan() // Stop scanning
-                        _currentDevice.emit(deviceInfo) // Emit the SensorTag device one final time
+                        Log.d(TAG, "Stopping scan after detecting SensorTag.")
                     } catch (e: Exception) {
                         Log.e(TAG, "Error stopping scan: ${e.message}", e)
                     } finally {
-                        _scanState.value = ScanState.NOT_SCANNING
-                        _currentDevice.emit(deviceInfo) // Emit the SensorTag device one final time
+                        scanStateMutex.withLock {
+                            _scanState.value = ScanState.NOT_SCANNING
+                        }
                     }
+                }
+
+                deviceToEmit?.let {
+                    _currentDevice.emit(it)
                 }
             }
         }
@@ -133,7 +152,8 @@ class BluetoothLeRepImpl @Inject constructor(
                 SCAN_FAILED_FEATURE_UNSUPPORTED -> "Feature unsupported."
                 else -> "Unknown error code: $errorCode"
             }
-            Log.e(TAG, "onScanFailed - Error: $errorMessage (code $errorCode)") }
+            Log.e(TAG, "onScanFailed - Error: $errorMessage (code $errorCode)")
+        }
 
         // Add additional logs to understand the flow better
         @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
@@ -154,36 +174,39 @@ class BluetoothLeRepImpl @Inject constructor(
     override suspend fun startScan() {
         // Reset the current device to ensure clean feedback
         // Create the device info object
-
-        if (_scanState.value == ScanState.NOT_SCANNING) {
-            _scanState.value = ScanState.SCANNING
-            try {
-                bleScanner.startScan(null, scanSettings, scanCallback)
-                Log.d(TAG, "startScan - Scan started successfully.")
-            } catch (e: Exception) {
-                _scanState.value = ScanState.NOT_SCANNING
-                Log.e(TAG, "startScan - Error starting scan: ${e.message}", e)
+        synchronized(_scanState) {
+            if (_scanState.value == ScanState.NOT_SCANNING) {
+                tagSensorFound = null
+                _scanState.value = ScanState.SCANNING
+                try {
+                    bleScanner.startScan(null, scanSettings, scanCallback)
+                    Log.d(TAG, "startScan - Scan started successfully.")
+                } catch (e: Exception) {
+                    _scanState.value = ScanState.NOT_SCANNING
+                    Log.e(TAG, "startScan - Error starting scan: ${e.message}", e)
+                }
+            } else {
+                Log.d(TAG, "startScan - Scan already running or stopping.")
             }
-        } else {
-            Log.d(TAG, "startScan - Scan already running or stopping.")
         }
     }
 
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     override suspend fun stopScan() {
-        if (_scanState.value == ScanState.NOT_SCANNING) {
-            Log.d(TAG, "stopScan - No active scan to stop.")
-            return
-        }
-        try {
-            bleScanner.stopScan(scanCallback)
-            Log.d(TAG, "stopScan - Scan stopped successfully.")
-        } catch (e: Exception) {
-            Log.e(TAG, "stopScan - Error stopping scan: ${e.message}", e)
-        } finally {
-            _scanState.value = ScanState.NOT_SCANNING
+        synchronized(_scanState) {
+            if (_scanState.value == ScanState.NOT_SCANNING) {
+                Log.d(TAG, "stopScan - No active scan to stop.")
+                return
+            }
+            try {
+                bleScanner.stopScan(scanCallback)
+                Log.d(TAG, "stopScan - Scan stopped successfully.")
+            } catch (e: Exception) {
+                Log.e(TAG, "stopScan - Error stopping scan: ${e.message}", e)
+            } finally {
+                _scanState.value = ScanState.NOT_SCANNING
+            }
         }
     }
-
 }
