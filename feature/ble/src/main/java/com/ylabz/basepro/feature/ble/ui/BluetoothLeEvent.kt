@@ -10,7 +10,7 @@ sealed interface BluetoothLeEvent {
     object RequestPermissions : BluetoothLeEvent
     object PermissionsGranted : BluetoothLeEvent
     object PermissionsDenied : BluetoothLeEvent
-    data class TiTagSensorDetected(val device: BluetoothDeviceInfo) : BluetoothLeEvent
+    //data class TiTagSensorDetected(val device: BluetoothDeviceInfo) : BluetoothLeEvent
 
 }
 

@@ -6,9 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothLeRepository
 import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
+import com.ylabz.basepro.core.model.ble.ScanState
 import com.ylabz.basepro.core.util.Logging
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,8 +27,11 @@ class BluetoothLeViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     // StateFlow for detecting the TI Tag Sensor
-    private val _isTiTagSensorFound = MutableStateFlow(false)
-    val isTiTagSensorFound = _isTiTagSensorFound.asStateFlow()
+    val scanState: StateFlow<ScanState> = bleRepository.scanState
+
+    private val _isStartButtonEnabled = MutableStateFlow(true)
+    val isStartButtonEnabled = _isStartButtonEnabled.asStateFlow()
+
 
     private var isBluetoothDialogAlreadyShown = false
 
@@ -47,10 +53,6 @@ class BluetoothLeViewModel @Inject constructor(
             is BluetoothLeEvent.FetchDevices -> fetchBleDevices() // Handle BLE
             BluetoothLeEvent.StartScan -> scanning()
             BluetoothLeEvent.StopScan -> stopping()
-            is BluetoothLeEvent.TiTagSensorDetected -> {
-                _isTiTagSensorFound.value = true
-                _uiState.value = BluetoothLeUiState.TiTagSensorFound(event.device)
-            }
         }
     }
 
@@ -89,12 +91,18 @@ class BluetoothLeViewModel @Inject constructor(
 
     private fun scanning() {
         //_uiState.value = BluetoothLeUiState.Scanning
+        if (!_isStartButtonEnabled.value) return
+        _isStartButtonEnabled.value = false
         viewModelScope.launch {
             try {
                 bleRepository.startScan()
             } catch (e: Exception) {
-                _uiState.value = BluetoothLeUiState.Error("Failed to fetch BLE devices: ${e.message}")
+                _uiState.value =
+                    BluetoothLeUiState.Error("Failed to fetch BLE devices: ${e.message}")
+                _isStartButtonEnabled.value = true
             }
+            delay(5000L)
+            _isStartButtonEnabled.value = true
         }
     }
 

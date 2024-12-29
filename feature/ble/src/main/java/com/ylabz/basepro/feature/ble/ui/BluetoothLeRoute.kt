@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,6 +38,8 @@ fun BluetoothLeRoute(
     val TAG = "BluetoothLeRoute"
     //val healthUiState by remember { mutableStateOf(viewModel.uiState) }
     val uiState = viewModel.uiState.collectAsState().value
+    val scanState by viewModel.scanState.collectAsState()
+    val isStartButtonEnabled by viewModel.isStartButtonEnabled.collectAsState()
     val context = LocalContext.current
 
 
@@ -82,7 +85,8 @@ fun BluetoothLeRoute(
             onManagePermissionsClick = {
                 // Navigate to BLE permissions settings or trigger permission request
                 permissionState.launchMultiplePermissionRequest()
-            }
+            },
+            scanState = scanState
         )
 
         when (uiState) {
@@ -106,7 +110,9 @@ fun BluetoothLeRoute(
             is BluetoothLeUiState.Loading -> LoadingScreen()
 
             is BluetoothLeUiState.ScanDevices -> BluetoothLeSuccessScreen(
+                scanState  = scanState,
                 device = uiState.devices,
+                isStartScanningEnabled = isStartButtonEnabled,
                 startScan = { viewModel.onEvent(BluetoothLeEvent.StartScan) },
                 stopScan = { viewModel.onEvent(BluetoothLeEvent.StopScan) } // Trigger rescan
             )
@@ -125,7 +131,7 @@ fun BluetoothLeRoute(
                 }
             } // Handle stopped state if needed
 
-            is BluetoothLeUiState.TiTagSensorFound -> {}
+            //is BluetoothLeUiState.TiTagSensorFound -> {}
 
         }
     }

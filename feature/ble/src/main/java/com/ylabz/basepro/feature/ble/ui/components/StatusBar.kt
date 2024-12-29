@@ -14,8 +14,14 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.outlined.Clear
+import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.twotone.AddCircle
+import androidx.compose.material.icons.twotone.Close
+import androidx.compose.material.icons.twotone.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -39,12 +45,14 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.shouldShowRationale
+import com.ylabz.basepro.core.model.ble.ScanState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun StatusBar(
     permissionState: MultiplePermissionsState,
-    onManagePermissionsClick: () -> Unit
+    onManagePermissionsClick: () -> Unit,
+    scanState: ScanState // Add scanState parameter
 ) {
     var isExpanded by remember { mutableStateOf(false) } // Track the expanded state
 
@@ -66,10 +74,50 @@ fun StatusBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Permissions Status",
+                    text = "BLE Status",
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
+
+                // Scan state
+                // Scan state with icons
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = when (scanState) {
+                            ScanState.NOT_SCANNING -> Icons.Outlined.PlayArrow
+                            ScanState.SCANNING -> Icons.Filled.PlayArrow
+                            ScanState.STOPPING -> Icons.Outlined.Clear
+                        },
+                        contentDescription = when (scanState) {
+                            ScanState.NOT_SCANNING -> "Not Scanning"
+                            ScanState.SCANNING -> "Scanning"
+                            ScanState.STOPPING -> "Stopping"
+                        },
+                        tint = when (scanState) {
+                            ScanState.NOT_SCANNING -> MaterialTheme.colorScheme.error
+                            ScanState.SCANNING -> MaterialTheme.colorScheme.secondary
+                            ScanState.STOPPING -> MaterialTheme.colorScheme.primary
+                        },
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = when (scanState) {
+                            ScanState.NOT_SCANNING -> "Not Scanning"
+                            ScanState.SCANNING -> "Scanning..."
+                            ScanState.STOPPING -> "Stopping..."
+                        },
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
+
+
+
+
+
+
                 IconButton(
                     onClick = { isExpanded = !isExpanded }, // Toggle expand/collapse
                     modifier = Modifier.size(24.dp)
