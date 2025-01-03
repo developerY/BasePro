@@ -1,11 +1,12 @@
 package com.ylabz.basepro.feature.ble.ui
 
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothLeRepository
-import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
 import com.ylabz.basepro.core.model.ble.ScanState
 import com.ylabz.basepro.core.util.Logging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,8 +30,12 @@ class BluetoothLeViewModel @Inject constructor(
     // StateFlow for detecting the TI Tag Sensor
     val scanState: StateFlow<ScanState> = bleRepository.scanState
 
+    val gattConnectionState = bleRepository.gattConnectionState
+
     private val _isStartButtonEnabled = MutableStateFlow(true)
     val isStartButtonEnabled = _isStartButtonEnabled.asStateFlow()
+
+
 
 
     private var isBluetoothDialogAlreadyShown = false
@@ -51,6 +56,7 @@ class BluetoothLeViewModel @Inject constructor(
             //is BluetoothLeEvent.PermissionsGranted -> fetchDevices() Moved to BluetoothViewModel
             is BluetoothLeEvent.PermissionsDenied -> _uiState.value = BluetoothLeUiState.PermissionsDenied
             is BluetoothLeEvent.FetchDevices -> fetchBleDevices() // Handle BLE
+            is BluetoothLeEvent.ConnectToSensorTag -> connectToSensorTag()
             BluetoothLeEvent.StartScan -> scanning()
             BluetoothLeEvent.StopScan -> stopping()
         }
@@ -123,6 +129,14 @@ class BluetoothLeViewModel @Inject constructor(
             isBluetoothDialogAlreadyShown = true
         }
     }
+
+
+    fun connectToSensorTag() {
+        viewModelScope.launch {
+            bleRepository.connectToDevice()
+        }
+    }
+
 
 
     private fun fetchBleDevices() {

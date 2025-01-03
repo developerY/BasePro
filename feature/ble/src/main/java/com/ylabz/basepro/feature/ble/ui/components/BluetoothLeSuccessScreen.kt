@@ -1,6 +1,5 @@
 package com.ylabz.basepro.feature.ble.ui.components
 
-import android.text.format.DateUtils.formatDateTime
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,8 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -39,7 +36,9 @@ fun BluetoothLeSuccessScreen(
     device: BluetoothDeviceInfo?,
     isStartScanningEnabled: Boolean,
     startScan: () -> Unit, // Callback to trigger rescan
-    stopScan: () -> Unit // Callback to trigger stop scan
+    stopScan: () -> Unit, // Callback to trigger stop scan
+    connectToDevice: () -> Unit,
+    batteryLevel: () -> Unit // = 45, // Replace with actual battery level
 ) {
     Column(
         modifier = Modifier
@@ -62,7 +61,7 @@ fun BluetoothLeSuccessScreen(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
                 Button(
-                    onClick = { /* Handle connect action */ },
+                    onClick = connectToDevice,
                     modifier = Modifier.fillMaxWidth(0.5f)
                 ) {
                     Text("Connect")
@@ -143,7 +142,7 @@ fun BluetoothLeSuccessScreen(
                                 )
                                 Divider(modifier = Modifier.padding(vertical = 8.dp))
                                 Text(
-                                    text = "Battery Level: 80%",
+                                    text = "Battery Level: ${batteryLevel}%",
                                     style = MaterialTheme.typography.bodyMedium,
                                     modifier = Modifier.padding(bottom = 8.dp)
                                 )

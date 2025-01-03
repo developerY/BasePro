@@ -12,5 +12,7 @@ sealed interface BluetoothLeUiState {
     object PermissionsDenied : BluetoothLeUiState
     data class ScanDevices(val devices: BluetoothDeviceInfo?) : BluetoothLeUiState
     data class Error(val message: String) : BluetoothLeUiState
+    data class BatteryLevel(val level: Int?) : BluetoothLeUiState // New state for battery level
+
     //data class TiTagSensorFound(val device: BluetoothDeviceInfo) : BluetoothLeUiState
 }

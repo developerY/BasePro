@@ -1,25 +1,26 @@
 package com.ylabz.basepro.feature.ble.ui
 
-import android.Manifest.permission.BLUETOOTH_ADMIN
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.ylabz.basepro.core.util.Logging
 import com.ylabz.basepro.feature.ble.ui.components.BluetoothLeSuccessScreen
 import com.ylabz.basepro.feature.ble.ui.components.ErrorScreen
 import com.ylabz.basepro.feature.ble.ui.components.LoadingScreen
@@ -39,6 +40,7 @@ fun BluetoothLeRoute(
     //val healthUiState by remember { mutableStateOf(viewModel.uiState) }
     val uiState = viewModel.uiState.collectAsState().value
     val scanState by viewModel.scanState.collectAsState()
+    val gattConnectionState by viewModel.gattConnectionState.collectAsState()
     val isStartButtonEnabled by viewModel.isStartButtonEnabled.collectAsState()
     val context = LocalContext.current
 
@@ -110,11 +112,13 @@ fun BluetoothLeRoute(
             is BluetoothLeUiState.Loading -> LoadingScreen()
 
             is BluetoothLeUiState.ScanDevices -> BluetoothLeSuccessScreen(
-                scanState  = scanState,
+                scanState = scanState,
                 device = uiState.devices,
                 isStartScanningEnabled = isStartButtonEnabled,
                 startScan = { viewModel.onEvent(BluetoothLeEvent.StartScan) },
-                stopScan = { viewModel.onEvent(BluetoothLeEvent.StopScan) } // Trigger rescan
+                stopScan = { viewModel.onEvent(BluetoothLeEvent.StopScan) }, // Trigger rescan
+                connectToDevice = { viewModel.onEvent(BluetoothLeEvent.ConnectToSensorTag) },
+                batteryLevel = {45}
             )
 
             is BluetoothLeUiState.Error -> ErrorScreen(uiState.message)
@@ -131,8 +135,22 @@ fun BluetoothLeRoute(
                 }
             } // Handle stopped state if needed
 
-            //is BluetoothLeUiState.TiTagSensorFound -> {}
+            is BluetoothLeUiState.BatteryLevel -> {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    val level = uiState.level
+                    Text(
+                        text = if (level != null) "Battery Level: $level%" else "Battery level not available",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = if (level != null) Color.Green else Color.Gray
+                    )
+                }
+            }
 
+            /*is BluetoothLeUiState.TiTagSensorConnect -> {
+                fun connectToSensorTag(device: BluetoothDevice) {
+                    bleRepository.connectToDevice(device)
+                }
+            }*/
         }
     }
 }
