@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
@@ -15,13 +16,18 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.RequiresPermission
 import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
+import com.ylabz.basepro.core.model.ble.GattCharacteristicValue
 import com.ylabz.basepro.core.model.ble.GattConnectionState
 import com.ylabz.basepro.core.model.ble.ScanState
 import com.ylabz.basepro.core.model.ble.tools.getHumanReadableName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -58,7 +64,8 @@ class BluetoothLeRepImpl @Inject constructor(
     private val _scanState = MutableStateFlow(ScanState.NOT_SCANNING)
     override val scanState: StateFlow<ScanState> = _scanState
 
-    private val _gattConnectionState = MutableStateFlow<GattConnectionState>(GattConnectionState.Disconnected)
+    private val _gattConnectionState =
+        MutableStateFlow<GattConnectionState>(GattConnectionState.Disconnected)
     override val gattConnectionState: StateFlow<GattConnectionState> = _gattConnectionState
 
     private val bleScanner by lazy {
@@ -69,8 +76,6 @@ class BluetoothLeRepImpl @Inject constructor(
     private val scanStateMutex = Mutex()
 
     private val scanCallback = object : ScanCallback() {
-
-
 
         @RequiresPermission(allOf = [Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN])
         override fun onScanResult(callbackType: Int, result: ScanResult) {
@@ -84,7 +89,8 @@ class BluetoothLeRepImpl @Inject constructor(
 
                 scanStateMutex.withLock {
                     if (deviceName.contains("CC2650 SensorTag", ignoreCase = true) &&
-                        _scanState.value != ScanState.STOPPING) {
+                        _scanState.value != ScanState.STOPPING
+                    ) {
                         // Update the state and store the SensorTag device
                         _scanState.value = ScanState.STOPPING
                         tagSensorFound = BluetoothDeviceInfo(
@@ -124,17 +130,20 @@ class BluetoothLeRepImpl @Inject constructor(
         }
     }
     private val BATTERY_SERVICE_UUID = UUID.fromString("0000180F-0000-1000-8000-00805f9b34fb")
-    private val BATTERY_LEVEL_CHARACTERISTIC_UUID = UUID.fromString("00002A19-0000-1000-8000-00805f9b34fb")
+    private val BATTERY_LEVEL_CHARACTERISTIC_UUID =
+        UUID.fromString("00002A19-0000-1000-8000-00805f9b34fb")
 
     // StateFlow to hold battery level percentage
-    private val _batteryLevel = MutableStateFlow<Int?>(null)
-    val batteryLevelFlow: StateFlow<Int?> = _batteryLevel
+    private val _gattCharacteristicList = MutableStateFlow<List<GattCharacteristicValue>>(emptyList())
+    override val gattCharacteristicList: StateFlow<List<GattCharacteristicValue>> = _gattCharacteristicList
+
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     override suspend fun connectToDevice() {
         val device: BluetoothDevice = bluetoothAdapter.getRemoteDevice(tagSensorFound?.address)
         _gattConnectionState.value = GattConnectionState.Connecting
         gatt = device.connectGatt(context, false, object : BluetoothGattCallback() {
+
             @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
             override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
@@ -144,64 +153,30 @@ class BluetoothLeRepImpl @Inject constructor(
                 } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                     Log.d(TAG, "Disconnected from GATT server.")
                     _gattConnectionState.value = GattConnectionState.Disconnected
-                    _batteryLevel.value = null // Clear battery level on disconnect
                 }
             }
 
+            // Called when services are discovered
             @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-            fun onServicesDiscoveredBATT(gatt: BluetoothGatt, status: Int) {
-                if (status == BluetoothGatt.GATT_SUCCESS) {
-                    val deviceInfoService = gatt.getService(UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb"))
-                    val manufacturerNameChar = deviceInfoService?.getCharacteristic(UUID.fromString("00002a29-0000-1000-8000-00805f9b34fb"))
-                    manufacturerNameChar?.let {
-                        gatt.readCharacteristic(it)
-                    }
-                }
-            }
-
-            /*override fun onCharacteristicRead(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
-                if (status == BluetoothGatt.GATT_SUCCESS) {
-                    if (characteristic.uuid == UUID.fromString("00002a29-0000-1000-8000-00805f9b34fb")) {
-                        val manufacturerName = characteristic.getStringValue(0) // UTF-8 string
-                        Log.d("BluetoothGatt", "Manufacturer Name: $manufacturerName")
-                    }
-                }
-            }*/
-
-            override fun onCharacteristicRead(
-                gatt: BluetoothGatt?,
-                characteristic: BluetoothGattCharacteristic?,
-                status: Int
-            ) {
-                if (status == BluetoothGatt.GATT_SUCCESS) {
-                    Log.d(TAG, "Characteristic read: ${characteristic?.uuid} ,${getHumanReadableName(characteristic?.uuid.toString())}")
-
-                    if (characteristic?.uuid == BATTERY_LEVEL_CHARACTERISTIC_UUID) {
-                        val value = characteristic.value // `ByteArray` of characteristic
-                        val batteryLevel = value?.getOrNull(0)?.toInt() ?: -1 // First byte is the battery level
-                        Log.d(TAG, "Battery Level: $batteryLevel%")
-                        coroutineScope.launch {
-                            //batteryLevelFlow.emit(batteryLevel)
-                        }
-                        if (characteristic?.uuid == UUID.fromString("00002a29-0000-1000-8000-00805f9b34fb")) {
-                            val manufacturerName = characteristic.getStringValue(0) // UTF-8 string
-                            Log.d("BluetoothGatt", "Manufacturer Name: $manufacturerName")
-                        }
-                    }
-                } else {
-                    Log.e(TAG, "Failed to read battery level. Status: $status")
-                }
-            }
-
-
-            override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
+            fun onServicesDiscoveredOld(gatt: BluetoothGatt, status: Int) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     Log.d(TAG, "GATT services discovered.")
-                    // Iterate over available services and characteristics
                     gatt.services.forEach { service ->
-                        Log.d(TAG, "Service: ${service.uuid}")
-                        service.characteristics.forEach { characteristic ->
-                            Log.d(TAG, "Characteristic read: ${characteristic?.uuid} ,${getHumanReadableName(characteristic?.uuid.toString())}")
+                        Log.d(TAG, "Service: ${getHumanReadableName(service.uuid.toString())}")
+                        service.characteristics.forEachIndexed { index, characteristic ->
+                            coroutineScope.launch {
+                                delay(index * 2000L)  // Delay to avoid skipping
+                                Log.d(TAG, "Delayed Characteristic: ${getHumanReadableName(characteristic.uuid.toString())}")
+                                if (characteristic.properties and BluetoothGattCharacteristic.PROPERTY_READ != 0) {
+                                    Log.d(TAG, "Reading Characteristic: ${getHumanReadableName(characteristic.uuid.toString())}")
+                                    val success = gatt.readCharacteristic(characteristic)
+                                    if (!success) {
+                                        Log.e(TAG, "Failed to initiate read for characteristic: ${characteristic.uuid}")
+                                    }
+                                } else {
+                                    Log.w(TAG, "Characteristic ${getHumanReadableName(characteristic.uuid.toString())} is not readable.")
+                                }
+                            }
                         }
                     }
                 } else {
@@ -209,48 +184,134 @@ class BluetoothLeRepImpl @Inject constructor(
                 }
             }
 
-            fun onCharacteristicReadOrig(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
+
+            @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+            private fun readAllCharacteristicsFlow(gatt: BluetoothGatt, service: BluetoothGattService): Flow<Pair<BluetoothGattCharacteristic, String>> = flow {
+                for (characteristic in service.characteristics) {
+                    if (characteristic.properties and BluetoothGattCharacteristic.PROPERTY_READ != 0) {
+                        val result = readCharacteristicSynchronously(gatt, characteristic)
+                        emit(characteristic to result)
+                    } else {
+                        emit(characteristic to "Not readable")
+                    }
+                }
+            }
+
+            @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+            suspend fun collectReads(gatt: BluetoothGatt) {
+                gatt.services.forEach { service ->
+                    readAllCharacteristicsFlow(gatt, service).collect { (characteristic, value) ->
+                        Log.d(TAG, "Characteristic: ${characteristic.uuid} = $value")
+                    }
+                }
+            }
+
+            @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+            override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
-                    val data = characteristic.value
-                    Log.d(TAG, "Characteristic read: ${characteristic.uuid}, Value: ${data?.contentToString()}")
+                    Log.d(TAG, "GATT services discovered.")
+                    coroutineScope.launch {
+                        gatt.services.forEach { service ->
+                            Log.d(TAG, "Service: ${getHumanReadableName(service.uuid.toString())}")
+                            service.characteristics.forEach { characteristic ->
+                                if (characteristic.properties and BluetoothGattCharacteristic.PROPERTY_READ != 0) {
+                                    // Read the characteristic synchronously
+                                    val result = readCharacteristicSynchronously(gatt, characteristic)
+                                    Log.d(TAG, "Characteristic: ${getHumanReadableName(characteristic.uuid.toString())} = $result")
+                                } else {
+                                    Log.w(TAG, "Characteristic ${getHumanReadableName(characteristic.uuid.toString())} is not readable.")
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    Log.e(TAG, "Failed to discover GATT services. Status: $status")
+                }
+            }
+
+            @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+            private fun readAllCharacteristics(gatt: BluetoothGatt, service: BluetoothGattService): Flow<Pair<BluetoothGattCharacteristic, String>> =
+                flow {
+                    for (characteristic in service.characteristics) {
+                        if (characteristic.properties and BluetoothGattCharacteristic.PROPERTY_READ != 0) {
+                            val result = readCharacteristicSynchronously(gatt, characteristic)
+                            emit(characteristic to result)  // Emit the result as a flow item
+                        } else {
+                            emit(characteristic to "Not readable")
+                        }
+                    }
+                }
+
+
+            @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+            private suspend fun readCharacteristicSynchronously(
+                gatt: BluetoothGatt,
+                characteristic: BluetoothGattCharacteristic
+            ): String = kotlinx.coroutines.suspendCancellableCoroutine { continuation ->
+                object : BluetoothGattCallback() {
+                    override fun onCharacteristicRead(
+                        gatt: BluetoothGatt?,
+                        characteristic: BluetoothGattCharacteristic?,
+                        status: Int
+                    ) {
+                        if (status == BluetoothGatt.GATT_SUCCESS && characteristic != null) {
+                            val value = characteristic.getStringValue(0) ?: "N/A"
+                            continuation.resume(value) {} // Resume coroutine with result
+                        } else {
+                            continuation.resume("Failed to read value. Status: $status") {}
+                        }
+                    }
+                }.also { callback ->
+                    val success = gatt.readCharacteristic(characteristic)
+                    if (!success) {
+                        continuation.resume("Failed to initiate read for ${characteristic.uuid}") {}
+                    }
+                }
+            }
+
+
+
+            // Called when a characteristic is read
+            override fun onCharacteristicRead(
+                gatt: BluetoothGatt?,
+                characteristic: BluetoothGattCharacteristic?,
+                status: Int
+            ) {
+                if (status == BluetoothGatt.GATT_SUCCESS && characteristic != null) {
+                    val description = getHumanReadableName(characteristic.uuid.toString())
+                    val rawValue = characteristic.value ?: ByteArray(0)  // Get the raw bytes
+
+                    val stringValue = characteristic.getStringValue(0) ?: "N/A"
+                    val intValue = rawValue.getOrNull(0)?.toInt() ?: -1
+                    val hexValue = rawValue.joinToString(" ") { byte -> "%02X".format(byte) }
+                    val length = rawValue.size
+
+                    Log.d(TAG, "Characteristic read: ${characteristic.uuid}, $description")
+                    Log.d(TAG, "Raw Value (Hex): $hexValue")
+                    Log.d(TAG, "String Value: $stringValue")
+                    Log.d(TAG, "First Byte as Int: $intValue")
+                    Log.d(TAG, "Length: $length bytes")
+
+                    // Add the characteristic to the list with a summary of all values
+                    val summary = """
+            Description: $description
+            Hex Value: $hexValue
+            String Value: $stringValue
+            First Byte (Int): $intValue
+            Length: $length bytes
+        """.trimIndent()
+
+                    coroutineScope.launch {
+                        _gattCharacteristicList.update { currentList ->
+                            currentList + GattCharacteristicValue(description, summary)
+                        }
+                    }
                 } else {
                     Log.e(TAG, "Failed to read characteristic. Status: $status")
                 }
             }
+
         })
-    }
-
-
-
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    override suspend fun readBatteryLevel(): StateFlow<Int?> {
-        val gattInstance = gatt ?: return MutableStateFlow(null)
-
-        val batteryService = gattInstance.getService(BATTERY_SERVICE_UUID)
-        val batteryLevelFlow = MutableStateFlow<Int?>(null)
-
-        if (batteryService != null) {
-            val batteryLevelCharacteristic = batteryService.getCharacteristic(BATTERY_LEVEL_CHARACTERISTIC_UUID)
-            if (batteryLevelCharacteristic != null) {
-                if (batteryLevelCharacteristic.properties and BluetoothGattCharacteristic.PROPERTY_READ != 0) {
-                    val success = gattInstance.readCharacteristic(batteryLevelCharacteristic)
-                    if (success) {
-                        Log.d(TAG, "Battery level read request sent.")
-                        // The actual battery level will be emitted from the callback
-                    } else {
-                        Log.e(TAG, "Failed to send battery level read request.")
-                    }
-                } else {
-                    Log.e(TAG, "Battery Level Characteristic is not readable.")
-                }
-            } else {
-                Log.e(TAG, "Battery Level Characteristic not found.")
-            }
-        } else {
-            Log.e(TAG, "Battery Service not found.")
-        }
-
-        return batteryLevelFlow
     }
 
     private val scanSettings = ScanSettings.Builder()

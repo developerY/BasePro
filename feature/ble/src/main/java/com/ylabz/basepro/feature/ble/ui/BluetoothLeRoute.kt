@@ -1,5 +1,6 @@
 package com.ylabz.basepro.feature.ble.ui
 
+import android.R.attr.level
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.ylabz.basepro.core.model.ble.GattConnectionState
 import com.ylabz.basepro.feature.ble.ui.components.BluetoothLeSuccessScreen
 import com.ylabz.basepro.feature.ble.ui.components.ErrorScreen
 import com.ylabz.basepro.feature.ble.ui.components.LoadingScreen
@@ -41,6 +43,7 @@ fun BluetoothLeRoute(
     val uiState = viewModel.uiState.collectAsState().value
     val scanState by viewModel.scanState.collectAsState()
     val gattConnectionState by viewModel.gattConnectionState.collectAsState()
+    val gattCharacteristicList by viewModel.gattCharacteristicList.collectAsState()
     val isStartButtonEnabled by viewModel.isStartButtonEnabled.collectAsState()
     val context = LocalContext.current
 
@@ -113,12 +116,13 @@ fun BluetoothLeRoute(
 
             is BluetoothLeUiState.ScanDevices -> BluetoothLeSuccessScreen(
                 scanState = scanState,
+                gattConnectionState = gattConnectionState,
                 device = uiState.devices,
                 isStartScanningEnabled = isStartButtonEnabled,
                 startScan = { viewModel.onEvent(BluetoothLeEvent.StartScan) },
                 stopScan = { viewModel.onEvent(BluetoothLeEvent.StopScan) }, // Trigger rescan
                 connectToDevice = { viewModel.onEvent(BluetoothLeEvent.ConnectToSensorTag) },
-                batteryLevel = {45}
+                gattCharacteristicList = gattCharacteristicList,
             )
 
             is BluetoothLeUiState.Error -> ErrorScreen(uiState.message)
@@ -137,7 +141,7 @@ fun BluetoothLeRoute(
 
             is BluetoothLeUiState.BatteryLevel -> {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    val level = uiState.level
+                    val level = uiState.level ?: 0
                     Text(
                         text = if (level != null) "Battery Level: $level%" else "Battery level not available",
                         style = MaterialTheme.typography.bodyMedium,

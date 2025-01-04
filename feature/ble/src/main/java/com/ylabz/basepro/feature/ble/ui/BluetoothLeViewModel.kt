@@ -24,19 +24,17 @@ class BluetoothLeViewModel @Inject constructor(
 ) : ViewModel() {
     private val TAG = Logging.getTag(this::class.java)
 
+    val scanState: StateFlow<ScanState> = bleRepository.scanState
+    val gattConnectionState = bleRepository.gattConnectionState
+    val gattCharacteristicList = bleRepository.gattCharacteristicList
+
     private val _uiState = MutableStateFlow<BluetoothLeUiState>(BluetoothLeUiState.PermissionsRequired)
     val uiState = _uiState.asStateFlow()
-
-    // StateFlow for detecting the TI Tag Sensor
-    val scanState: StateFlow<ScanState> = bleRepository.scanState
-
-    val gattConnectionState = bleRepository.gattConnectionState
 
     private val _isStartButtonEnabled = MutableStateFlow(true)
     val isStartButtonEnabled = _isStartButtonEnabled.asStateFlow()
 
-
-
+    // StateFlow for detecting the TI Tag Sensor
 
     private var isBluetoothDialogAlreadyShown = false
 
@@ -59,6 +57,7 @@ class BluetoothLeViewModel @Inject constructor(
             is BluetoothLeEvent.ConnectToSensorTag -> connectToSensorTag()
             BluetoothLeEvent.StartScan -> scanning()
             BluetoothLeEvent.StopScan -> stopping()
+            BluetoothLeEvent.GattCharacteristicList -> gattCharacteristicList
         }
     }
 

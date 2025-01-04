@@ -24,7 +24,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
+import com.ylabz.basepro.core.model.ble.GattCharacteristicValue
+import com.ylabz.basepro.core.model.ble.GattConnectionState
 import com.ylabz.basepro.core.model.ble.ScanState
+import com.ylabz.basepro.feature.ble.ui.BluetoothLeEvent
+import com.ylabz.basepro.feature.ble.ui.BluetoothLeEvent.GattCharacteristicList
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -33,12 +37,13 @@ import java.util.Locale
 @Composable
 fun BluetoothLeSuccessScreen(
     scanState: ScanState,
+    gattConnectionState: GattConnectionState,
     device: BluetoothDeviceInfo?,
     isStartScanningEnabled: Boolean,
     startScan: () -> Unit, // Callback to trigger rescan
     stopScan: () -> Unit, // Callback to trigger stop scan
     connectToDevice: () -> Unit,
-    batteryLevel: () -> Unit // = 45, // Replace with actual battery level
+    gattCharacteristicList: List<GattCharacteristicValue>,
 ) {
     Column(
         modifier = Modifier
@@ -126,42 +131,7 @@ fun BluetoothLeSuccessScreen(
                     }
 
                     if (device != null && device.name.contains("CC2650 SensorTag", ignoreCase = true)) {
-                        Card(
-                            shape = RoundedCornerShape(8.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            elevation = CardDefaults.cardElevation(4.dp)
-                        ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Text(
-                                    text = "Sensor Tag Details",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
-                                Divider(modifier = Modifier.padding(vertical = 8.dp))
-                                Text(
-                                    text = "Battery Level: ${batteryLevel}%",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
-                                Text(
-                                    text = "Temperature: 22°C",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
-                                Text(
-                                    text = "Humidity: 45%",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
-                                Text(
-                                    text = "Last Synced: ${formatDateTime(System.currentTimeMillis())}",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            }
-                        }
+                        GattCharTable(characteristics = gattCharacteristicList )
                     }
                 }
             }
