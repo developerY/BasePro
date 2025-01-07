@@ -242,13 +242,7 @@ object AllGattCharacteristics {
 
     }
 
-    fun lookup(uuid: UUID): String {
-        return lookup(uuid.toString(), "--")
-    }
-
-
-    fun lookup(uuid: String?, defaultName: String = "--"): String {
-        val name = attributes[uuid]
-        return name ?: defaultName
+    fun lookup(uuid: String?): String? {
+        return attributes[uuid]  // Will return null if not found
     }
 }

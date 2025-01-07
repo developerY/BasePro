@@ -24,6 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
+import com.ylabz.basepro.core.model.ble.DeviceCharacteristic
+import com.ylabz.basepro.core.model.ble.DeviceService
 import com.ylabz.basepro.core.model.ble.GattCharacteristicValue
 import com.ylabz.basepro.core.model.ble.GattConnectionState
 import com.ylabz.basepro.core.model.ble.ScanState
@@ -43,7 +45,10 @@ fun BluetoothLeSuccessScreen(
     startScan: () -> Unit, // Callback to trigger rescan
     stopScan: () -> Unit, // Callback to trigger stop scan
     connectToDevice: () -> Unit,
-    gattCharacteristicList: List<GattCharacteristicValue>,
+    readBattLevel: () -> Unit,
+    // getCharacteristicValue: (DeviceService, DeviceCharacteristic) -> GattCharacteristicValue,
+    //gattCharacteristicList: List<GattCharacteristicValue>,
+    gattServicesList: List<DeviceService>
 ) {
     Column(
         modifier = Modifier
@@ -131,7 +136,12 @@ fun BluetoothLeSuccessScreen(
                     }
 
                     if (device != null && device.name.contains("CC2650 SensorTag", ignoreCase = true)) {
-                        GattCharTable(characteristics = gattCharacteristicList )
+                        //GattCharTable(characteristics = gattCharacteristicList )
+                        GattServices(
+                            services = gattServicesList,
+                            readBat = readBattLevel
+                            //onCharacteristicClick = {} as (DeviceService, DeviceCharacteristic) -> Unit//getCharacteristicValue
+                        )
                     }
                 }
             }

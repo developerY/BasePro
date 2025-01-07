@@ -22,6 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.ylabz.basepro.core.model.ble.DeviceCharacteristic
+import com.ylabz.basepro.core.model.ble.DeviceService
+import com.ylabz.basepro.core.model.ble.GattCharacteristicValue
 import com.ylabz.basepro.core.model.ble.GattConnectionState
 import com.ylabz.basepro.feature.ble.ui.components.BluetoothLeSuccessScreen
 import com.ylabz.basepro.feature.ble.ui.components.ErrorScreen
@@ -46,6 +49,9 @@ fun BluetoothLeRoute(
     val gattCharacteristicList by viewModel.gattCharacteristicList.collectAsState()
     val isStartButtonEnabled by viewModel.isStartButtonEnabled.collectAsState()
     val context = LocalContext.current
+
+
+    val gattServicesList by viewModel.gattServicesList.collectAsState()
 
 
     // Define BLE permissions
@@ -122,7 +128,9 @@ fun BluetoothLeRoute(
                 startScan = { viewModel.onEvent(BluetoothLeEvent.StartScan) },
                 stopScan = { viewModel.onEvent(BluetoothLeEvent.StopScan) }, // Trigger rescan
                 connectToDevice = { viewModel.onEvent(BluetoothLeEvent.ConnectToSensorTag) },
-                gattCharacteristicList = gattCharacteristicList,
+                // getCharacteristicValue = { } as (DeviceService, DeviceCharacteristic) -> GattCharacteristicValue,
+                readBattLevel = { viewModel.onEvent(BluetoothLeEvent.ReadBatteryLevel) },
+                gattServicesList = gattServicesList
             )
 
             is BluetoothLeUiState.Error -> ErrorScreen(uiState.message)
@@ -138,23 +146,7 @@ fun BluetoothLeRoute(
                     viewModel.onEvent(BluetoothLeEvent.StopScan)
                 }
             } // Handle stopped state if needed
-
-            is BluetoothLeUiState.BatteryLevel -> {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    val level = uiState.level ?: 0
-                    Text(
-                        text = if (level != null) "Battery Level: $level%" else "Battery level not available",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = if (level != null) Color.Green else Color.Gray
-                    )
-                }
-            }
-
-            /*is BluetoothLeUiState.TiTagSensorConnect -> {
-                fun connectToSensorTag(device: BluetoothDevice) {
-                    bleRepository.connectToDevice(device)
-                }
-            }*/
+            is BluetoothLeUiState.DataLoaded -> TODO()
         }
     }
 }

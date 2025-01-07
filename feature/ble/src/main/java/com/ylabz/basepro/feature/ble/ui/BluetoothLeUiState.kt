@@ -1,6 +1,9 @@
 package com.ylabz.basepro.feature.ble.ui
 
 import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
+import com.ylabz.basepro.core.model.ble.DeviceCharacteristic
+import com.ylabz.basepro.core.model.ble.DeviceService
+import com.ylabz.basepro.core.model.ble.GattCharacteristicValue
 
 
 sealed interface BluetoothLeUiState {
@@ -12,7 +15,15 @@ sealed interface BluetoothLeUiState {
     object PermissionsDenied : BluetoothLeUiState
     data class ScanDevices(val devices: BluetoothDeviceInfo?) : BluetoothLeUiState
     data class Error(val message: String) : BluetoothLeUiState
-    data class BatteryLevel(val level: Int?) : BluetoothLeUiState // New state for battery level
 
-    //data class TiTagSensorFound(val device: BluetoothDeviceInfo) : BluetoothLeUiState
+    // Unified "success" state holding all BLE device data
+    data class DataLoaded(
+        val scannedDevice: BluetoothDeviceInfo? = null,  // Holds discovered device details
+        val services: List<DeviceService> = emptyList(),  // Discovered GATT services
+        val selectedService: DeviceService? = null,  // Selected service
+        val selectedCharacteristic: DeviceCharacteristic? = null,  // Selected characteristic
+        val characteristicValues: Map<String, String?> = emptyMap()  // Cached values for each characteristic UUID
+    ) : BluetoothLeUiState
 }
+
+

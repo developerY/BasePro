@@ -10,6 +10,7 @@ import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothLeRepository
 import com.ylabz.basepro.core.model.ble.ScanState
 import com.ylabz.basepro.core.util.Logging
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +28,7 @@ class BluetoothLeViewModel @Inject constructor(
     val scanState: StateFlow<ScanState> = bleRepository.scanState
     val gattConnectionState = bleRepository.gattConnectionState
     val gattCharacteristicList = bleRepository.gattCharacteristicList
+    val gattServicesList = bleRepository.gattServicesList
 
     private val _uiState = MutableStateFlow<BluetoothLeUiState>(BluetoothLeUiState.PermissionsRequired)
     val uiState = _uiState.asStateFlow()
@@ -58,6 +60,20 @@ class BluetoothLeViewModel @Inject constructor(
             BluetoothLeEvent.StartScan -> scanning()
             BluetoothLeEvent.StopScan -> stopping()
             BluetoothLeEvent.GattCharacteristicList -> gattCharacteristicList
+
+            is BluetoothLeEvent.ReadBatteryLevel -> readAllCharacteristics()//readBatteryLevel()
+        }
+    }
+
+    private fun readBatteryLevel() {
+        viewModelScope.launch(Dispatchers.IO) {
+            bleRepository.readBatteryLevel()
+        }
+    }
+
+    private fun readAllCharacteristics() {
+        viewModelScope.launch(Dispatchers.IO) {
+            bleRepository.readAllCharacteristics()
         }
     }
 

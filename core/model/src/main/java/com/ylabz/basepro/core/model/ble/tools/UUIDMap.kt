@@ -1,12 +1,12 @@
 package com.ylabz.basepro.core.model.ble.tools
 
-import com.ylabz.basepro.core.model.ble.tools.AllGattCharacteristics
-
 val allGattCharacteristics = AllGattCharacteristics
 
 fun getHumanReadableName(uuid: String): String {
-    return allGattCharacteristics.lookup(uuid) ?: "Unknown Service/Characteristic ($uuid)"
-    //return uuidToDescriptionMap[uuid] ?: "Unknown Service/Characteristic ($uuid)"
+    return allGattCharacteristics.lookup(uuid.trim())
+        ?: uuidToDescriptionMap[uuid]
+        ?: combinedGattMap[uuid]
+        ?: "Unknown Service/Characteristic/Descriptor -- Full Lookup Done ($uuid)"
 }
 
 private val uuidToDescriptionMap = mapOf(
