@@ -39,15 +39,12 @@ import java.util.Locale
 @Composable
 fun BluetoothLeSuccessScreen(
     scanState: ScanState,
-    gattConnectionState: GattConnectionState,
     device: BluetoothDeviceInfo?,
     isStartScanningEnabled: Boolean,
     startScan: () -> Unit, // Callback to trigger rescan
     stopScan: () -> Unit, // Callback to trigger stop scan
     connectToDevice: () -> Unit,
     readBattLevel: () -> Unit,
-    // getCharacteristicValue: (DeviceService, DeviceCharacteristic) -> GattCharacteristicValue,
-    //gattCharacteristicList: List<GattCharacteristicValue>,
     gattServicesList: List<DeviceService>
 ) {
     Column(

@@ -322,7 +322,6 @@ class BluetoothLeRepImpl @Inject constructor(
                     Log.d(TAG, "Attempting delay to read characteristic: ${characteristic.uuid}")
                     val result = try {
                         val success = gatt.readCharacteristic(characteristic)
-                        //val success = true
                         if (!success) {
                             Log.e(
                                 TAG,
@@ -350,5 +349,29 @@ class BluetoothLeRepImpl @Inject constructor(
         }
 
         Log.d(TAG, "Finished reading all characteristics.")
+    }
+
+
+    // Update the value of a specific characteristic
+    private fun updateCharacteristicValue(serviceUUID: String, charUUID: String, value: String) {
+        coroutineScope.launch {
+            _gattServicesList.update { currentServices ->
+                currentServices.map { service ->
+                    if (service.uuid == serviceUUID) {
+                        service.copy(
+                            characteristics = service.characteristics.map { char ->
+                                if (char.uuid == charUUID) {
+                                    char.copy(value = value)
+                                } else {
+                                    char
+                                }
+                            }
+                        )
+                    } else {
+                        service
+                    }
+                }
+            }
+        }
     }
 }
