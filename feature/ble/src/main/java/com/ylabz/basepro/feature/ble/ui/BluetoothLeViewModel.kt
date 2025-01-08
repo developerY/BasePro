@@ -65,12 +65,6 @@ class BluetoothLeViewModel @Inject constructor(
         }
     }
 
-    private fun readBatteryLevel() {
-        viewModelScope.launch(Dispatchers.IO) {
-            bleRepository.readBatteryLevel()
-        }
-    }
-
     private fun readAllCharacteristics() {
         viewModelScope.launch(Dispatchers.IO) {
             bleRepository.readAllCharacteristics()

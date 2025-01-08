@@ -147,10 +147,6 @@ class BluetoothLeRepImpl @Inject constructor(
             }
         }
     }
-    private val BATTERY_SERVICE_UUID = UUID.fromString("0000180F-0000-1000-8000-00805f9b34fb")
-    private val BATTERY_LEVEL_CHARACTERISTIC_UUID =
-        UUID.fromString("00002A19-0000-1000-8000-00805f9b34fb")
-
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     override suspend fun connectToDevice() {
@@ -204,47 +200,6 @@ class BluetoothLeRepImpl @Inject constructor(
                     _gattServicesList.value = services
 
                     Log.d(TAG, "Cached ${_gattServicesList.value.size} services.")
-                } else {
-                    Log.e(TAG, "Failed to discover GATT services. Status: $status")
-                }
-            }
-
-            @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-            fun onServicesDiscoveredWithRead(gatt: BluetoothGatt, status: Int) {
-                if (status == BluetoothGatt.GATT_SUCCESS) {
-                    Log.d(TAG, "GATT services discovered.")
-                    gatt.services.forEach { service ->
-                        Log.d(TAG, "Service: ${getHumanReadableName(service.uuid.toString())}")
-                        service.characteristics.forEachIndexed { index, characteristic ->
-                            coroutineScope.launch {
-                                delay(index * 2000L)  // Delay to avoid skipping
-                                Log.d(
-                                    TAG,
-                                    "Delayed Characteristic: ${getHumanReadableName(characteristic.uuid.toString())}"
-                                )
-                                if (characteristic.properties and BluetoothGattCharacteristic.PROPERTY_READ != 0) {
-                                    Log.d(
-                                        TAG,
-                                        "Reading Characteristic: ${
-                                            getHumanReadableName(characteristic.uuid.toString())
-                                        }"
-                                    )
-                                    val success = gatt.readCharacteristic(characteristic)
-                                    if (!success) {
-                                        Log.e(
-                                            TAG,
-                                            "Failed to initiate read for characteristic: ${characteristic.uuid}"
-                                        )
-                                    }
-                                } else {
-                                    Log.w(
-                                        TAG,
-                                        "Characteristic ${getHumanReadableName(characteristic.uuid.toString())} is not readable."
-                                    )
-                                }
-                            }
-                        }
-                    }
                 } else {
                     Log.e(TAG, "Failed to discover GATT services. Status: $status")
                 }
@@ -348,49 +303,6 @@ class BluetoothLeRepImpl @Inject constructor(
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    override suspend fun readBatteryLevel() {
-        val gatt = getCachedGatt() ?: run {
-            Log.e(TAG, "GATT connection is not available")
-            return
-        }
-
-        val batteryService = gatt.getService(BATTERY_SERVICE_UUID)
-        if (batteryService == null) {
-            Log.e(TAG, "Battery service not found")
-            return
-        }
-
-        val batteryLevelCharacteristic =
-            batteryService.getCharacteristic(BATTERY_LEVEL_CHARACTERISTIC_UUID)
-        if (batteryLevelCharacteristic == null) {
-            Log.e(TAG, "Battery level characteristic not found")
-            return
-        }
-
-        if (batteryLevelCharacteristic.properties and BluetoothGattCharacteristic.PROPERTY_READ == 0) {
-            Log.e(TAG, "Battery level characteristic is not readable")
-            return
-        }
-
-        // Perform the read operation
-        val result = suspendCancellableCoroutine<Boolean> { continuation ->
-            val success = gatt.readCharacteristic(batteryLevelCharacteristic)
-            if (!success) {
-                Log.e(TAG, "Failed to initiate read for battery level")
-                continuation.resume(false) {}
-            }
-        }
-
-        if (result) {
-            val value = batteryLevelCharacteristic.value?.getOrNull(0)?.toInt() ?: -1
-            Log.d(TAG, "Battery Level: $value%")
-        }
-    }
-
-    private val readMutex =
-        Mutex() // Single Mutex to ensure sequential reads for each characteristic
-
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     override suspend fun readAllCharacteristics() {
         val gatt = gatt ?: run {
             Log.e(TAG, "No GATT connection.")
@@ -403,21 +315,31 @@ class BluetoothLeRepImpl @Inject constructor(
                 TAG,
                 "Service: ${getHumanReadableName(service.uuid.toString())} (${service.uuid})"
             )
-
             for (characteristic in service.characteristics) {
                 if (characteristic.properties and BluetoothGattCharacteristic.PROPERTY_READ != 0) {
-                    readMutex.withLock {
-                        delay(2000)  // Add a short delay to allow the device to process requests
-                        Log.d(TAG, "Attempting delay to read characteristic: ${characteristic.uuid}")
-                        val result = try {
-                           // readCharacteristic(gatt, characteristic)
-                        } catch (e: Exception) {
-                            "Error: ${e.message}"
+
+                    delay(1000)  // Add a short delay to allow the device to process requests
+                    Log.d(TAG, "Attempting delay to read characteristic: ${characteristic.uuid}")
+                    val result = try {
+                        val success = gatt.readCharacteristic(characteristic)
+                        //val success = true
+                        if (!success) {
+                            Log.e(
+                                TAG,
+                                "Failed to initiate read for characteristic: ${characteristic.uuid}"
+                            )
+                        } else {
+                            Log.d(
+                                TAG,
+                                "Read request sent successfully for characteristic: ${characteristic.uuid}"
+                            )
                         }
-                        Log.d(TAG, "Characteristic read complete: ${characteristic.uuid} = $result \n")
+                    } catch (e: Exception) {
+                        "Error: ${e.message}"
                     }
+                    Log.d(TAG, "Characteristic read complete: ${characteristic.uuid} = $result \n")
+
                     // Small delay to ensure GATT queue has time to clear
-                    delay(2000)
                 } else {
                     Log.d(
                         TAG,
@@ -429,70 +351,4 @@ class BluetoothLeRepImpl @Inject constructor(
 
         Log.d(TAG, "Finished reading all characteristics.")
     }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    private suspend fun readCharacteristic(
-        gatt: BluetoothGatt,
-        characteristic: BluetoothGattCharacteristic
-    ): String = suspendCancellableCoroutine { continuation ->
-        Log.d(TAG, "Start to initiate read for characteristic: ${characteristic.uuid}")
-        //val success = gatt.readCharacteristic(characteristic)
-        val success = true
-        if (!success) {
-            Log.e(TAG, "Failed to initiate read for characteristic: ${characteristic.uuid}")
-            continuation.resume("Read failed") {}
-        } else {
-            Log.d(TAG, "Read request sent successfully for characteristic: ${characteristic.uuid}")
-        }
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    suspend fun readAllCharacteristicsFlat() {
-        val gatt = getCachedGatt() ?: run {
-            Log.e(TAG, "GATT connection is not available")
-            return
-        }
-
-        // Ensure only one read operation is active at any time using the Mutex
-        readMutex.withLock {
-            gatt.services.forEach { service ->
-                Log.d(
-                    TAG,
-                    "Service: ${getHumanReadableName(service.uuid.toString())} (${service.uuid})"
-                )
-
-                service.characteristics.forEach { characteristic ->
-                    if (characteristic.properties and BluetoothGattCharacteristic.PROPERTY_READ != 0) {
-                        val result = suspendCancellableCoroutine<Boolean> { continuation ->
-                            val success = gatt.readCharacteristic(characteristic)
-                            if (!success) {
-                                Log.e(TAG, "Failed to initiate read for ${characteristic.uuid}")
-                                continuation.resume(false) {}
-                            }
-                        }
-
-                        if (result) {
-                            val value =
-                                characteristic.value?.joinToString(" ") { "%02X".format(it) }
-                                    ?: "N/A"
-                            Log.d(
-                                TAG,
-                                "Characteristic: ${getHumanReadableName(characteristic.uuid.toString())} (${characteristic.uuid}) = $value"
-                            )
-                        }
-                    } else {
-                        Log.d(
-                            TAG,
-                            "Characteristic: ${getHumanReadableName(characteristic.uuid.toString())} (${characteristic.uuid}) is not readable."
-                        )
-                    }
-                }
-            }
-        }
-
-        Log.d(TAG, "Finished reading all characteristics.")
-    }
-
 }

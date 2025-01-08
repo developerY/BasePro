@@ -28,7 +28,5 @@ interface BluetoothLeRepository {
     //suspend fun enableNotifications(characteristic: BluetoothGattCharacteristic): Boolean
     //val notificationFlow: Flow<Pair<String, String>> // Emits characteristic UUID and value when notified
     //fun cacheServicesAndCharacteristics(gatt: BluetoothGatt)
-
-    suspend fun readBatteryLevel()
     suspend fun readAllCharacteristics()
 }
