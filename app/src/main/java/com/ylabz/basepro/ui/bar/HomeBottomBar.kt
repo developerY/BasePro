@@ -1,5 +1,6 @@
 package com.ylabz.basepro.ui.bar
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.List
@@ -22,8 +23,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.ui.navigation.main.BottomNavigationItem
 
@@ -107,6 +111,22 @@ private fun navigateTo(tabTitle: String, navController: NavHostController) {
         "Settings" -> navController.navigate(Screen.SettingsScreen.route)
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun HomeBottomBarPreview() {
+    // Mock NavController for preview
+    val mockNavController = rememberNavController()
+
+    HomeBottomBar(
+        route = "Home",
+        navController = mockNavController,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+    )
+}
+
 
     /*
     AppBottomBar(

@@ -1,10 +1,13 @@
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -66,4 +69,17 @@ fun MapContent(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MapContentPreview() {
+    MapContent(
+        directions = "Head north on Main Street and turn left at the second traffic light.",
+        paddingValues = PaddingValues(16.dp),
+        isError = true, // To show error overlay in preview
+        errorMessage = "Network error. Please try again.",
+        onRetry = { println("Retry clicked!") }, // Mock retry callback
+        modifier = Modifier.fillMaxSize()
+    )
 }

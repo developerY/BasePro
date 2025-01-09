@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
 import com.ylabz.basepro.core.model.ble.DeviceCharacteristic
@@ -179,4 +180,39 @@ fun BluetoothLeSuccessScreen(
 fun formatDateTime(timestamp: Long): String {
     val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     return formatter.format(Date(timestamp))
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BluetoothLeSuccessScreenPreview() {
+    BluetoothLeSuccessScreen(
+        scanState = ScanState.SCANNING,
+        gattConnectionState = GattConnectionState.Disconnected,
+        device = BluetoothDeviceInfo(
+            name = "CC2650 SensorTag",
+            address = "00:11:22:33:44:55",
+            rssi = -65
+        ),
+        isStartScanningEnabled = true,
+        startScan = { /* Mock start scan action */ },
+        stopScan = { /* Mock stop scan action */ },
+        connectToDevice = { /* Mock connect to device action */ },
+        readBattLevel = { /* Mock read battery level action */ },
+        gattServicesList = listOf(
+            DeviceService(
+                uuid = "0000180f-0000-1000-8000-00805f9b34fb",
+                name = "Battery Service",
+                characteristics = listOf(
+                    DeviceCharacteristic(
+                        uuid = "00002a19-0000-1000-8000-00805f9b34fb",
+                        name = "Battery Level",
+                        isReadable = true,
+                        isWritable = false,
+                        isNotifiable = true,
+                        value = "95%"
+                    )
+                )
+            )
+        )
+    )
 }

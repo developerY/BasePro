@@ -48,7 +48,7 @@ dependencies {
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.ui.tooling.preview.android)
+    implementation(libs.androidx.ui.tooling)
 
     // Hilt Dependency Injection
     implementation(libs.hilt.navigation.compose)

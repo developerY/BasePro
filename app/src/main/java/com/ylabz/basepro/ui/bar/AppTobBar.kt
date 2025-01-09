@@ -4,13 +4,17 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -44,6 +48,26 @@ fun AppTopBar(
             }
             // Additional actions passed via the slot
             actions()
+        }
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AppTopBarPreview() {
+    // Mock DrawerState and CoroutineScope for the preview
+    val drawerState = rememberDrawerState(initialValue = androidx.compose.material3.DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+    AppTopBar(
+        title = "Preview Title",
+        scope = scope,
+        drawerState = drawerState,
+        actions = {
+            // Example additional action for the preview
+            IconButton(onClick = { /* Handle settings action */ }) {
+                Icon(Icons.Default.Settings, contentDescription = "Settings")
+            }
         }
     )
 }

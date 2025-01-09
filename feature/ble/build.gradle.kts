@@ -52,7 +52,6 @@ dependencies {
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.ui.tooling.preview.android)
 
     // Hilt Dependency Injection
     implementation(libs.hilt.navigation.compose)
@@ -66,4 +65,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    // Preview
+    debugImplementation(libs.androidx.ui.tooling)
+
 }

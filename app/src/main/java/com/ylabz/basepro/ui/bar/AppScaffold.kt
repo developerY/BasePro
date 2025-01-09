@@ -2,6 +2,8 @@ package com.ylabz.basepro.ui.bar
 
 import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
@@ -9,8 +11,13 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.core.ui.Screen.BLEPermissionsScreen.route
 import kotlinx.coroutines.CoroutineScope
@@ -57,5 +64,29 @@ fun AppScaffold(
         }
     ) { padding ->
         content(padding)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AppScaffoldPreview() {
+    // Mock dependencies for preview
+    val mockNavController = rememberNavController()
+    val mockDrawerState = rememberDrawerState(initialValue = androidx.compose.material3.DrawerValue.Closed)
+    val mockScope = rememberCoroutineScope()
+
+    AppScaffold(
+        route = "main",
+        scope = mockScope,
+        drawerState = mockDrawerState,
+        navController = mockNavController
+    ) { paddingValues ->
+        // Mock content for preview
+        androidx.compose.material3.Text(
+            text = "Main Screen Content",
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        )
     }
 }

@@ -40,10 +40,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.ylabz.basepro.core.model.ble.ScanState
 
@@ -244,6 +247,28 @@ private fun getFriendlyName(permission: String): String {
         android.Manifest.permission.ACCESS_FINE_LOCATION -> "Fine Location"
         else -> "Unknown"
     }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Preview(showBackground = true)
+@Composable
+fun StatusBarPreview() {
+    // Mock permissions state for preview
+    val permissions = listOf(
+       android.Manifest.permission.BLUETOOTH_SCAN,
+        android.Manifest.permission.BLUETOOTH_CONNECT,
+        android.Manifest.permission.ACCESS_FINE_LOCATION
+    )
+
+    val permissionState = rememberMultiplePermissionsState(permissions) {
+        /* Handle permission requests */
+    }
+
+    StatusBar(
+        permissionState = permissionState,
+        onManagePermissionsClick = { /* Mock click */ },
+        scanState = ScanState.SCANNING // Example scan state
+    )
 }
 
 
