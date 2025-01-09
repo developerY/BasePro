@@ -8,8 +8,6 @@ import com.ylabz.basepro.core.model.ble.GattCharacteristicValue
 
 sealed interface BluetoothLeUiState {
     object ShowBluetoothDialog : BluetoothLeUiState
-    object Stopped : BluetoothLeUiState
-    object Scanning : BluetoothLeUiState
     object Loading : BluetoothLeUiState
     object PermissionsRequired : BluetoothLeUiState
     object PermissionsDenied : BluetoothLeUiState

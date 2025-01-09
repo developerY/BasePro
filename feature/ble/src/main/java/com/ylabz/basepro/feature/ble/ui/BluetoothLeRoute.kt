@@ -135,17 +135,6 @@ fun BluetoothLeRoute(
 
             is BluetoothLeUiState.Error -> ErrorScreen(uiState.message)
 
-            is BluetoothLeUiState.Scanning -> {
-                LaunchedEffect(Unit) {
-                    viewModel.onEvent(BluetoothLeEvent.StopScan)
-                }
-            } // Handle stopped state if needed
-
-            is BluetoothLeUiState.Stopped -> {
-                LaunchedEffect(Unit) {
-                    viewModel.onEvent(BluetoothLeEvent.StopScan)
-                }
-            } // Handle stopped state if needed
             is BluetoothLeUiState.DataLoaded -> TODO()
         }
     }

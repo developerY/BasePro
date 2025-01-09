@@ -37,15 +37,14 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-// Success screen showing BLE devices
 @Composable
 fun BluetoothLeSuccessScreen(
     scanState: ScanState,
     gattConnectionState: GattConnectionState,
     device: BluetoothDeviceInfo?,
     isStartScanningEnabled: Boolean,
-    startScan: () -> Unit, // Callback to trigger rescan
-    stopScan: () -> Unit, // Callback to trigger stop scan
+    startScan: () -> Unit,
+    stopScan: () -> Unit,
     connectToDevice: () -> Unit,
     readBattLevel: () -> Unit,
     gattServicesList: List<DeviceService>
@@ -53,55 +52,78 @@ fun BluetoothLeSuccessScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(8.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         // Header Section
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if (device != null && device.name.contains("CC2650 SensorTag", ignoreCase = true)) {
-                Text(
-                    text = "TI Tag Sensor Found!",
-                    color = Color(0xFF009688),
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleLarge,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-                Button(
-                    onClick = connectToDevice,
-                    modifier = Modifier.fillMaxWidth(0.5f)
+        if (device != null && device.name.contains("CC2650 SensorTag", ignoreCase = true)) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(4.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Connect")
+                    Column {
+                        Text(
+                            text = "TI Tag Sensor Found!",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = "RSSI: ${device.rssi} dBm",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray
+                        )
+                    }
+                    if (gattConnectionState == GattConnectionState.Disconnected) {
+                        Button(
+                            onClick = connectToDevice,
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text("Connect")
+                        }
+                    } else if (gattConnectionState == GattConnectionState.Connected) {
+                        Button(
+                            onClick = readBattLevel,
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+                        ) {
+                            Text("Read Values")
+                        }
+                    }
                 }
-            } else {
-                Text(
-                    text = if (scanState == ScanState.NOT_SCANNING) "Idle" else "Searching for TI Tag Sensor...",
-                    color = Color.Gray,
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
             }
+        } else {
+            Text(
+                text = if (scanState == ScanState.NOT_SCANNING) "Idle" else "Searching for TI Tag Sensor...",
+                color = Color.Gray,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-        // Devices List Section
+        // Device Info Section
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
             verticalArrangement = Arrangement.Top
         ) {
-            Text(
-                text = "Device Information",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-
             if (device == null) {
                 Text(
                     text = "No devices found. Try (re)scanning.",
@@ -110,7 +132,7 @@ fun BluetoothLeSuccessScreen(
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp)
+                        .padding(bottom = 8.dp)
                 )
             } else {
                 Card(
@@ -118,48 +140,44 @@ fun BluetoothLeSuccessScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    elevation = CardDefaults.cardElevation(6.dp)
+                    elevation = CardDefaults.cardElevation(4.dp)
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
+                    Column(
+                        modifier = Modifier.padding(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         Text(
                             text = "${device.name} (${device.address})",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                        Text(
-                            text = "RSSI: ${device.rssi} dBm",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Gray,
-                            modifier = Modifier.padding(bottom = 16.dp)
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold
                         )
 
-                        if (device.name.contains("CC2650 SensorTag", ignoreCase = true)) {
+                        // GATT Services List Section
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
                             Text(
                                 text = "GATT Services:",
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
-
-                            // Integrating the beautiful expandable list for GATT services
-                            GattServicesList(
-                                services = gattServicesList,
-                                readBat = readBattLevel
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
                             )
                         }
+
+                        GattServicesList(
+                            services = gattServicesList,
+                            readBat = readBattLevel
+                        )
                     }
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Actions Section
+        // Scan Control Buttons
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp),
+                .padding(vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(
@@ -167,23 +185,22 @@ fun BluetoothLeSuccessScreen(
                 enabled = isStartScanningEnabled,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (isStartScanningEnabled) MaterialTheme.colorScheme.primary else Color.Gray
-                )
+                ),
+                shape = RoundedCornerShape(16.dp)
             ) {
                 Text("Start Scan")
             }
 
             Button(
                 onClick = stopScan,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary
-                )
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+                shape = RoundedCornerShape(16.dp)
             ) {
                 Text("Stop Scan")
             }
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
