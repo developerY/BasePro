@@ -1,6 +1,7 @@
 package com.ylabz.basepro.feature.ble.ui.components
 
 import android.R.attr.description
+import android.text.format.DateUtils.formatDateTime
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -133,7 +134,7 @@ fun Gattab(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             Text(
-                text = "Last Synced: ${formatDateTime(System.currentTimeMillis())}",
+                text = "Last Synced: 0",
                 style = MaterialTheme.typography.bodyMedium
             )
         }

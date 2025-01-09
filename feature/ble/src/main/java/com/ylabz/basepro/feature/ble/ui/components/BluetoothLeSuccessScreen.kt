@@ -1,5 +1,6 @@
 package com.ylabz.basepro.feature.ble.ui.components
 
+import android.R.attr.fontWeight
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -63,7 +64,7 @@ fun BluetoothLeSuccessScreen(
             if (device != null && device.name.contains("CC2650 SensorTag", ignoreCase = true)) {
                 Text(
                     text = "TI Tag Sensor Found!",
-                    color = Color.Green,
+                    color = Color(0xFF009688),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleLarge,
                     textAlign = TextAlign.Center,
@@ -96,7 +97,7 @@ fun BluetoothLeSuccessScreen(
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = "Devices Found:",
+                text = "Device Information",
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
@@ -113,11 +114,11 @@ fun BluetoothLeSuccessScreen(
                 )
             } else {
                 Card(
-                    shape = RoundedCornerShape(8.dp),
+                    shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    elevation = CardDefaults.cardElevation(4.dp)
+                    elevation = CardDefaults.cardElevation(6.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
@@ -130,17 +131,23 @@ fun BluetoothLeSuccessScreen(
                             text = "RSSI: ${device.rssi} dBm",
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.Gray,
-                            modifier = Modifier.padding(bottom = 8.dp)
+                            modifier = Modifier.padding(bottom = 16.dp)
                         )
-                    }
 
-                    if (device != null && device.name.contains("CC2650 SensorTag", ignoreCase = true)) {
-                        //GattCharTable(characteristics = gattCharacteristicList )
-                        GattServices(
-                            services = gattServicesList,
-                            readBat = readBattLevel
-                            //onCharacteristicClick = {} as (DeviceService, DeviceCharacteristic) -> Unit//getCharacteristicValue
-                        )
+                        if (device.name.contains("CC2650 SensorTag", ignoreCase = true)) {
+                            Text(
+                                text = "GATT Services:",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+
+                            // Integrating the beautiful expandable list for GATT services
+                            GattServicesList(
+                                services = gattServicesList,
+                                readBat = readBattLevel
+                            )
+                        }
                     }
                 }
             }
@@ -177,10 +184,6 @@ fun BluetoothLeSuccessScreen(
     }
 }
 
-fun formatDateTime(timestamp: Long): String {
-    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-    return formatter.format(Date(timestamp))
-}
 
 @Preview(showBackground = true)
 @Composable
@@ -191,13 +194,13 @@ fun BluetoothLeSuccessScreenPreview() {
         device = BluetoothDeviceInfo(
             name = "CC2650 SensorTag",
             address = "00:11:22:33:44:55",
-            rssi = -65
+            rssi = -70
         ),
         isStartScanningEnabled = true,
-        startScan = { /* Mock start scan action */ },
-        stopScan = { /* Mock stop scan action */ },
-        connectToDevice = { /* Mock connect to device action */ },
-        readBattLevel = { /* Mock read battery level action */ },
+        startScan = { println("Start scanning...") },
+        stopScan = { println("Stop scanning...") },
+        connectToDevice = { println("Connecting to device...") },
+        readBattLevel = { println("Reading battery level...") },
         gattServicesList = listOf(
             DeviceService(
                 uuid = "0000180f-0000-1000-8000-00805f9b34fb",
@@ -209,10 +212,26 @@ fun BluetoothLeSuccessScreenPreview() {
                         isReadable = true,
                         isWritable = false,
                         isNotifiable = true,
-                        value = "95%"
+                        value = "90%"
                     )
+                )
+            ),
+            DeviceService(
+            uuid = "0000180a-0000-1000-8000-00805f9b34fb",
+            name = "Device Information Service",
+            characteristics = listOf(
+                DeviceCharacteristic(
+                    uuid = "00002a24-0000-1000-8000-00805f9b34fb",
+                    name = "Model Number",
+                    isReadable = true,
+                    isWritable = false,
+                    isNotifiable = false,
+                    value = "CC2650 Sensor"
                 )
             )
         )
+
+        )
     )
 }
+
