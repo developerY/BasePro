@@ -199,6 +199,11 @@ class BluetoothLeRepImpl @Inject constructor(
 
                     _gattServicesList.value = services
 
+                    // Activate the sensors
+                    coroutineScope.launch {
+                        activateGattServices()
+                    }
+
                     // Automatically read all characteristics after discovery
                     /*coroutineScope.launch {
                         readAllCharacteristics()
@@ -366,6 +371,48 @@ class BluetoothLeRepImpl @Inject constructor(
 
         Log.d(TAG, "Finished reading all characteristics.")
     }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    suspend fun activateGattServices() {
+        val gatt = gatt ?: run {
+            Log.e(TAG, "No GATT connection.")
+            return
+        }
+
+        val activationMap = mapOf(
+            "f000aa02-0451-4000-b000-000000000000" to byteArrayOf(0x01), // Temperature Enable
+            "f000aa22-0451-4000-b000-000000000000" to byteArrayOf(0x01), // Humidity Enable
+            "f000aa42-0451-4000-b000-000000000000" to byteArrayOf(0x01), // Barometer Enable
+            "f000ac02-0451-4000-b000-000000000000" to byteArrayOf(0x01), // Accelerometer Enable
+            "f000aa82-0451-4000-b000-000000000000" to byteArrayOf(0x01), // Magnetometer Enable
+            "f000aa72-0451-4000-b000-000000000000" to byteArrayOf(0x07)  // Gyroscope Enable (0x07 for all axes)
+        )
+
+        for ((uuid, value) in activationMap) {
+            val characteristic = gatt.services
+                .flatMap { it.characteristics }
+                .find { it.uuid == UUID.fromString(uuid) }
+
+            if (characteristic != null) {
+                try {
+                    characteristic.value = value
+                    val success = gatt.writeCharacteristic(characteristic)
+                    if (success) {
+                        Log.d(TAG, "Activated service: $uuid with value: ${value.joinToString(", ") { "0x%02X".format(it) }}")
+                    } else {
+                        Log.e(TAG, "Failed to activate service: $uuid")
+                    }
+                    // Add delay to ensure GATT queue clears before sending the next write
+                    delay(1000) // 500ms delay to prevent overwhelming the GATT server
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error writing to characteristic: $uuid. ${e.message}", e)
+                }
+            } else {
+                Log.e(TAG, "Characteristic not found for UUID: $uuid")
+            }
+        }
+    }
+
 
 
     // Update the value of a specific characteristic
