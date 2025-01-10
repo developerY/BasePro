@@ -223,6 +223,11 @@ class BluetoothLeRepImpl @Inject constructor(
 
                     val serviceUUID = characteristic.service.uuid.toString()
                     val charUUID = characteristic.uuid.toString()
+                    val parsedValue = characteristicParsers[charUUID]?.invoke(rawValue) ?: "Unknown Value"
+
+                    Log.d(TAG, "Characteristic read: $charUUID, Parsed Value: $parsedValue")
+
+                    updateCharacteristicValue(characteristic.service.uuid.toString(), charUUID, parsedValue)
 
                     val stringValue = characteristic.getStringValue(0) ?: "N/A"
                     val intValue = rawValue.getOrNull(0)?.toInt() ?: -1
@@ -235,8 +240,6 @@ class BluetoothLeRepImpl @Inject constructor(
                     Log.d(TAG, "First Byte as Int: $intValue")
                     Log.d(TAG, "Length: $length bytes")
 
-                    // Update the value in the characteristic list
-                    updateCharacteristicValue(serviceUUID, charUUID, stringValue)
 
                     // Add the characteristic to the list with a summary of all values
                     val summary = """
@@ -388,3 +391,99 @@ class BluetoothLeRepImpl @Inject constructor(
         }
     }
 }
+
+// Make everything human readable
+// Map of characteristic UUIDs to their corresponding parsers
+private val characteristicParsers = mapOf(
+    "00002a00-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> raw.toString(Charsets.UTF_8) }, // Device Name (String)
+    "00002a01-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> parseAppearance(raw) }, // Appearance (Int)
+    "00002a04-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> parseConnectionParameters(raw) }, // Connection Params
+    "00002a19-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> "${raw.getOrNull(0)?.toInt() ?: 0}%" }, // Battery Level (Percentage)
+    "f000aa01-0451-4000-b000-000000000000" to { raw: ByteArray -> parseTemperature(raw) }, // Temperature Data
+    "f000aa21-0451-4000-b000-000000000000" to { raw: ByteArray -> parseHumidity(raw) }, // Humidity Data
+    "f000aa41-0451-4000-b000-000000000000" to { raw: ByteArray -> parseBarometerData(raw) }, // Barometer Data
+    "f000ac01-0451-4000-b000-000000000000" to { raw: ByteArray -> parseAccelerometerData(raw) }, // Accelerometer Data
+    "f000aa81-0451-4000-b000-000000000000" to { raw: ByteArray -> parseMagnetometerData(raw) }, // Magnetometer Data
+    "f000aa71-0451-4000-b000-000000000000" to { raw: ByteArray -> parseGyroscopeData(raw) } // Gyroscope Data
+)
+
+private fun parseAppearance(raw: ByteArray): String {
+    return if (raw.size >= 2) {
+        val appearance = (raw[1].toInt() shl 8) or (raw[0].toInt() and 0xFF)
+        "Appearance Code: $appearance"
+    } else {
+        "Unknown Appearance"
+    }
+}
+
+private fun parseConnectionParameters(raw: ByteArray): String {
+    return if (raw.size >= 8) {
+        val minConnInterval = (raw[1].toInt() shl 8) or (raw[0].toInt() and 0xFF)
+        val maxConnInterval = (raw[3].toInt() shl 8) or (raw[2].toInt() and 0xFF)
+        val slaveLatency = (raw[5].toInt() shl 8) or (raw[4].toInt() and 0xFF)
+        "Min Interval: ${minConnInterval * 1.25} ms, Max Interval: ${maxConnInterval * 1.25} ms, Slave Latency: $slaveLatency"
+    } else {
+        "Invalid Connection Parameters"
+    }
+}
+
+private fun parseTemperature(raw: ByteArray): String {
+    return if (raw.size >= 4) {
+        val ambientTemp = (raw[2].toInt() shl 8 or (raw[3].toInt() and 0xFF)) / 128.0
+        "Temperature: %.2f°C".format(ambientTemp)
+    } else {
+        "Invalid Temperature Data"
+    }
+}
+
+private fun parseHumidity(raw: ByteArray): String {
+    return if (raw.size >= 4) {
+        val humidity = ((raw[2].toInt() shl 8) or (raw[3].toInt() and 0xFF)) / 65536.0 * 100
+        "Humidity: %.1f%%".format(humidity)
+    } else {
+        "Invalid Humidity Data"
+    }
+}
+
+private fun parseBarometerData(raw: ByteArray): String {
+    return if (raw.size >= 6) {
+        val pressure = ((raw[2].toInt() shl 16) or (raw[1].toInt() shl 8) or (raw[0].toInt() and 0xFF))
+        "Pressure: ${pressure / 100.0} hPa"
+    } else {
+        "Invalid Barometer Data"
+    }
+}
+
+private fun parseAccelerometerData(raw: ByteArray): String {
+    return if (raw.size >= 6) {
+        val x = raw[0].toInt()
+        val y = raw[1].toInt()
+        val z = raw[2].toInt()
+        "X: $x, Y: $y, Z: $z"
+    } else {
+        "Invalid Accelerometer Data"
+    }
+}
+
+private fun parseMagnetometerData(raw: ByteArray): String {
+    return if (raw.size >= 6) {
+        val x = (raw[1].toInt() shl 8) or (raw[0].toInt() and 0xFF)
+        val y = (raw[3].toInt() shl 8) or (raw[2].toInt() and 0xFF)
+        val z = (raw[5].toInt() shl 8) or (raw[4].toInt() and 0xFF)
+        "Magnetometer X: $x, Y: $y, Z: $z"
+    } else {
+        "Invalid Magnetometer Data"
+    }
+}
+
+private fun parseGyroscopeData(raw: ByteArray): String {
+    return if (raw.size >= 6) {
+        val x = (raw[1].toInt() shl 8) or (raw[0].toInt() and 0xFF)
+        val y = (raw[3].toInt() shl 8) or (raw[2].toInt() and 0xFF)
+        val z = (raw[5].toInt() shl 8) or (raw[4].toInt() and 0xFF)
+        "Gyroscope X: $x, Y: $y, Z: $z"
+    } else {
+        "Invalid Gyroscope Data"
+    }
+}
+
