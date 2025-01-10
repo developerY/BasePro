@@ -199,6 +199,11 @@ class BluetoothLeRepImpl @Inject constructor(
 
                     _gattServicesList.value = services
 
+                    // Automatically read all characteristics after discovery
+                    /*coroutineScope.launch {
+                        readAllCharacteristics()
+                    }*/
+
                     Log.d(TAG, "Cached ${_gattServicesList.value.size} services.")
                 } else {
                     Log.e(TAG, "Failed to discover GATT services. Status: $status")
@@ -215,6 +220,10 @@ class BluetoothLeRepImpl @Inject constructor(
                     val description = getHumanReadableName(characteristic.uuid.toString())
                     val rawValue = characteristic.value ?: ByteArray(0)  // Get the raw bytes
 
+
+                    val serviceUUID = characteristic.service.uuid.toString()
+                    val charUUID = characteristic.uuid.toString()
+
                     val stringValue = characteristic.getStringValue(0) ?: "N/A"
                     val intValue = rawValue.getOrNull(0)?.toInt() ?: -1
                     val hexValue = rawValue.joinToString(" ") { byte -> "%02X".format(byte) }
@@ -225,6 +234,9 @@ class BluetoothLeRepImpl @Inject constructor(
                     Log.d(TAG, "String Value: $stringValue")
                     Log.d(TAG, "First Byte as Int: $intValue")
                     Log.d(TAG, "Length: $length bytes")
+
+                    // Update the value in the characteristic list
+                    updateCharacteristicValue(serviceUUID, charUUID, stringValue)
 
                     // Add the characteristic to the list with a summary of all values
                     val summary = """
@@ -266,6 +278,7 @@ class BluetoothLeRepImpl @Inject constructor(
     override suspend fun startScan() {
         // Reset the current device to ensure clean feedback
         // Create the device info object
+        _gattServicesList.value = emptyList<DeviceService>()
         synchronized(_scanState) {
             if (_scanState.value == ScanState.NOT_SCANNING) {
                 tagSensorFound = null

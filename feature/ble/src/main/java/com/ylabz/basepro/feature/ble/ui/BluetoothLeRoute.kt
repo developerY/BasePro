@@ -129,7 +129,7 @@ fun BluetoothLeRoute(
                 stopScan = { viewModel.onEvent(BluetoothLeEvent.StopScan) }, // Trigger rescan
                 connectToDevice = { viewModel.onEvent(BluetoothLeEvent.ConnectToSensorTag) },
                 // getCharacteristicValue = { } as (DeviceService, DeviceCharacteristic) -> GattCharacteristicValue,
-                readBattLevel = { viewModel.onEvent(BluetoothLeEvent.ReadBatteryLevel) },
+                readCharacteristics = { viewModel.onEvent(BluetoothLeEvent.ReadCharacteristics) },
                 gattServicesList = gattServicesList
             )
 

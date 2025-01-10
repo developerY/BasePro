@@ -17,7 +17,7 @@ sealed interface BluetoothLeEvent {
     object GattCharacteristicList : BluetoothLeEvent
 
     // Add this new event for battery level reading
-    object ReadBatteryLevel : BluetoothLeEvent
+    object ReadCharacteristics : BluetoothLeEvent
 
 
     //object FetchGattServices : BluetoothLeEvent

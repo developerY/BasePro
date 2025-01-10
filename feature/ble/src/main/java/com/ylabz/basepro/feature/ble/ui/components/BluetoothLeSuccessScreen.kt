@@ -46,7 +46,7 @@ fun BluetoothLeSuccessScreen(
     startScan: () -> Unit,
     stopScan: () -> Unit,
     connectToDevice: () -> Unit,
-    readBattLevel: () -> Unit,
+    readCharacteristics: () -> Unit,
     gattServicesList: List<DeviceService>
 ) {
     Column(
@@ -94,7 +94,7 @@ fun BluetoothLeSuccessScreen(
                         }
                     } else if (gattConnectionState == GattConnectionState.Connected) {
                         Button(
-                            onClick = readBattLevel,
+                            onClick = readCharacteristics,
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
                         ) {
@@ -166,7 +166,6 @@ fun BluetoothLeSuccessScreen(
 
                         GattServicesList(
                             services = gattServicesList,
-                            readBat = readBattLevel
                         )
                     }
                 }
@@ -217,7 +216,7 @@ fun BluetoothLeSuccessScreenPreview() {
         startScan = { println("Start scanning...") },
         stopScan = { println("Stop scanning...") },
         connectToDevice = { println("Connecting to device...") },
-        readBattLevel = { println("Reading battery level...") },
+        readCharacteristics = { println("Reading characteristics from device ...") },
         gattServicesList = listOf(
             DeviceService(
                 uuid = "0000180f-0000-1000-8000-00805f9b34fb",

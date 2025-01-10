@@ -44,7 +44,6 @@ import com.ylabz.basepro.core.model.ble.ScanState
 fun GattServicesList(
     modifier: Modifier = Modifier,
     services: List<DeviceService>,
-    readBat: () -> Unit
 ) {
     Column(modifier = modifier.padding(16.dp)) {
         LazyColumn(
@@ -52,7 +51,7 @@ fun GattServicesList(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(services) { service ->
-                ExpandableGattServiceCard(service, {})
+                ExpandableGattServiceCard(service)
             }
         }
     }
@@ -61,7 +60,6 @@ fun GattServicesList(
 @Composable
 fun ExpandableGattServiceCard(
     service: DeviceService,
-    onUpdateValue: (DeviceCharacteristic) -> Unit // Callback to update the characteristic value
 ) {
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -132,13 +130,6 @@ fun ExpandableGattServiceCard(
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
-
-                            Button(
-                                onClick = { onUpdateValue(characteristic) },
-                                modifier = Modifier.align(Alignment.End)
-                            ) {
-                                Text("Update Value")
-                            }
                         }
                     }
                 }
@@ -261,7 +252,6 @@ fun GattServicesListPreview() {
 
     GattServicesList(
         services = sampleServices,
-        readBat = { /* Mock battery read action */ }
     )
 }
 
@@ -285,10 +275,7 @@ fun ExpandableGattServiceCardPreview() {
     )
 
     ExpandableGattServiceCard(
-        service = mockService,
-        onUpdateValue = { characteristic ->
-            println("Updating value for ${characteristic.name}")
-        }
+        service = mockService
     )
 }
 
@@ -333,7 +320,6 @@ fun GattServicesListPreview2() {
                 )
             )
         ),
-        readBat = { println("Read battery level") }
     )
 }
 
@@ -354,8 +340,7 @@ fun ExpandableGattServiceCardPreview2() {
                     value = "90%"
                 )
             )
-        ),
-        onUpdateValue = { println("Update value") }
+        )
     )
 }
 
@@ -374,7 +359,7 @@ fun BluetoothLeSuccessScreenPreview2() {
         startScan = { println("Start scanning") },
         stopScan = { println("Stop scanning") },
         connectToDevice = { println("Connect to device") },
-        readBattLevel = { println("Read battery level") },
+        readCharacteristics = { println("Read battery level") },
         gattServicesList = listOf(
             DeviceService(
                 uuid = "0000180f-0000-1000-8000-00805f9b34fb",

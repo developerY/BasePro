@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothLeRepository
+import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
 import com.ylabz.basepro.core.model.ble.ScanState
 import com.ylabz.basepro.core.util.Logging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -62,7 +63,7 @@ class BluetoothLeViewModel @Inject constructor(
             BluetoothLeEvent.StopScan -> stopping()
             BluetoothLeEvent.GattCharacteristicList -> gattCharacteristicList
 
-            is BluetoothLeEvent.ReadBatteryLevel -> readAllCharacteristics()//readBatteryLevel()
+            is BluetoothLeEvent.ReadCharacteristics -> readAllCharacteristics()//readBatteryLevel()
         }
     }
 
@@ -75,6 +76,7 @@ class BluetoothLeViewModel @Inject constructor(
     private fun scanning() {
         if (!_isStartButtonEnabled.value) return
         _isStartButtonEnabled.value = false
+        _uiState.value = BluetoothLeUiState.Loading
         viewModelScope.launch {
             try {
                 bleRepository.startScan()
@@ -89,7 +91,6 @@ class BluetoothLeViewModel @Inject constructor(
     }
 
     private fun stopping() {
-        //_uiState.value = BluetoothLeUiState.Stopped
         viewModelScope.launch {
             try {
                 bleRepository.stopScan()
