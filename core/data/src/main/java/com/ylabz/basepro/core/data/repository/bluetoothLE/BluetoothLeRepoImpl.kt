@@ -394,11 +394,21 @@ class BluetoothLeRepImpl @Inject constructor(
 
 // Make everything human readable
 // Map of characteristic UUIDs to their corresponding parsers
+// Updated map of characteristic UUIDs to their corresponding parsers
 private val characteristicParsers = mapOf(
     "00002a00-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> raw.toString(Charsets.UTF_8) }, // Device Name (String)
     "00002a01-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> parseAppearance(raw) }, // Appearance (Int)
+    "00002a23-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> parseSystemId(raw) }, // System ID (Hex)
     "00002a04-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> parseConnectionParameters(raw) }, // Connection Params
     "00002a19-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> "${raw.getOrNull(0)?.toInt() ?: 0}%" }, // Battery Level (Percentage)
+    "00002a24-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> raw.toString(Charsets.UTF_8) }, // Model Number String (String)
+    "00002a25-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> raw.toString(Charsets.UTF_8) }, // Serial Number String (String)
+    "00002a26-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> raw.toString(Charsets.UTF_8) }, // Firmware Revision String (String)
+    "00002a27-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> raw.toString(Charsets.UTF_8) }, // Hardware Revision String (String)
+    "00002a28-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> raw.toString(Charsets.UTF_8) }, // Software Revision String (String)
+    "00002a29-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> raw.toString(Charsets.UTF_8) }, // Manufacturer Name String (String)
+    "00002a2a-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> "Experimental Certification Data: ${raw.toString(Charsets.UTF_8)}" }, // IEEE 11073-20601 Regulatory Certification Data List
+    "00002a50-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> parsePnPId(raw) }, // PnP ID
     "f000aa01-0451-4000-b000-000000000000" to { raw: ByteArray -> parseTemperature(raw) }, // Temperature Data
     "f000aa21-0451-4000-b000-000000000000" to { raw: ByteArray -> parseHumidity(raw) }, // Humidity Data
     "f000aa41-0451-4000-b000-000000000000" to { raw: ByteArray -> parseBarometerData(raw) }, // Barometer Data
@@ -406,6 +416,31 @@ private val characteristicParsers = mapOf(
     "f000aa81-0451-4000-b000-000000000000" to { raw: ByteArray -> parseMagnetometerData(raw) }, // Magnetometer Data
     "f000aa71-0451-4000-b000-000000000000" to { raw: ByteArray -> parseGyroscopeData(raw) } // Gyroscope Data
 )
+
+// Example parser for PnP ID
+private fun parsePnPId(raw: ByteArray): String {
+    return if (raw.size >= 7) {
+        val vendorIdSource = raw[0].toInt()
+        val vendorId = (raw[2].toInt() shl 8) or (raw[1].toInt() and 0xFF)
+        val productId = (raw[4].toInt() shl 8) or (raw[3].toInt() and 0xFF)
+        val productVersion = (raw[6].toInt() shl 8) or (raw[5].toInt() and 0xFF)
+        "Vendor ID Source: $vendorIdSource, Vendor ID: $vendorId, Product ID: $productId, Product Version: $productVersion"
+    } else {
+        "Invalid PnP ID"
+    }
+}
+
+
+private fun parseSystemId(raw: ByteArray): String {
+    return if (raw.size >= 8) {
+        val manufacturerId = raw.copyOfRange(0, 5).joinToString(":") { "%02X".format(it) }
+        val organizationId = raw.copyOfRange(5, 8).joinToString(":") { "%02X".format(it) }
+        "Manufacturer ID: $manufacturerId, Organization ID: $organizationId"
+    } else {
+        "Invalid System ID"
+    }
+}
+
 
 private fun parseAppearance(raw: ByteArray): String {
     return if (raw.size >= 2) {
