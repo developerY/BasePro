@@ -7,13 +7,16 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
 import com.ylabz.basepro.core.model.ble.DeviceCharacteristic
@@ -199,9 +202,21 @@ class BluetoothLeRepImpl @Inject constructor(
 
                     _gattServicesList.value = services
 
-                    // Activate the sensors
                     coroutineScope.launch {
-                        activateGattServices()
+                        try {
+                            Log.d(TAG, "Activating GATT services...")
+                            activateGattServices() // Activates all required services
+                            delay(1000) // Short delay to ensure services have stabilized
+
+                            Log.d(TAG, "Activating temperature-specific configuration...")
+                            activateTemperatureSensor() // Activates temperature configuration and period
+                            delay(1000) // Allow the GATT queue to clear
+
+                            Log.d(TAG, "Ready to read all characteristics...")
+                            //readAllCharacteristics() // Reads all sensor data
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Error during GATT operations: ${e.message}", e)
+                        }
                     }
 
                     // Automatically read all characteristics after discovery
@@ -260,6 +275,26 @@ class BluetoothLeRepImpl @Inject constructor(
                             currentList + GattCharacteristicValue(description, summary)
                         }
                     }
+
+                    // debug temp
+
+                    if (charUUID == "f000aa01-0451-4000-b000-000000000000") {
+                        Log.d(TAG, "Reading Temperature Data Characteristic...")
+
+                        val rawValue = characteristic.value ?: ByteArray(0)
+                        Log.d(TAG, "Raw Value Length: ${rawValue.size} bytes")
+                        rawValue.forEachIndexed { index, byte ->
+                            Log.d(TAG, "Byte $index: ${byte.toInt() and 0xFF}")
+                        }
+
+                        val parsedValue = characteristicParsers[charUUID]?.invoke(rawValue) ?: "Unknown Value"
+                        Log.d(TAG, "Parsed Temperature Value: $parsedValue")
+                    } else {
+                        Log.d(TAG, "Non-temperature characteristic read: $charUUID")
+                    }
+
+
+
                 } else {
                     Log.e(TAG, "Failed to read characteristic. Status: $status")
                 }
@@ -368,8 +403,12 @@ class BluetoothLeRepImpl @Inject constructor(
                 }
             }
         }
-
         Log.d(TAG, "Finished reading all characteristics.")
+        delay(5000)
+        // start polling for temperature data
+        Log.d(TAG, "~~~~~~~~~~~~~~~~~~~Starting to poll temperature data.")
+        pollTemperatureData()
+
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
@@ -395,15 +434,27 @@ class BluetoothLeRepImpl @Inject constructor(
 
             if (characteristic != null) {
                 try {
-                    characteristic.value = value
-                    val success = gatt.writeCharacteristic(characteristic)
-                    if (success) {
-                        Log.d(TAG, "Activated service: $uuid with value: ${value.joinToString(", ") { "0x%02X".format(it) }}")
+                    if (Build.VERSION.SDK_INT >= 33) {
+                        // Use the new API for API level 33 and above
+                        characteristic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+                        val success = gatt.writeCharacteristic(characteristic, value, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+                        if (success == BluetoothGatt.GATT_SUCCESS) {
+                            Log.d(TAG, "Activated service: $uuid with value: ${value.joinToString(", ") { "0x%02X".format(it) }}")
+                        } else {
+                            Log.e(TAG, "Failed to activate service: $uuid")
+                        }
                     } else {
-                        Log.e(TAG, "Failed to activate service: $uuid")
+                        // Use the deprecated API for API level 31 and 32
+                        characteristic.value = value
+                        val success = gatt.writeCharacteristic(characteristic)
+                        if (success) {
+                            Log.d(TAG, "Activated service (deprecated write): $uuid with value: ${value.joinToString(", ") { "0x%02X".format(it) }}")
+                        } else {
+                            Log.e(TAG, "Failed to activate service (deprecated write): $uuid")
+                        }
                     }
-                    // Add delay to ensure GATT queue clears before sending the next write
-                    delay(1000) // 500ms delay to prevent overwhelming the GATT server
+                    // Add delay to avoid overwhelming the GATT server
+                    delay(1000)
                 } catch (e: Exception) {
                     Log.e(TAG, "Error writing to characteristic: $uuid. ${e.message}", e)
                 }
@@ -412,6 +463,119 @@ class BluetoothLeRepImpl @Inject constructor(
             }
         }
     }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    suspend fun activateTemperatureSensor() {
+        val gatt = gatt ?: run {
+            Log.e(TAG, "No GATT connection.")
+            return
+        }
+
+        val temperatureConfigUUID = UUID.fromString("f000aa02-0451-4000-b000-000000000000") // Configuration UUID
+        val temperaturePeriodUUID = UUID.fromString("f000aa03-0451-4000-b000-000000000000") // Period UUID
+        val temperatureDataUUID = UUID.fromString("f000aa01-0451-4000-b000-000000000000") // Data UUID
+
+        // Enable temperature sensor (write 0x01 to the config characteristic)
+        val configCharacteristic = gatt.services
+            .flatMap { it.characteristics }
+            .find { it.uuid == temperatureConfigUUID }
+
+        if (configCharacteristic != null) {
+            configCharacteristic.value = byteArrayOf(0x01) // Enable temperature sensor
+            val successConfig = gatt.writeCharacteristic(configCharacteristic)
+            if (successConfig) {
+                Log.d(TAG, "Temperature sensor enabled (Configuration Write Successful).")
+            } else {
+                Log.e(TAG, "Failed to write to Temperature Configuration Characteristic.")
+            }
+        } else {
+            Log.e(TAG, "Temperature Configuration Characteristic not found.")
+        }
+
+        delay(1000) // Short delay before setting the period
+
+        // Set sampling period (100ms)
+        val periodCharacteristic = gatt.services
+            .flatMap { it.characteristics }
+            .find { it.uuid == temperaturePeriodUUID }
+
+        if (periodCharacteristic != null) {
+            Log.d(TAG, "Temperature Period Characteristic found. Properties: ${periodCharacteristic.properties}")
+
+            periodCharacteristic.value = byteArrayOf(0x64) // 100ms
+            val successPeriod = gatt.writeCharacteristic(periodCharacteristic)
+            if (successPeriod) {
+                Log.d(TAG, "Temperature sampling period set successfully.")
+            } else {
+                Log.e(TAG, "Failed to write to Temperature Period Characteristic.")
+            }
+        } else {
+            Log.e(TAG, "Temperature Period Characteristic not found.")
+        }
+
+        delay(1000) // Delay to ensure the configuration is applied
+
+        // Enable notifications for the temperature data characteristic
+        val temperatureCharacteristic = gatt.services
+            .flatMap { it.characteristics }
+            .find { it.uuid == temperatureDataUUID }
+
+        if (temperatureCharacteristic != null) {
+            enableCharacteristicNotification(gatt, temperatureCharacteristic)
+        } else {
+            Log.e(TAG, "Temperature Data Characteristic not found.")
+        }
+    }
+
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private fun enableCharacteristicNotification(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
+        gatt.setCharacteristicNotification(characteristic, true)
+
+        val descriptor = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"))
+        if (descriptor != null) {
+            descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+            val success = gatt.writeDescriptor(descriptor)
+            if (success) {
+                Log.d(TAG, "Temperature notification enabled successfully.")
+            } else {
+                Log.e(TAG, "Failed to enable notifications for Temperature Data Characteristic.")
+            }
+        } else {
+            Log.e(TAG, "CCCD Descriptor not found for Temperature Data Characteristic.")
+        }
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private suspend fun pollTemperatureData() {
+        val gatt = gatt ?: run {
+            Log.e(TAG, "No GATT connection.")
+            return
+        }
+
+        val temperatureDataUUID = UUID.fromString("f000aa01-0451-4000-b000-000000000000") // Temperature Data Characteristic
+
+        for (i in 1..10) { // Poll 10 times (adjust as needed)
+            Log.d(TAG, "Temperature read Start Polling.")
+            val temperatureCharacteristic = gatt.services
+                .flatMap { it.characteristics }
+                .find { it.uuid == temperatureDataUUID }
+
+            if (temperatureCharacteristic != null) {
+                val readSuccess = gatt.readCharacteristic(temperatureCharacteristic)
+                if (readSuccess) {
+                    Log.d(TAG, "Temperature read request sent successfully.")
+                } else {
+                    Log.e(TAG, "Failed to read Temperature Data Characteristic.")
+                }
+            } else {
+                Log.e(TAG, "Temperature Data Characteristic not found.")
+            }
+            delay(1000) // Delay 1 second between reads
+        }
+    }
+
+
 
 
 
@@ -438,6 +602,8 @@ class BluetoothLeRepImpl @Inject constructor(
         }
     }
 }
+
+
 
 // Make everything human readable
 // Map of characteristic UUIDs to their corresponding parsers
