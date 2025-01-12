@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-12-01T01:13:22.292558Z">
+        <DropdownSelection timestamp="2025-01-12T02:52:24.356881Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=8BQX1E6VA" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ash/.android/avd/Wear_OS_Rectangular.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -18,6 +18,14 @@
       </SelectionState>
       <SelectionState runConfigName="feature.wearos.home">
         <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2025-01-12T02:50:33.063673Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ash/.android/avd/Medium_Phone.avd" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
       </SelectionState>
     </selectionStates>
   </component>

@@ -64,9 +64,15 @@ androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" } 
 androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }  # Compose UI test library for JUnit4
 androidx-material3 = { module = "androidx.compose.material3:material3" }  # Material Design 3 components for Compose
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNavigation" }
+
 # WearOS
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
-androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
+# WearOS Compose alterniative way
+# wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
+androidx-wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
+androidx-wear-compose-material-icons = { group = "androidx.wear.compose", name = "compose-material-icons", version.ref = "composeMaterial" }
+androidx-wear-compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "composeMaterial" }
+
 androidx-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "composeFoundation" }
 androidx-wear-tooling-preview = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wearToolingPreview" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
