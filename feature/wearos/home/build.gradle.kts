@@ -54,7 +54,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling)
-    implementation(libs.androidx.wear.compose.material)
+    implementation(libs.androidx.wear.compose.material3)
     implementation(libs.androidx.wear.compose.navigation)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.wear.tooling.preview)

@@ -37,6 +37,7 @@ healthConnect = "1.1.0-alpha10" # Health Connect"
 apollo = "3.8.5"
 playServicesWearable = "18.0.0"
 composeMaterial = "1.2.1"
+composeMaterial3 = "1.0.0-alpha30"
 composeFoundation = "1.2.1"
 wearToolingPreview = "1.0.0"
 coreSplashscreen = "1.0.1"
@@ -71,6 +72,7 @@ play-services-wearable = { group = "com.google.android.gms", name = "play-servic
 # wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
 androidx-wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
 androidx-wear-compose-material-icons = { group = "androidx.wear.compose", name = "compose-material-icons", version.ref = "composeMaterial" }
+androidx-wear-compose-material3 = { module = "androidx.wear.compose:compose-material3", version.ref = "composeMaterial3" }
 androidx-wear-compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "composeMaterial" }
 
 androidx-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "composeFoundation" }
