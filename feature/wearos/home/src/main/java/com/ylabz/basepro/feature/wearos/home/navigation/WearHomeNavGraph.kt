@@ -1,6 +1,7 @@
 package com.ylabz.basepro.feature.wearos.home.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.Vignette
@@ -22,7 +23,7 @@ fun WearHomeNavGraph() {
         timeText = { TimeText() },
         vignette = { Vignette(VignettePosition.TopAndBottom) }
     ) {
-        // Start Destination (or “route”) for your watch
+        // No padding needed here in Material 3
         SwipeDismissableNavHost(
             navController = navController,
             startDestination = WearScreen.Home.route
@@ -39,7 +40,13 @@ fun WearHomeNavGraph() {
             composable(route = WearScreen.Drunk.route) {
                 DrunkWatchRoute(navController = navController)
             }
-            // Add more watch destinations here...
         }
     }
+}
+
+
+@Preview
+@Composable
+private fun PreviewWearHomeNavGraph() {
+     WearHomeNavGraph()
 }
