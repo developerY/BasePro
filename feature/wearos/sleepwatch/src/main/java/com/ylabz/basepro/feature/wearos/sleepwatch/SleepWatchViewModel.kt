@@ -37,45 +37,7 @@ class SleepWatchViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<SleepWatchUiState>(SleepWatchUiState.Uninitialized)
     var uiState = _uiState.asStateFlow()
 
-    val permissions = setOf(
-        HealthPermission.getWritePermission(ExerciseSessionRecord::class),
-        HealthPermission.getReadPermission(ExerciseSessionRecord::class),
-        HealthPermission.getWritePermission(StepsRecord::class),
-        HealthPermission.getReadPermission(StepsRecord::class),
-        HealthPermission.getWritePermission(DistanceRecord::class),
-        HealthPermission.getReadPermission(DistanceRecord::class),
-        HealthPermission.getWritePermission(TotalCaloriesBurnedRecord::class),
-        HealthPermission.getReadPermission(TotalCaloriesBurnedRecord::class),
-        HealthPermission.getWritePermission(HeartRateRecord::class),
-        HealthPermission.getReadPermission(HeartRateRecord::class),
-        HealthPermission.getWritePermission(WeightRecord::class),
-        HealthPermission.getReadPermission(WeightRecord::class)
-    )
-
-    val backgroundReadPermissions = setOf(PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND)
-
-    var permissionsGranted = mutableStateOf(false)
-        private set
-
-    var backgroundReadAvailable = mutableStateOf(false)
-        private set
-
-    var backgroundReadGranted = mutableStateOf(false)
-        private set
-
-
-    val permissionsLauncher = healthSessionManager.requestPermissionsActivityContract()
-
-
-    private fun checkHealthConnectAvailability() {
-        val availability = healthSessionManager.availability.value
-        if (availability != HealthConnectClient.SDK_AVAILABLE) {
-            _uiState.value = SleepWatchUiState.Error("Health Connect is not available.")
-        }
-    }
-
     init {
-        checkHealthConnectAvailability()
         initialLoad()
     }
 
@@ -83,34 +45,14 @@ class SleepWatchViewModel @Inject constructor(
         when (event) {
             is SleepWatchEvent.LoadSleepWatchData -> loadHealthData()
             is SleepWatchEvent.DeleteAll -> delData()
-            is SleepWatchEvent.Retry -> checkPermissionsAndLoadData()
             is SleepWatchEvent.Insert -> insertExerciseSession()
-            is SleepWatchEvent.RequestPermissions -> checkPermissionsAndLoadData()
-        }
-    }
-
-    private fun checkPermissionsAndLoadData() {
-        viewModelScope.launch {
-            if (healthSessionManager.availability.value != HealthConnectClient.SDK_AVAILABLE) {
-                _uiState.value = SleepWatchUiState.Error("Health Connect is not available.")
-                return@launch
-            }
-
-            val permissionsGranted = healthSessionManager.hasAllPermissions(permissions)
-            if (permissionsGranted) {
-                loadHealthData()
-            } else {
-                _uiState.value = SleepWatchUiState.PermissionsRequired("Health permissions are required.")
-            }
         }
     }
 
 
     private fun delData() {
         viewModelScope.launch {
-            tryWithPermissionsCheck {
-                healthSessionManager.deleteAllSessionData()
-            }
+
         }
     }
 
@@ -120,10 +62,7 @@ class SleepWatchViewModel @Inject constructor(
         viewModelScope.launch {
             Log.d("HealthViewModel", "viewModelScope.launch called") // Debug statement
             try {
-                tryWithPermissionsCheck {
-                    Log.d("HealthViewModel", "Permissions check passed, loading data") // Debug
-                    readSessionInputs()
-                }
+
             } catch (e: Exception) {
                 Log.e("HealthViewModel", "Exception in initialLoad: ${e.message}", e)
             }
@@ -164,62 +103,16 @@ class SleepWatchViewModel @Inject constructor(
         return weightInputs
     }
 
-    @OptIn(ExperimentalFeatureAvailabilityApi::class)
-    private suspend fun tryWithPermissionsCheck(block: suspend () -> Unit) {
-        permissionsGranted.value = healthSessionManager.hasAllPermissions(permissions)
-        backgroundReadAvailable.value = healthSessionManager.isFeatureAvailable(
-            HealthConnectFeatures.FEATURE_READ_HEALTH_DATA_IN_BACKGROUND
-        )
-        backgroundReadGranted.value = healthSessionManager.hasAllPermissions(backgroundReadPermissions)
-
-        _uiState.value = try {
-            if (permissionsGranted.value) {
-                block()
-                SleepWatchUiState.Success(readSessionInputs())
-            } else {
-                SleepWatchUiState.PermissionsRequired("permissions")
-            }
-        } catch (remoteException: RemoteException) {
-            SleepWatchUiState.Error(Exception(remoteException).message.toString())
-        } catch (securityException: SecurityException) {
-            SleepWatchUiState.Error(Exception(securityException).message.toString())
-        } catch (ioException: IOException) {
-            SleepWatchUiState.Error(Exception(ioException).message.toString())
-        } catch (illegalStateException: IllegalStateException) {
-            SleepWatchUiState.Error(Exception(illegalStateException).message.toString())
-        }
-    }
-
-
-
-    fun updatePermissionsState(grantedPermissions: Set<String>) {
-        permissionsGranted.value = permissions.all { it in grantedPermissions }
-        backgroundReadGranted.value = backgroundReadPermissions.all { it in grantedPermissions }
-    }
 
     fun insertExerciseSession() {
         viewModelScope.launch {
-            tryWithPermissionsCheck {
-                val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
-                val latestStartOfSession = ZonedDateTime.now().minusMinutes(30)
-                val offset = Random.nextDouble()
 
-                // Generate random start time between the start of the day and (now - 30mins).
-                val startOfSession = startOfDay.plusSeconds(
-                    (Duration.between(startOfDay, latestStartOfSession).seconds * offset).toLong()
-                )
-                val endOfSession = startOfSession.plusMinutes(30)
-
-                healthSessionManager.writeExerciseSession(startOfSession, endOfSession)
-            }
         }
     }
 
     fun deleteStoredExerciseSession(uid: String) {
         viewModelScope.launch {
-            tryWithPermissionsCheck {
-                healthSessionManager.deleteExerciseSession(uid)
-            }
+
         }
     }
 }

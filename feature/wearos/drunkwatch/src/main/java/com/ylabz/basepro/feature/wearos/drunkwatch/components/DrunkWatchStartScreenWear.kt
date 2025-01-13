@@ -5,31 +5,26 @@ import androidx.compose.runtime.Composable
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.navigation.NavController
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
-import androidx.wear.compose.material.items
 import androidx.wear.compose.material.Text
-import com.ylabz.basepro.feature.wearos.health.ui.HealthEvent
+import com.ylabz.basepro.feature.wearos.drunkwatch.DrukWatchEvent
 
 @Composable
-fun HealthStartScreenWear(
+fun DrunkWatchStartScreenWear(
     navController: NavController,
-    healthData: List<ExerciseSessionRecord>,
-    onEvent: (HealthEvent) -> Unit,
+    onEvent: (DrukWatchEvent) -> Unit,
     onRequestPermissions: (Array<String>) -> Unit
 ) {
+    Text("Drunk Watch")
     ScalingLazyColumn {
         item {
-            Text(text = "Wear Health Data")
-        }
-        items(healthData.size) { dataItem ->
-            // Display each dataItem; for example:
-            Text("• $dataItem")
+            Text(text = "Wear Drunk Watch")
         }
         item {
             // Example button or clickable text
             TextButton(
                 onClick = { /*onEvent(HealthEvent.StartSession)*/ }
             ) {
-                Text(text = "Start Session")
+                Text(text = "Drunk Watch")
             }
         }
     }

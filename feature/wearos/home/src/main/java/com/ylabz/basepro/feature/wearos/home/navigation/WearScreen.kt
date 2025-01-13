@@ -8,9 +8,9 @@ sealed class WearScreen(val route: String) {
     // etc.
 }
 
-sealed class WearRoute(val route: String) {
+/*sealed class WearRoute(val route: String) {
     object Home : WearRoute("wear_home_screen")
     object Health : WearRoute("wear_health_screen")
     object SleepWatch : WearRoute("wear_sleep_watch_screen")
     object DrunkWatch : WearRoute("wear_drunk")
-}
+}*/

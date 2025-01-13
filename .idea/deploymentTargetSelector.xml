@@ -18,10 +18,10 @@
       </SelectionState>
       <SelectionState runConfigName="feature.wearos.home">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-01-12T02:50:33.063673Z">
+        <DropdownSelection timestamp="2025-01-13T01:57:10.814374Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ash/.android/avd/Medium_Phone.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ash/.android/avd/Wear_OS_Rectangular.avd" />
             </handle>
           </Target>
         </DropdownSelection>

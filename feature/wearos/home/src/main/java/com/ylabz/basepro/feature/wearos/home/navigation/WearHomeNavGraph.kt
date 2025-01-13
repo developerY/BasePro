@@ -8,6 +8,7 @@ import androidx.wear.compose.material.VignettePosition
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import androidx.wear.compose.navigation.composable
+import com.ylabz.basepro.feature.wearos.drunkwatch.DrunkWatchRoute
 import com.ylabz.basepro.feature.wearos.health.ui.WearHealthRoute
 import com.ylabz.basepro.feature.wearos.home.presentation.WearHomeRoute
 import com.ylabz.basepro.feature.wearos.sleepwatch.SleepWatchRoute
@@ -34,6 +35,9 @@ fun WearHomeNavGraph() {
             }
             composable(route = WearScreen.Sleep.route) {
                 SleepWatchRoute(navController = navController)
+            }
+            composable(route = WearScreen.Drunk.route) {
+                DrunkWatchRoute(navController = navController)
             }
             // Add more watch destinations here...
         }

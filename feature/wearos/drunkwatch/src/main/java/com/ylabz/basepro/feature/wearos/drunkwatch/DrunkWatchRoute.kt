@@ -1,6 +1,5 @@
 package com.ylabz.basepro.feature.wearos.drunkwatch
 
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.navigation.NavController
@@ -9,33 +8,28 @@ import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.Vignette
 import androidx.wear.compose.material.VignettePosition
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ylabz.basepro.feature.wearos.health.ui.components.ErrorScreenWear
-import com.ylabz.basepro.feature.wearos.health.ui.components.HealthFeatureWithPermissionsWear
-import com.ylabz.basepro.feature.wearos.health.ui.components.HealthStartScreenWear
-import com.ylabz.basepro.feature.wearos.health.ui.components.LoadingScreenWear
+import com.ylabz.basepro.feature.wearos.drunkwatch.components.ErrorScreenWear
+import com.ylabz.basepro.feature.wearos.drunkwatch.components.DrunkWatchStartScreenWear
+import com.ylabz.basepro.feature.wearos.drunkwatch.components.LoadingScreenWear
 import java.util.UUID
 
 @Composable
-fun WearHealthRoute(
+fun DrunkWatchRoute(
     navController: NavController,
-    viewModel: HealthViewModel = hiltViewModel()
+    viewModel: DrunkWatchViewModel = hiltViewModel()
 ) {
-    val healthUiState by viewModel.uiState.collectAsState()
+    val drunkWatchUiState by viewModel.uiState.collectAsState()
     val errorId = rememberSaveable { mutableStateOf(UUID.randomUUID()) }
     val onPermissionsResult = { viewModel.initialLoad() }
-    val permissionsLauncher =
-        rememberLauncherForActivityResult(viewModel.permissionsLauncher) {
-            onPermissionsResult()
-        }
 
-    LaunchedEffect(healthUiState) {
-        if (healthUiState is HealthUiState.Uninitialized) {
+    LaunchedEffect(drunkWatchUiState) {
+        if (drunkWatchUiState is DrunkWatchUiState.Uninitialized) {
             onPermissionsResult()
         }
 
         if (
-            healthUiState is HealthUiState.Error &&
-            errorId.value != (healthUiState as HealthUiState.Error).uuid
+            drunkWatchUiState is DrunkWatchUiState.Error &&
+            errorId.value != (drunkWatchUiState as DrunkWatchUiState.Error).uuid
         ) {
             // Example: You can show a Wear OS-specific error UI or toast
             // errorId.value = (healthUiState as HealthUiState.Error).uuid
@@ -53,19 +47,13 @@ fun WearHealthRoute(
         }
     ) {
         // Here’s where you show different composables based on the UI state
-        when (healthUiState) {
-            is HealthUiState.PermissionsRequired -> {
-                HealthFeatureWithPermissionsWear {
-                    permissionsLauncher.launch(viewModel.permissions)
-                }
-            }
+        when (drunkWatchUiState) {
 
-            is HealthUiState.Success -> {
+            is DrunkWatchUiState.Success -> {
                 // This is your “healthy data” screen.
                 // On Wear OS you might use a ScalingLazyColumn, etc.
-                HealthStartScreenWear(
+                DrunkWatchStartScreenWear(
                     navController = navController,
-                    healthData = (healthUiState as HealthUiState.Success).healthData,
                     onEvent = { event -> viewModel.onEvent(event) },
                     onRequestPermissions = { values ->
                         //permissionsLauncher.launch(values)
@@ -73,20 +61,21 @@ fun WearHealthRoute(
                 )
             }
 
-            is HealthUiState.Error -> {
+            is DrunkWatchUiState.Error -> {
                 // Show an error UI
                 ErrorScreenWear(
-                    message = "Error: ${(healthUiState as HealthUiState.Error).message}",
+                    message = "Error: ${(drunkWatchUiState as DrunkWatchUiState.Error).message}",
                     onRetry = { viewModel.initialLoad() },
                 )
             }
 
-            is HealthUiState.Uninitialized -> {
+            is DrunkWatchUiState.Uninitialized -> {
                 // If still uninitialized, try initial load
-                viewModel.initialLoad()
+                //viewModel.initialLoad()
+                LoadingScreenWear()
             }
 
-            is HealthUiState.Loading -> {
+            is DrunkWatchUiState.Loading -> {
                 LoadingScreenWear()
             }
         }

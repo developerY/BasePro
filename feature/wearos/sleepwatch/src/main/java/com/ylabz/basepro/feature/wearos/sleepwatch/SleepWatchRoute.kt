@@ -20,27 +20,7 @@ fun SleepWatchRoute(
     navController: NavController,
     viewModel: SleepWatchViewModel = hiltViewModel()
 ) {
-    val healthUiState by viewModel.uiState.collectAsState()
-    val errorId = rememberSaveable { mutableStateOf(UUID.randomUUID()) }
-    val onPermissionsResult = { viewModel.initialLoad() }
-    val permissionsLauncher =
-        rememberLauncherForActivityResult(viewModel.permissionsLauncher) {
-            onPermissionsResult()
-        }
-
-    LaunchedEffect(healthUiState) {
-        if (healthUiState is SleepWatchUiState.Uninitialized) {
-            onPermissionsResult()
-        }
-
-        if (
-            healthUiState is SleepWatchUiState.Error &&
-            errorId.value != (healthUiState as SleepWatchUiState.Error).uuid
-        ) {
-            // Example: You can show a Wear OS-specific error UI or toast
-            // errorId.value = (healthUiState as HealthUiState.Error).uuid
-        }
-    }
+    val sleepWatchUiState by viewModel.uiState.collectAsState()
 
     // A typical Wear Scaffold might use TimeText, Vignette, PositionIndicator, etc.
     Scaffold(
@@ -53,7 +33,7 @@ fun SleepWatchRoute(
         }
     ) {
         // Here’s where you show different composables based on the UI state
-        when (healthUiState) {
+        when (sleepWatchUiState) {
             is SleepWatchUiState.Success -> {
                 // This is your “healthy data” screen.
                 // On Wear OS you might use a ScalingLazyColumn, etc.
@@ -69,7 +49,7 @@ fun SleepWatchRoute(
             is SleepWatchUiState.Error -> {
                 // Show an error UI
                 ErrorScreenWear(
-                    message = "Error: ${(healthUiState as SleepWatchUiState.Error).message}",
+                    message = "Error: ${(sleepWatchUiState as SleepWatchUiState.Error).message}",
                     onRetry = { viewModel.initialLoad() },
                 )
             }
@@ -77,6 +57,7 @@ fun SleepWatchRoute(
             is SleepWatchUiState.Uninitialized -> {
                 // If still uninitialized, try initial load
                 viewModel.initialLoad()
+                LoadingScreenWear()
             }
 
             is SleepWatchUiState.Loading -> {
