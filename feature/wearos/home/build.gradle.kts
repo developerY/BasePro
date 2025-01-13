@@ -45,6 +45,8 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
     implementation(project(":feature:wearos:health"))
+    implementation(project(":feature:wearos:sleepwatch"))
+    implementation(project(":feature:wearos:drunkwatch"))
 
 
     implementation(libs.play.services.wearable)

@@ -12,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
@@ -71,8 +72,11 @@ fun Greeting(
     }
 }
 
-@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
+@Preview(showBackground = true, backgroundColor = 0xFF000000)
 @Composable
-fun DefaultPreview() {
-    WearApp("Preview Android", NavController(LocalContext.current))
+fun GreetingScreenPreview() {
+    val navController = rememberNavController()
+    MaterialTheme {
+        GreetingScreen(navController, "WearUser")
+    }
 }

@@ -10,6 +10,7 @@ import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import androidx.wear.compose.navigation.composable
 import com.ylabz.basepro.feature.wearos.health.ui.WearHealthRoute
 import com.ylabz.basepro.feature.wearos.home.presentation.WearHomeRoute
+import com.ylabz.basepro.feature.wearos.sleepwatch.SleepWatchRoute
 
 @Composable
 fun WearHomeNavGraph() {
@@ -30,6 +31,9 @@ fun WearHomeNavGraph() {
             }
             composable(route = WearScreen.Health.route) {
                 WearHealthRoute(navController = navController)
+            }
+            composable(route = WearScreen.Sleep.route) {
+                SleepWatchRoute(navController = navController)
             }
             // Add more watch destinations here...
         }
