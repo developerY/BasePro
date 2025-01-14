@@ -60,6 +60,13 @@ dependencies {
     implementation(libs.androidx.wear.tooling.preview)
     implementation(libs.androidx.activity.compose)
 
+    implementation(libs.horologist.compose.tools)
+    implementation(libs.horologist.compose.layout)
+    implementation(libs.horologist.tiles)
+    implementation(libs.horologist.composables)
+    implementation(libs.horologist.compose.material)
+
+
     // Hilt Dependency Injection
     implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.android)

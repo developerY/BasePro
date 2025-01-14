@@ -1,7 +1,5 @@
 package com.ylabz.basepro.feature.wearos.home.presentation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +16,7 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
 import com.ylabz.basepro.feature.wearos.home.R
+import com.ylabz.basepro.feature.wearos.home.navigation.GreetingScreen
 import com.ylabz.basepro.feature.wearos.home.navigation.WearScreen
 import com.ylabz.basepro.feature.wearos.home.presentation.theme.BaseProTheme
 
@@ -25,28 +24,10 @@ import com.ylabz.basepro.feature.wearos.home.presentation.theme.BaseProTheme
 fun WearHomeRoute(
     navController: NavController,
 ) {
-    WearApp("Android", navController)
-}
-
-@Composable
-fun WearApp(
-    greetingName: String,
-    navController: NavController
-) {
-    BaseProTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background),
-            contentAlignment = Alignment.Center
-        ) {
-            TimeText()
-            Greeting(
-                navController = navController,
-                greetingName = greetingName
-            )
-        }
-    }
+    GreetingScreen(
+        navController = navController,
+        greetingName = "WearUser"
+    )
 }
 
 @Composable
