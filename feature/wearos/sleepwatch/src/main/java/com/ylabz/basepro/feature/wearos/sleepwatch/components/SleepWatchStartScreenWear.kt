@@ -1,7 +1,6 @@
 package com.ylabz.basepro.feature.wearos.sleepwatch.components
 
 
-import android.R.attr.data
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,7 +12,6 @@ import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.records.SleepSessionRecord
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.material.Text
 import com.ylabz.basepro.core.data.fake.sleep.FakeHealthRepository
 import com.ylabz.basepro.core.model.health.SleepSessionData
@@ -21,22 +19,14 @@ import com.ylabz.basepro.feature.wearos.sleepwatch.SleepWatchEvent
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneOffset
-import java.util.UUID
 
 
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.Text
 import com.ylabz.basepro.core.model.health.SleepSegment
 
 @Composable
@@ -62,7 +52,7 @@ fun SleepWatchStartScreenWear(
             Log.d("SleepWatchStartScreenWear", "Item $index: $item")
         }
     }
-    SleepClockFace(
+    SleepClockFaceOrig(
         segments = sampleSegments,
         clockSize = 200.dp
     )

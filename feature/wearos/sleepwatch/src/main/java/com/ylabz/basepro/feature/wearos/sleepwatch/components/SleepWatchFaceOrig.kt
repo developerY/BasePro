@@ -22,7 +22,7 @@ import kotlin.collections.isNotEmpty
 
 
 @Composable
-fun SleepClockFace(
+fun SleepClockFaceOrig(
     segments: List<SleepSegment>,
     clockSize: Dp,
     modifier: Modifier = Modifier
@@ -182,7 +182,7 @@ fun polarToCartesian(angleDeg: Float, distance: Float, center: Offset): Offset {
 
 @Composable
 @Preview(showBackground = true, backgroundColor = 0xFF000000)
-fun SleepClockFacePreview() {
+fun SleepClockFacePreviewOrig() {
     val sampleSegments = listOf(
         // Start/End in decimal hours: e.g., 22.5 = 10:30 PM
         SleepSegment(startHour = 22.5f, endHour = 23.5f, percentage = 8f, color = Color(0xFF6A5ACD), label = "N2 Sleep: 2"),
@@ -194,7 +194,7 @@ fun SleepClockFacePreview() {
 
     // This is your main screen composable
 
-    SleepClockFace(
+    SleepClockFaceOrig(
         segments = sampleSegments,
         clockSize = 150.dp
     )
