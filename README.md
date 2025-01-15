@@ -16,7 +16,8 @@ Welcome to the BasePro Project! This project is an Android application built wit
 
 Image:
 SleepWatch
-![SleepWatch main screen](img/clock.png?raw=true)
+![SleepWatch main screen](img/clock.png?raw=true =50x)
+![SleepWatch main screen](img/phone.png?raw=true =50x)
 
 
 ## Article 
