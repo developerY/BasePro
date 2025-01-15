@@ -1,12 +1,13 @@
 package com.ylabz.basepro.feature.wearos.sleepwatch
 
 import androidx.health.connect.client.records.ExerciseSessionRecord
+import com.ylabz.basepro.core.model.health.SleepSessionData
 import java.util.UUID
 
 sealed class SleepWatchUiState {
     object Uninitialized : SleepWatchUiState()
     object Loading : SleepWatchUiState()
-    data class Success(val healthData: List<ExerciseSessionRecord>) : SleepWatchUiState()
+    data class Success(val healthData: List<SleepSessionData>) : SleepWatchUiState()
     //data class Error(val message: String) : HealthUiState()
     //object GetPermissions : HealthUiState()
     data class Error(val message: String, val uuid: UUID = UUID.randomUUID()) : SleepWatchUiState()

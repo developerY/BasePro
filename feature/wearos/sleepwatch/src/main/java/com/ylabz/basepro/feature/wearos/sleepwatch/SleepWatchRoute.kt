@@ -42,7 +42,8 @@ fun SleepWatchRoute(
                     onEvent = { event -> viewModel.onEvent(event) },
                     onRequestPermissions = { values ->
                         //permissionsLauncher.launch(values)
-                    }
+                    },
+                    data = (sleepWatchUiState as SleepWatchUiState.Success).healthData
                 )
             }
 

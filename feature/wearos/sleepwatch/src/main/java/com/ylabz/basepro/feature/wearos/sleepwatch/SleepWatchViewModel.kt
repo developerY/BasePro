@@ -11,12 +11,15 @@ import androidx.health.connect.client.permission.HealthPermission.Companion.PERM
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.HeartRateRecord
+import androidx.health.connect.client.records.SleepSessionRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.TotalCaloriesBurnedRecord
 import androidx.health.connect.client.records.WeightRecord
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ylabz.basepro.core.data.fake.sleep.FakeHealthRepository
 import com.ylabz.basepro.core.data.service.health.HealthSessionManager
+import com.ylabz.basepro.core.model.health.SleepSessionData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,6 +39,9 @@ class SleepWatchViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<SleepWatchUiState>(SleepWatchUiState.Uninitialized)
     var uiState = _uiState.asStateFlow()
+
+    // Fake it for now
+    val fakeData = FakeHealthRepository().getData()
 
     init {
         initialLoad()
@@ -58,11 +64,14 @@ class SleepWatchViewModel @Inject constructor(
 
 
     fun initialLoad() {
+        val sleepData: List<SleepSessionData> = emptyList()
         Log.d("HealthViewModel", "initialLoad() called") // Debug statement
         viewModelScope.launch {
             Log.d("HealthViewModel", "viewModelScope.launch called") // Debug statement
             try {
+                // healthSessionManager.readSleepSessions() NOTE: Fake this for now
 
+                _uiState.value = SleepWatchUiState.Success(fakeData)
             } catch (e: Exception) {
                 Log.e("HealthViewModel", "Exception in initialLoad: ${e.message}", e)
             }
@@ -82,11 +91,11 @@ class SleepWatchViewModel @Inject constructor(
         }
     }
 
-    private suspend fun readSessionInputs(): List<ExerciseSessionRecord> {
+    private suspend fun readSessionInputs(): List<SleepSessionData> {
         val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
         val now = Instant.now()
         val endofWeek = startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
-        val sessionInputs = healthSessionManager.readExerciseSessions(startOfDay.toInstant(), now)
+        val sessionInputs = healthSessionManager.readSleepSessions()
         print("weightInputs: $sessionInputs")
         Log.d("TAG","${healthSessionManager.readWeightInputs(startOfDay.toInstant(), now)}")
         return sessionInputs
