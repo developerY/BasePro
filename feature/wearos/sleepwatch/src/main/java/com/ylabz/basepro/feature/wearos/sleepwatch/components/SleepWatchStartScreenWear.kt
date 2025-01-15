@@ -1,6 +1,7 @@
 package com.ylabz.basepro.feature.wearos.sleepwatch.components
 
 
+import android.R.attr.data
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -29,11 +30,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Text
+import com.ylabz.basepro.core.model.health.SleepSegment
 
 @Composable
 fun SleepWatchStartScreenWear(
@@ -42,6 +46,15 @@ fun SleepWatchStartScreenWear(
     onRequestPermissions: (Array<String>) -> Unit,
     data: List<SleepSessionData>
 ) {
+
+    val sampleSegments = listOf(
+        // Start/End in decimal hours: e.g., 22.5 = 10:30 PM
+        SleepSegment(startHour = 22.5f, endHour = 23.5f, percentage = 8f, color = Color(0xFF6A5ACD), label = "N2 Sleep: 2"),
+        SleepSegment(startHour = 23.5f, endHour = 1.0f,  percentage = 16f, color = Color(0xFF7B68EE), label = "REM: 1"),
+        SleepSegment(startHour = 1.0f,  endHour = 3.0f,  percentage = 33f, color = Color(0xFF483D8B), label = "Deep: 2"),
+        SleepSegment(startHour = 3.0f,  endHour = 6.0f,  percentage = 30f, color = Color(0xFF708090), label = "N1 Sleep"),
+        SleepSegment(startHour = 6.0f,  endHour = 7.0f,  percentage = 8f,  color = Color(0xFF9370DB), label = "Light Sleep")
+    )
     // Log whenever the Composable is recomposed
     LaunchedEffect(data) {
         Log.d("SleepWatchStartScreenWear", "Sleep data list size: ${data.size}")
@@ -49,7 +62,18 @@ fun SleepWatchStartScreenWear(
             Log.d("SleepWatchStartScreenWear", "Item $index: $item")
         }
     }
+    SleepClockFace(
+        segments = sampleSegments,
+        clockSize = 200.dp
+    )
 
+}
+
+@Composable
+fun TestScreen(
+    modifier: Modifier = Modifier,
+    data: List<SleepSessionData>
+) {
     if (data.isEmpty()) {
         // Debug text for empty data
         Text(
@@ -73,6 +97,7 @@ fun SleepWatchStartScreenWear(
             }
         }
     }
+    
 }
 
 @Preview(showBackground = true)
