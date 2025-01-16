@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.OutlinedButton
 
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,11 +26,18 @@ import java.time.ZoneOffset
 
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import com.ylabz.basepro.core.model.Purple200
+import com.ylabz.basepro.core.model.Purple500
+import com.ylabz.basepro.core.model.Purple80
 import com.ylabz.basepro.core.model.health.SleepSegment
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun SleepWatchStartScreenWear(
@@ -36,6 +46,26 @@ fun SleepWatchStartScreenWear(
     onRequestPermissions: (Array<String>) -> Unit,
     data: List<SleepSessionData>
 ) {
+
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f,
+        pageCount = {2}
+    )
+
+    val coroutineScope = rememberCoroutineScope()
+
+    val testInput = listOf(
+        SleePieChartInput(color = Purple80, value = 2, description = "Red"),
+        SleePieChartInput(color = Purple200, value = 2, description = "N2 Sleep"),
+        SleePieChartInput(color = Purple80, value = 2, description = "Red"),
+        SleePieChartInput(color = Purple200, value = 2, description = "N2 Sleep"),
+        SleePieChartInput(color = LightGray, value = 8, description = "Wake"),
+        SleePieChartInput(color = Purple80, value = 2, description = "Red"),
+        SleePieChartInput(color = Purple200, value = 2, description = "N2 Sleep"),
+        //SleePieChartInput(color = redOrange, value = 4, description = "Wake"),
+        SleePieChartInput(color = Purple500, value = 4, description = "REM"),
+    )
 
     val sampleSegments = listOf(
         // Start/End in decimal hours: e.g., 22.5 = 10:30 PM
@@ -52,10 +82,28 @@ fun SleepWatchStartScreenWear(
             Log.d("SleepWatchStartScreenWear", "Item $index: $item")
         }
     }
-    SleepClockFaceOrig(
-        segments = sampleSegments,
-        clockSize = 200.dp
-    )
+    HorizontalPager(
+        state = pagerState
+    ) { page ->
+        when (page) {
+            0 -> {SleepClockFaceOrig(
+                segments = sampleSegments,
+                clockSize = 200.dp
+            )}
+            1 -> {SleePieChart(input = testInput)}
+        }
+    }
+
+    // Optionally, show pager indicators
+    OutlinedButton(
+        onClick = {
+            coroutineScope.launch {
+                pagerState.animateScrollToPage((pagerState.currentPage + 1) % 2)
+            }
+        }
+    ) {
+        Text(text = "Next Page")
+    }
 
 }
 

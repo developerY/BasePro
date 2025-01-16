@@ -14,11 +14,6 @@ Welcome to the BasePro Project! This project is an Android application built wit
 - [Contributing](#contributing)
 - [License](#license)
 
-Image:
-SleepWatch
-![SleepWatch main screen](img/clock.png?raw=true =50x)
-![SleepWatch main screen](img/phone.png?raw=true =50x)
-
 
 ## Article 
 [Zero to Compose: Room, Hilt, & Nav](https://medium.com/@zoewave/zero-to-compose-room-hilt-nav-da1bc0b5ab8c)
@@ -344,3 +339,8 @@ We welcome contributions to the BasePro project! To contribute:
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+Image:
+SleepWatch
+![Phone main screen](img/clock.png?raw=true)
+![Clock main screen](img/phone.png?raw=true)
