@@ -2,6 +2,7 @@ package com.ylabz.basepro.feature.wearos.sleepwatch.components
 
 
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,11 +28,16 @@ import java.time.ZoneOffset
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.wear.compose.material.Scaffold
+import androidx.wear.compose.material.TimeText
+import androidx.wear.compose.material.Vignette
+import androidx.wear.compose.material.VignettePosition
 import com.ylabz.basepro.core.model.Purple200
 import com.ylabz.basepro.core.model.Purple500
 import com.ylabz.basepro.core.model.Purple80
@@ -46,65 +52,46 @@ fun SleepWatchStartScreenWear(
     onRequestPermissions: (Array<String>) -> Unit,
     data: List<SleepSessionData>
 ) {
-
-    val pagerState = rememberPagerState(
-        initialPage = 0,
-        initialPageOffsetFraction = 0f,
-        pageCount = {2}
-    )
-
+    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
 
-    val testInput = listOf(
-        SleePieChartInput(color = Purple80, value = 2, description = "Red"),
-        SleePieChartInput(color = Purple200, value = 2, description = "N2 Sleep"),
-        SleePieChartInput(color = Purple80, value = 2, description = "Red"),
-        SleePieChartInput(color = Purple200, value = 2, description = "N2 Sleep"),
-        SleePieChartInput(color = LightGray, value = 8, description = "Wake"),
-        SleePieChartInput(color = Purple80, value = 2, description = "Red"),
-        SleePieChartInput(color = Purple200, value = 2, description = "N2 Sleep"),
-        //SleePieChartInput(color = redOrange, value = 4, description = "Wake"),
-        SleePieChartInput(color = Purple500, value = 4, description = "REM"),
-    )
+    Scaffold(
+        timeText = { TimeText() },
+        vignette = { Vignette(VignettePosition.TopAndBottom) }
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
+        ) {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.align(Alignment.Center)
+            ) { page ->
+                when (page) {
+                    0 -> SleepClockFaceOrig(
+                        segments = sampleSleepSegments,
+                        clockSize = 200.dp
+                    )
+                    1 -> SleePieChart(input = samplePieChartInput)
+                }
+            }
 
-    val sampleSegments = listOf(
-        // Start/End in decimal hours: e.g., 22.5 = 10:30 PM
-        SleepSegment(startHour = 22.5f, endHour = 23.5f, percentage = 8f, color = Color(0xFF6A5ACD), label = "N2 Sleep: 2"),
-        SleepSegment(startHour = 23.5f, endHour = 1.0f,  percentage = 16f, color = Color(0xFF7B68EE), label = "REM: 1"),
-        SleepSegment(startHour = 1.0f,  endHour = 3.0f,  percentage = 33f, color = Color(0xFF483D8B), label = "Deep: 2"),
-        SleepSegment(startHour = 3.0f,  endHour = 6.0f,  percentage = 30f, color = Color(0xFF708090), label = "N1 Sleep"),
-        SleepSegment(startHour = 6.0f,  endHour = 7.0f,  percentage = 8f,  color = Color(0xFF9370DB), label = "Light Sleep")
-    )
-    // Log whenever the Composable is recomposed
-    LaunchedEffect(data) {
-        Log.d("SleepWatchStartScreenWear", "Sleep data list size: ${data.size}")
-        data.forEachIndexed { index, item ->
-            Log.d("SleepWatchStartScreenWear", "Item $index: $item")
-        }
-    }
-    HorizontalPager(
-        state = pagerState
-    ) { page ->
-        when (page) {
-            0 -> {SleepClockFaceOrig(
-                segments = sampleSegments,
-                clockSize = 200.dp
-            )}
-            1 -> {SleePieChart(input = testInput)}
-        }
-    }
-
-    // Optionally, show pager indicators
-    OutlinedButton(
-        onClick = {
-            coroutineScope.launch {
-                pagerState.animateScrollToPage((pagerState.currentPage + 1) % 2)
+            // Navigation button
+            OutlinedButton(
+                onClick = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage((pagerState.currentPage + 1) % 2)
+                    }
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 24.dp)
+            ) {
+                Text(text = "Next View")
             }
         }
-    ) {
-        Text(text = "Next Page")
     }
-
 }
 
 @Composable
@@ -137,6 +124,35 @@ fun TestScreen(
     }
     
 }
+
+val sampleSleepSegments = listOf(
+    SleepSegment(22.5f, 23.5f, 8f, Color(0xFF6A5ACD), "N2 Sleep"),
+    SleepSegment(23.5f, 1.0f, 16f, Color(0xFF7B68EE), "REM"),
+    SleepSegment(1.0f, 3.0f, 33f, Color(0xFF483D8B), "Deep Sleep"),
+    SleepSegment(3.0f, 6.0f, 30f, Color(0xFF708090), "N1 Sleep"),
+    SleepSegment(6.0f, 7.0f, 8f, Color(0xFF9370DB), "Light Sleep")
+)
+
+val samplePieChartInput = listOf(
+    SleePieChartInput(color = Color(0xFF6A5ACD), value = 2, description = "N2 Sleep"),
+    SleePieChartInput(color = Color(0xFF7B68EE), value = 4, description = "REM"),
+    SleePieChartInput(color = Color(0xFF483D8B), value = 3, description = "Deep Sleep"),
+    SleePieChartInput(color = Color(0xFF708090), value = 3, description = "N1 Sleep"),
+    SleePieChartInput(color = Color.LightGray, value = 1, description = "Wake")
+)
+
+@Preview(showBackground = true, backgroundColor = 0xFF000000)
+@Composable
+fun PreviewSleepWatchStartScreenWear() {
+    val navController = rememberNavController()
+    SleepWatchStartScreenWear(
+        navController = navController,
+        onEvent = {},
+        onRequestPermissions = {},
+        data = listOf()
+    )
+}
+
 
 @Preview(showBackground = true)
 @Composable
