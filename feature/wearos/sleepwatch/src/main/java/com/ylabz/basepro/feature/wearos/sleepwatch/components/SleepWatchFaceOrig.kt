@@ -70,19 +70,31 @@ fun SleepClockFaceOrig(
             .size(clockSize)
             .pointerInput(Unit) {
                 detectTapGestures { tapOffset ->
-                    val center = Offset(size.width / 2f, size.height / 2f)
-                    val tapAngleDegrees = (-atan2(
+                    val circleCenter = Offset(size.width / 2f, size.height / 2f)
+
+
+
+                    /*val tapAngleDegrees = (-atan2(
                         x = tapOffset.y - center.y,
                         y = tapOffset.x - center.x
-                    ) * (180f / Math.PI).toFloat() + 360f).mod(360f)
+                    ) * (180f / Math.PI).toFloat() + 360f).mod(360f)*/
+
+                    val tapAngleInDegrees = (
+                            -atan2(
+                                x = circleCenter.y - tapOffset.y,
+                                y = circleCenter.x - tapOffset.x
+                            ) * (180f / Math.PI).toFloat()
+                            ).mod(360f)
+
+                    val adjustedTapAngle = (tapAngleInDegrees).mod(360f)
+                    // Shift by 90° to align with top as 0°.
+                    // val adjustedTapAngle = (tapAngleDegrees + 90f).mod(360f)
 
                     tapLocation = tapOffset  // Save tap location
 
-                    // Shift by 90° to align with top as 0°.
-                    val adjustedTapAngle = (tapAngleDegrees + 90f).mod(360f)
-
-                    Log.d("SleepClockFaceOrig", "Tap angle: $tapAngleDegrees")
+                    Log.d("SleepClockFaceOrig", "Tap angle: $tapAngleInDegrees")
                     Log.d("SleepClockFaceOrig", "Adjusted Tap angle: $adjustedTapAngle")
+
 
                     var foundSegment: SleepSegment? = null
 
