@@ -54,6 +54,7 @@ fun SleepClockFaceOrig(
     // Remember state to store the tap location
     var tapLocation by remember { mutableStateOf<Offset?>(null) }
 
+    val selectedSegment = remember { mutableStateOf<SleepSegment?>(null) }
 
     // Periodically update the time (e.g., every minute)
     LaunchedEffect(Unit) {
@@ -127,6 +128,26 @@ fun SleepClockFaceOrig(
                         Log.d("SleepClockFaceOrig", "No segment tapped")
                         clickedSegment = null
                     }
+
+                    // Detect the tapped segment
+                    val tappedSegment = segments.find { segment ->
+                        val startAngle = (hourToAngle(segment.startHour) - 90f).mod(360f)
+                        val endAngle = (hourToAngle(segment.endHour) - 90f).mod(360f)
+                        val adjustedTapAngle = tapAngleInDegrees
+                        if (endAngle > startAngle) {
+                            adjustedTapAngle in startAngle..endAngle
+                        } else {
+                            adjustedTapAngle in startAngle..360f || adjustedTapAngle in 0f..endAngle
+                        }
+                    }
+
+                    if (tappedSegment != null) {
+                        Log.d("SleepClockFaceOrig", "Tapped on segment: ${tappedSegment.label}")
+                        selectedSegment.value = tappedSegment
+                    } else {
+                        Log.d("SleepClockFaceOrig", "No segment tapped")
+                        selectedSegment.value = null
+                    }
                 }
             }
     ) {
@@ -178,6 +199,23 @@ fun SleepClockFaceOrig(
             )
         }
 
+        // Draw percentage for the selected segment
+        selectedSegment.value?.let { segment ->
+            drawContext.canvas.nativeCanvas.apply {
+                drawText(
+                    "${segment.label}: ${segment.percentage}%",
+                    center.x,
+                    center.y + radius - 20f,// + 20f,
+                    Paint().apply {
+                        color = android.graphics.Color.WHITE
+                        textSize = 32f
+                        textAlign = Paint.Align.CENTER
+                        isFakeBoldText = true
+                    }
+                )
+            }
+        }
+
         drawClockHands(currentHourFraction.value, radius, center)
     }
 }
@@ -226,3 +264,23 @@ fun calculateSweepAngle(segment: SleepSegment): Float {
         (360f - startAngleDegrees) + endAngleDegrees
     }
 }
+
+@Preview(showBackground = true, backgroundColor = 0xFF000000)
+@Composable
+fun SleepClockFaceOrigPreview() {
+    val sampleSegments = listOf(
+        SleepSegment(startHour = 22.0f, endHour = 23.0f, percentage = 10f, color = Color.Gray, label = "Light Sleep"),
+        SleepSegment(startHour = 23.0f, endHour = 1.0f, percentage = 20f, color = Color.Green, label = "REM"),
+        SleepSegment(startHour = 1.0f, endHour = 3.0f, percentage = 40f, color = Color.Blue, label = "Deep Sleep"),
+        SleepSegment(startHour = 3.0f, endHour = 6.0f, percentage = 30f, color = Color.Cyan, label = "N1 Sleep"),
+        SleepSegment(startHour = 6.0f, endHour = 7.0f, percentage = 30f, color = Color.White, label = "N3 Sleep"),
+        SleepSegment(startHour = 8.0f, endHour = 9.0f, percentage = 30f, color = Color.Red, label = "N3 Sleep")
+    )
+
+    SleepClockFaceOrig(
+        segments = sampleSegments,
+        clockSize = 300.dp, // Adjust size as needed
+        modifier = Modifier
+    )
+}
+
