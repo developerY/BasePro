@@ -9,6 +9,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,6 +40,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.navigation.Navigation
+import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.Vignette
@@ -77,7 +85,35 @@ fun SleepWatchStartScreenWear(
                 }
             }
 
-            // Navigation button
+            // Navigation Icon Button
+            // Navigation Icon Button
+            IconButton(
+                onClick = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage((pagerState.currentPage + 1) % 2)
+                    }
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 24.dp)
+            ) {
+                Icon(
+                    imageVector = if (pagerState.currentPage == 0) {
+                        Icons.AutoMirrored.Filled.ArrowForward // Forward arrow for first screen
+                    } else {
+                        Icons.AutoMirrored.Filled.ArrowBack // Backward arrow for second screen
+                    },
+                    contentDescription = if (pagerState.currentPage == 0) {
+                        "Go to Next View"
+                    } else {
+                        "Go to Previous View"
+                    },
+                    tint = Color.White // Adjust color to fit your theme
+                )
+            }
+
+
+            /* Navigation button
             OutlinedButton(
                 onClick = {
                     coroutineScope.launch {
@@ -89,7 +125,7 @@ fun SleepWatchStartScreenWear(
                     .padding(bottom = 24.dp)
             ) {
                 Text(text = "Next View")
-            }
+            }*/
         }
     }
 }

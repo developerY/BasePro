@@ -161,12 +161,12 @@ fun SleepClockFaceOrig(
                 radius = 8f,
                 center = it
             )
-            drawLine(
+            /*drawLine( // line to help find where the tap is
                 color = Color.Green,
                 start = center,
                 end = it,
                 strokeWidth = 3f
-            )
+            )*/
         }
 
 
@@ -202,19 +202,27 @@ fun SleepClockFaceOrig(
         // Draw percentage for the selected segment
         selectedSegment.value?.let { segment ->
             drawContext.canvas.nativeCanvas.apply {
+                val text = "${segment.label}: ${segment.percentage}%"
+                val paint = Paint().apply {
+                    color = android.graphics.Color.WHITE
+                    textSize = 32f
+                    textAlign = Paint.Align.CENTER
+                    isFakeBoldText = true
+                }
+                val textBounds = android.graphics.Rect()
+                paint.getTextBounds(text, 0, text.length, textBounds)
+
+                // Calculate the vertical center offset
+                val textHeight = textBounds.height()
                 drawText(
-                    "${segment.label}: ${segment.percentage}%",
+                    text,
                     center.x,
-                    center.y + radius - 20f,// + 20f,
-                    Paint().apply {
-                        color = android.graphics.Color.WHITE
-                        textSize = 32f
-                        textAlign = Paint.Align.CENTER
-                        isFakeBoldText = true
-                    }
+                    center.y + (textHeight / 2), // Center vertically
+                    paint
                 )
             }
         }
+
 
         drawClockHands(currentHourFraction.value, radius, center)
     }
@@ -227,7 +235,7 @@ fun getHourFraction(): Float {
     return (time.hour % 12) + (time.minute / 60f)
 }
 
-fun DrawScope.drawClockHandsNew(hourFraction: Float, radius: Float, center: Offset) {
+/*fun DrawScope.drawClockHandsNew(hourFraction: Float, radius: Float, center: Offset) {
     val hourAngleDegrees = (hourFraction * 30f) - 90f
     rotate(degrees = hourAngleDegrees, pivot = center) {
         drawLine(
@@ -237,7 +245,7 @@ fun DrawScope.drawClockHandsNew(hourFraction: Float, radius: Float, center: Offs
             strokeWidth = 4f
         )
     }
-}
+}*/
 
 /** Convert angle+distance to an (x,y) on the Canvas. Angle in degrees, 0° at right by default. */
 fun polarToCartesian(angleDeg: Float, distance: Float, center: Offset): Offset {
