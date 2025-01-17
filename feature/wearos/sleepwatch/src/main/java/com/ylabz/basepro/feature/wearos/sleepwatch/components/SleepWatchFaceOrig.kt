@@ -51,6 +51,10 @@ fun SleepClockFaceOrig(
     val radius = diameterPx / 2f
     val currentHourFraction = remember { mutableStateOf(getHourFraction()) }
 
+    // Remember state to store the tap location
+    var tapLocation by remember { mutableStateOf<Offset?>(null) }
+
+
     // Periodically update the time (e.g., every minute)
     LaunchedEffect(Unit) {
         while (true) {
@@ -66,16 +70,22 @@ fun SleepClockFaceOrig(
             .size(clockSize)
             .pointerInput(Unit) {
                 detectTapGestures { tapOffset ->
-                    val center = size.center // Use size.center directly
+                    val center = Offset(size.width / 2f, size.height / 2f)
                     val tapAngleDegrees = (-atan2(
-                        x = center.y - tapOffset.y,
-                        y = center.x - tapOffset.x
-                    ) * (180f / PI).toFloat() - 90f).mod(360f)
+                        x = tapOffset.y - center.y,
+                        y = tapOffset.x - center.x
+                    ) * (180f / Math.PI).toFloat() + 360f).mod(360f)
+
+                    tapLocation = tapOffset  // Save tap location
+
+                    // Shift by 90° to align with top as 0°.
+                    val adjustedTapAngle = (tapAngleDegrees + 90f).mod(360f)
 
                     Log.d("SleepClockFaceOrig", "Tap angle: $tapAngleDegrees")
+                    Log.d("SleepClockFaceOrig", "Adjusted Tap angle: $adjustedTapAngle")
 
-                    // Check if the tap is inside any segment
-                    var found = false
+                    var foundSegment: SleepSegment? = null
+
                     segments.forEach { segment ->
                         val startAngle = hourToAngle(segment.startHour)
                         val endAngle = hourToAngle(segment.endHour)
@@ -85,16 +95,23 @@ fun SleepClockFaceOrig(
                             (360f - startAngle) + endAngle
                         }
 
-                        val isTapped = tapAngleDegrees in startAngle..(startAngle + sweepAngle)
+                        val isTapped = if (startAngle + sweepAngle > 360f) {
+                            // Handle case where the segment wraps past midnight
+                            adjustedTapAngle in startAngle..360f || adjustedTapAngle in 0f..(startAngle + sweepAngle - 360f)
+                        } else {
+                            adjustedTapAngle in startAngle..(startAngle + sweepAngle)
+                        }
+
                         if (isTapped) {
-                            Log.d("SleepClockFaceOrig", "Tapped on segment: ${segment.label}")
-                            clickedSegment = segment
-                            found = true
-                            return@detectTapGestures
+                            foundSegment = segment
+                            return@forEach
                         }
                     }
 
-                    if (!found) {
+                    if (foundSegment != null) {
+                        Log.d("SleepClockFaceOrig", "Tapped on segment: ${foundSegment.label}")
+                        clickedSegment = foundSegment
+                    } else {
                         Log.d("SleepClockFaceOrig", "No segment tapped")
                         clickedSegment = null
                     }
@@ -102,6 +119,23 @@ fun SleepClockFaceOrig(
             }
     ) {
         val center = size.center // Use center here for drawing
+
+
+        // Draw a dot and a line
+        tapLocation?.let {
+            drawCircle(
+                color = Color.Red,
+                radius = 8f,
+                center = it
+            )
+            drawLine(
+                color = Color.Green,
+                start = center,
+                end = it,
+                strokeWidth = 3f
+            )
+        }
+
 
         // Drawing arcs and other elements using 'center'
         drawArc(
