@@ -14,7 +14,9 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,7 +62,11 @@ fun SleepWatchStartScreenWear(
     onRequestPermissions: (Array<String>) -> Unit,
     data: List<SleepSessionData>
 ) {
-    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f,
+        pageCount = { 2 }
+    )
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
@@ -72,6 +78,7 @@ fun SleepWatchStartScreenWear(
                 .fillMaxSize()
                 .padding(8.dp)
         ) {
+            // Horizontal Pager for different views
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.align(Alignment.Center)
@@ -79,13 +86,44 @@ fun SleepWatchStartScreenWear(
                 when (page) {
                     0 -> SleepClockFaceOrig(
                         segments = sampleSleepSegments,
-                        clockSize = 200.dp
+                        clockSize = 200.dp,
+                        modifier = Modifier.align(Alignment.Center)
                     )
                     1 -> SleePieChart(input = samplePieChartInput)
                 }
             }
 
-            // Navigation Icon Button
+            // Additional Information and Actions
+            Text(
+                text = "Total Sleep: 7h 45m",
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 16.dp),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White)
+            )
+
+            Text(
+                text = "Sleep Score: 85",
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 64.dp),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White)
+            )
+
+            // Alarm Icon Button
+            IconButton(
+                onClick = { /* Open alarms */ },
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Notifications,
+                    contentDescription = "Set Alarm",
+                    tint = Color.White
+                )
+            }
+
             // Navigation Icon Button
             IconButton(
                 onClick = {
@@ -108,7 +146,7 @@ fun SleepWatchStartScreenWear(
                     } else {
                         "Go to Previous View"
                     },
-                    tint = Color.White // Adjust color to fit your theme
+                    tint = Color.White
                 )
             }
 
@@ -129,6 +167,7 @@ fun SleepWatchStartScreenWear(
         }
     }
 }
+
 
 @Composable
 fun TestScreen(
