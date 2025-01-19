@@ -2,8 +2,12 @@ package com.ylabz.basepro.feature.wearos.sleepwatch.components
 
 
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -41,7 +45,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 import androidx.navigation.Navigation
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Scaffold
@@ -93,63 +99,79 @@ fun SleepWatchStartScreenWear(
                 }
             }
 
-            // Additional Information and Actions
-            Text(
-                text = "Total Sleep: 7h 45m",
+            // Top Section: Time and Total Sleep
+            Column(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(top = 16.dp),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White)
-            )
-
-            Text(
-                text = "Sleep Score: 85",
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 64.dp),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White)
-            )
-
-            // Alarm Icon Button
-            IconButton(
-                onClick = { /* Open alarms */ },
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(16.dp)
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
-                    imageVector = Icons.Default.Notifications,
-                    contentDescription = "Set Alarm",
-                    tint = Color.White
+                Text(
+                    text = "7:07", // Replace with dynamic time if needed
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "Total Sleep: 7h 45m",
+                    color = Color.White,
+                    fontSize = 14.sp
                 )
             }
 
-            // Navigation Icon Button
-            IconButton(
-                onClick = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage((pagerState.currentPage + 1) % 2)
+            // Center Section: Selected Segment
+            Column(
+                modifier = Modifier.align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "N1 Sleep: 30.0%",
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "Sleep Score: 85",
+                    color = Color.White,
+                    fontSize = 16.sp
+                )
+            }
+
+            // Bottom Section: Icons and Arrow
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = { /* Alarm action */ },
+                    modifier = Modifier.padding(start = 16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Notifications,
+                        contentDescription = "Alarm",
+                        tint = Color.White
+                    )
+                }
+
+                IconButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage((pagerState.currentPage + 1) % 2)
+                        }
                     }
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 24.dp)
-            ) {
-                Icon(
-                    imageVector = if (pagerState.currentPage == 0) {
-                        Icons.AutoMirrored.Filled.ArrowForward // Forward arrow for first screen
-                    } else {
-                        Icons.AutoMirrored.Filled.ArrowBack // Backward arrow for second screen
-                    },
-                    contentDescription = if (pagerState.currentPage == 0) {
-                        "Go to Next View"
-                    } else {
-                        "Go to Previous View"
-                    },
-                    tint = Color.White
-                )
+                ) {
+                    Icon(
+                        imageVector = if (pagerState.currentPage == 0) Icons.Filled.ArrowForward else Icons.Filled.ArrowBack,
+                        contentDescription = "Next View",
+                        tint = Color.White
+                    )
+                }
             }
-
 
             /* Navigation button
             OutlinedButton(
@@ -164,7 +186,9 @@ fun SleepWatchStartScreenWear(
             ) {
                 Text(text = "Next View")
             }*/
+
         }
+
     }
 }
 
