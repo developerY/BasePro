@@ -1,6 +1,7 @@
 package com.ylabz.basepro.feature.wearos.sleepwatch.components
 
 
+import android.R.attr.fontWeight
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.LightGray
+import androidx.compose.ui.input.key.Key.Companion.Sleep
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -126,13 +128,13 @@ fun SleepWatchStartScreenWear(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "N1 Sleep: 30.0%",
+                    text = "",// ""N1 Sleep: 30.0%",
                     color = Color.White,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Sleep Score: 85",
+                    text = "", //""Sleep Score: 85",
                     color = Color.White,
                     fontSize = 16.sp
                 )
