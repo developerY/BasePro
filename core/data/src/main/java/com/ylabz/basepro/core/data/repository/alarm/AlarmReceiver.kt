@@ -15,7 +15,7 @@ class AlarmReceiver : BroadcastReceiver() {
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val notification = NotificationCompat.Builder(context, "ALARM_CHANNEL")
-            //.setSmallIcon(R.drawable.ic_alarm)
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle("Alarm Notification")
             .setContentText(alarmMessage)
             .setPriority(NotificationCompat.PRIORITY_HIGH)

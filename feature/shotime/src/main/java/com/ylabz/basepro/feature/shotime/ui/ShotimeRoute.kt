@@ -46,7 +46,12 @@ fun ShotimeRoute(
 
         when (uiState) {
             is ShotimeUiState.Loading -> LoadingScreen()
-            is ShotimeUiState.Success -> ShotimeSuccessScreen(data = uiState.data)
+            is ShotimeUiState.Success -> ShotimeSuccessScreen(
+                data = uiState.data,
+                setAlarm = { alarm ->
+                    viewModel.setAlarm(alarm)
+                }
+            )
             is ShotimeUiState.Error -> ErrorScreen(uiState.message)
         }
     }

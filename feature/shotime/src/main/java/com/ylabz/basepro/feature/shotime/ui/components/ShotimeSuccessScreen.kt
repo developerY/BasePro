@@ -10,6 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,12 +22,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.ylabz.basepro.core.data.repository.alarm.Alarm
 import com.ylabz.basepro.core.model.shotime.ShotimeSessionData
+import com.ylabz.basepro.feature.shotime.ui.ShotimeEvent
+import kotlin.random.Random
 
 @Composable
 fun ShotimeSuccessScreen(
     modifier: Modifier = Modifier,
     data: List<ShotimeSessionData>,
+    setAlarm: (Alarm) -> Unit
 ) {
     Box(
         modifier = modifier
@@ -47,6 +56,18 @@ fun ShotimeSuccessScreen(
                         .padding(16.dp)
                 )
             }
+        }
+
+        FloatingActionButton(
+            onClick = {
+                // Add a sample alarm for demo
+                val currentTime = System.currentTimeMillis() + 1000 // 1 minute later
+                val alarm = Alarm(id = Random.nextInt(), timeInMillis = currentTime, message = "Test Alarm")
+                setAlarm(alarm)
+            },
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Icon(Icons.Default.Add, contentDescription = "Add Alarm")
         }
     }
 }
