@@ -60,6 +60,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:data"))
     implementation(project(":feature:listings"))
     implementation(project(":feature:home"))
     implementation(project(":feature:camera"))

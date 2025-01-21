@@ -7,6 +7,14 @@
         android:required="false" />
     <uses-permission android:name="android.permission.CAMERA"/>
 
+    <!-- alarm -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+
+
+
+
     <!--uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /-->
@@ -69,6 +77,10 @@
             </intent-filter>
 
         </activity>
+
+        <receiver
+            android:name="com.ylabz.basepro.core.data.repository.alarm.AlarmReceiver"
+            android:exported="true" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
