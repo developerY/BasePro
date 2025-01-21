@@ -34,6 +34,7 @@ import com.ylabz.basepro.ui.navigation.graphs.healthNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.photodoNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.placesNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.settingsNavGraph
+import com.ylabz.basepro.ui.navigation.graphs.shotimeNavGraph
 import kotlinx.coroutines.CoroutineScope
 
 
@@ -93,6 +94,12 @@ fun MainNavGraph(
             navController
         )
         healthNavGraph(
+            drawerState,
+            scope,
+            navController
+        )
+
+        shotimeNavGraph(
             drawerState,
             scope,
             navController

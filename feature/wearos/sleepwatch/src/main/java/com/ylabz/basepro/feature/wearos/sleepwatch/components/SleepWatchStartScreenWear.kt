@@ -242,7 +242,7 @@ val samplePieChartInput = listOf(
     SleePieChartInput(color = Color.LightGray, value = 1, description = "Wake")
 )
 
-@Preview(showBackground = true, backgroundColor = 0xFF000000)
+@Preview(showBackground = true, backgroundColor = 0xFF000000, device = "id:wearos_large_round")
 @Composable
 fun PreviewSleepWatchStartScreenWear() {
     val navController = rememberNavController()
@@ -255,7 +255,7 @@ fun PreviewSleepWatchStartScreenWear() {
 }
 
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, backgroundColor = 0xFF000000, device = "id:wearos_large_round")
 @Composable
 fun SleepWatchStartScreenWearPreviewOld() {
     val testNavController = NavController(LocalContext.current)
@@ -272,7 +272,7 @@ fun SleepWatchStartScreenWearPreviewOld() {
     )
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, device = "id:wearos_large_round")
 @Composable
 fun SleepWatchStartScreenWearPreview() {
     //BaseProTheme {

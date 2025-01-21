@@ -273,7 +273,7 @@ fun calculateSweepAngle(segment: SleepSegment): Float {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFF000000)
+@Preview(showBackground = true, backgroundColor = 0xFF000000, device = "id:wearos_large_round")
 @Composable
 fun SleepClockFaceOrigPreview() {
     val sampleSegments = listOf(
@@ -287,7 +287,7 @@ fun SleepClockFaceOrigPreview() {
 
     SleepClockFaceOrig(
         segments = sampleSegments,
-        clockSize = 300.dp, // Adjust size as needed
+        clockSize = 200.dp, // Adjust size as needed
         modifier = Modifier
     )
 }

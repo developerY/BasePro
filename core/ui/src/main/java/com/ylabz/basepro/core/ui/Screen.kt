@@ -36,6 +36,7 @@ const val PLACES = "places"
 const val HEALTH = "health"
 const val BLE = "ble"
 const val SETTINGS = "settings"
+const val SHOTIME = "shotime"
 
 
 sealed class Screen(val route: String) {
@@ -48,6 +49,8 @@ sealed class Screen(val route: String) {
     data object HealthScreen : Screen("health_screen")
     data object BLEScreen : Screen("ble_screen")
     data object BLEPermissionsScreen : Screen("ble_permissions_screen")
+    data object ShotimeScreen : Screen("shotime_screen")
+
 }
 
 @Serializable

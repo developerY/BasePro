@@ -68,6 +68,7 @@ dependencies {
     implementation(project(":feature:maps"))
     implementation(project(":feature:ble"))
     implementation(project(":feature:settings"))
+    implementation(project(":feature:shotime"))
 
     // feature module  dependency
     implementation(project(":feature:settings"))  // feature module  dependency

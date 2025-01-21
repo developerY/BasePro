@@ -75,6 +75,13 @@ fun DrawerContent(onNavigate: (String) -> Unit) {
                 onClick = { onNavigate("health") }
             )
 
+            //Shot Time
+            NavigationDrawerItem(
+                label = { Text("Shot Time") },
+                selected = false,
+                onClick = { onNavigate("shotime") }
+            )
+
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             Text(
