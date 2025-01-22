@@ -1,6 +1,5 @@
-package com.ylabz.basepro.feature.shotime.ui.components
+package com.ylabz.basepro.feature.alarm.ui.components
 
-import android.R.attr.data
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,17 +18,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ylabz.basepro.core.data.repository.alarm.Alarm
 import com.ylabz.basepro.core.model.shotime.ShotimeSessionData
-import com.ylabz.basepro.feature.shotime.ui.ShotimeEvent
 import kotlin.random.Random
 
 @Composable
-fun ShotimeSuccessScreen(
+fun AlarmSuccessScreen(
     modifier: Modifier = Modifier,
     data: List<ShotimeSessionData>,
     setAlarm: (Alarm) -> Unit
@@ -67,7 +63,7 @@ fun ShotimeSuccessScreen(
             },
             modifier = Modifier.padding(16.dp)
         ) {
-            Icon(Icons.Default.Add, contentDescription = "Add ShotAlarm")
+            Icon(Icons.Default.Add, contentDescription = "Add Alarm")
         }
     }
 }

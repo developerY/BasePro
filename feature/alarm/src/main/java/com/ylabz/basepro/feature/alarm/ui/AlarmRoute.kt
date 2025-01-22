@@ -1,33 +1,27 @@
-package com.ylabz.basepro.feature.shotime.ui
+package com.ylabz.basepro.feature.alarm.ui
 
-import android.Manifest
 import android.R.attr.data
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.bluetooth.BluetoothAdapter
-import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.ylabz.basepro.feature.shotime.ui.components.ErrorScreen
-import com.ylabz.basepro.feature.shotime.ui.components.LoadingScreen
-import com.ylabz.basepro.feature.shotime.ui.components.ShotimeSuccessScreen
+import com.ylabz.basepro.feature.alarm.ui.components.AlarmSuccessScreen
+import com.ylabz.basepro.feature.alarm.ui.components.ErrorScreen
+import com.ylabz.basepro.feature.alarm.ui.components.LoadingScreen
 
 @SuppressLint("MissingPermission")
 @Composable
-fun ShotimeRoute(
+fun AlarmRoute(
     navController: NavController,
     paddingValues: PaddingValues,
-    viewModel: ShotimeViewModel = hiltViewModel()
+    viewModel: AlarmViewModel = hiltViewModel()
 ) {
     val TAG = "ShotimeRoute"
     val uiState = viewModel.uiState.collectAsState().value
@@ -42,14 +36,14 @@ fun ShotimeRoute(
         // Status Bar at the top of the screen
 
         when (uiState) {
-            is ShotimeUiState.Loading -> LoadingScreen()
-            is ShotimeUiState.Success -> ShotimeSuccessScreen(
+            is AlarmUiState.Loading -> LoadingScreen()
+            is AlarmUiState.Success -> AlarmSuccessScreen(
                 data = uiState.data,
                 setAlarm = { alarm ->
                     viewModel.setAlarm(alarm)
                 }
             )
-            is ShotimeUiState.Error -> ErrorScreen(uiState.message)
+            is AlarmUiState.Error -> ErrorScreen(uiState.message)
         }
     }
 }

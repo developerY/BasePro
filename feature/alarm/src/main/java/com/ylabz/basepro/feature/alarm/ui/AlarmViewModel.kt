@@ -1,52 +1,42 @@
-package com.ylabz.basepro.feature.shotime.ui
+package com.ylabz.basepro.feature.alarm.ui
 
 import android.Manifest
 import android.app.AlarmManager
-import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.data.repository.alarm.Alarm
 import com.ylabz.basepro.core.data.repository.alarm.AlarmReceiver
 import com.ylabz.basepro.core.data.repository.alarm.AlarmRepository
-import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothLeRepository
-import com.ylabz.basepro.core.model.ble.ScanState
 import com.ylabz.basepro.core.model.shotime.ShotimeSessionData
 import com.ylabz.basepro.core.util.Logging
-import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ShotimeViewModel @Inject constructor(
+class AlarmViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val alarmRepository: AlarmRepository
 ) : ViewModel() {
     private val TAG = Logging.getTag(this::class.java)
 
     // StateFlow for detecting the TI Tag Sensor
-    private val _uiState = MutableStateFlow<ShotimeUiState>(ShotimeUiState.Loading)
-    val uiState: StateFlow<ShotimeUiState> = _uiState
+    private val _uiState = MutableStateFlow<AlarmUiState>(AlarmUiState.Loading)
+    val uiState: StateFlow<AlarmUiState> = _uiState
 
 
     private var isBluetoothDialogAlreadyShown = false
 
-    private val notificationChannelId = "SHOT_CHANNEL"
+    private val notificationChannelId = "ALARM_CHANNEL"
     private val notificationChannelName = "Alarm Notifications"
 
     init {
@@ -104,24 +94,24 @@ class ShotimeViewModel @Inject constructor(
 
 
     private fun loadShotimes() {
-        _uiState.value = ShotimeUiState.Loading
+        _uiState.value = AlarmUiState.Loading
         viewModelScope.launch {
             try {
                 val dat : ShotimeSessionData = ShotimeSessionData(
                     shot = "one"
                 )
                 val listDat = listOf(dat)
-                _uiState.value = ShotimeUiState.Success(listDat)
+                _uiState.value = AlarmUiState.Success(listDat)
             } catch (e: Exception) {
-                _uiState.value = ShotimeUiState.Error("Failed to load coffee shops")
+                _uiState.value = AlarmUiState.Error("Failed to load coffee shops")
             }
         }
     }
 
 
-    fun onEvent(event: ShotimeEvent) {
+    fun onEvent(event: AlarmEvent) {
         when (event) {
-            ShotimeEvent.Shotime -> getShotimes()
+            AlarmEvent.Alarm -> getShotimes()
         }
     }
 

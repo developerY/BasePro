@@ -1,5 +1,6 @@
 package com.ylabz.basepro.ui
 
+import android.R.attr.label
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -73,6 +74,13 @@ fun DrawerContent(onNavigate: (String) -> Unit) {
                 label = { Text("Health") },
                 selected = false,
                 onClick = { onNavigate("health") }
+            )
+
+            //Alarm Time
+            NavigationDrawerItem(
+                label = { Text("Alarm") },
+                selected = false,
+                onClick = { onNavigate("alarm") }
             )
 
             //Shot Time

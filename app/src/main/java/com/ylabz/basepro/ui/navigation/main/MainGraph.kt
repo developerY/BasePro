@@ -28,6 +28,7 @@ import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.feature.home.ui.HomeMainRoute
 import com.ylabz.basepro.settings.ui.SettingsUiRoute
 import com.ylabz.basepro.ui.bar.AppScaffold
+import com.ylabz.basepro.ui.navigation.graphs.alarmNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.bluetoothLeNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.gmapNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.healthNavGraph
@@ -100,6 +101,12 @@ fun MainNavGraph(
         )
 
         shotimeNavGraph(
+            drawerState,
+            scope,
+            navController
+        )
+
+        alarmNavGraph(
             drawerState,
             scope,
             navController

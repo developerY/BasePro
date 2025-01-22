@@ -37,6 +37,7 @@ const val HEALTH = "health"
 const val BLE = "ble"
 const val SETTINGS = "settings"
 const val SHOTIME = "shotime"
+const val ALARM = "alarm"
 
 
 sealed class Screen(val route: String) {
@@ -50,6 +51,7 @@ sealed class Screen(val route: String) {
     data object BLEScreen : Screen("ble_screen")
     data object BLEPermissionsScreen : Screen("ble_permissions_screen")
     data object ShotimeScreen : Screen("shotime_screen")
+    data object AlarmScreen : Screen("alarm_screen")
 
 }
 

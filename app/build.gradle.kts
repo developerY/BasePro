@@ -70,10 +70,12 @@ dependencies {
     implementation(project(":feature:ble"))
     implementation(project(":feature:settings"))
     implementation(project(":feature:shotime"))
+    implementation(project(":feature:alarm"))
 
     // feature module  dependency
     implementation(project(":feature:settings"))  // feature module  dependency
-    implementation(project(":core:ui"))  // feature module  dependency
+    implementation(project(":core:ui"))
+    implementation(project(":core:model")) // feature module  dependency
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

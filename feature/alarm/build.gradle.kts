@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.ylabz.basepro.feature.shotime"
+    namespace = "com.ylabz.basepro.feature.alarm"
     compileSdk = 35
 
     defaultConfig {
@@ -63,6 +63,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
     // Preview
     debugImplementation(libs.androidx.ui.tooling)
 
