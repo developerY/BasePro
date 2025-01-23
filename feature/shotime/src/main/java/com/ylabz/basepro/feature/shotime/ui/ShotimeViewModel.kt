@@ -75,7 +75,6 @@ class ShotimeViewModel @Inject constructor(
         // Logic for setting up and handling alarms
     }
 
-    @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
     fun setAlarm(alarm: Alarm) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -91,9 +90,13 @@ class ShotimeViewModel @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        alarmManager.setExactAndAllowWhileIdle(
+        // Provide a window of 1 minute (60000 milliseconds) around the scheduled time
+        val windowLengthMillis = 60000L
+
+        alarmManager.setWindow(
             AlarmManager.RTC_WAKEUP,
             alarm.timeInMillis,
+            windowLengthMillis,
             pendingIntent
         )
 

@@ -15,7 +15,6 @@ class AlarmRepositoryImpl @Inject constructor(
 ) : AlarmRepository {
     private val alarmList = mutableListOf<Alarm>()
 
-    @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
     override fun addAlarm(alarm: Alarm) {
         alarmList.add(alarm)
         scheduleNotification(alarm)
@@ -31,7 +30,6 @@ class AlarmRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
     private fun scheduleNotification(alarm: Alarm) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java).apply {
@@ -44,9 +42,14 @@ class AlarmRepositoryImpl @Inject constructor(
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        alarmManager.setExact(
+
+        // Provide a window of 1 minute (60000 milliseconds) around the scheduled time
+        val windowLengthMillis = 60000L
+
+        alarmManager.setWindow(
             AlarmManager.RTC_WAKEUP,
             alarm.timeInMillis,
+            windowLengthMillis,
             pendingIntent
         )
     }
