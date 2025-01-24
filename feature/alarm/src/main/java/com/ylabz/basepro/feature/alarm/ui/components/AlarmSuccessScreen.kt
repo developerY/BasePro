@@ -30,8 +30,8 @@ import kotlin.random.Random
 fun AlarmSuccessScreen(
     modifier: Modifier = Modifier,
     data: List<ShotimeSessionData>,
-    onAddAlarmClick: () -> Unit, // Callback to handle adding an alarm
-    onDeleteAllClick: () -> Unit // Callback to handle deleting all alarms
+    onAddAlarmClick: () -> Unit,
+    onDeleteAllClick: () -> Unit
 ) {
     Box(
         modifier = modifier

@@ -41,6 +41,12 @@ class AlarmRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun clearAllAlarms() {
+        context.dataStore.edit { preferences ->
+            preferences.remove(alarmsKey) // Clear all alarms from DataStore
+        }
+    }
+
     override fun getAlarms(): Flow<List<ProAlarm>> = alarmsStateFlow
 
     // Add a new alarm

@@ -49,10 +49,10 @@ fun AlarmRoute(
                         timeInMillis = currentTime,
                         message = "Test Alarm"
                     )
-                    viewModel.setAlarm(proAlarm) // Delegate to ViewModel
+                    viewModel.onEvent(AlarmEvent.AddAlarm) // Delegate to ViewModel
                 },
                 onDeleteAllClick = {
-                    viewModel.onEvent(AlarmEvent.Alarm)
+                    viewModel.onEvent(AlarmEvent.DeleteAll)
                 }
             )
             is AlarmUiState.Error -> ErrorScreen(uiState.message)
@@ -65,10 +65,10 @@ fun AlarmRoute(
                         timeInMillis = currentTime,
                         message = "Test Alarm"
                     )
-                    viewModel.setAlarm(proAlarm) // Delegate to ViewModel
+                    viewModel.onEvent(AlarmEvent.AddAlarm) // Delegate to ViewModel
                 },
                 onDeleteAllClick = {
-                    viewModel.onEvent(AlarmEvent.Alarm)
+                    viewModel.onEvent(AlarmEvent.DeleteAll)
                 }
             )
         }

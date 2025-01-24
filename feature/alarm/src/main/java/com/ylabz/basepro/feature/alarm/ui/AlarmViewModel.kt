@@ -18,16 +18,17 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.random.Random
 
 @HiltViewModel
 class AlarmViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val alarmRepository: AlarmRepository
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow<AlarmUiState>(AlarmUiState.Loading)
     val uiState: StateFlow<AlarmUiState> = _uiState
 
@@ -39,9 +40,8 @@ class AlarmViewModel @Inject constructor(
         loadAlarms()
     }
 
+    // Set up the notification channel
     private fun setupNotificationChannel() {
-        val notificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channel = NotificationChannel(
             notificationChannelId,
             notificationChannelName,
@@ -49,54 +49,25 @@ class AlarmViewModel @Inject constructor(
         ).apply {
             description = "Channel for alarm notifications"
         }
+
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
 
-    fun setAlarm(proAlarm: ProAlarm) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, AlarmReceiver::class.java).apply {
-            putExtra("ALARM_MESSAGE", proAlarm.message)
-            putExtra("ALARM_ID", proAlarm.id)
-        }
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            proAlarm.id,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        // Set the alarm with a 1-minute window
-        alarmManager.setWindow(
-            AlarmManager.RTC_WAKEUP,
-            proAlarm.timeInMillis,
-            60000L,
-            pendingIntent
-        )
-
-        // Save the alarm to the repository
-        viewModelScope.launch {
-            try {
-                alarmRepository.addAlarm(proAlarm)
-                loadAlarms() // Reload alarms to update UI state
-            } catch (e: Exception) {
-                _uiState.value = AlarmUiState.Error("Failed to save alarm: ${e.message}")
-            }
-        }
-    }
-
+    // Load alarms into UI state
     private fun loadAlarms() {
         _uiState.value = AlarmUiState.Loading
         viewModelScope.launch {
             try {
-                alarmRepository.getAlarms().collect { alarms ->
-                    val sessionData = alarms.map { alarm ->
-                        ShotimeSessionData(shot = alarm.message)
+                val alarms = alarmRepository.getAlarms().firstOrNull() ?: emptyList()
+                if (alarms.isEmpty()) {
+                    _uiState.value = AlarmUiState.Empty
+                } else {
+                    val data = alarms.map { alarm ->
+                        ShotimeSessionData(shot = alarm.message) // Map alarms to ShotimeSessionData
                     }
-                    _uiState.value = if (sessionData.isEmpty()) {
-                        AlarmUiState.Empty
-                    } else {
-                        AlarmUiState.Success(sessionData)
-                    }
+                    _uiState.value = AlarmUiState.Success(data)
                 }
             } catch (e: Exception) {
                 _uiState.value = AlarmUiState.Error("Failed to load alarms: ${e.message}")
@@ -104,11 +75,38 @@ class AlarmViewModel @Inject constructor(
         }
     }
 
+    // Handle events
     fun onEvent(event: AlarmEvent) {
         when (event) {
-            AlarmEvent.Alarm -> loadAlarms()
+            AlarmEvent.AddAlarm -> addAlarm()
+            AlarmEvent.DeleteAll -> deleteAllAlarms()
+        }
+    }
+
+    // Add a new alarm
+    private fun addAlarm() {
+        val currentTime = System.currentTimeMillis() + 1000 // 1 second later
+        val proAlarm = ProAlarm(
+            id = Random.nextInt(),
+            timeInMillis = currentTime,
+            message = "Test Alarm"
+        )
+
+        viewModelScope.launch {
+            alarmRepository.addAlarm(proAlarm)
+            loadAlarms() // Refresh UI state
+        }
+    }
+
+    // Delete all alarms
+    private fun deleteAllAlarms() {
+        viewModelScope.launch {
+            try {
+                alarmRepository.clearAllAlarms()
+                loadAlarms() // Refresh UI state
+            } catch (e: Exception) {
+                _uiState.value = AlarmUiState.Error("Failed to delete all alarms: ${e.message}")
+            }
         }
     }
 }
-
-
