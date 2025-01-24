@@ -3,6 +3,7 @@ package com.ylabz.basepro.feature.alarm.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -20,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ylabz.basepro.core.data.repository.alarm.Alarm
+import com.ylabz.basepro.core.model.alarm.ProAlarm
 import com.ylabz.basepro.core.model.shotime.ShotimeSessionData
 import kotlin.random.Random
 
@@ -28,14 +30,16 @@ import kotlin.random.Random
 fun AlarmSuccessScreen(
     modifier: Modifier = Modifier,
     data: List<ShotimeSessionData>,
-    setAlarm: (Alarm) -> Unit
+    onAddAlarmClick: () -> Unit, // Callback to handle adding an alarm
+    onDeleteAllClick: () -> Unit // Callback to handle deleting all alarms
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.Black) // Background color can be adjusted
+            .background(Color.Black)
             .padding(16.dp)
     ) {
+        // LazyColumn for displaying the data
         LazyColumn(
             modifier = Modifier.align(Alignment.TopCenter),
             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -54,16 +58,28 @@ fun AlarmSuccessScreen(
             }
         }
 
-        FloatingActionButton(
-            onClick = {
-                // Add a sample alarm for demo
-                val currentTime = System.currentTimeMillis() + 1000 // 1 minute later
-                val alarm = Alarm(id = Random.nextInt(), timeInMillis = currentTime, message = "Test Alarm")
-                setAlarm(alarm)
-            },
-            modifier = Modifier.padding(16.dp)
+        // Add and Delete All Buttons
+        Row(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Icon(Icons.Default.Add, contentDescription = "Add Alarm")
+            // Delete All Button
+            FloatingActionButton(
+                onClick = onDeleteAllClick,
+                modifier = Modifier
+            ) {
+                Icon(Icons.Default.Delete, contentDescription = "Delete All Alarms")
+            }
+
+            // Add Alarm Button
+            FloatingActionButton(
+                onClick = onAddAlarmClick,
+                modifier = Modifier
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add Alarm")
+            }
         }
     }
 }

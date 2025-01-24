@@ -1,34 +1,22 @@
 package com.ylabz.basepro.feature.shotime.ui
 
-import android.Manifest
 import android.app.AlarmManager
-import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresPermission
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.core.data.repository.alarm.Alarm
 import com.ylabz.basepro.core.data.repository.alarm.AlarmReceiver
 import com.ylabz.basepro.core.data.repository.alarm.AlarmRepository
-import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothLeRepository
-import com.ylabz.basepro.core.model.ble.ScanState
+import com.ylabz.basepro.core.model.alarm.ProAlarm
 import com.ylabz.basepro.core.model.shotime.ShotimeSessionData
 import com.ylabz.basepro.core.util.Logging
-import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -75,17 +63,17 @@ class ShotimeViewModel @Inject constructor(
         // Logic for setting up and handling alarms
     }
 
-    fun setAlarm(alarm: Alarm) {
+    fun setAlarm(proAlarm: ProAlarm) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(context, AlarmReceiver::class.java).apply {
-            putExtra("ALARM_MESSAGE", alarm.message)
-            putExtra("ALARM_ID", alarm.id)
+            putExtra("ALARM_MESSAGE", proAlarm.message)
+            putExtra("ALARM_ID", proAlarm.id)
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            alarm.id,
+            proAlarm.id,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -95,13 +83,15 @@ class ShotimeViewModel @Inject constructor(
 
         alarmManager.setWindow(
             AlarmManager.RTC_WAKEUP,
-            alarm.timeInMillis,
+            proAlarm.timeInMillis,
             windowLengthMillis,
             pendingIntent
         )
 
         // Save the alarm to a repository for persistence
-        alarmRepository.addAlarm(alarm)
+        viewModelScope.launch {
+            alarmRepository.addAlarm(proAlarm)
+        }
     }
 
 

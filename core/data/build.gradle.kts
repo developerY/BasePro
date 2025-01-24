@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.apollo.graphql)
     alias(libs.plugins.mapsplatform.secrets)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -61,6 +62,10 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+
+    // Datastore
+    implementation(libs.androidx.datastore)
+    implementation(libs.kotlinx.serialization.json)
 
     // Hilt Dependency Injection
     implementation(libs.hilt.android)

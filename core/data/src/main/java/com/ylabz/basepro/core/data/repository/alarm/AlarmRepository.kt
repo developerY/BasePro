@@ -1,16 +1,12 @@
 package com.ylabz.basepro.core.data.repository.alarm
 
-import android.Manifest
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import androidx.annotation.RequiresPermission
-import kotlin.jvm.java
+import com.ylabz.basepro.core.model.alarm.ProAlarm
+import kotlinx.coroutines.flow.Flow
 
 interface AlarmRepository {
-    fun addAlarm(alarm: Alarm)
-    fun getAlarms(): List<Alarm>
+    suspend fun addAlarm(proAlarm: ProAlarm)
+    suspend fun deleteAlarm(alarmId: Int)
+    fun getAlarms(): Flow<List<ProAlarm>>
     fun removeAlarm(alarmId: Int)
 }
 

@@ -7,7 +7,7 @@ junitVersion = "1.2.1"         # AndroidX JUnit extension, provides compatibilit
 espressoCore = "3.6.1"         # Espresso, a library for Android UI testing
 lifecycleRuntimeKtx = "2.8.4"  # AndroidX Lifecycle runtime KTX, provides Kotlin extensions for lifecycle management
 activityCompose = "1.9.1"      # Activity Compose, allows using Jetpack Compose in Activities
-composeBom = "2024.08.00"      # Compose BOM (Bill of Materials), ensures consistent Compose library versions
+composeBom = "2025.01.00"      # Compose BOM (Bill of Materials), ensures consistent Compose library versions
 
 # Additional Libraries
 hilt = "2.49"                  # Hilt, a dependency injection library for Android
@@ -24,13 +24,14 @@ hiltNavigationCompose = "1.2.0" # Hilt support for Jetpack Compose Navigation
 hiltWork = "1.2.0"             # Hilt support for WorkManager
 androidxNavigation = "2.8.2"
 ksp = "2.0.20-1.0.24"
-serialization = "1.6.3"
+serialization = "1.8.0"
 cameraX = "1.3.4"
 accompanistPermissions = "0.36.0"
 mapsCompose = "4.4.1"
 mapsplatformSecretsPlugin = "2.0.1" # mapsplatform-secrets
 okhttp = "5.0.0-alpha.11" # OkHttp
 healthConnect = "1.1.0-alpha10" # Health Connect"
+datastore = "1.1.2" # DataStore
 
 # plugins
 # Apollo GraphQL
@@ -64,6 +65,10 @@ androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" } 
 androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }  # Compose UI test library for JUnit4
 androidx-material3 = { module = "androidx.compose.material3:material3" }  # Material Design 3 components for Compose
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNavigation" }
+
+# datastore
+androidx-datastore = {module = "androidx.datastore:datastore-preferences", version.ref = "datastore"}
+
 
 # WearOS
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }

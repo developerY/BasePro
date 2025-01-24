@@ -1,6 +1,5 @@
 package com.ylabz.basepro.feature.shotime.ui.components
 
-import android.R.attr.data
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,20 +18,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ylabz.basepro.core.data.repository.alarm.Alarm
+import com.ylabz.basepro.core.model.alarm.ProAlarm
 import com.ylabz.basepro.core.model.shotime.ShotimeSessionData
-import com.ylabz.basepro.feature.shotime.ui.ShotimeEvent
 import kotlin.random.Random
 
 @Composable
 fun ShotimeSuccessScreen(
     modifier: Modifier = Modifier,
     data: List<ShotimeSessionData>,
-    setAlarm: (Alarm) -> Unit
+    setAlarm: (ProAlarm) -> Unit
 ) {
     Box(
         modifier = modifier
@@ -61,9 +57,9 @@ fun ShotimeSuccessScreen(
         FloatingActionButton(
             onClick = {
                 // Add a sample alarm for demo
-                val currentTime = System.currentTimeMillis() + 1000 // 1 minute later
-                val alarm = Alarm(id = Random.nextInt(), timeInMillis = currentTime, message = "Test Alarm")
-                setAlarm(alarm)
+                val currentTime = System.currentTimeMillis() + 100 // 1 sec later
+                val proAlarm = ProAlarm(id = Random.nextInt(), timeInMillis = currentTime, message = "Test Alarm")
+                setAlarm(proAlarm)
             },
             modifier = Modifier.padding(16.dp)
         ) {

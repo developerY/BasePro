@@ -6,15 +6,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.ylabz.basepro.core.model.alarm.ProAlarm
 import com.ylabz.basepro.feature.alarm.ui.components.AlarmSuccessScreen
 import com.ylabz.basepro.feature.alarm.ui.components.ErrorScreen
 import com.ylabz.basepro.feature.alarm.ui.components.LoadingScreen
+import kotlin.random.Random
 
 @SuppressLint("MissingPermission")
 @Composable
@@ -39,11 +42,35 @@ fun AlarmRoute(
             is AlarmUiState.Loading -> LoadingScreen()
             is AlarmUiState.Success -> AlarmSuccessScreen(
                 data = uiState.data,
-                setAlarm = { alarm ->
-                    viewModel.setAlarm(alarm)
+                onAddAlarmClick = {
+                    val currentTime = System.currentTimeMillis() + 1000 // 1 second later
+                    val proAlarm = ProAlarm(
+                        id = Random.nextInt(),
+                        timeInMillis = currentTime,
+                        message = "Test Alarm"
+                    )
+                    viewModel.setAlarm(proAlarm) // Delegate to ViewModel
+                },
+                onDeleteAllClick = {
+                    viewModel.onEvent(AlarmEvent.Alarm)
                 }
             )
             is AlarmUiState.Error -> ErrorScreen(uiState.message)
+            AlarmUiState.Empty -> AlarmSuccessScreen(
+                data = emptyList(),
+                onAddAlarmClick = {
+                    val currentTime = System.currentTimeMillis() + 1000 // 1 second later
+                    val proAlarm = ProAlarm(
+                        id = Random.nextInt(),
+                        timeInMillis = currentTime,
+                        message = "Test Alarm"
+                    )
+                    viewModel.setAlarm(proAlarm) // Delegate to ViewModel
+                },
+                onDeleteAllClick = {
+                    viewModel.onEvent(AlarmEvent.Alarm)
+                }
+            )
         }
     }
 }

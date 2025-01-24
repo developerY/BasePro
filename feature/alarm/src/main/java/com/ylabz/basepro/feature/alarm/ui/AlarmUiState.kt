@@ -5,8 +5,8 @@ import com.ylabz.basepro.core.model.shotime.ShotimeSessionData
 
 sealed interface AlarmUiState {
     object Loading : AlarmUiState
-    data class Success(val data: List<ShotimeSessionData> = emptyList()) : AlarmUiState
+    object Empty : AlarmUiState // Represents an empty state when no alarms are available
+    data class Success(val data: List<ShotimeSessionData>) : AlarmUiState
     data class Error(val message: String) : AlarmUiState
 }
-
 
