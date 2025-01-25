@@ -43,36 +43,44 @@ fun AlarmRoute(
             is AlarmUiState.Success -> AlarmSuccessScreen(
                 data = uiState.data,
                 onAddAlarmClick = {
-                    val currentTime = System.currentTimeMillis() + 1000 // 1 second later
+                    val currentTime = System.currentTimeMillis() + 1000
                     val id = Random.nextInt()
                     val proAlarm = ProAlarm(
                         id = id,
                         timeInMillis = currentTime,
-                        message = "Test Alarm ID = $id"
+                        message = "Test Alarm $id"
                     )
-                    // Delegate to ViewModel
-                    viewModel.onEvent(AlarmEvent.AddAlarm(proAlarm)) // Pass ProAlarm to the event
+                    viewModel.onEvent(AlarmEvent.AddAlarm(proAlarm))
                 },
                 onDeleteAllClick = {
                     viewModel.onEvent(AlarmEvent.DeleteAll)
+                },
+                onToggleAlarm = { alarmId, isEnabled ->
+                    viewModel.onEvent(AlarmEvent.ToggleAlarm(alarmId, isEnabled))
                 }
             )
+
             is AlarmUiState.Error -> ErrorScreen(uiState.message)
             AlarmUiState.Empty -> AlarmSuccessScreen(
-                data = emptyList(),
-                onAddAlarmClick = {
-                    val currentTime = System.currentTimeMillis() + 1000 // 1 second later
-                    val proAlarm = ProAlarm(
-                        id = Random.nextInt(),
-                        timeInMillis = currentTime,
-                        message = "Add First Test Alarm"
-                    )
-                    viewModel.onEvent(AlarmEvent.AddAlarm(proAlarm)) // Delegate to ViewModel
-                },
-                onDeleteAllClick = {
-                    viewModel.onEvent(AlarmEvent.DeleteAll)
-                }
-            )
+            data = emptyList(),
+            onAddAlarmClick = {
+                val currentTime = System.currentTimeMillis() + 1000
+                val id = Random.nextInt()
+                val proAlarm = ProAlarm(
+                    id = id,
+                    timeInMillis = currentTime,
+                    message = "Test Alarm $id"
+                )
+                viewModel.onEvent(AlarmEvent.AddAlarm(proAlarm))
+            },
+            onDeleteAllClick = {
+                viewModel.onEvent(AlarmEvent.DeleteAll)
+            },
+            onToggleAlarm = { alarmId, isEnabled ->
+                viewModel.onEvent(AlarmEvent.ToggleAlarm(alarmId, isEnabled))
+            }
+        )
+
         }
     }
 }

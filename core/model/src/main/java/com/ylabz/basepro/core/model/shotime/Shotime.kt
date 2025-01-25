@@ -6,7 +6,9 @@ import java.time.Instant
 import java.time.ZoneOffset
 
 data class ShotimeSessionData(
-    val shot: String
+    val shot: String,
+    val id: Int,
+    val isEnabled: Boolean
     /*val startTime: Instant,
     val startZoneOffset: ZoneOffset?,
     val endTime: Instant,

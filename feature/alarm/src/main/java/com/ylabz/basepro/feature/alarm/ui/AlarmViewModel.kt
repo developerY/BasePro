@@ -32,27 +32,9 @@ class AlarmViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<AlarmUiState>(AlarmUiState.Loading)
     val uiState: StateFlow<AlarmUiState> = _uiState
 
-    private val notificationChannelId = "ALARM_CHANNEL"
-    private val notificationChannelName = "Alarm Notifications"
-
     init {
-        setupNotificationChannel()
+        alarmRepository.setupNotificationChannel()
         loadAlarms()
-    }
-
-    // Set up the notification channel
-    private fun setupNotificationChannel() {
-        val channel = NotificationChannel(
-            notificationChannelId,
-            notificationChannelName,
-            NotificationManager.IMPORTANCE_HIGH
-        ).apply {
-            description = "Channel for alarm notifications"
-        }
-
-        val notificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
     }
 
     // Load alarms into UI state
@@ -61,14 +43,14 @@ class AlarmViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val alarms = alarmRepository.getAlarms().firstOrNull() ?: emptyList()
-                if (alarms.isEmpty()) {
-                    _uiState.value = AlarmUiState.Empty
-                } else {
-                    val data = alarms.map { alarm ->
-                        ShotimeSessionData(shot = alarm.message) // Map alarms to ShotimeSessionData
-                    }
-                    _uiState.value = AlarmUiState.Success(data)
+                val data = alarms.map { alarm ->
+                    ShotimeSessionData(
+                        shot = alarm.message,
+                        id = alarm.id,
+                        isEnabled = alarm.isEnabled
+                    )
                 }
+                _uiState.value = AlarmUiState.Success(data)
             } catch (e: Exception) {
                 _uiState.value = AlarmUiState.Error("Failed to load alarms: ${e.message}")
             }
@@ -80,6 +62,15 @@ class AlarmViewModel @Inject constructor(
         when (event) {
             is AlarmEvent.AddAlarm -> addAlarm(event.proAlarm)
             AlarmEvent.DeleteAll -> deleteAllAlarms()
+            is AlarmEvent.ToggleAlarm -> toggleAlarm(event.alarmId, event.isEnabled)
+        }
+    }
+
+    /* Everything must call the Repo */
+    private fun toggleAlarm(alarmId: Int, isEnabled: Boolean) {
+        viewModelScope.launch {
+            alarmRepository.toggleAlarm(alarmId, isEnabled)
+            loadAlarms() // Refresh UI state
         }
     }
 

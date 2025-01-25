@@ -100,10 +100,10 @@ class ShotimeViewModel @Inject constructor(
         _uiState.value = ShotimeUiState.Loading
         viewModelScope.launch {
             try {
-                val dat : ShotimeSessionData = ShotimeSessionData(
+                /*val dat : ShotimeSessionData = ShotimeSessionData(
                     shot = "one"
-                )
-                val listDat = listOf(dat)
+                )*/
+                val listDat = emptyList<ShotimeSessionData>()
                 _uiState.value = ShotimeUiState.Success(listDat)
             } catch (e: Exception) {
                 _uiState.value = ShotimeUiState.Error("Failed to load coffee shops")

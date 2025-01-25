@@ -13,8 +13,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,7 +33,8 @@ fun AlarmSuccessScreen(
     modifier: Modifier = Modifier,
     data: List<ShotimeSessionData>,
     onAddAlarmClick: () -> Unit,
-    onDeleteAllClick: () -> Unit
+    onDeleteAllClick: () -> Unit,
+    onToggleAlarm: (Int, Boolean) -> Unit // Callback for toggling alarms
 ) {
     Box(
         modifier = modifier
@@ -39,47 +42,51 @@ fun AlarmSuccessScreen(
             .background(Color.Black)
             .padding(16.dp)
     ) {
-        // LazyColumn for displaying the data
         LazyColumn(
             modifier = Modifier.align(Alignment.TopCenter),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(data) { item ->
-                Text(
-                    text = item.shot,
-                    color = Color.White,
-                    fontSize = 16.sp,
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)
                         .background(Color.DarkGray, shape = RoundedCornerShape(8.dp))
-                        .padding(16.dp)
-                )
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = item.shot,
+                        color = Color.White,
+                        fontSize = 16.sp
+                    )
+                    Switch(
+                        checked = item.isEnabled,
+                        onCheckedChange = { isChecked ->
+                            onToggleAlarm(item.id, isChecked)
+                        }
+                    )
+                }
             }
         }
 
-        // Add and Delete All Buttons
-        Row(
+        FloatingActionButton(
+            onClick = onAddAlarmClick,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(16.dp)
         ) {
-            // Delete All Button
-            FloatingActionButton(
-                onClick = onDeleteAllClick,
-                modifier = Modifier
-            ) {
-                Icon(Icons.Default.Delete, contentDescription = "Delete All Alarms")
-            }
+            Icon(Icons.Default.Add, contentDescription = "Add Alarm")
+        }
 
-            // Add Alarm Button
-            FloatingActionButton(
-                onClick = onAddAlarmClick,
-                modifier = Modifier
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Alarm")
-            }
+        Button(
+            onClick = onDeleteAllClick,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(16.dp)
+        ) {
+            Text("Delete All")
         }
     }
 }

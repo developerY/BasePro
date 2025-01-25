@@ -1,6 +1,7 @@
 package com.ylabz.basepro.core.data.repository.alarm
 
 import android.app.AlarmManager
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -29,6 +30,9 @@ class AlarmRepositoryImpl @Inject constructor(
     val Context.dataStore by preferencesDataStore(name = "alarms_datastore")
     private val alarmsKey = stringPreferencesKey("alarms_key")
 
+    private val notificationChannelId = "ALARM_CHANNEL"
+    private val notificationChannelName = "Alarm Notifications"
+
     init {
         // Continuously observe the DataStore and update alarmsStateFlow
         CoroutineScope(Dispatchers.IO).launch {
@@ -39,6 +43,20 @@ class AlarmRepositoryImpl @Inject constructor(
                 alarmsStateFlow.value = alarms
             }
         }
+    }
+
+    // Set up the notification channel
+    override fun setupNotificationChannel() {
+        val channel = NotificationChannel(
+            notificationChannelId,
+            notificationChannelName,
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "Channel for alarm notifications"
+        }
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
 
     override suspend fun clearAllAlarms() {
@@ -53,26 +71,54 @@ class AlarmRepositoryImpl @Inject constructor(
     override suspend fun addAlarm(alarm: ProAlarm) {
         val currentAlarms = alarmsStateFlow.value
         saveAlarms(currentAlarms + alarm)
+        if (alarm.isEnabled) {
+            scheduleNotification(alarm)
+        }
     }
 
     // Delete an alarm
     override suspend fun deleteAlarm(alarmId: Int) {
         val currentAlarms = alarmsStateFlow.value
-        saveAlarms(currentAlarms.filter { it.id != alarmId })
-    }
+        val updatedAlarms = currentAlarms.filter { it.id != alarmId }
+        saveAlarms(updatedAlarms)
 
+        // Cancel the alarm if it exists
+        cancelNotification(alarmId)
+    }
     // Save alarms to DataStore
-    private suspend fun saveAlarms(alarms: List<ProAlarm>) {
+    override suspend fun saveAlarms(alarms: List<ProAlarm>) {
         val alarmsJson: String = Json.encodeToString(alarms)
         context.dataStore.edit { preferences ->
             preferences[alarmsKey] = alarmsJson
         }
+
+        // Schedule notifications for all enabled alarms
+        alarms.filter { it.isEnabled }.forEach { scheduleNotification(it) }
     }
 
 
-    override fun removeAlarm(alarmId: Int) {
-        TODO("Not yet implemented")
+    override suspend fun removeAlarm(alarmId: Int) {
+        deleteAlarm(alarmId)
     }
+
+    override suspend fun toggleAlarm(alarmId: Int, isEnabled: Boolean) {
+        val currentAlarms = alarmsStateFlow.value
+        val updatedAlarms = currentAlarms.map { alarm ->
+            if (alarm.id == alarmId) {
+                alarm.copy(isEnabled = isEnabled).also {
+                    if (isEnabled) {
+                        scheduleNotification(it)
+                    } else {
+                        cancelNotification(alarmId)
+                    }
+                }
+            } else {
+                alarm
+            }
+        }
+        saveAlarms(updatedAlarms)
+    }
+
 
     private fun scheduleNotification(proAlarm: ProAlarm) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -87,8 +133,8 @@ class AlarmRepositoryImpl @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        // Provide a window of 1 minute (60000 milliseconds) around the scheduled time
-        val windowLengthMillis = 60000L
+        // Provide a window of 1 minute 1(0000 milliseconds) around the scheduled time
+        val windowLengthMillis = 10000L
 
         alarmManager.setWindow(
             AlarmManager.RTC_WAKEUP,

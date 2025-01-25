@@ -7,5 +7,7 @@ import kotlinx.serialization.Serializable
 data class ProAlarm(
     val id: Int,
     val timeInMillis: Long,
-    val message: String
+    val message: String,
+    val isEnabled: Boolean = true // Default to enabled
 )
+
