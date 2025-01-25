@@ -44,12 +44,14 @@ fun AlarmRoute(
                 data = uiState.data,
                 onAddAlarmClick = {
                     val currentTime = System.currentTimeMillis() + 1000 // 1 second later
+                    val id = Random.nextInt()
                     val proAlarm = ProAlarm(
-                        id = Random.nextInt(),
+                        id = id,
                         timeInMillis = currentTime,
-                        message = "Test Alarm"
+                        message = "Test Alarm ID = $id"
                     )
-                    viewModel.onEvent(AlarmEvent.AddAlarm) // Delegate to ViewModel
+                    // Delegate to ViewModel
+                    viewModel.onEvent(AlarmEvent.AddAlarm(proAlarm)) // Pass ProAlarm to the event
                 },
                 onDeleteAllClick = {
                     viewModel.onEvent(AlarmEvent.DeleteAll)
@@ -63,9 +65,9 @@ fun AlarmRoute(
                     val proAlarm = ProAlarm(
                         id = Random.nextInt(),
                         timeInMillis = currentTime,
-                        message = "Test Alarm"
+                        message = "Add First Test Alarm"
                     )
-                    viewModel.onEvent(AlarmEvent.AddAlarm) // Delegate to ViewModel
+                    viewModel.onEvent(AlarmEvent.AddAlarm(proAlarm)) // Delegate to ViewModel
                 },
                 onDeleteAllClick = {
                     viewModel.onEvent(AlarmEvent.DeleteAll)

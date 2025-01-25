@@ -78,23 +78,17 @@ class AlarmViewModel @Inject constructor(
     // Handle events
     fun onEvent(event: AlarmEvent) {
         when (event) {
-            AlarmEvent.AddAlarm -> addAlarm()
+            is AlarmEvent.AddAlarm -> addAlarm(event.proAlarm)
             AlarmEvent.DeleteAll -> deleteAllAlarms()
         }
     }
 
     // Add a new alarm
-    private fun addAlarm() {
-        val currentTime = System.currentTimeMillis() + 1000 // 1 second later
-        val proAlarm = ProAlarm(
-            id = Random.nextInt(),
-            timeInMillis = currentTime,
-            message = "Test Alarm"
-        )
-
+    // Add an alarm with a parameter
+    private fun addAlarm(proAlarm: ProAlarm) {
         viewModelScope.launch {
-            alarmRepository.addAlarm(proAlarm)
-            loadAlarms() // Refresh UI state
+            alarmRepository.addAlarm(proAlarm) // Save the alarm
+            loadAlarms() // Refresh the UI state
         }
     }
 
