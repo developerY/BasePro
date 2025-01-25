@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import java.util.Date
 import javax.inject.Inject
 
 
@@ -143,6 +145,38 @@ class AlarmRepositoryImpl @Inject constructor(
             pendingIntent
         )
     }
+
+    override fun logAlarms() {
+        val currentAlarms = alarmsStateFlow.value
+        Log.d("AlarmRepository", "Logging Alarms. Total: ${currentAlarms.size}")
+
+        currentAlarms.forEach { alarm ->
+            val isScheduled = isAlarmScheduled(alarm)
+            Log.d(
+                "AlarmRepository",
+                "Alarm ID: ${alarm.id}, Time: ${Date(alarm.timeInMillis)}, Message: ${alarm.message}, Scheduled: $isScheduled"
+            )
+        }
+
+        if (currentAlarms.isEmpty()) {
+            Log.d("AlarmRepository", "No alarms found in the local list.")
+        }
+    }
+
+    private fun isAlarmScheduled(proAlarm: ProAlarm): Boolean {
+        val intent = Intent(context, AlarmReceiver::class.java).apply {
+            putExtra("ALARM_ID", proAlarm.id)
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            proAlarm.id,
+            intent,
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+        )
+        return pendingIntent != null
+    }
+
+
 
     private fun sendTestNotification(context: Context) {
         val notificationManager =

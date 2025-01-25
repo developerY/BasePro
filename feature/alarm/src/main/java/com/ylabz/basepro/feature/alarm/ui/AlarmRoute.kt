@@ -43,7 +43,7 @@ fun AlarmRoute(
             is AlarmUiState.Success -> AlarmSuccessScreen(
                 data = uiState.data,
                 onAddAlarmClick = {
-                    val currentTime = System.currentTimeMillis() + 1000
+                    val currentTime = System.currentTimeMillis() + 1000 // 1 second later
                     val id = Random.nextInt()
                     val proAlarm = ProAlarm(
                         id = id,
@@ -57,14 +57,18 @@ fun AlarmRoute(
                 },
                 onToggleAlarm = { alarmId, isEnabled ->
                     viewModel.onEvent(AlarmEvent.ToggleAlarm(alarmId, isEnabled))
+                },
+                onDebugLogClick = {
+                    viewModel.logDebugInfo() // Call the ViewModel's debug method
                 }
             )
+
 
             is AlarmUiState.Error -> ErrorScreen(uiState.message)
             AlarmUiState.Empty -> AlarmSuccessScreen(
             data = emptyList(),
             onAddAlarmClick = {
-                val currentTime = System.currentTimeMillis() + 1000
+                val currentTime = System.currentTimeMillis() + 1000 // 1 second later
                 val id = Random.nextInt()
                 val proAlarm = ProAlarm(
                     id = id,
@@ -78,8 +82,12 @@ fun AlarmRoute(
             },
             onToggleAlarm = { alarmId, isEnabled ->
                 viewModel.onEvent(AlarmEvent.ToggleAlarm(alarmId, isEnabled))
+            },
+            onDebugLogClick = {
+                viewModel.logDebugInfo() // Call the ViewModel's debug method
             }
         )
+
 
         }
     }

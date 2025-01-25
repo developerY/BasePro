@@ -94,4 +94,9 @@ class AlarmViewModel @Inject constructor(
             }
         }
     }
+
+    fun logDebugInfo() {
+        alarmRepository.logAlarms()
+    }
+
 }

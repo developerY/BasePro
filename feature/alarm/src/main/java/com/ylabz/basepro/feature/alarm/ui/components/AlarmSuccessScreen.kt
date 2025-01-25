@@ -34,7 +34,8 @@ fun AlarmSuccessScreen(
     data: List<ShotimeSessionData>,
     onAddAlarmClick: () -> Unit,
     onDeleteAllClick: () -> Unit,
-    onToggleAlarm: (Int, Boolean) -> Unit // Callback for toggling alarms
+    onToggleAlarm: (Int, Boolean) -> Unit, // Callback for toggling alarms
+    onDebugLogClick: () -> Unit // Callback for debug logging
 ) {
     Box(
         modifier = modifier
@@ -80,13 +81,24 @@ fun AlarmSuccessScreen(
             Icon(Icons.Default.Add, contentDescription = "Add Alarm")
         }
 
-        Button(
-            onClick = onDeleteAllClick,
+        Row(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(16.dp)
         ) {
-            Text("Delete All")
+            Button(
+                onClick = onDeleteAllClick,
+
+            ) {
+                Text("Delete All")
+            }
+
+            // Debug log button
+            Button(
+                onClick = onDebugLogClick,
+            ) {
+                Text(text = "Debug Log")
+            }
         }
     }
 }
