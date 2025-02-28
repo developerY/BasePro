@@ -192,3 +192,5 @@ For questions or support, please contact us at developer@ylabz.com.
 | **Example Use Case**             | Fetching data, observing external changes.             | Managing toggle states, simple UI logic.       |
 
 ---
+
+Add a module 

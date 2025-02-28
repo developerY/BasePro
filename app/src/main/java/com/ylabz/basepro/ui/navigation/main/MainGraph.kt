@@ -3,32 +3,23 @@ package com.ylabz.basepro.ui.navigation.main
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.ylabz.basepro.listings.ui.ListUIRoute
-import com.ylabz.basepro.listings.ui.components.DetailsRoute
 import com.ylabz.basepro.core.ui.MAIN
 import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.feature.home.ui.HomeMainRoute
-import com.ylabz.basepro.settings.ui.SettingsUiRoute
+import com.ylabz.basepro.listings.ui.ListUIRoute
+import com.ylabz.basepro.listings.ui.components.DetailsRoute
 import com.ylabz.basepro.ui.bar.AppScaffold
 import com.ylabz.basepro.ui.navigation.graphs.alarmNavGraph
+import com.ylabz.basepro.ui.navigation.graphs.bikeNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.bluetoothLeNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.gmapNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.healthNavGraph
@@ -124,6 +115,12 @@ fun MainNavGraph(
             navController
         )
 
+        bikeNavGraph(
+            drawerState,
+            scope,
+            navController
+        )
+
         composable(
             Screen.HomeScreen.route,
         ) {
@@ -159,19 +156,19 @@ fun MainNavGraph(
         }
 
 
-            // master / detail views for tasks
-            composable(
-                route = "details/{id}",
-                arguments = listOf(navArgument("id") { type = NavType.IntType })
-            ) { backStackEntry ->
-                val itemId = backStackEntry.arguments?.getInt("id")
-                itemId?.let {
-                    DetailsRoute(
-                        navController = navController,
-                        itemId = it
-                    )
-                }
+        // master / detail views for tasks
+        composable(
+            route = "details/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getInt("id")
+            itemId?.let {
+                DetailsRoute(
+                    navController = navController,
+                    itemId = it
+                )
             }
         }
+    }
 
 }
