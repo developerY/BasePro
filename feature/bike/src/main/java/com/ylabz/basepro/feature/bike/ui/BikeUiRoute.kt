@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ylabz.basepro.settings.ui.components.BikeCompose
+import com.ylabz.basepro.feature.bike.ui.components.BikeCompose
 import com.ylabz.basepro.settings.ui.components.ErrorScreen
 import com.ylabz.basepro.settings.ui.components.LoadingScreen
 

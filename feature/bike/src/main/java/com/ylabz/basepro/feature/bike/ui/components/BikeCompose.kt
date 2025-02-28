@@ -1,19 +1,25 @@
-package com.ylabz.basepro.settings.ui.components
+package com.ylabz.basepro.feature.bike.ui.components
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.Icon
 import com.ylabz.basepro.feature.bike.ui.BikeEvent
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BikeCompose(
     modifier: Modifier = Modifier,
@@ -21,132 +27,157 @@ fun BikeCompose(
     onEvent: (BikeEvent) -> Unit,
     navTo: (String) -> Unit // Navigation callback for FAB
 ) {
+
+
+
+    // States for toggles (Switches)
+    val avoidHeavyTraffic = remember { mutableStateOf(false) }
+    val preferFlatTerrain = remember { mutableStateOf(false) }
+    val preferScenicRoutes = remember { mutableStateOf(false) }
+    val enableArNavigation = remember { mutableStateOf(false) }
+
+    // Optional: Scaffold for a TopAppBar or other Material components
     Scaffold(
-        modifier = modifier.fillMaxSize(),
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navTo("home_screen") },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Home,
-                    contentDescription = "Navigate to Home"
-                )
-            }
-        },
-        floatingActionButtonPosition = FabPosition.End
-    ) { paddingValues ->
+        topBar = {
+            TopAppBar(
+                title = { Text("Route Planning") }
+            )
+        }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
-                .padding(paddingValues)
-                .padding(16.dp)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(innerPadding)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
         ) {
-            // Display each setting with compact RadioButton options
-            settings.forEach { (key, options) ->
-                var selectedOption by remember { mutableStateOf(options.first()) }
+            // 5.1. Customized Route Generation
+            SectionHeader(title = "5.1. Customized Route Generation")
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = key,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.align(Alignment.Start)
-                    )
+            // 5.1.1. Preference-Based Routing
+            SubsectionHeader(title = "5.1.1. Preference-Based Routing")
+            Text(
+                text = "• Terrain Preferences: Selecting routes based on difficulty (flat routes or hill climbs)\n" +
+                        "• Surface Types: Filtering routes by surface (paved roads, gravel paths, trails)",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+            )
 
-                    // Row for each setting's options
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        options.forEach { option ->
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .clickable { selectedOption = option }
-                            ) {
-                                RadioButton(
-                                    selected = (selectedOption == option),
-                                    onClick = { selectedOption = option }
-                                )
-                                Text(
-                                    text = option,
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            }
-                        }
-                    }
+            // Toggles for preferences
+            PreferenceSwitch(
+                label = "Avoid Heavy Traffic",
+                checked = avoidHeavyTraffic.value,
+                onCheckedChange = { avoidHeavyTraffic.value = it }
+            )
+            PreferenceSwitch(
+                label = "Prefer Flat Terrain",
+                checked = preferFlatTerrain.value,
+                onCheckedChange = { preferFlatTerrain.value = it }
+            )
+            PreferenceSwitch(
+                label = "Prefer Scenic Routes",
+                checked = preferScenicRoutes.value,
+                onCheckedChange = { preferScenicRoutes.value = it }
+            )
 
-                    Button(
-                        onClick = { onEvent(BikeEvent.UpdateSetting(key, selectedOption)) },
-                        modifier = Modifier.align(Alignment.End)
-                    ) {
-                        Text("Save $key")
-                    }
-                }
+            // 5.1.2. Safety and Comfort Factors
+            SubsectionHeader(title = "5.1.2. Safety and Comfort Factors")
+            Text(
+                text = "• Traffic Density Analysis: Avoid high-traffic areas for safer rides\n" +
+                        "• Lighting Conditions: Consider time of day and street lighting for visibility",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+            )
+
+            // Map placeholder
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .padding(16.dp)
+                    .background(Color.LightGray),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "Map Placeholder")
             }
 
-            // Spacer(modifier = Modifier.weight(1f))
+            // AR Navigation (Beta)
+            PreferenceSwitch(
+                label = "Enable AR Navigation (Beta)",
+                checked = enableArNavigation.value,
+                onCheckedChange = { enableArNavigation.value = it }
+            )
 
-            // Button to delete all entries
+            // 5.2. Real-Time Route Adjustments
+            SectionHeader(title = "5.2. Real-Time Route Adjustments")
+
+            // 5.2.1. Dynamic Re-Routing
+            SubsectionHeader(title = "5.2.1. Dynamic Re-Routing")
+            Text(
+                text = "• Incident Avoidance: Automatically adjust routes to avoid accidents or construction zones\n" +
+                        "• Pace Adjustments: Modify the route to accommodate changes in speed or delays",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+            )
+
+            // 5.2.2. Interactive Map Features
+            SubsectionHeader(title = "5.2.2. Interactive Map Features")
+            Text(
+                text = "• Points of Interest (POIs): Display rest stops, viewpoints, and amenities\n" +
+                        "• Community Updates: Show real-time updates from other cyclists about route conditions",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+            )
+
+            // Start Navigation button
             Button(
-                onClick = { onEvent(BikeEvent.DeleteAllEntries) },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error,
-                    contentColor = MaterialTheme.colorScheme.onError
-                )
+                onClick = { /* Handle navigation start */ },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
             ) {
-                Text("Delete All Entries")
+                Text(text = "Start Navigation")
             }
         }
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun SettingsComposePreview() {
-    val sampleSettings = mapOf(
-        "Theme" to listOf("Light", "Dark", "System Default"),
-        "Language" to listOf("English", "Spanish", "French"),
-        "Notifications" to listOf("Enabled", "Disabled")
-    )
-
-    BikeCompose(
-        settings = sampleSettings,
-        onEvent = {},
-        navTo = {} // No-op for preview
+fun SectionHeader(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+        modifier = Modifier.padding(16.dp)
     )
 }
 
-
-
-// These will be move to a common directory.
 @Composable
-fun LoadingScreen() {
-    Text(text = "Loading...", modifier = Modifier.fillMaxSize())
+fun SubsectionHeader(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+    )
 }
 
 @Composable
-fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+fun PreferenceSwitch(
+    label: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text(
-            text = "Error: $errorMessage",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(bottom = 16.dp)
+            text = label,
+            modifier = Modifier.weight(1f)
         )
-        Text(
-            text = "Retry",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier
-                .clickable { onRetry() }
-                .padding(vertical = 8.dp)
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange
         )
     }
 }
