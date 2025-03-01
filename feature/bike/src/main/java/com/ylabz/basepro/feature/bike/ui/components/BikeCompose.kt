@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -114,22 +115,15 @@ fun BikeCompose(
                         front = {
                             Column(modifier = Modifier.padding(horizontal = 12.dp)) {
                                 if (isPreferencesExpanded) {
-                                    PreferenceSwitch(
-                                        label = "Avoid Heavy Traffic",
-                                        checked = avoidHeavyTraffic.value,
-                                        onCheckedChange = { avoidHeavyTraffic.value = it }
+                                    // Switches with icons
+                                    PreferencesCardContent(
+                                        avoidHeavyTraffic = avoidHeavyTraffic.value,
+                                        onAvoidHeavyTrafficChange = { avoidHeavyTraffic.value = it },
+                                        preferFlatTerrain = preferFlatTerrain.value,
+                                        onPreferFlatTerrainChange = { preferFlatTerrain.value = it },
+                                        preferScenicRoutes = preferScenicRoutes.value,
+                                        onPreferScenicRoutesChange = { preferScenicRoutes.value = it }
                                     )
-                                    PreferenceSwitch(
-                                        label = "Prefer Flat Terrain",
-                                        checked = preferFlatTerrain.value,
-                                        onCheckedChange = { preferFlatTerrain.value = it }
-                                    )
-                                    PreferenceSwitch(
-                                        label = "Prefer Scenic Routes",
-                                        checked = preferScenicRoutes.value,
-                                        onCheckedChange = { preferScenicRoutes.value = it }
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
                                 } else {
                                     Text(
                                         text = "Preferences are collapsed.",
@@ -222,21 +216,38 @@ fun BikeCompose(
 }
 
 @Composable
-fun PreferenceSwitch(
+fun PreferenceSwitchOld(
     label: String,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
+    icon: ImageVector? = null
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // If an icon is provided, display it
+        icon?.let {
+            Icon(
+                imageVector = it,
+                contentDescription = null,
+                tint = Color.Black,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+        }
+
+        // The label
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.weight(1f),
             color = Color.Black
         )
+
+        // The switch
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
@@ -247,6 +258,7 @@ fun PreferenceSwitch(
         )
     }
 }
+
 
 @Composable
 fun FlipCard(
