@@ -35,10 +35,10 @@ fun RoutePlanningScreen() {
     val preferScenicRoutes = remember { mutableStateOf(false) }
     val enableArNavigation = remember { mutableStateOf(false) }
 
-    // Whether the Preferences card is flipped
+    // Collapsible and flip states for Preferences
+    var isPreferencesExpanded by remember { mutableStateOf(true) }
     var isPreferencesFlipped by remember { mutableStateOf(false) }
 
-    // Main container
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -47,7 +47,7 @@ fun RoutePlanningScreen() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())  // If you want the map to expand fully, remove the scroll
+                .verticalScroll(rememberScrollState())
                 .padding(12.dp)
         ) {
             // Title
@@ -63,98 +63,104 @@ fun RoutePlanningScreen() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // ▼▼▼ FlipCard usage ▼▼▼
+            // ▼▼▼ Preferences Card with collapse & flip ▼▼▼
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
-                // Our custom FlipCard
-                FlipCard(
-                    isFlipped = isPreferencesFlipped,
-                    front = {
-                        // FRONT SIDE (Preferences + Toggles)
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            // Header row (clickable to flip)
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { isPreferencesFlipped = !isPreferencesFlipped },
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Preferences",
-                                    style = MaterialTheme.typography.titleMedium.copy(
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    color = Color.Black,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                Icon(
-                                    painter = painterResource(android.R.drawable.arrow_up_float),
-                                    contentDescription = null,
-                                    tint = Color.Gray
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            // Toggles
-                            PreferenceSwitch(
-                                label = "Avoid Heavy Traffic",
-                                checked = avoidHeavyTraffic.value,
-                                onCheckedChange = { avoidHeavyTraffic.value = it }
-                            )
-                            PreferenceSwitch(
-                                label = "Prefer Flat Terrain",
-                                checked = preferFlatTerrain.value,
-                                onCheckedChange = { preferFlatTerrain.value = it }
-                            )
-                            PreferenceSwitch(
-                                label = "Prefer Scenic Routes",
-                                checked = preferScenicRoutes.value,
-                                onCheckedChange = { preferScenicRoutes.value = it }
+                Column {
+                    // Header row with two icons: collapse & flip
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Preferences",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = Color.Black,
+                            modifier = Modifier.weight(1f)
+                        )
+                        // Collapse/Expand icon
+                        IconButton(onClick = { isPreferencesExpanded = !isPreferencesExpanded }) {
+                            Icon(
+                                painter = if (isPreferencesExpanded)
+                                    painterResource(android.R.drawable.arrow_up_float)
+                                else
+                                    painterResource(android.R.drawable.arrow_down_float),
+                                contentDescription = "Expand or Collapse",
+                                tint = Color.Gray
                             )
                         }
-                    },
-                    back = {
-                        // BACK SIDE
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(12.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { isPreferencesFlipped = !isPreferencesFlipped },
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Back of Card",
-                                    style = MaterialTheme.typography.titleMedium.copy(
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    color = Color.Black,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                Icon(
-                                    painter = painterResource(android.R.drawable.arrow_down_float),
-                                    contentDescription = null,
-                                    tint = Color.Gray
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "Here is where you could show advanced settings, tips, or additional info!",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color.Black
+                        // Flip icon
+                        IconButton(onClick = { isPreferencesFlipped = !isPreferencesFlipped }) {
+                            Icon(
+                                painter = painterResource(android.R.drawable.ic_menu_rotate),
+                                contentDescription = "Flip Card",
+                                tint = Color.Gray
                             )
                         }
                     }
-                )
+
+                    // FlipCard composable to handle the 3D flip animation
+                    FlipCard(
+                        isFlipped = isPreferencesFlipped,
+                        front = {
+                            // FRONT side of card
+                            Column(modifier = Modifier.padding(horizontal = 12.dp)) {
+                                if (isPreferencesExpanded) {
+                                    // Show toggles
+                                    PreferenceSwitch(
+                                        label = "Avoid Heavy Traffic",
+                                        checked = avoidHeavyTraffic.value,
+                                        onCheckedChange = { avoidHeavyTraffic.value = it }
+                                    )
+                                    PreferenceSwitch(
+                                        label = "Prefer Flat Terrain",
+                                        checked = preferFlatTerrain.value,
+                                        onCheckedChange = { preferFlatTerrain.value = it }
+                                    )
+                                    PreferenceSwitch(
+                                        label = "Prefer Scenic Routes",
+                                        checked = preferScenicRoutes.value,
+                                        onCheckedChange = { preferScenicRoutes.value = it }
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                } else {
+                                    // Collapsed
+                                    Text(
+                                        text = "Preferences are collapsed.",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = Color.Black
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                }
+                            }
+                        },
+                        back = {
+                            // BACK side of card
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Text(
+                                    text = "Advanced Settings",
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    color = Color.Black
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "Place your advanced or additional settings here!",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.Black
+                                )
+                            }
+                        }
+                    )
+                }
             }
-            // ▲▲▲ END FlipCard usage ▲▲▲
+            // ▲▲▲ END of Preferences Card ▲▲▲
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -250,7 +256,7 @@ fun PreferenceSwitch(
 }
 
 /**
- * A composable that flips between a front and back side.
+ * A composable that flips between a front and back side with a 3D rotation animation.
  *
  * @param isFlipped Whether to show the back side (true) or the front (false).
  * @param front The composable for the front side.
@@ -277,11 +283,11 @@ fun FlipCard(
             rotationY = rotation
         }
     ) {
-        // Show front if rotation <= 90, else show back
         if (rotation <= 90f) {
+            // FRONT
             front()
         } else {
-            // Rotate the back side 180° so it looks correct when flipped
+            // BACK (rotate 180° so text isn’t reversed)
             Box(modifier = Modifier.graphicsLayer { rotationY = 180f }) {
                 back()
             }
