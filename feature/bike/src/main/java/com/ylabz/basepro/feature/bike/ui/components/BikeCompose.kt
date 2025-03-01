@@ -18,10 +18,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import com.ylabz.basepro.feature.bike.ui.BikeEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RoutePlanningScreen() {
+fun BikeCompose(
+    modifier: Modifier = Modifier,
+    settings: Map<String, List<String>>, // Each setting now has a list of options
+    onEvent: (BikeEvent) -> Unit,
+    navTo: (String) -> Unit // Navigation callback for FAB
+) {
     // Background gradient
     val backgroundGradient = Brush.verticalGradient(
         colors = listOf(Color(0xFF58B5EB), Color(0xFF6AD8AC))
@@ -167,8 +173,9 @@ fun RoutePlanningScreen() {
                         .background(Color.LightGray),
                     contentAlignment = Alignment.Center
                 ) {
+                    MapScreen()
                     Text(
-                        text = "Map Placeholder",
+                        text = "Bike Map",
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.DarkGray
                     )
@@ -269,8 +276,18 @@ fun FlipCard(
 @Preview(showBackground = true)
 @Composable
 fun PreviewRoutePlanningScreen() {
+    val sampleSettings = mapOf(
+        "Theme" to listOf("Light", "Dark", "System Default"),
+        "Language" to listOf("English", "Spanish", "French"),
+        "Notifications" to listOf("Enabled", "Disabled")
+    )
+
     MaterialTheme {
-        RoutePlanningScreen()
+        BikeCompose(
+            settings = sampleSettings,
+            onEvent = {},
+            navTo = {} // No-op for preview
+        )
     }
 }
 
