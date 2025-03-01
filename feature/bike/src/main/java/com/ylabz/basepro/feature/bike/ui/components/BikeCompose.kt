@@ -1,14 +1,20 @@
 package com.ylabz.basepro.feature.bike.ui.components
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,19 +35,19 @@ fun RoutePlanningScreen() {
     val preferScenicRoutes = remember { mutableStateOf(false) }
     val enableArNavigation = remember { mutableStateOf(false) }
 
-    // Collapsible state for Preferences card
-    var isPreferencesExpanded by remember { mutableStateOf(true) }
+    // Whether the Preferences card is flipped
+    var isPreferencesFlipped by remember { mutableStateOf(false) }
 
-    // Outer Box with gradient background
+    // Main container
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(brush = backgroundGradient)
     ) {
-        // Column that fills the screen (no verticalScroll so the map can expand)
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())  // If you want the map to expand fully, remove the scroll
                 .padding(12.dp)
         ) {
             // Title
@@ -57,41 +63,43 @@ fun RoutePlanningScreen() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Collapsible Card for Preferences
+            // ▼▼▼ FlipCard usage ▼▼▼
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
-                Column {
-                    // Card Header (click to expand/collapse)
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { isPreferencesExpanded = !isPreferencesExpanded }
-                            .padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Preferences",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = Color.Black,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Icon(
-                            painter = if (isPreferencesExpanded) {
-                                painterResource(android.R.drawable.arrow_up_float)
-                            } else {
-                                painterResource(android.R.drawable.arrow_down_float)
-                            },
-                            contentDescription = null,
-                            tint = Color.Gray
-                        )
-                    }
+                // Our custom FlipCard
+                FlipCard(
+                    isFlipped = isPreferencesFlipped,
+                    front = {
+                        // FRONT SIDE (Preferences + Toggles)
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            // Header row (clickable to flip)
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { isPreferencesFlipped = !isPreferencesFlipped },
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Preferences",
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    color = Color.Black,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                Icon(
+                                    painter = painterResource(android.R.drawable.arrow_up_float),
+                                    contentDescription = null,
+                                    tint = Color.Gray
+                                )
+                            }
 
-                    // Show switches if expanded
-                    if (isPreferencesExpanded) {
-                        Column(modifier = Modifier.padding(horizontal = 12.dp)) {
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            // Toggles
                             PreferenceSwitch(
                                 label = "Avoid Heavy Traffic",
                                 checked = avoidHeavyTraffic.value,
@@ -107,19 +115,54 @@ fun RoutePlanningScreen() {
                                 checked = preferScenicRoutes.value,
                                 onCheckedChange = { preferScenicRoutes.value = it }
                             )
+                        }
+                    },
+                    back = {
+                        // BACK SIDE
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { isPreferencesFlipped = !isPreferencesFlipped },
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Back of Card",
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    color = Color.Black,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                Icon(
+                                    painter = painterResource(android.R.drawable.arrow_down_float),
+                                    contentDescription = null,
+                                    tint = Color.Gray
+                                )
+                            }
                             Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "Here is where you could show advanced settings, tips, or additional info!",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.Black
+                            )
                         }
                     }
-                }
+                )
             }
+            // ▲▲▲ END FlipCard usage ▲▲▲
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Make the map card expand to fill remaining space
+            // Map
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .height(300.dp),
                 shape = MaterialTheme.shapes.medium,
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
@@ -137,7 +180,7 @@ fun RoutePlanningScreen() {
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             // AR Navigation (Beta)
             Text(
@@ -176,7 +219,7 @@ fun RoutePlanningScreen() {
     }
 }
 
-// A reusable switch row for preferences, using M3 components
+// A reusable switch row for preferences
 @Composable
 fun PreferenceSwitch(
     label: String,
@@ -206,6 +249,46 @@ fun PreferenceSwitch(
     }
 }
 
+/**
+ * A composable that flips between a front and back side.
+ *
+ * @param isFlipped Whether to show the back side (true) or the front (false).
+ * @param front The composable for the front side.
+ * @param back The composable for the back side.
+ */
+@Composable
+fun FlipCard(
+    isFlipped: Boolean,
+    front: @Composable () -> Unit,
+    back: @Composable () -> Unit
+) {
+    // Animate from 0° to 180° when flipping
+    val rotation by animateFloatAsState(
+        targetValue = if (isFlipped) 180f else 0f,
+        animationSpec = tween(durationMillis = 600)
+    )
+
+    // Increase cameraDistance to reduce distortion
+    val cameraDistance = 8 * LocalDensity.current.density
+
+    Box(
+        modifier = Modifier.graphicsLayer {
+            this.cameraDistance = cameraDistance
+            rotationY = rotation
+        }
+    ) {
+        // Show front if rotation <= 90, else show back
+        if (rotation <= 90f) {
+            front()
+        } else {
+            // Rotate the back side 180° so it looks correct when flipped
+            Box(modifier = Modifier.graphicsLayer { rotationY = 180f }) {
+                back()
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewRoutePlanningScreen() {
@@ -213,6 +296,7 @@ fun PreviewRoutePlanningScreen() {
         RoutePlanningScreen()
     }
 }
+
 
 
 
