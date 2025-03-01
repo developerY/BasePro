@@ -55,9 +55,15 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.tooling)
 
+    // Icons
+    implementation(libs.androidx.material.icons.extended)
+
+
     // Hilt Dependency Injection
     implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.android)
+    implementation(libs.play.services.maps)
+    // implementation((libs.play.services.location))
     ksp(libs.hilt.android.compiler)
     // kapt(libs.hilt.compiler)
 

@@ -56,6 +56,9 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.tooling)
 
+    // Icons
+    implementation(libs.androidx.material.icons.extended)
+
     // maps
     implementation(libs.google.maps.compose)
 

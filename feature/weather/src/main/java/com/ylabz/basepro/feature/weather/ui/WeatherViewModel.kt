@@ -30,15 +30,17 @@ class WeatherViewModel @Inject constructor(
 
         // Simulate a network call to fetch weather.
         viewModelScope.launch {
-            delay(2000) // Simulate network delay.
-            _weatherState.value = WeatherUiState.Success(
-                Weather(
+
+            val currentState = _uiState.value
+            if (currentState is WeatherUiState.Success) {
+                // Copy the existing settings, update the location
+                _uiState.value = currentState.copy(weather = Weather(
                     temperature = 22.5,
                     description = "Sunny",
                     iconUrl = "", // Replace with a URL or local resource reference.
                     location = "San Francisco, CA"
-                )
-            )
+                ))
+            }
         }
 
         // Trigger initial load of settings
@@ -81,6 +83,12 @@ class WeatherViewModel @Inject constructor(
             // Simulate loading settings data
             // In a real app, you'd retrieve these from your repository
             _uiState.value = WeatherUiState.Success(
+                weather = Weather(
+                    temperature = 22.5,
+                    description = "Sunny",
+                    iconUrl = "", // Replace with a URL or local resource reference.
+                    location = "San Francisco, CA"
+                ),
                 settings = mapOf(
                     "Theme" to listOf("Light", "Dark", "System Default"),
                     "Language" to listOf("English", "Spanish", "French"),
@@ -98,6 +106,12 @@ class WeatherViewModel @Inject constructor(
                 // e.g., handle your setting changes here
             }
             _uiState.value = WeatherUiState.Success(
+                weather = Weather(
+                    temperature = 22.5,
+                    description = "Sunny",
+                    iconUrl = "", // Replace with a URL or local resource reference.
+                    location = "San Francisco, CA"
+                ),
                 settings = updatedSettings,
                 location = (_uiState.value as? WeatherUiState.Success)?.location
             )
