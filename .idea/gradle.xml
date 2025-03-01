@@ -34,6 +34,7 @@
             <option value="$PROJECT_DIR$/feature/wearos/health" />
             <option value="$PROJECT_DIR$/feature/wearos/home" />
             <option value="$PROJECT_DIR$/feature/wearos/sleepwatch" />
+            <option value="$PROJECT_DIR$/feature/weather" />
           </set>
         </option>
       </GradleProjectSettings>
