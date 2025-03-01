@@ -35,7 +35,6 @@ fun BikeCompose(
     val preferScenicRoutes = remember { mutableStateOf(false) }
     val enableArNavigation = remember { mutableStateOf(false) }
 
-    // Main container with gradient background
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -60,31 +59,41 @@ fun BikeCompose(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Preferences label using M3 title style
-            Text(
-                text = "Preferences",
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                color = Color.Black
-            )
+            // ▼▼▼ TRANSFORMED CODE ▼▼▼
+            // Wrap the "Preferences" label and 3 switches in a Card
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium,
+                elevation = CardDefaults.cardElevation(4.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Preferences",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color.Black
+                    )
 
-            Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-            // Three preference toggles
-            PreferenceSwitch(
-                label = "Avoid Heavy Traffic",
-                checked = avoidHeavyTraffic.value,
-                onCheckedChange = { avoidHeavyTraffic.value = it }
-            )
-            PreferenceSwitch(
-                label = "Prefer Flat Terrain",
-                checked = preferFlatTerrain.value,
-                onCheckedChange = { preferFlatTerrain.value = it }
-            )
-            PreferenceSwitch(
-                label = "Prefer Scenic Routes",
-                checked = preferScenicRoutes.value,
-                onCheckedChange = { preferScenicRoutes.value = it }
-            )
+                    // Three preference toggles
+                    PreferenceSwitch(
+                        label = "Avoid Heavy Traffic",
+                        checked = avoidHeavyTraffic.value,
+                        onCheckedChange = { avoidHeavyTraffic.value = it }
+                    )
+                    PreferenceSwitch(
+                        label = "Prefer Flat Terrain",
+                        checked = preferFlatTerrain.value,
+                        onCheckedChange = { preferFlatTerrain.value = it }
+                    )
+                    PreferenceSwitch(
+                        label = "Prefer Scenic Routes",
+                        checked = preferScenicRoutes.value,
+                        onCheckedChange = { preferScenicRoutes.value = it }
+                    )
+                }
+            }
+            // ▲▲▲ END TRANSFORMED CODE ▲▲▲
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -102,7 +111,6 @@ fun BikeCompose(
                         .background(Color.LightGray),
                     contentAlignment = Alignment.Center
                 ) {
-                    // Replace with your actual map composable
                     Text(
                         text = "Map Placeholder",
                         style = MaterialTheme.typography.bodyMedium,
@@ -129,10 +137,9 @@ fun BikeCompose(
                 onCheckedChange = { enableArNavigation.value = it }
             )
 
-            // Push the button to the bottom
             Spacer(modifier = Modifier.weight(1f))
 
-            // Start Navigation button at bottom
+            // Start Navigation button
             Button(
                 onClick = { /* Start navigation action */ },
                 colors = ButtonDefaults.buttonColors(
