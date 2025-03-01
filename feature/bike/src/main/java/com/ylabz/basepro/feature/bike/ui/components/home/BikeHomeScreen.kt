@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.bike.ui.components
+package com.ylabz.basepro.feature.bike.ui.components.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -34,7 +34,7 @@ fun BikeHomeScreen(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Button(onClick = { /* TODO: Handle Action 1 */ }) {
+                Button(onClick = { navTo("bike") }) {
                     Text("Action 1")
                 }
                 Button(onClick = { /* TODO: Handle Action 2 */ }) {
