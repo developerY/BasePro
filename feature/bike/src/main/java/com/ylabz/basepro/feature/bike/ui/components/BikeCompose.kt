@@ -3,8 +3,6 @@ package com.ylabz.basepro.feature.bike.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RoutePlanningScreen() {
-    // Gradient background
+    // Background gradient
     val backgroundGradient = Brush.verticalGradient(
         colors = listOf(Color(0xFF58B5EB), Color(0xFF6AD8AC))
     )
@@ -34,16 +32,16 @@ fun RoutePlanningScreen() {
     // Collapsible state for Preferences card
     var isPreferencesExpanded by remember { mutableStateOf(true) }
 
+    // Outer Box with gradient background
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(brush = backgroundGradient)
     ) {
+        // Column that fills the screen (no verticalScroll so the map can expand)
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                // Reduced overall screen padding
                 .padding(12.dp)
         ) {
             // Title
@@ -66,7 +64,7 @@ fun RoutePlanningScreen() {
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
                 Column {
-                    // Card header (clickable to collapse/expand)
+                    // Card Header (click to expand/collapse)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -91,7 +89,7 @@ fun RoutePlanningScreen() {
                         )
                     }
 
-                    // Only show switches if expanded
+                    // Show switches if expanded
                     if (isPreferencesExpanded) {
                         Column(modifier = Modifier.padding(horizontal = 12.dp)) {
                             PreferenceSwitch(
@@ -117,11 +115,11 @@ fun RoutePlanningScreen() {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Map card (increased height to 300dp)
+            // Make the map card expand to fill remaining space
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(300.dp),
+                    .weight(1f),
                 shape = MaterialTheme.shapes.medium,
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
@@ -139,7 +137,7 @@ fun RoutePlanningScreen() {
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             // AR Navigation (Beta)
             Text(
@@ -156,8 +154,7 @@ fun RoutePlanningScreen() {
                 onCheckedChange = { enableArNavigation.value = it }
             )
 
-            // Push button to bottom
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Start Navigation button
             Button(
@@ -179,6 +176,7 @@ fun RoutePlanningScreen() {
     }
 }
 
+// A reusable switch row for preferences, using M3 components
 @Composable
 fun PreferenceSwitch(
     label: String,
