@@ -4,21 +4,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.feature.bike.ui.BikeEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,42 +24,52 @@ fun BikeCompose(
     onEvent: (BikeEvent) -> Unit,
     navTo: (String) -> Unit // Navigation callback for FAB
 ) {
+    // Create a vertical gradient from a blue shade to a green shade
+    val backgroundGradient = Brush.verticalGradient(
+        colors = listOf(Color(0xFF58B5EB), Color(0xFF6AD8AC))
+    )
 
-
-
-    // States for toggles (Switches)
+    // States for toggles
     val avoidHeavyTraffic = remember { mutableStateOf(false) }
     val preferFlatTerrain = remember { mutableStateOf(false) }
     val preferScenicRoutes = remember { mutableStateOf(false) }
     val enableArNavigation = remember { mutableStateOf(false) }
 
-    // Optional: Scaffold for a TopAppBar or other Material components
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Route Planning") }
-            )
-        }
-    ) { innerPadding ->
+    // Main container with gradient background
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(brush = backgroundGradient)
+    ) {
         Column(
             modifier = Modifier
-                .padding(innerPadding)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .padding(16.dp)
         ) {
-            // 5.1. Customized Route Generation
-            SectionHeader(title = "5.1. Customized Route Generation")
-
-            // 5.1.1. Preference-Based Routing
-            SubsectionHeader(title = "5.1.1. Preference-Based Routing")
+            // Title at the top using M3 headline style
             Text(
-                text = "• Terrain Preferences: Selecting routes based on difficulty (flat routes or hill climbs)\n" +
-                        "• Surface Types: Filtering routes by surface (paved roads, gravel paths, trails)",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                text = "Route Planning",
+                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                color = Color.White,
+                textAlign = TextAlign.Center
             )
 
-            // Toggles for preferences
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Preferences label using M3 title style
+            Text(
+                text = "Preferences",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                color = Color.Black
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Three preference toggles
             PreferenceSwitch(
                 label = "Avoid Heavy Traffic",
                 checked = avoidHeavyTraffic.value,
@@ -81,86 +86,73 @@ fun BikeCompose(
                 onCheckedChange = { preferScenicRoutes.value = it }
             )
 
-            // 5.1.2. Safety and Comfort Factors
-            SubsectionHeader(title = "5.1.2. Safety and Comfort Factors")
-            Text(
-                text = "• Traffic Density Analysis: Avoid high-traffic areas for safer rides\n" +
-                        "• Lighting Conditions: Consider time of day and street lighting for visibility",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-            )
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Map placeholder
-            Box(
+            // Rounded card for the map area
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
-                    .padding(16.dp)
-                    .background(Color.LightGray),
-                contentAlignment = Alignment.Center
+                    .height(200.dp),
+                shape = MaterialTheme.shapes.medium,
+                elevation = CardDefaults.cardElevation(4.dp)
             ) {
-                Text(text = "Map Placeholder")
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.LightGray),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // Replace with your actual map composable
+                    Text(
+                        text = "Map Placeholder",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.DarkGray
+                    )
+                }
             }
 
-            // AR Navigation (Beta)
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // AR Navigation (Beta) label
+            Text(
+                text = "AR Navigation (Beta)",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                color = Color.Black
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Toggle for AR Navigation
             PreferenceSwitch(
-                label = "Enable AR Navigation (Beta)",
+                label = "Enable AR Navigation",
                 checked = enableArNavigation.value,
                 onCheckedChange = { enableArNavigation.value = it }
             )
 
-            // 5.2. Real-Time Route Adjustments
-            SectionHeader(title = "5.2. Real-Time Route Adjustments")
+            // Push the button to the bottom
+            Spacer(modifier = Modifier.weight(1f))
 
-            // 5.2.1. Dynamic Re-Routing
-            SubsectionHeader(title = "5.2.1. Dynamic Re-Routing")
-            Text(
-                text = "• Incident Avoidance: Automatically adjust routes to avoid accidents or construction zones\n" +
-                        "• Pace Adjustments: Modify the route to accommodate changes in speed or delays",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-            )
-
-            // 5.2.2. Interactive Map Features
-            SubsectionHeader(title = "5.2.2. Interactive Map Features")
-            Text(
-                text = "• Points of Interest (POIs): Display rest stops, viewpoints, and amenities\n" +
-                        "• Community Updates: Show real-time updates from other cyclists about route conditions",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-            )
-
-            // Start Navigation button
+            // Start Navigation button at bottom
             Button(
-                onClick = { /* Handle navigation start */ },
+                onClick = { /* Start navigation action */ },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF0066FF),
+                    contentColor = Color.White
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .height(48.dp)
             ) {
-                Text(text = "Start Navigation")
+                Text(
+                    text = "Start Navigation",
+                    style = MaterialTheme.typography.labelLarge
+                )
             }
         }
     }
 }
 
-@Composable
-fun SectionHeader(title: String) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-        modifier = Modifier.padding(16.dp)
-    )
-}
-
-@Composable
-fun SubsectionHeader(title: String) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-    )
-}
-
+// A reusable switch row for preferences, using M3 components
 @Composable
 fun PreferenceSwitch(
     label: String,
@@ -170,16 +162,22 @@ fun PreferenceSwitch(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = label,
-            modifier = Modifier.weight(1f)
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(1f),
+            color = Color.Black
         )
         Switch(
             checked = checked,
-            onCheckedChange = onCheckedChange
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = Color.White,
+                checkedTrackColor = Color(0xFF4CAF50)
+            )
         )
     }
 }
