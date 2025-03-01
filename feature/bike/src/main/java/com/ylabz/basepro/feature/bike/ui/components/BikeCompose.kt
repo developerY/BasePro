@@ -1,6 +1,7 @@
 package com.ylabz.basepro.feature.bike.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -10,21 +11,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
-import com.ylabz.basepro.feature.bike.ui.BikeEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BikeCompose(
-    modifier: Modifier = Modifier,
-    settings: Map<String, List<String>>, // Each setting now has a list of options
-    onEvent: (BikeEvent) -> Unit,
-    navTo: (String) -> Unit // Navigation callback for FAB
-) {
-    // Create a vertical gradient from a blue shade to a green shade
+fun RoutePlanningScreen() {
+    // Gradient background
     val backgroundGradient = Brush.verticalGradient(
         colors = listOf(Color(0xFF58B5EB), Color(0xFF6AD8AC))
     )
@@ -35,6 +31,9 @@ fun BikeCompose(
     val preferScenicRoutes = remember { mutableStateOf(false) }
     val enableArNavigation = remember { mutableStateOf(false) }
 
+    // Collapsible state for Preferences card
+    var isPreferencesExpanded by remember { mutableStateOf(true) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -44,64 +43,85 @@ fun BikeCompose(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp)
+                // Reduced overall screen padding
+                .padding(12.dp)
         ) {
-            // Title at the top using M3 headline style
+            // Title
             Text(
                 text = "Route Planning",
                 style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp),
+                    .padding(top = 8.dp),
                 color = Color.White,
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // ▼▼▼ TRANSFORMED CODE ▼▼▼
-            // Wrap the "Preferences" label and 3 switches in a Card
+            // Collapsible Card for Preferences
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "Preferences",
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = Color.Black
-                    )
+                Column {
+                    // Card header (clickable to collapse/expand)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { isPreferencesExpanded = !isPreferencesExpanded }
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Preferences",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = Color.Black,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Icon(
+                            painter = if (isPreferencesExpanded) {
+                                painterResource(android.R.drawable.arrow_up_float)
+                            } else {
+                                painterResource(android.R.drawable.arrow_down_float)
+                            },
+                            contentDescription = null,
+                            tint = Color.Gray
+                        )
+                    }
 
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // Three preference toggles
-                    PreferenceSwitch(
-                        label = "Avoid Heavy Traffic",
-                        checked = avoidHeavyTraffic.value,
-                        onCheckedChange = { avoidHeavyTraffic.value = it }
-                    )
-                    PreferenceSwitch(
-                        label = "Prefer Flat Terrain",
-                        checked = preferFlatTerrain.value,
-                        onCheckedChange = { preferFlatTerrain.value = it }
-                    )
-                    PreferenceSwitch(
-                        label = "Prefer Scenic Routes",
-                        checked = preferScenicRoutes.value,
-                        onCheckedChange = { preferScenicRoutes.value = it }
-                    )
+                    // Only show switches if expanded
+                    if (isPreferencesExpanded) {
+                        Column(modifier = Modifier.padding(horizontal = 12.dp)) {
+                            PreferenceSwitch(
+                                label = "Avoid Heavy Traffic",
+                                checked = avoidHeavyTraffic.value,
+                                onCheckedChange = { avoidHeavyTraffic.value = it }
+                            )
+                            PreferenceSwitch(
+                                label = "Prefer Flat Terrain",
+                                checked = preferFlatTerrain.value,
+                                onCheckedChange = { preferFlatTerrain.value = it }
+                            )
+                            PreferenceSwitch(
+                                label = "Prefer Scenic Routes",
+                                checked = preferScenicRoutes.value,
+                                onCheckedChange = { preferScenicRoutes.value = it }
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                    }
                 }
             }
-            // ▲▲▲ END TRANSFORMED CODE ▲▲▲
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            // Rounded card for the map area
+            // Map card (increased height to 300dp)
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp),
+                    .height(300.dp),
                 shape = MaterialTheme.shapes.medium,
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
@@ -119,9 +139,9 @@ fun BikeCompose(
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // AR Navigation (Beta) label
+            // AR Navigation (Beta)
             Text(
                 text = "AR Navigation (Beta)",
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
@@ -130,13 +150,13 @@ fun BikeCompose(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Toggle for AR Navigation
             PreferenceSwitch(
                 label = "Enable AR Navigation",
                 checked = enableArNavigation.value,
                 onCheckedChange = { enableArNavigation.value = it }
             )
 
+            // Push button to bottom
             Spacer(modifier = Modifier.weight(1f))
 
             // Start Navigation button
@@ -159,7 +179,6 @@ fun BikeCompose(
     }
 }
 
-// A reusable switch row for preferences, using M3 components
 @Composable
 fun PreferenceSwitch(
     label: String,
@@ -169,7 +188,7 @@ fun PreferenceSwitch(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -191,18 +210,11 @@ fun PreferenceSwitch(
 
 @Preview(showBackground = true)
 @Composable
-fun BikeComposePreview() {
-    val sampleSettings = mapOf(
-        "Theme" to listOf("Light", "Dark", "System Default"),
-        "Language" to listOf("English", "Spanish", "French"),
-        "Notifications" to listOf("Enabled", "Disabled")
-    )
-
-    BikeCompose(
-        settings = sampleSettings,
-        onEvent = {},
-        navTo = {} // No-op for preview
-    )
+fun PreviewRoutePlanningScreen() {
+    MaterialTheme {
+        RoutePlanningScreen()
+    }
 }
+
 
 
