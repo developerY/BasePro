@@ -4,7 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ylabz.basepro.feature.bike.ui.components.BikeCompose
+import com.ylabz.basepro.feature.bike.ui.components.BikeHomeScreen
+import com.ylabz.basepro.feature.bike.ui.components.BikeHomeScreenNav
 import com.ylabz.basepro.settings.ui.components.ErrorScreen
 import com.ylabz.basepro.settings.ui.components.LoadingScreen
 
@@ -26,13 +27,21 @@ fun BikeUiRoute(
             }
         }
         is BikeUiState.Success -> {
-            BikeCompose(
+            /*BikeCompose(
                 modifier = modifier,
                 settings = uiState.settings,
                 location = uiState.location,   // <-- Pass the location here
                 onEvent = { event -> viewModel.onEvent(event) },
                 navTo = navTo
-            )
+            )*/
+            BikeHomeScreen(
+               modifier = modifier,
+               settings = uiState.settings,
+               location = uiState.location,   // <-- Pass the location here
+               onEvent = { event -> viewModel.onEvent(event) },
+               navTo = navTo
+           )
+
         }
     }
 }
