@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.android)
     implementation(project(":core:database"))
+    implementation(libs.play.services.location)
     ksp(libs.hilt.android.compiler)
     // kapt(libs.hilt.compiler)
 

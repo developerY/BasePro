@@ -47,7 +47,8 @@ tilesMaterial = "1.4.0"
 tilesTooling = "1.4.0"
 tilesToolingPreview = "1.4.0"
 horologist = "0.6.20"
-watchfaceComplicationsDataSourceKtx = "1.2.1" # apollo-graphql
+watchfaceComplicationsDataSourceKtx = "1.2.1"
+playServicesLocation = "21.3.0" # apollo-graphql
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }  # Core KTX library
@@ -149,6 +150,7 @@ google-maps-compose = { module = 'com.google.maps.android:maps-compose', version
 
 # Health
 healthConnect = { module = 'androidx.health.connect:connect-client', version.ref = "healthConnect" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }  # Android application plugin

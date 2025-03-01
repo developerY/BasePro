@@ -29,7 +29,7 @@ fun MapScreen() {
     }
 
     // Request the current location and update the camera position
-    LaunchedEffect(Unit) {
+    LaunchedEffect(Unit) @androidx.annotation.RequiresPermission(anyOf = [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION]) {
         try {
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 if (location != null) {
