@@ -49,6 +49,7 @@ tilesToolingPreview = "1.4.0"
 horologist = "0.6.20"
 watchfaceComplicationsDataSourceKtx = "1.2.1"
 playServicesLocation = "21.3.0" # apollo-graphql
+playServicesCoroutines = "1.6.4"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }  # Core KTX library
@@ -98,6 +99,7 @@ horologist-composables = { module = "com.google.android.horologist:horologist-co
 horologist-compose-material = { module = "com.google.android.horologist:horologist-compose-material", version.ref = "horologist" }
 
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
+kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "playServicesCoroutines"}
 
 
 # Hilt Librariesandroidx.navigation:navigation-compose

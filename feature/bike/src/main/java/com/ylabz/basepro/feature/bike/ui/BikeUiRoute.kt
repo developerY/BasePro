@@ -29,9 +29,11 @@ fun BikeUiRoute(
             BikeCompose(
                 modifier = modifier,
                 settings = uiState.settings,
+                location = uiState.location,   // <-- Pass the location here
                 onEvent = { event -> viewModel.onEvent(event) },
                 navTo = navTo
             )
         }
     }
 }
+

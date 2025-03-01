@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
+import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.feature.bike.ui.BikeEvent
 import com.ylabz.basepro.feature.bike.ui.components.BikeCompose
 
@@ -121,6 +122,7 @@ fun SettingsComposePreview() {
 
     BikeCompose(
         settings = sampleSettings,
+        location = LatLng(0.0,0.0),
         onEvent = {},
         navTo = {} // No-op for preview
     )

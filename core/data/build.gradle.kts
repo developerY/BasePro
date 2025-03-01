@@ -79,6 +79,12 @@ dependencies {
     // Health Connect
     implementation(libs.healthConnect)
 
+    // maps
+    implementation(libs.google.maps.compose)
+    implementation(libs.play.services.location)
+
+    implementation(libs.kotlinx.coroutines.play.services)
+
 
     // kapt(libs.hilt.compiler)
     testImplementation(libs.junit)

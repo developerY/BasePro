@@ -38,6 +38,7 @@ android {
 
 dependencies {
     implementation(project(":core:data"))
+    implementation(project(":core:database"))
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
     implementation(project(":core:util"))
@@ -61,8 +62,6 @@ dependencies {
     // Hilt Dependency Injection
     implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.android)
-    implementation(project(":core:database"))
-    implementation(libs.play.services.location)
     ksp(libs.hilt.android.compiler)
     // kapt(libs.hilt.compiler)
 

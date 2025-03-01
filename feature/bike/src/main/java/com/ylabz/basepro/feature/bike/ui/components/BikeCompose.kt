@@ -18,15 +18,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.feature.bike.ui.BikeEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BikeCompose(
     modifier: Modifier = Modifier,
-    settings: Map<String, List<String>>, // Each setting now has a list of options
+    settings: Map<String, List<String>>,
+    location: LatLng?,
     onEvent: (BikeEvent) -> Unit,
-    navTo: (String) -> Unit // Navigation callback for FAB
+    navTo: (String) -> Unit
 ) {
     // Background gradient
     val backgroundGradient = Brush.verticalGradient(
@@ -286,6 +288,7 @@ fun PreviewRoutePlanningScreen() {
         BikeCompose(
             settings = sampleSettings,
             onEvent = {},
+            location = LatLng(0.0,0.0),
             navTo = {} // No-op for preview
         )
     }
