@@ -46,6 +46,7 @@ fun WeatherUiRoute(
 
             WeatherScreen(
                 modifier = modifier,
+                weather = uiState.weatherOpen,
                 settings = uiState.settings,
                 location = uiState.location,   // <-- Pass the location here
                 onEvent = { event -> viewModel.onEvent(event) },

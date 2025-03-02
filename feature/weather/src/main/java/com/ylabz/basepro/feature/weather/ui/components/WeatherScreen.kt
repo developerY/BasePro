@@ -16,12 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.core.model.weather.OpenWeatherResponse
 import com.ylabz.basepro.feature.weather.ui.WeatherEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherScreen(
     modifier: Modifier = Modifier,
+    weather: OpenWeatherResponse?,
     settings: Map<String, List<String>>,
     location: LatLng?,
     onEvent: (WeatherEvent) -> Unit,
@@ -52,6 +54,9 @@ fun WeatherScreen(
                     windDegree = 120
                 )
                 Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    weather.toString()
+                )
                 // Button to fetch weather from the API
                 Button(onClick = { onEvent(WeatherEvent.FetchWeather) }) {
                     Text("Fetch Weather")

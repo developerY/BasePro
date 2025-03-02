@@ -1,6 +1,5 @@
 package com.ylabz.basepro.core.data.repository.weather
 
-import android.net.http.HttpException
 import android.os.Build
 import androidx.annotation.RequiresExtension
 import com.ylabz.basepro.core.model.weather.OpenWeatherResponse
@@ -10,19 +9,19 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import com.ylabz.basepro.core.network.BuildConfig.OPEN_WEATHER_API_KEY
+import retrofit2.HttpException
 
 
-@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 suspend fun openFetchWeatherData(cityName: String) : OpenWeatherResponse? {
     var call : OpenWeatherResponse? = null
 
     try {
         call = OpenRetrofitClient.openWeatherService.getCurrentOpenWeather(cityName, OPEN_WEATHER_API_KEY)
     } catch (e: HttpException) {
-        if (e.message.equals("HTTP 404 Not Found")){
+        if (e.code() == 404) {
             print("City not found")
         } else {
-            print("Error: ${e.message}")
+            print("Error: ${e.message()}")
         }
         call = null
     } catch (e: Exception) {
