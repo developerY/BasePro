@@ -85,6 +85,11 @@ dependencies {
 
     implementation(libs.kotlinx.coroutines.play.services)
 
+    // Retrofit
+    implementation(libs.squareup.retrofit)
+    implementation(libs.squareup.retrofit.converter.gson)
+    implementation(libs.squareup.okhttp3.logging.interceptor)
+
 
     // kapt(libs.hilt.compiler)
     testImplementation(libs.junit)

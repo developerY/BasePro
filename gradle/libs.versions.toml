@@ -124,6 +124,10 @@ room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }  
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }  # Kotlin extensions for Room
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room"}  # Room annotation processor
 
+squareup-retrofit = {module = 'com.squareup.retrofit2:retrofit', version ='2.9.0'}
+squareup-retrofit-converter-gson = {module = 'com.squareup.retrofit2:converter-gson', version ='2.9.0'}
+squareup-okhttp3-logging-interceptor = {module ='com.squareup.okhttp3:logging-interceptor', version = '4.9.1'}
+
 # WorkManager Library
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }  # WorkManager runtime with Kotlin extensions
 

@@ -7,3 +7,4 @@ data class Weather(
     val location: String,
     val iconUrl: String? // You might use this with an image loader (e.g., Coil)
 )
+
