@@ -1,11 +1,14 @@
 package com.ylabz.basepro.feature.weather.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.data.repository.location.LocationRepository
+import com.ylabz.basepro.core.data.repository.weather.WeatherRepo
 import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
 import com.ylabz.basepro.core.model.weather.Weather
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
     private val repository: BaseProRepo,           // Your existing repo
+    private val weatherRepo: WeatherRepo,          // Your new repo
     private val locationRepository: LocationRepository // The location repo
 ) : ViewModel() {
 
@@ -24,6 +28,8 @@ class WeatherViewModel @Inject constructor(
 
     private val _weatherState = MutableStateFlow<WeatherUiState>(WeatherUiState.Loading)
     val weatherState: StateFlow<WeatherUiState> = _weatherState
+
+    private var getWindWeatherJob: Job? = null
 
 
     init {
@@ -48,12 +54,17 @@ class WeatherViewModel @Inject constructor(
 
         // Start collecting location changes
         viewModelScope.launch {
+            val weatherOpen = weatherRepo.openCurrentWeather((_uiState.value as WeatherUiState.Success).locationString)
+            Log.d("Weather", "WindViewModel    ---- Weather: ${weatherOpen.toString()} ")
             locationRepository.currentLocation.collect { latLng ->
                 // Only update if we're in the Success state
                 val currentState = _uiState.value
                 if (currentState is WeatherUiState.Success) {
                     // Copy the existing settings, update the location
-                    _uiState.value = currentState.copy(location = latLng)
+                    _uiState.value = currentState.copy(
+                        weatherOpen = weatherOpen,
+                        location = latLng
+                    )
                 }
             }
         }
@@ -94,7 +105,9 @@ class WeatherViewModel @Inject constructor(
                     "Language" to listOf("English", "Spanish", "French"),
                     "Notifications" to listOf("Enabled", "Disabled")
                 ),
-                location = null // We'll update this once location flow emits
+                location = null,
+                weatherOpen = null,
+                locationString = "Santa Barbara, US" // We'll update this once location flow emits
             )
         }
     }
@@ -113,7 +126,9 @@ class WeatherViewModel @Inject constructor(
                     location = "San Francisco, CA"
                 ),
                 settings = updatedSettings,
-                location = (_uiState.value as? WeatherUiState.Success)?.location
+                location = (_uiState.value as? WeatherUiState.Success)?.location,
+                weatherOpen = null,
+                locationString = "Santa Barbara, US" // We'll update this once location flow emits
             )
         }
     }
