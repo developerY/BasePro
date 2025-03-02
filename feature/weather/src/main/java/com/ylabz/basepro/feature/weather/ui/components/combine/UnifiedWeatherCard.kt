@@ -169,15 +169,17 @@ fun UnifiedWeatherCard(
                     .size(48.dp),
                 contentAlignment = Alignment.Center
             ) {
-                WindDirectionDialUni(degree = windDegree.toFloat())
+                val degree = 180f
+                val speed = 10f
+                WindDirectionDialWithSpeed(degree = degree, speed = speed)
                 // Optional: Abbreviation "WD" or remove entirely
-                Box(modifier = Modifier.align(Alignment.BottomCenter)) {
+                /*Box(modifier = Modifier.align(Alignment.BottomCenter)) {
                     Text(
                         text = "WD",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.DarkGray
                     )
-                }
+                }*/
             }
         }
     }
