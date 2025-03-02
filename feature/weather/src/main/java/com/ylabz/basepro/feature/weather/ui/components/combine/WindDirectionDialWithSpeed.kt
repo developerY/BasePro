@@ -1,11 +1,18 @@
 package com.ylabz.basepro.feature.weather.ui.components.combine
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -23,6 +30,20 @@ fun WindDirectionDialWithSpeed(
     speed: Float,
     modifier: Modifier = Modifier
 ) {
+    // 1) Create an infinite transition for the wiggle
+    val infiniteTransition = rememberInfiniteTransition()
+    val wiggleOffset by infiniteTransition.animateFloat(
+        initialValue = -3f,
+        targetValue = 3f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    // 2) Combine the base degree with the wiggle offset
+    val arrowAngle = degree + wiggleOffset
+
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val radius = size.minDimension / 2
@@ -54,9 +75,9 @@ fun WindDirectionDialWithSpeed(
                 )
             }
 
-            // Red arrow
+            // 3) Use arrowAngle instead of degree
             val arrowLength = radius * 0.6f
-            val arrowAngleRad = Math.toRadians((degree - 90).toDouble())
+            val arrowAngleRad = Math.toRadians((arrowAngle - 90).toDouble())
 
             val tipX = center.x + (arrowLength * cos(arrowAngleRad)).toFloat()
             val tipY = center.y + (arrowLength * sin(arrowAngleRad)).toFloat()
@@ -69,7 +90,7 @@ fun WindDirectionDialWithSpeed(
                 strokeWidth = 3f
             )
 
-            // Arrow head
+            // Simple arrow head
             val headSize = 6f
             val leftAngle = arrowAngleRad + Math.toRadians(150.0)
             val rightAngle = arrowAngleRad - Math.toRadians(150.0)
@@ -93,7 +114,7 @@ fun WindDirectionDialWithSpeed(
             )
         }
 
-        // Display wind speed in the center (e.g., "5 m/s" or "12 mph")
+        // Wind speed in the center
         Text(
             text = "${speed} m/s",
             style = MaterialTheme.typography.labelSmall,
@@ -101,6 +122,7 @@ fun WindDirectionDialWithSpeed(
         )
     }
 }
+
 
 @Preview
 @Composable
