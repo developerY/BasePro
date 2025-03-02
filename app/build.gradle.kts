@@ -72,6 +72,7 @@ dependencies {
     implementation(project(":feature:shotime"))
     implementation(project(":feature:alarm"))
     implementation(project(":feature:bike"))
+    implementation(project(":feature:weather"))
 
     // feature module  dependency
     implementation(project(":feature:settings"))  // feature module  dependency

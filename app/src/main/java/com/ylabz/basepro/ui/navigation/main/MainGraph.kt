@@ -27,6 +27,7 @@ import com.ylabz.basepro.ui.navigation.graphs.photodoNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.placesNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.settingsNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.shotimeNavGraph
+import com.ylabz.basepro.ui.navigation.graphs.weatherNavGraph
 import kotlinx.coroutines.CoroutineScope
 
 
@@ -116,6 +117,12 @@ fun MainNavGraph(
         )
 
         bikeNavGraph(
+            drawerState,
+            scope,
+            navController
+        )
+
+        weatherNavGraph(
             drawerState,
             scope,
             navController

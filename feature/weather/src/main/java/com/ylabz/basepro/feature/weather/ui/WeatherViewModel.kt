@@ -5,11 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.data.repository.location.LocationRepository
 import com.ylabz.basepro.core.data.repository.weather.WeatherRepo
-import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
+import com.ylabz.basepro.core.database.BaseProRepo
 import com.ylabz.basepro.core.model.weather.Weather
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -17,87 +15,66 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
-    private val repository: BaseProRepo,           // Your existing repo
-    private val weatherRepo: WeatherRepo,          // Your new repo
-    private val locationRepository: LocationRepository // The location repo
+    private val repository: BaseProRepo,
+    private val weatherRepo: WeatherRepo,
+    private val locationRepository: LocationRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<WeatherUiState>(WeatherUiState.Loading)
     val uiState: StateFlow<WeatherUiState> = _uiState
 
-
-    private val _weatherState = MutableStateFlow<WeatherUiState>(WeatherUiState.Loading)
-    val weatherState: StateFlow<WeatherUiState> = _weatherState
-
-    private var getWindWeatherJob: Job? = null
-
-
     init {
+        // Initialize the UI state by loading settings
+        loadSettings()
+    }
 
-        // Simulate a network call to fetch weather.
+    /**
+     * Called when the user presses a button to fetch the weather from OpenWeather API.
+     */
+    fun onFetchWeatherClicked() {
         viewModelScope.launch {
-
             val currentState = _uiState.value
             if (currentState is WeatherUiState.Success) {
-                // Copy the existing settings, update the location
-                _uiState.value = currentState.copy(weather = Weather(
-                    temperature = 22.5,
-                    description = "Sunny",
-                    iconUrl = "", // Replace with a URL or local resource reference.
-                    location = "San Francisco, CA"
-                ))
-            }
-        }
-
-        // Trigger initial load of settings
-        onEvent(WeatherEvent.LoadBike)
-
-        // Start collecting location changes
-        viewModelScope.launch {
-            val weatherOpen = weatherRepo.openCurrentWeather((_uiState.value as WeatherUiState.Success).locationString)
-            Log.d("Weather", "WindViewModel    ---- Weather: ${weatherOpen.toString()} ")
-            locationRepository.currentLocation.collect { latLng ->
-                // Only update if we're in the Success state
-                val currentState = _uiState.value
-                if (currentState is WeatherUiState.Success) {
-                    // Copy the existing settings, update the location
-                    _uiState.value = currentState.copy(
-                        weatherOpen = weatherOpen,
-                        location = latLng
-                    )
+                val city = currentState.locationString  // e.g., "Santa Barbara, US"
+                try {
+                    val response = weatherRepo.openCurrentWeather(city)
+                    Log.d("Weather", "API call success: $response")
+                    _uiState.value = currentState.copy(weatherOpen = response)
+                } catch (e: Exception) {
+                    Log.e("Weather", "API call failed", e)
+                    // Optionally update UI state with an error.
                 }
+            } else {
+                Log.w("Weather", "UI state not ready for API call.")
             }
-        }
-
-        // Optionally, trigger an initial location fetch
-        viewModelScope.launch {
-            locationRepository.updateLocation()
         }
     }
 
+
+    /**
+     * Handle various events (Load, Update, Delete).
+     */
     fun onEvent(event: WeatherEvent) {
         when (event) {
-            is WeatherEvent.LoadBike -> {
-                loadSettings()
-            }
-            is WeatherEvent.UpdateSetting -> {
-                updateSetting(event.settingKey, event.settingValue)
-            }
-            is WeatherEvent.DeleteAllEntries -> {
-                deleteAllEntries()
-            }
+            is WeatherEvent.LoadBike -> loadSettings()
+            is WeatherEvent.UpdateSetting -> updateSetting(event.settingKey, event.settingValue)
+            is WeatherEvent.DeleteAllEntries -> deleteAllEntries()
+            is WeatherEvent.FetchWeather -> onFetchWeatherClicked()  // Handle the fetch weather event
         }
     }
 
+
+    /**
+     * Loads or simulates loading initial settings/data.
+     */
     private fun loadSettings() {
         viewModelScope.launch {
-            // Simulate loading settings data
-            // In a real app, you'd retrieve these from your repository
+            // Simulate loading or retrieve actual settings from your repository
             _uiState.value = WeatherUiState.Success(
                 weather = Weather(
                     temperature = 22.5,
                     description = "Sunny",
-                    iconUrl = "", // Replace with a URL or local resource reference.
+                    iconUrl = "",
                     location = "San Francisco, CA"
                 ),
                 settings = mapOf(
@@ -107,36 +84,34 @@ class WeatherViewModel @Inject constructor(
                 ),
                 location = null,
                 weatherOpen = null,
-                locationString = "Santa Barbara, US" // We'll update this once location flow emits
+                locationString = "Santa Barbara, US" // Default location for API calls
             )
         }
     }
 
+    /**
+     * Updates a specific setting in the UI state.
+     */
     private fun updateSetting(key: String, value: String) {
         viewModelScope.launch {
-            val currentSettings = (_uiState.value as? WeatherUiState.Success)?.settings ?: emptyMap()
-            val updatedSettings = currentSettings.toMutableMap().apply {
-                // e.g., handle your setting changes here
+            val currentState = _uiState.value
+            if (currentState is WeatherUiState.Success) {
+                val updatedSettings = currentState.settings.toMutableMap().apply {
+                    // Modify your settings as needed
+                    this[key] = listOf(value)
+                }
+                _uiState.value = currentState.copy(settings = updatedSettings)
             }
-            _uiState.value = WeatherUiState.Success(
-                weather = Weather(
-                    temperature = 22.5,
-                    description = "Sunny",
-                    iconUrl = "", // Replace with a URL or local resource reference.
-                    location = "San Francisco, CA"
-                ),
-                settings = updatedSettings,
-                location = (_uiState.value as? WeatherUiState.Success)?.location,
-                weatherOpen = null,
-                locationString = "Santa Barbara, US" // We'll update this once location flow emits
-            )
         }
     }
 
+    /**
+     * Deletes all entries in your repository (example usage).
+     */
     private fun deleteAllEntries() {
         viewModelScope.launch {
             repository.deleteAll()
-            // Optionally, update UI state or reload settings
+            Log.d("Weather", "All entries deleted from repository.")
         }
     }
 }

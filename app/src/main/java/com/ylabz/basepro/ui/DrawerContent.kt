@@ -90,11 +90,18 @@ fun DrawerContent(onNavigate: (String) -> Unit) {
                 onClick = { onNavigate("shotime") }
             )
 
-            //Shot Time
+            //Bike
             NavigationDrawerItem(
                 label = { Text("Bike") },
                 selected = false,
                 onClick = { onNavigate("bike") }
+            )
+
+            //Weather
+            NavigationDrawerItem(
+                label = { Text("Weather") },
+                selected = false,
+                onClick = { onNavigate("weather") }
             )
 
 
