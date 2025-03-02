@@ -1,10 +1,8 @@
-package com.ylabz.basepro.feature.weather.ui.components.combine
+package com.ylabz.basepro.feature.weather.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -21,19 +19,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherParticle
+import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDialWithSpeed
 import kotlinx.coroutines.delay
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.random.Random
 
-enum class WeatherCondition {
+enum class WeatherConditionUnif {
     SUNNY, RAINY, SNOWY
 }
 
 
 @Composable
 fun UnifiedWeatherCard(
-    weatherCondition: WeatherCondition,
+    weatherCondition: WeatherConditionUnif,
     temperature: Double,
     conditionText: String,        // e.g. "Sunny", "Rainy", "Snowy"
     location: String,             // e.g. "Los Angeles, CA"
@@ -44,18 +41,18 @@ fun UnifiedWeatherCard(
     val cardWidth = 240.dp
 
     // State for the raindrops or snowflakes if needed
-    val showRainOrSnow = (weatherCondition == WeatherCondition.RAINY || weatherCondition == WeatherCondition.SNOWY)
+    val showRainOrSnow = (weatherCondition == WeatherConditionUnif.RAINY || weatherCondition == WeatherConditionUnif.SNOWY)
     val effectParticles = remember(showRainOrSnow) {
         if (showRainOrSnow) {
             // More or fewer particles if you like
-            val count = if (weatherCondition == WeatherCondition.RAINY) 250 else 200
+            val count = if (weatherCondition == WeatherConditionUnif.RAINY) 250 else 200
             List(count) {
                 WeatherParticle(
                     screenWidth = 600f,
                     screenHeight = cardHeight.value,
                     // Smaller size range for snow vs. rain, for example
-                    sizeRange = if (weatherCondition == WeatherCondition.RAINY) 2f..6f else 1f..3f,
-                    speedRange = if (weatherCondition == WeatherCondition.RAINY) 3f..7f else 1f..4f
+                    sizeRange = if (weatherCondition == WeatherConditionUnif.RAINY) 2f..6f else 1f..3f,
+                    speedRange = if (weatherCondition == WeatherConditionUnif.RAINY) 3f..7f else 1f..4f
                 )
             }
         } else {
@@ -99,14 +96,14 @@ fun UnifiedWeatherCard(
                     effectParticles.forEach { p ->
                         if (p.isSplashing) {
                             drawCircle(
-                                color = if (weatherCondition == WeatherCondition.RAINY)
+                                color = if (weatherCondition == WeatherConditionUnif.RAINY)
                                     Color(0x9E0288D1) else Color.White.copy(alpha = 0.8f),
                                 radius = p.splashRadius / 2,
                                 center = Offset(p.x, size.height - p.splashRadius)
                             )
                         } else {
                             // For rain, draw lines. For snow, draw circles.
-                            if (weatherCondition == WeatherCondition.RAINY) {
+                            if (weatherCondition == WeatherConditionUnif.RAINY) {
                                 drawLine(
                                     color = Color(0x900288D1),
                                     start = Offset(p.x, p.y),
@@ -126,7 +123,7 @@ fun UnifiedWeatherCard(
             }
 
             // 2) If sunny, place a small sun icon in the top-left
-            if (weatherCondition == WeatherCondition.SUNNY) {
+            if (weatherCondition == WeatherConditionUnif.SUNNY) {
                 Image(
                     painter = painterResource(id = android.R.drawable.btn_star_big_on), // Replace with your sun icon
                     contentDescription = "Sun Icon",
@@ -189,7 +186,7 @@ fun UnifiedWeatherCard(
 @Composable
 fun UnifiedWeatherCardPreview() {
     UnifiedWeatherCard(
-        weatherCondition = WeatherCondition.RAINY,
+        weatherCondition = WeatherConditionUnif.RAINY,
         temperature = 25.0,
         conditionText = "Rain",
         location = "Los Angeles, CA",

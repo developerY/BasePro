@@ -11,8 +11,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ylabz.basepro.feature.weather.ui.components.combine.UnifiedWeatherCard
-import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherCondition
+import com.ylabz.basepro.feature.weather.ui.components.UnifiedWeatherCard
+import com.ylabz.basepro.feature.weather.ui.components.WeatherConditionUnif
+import com.ylabz.basepro.feature.weather.ui.components.WeatherScreen
 
 
 @Composable
@@ -43,13 +44,14 @@ fun WeatherUiRoute(
             )*/
 
 
-            UnifiedWeatherCard(
-                weatherCondition = WeatherCondition.RAINY,
-                temperature = 25.0,
-                conditionText = "Rain",
-                location = "Los Angeles, CA",
-                windDegree = 120
+            WeatherScreen(
+                modifier = modifier,
+                settings = uiState.settings,
+                location = uiState.location,   // <-- Pass the location here
+                onEvent = { event -> viewModel.onEvent(event) },
+                navTo = navTo
             )
+
 
             /*BikeHomeScreen(
                modifier = modifier,

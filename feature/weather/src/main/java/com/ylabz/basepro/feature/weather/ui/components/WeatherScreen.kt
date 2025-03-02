@@ -1,46 +1,31 @@
 package com.ylabz.basepro.feature.weather.ui.components
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
-import com.ylabz.basepro.feature.weather.ui.components.rain.RainVolumeCard
-import com.ylabz.basepro.feature.weather.ui.components.snow.BetterSnowVolumeCardAI
-import com.ylabz.basepro.feature.weather.ui.components.sun.TemperatureCardAI
-import com.ylabz.basepro.feature.weather.ui.components.wind.WindCard
+import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.feature.weather.ui.WeatherEvent
 
-// Define a simple enum to represent the current weather condition.
-enum class WeatherCondition {
-    CLEAR, RAINY, SNOWY
-}
-
-/**
- * WeatherScreen that displays one primary weather card based on the current condition,
- * and always shows the wind card.
- *
- * @param weatherCondition The current weather condition.
- * @param temperature The current temperature in °C.
- * @param rainVolume The current rain volume (e.g., in mm).
- * @param snowVolume The current snow volume (e.g., in mm).
- * @param windDegree The wind direction (in degrees).
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherScreen(
-    weatherCondition: WeatherCondition,
-    temperature: Double,
-    rainVolume: Double,
-    snowVolume: Double,
-    windDegree: Int
+    modifier: Modifier = Modifier,
+    settings: Map<String, List<String>>,
+    location: LatLng?,
+    onEvent: (WeatherEvent) -> Unit,
+    navTo: (String) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -53,44 +38,25 @@ fun WeatherScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-                    .verticalScroll(rememberScrollState())
                     .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                // Display the primary weather card based on the condition.
-                when (weatherCondition) {
-                    WeatherCondition.RAINY -> {
-                        // Display the Rain card
-                        RainVolumeCard(volume = rainVolume)
-                    }
-                    WeatherCondition.SNOWY -> {
-                        // Display the Snow card
-                        BetterSnowVolumeCardAI(volume = snowVolume)
-                    }
-                    else -> {
-                        // For CLEAR or any other condition, display the Temperature card.
-                        TemperatureCardAI(temp = temperature)
-                    }
+                // Display the unified weather card if data is available
+
+                UnifiedWeatherCard(
+                    weatherCondition = WeatherConditionUnif.RAINY,
+                    temperature = 25.0,
+                    conditionText = "Rain",
+                    location = "Los Angeles, CA",
+                    windDegree = 120
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                // Button to fetch weather from the API
+                Button(onClick = { onEvent(WeatherEvent.FetchWeather) }) {
+                    Text("Fetch Weather")
                 }
-                Spacer(modifier = Modifier.height(16.dp))
-                // Always display the Wind card.
-                WindCard(windDegree = windDegree)
             }
         }
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun WeatherScreenPreview() {
-    MaterialTheme {
-        // Change the parameters below to simulate different weather conditions.
-        WeatherScreen(
-            weatherCondition = WeatherCondition.RAINY,
-            temperature = 22.0,
-            rainVolume = 12.0,
-            snowVolume = 8.0,
-            windDegree = 30
-        )
-    }
 }

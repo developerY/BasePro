@@ -1,6 +1,5 @@
 package com.ylabz.basepro.feature.bike.ui.components
 
-import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
