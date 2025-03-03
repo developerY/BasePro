@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
 enum class WeatherConditionUnif {
-    SUNNY, RAINY, SNOWY, CLOUDY
+    SUNNY, RAINY, SNOWY, CLOUDY, CLEAR
 }
 
 

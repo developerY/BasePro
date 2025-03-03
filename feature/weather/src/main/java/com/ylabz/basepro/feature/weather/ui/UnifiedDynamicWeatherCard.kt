@@ -32,6 +32,8 @@ import com.ylabz.basepro.core.model.weather.OpenWeatherResponse
 import com.ylabz.basepro.core.model.weather.Wind
 import com.ylabz.basepro.feature.weather.ui.components.WeatherBackground
 import com.ylabz.basepro.feature.weather.ui.components.WeatherIcon
+import com.ylabz.basepro.feature.weather.ui.components.backgrounds.WeatherBackgroundAnimation
+import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionUnif
 import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDialWithSpeed
 
 // Assume these composables are imported from their respective files:
@@ -41,17 +43,20 @@ fun UnifiedDynamicWeatherCard(
     response: OpenWeatherResponse,
     modifier: Modifier = Modifier
 ) {
-    // Determine the primary condition from the response.
-    // (For simplicity, we use the first weather condition in the list.)
+    // Determine the primary condition.
     val conditionText = response.weatherOne.firstOrNull()?.main ?: "Clear"
-
-    // Extract data from the response.
+    val weatherCondition = when {
+        response.rain != null -> WeatherConditionUnif.RAINY
+        response.snow != null -> WeatherConditionUnif.SNOWY
+        conditionText.equals("Clouds", ignoreCase = true) -> WeatherConditionUnif.CLOUDY
+        conditionText.equals("Clear", ignoreCase = true) -> WeatherConditionUnif.SUNNY
+        else -> WeatherConditionUnif.CLEAR
+    }
     val temperature = response.main.temp           // in °C
     val location = "${response.name}, ${response.sys.country}"
     val windDegree = response.wind.deg
     val windSpeed = response.wind.speed.toFloat()
 
-    // Build the unified card.
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -60,13 +65,13 @@ fun UnifiedDynamicWeatherCard(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            // Weather background based on condition.
-            WeatherBackground(
-                condition = conditionText,
+            // Add the dynamic background animation layer
+            WeatherBackgroundAnimation(
+                weatherCondition = weatherCondition,
                 modifier = Modifier.fillMaxSize()
             )
-
-            // Weather icon placed in the top-left corner.
+            // Other layers: icon, center text, wind dial
+            // Weather icon in the top-left.
             Box(
                 modifier = Modifier
                     .align(Alignment.TopStart)
@@ -74,8 +79,7 @@ fun UnifiedDynamicWeatherCard(
             ) {
                 WeatherIcon(condition = conditionText)
             }
-
-            // Wind dial with wind speed in the bottom-left corner.
+            // Wind dial in bottom-left.
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
@@ -88,8 +92,7 @@ fun UnifiedDynamicWeatherCard(
                     speed = windSpeed
                 )
             }
-
-            // Center text for temperature, condition, and location.
+            // Center text with temperature, condition, location.
             Column(
                 modifier = Modifier.align(Alignment.Center),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -98,9 +101,9 @@ fun UnifiedDynamicWeatherCard(
                     text = "${temperature.roundToLong()}°C",
                     style = MaterialTheme.typography.displayMedium.copy(
                         fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                        fontSize = 36.sp
-                    ),
-                    color = Color.White
+                        fontSize = 36.sp,
+                        color = Color.White
+                    )
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
@@ -120,6 +123,7 @@ fun UnifiedDynamicWeatherCard(
         }
     }
 }
+
 
 @Preview
 @Composable
