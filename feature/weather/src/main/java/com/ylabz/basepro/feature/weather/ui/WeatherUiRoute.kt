@@ -11,8 +11,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ylabz.basepro.feature.weather.ui.components.UnifiedWeatherCard
-import com.ylabz.basepro.feature.weather.ui.components.WeatherConditionUnif
 import com.ylabz.basepro.feature.weather.ui.components.WeatherScreen
 
 

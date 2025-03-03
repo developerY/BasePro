@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.weather.ui.components
+package com.ylabz.basepro.feature.weather.ui.components.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -24,10 +24,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.core.model.weather.Weather
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BeautifulWeatherScreen(weather: Weather) {
+fun BeautifulWeatherScreenOne(weather: Weather) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -49,7 +48,7 @@ fun BeautifulWeatherScreen(weather: Weather) {
                     )
                     .padding(innerPadding)
             ) {
-                BeautifulWeatherCard(
+                BeautifulWeatherCardOne(
                     weather = weather,
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -61,7 +60,7 @@ fun BeautifulWeatherScreen(weather: Weather) {
 }
 
 @Composable
-fun BeautifulWeatherCard(weather: Weather, modifier: Modifier = Modifier) {
+fun BeautifulWeatherCardOne(weather: Weather, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
@@ -118,9 +117,9 @@ fun BeautifulWeatherCard(weather: Weather, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewBeautifulWeatherScreen() {
+fun PreviewBeautifulWeatherScreenOne() {
     MaterialTheme {
-        BeautifulWeatherScreen(
+        BeautifulWeatherScreenOne(
             weather = Weather(
                 temperature = 28.0,
                 description = "Sunny",

@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.weather.ui.components
+package com.ylabz.basepro.feature.weather.ui.components.cloud
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -27,9 +27,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlin.math.cos
 import kotlin.math.roundToLong
-import kotlin.math.sin
 import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDialWithSpeed
 

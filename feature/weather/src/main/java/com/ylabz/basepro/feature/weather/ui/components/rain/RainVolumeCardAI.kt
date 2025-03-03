@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import com.ylabz.basepro.feature.weather.ui.components.backgrounds.Raindrop
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
@@ -119,48 +120,6 @@ fun RainVolumeCard(
     }
 }
 
-// Raindrop data class and helpers (same as your original implementation)
-data class Raindrop(
-    val screenWidth: Float,
-    val screenHeight: Float,
-    val sizeRange: ClosedFloatingPointRange<Float>,
-    val speedRange: ClosedFloatingPointRange<Float>
-) {
-    private val random = Random(System.nanoTime())
-    val size: Float = sizeRange.randomInRange()
-    var speed: Float = speedRange.randomInRange()
-    var x: Float = random.nextFloat() * screenWidth
-    var y: Float = random.nextFloat() * screenHeight
-
-    var isSplashing: Boolean by mutableStateOf(false)
-    var splashRadius: Float by mutableStateOf(0f)
-    private var splashProgress by mutableStateOf(0f)
-
-    fun move() {
-        if (isSplashing) {
-            splashProgress += 0.1f
-            splashRadius = (splashProgress * size * 3).coerceAtMost(size * 3)
-            if (splashProgress >= 1f) {
-                isSplashing = false
-                splashProgress = 0f
-                splashRadius = 0f
-            }
-        } else {
-            y += speed
-        }
-    }
-
-    fun resetPosition(height: Float) {
-        y = -size
-        x = random.nextFloat() * screenWidth
-        speed = speedRange.randomInRange()
-    }
-
-    fun startSplash() {
-        isSplashing = true
-        splashProgress = 0f
-    }
-}
 
 fun ClosedFloatingPointRange<Float>.randomInRange(): Float {
     return Random.nextFloat() * (endInclusive - start) + start
@@ -168,7 +127,7 @@ fun ClosedFloatingPointRange<Float>.randomInRange(): Float {
 
 @Preview(showBackground = true)
 @Composable
-fun ainVolumeCardPreview() {
+fun rainVolumeCardPreview() {
     MaterialTheme {
         RainVolumeCard(volume = 15.0)
     }

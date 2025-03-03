@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.weather.ui.components
+package com.ylabz.basepro.feature.weather.ui.components.combine
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -19,12 +19,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherParticle
-import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDialWithSpeed
 import kotlinx.coroutines.delay
 
 enum class WeatherConditionUnif {
-    SUNNY, RAINY, SNOWY
+    SUNNY, RAINY, SNOWY, CLOUDY
 }
 
 

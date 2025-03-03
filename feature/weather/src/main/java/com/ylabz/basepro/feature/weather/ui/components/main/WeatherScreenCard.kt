@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.weather.ui.components
+package com.ylabz.basepro.feature.weather.ui.components.main
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState

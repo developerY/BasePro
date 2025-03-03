@@ -7,7 +7,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.feature.weather.ui.components.WeatherCondition
+import com.ylabz.basepro.feature.weather.ui.components.main.WeatherCondition
 import com.ylabz.basepro.feature.weather.ui.components.rain.RainVolumeCard
 import com.ylabz.basepro.feature.weather.ui.components.snow.BetterSnowVolumeCardAI
 import com.ylabz.basepro.feature.weather.ui.components.sun.TemperatureCardAI
