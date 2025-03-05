@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.feature.bike.ui.BikeEvent
-import com.ylabz.basepro.feature.bike.ui.components.Settiings.BikeSettingsScreen
+import com.ylabz.basepro.feature.bike.ui.components.settings.BikeSettingsScreen
 import com.ylabz.basepro.feature.bike.ui.components.home.BikeNavItem
 import com.ylabz.basepro.feature.bike.ui.components.route.BikeRoutesScreen
 

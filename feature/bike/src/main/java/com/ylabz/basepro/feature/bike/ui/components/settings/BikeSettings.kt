@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.bike.ui.components.Settiings
+package com.ylabz.basepro.feature.bike.ui.components.settings
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
