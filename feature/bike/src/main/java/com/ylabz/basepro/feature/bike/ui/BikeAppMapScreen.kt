@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.bike.ui.components
+package com.ylabz.basepro.feature.bike.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,12 +13,11 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DirectionsBike
+import androidx.compose.material.icons.automirrored.filled.DirectionsBike
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Navigation
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.gms.maps.model.CameraPosition
@@ -31,7 +30,11 @@ import com.google.maps.android.compose.rememberCameraPositionState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BikeAppMapScreen(
-    navTo: (String) -> Unit = {}  // Replace with your navigation function
+    modifier: Modifier = Modifier,
+    settings: Map<String, List<String>>,
+    location: LatLng?,
+    onEvent: (BikeEvent) -> Unit,
+    navTo: (String) -> Unit  // Replace with your navigation function
 ) {
     // Set up the initial camera position (example: a default LatLng)
     val cameraPositionState = rememberCameraPositionState {
@@ -59,7 +62,7 @@ fun BikeAppMapScreen(
                 NavigationBarItem(
                     selected = true,
                     onClick = { /* current tab */ },
-                    icon = { Icon(Icons.Filled.DirectionsBike, contentDescription = "Ride") },
+                    icon = { Icon(Icons.AutoMirrored.Filled.DirectionsBike, contentDescription = "Ride") },
                     label = { Text("Ride") }
                 )
                 NavigationBarItem(
@@ -97,7 +100,19 @@ fun BikeAppMapScreen(
 @Preview(showBackground = true)
 @Composable
 fun BikeAppMapScreenPreview() {
+    val sampleSettings = mapOf(
+        "Theme" to listOf("Light", "Dark", "System Default"),
+        "Language" to listOf("English", "Spanish", "French"),
+        "Notifications" to listOf("Enabled", "Disabled")
+    )
+
+
     MaterialTheme {
-        BikeAppMapScreen()
+        BikeAppMapScreen(
+            settings = sampleSettings,
+            onEvent = {},
+            location = LatLng(0.0,0.0),
+            navTo = {} // No-op for preview
+        )
     }
 }

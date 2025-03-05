@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.feature.bike.ui.components.home.BikeHomeScreen
 import com.ylabz.basepro.feature.bike.ui.components.home.BikeHomeSlider
 import com.ylabz.basepro.settings.ui.components.ErrorScreen
@@ -16,6 +17,12 @@ fun BikeUiRoute(
     viewModel: BikeViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsState().value
+
+    val sampleSettings = mapOf(
+        "Theme" to listOf("Light", "Dark", "System Default"),
+        "Language" to listOf("English", "Spanish", "French"),
+        "Notifications" to listOf("Enabled", "Disabled")
+    )
 
     when (uiState) {
         is BikeUiState.Loading -> {
@@ -41,7 +48,12 @@ fun BikeUiRoute(
                onEvent = { event -> viewModel.onEvent(event) },
                navTo = navTo
            )*/
-            BikeHomeSlider()
+            BikeAppMapScreen(
+                settings = sampleSettings,
+                onEvent = {},
+                location = LatLng(0.0,0.0),
+                navTo = {} // No-op for preview
+            )
         }
     }
 }
