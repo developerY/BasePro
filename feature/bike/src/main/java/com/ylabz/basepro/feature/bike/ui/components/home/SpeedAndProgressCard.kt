@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,39 +40,29 @@ fun SpeedAndProgressCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(200.dp)
-            .shadow(8.dp, shape = MaterialTheme.shapes.large),
+            .height(240.dp),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = Color(0xFF1976D2))
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            // Center a column for speed text & trip progress line
-            Column(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),  // side padding if you want
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                // Large Speed Text
-                Text(
-                    text = "${currentSpeed.roundToLong()} km/h",
-                    style = MaterialTheme.typography.displayMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 48.sp
-                    ),
-                    color = Color.White
-                )
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // 1) Fancy speedometer
+            FancySpeedometer(
+                currentSpeed = currentSpeed.toFloat(),
+                maxSpeed = 60f,    // or your typical max speed
+                modifier = Modifier.size(200.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
 
-                // Trip progress line with bike icon
-                // Adjust trackHeight, icon size, or container height as needed
-                TripProgressIndicator(
-                    currentDistance = currentTripDistance,
-                    totalDistance = totalDistance,
-                    trackHeight = 6.dp,  // smaller thickness
-                )
-            }
+            // 2) Trip progress line with bike icon
+            TripProgressIndicator(
+                currentDistance = currentTripDistance,
+                totalDistance = totalDistance,
+                trackHeight = 12.dp
+            )
         }
     }
 }
