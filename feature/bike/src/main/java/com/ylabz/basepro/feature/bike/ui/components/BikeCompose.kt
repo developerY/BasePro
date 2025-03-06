@@ -48,14 +48,13 @@ fun BikeCompose(
 
     // Outer container (without verticalScroll so weight works)
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(brush = backgroundGradient)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp)
+            modifier = Modifier.align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Title
             Text(

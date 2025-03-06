@@ -1,31 +1,25 @@
 package com.ylabz.basepro.feature.bike.ui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsBike
+import androidx.compose.material.icons.filled.DirectionsBike
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Navigation
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.feature.bike.ui.components.BikeCompose
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,9 +28,24 @@ fun BikeAppMapScreen(
     settings: Map<String, List<String>>,
     location: LatLng?,
     onEvent: (BikeEvent) -> Unit,
-    navTo: (String) -> Unit  // Replace with your navigation function
+    navTo: (String) -> Unit
 ) {
-    // Set up the initial camera position (example: a default LatLng)
+    // Local state to track the selected tab.
+    var selectedTab by remember { mutableStateOf("ride") }
+
+    val sampleSettings = mapOf(
+        "Theme" to listOf("Light", "Dark", "System Default"),
+        "Language" to listOf("English", "Spanish", "French"),
+        "Notifications" to listOf("Enabled", "Disabled")
+    )
+
+    // Local navigation lambda that updates local state and calls external navTo.
+    val localNavTo: (String) -> Unit = { route ->
+        selectedTab = route
+        navTo(route)
+    }
+
+    // Set up the initial camera position for the map.
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(LatLng(37.4219999, -122.0862462), 14f)
     }
@@ -44,12 +53,12 @@ fun BikeAppMapScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Bike Ride") }
+                title = { Text("Ash Bike") }
             )
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navTo("startRide") }  // Navigate to ride screen
+                onClick = { localNavTo("startRide") }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Navigation,
@@ -60,38 +69,83 @@ fun BikeAppMapScreen(
         bottomBar = {
             NavigationBar {
                 NavigationBarItem(
-                    selected = true,
-                    onClick = { /* current tab */ },
+                    selected = selectedTab == "ride",
+                    onClick = { localNavTo("ride") },
                     icon = { Icon(Icons.AutoMirrored.Filled.DirectionsBike, contentDescription = "Ride") },
                     label = { Text("Ride") }
                 )
                 NavigationBarItem(
-                    selected = false,
-                    onClick = { navTo("history") },
+                    selected = selectedTab == "history",
+                    onClick = { localNavTo("history") },
                     icon = { Icon(Icons.Filled.History, contentDescription = "History") },
                     label = { Text("History") }
                 )
                 NavigationBarItem(
-                    selected = false,
-                    onClick = { navTo("settings") },
+                    selected = selectedTab == "settings",
+                    onClick = { localNavTo("settings") },
                     icon = { Icon(Icons.Filled.Settings, contentDescription = "Settings") },
                     label = { Text("Settings") }
                 )
             }
         },
         content = { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            ) {
-                // The GoogleMap composable displays a full-screen map.
-                GoogleMap(
-                    modifier = Modifier.fillMaxSize(),
-                    cameraPositionState = cameraPositionState,
-                    properties = MapProperties(isMyLocationEnabled = true),
-                    uiSettings = MapUiSettings(zoomControlsEnabled = true)
-                )
+            when (selectedTab) {
+                "ride" -> {
+                    BikeCompose(
+                        modifier = Modifier.padding(innerPadding),
+                        settings = sampleSettings,
+                        onEvent = {},
+                        location = LatLng(0.0,0.0),
+                        navTo = {} // No-op for preview
+                    )
+                }
+                "history" -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                    ) {
+                        // Ride screen shows the full-screen map.
+                        GoogleMap(
+                            modifier = Modifier.fillMaxSize(),
+                            cameraPositionState = cameraPositionState,
+                            properties = MapProperties(isMyLocationEnabled = true),
+                            uiSettings = MapUiSettings(zoomControlsEnabled = true)
+                        )
+                    }
+                }
+                "settings" -> {
+                    // Settings screen placeholder.
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Settings Screen")
+                    }
+                }
+                "startRide" -> {
+                    // Start Ride screen placeholder.
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Start Ride Screen")
+                    }
+                }
+                else -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Unknown Route")
+                    }
+                }
             }
         }
     )
@@ -105,14 +159,12 @@ fun BikeAppMapScreenPreview() {
         "Language" to listOf("English", "Spanish", "French"),
         "Notifications" to listOf("Enabled", "Disabled")
     )
-
-
     MaterialTheme {
         BikeAppMapScreen(
             settings = sampleSettings,
+            location = LatLng(0.0, 0.0),
             onEvent = {},
-            location = LatLng(0.0,0.0),
-            navTo = {} // No-op for preview
+            navTo = {}
         )
     }
 }

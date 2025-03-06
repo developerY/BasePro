@@ -5,8 +5,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.maps.model.LatLng
-import com.ylabz.basepro.feature.bike.ui.components.home.BikeHomeScreen
-import com.ylabz.basepro.feature.bike.ui.components.home.BikeHomeSlider
 import com.ylabz.basepro.settings.ui.components.ErrorScreen
 import com.ylabz.basepro.settings.ui.components.LoadingScreen
 
