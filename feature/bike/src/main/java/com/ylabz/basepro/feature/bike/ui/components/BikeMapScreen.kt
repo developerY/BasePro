@@ -9,6 +9,7 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
+import androidx.compose.ui.tooling.preview.Preview
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.rememberCameraPositionState
 
@@ -39,4 +40,12 @@ fun MapScreen(
         uiSettings = MapUiSettings(zoomControlsEnabled = true)
     )
 }
+
+@Preview
+@Composable
+fun MapScreenPreview() {
+    val loc = LatLng(37.7749, -122.4194)
+    MapScreen(loc = loc)
+}
+
 

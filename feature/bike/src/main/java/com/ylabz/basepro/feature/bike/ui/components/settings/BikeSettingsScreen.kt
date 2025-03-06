@@ -11,13 +11,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
-import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.feature.bike.ui.BikeEvent
-import com.ylabz.basepro.feature.bike.ui.components.BikeCompose
 
 
 @Composable
-fun BikeComposeSettings(
+fun BikeRouteScreen(
     modifier: Modifier = Modifier,
     settings: Map<String, List<String>>, // Each setting now has a list of options
     onEvent: (BikeEvent) -> Unit,
@@ -113,16 +111,15 @@ fun BikeComposeSettings(
 
 @Preview(showBackground = true)
 @Composable
-fun SettingsComposePreview() {
+fun BikeRouteScreenPreview() {
     val sampleSettings = mapOf(
         "Theme" to listOf("Light", "Dark", "System Default"),
         "Language" to listOf("English", "Spanish", "French"),
         "Notifications" to listOf("Enabled", "Disabled")
     )
 
-    BikeCompose(
+    BikeRouteScreen(
         settings = sampleSettings,
-        location = LatLng(0.0,0.0),
         onEvent = {},
         navTo = {} // No-op for preview
     )

@@ -1,17 +1,15 @@
-package com.ylabz.basepro.feature.bike.ui
+package com.ylabz.basepro.feature.bike.ui.components.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsBike
-import androidx.compose.material.icons.filled.DirectionsBike
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Navigation
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
@@ -19,7 +17,11 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.core.ui.Screen
+import com.ylabz.basepro.feature.bike.ui.BikeEvent
 import com.ylabz.basepro.feature.bike.ui.components.BikeCompose
+import com.ylabz.basepro.feature.bike.ui.components.settings.BikeSettingsOneScreen
+import com.ylabz.basepro.settings.ui.components.BikeRouteScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -115,15 +117,12 @@ fun BikeAppMapScreen(
                     }
                 }
                 "settings" -> {
-                    // Settings screen placeholder.
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("Settings Screen")
-                    }
+                    BikeRouteScreen(
+                        modifier = Modifier.padding(innerPadding),
+                        settings = sampleSettings,
+                        onEvent = {},
+                        navTo = {} // No-op for preview
+                    )
                 }
                 "startRide" -> {
                     // Start Ride screen placeholder.

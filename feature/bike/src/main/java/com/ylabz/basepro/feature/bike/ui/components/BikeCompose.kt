@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.feature.bike.ui.BikeEvent
+import com.ylabz.basepro.feature.bike.ui.components.settings.PreferenceSwitch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

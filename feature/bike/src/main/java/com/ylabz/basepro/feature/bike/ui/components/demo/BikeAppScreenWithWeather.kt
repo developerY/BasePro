@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.bike.ui.components
+package com.ylabz.basepro.feature.bike.ui.components.demo
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
