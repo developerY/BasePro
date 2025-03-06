@@ -37,34 +37,12 @@ fun BikeDashboardContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // 1) Current Speed Card
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .shadow(8.dp, shape = MaterialTheme.shapes.large),
-            shape = MaterialTheme.shapes.large,
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF1976D2))
-        ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "${currentSpeed.roundToLong()} km/h",
-                    style = MaterialTheme.typography.displayMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 48.sp
-                    ),
-                    color = Color.White
-                )
-                // Trip Progress Indicator (if desired)
-                TripProgressIndicator(
-                    currentDistance = currentTripDistance,
-                    totalDistance = totalDistance,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-            }
-        }
+       SpeedAndProgressCard(
+            currentSpeed = currentSpeed,
+            currentTripDistance = currentTripDistance,
+            totalDistance = totalDistance,
+            modifier = Modifier.fillMaxWidth()
+        )
 
 
 
