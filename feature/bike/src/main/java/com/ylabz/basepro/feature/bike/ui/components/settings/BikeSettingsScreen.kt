@@ -15,7 +15,7 @@ import com.ylabz.basepro.feature.bike.ui.BikeEvent
 
 
 @Composable
-fun BikeRouteScreen(
+fun BikeSettingsScreen(
     modifier: Modifier = Modifier,
     settings: Map<String, List<String>>, // Each setting now has a list of options
     onEvent: (BikeEvent) -> Unit,
@@ -118,7 +118,7 @@ fun BikeRouteScreenPreview() {
         "Notifications" to listOf("Enabled", "Disabled")
     )
 
-    BikeRouteScreen(
+    BikeSettingsScreen(
         settings = sampleSettings,
         onEvent = {},
         navTo = {} // No-op for preview

@@ -3,6 +3,7 @@ package com.ylabz.basepro.feature.bike.ui.components.home
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.AddToHomeScreen
 import androidx.compose.material.icons.automirrored.filled.DirectionsBike
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Navigation
@@ -17,11 +18,9 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.feature.bike.ui.BikeEvent
 import com.ylabz.basepro.feature.bike.ui.components.BikeCompose
-import com.ylabz.basepro.feature.bike.ui.components.settings.BikeSettingsOneScreen
-import com.ylabz.basepro.settings.ui.components.BikeRouteScreen
+import com.ylabz.basepro.settings.ui.components.BikeSettingsScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,15 +70,15 @@ fun BikeAppMapScreen(
         bottomBar = {
             NavigationBar {
                 NavigationBarItem(
-                    selected = selectedTab == "ride",
-                    onClick = { localNavTo("ride") },
-                    icon = { Icon(Icons.AutoMirrored.Filled.DirectionsBike, contentDescription = "Ride") },
+                    selected = selectedTab == "home",
+                    onClick = { localNavTo("home") },
+                    icon = { Icon(Icons.AutoMirrored.Filled.AddToHomeScreen, contentDescription = "Home") },
                     label = { Text("Ride") }
                 )
                 NavigationBarItem(
-                    selected = selectedTab == "history",
-                    onClick = { localNavTo("history") },
-                    icon = { Icon(Icons.Filled.History, contentDescription = "History") },
+                    selected = selectedTab == "ride",
+                    onClick = { localNavTo("ride") },
+                    icon = { Icon(Icons.AutoMirrored.Filled.DirectionsBike, contentDescription = "Ride") },
                     label = { Text("History") }
                 )
                 NavigationBarItem(
@@ -92,7 +91,7 @@ fun BikeAppMapScreen(
         },
         content = { innerPadding ->
             when (selectedTab) {
-                "ride" -> {
+                "home" -> {
                     BikeCompose(
                         modifier = Modifier.padding(innerPadding),
                         settings = sampleSettings,
@@ -101,7 +100,7 @@ fun BikeAppMapScreen(
                         navTo = {} // No-op for preview
                     )
                 }
-                "history" -> {
+                "ride" -> {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -117,7 +116,7 @@ fun BikeAppMapScreen(
                     }
                 }
                 "settings" -> {
-                    BikeRouteScreen(
+                    BikeSettingsScreen(
                         modifier = Modifier.padding(innerPadding),
                         settings = sampleSettings,
                         onEvent = {},
