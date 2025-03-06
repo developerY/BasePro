@@ -15,11 +15,15 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import kotlinx.coroutines.delay
+import androidx.compose.ui.geometry.Size
+
 
 enum class WeatherConditionUnif {
     SUNNY, RAINY, SNOWY, CLOUDY, CLEAR
@@ -28,59 +32,69 @@ enum class WeatherConditionUnif {
 
 @Composable
 fun UnifiedWeatherCard(
+    modifier: Modifier = Modifier,
     weatherCondition: WeatherConditionUnif,
     temperature: Double,
-    conditionText: String,        // e.g. "Sunny", "Rainy", "Snowy"
-    location: String,             // e.g. "Los Angeles, CA"
+    conditionText: String,
+    location: String,
     windDegree: Int,
-    modifier: Modifier = Modifier
 ) {
-    val cardHeight = 120.dp
-    val cardWidth = 240.dp
+    var cardSize by remember { mutableStateOf(Size.Zero) }
 
-    // State for the raindrops or snowflakes if needed
     val showRainOrSnow = (weatherCondition == WeatherConditionUnif.RAINY || weatherCondition == WeatherConditionUnif.SNOWY)
+
+    // We'll create or remember the particles only after we know if we need them (rain/snow).
+    // The actual dimension logic will happen in LaunchedEffect once cardSize is known.
     val effectParticles = remember(showRainOrSnow) {
         if (showRainOrSnow) {
-            // More or fewer particles if you like
-            val count = if (weatherCondition == WeatherConditionUnif.RAINY) 250 else 200
-            List(count) {
-                WeatherParticle(
-                    screenWidth = 600f,
-                    screenHeight = cardHeight.value,
-                    // Smaller size range for snow vs. rain, for example
-                    sizeRange = if (weatherCondition == WeatherConditionUnif.RAINY) 2f..6f else 1f..3f,
-                    speedRange = if (weatherCondition == WeatherConditionUnif.RAINY) 3f..7f else 1f..4f
-                )
-            }
+            // We’ll fill them in after we measure cardSize.
+            mutableStateListOf<WeatherParticle>()
         } else {
-            emptyList()
+            mutableStateListOf()
         }
     }
 
-    // Animate the particles if we have any (rain or snow)
-    LaunchedEffect(showRainOrSnow) {
-        while (showRainOrSnow) {
-            effectParticles.forEach { particle ->
-                particle.move()
-                if (particle.y > cardHeight.value * 3) {
-                    particle.resetPosition(cardHeight.value)
-                    particle.startSplash()
+    // Animate or update the raindrops/snowflakes once cardSize is known.
+    LaunchedEffect(cardSize, showRainOrSnow) {
+        if (showRainOrSnow && cardSize.width > 0f && cardSize.height > 0f) {
+            // Initialize the particles only once the card is measured.
+            if (effectParticles.isEmpty()) {
+                val count = if (weatherCondition == WeatherConditionUnif.RAINY) 250 else 200
+                repeat(count) {
+                    effectParticles.add(
+                        WeatherParticle(
+                            screenWidth = cardSize.width,
+                            screenHeight = cardSize.height,
+                            sizeRange = if (weatherCondition == WeatherConditionUnif.RAINY) 2f..6f else 1f..3f,
+                            speedRange = if (weatherCondition == WeatherConditionUnif.RAINY) 3f..7f else 1f..4f
+                        )
+                    )
                 }
             }
-            delay(16L) // ~60 FPS
+            while (true) {
+                effectParticles.forEach { particle ->
+                    particle.move()
+                    if (particle.y > cardSize.height * 3) {
+                        // Use cardSize.height for resetting position
+                        particle.resetPosition(cardSize.height)
+                        particle.startSplash()
+                    }
+                }
+                delay(16L) // ~60 FPS
+            }
         }
     }
-
-
 
     Card(
         modifier = modifier
-            //.fillMaxWidth()
-            .width(cardWidth)
-            .height(cardHeight)
+            .fillMaxWidth()
+            .height(180.dp)  // Force a real height so the card isn't 0px tall
             .padding(16.dp)
-            .shadow(4.dp, RoundedCornerShape(12.dp)),
+            .shadow(4.dp, RoundedCornerShape(12.dp))
+            .onGloballyPositioned { layoutCoordinates ->
+                // Convert the IntSize from layoutCoordinates.size to a Float-based Size
+                cardSize = layoutCoordinates.size.toSize()
+            },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F1F1))
     ) {
@@ -89,18 +103,19 @@ fun UnifiedWeatherCard(
             contentAlignment = Alignment.Center
         ) {
             // 1) Rain or Snow background effect
-            if (showRainOrSnow) {
+            if (showRainOrSnow && effectParticles.isNotEmpty()) {
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     effectParticles.forEach { p ->
                         if (p.isSplashing) {
                             drawCircle(
                                 color = if (weatherCondition == WeatherConditionUnif.RAINY)
-                                    Color(0x9E0288D1) else Color.White.copy(alpha = 0.8f),
+                                    Color(0x9E0288D1)
+                                else Color.White.copy(alpha = 0.8f),
                                 radius = p.splashRadius / 2,
                                 center = Offset(p.x, size.height - p.splashRadius)
                             )
                         } else {
-                            // For rain, draw lines. For snow, draw circles.
+                            // For rain, draw lines; for snow, circles
                             if (weatherCondition == WeatherConditionUnif.RAINY) {
                                 drawLine(
                                     color = Color(0x900288D1),
@@ -133,11 +148,11 @@ fun UnifiedWeatherCard(
                 )
             }
 
-            // 3) The main text (temp, condition, location) in the center
+            // 3) Main text in the center
             Column(
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier
-                    .padding(start = 56.dp)  // to avoid overlapping the sun icon
+                    .padding(start = 56.dp)
             ) {
                 Text(
                     text = "${"%.1f".format(temperature)}°C",
@@ -156,7 +171,7 @@ fun UnifiedWeatherCard(
                 )
             }
 
-            // 4) The wind dial in the bottom-left corner (abbreviated "WD")
+            // 4) Wind dial in the bottom-left corner
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
@@ -167,18 +182,11 @@ fun UnifiedWeatherCard(
                 val degree = 180f
                 val speed = 10f
                 WindDirectionDialWithSpeed(degree = degree, speed = speed)
-                // Optional: Abbreviation "WD" or remove entirely
-                /*Box(modifier = Modifier.align(Alignment.BottomCenter)) {
-                    Text(
-                        text = "WD",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.DarkGray
-                    )
-                }*/
             }
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

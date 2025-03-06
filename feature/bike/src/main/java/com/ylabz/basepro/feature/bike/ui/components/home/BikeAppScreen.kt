@@ -3,9 +3,8 @@ package com.ylabz.basepro.feature.bike.ui.components.home
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.AddToHomeScreen
+import androidx.compose.material.icons.automirrored.filled.AltRoute
 import androidx.compose.material.icons.automirrored.filled.DirectionsBike
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Navigation
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
@@ -19,12 +18,12 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.feature.bike.ui.BikeEvent
-import com.ylabz.basepro.feature.bike.ui.components.BikeCompose
+import com.ylabz.basepro.feature.bike.ui.components.path.BikePathScreen
 import com.ylabz.basepro.settings.ui.components.BikeSettingsScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BikeAppMapScreen(
+fun BikeAppScreen(
     modifier: Modifier = Modifier,
     settings: Map<String, List<String>>,
     location: LatLng?,
@@ -70,16 +69,16 @@ fun BikeAppMapScreen(
         bottomBar = {
             NavigationBar {
                 NavigationBarItem(
-                    selected = selectedTab == "home",
-                    onClick = { localNavTo("home") },
-                    icon = { Icon(Icons.AutoMirrored.Filled.AddToHomeScreen, contentDescription = "Home") },
-                    label = { Text("Ride") }
-                )
-                NavigationBarItem(
                     selected = selectedTab == "ride",
                     onClick = { localNavTo("ride") },
                     icon = { Icon(Icons.AutoMirrored.Filled.DirectionsBike, contentDescription = "Ride") },
-                    label = { Text("History") }
+                    label = { Text("Ride") }
+                )
+                NavigationBarItem(
+                    selected = selectedTab == "path",
+                    onClick = { localNavTo("path") },
+                    icon = { Icon(Icons.AutoMirrored.Filled.AltRoute, contentDescription = "Path") },
+                    label = { Text("Path") }
                 )
                 NavigationBarItem(
                     selected = selectedTab == "settings",
@@ -91,29 +90,24 @@ fun BikeAppMapScreen(
         },
         content = { innerPadding ->
             when (selectedTab) {
-                "home" -> {
-                    BikeCompose(
+                "ride" -> {
+                    BikeDashboardContent(
+                        modifier = Modifier.padding(innerPadding),
+                        currentSpeed = 28.3,
+                        totalDistance = 12.5,
+                        tripDuration = "00:45:30",
+                        averageSpeed = 25.0,
+                        elevation = 150.0
+                    )
+                }
+                "path" -> {
+                    BikePathScreen(
                         modifier = Modifier.padding(innerPadding),
                         settings = sampleSettings,
                         onEvent = {},
                         location = LatLng(0.0,0.0),
                         navTo = {} // No-op for preview
                     )
-                }
-                "ride" -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                    ) {
-                        // Ride screen shows the full-screen map.
-                        GoogleMap(
-                            modifier = Modifier.fillMaxSize(),
-                            cameraPositionState = cameraPositionState,
-                            properties = MapProperties(isMyLocationEnabled = true),
-                            uiSettings = MapUiSettings(zoomControlsEnabled = true)
-                        )
-                    }
                 }
                 "settings" -> {
                     BikeSettingsScreen(
@@ -158,7 +152,7 @@ fun BikeAppMapScreenPreview() {
         "Notifications" to listOf("Enabled", "Disabled")
     )
     MaterialTheme {
-        BikeAppMapScreen(
+        BikeAppScreen(
             settings = sampleSettings,
             location = LatLng(0.0, 0.0),
             onEvent = {},

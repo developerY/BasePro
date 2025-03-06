@@ -1,9 +1,8 @@
-package com.ylabz.basepro.feature.bike.ui.components
+package com.ylabz.basepro.feature.bike.ui.components.path
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -21,11 +20,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.feature.bike.ui.BikeEvent
+import com.ylabz.basepro.feature.bike.ui.components.MapScreen
+import com.ylabz.basepro.feature.bike.ui.components.PreferencesCardContent
 import com.ylabz.basepro.feature.bike.ui.components.settings.PreferenceSwitch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BikeCompose(
+fun BikePathScreen(
     modifier: Modifier = Modifier,
     settings: Map<String, List<String>>,
     location: LatLng?,
@@ -297,7 +298,7 @@ fun PreviewRoutePlanningScreen() {
     )
 
     MaterialTheme {
-        BikeCompose(
+        BikePathScreen(
             settings = sampleSettings,
             onEvent = {},
             location = LatLng(0.0,0.0),

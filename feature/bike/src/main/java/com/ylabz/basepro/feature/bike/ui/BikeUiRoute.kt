@@ -5,7 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.maps.model.LatLng
-import com.ylabz.basepro.feature.bike.ui.components.home.BikeAppMapScreen
+import com.ylabz.basepro.feature.bike.ui.components.home.BikeAppScreen
 import com.ylabz.basepro.settings.ui.components.ErrorScreen
 import com.ylabz.basepro.settings.ui.components.LoadingScreen
 
@@ -47,7 +47,7 @@ fun BikeUiRoute(
                onEvent = { event -> viewModel.onEvent(event) },
                navTo = navTo
            )*/
-            BikeAppMapScreen(
+            BikeAppScreen(
                 settings = sampleSettings,
                 onEvent = {},
                 location = LatLng(0.0,0.0),
