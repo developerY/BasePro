@@ -1,6 +1,8 @@
 package com.ylabz.basepro.feature.bike.ui.components.home
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.roundToLong
 import androidx.compose.ui.tooling.preview.Preview
+import com.ylabz.basepro.feature.bike.ui.components.path.TripProgressIndicator
 import com.ylabz.basepro.feature.weather.ui.components.combine.UnifiedWeatherCard
 import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionUnif
 
@@ -20,6 +23,7 @@ fun BikeDashboardContent(
     modifier: Modifier = Modifier,
     currentSpeed: Double,
     totalDistance: Double,
+    currentTripDistance: Double,  // current progress (km)
     tripDuration: String,
     averageSpeed: Double,
     elevation: Double
@@ -27,6 +31,7 @@ fun BikeDashboardContent(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState()) // Enables vertical scrolling
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -52,8 +57,16 @@ fun BikeDashboardContent(
                     ),
                     color = Color.White
                 )
+                // Trip Progress Indicator (if desired)
+                TripProgressIndicator(
+                    currentDistance = currentTripDistance,
+                    totalDistance = totalDistance,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
             }
         }
+
+
 
         // 2) Trip stats row: Distance, Duration, Avg Speed
         Row(
@@ -78,54 +91,15 @@ fun BikeDashboardContent(
         )
 
         // 3) Full-width elevation stat card
-        StatCard(
+        /*StatCard(
             label = "Elevation",
             value = "${elevation.roundToLong()} m",
             modifier = Modifier.fillMaxWidth()
-        )
+        )*/
 
 
     }
 }
-
-@Composable
-fun StatCard(
-    label: String,
-    value: String,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier
-            .width(120.dp)
-            .height(120.dp),
-        shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF90CAF9))
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = value,
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
-                ),
-                color = Color.White
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = label,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.White
-            )
-        }
-    }
-}
-
 
 @Preview(showBackground = true)
 @Composable
@@ -134,6 +108,7 @@ fun BikeDashboardContentPreview() {
         BikeDashboardContent(
             currentSpeed = 28.0,
             totalDistance = 12.5,
+            currentTripDistance =  7.2,  // current progress (km)
             tripDuration = "00:45:30",
             averageSpeed = 25.0,
             elevation = 150.0

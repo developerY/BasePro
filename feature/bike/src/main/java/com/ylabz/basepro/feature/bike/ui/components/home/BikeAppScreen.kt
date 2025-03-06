@@ -95,6 +95,7 @@ fun BikeAppScreen(
                         modifier = Modifier.padding(innerPadding),
                         currentSpeed = 28.3,
                         totalDistance = 12.5,
+                        currentTripDistance = 7.2,  // current progress (km)
                         tripDuration = "00:45:30",
                         averageSpeed = 25.0,
                         elevation = 150.0
