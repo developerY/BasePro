@@ -54,9 +54,12 @@ fun BikeDashboardContent(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            StatCard(label = "Distance", value = "${totalDistance} km")
-            StatCard(label = "Duration", value = tripDuration)
-            StatCard(label = "Avg Speed", value = "${averageSpeed.roundToLong()} km/h")
+            StatsRow(
+                distance = 12.5,
+                duration = "1h 30m",
+                avgSpeed = 8.3,
+                elevation = 150.0,
+            )
         }
 
         // 4) Unified Weather Card (Rainy example)
