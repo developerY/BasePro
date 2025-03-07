@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,104 +48,65 @@ fun SpeedAndProgressCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(320.dp), // increased height so there's enough space
+            // Increase the height so everything fits comfortably
+            .height(320.dp)
+            .shadow(4.dp, shape = MaterialTheme.shapes.large),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = Color(0xFF1976D2))
     ) {
-        // We use a Box to layer items:
-        // 1) Speedometer & progress line in the center
-        // 2) Wind dial top-left
-        // 3) Weather condition top-right
-        Box(modifier = Modifier.fillMaxSize()) {
-
-            // The main column for speedometer and progress line
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(vertical = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            // 1) Top row: wind dial (left) + weather badge (right)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
             ) {
-                // Speedometer
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    FancySpeedometer(
-                        currentSpeed = currentSpeed.toFloat(),
-                        maxSpeed = 60f,
-                        modifier = Modifier.size(220.dp)
+                // Wind dial on left
+                Box(modifier = Modifier.size(80.dp)) {
+                    WindDirectionDialWithSpeed(
+                        degree = windDegree,
+                        speed = windSpeed
                     )
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Trip progress line
-                Box(
-                    modifier = Modifier
-                        .weight(0.5f)
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    BigBikeProgressIndicator(
-                        currentDistance = currentTripDistance,
-                        totalDistance = totalDistance,
-                        iconSize = 64.dp,
-                        containerHeight = 120.dp,
-                        trackHeight = 12.dp
-                    )
-                }
+                // Weather condition on right
+                WeatherBadge(conditionText = weatherConditionText)
             }
 
-            // 1) Wind dial in the top-left corner
+            // 2) Center: Speedometer
             Box(
                 modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(8.dp)
-                    .size(80.dp), // adjust for your dial size
+                    .fillMaxWidth()
+                    .weight(1f),
                 contentAlignment = Alignment.Center
             ) {
-                WindDirectionDialWithSpeed(
-                    degree = windDegree,
-                    speed = windSpeed
+                FancySpeedometer(
+                    currentSpeed = currentSpeed.toFloat(),
+                    maxSpeed = 60f,
+                    modifier = Modifier.size(220.dp)
                 )
             }
 
-            // 2) Weather condition badge in the top-right corner
+            // 3) Bottom: Trip progress line
             Box(
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp)
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                contentAlignment = Alignment.Center
             ) {
-                WeatherConditionBadge(conditionText = weatherConditionText)
+                BigBikeProgressIndicator(
+                    currentDistance = currentTripDistance,
+                    totalDistance = totalDistance,
+                    iconSize = 64.dp,
+                    containerHeight = 100.dp,
+                    trackHeight = 12.dp
+                )
             }
         }
-    }
-}
-
-/**
- * A simple composable that displays the weather condition text
- * in a small styled container.
- */
-@Composable
-fun WeatherConditionBadge(
-    conditionText: String,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.8f))
-    ) {
-        Text(
-            text = conditionText,
-            style = MaterialTheme.typography.bodyMedium.copy(
-                color = Color.Black,
-                fontWeight = FontWeight.Bold
-            ),
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-        )
     }
 }
 
