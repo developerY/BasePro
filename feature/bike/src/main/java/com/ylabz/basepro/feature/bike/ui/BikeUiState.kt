@@ -15,7 +15,9 @@ sealed class BikeUiState {
         // Just a place holder
         val speedKmh : Float = 0.0f,
         // Just a place holder
-        val remainingDistance : Float = 0.0f
+        val remainingDistance : Float = 0.0f,
+
+        val rideDuration : String = "00:00:00"
 
     ) : BikeUiState()
     data class Error(val message: String) : BikeUiState()

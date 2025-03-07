@@ -1,6 +1,7 @@
 package com.ylabz.basepro.feature.bike.ui
 
 import android.util.Log
+import androidx.core.util.TimeUtils.formatDuration
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.data.repository.travel.DistanceRepository
@@ -25,6 +26,9 @@ class BikeViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.Loading)
     val uiState: StateFlow<BikeUiState> = _uiState
+
+    // Store the ride start time.
+    private var rideStartTime: Long = 0L
 
     init {
         // Trigger initial load of settings.
@@ -87,6 +91,32 @@ class BikeViewModel @Inject constructor(
             locationRepository.updateLocation()
         }
 
+        // Start ride duration updates.
+        startRideDurationUpdates()
+
+    }
+
+    // Helper to format milliseconds as HH:MM:SS
+    private fun formatDuration(millis: Long): String {
+        val seconds = millis / 1000 % 60
+        val minutes = millis / (1000 * 60) % 60
+        val hours = millis / (1000 * 60 * 60)
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+    }
+
+    private fun startRideDurationUpdates() {
+        rideStartTime = System.currentTimeMillis() // Record ride start time.
+        viewModelScope.launch {
+            while (true) {
+                val elapsedMillis = System.currentTimeMillis() - rideStartTime
+                val formatted = formatDuration(elapsedMillis)
+                val currentState = _uiState.value
+                if (currentState is BikeUiState.Success) {
+                    _uiState.value = currentState.copy(rideDuration = formatted)
+                }
+                delay(1000L) // Update every second.
+            }
+        }
     }
 
     fun onEvent(event: BikeEvent) {
@@ -109,7 +139,8 @@ class BikeViewModel @Inject constructor(
                 currentSpeed = 0.0,
                 currentDistance = 0.0,
                 totalDistance = 50.0,
-                locationString = "Santa Barbara, US"
+                locationString = "Santa Barbara, US",
+                rideDuration = "00:00:00"
             )
             Log.d("BikeViewModel", "Settings loaded.")
         }
