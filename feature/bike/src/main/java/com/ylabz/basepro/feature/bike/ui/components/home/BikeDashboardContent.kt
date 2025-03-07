@@ -73,6 +73,8 @@ fun BikeDashboardContent(
             calories = 300.0
         )
 
+        AnimatedHeartRateCard(heartRate = 70)
+
         // 4) Unified Weather Card (Rainy example)
         Spacer(modifier = Modifier.height(16.dp))
         UnifiedWeatherCard(
