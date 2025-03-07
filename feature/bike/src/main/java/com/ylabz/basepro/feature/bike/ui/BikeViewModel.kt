@@ -3,6 +3,7 @@ package com.ylabz.basepro.feature.bike.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ylabz.basepro.core.data.repository.travel.DistanceRepository
 import com.ylabz.basepro.core.data.repository.travel.LocationRepository
 import com.ylabz.basepro.core.data.repository.travel.SpeedRepository
 import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
@@ -17,7 +18,8 @@ import javax.inject.Inject
 class BikeViewModel @Inject constructor(
     private val repository: BaseProRepo,           // Your existing repo
     private val locationRepository: LocationRepository, // The location repo
-    private val speedRepository: SpeedRepository
+    private val speedRepository: SpeedRepository,
+    private val distanceRepository: DistanceRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.Loading)
@@ -53,6 +55,19 @@ class BikeViewModel @Inject constructor(
         viewModelScope.launch {
             locationRepository.updateLocation()
         }
+
+        viewModelScope.launch {
+            distanceRepository.remainingDistanceFlow.collect { remaining ->
+                val currentState = _uiState.value
+                if (currentState is BikeUiState.Success) {
+                    _uiState.value = currentState.copy(
+                        remainingDistance = remaining
+                    )
+                }
+            }
+        }
+
+
         // Fake data: increment speed & distance in a loop
         viewModelScope.launch {
             var speed = 0.0
