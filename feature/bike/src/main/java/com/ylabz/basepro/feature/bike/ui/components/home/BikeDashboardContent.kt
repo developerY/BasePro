@@ -62,6 +62,17 @@ fun BikeDashboardContent(
             )
         }
 
+        BikeDashboardScreen(
+            distance = 10.5,
+            duration = "30:00",
+            avgSpeed = 21.0,
+            elevation = 150.0,
+            battery = 80,
+            motorPower = 250.0,
+            heartRate = 120,
+            calories = 300.0
+        )
+
         // 4) Unified Weather Card (Rainy example)
         Spacer(modifier = Modifier.height(16.dp))
         UnifiedWeatherCard(

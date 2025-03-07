@@ -29,20 +29,22 @@ import androidx.compose.ui.unit.sp
 /**
  * A single card showing an icon, a value, and a label.
  */
+/**
+ * A single stat card with an icon, a value, and a label.
+ */
 @Composable
 fun StatCard(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     label: String,
     value: String,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
-            .width(100.dp)  // fixed width for consistent sizing
-            .height(80.dp),
+            .height(80.dp),  // adjust as needed
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
-            containerColor = Color.Blue.copy(alpha = 0.1f) // semi-transparent
+            containerColor = Color.Blue.copy(alpha = 0.1f)
         )
     ) {
         Column(
