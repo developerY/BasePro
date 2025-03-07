@@ -1,5 +1,9 @@
 package com.ylabz.basepro.feature.bike.ui.components.home
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -23,7 +27,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Modifier
@@ -49,55 +57,76 @@ fun SpeedAndProgressCard(
     weatherConditionText: String,
     modifier: Modifier = Modifier
 ) {
+    // Control the visibility of the wind dial & weather badge for a subtle fade/slide in
+    var showOverlays by remember { mutableStateOf(false) }
+    // Trigger the overlays to appear after composition
+    LaunchedEffect(Unit) {
+        showOverlays = true
+    }
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            // Give enough vertical space for a large speedometer + progress bar
+            // Enough height for large speedometer, progress bar, small wind dial
             .height(400.dp)
             .shadow(4.dp, shape = MaterialTheme.shapes.large),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = Color(0xFF1976D2))
     ) {
-        // Column that arranges:
-        // 1) top row (wind dial + weather badge),
-        // 2) center speedometer,
-        // 3) bottom progress line
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // TOP ROW: small wind dial (left) + weather badge (right)
+            // TOP ROW: small wind dial (left) + weather badge (right) with animations
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top
             ) {
-                // Small wind dial on the left
-                Box(modifier = Modifier.size(50.dp)) {
-                    WindDirectionDialWithSpeed(
-                        degree = windDegree,
-                        speed = windSpeed
-                    )
+                // 1) Wind dial, animated
+                AnimatedVisibility(
+                    visible = showOverlays,
+                    enter = fadeIn(animationSpec = tween(600)) +
+                            slideInHorizontally(initialOffsetX = { -it / 2 }, animationSpec = tween(600))
+                ) {
+                    Box(modifier = Modifier.size(60.dp)) {
+                        WindDirectionDialWithSpeed(
+                            degree = windDegree,
+                            speed = windSpeed
+                        )
+                    }
                 }
-                // Weather badge on the right
-                WeatherBadge(conditionText = weatherConditionText)
+
+                // 2) Weather badge, animated
+                AnimatedVisibility(
+                    visible = showOverlays,
+                    enter = fadeIn(animationSpec = tween(600)) +
+                            slideInHorizontally(initialOffsetX = { it / 2 }, animationSpec = tween(600))
+                ) {
+                    WeatherBadge(conditionText = weatherConditionText)
+                }
             }
 
-            // MIDDLE: Large speedometer
+            // MIDDLE: Large speedometer (responsive)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),  // Take remaining vertical space
+                    .weight(1f),
                 contentAlignment = Alignment.Center
             ) {
-                // Make the speedometer as large as possible within 400dp card
-                FancySpeedometer(
-                    currentSpeed = currentSpeed.toFloat(),
-                    maxSpeed = 60f,
-                    modifier = Modifier.size(340.dp)  // Very large speedometer
-                )
+                // We measure the parent width, pick a responsive size for the speedometer
+                BoxWithConstraints {
+                    val availableWidth = maxWidth
+                    // Use a fraction of availableWidth or clamp it to some range
+                    val gaugeSize = availableWidth.coerceAtMost(450.dp) // up to 340dp
+                    FancySpeedometer(
+                        currentSpeed = currentSpeed.toFloat(),
+                        maxSpeed = 60f,
+                        modifier = Modifier.size(gaugeSize)
+                    )
+                }
             }
 
             // BOTTOM: Trip progress line
@@ -110,9 +139,9 @@ fun SpeedAndProgressCard(
                 BigBikeProgressIndicator(
                     currentDistance = currentTripDistance,
                     totalDistance = totalDistance,
-                    iconSize = 54.dp,
-                    containerHeight = 50.dp,
-                    trackHeight = 12.dp
+                    iconSize = 48.dp,
+                    containerHeight = 60.dp,
+                    trackHeight = 8.dp
                 )
             }
         }
