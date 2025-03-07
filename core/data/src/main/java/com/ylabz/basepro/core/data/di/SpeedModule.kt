@@ -1,7 +1,7 @@
 package com.ylabz.basepro.core.data.di
 
-import com.ylabz.basepro.core.data.repository.speed.SpeedRepository
-import com.ylabz.basepro.core.data.repository.speed.SpeedRepositoryImpl
+import com.ylabz.basepro.core.data.repository.travel.SpeedRepository
+import com.ylabz.basepro.core.data.repository.travel.SpeedRepositoryImpl
 
 import dagger.Binds
 import dagger.Module

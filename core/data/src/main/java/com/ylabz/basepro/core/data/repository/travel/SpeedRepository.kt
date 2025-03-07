@@ -1,4 +1,4 @@
-package com.ylabz.basepro.core.data.repository.speed
+package com.ylabz.basepro.core.data.repository.travel
 
 import kotlinx.coroutines.flow.Flow
 

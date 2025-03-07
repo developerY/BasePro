@@ -1,4 +1,4 @@
-package com.ylabz.basepro.core.data.repository.location
+package com.ylabz.basepro.core.data.repository.travel
 
 
 import com.google.android.gms.maps.model.LatLng

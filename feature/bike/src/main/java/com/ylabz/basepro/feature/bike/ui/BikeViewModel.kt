@@ -3,8 +3,8 @@ package com.ylabz.basepro.feature.bike.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.core.data.repository.location.LocationRepository
-import com.ylabz.basepro.core.data.repository.speed.SpeedRepository
+import com.ylabz.basepro.core.data.repository.travel.LocationRepository
+import com.ylabz.basepro.core.data.repository.travel.SpeedRepository
 import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay

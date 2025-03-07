@@ -3,7 +3,7 @@ package com.ylabz.basepro.feature.weather.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.core.data.repository.location.LocationRepository
+import com.ylabz.basepro.core.data.repository.travel.LocationRepository
 import com.ylabz.basepro.core.data.repository.weather.WeatherRepo
 import com.ylabz.basepro.core.database.BaseProRepo
 import com.ylabz.basepro.core.model.weather.Weather

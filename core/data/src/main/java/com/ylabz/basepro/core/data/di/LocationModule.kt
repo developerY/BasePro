@@ -1,11 +1,9 @@
 package com.ylabz.basepro.core.data.di
 
-import android.content.Context
-import com.ylabz.basepro.core.data.repository.location.LocationRepository
-import com.ylabz.basepro.core.data.repository.location.LocationRepositoryImpl
+import com.ylabz.basepro.core.data.repository.travel.LocationRepository
+import com.ylabz.basepro.core.data.repository.travel.LocationRepositoryImpl
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
