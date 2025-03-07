@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ylabz.basepro.feature.bike.ui.components.path.BigBikeProgressIndicator
 import com.ylabz.basepro.feature.bike.ui.components.path.TripProgressIndicator
 import kotlin.math.roundToLong
 
@@ -40,32 +41,52 @@ fun SpeedAndProgressCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(240.dp),
+            // Increase the height so speedometer and progress line don’t overlap
+            .height(320.dp),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = Color(0xFF1976D2))
     ) {
+        // We use a Column that splits the card vertically
         Column(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 1) Fancy speedometer
-            FancySpeedometer(
-                currentSpeed = currentSpeed.toFloat(),
-                maxSpeed = 60f,    // or your typical max speed
-                modifier = Modifier.size(200.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            // 1) Speedometer in the top half
+            Box(
+                modifier = Modifier
+                    .weight(1f) // take half (or more) of the vertical space
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                FancySpeedometer(
+                    currentSpeed = currentSpeed.toFloat(),
+                    maxSpeed = 60f,
+                    modifier = Modifier.size(220.dp) // speedometer size
+                )
+            }
 
-            // 2) Trip progress line with bike icon
-            TripProgressIndicator(
-                currentDistance = currentTripDistance,
-                totalDistance = totalDistance,
-                trackHeight = 12.dp
-            )
+            // 2) A spacer to separate them
+            //Spacer(modifier = Modifier.height(16.dp))
+
+            // 3) Trip progress indicator near the bottom
+            Box(
+                modifier = Modifier
+                    .weight(0.5f) // allocate some vertical space for the progress line
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                BigBikeProgressIndicator(
+                    currentDistance = currentTripDistance,
+                    totalDistance = totalDistance,
+                    iconSize = 64.dp,
+                    containerHeight = 120.dp,  // internal height for the indicator
+                    trackHeight = 12.dp
+                )
+            }
         }
     }
 }
+
 
 @Preview
 @Composable

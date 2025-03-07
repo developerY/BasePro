@@ -33,6 +33,12 @@ fun BikeUiRoute(
             }
         }
         is BikeUiState.Success -> {
+            BikeAppScreen(
+                settings = sampleSettings,
+                onEvent = {},
+                location = LatLng(0.0,0.0),
+                navTo = {} // No-op for preview
+            )
             /*BikeCompose(
                 modifier = modifier,
                 settings = uiState.settings,
@@ -47,12 +53,7 @@ fun BikeUiRoute(
                onEvent = { event -> viewModel.onEvent(event) },
                navTo = navTo
            )*/
-            BikeAppScreen(
-                settings = sampleSettings,
-                onEvent = {},
-                location = LatLng(0.0,0.0),
-                navTo = {} // No-op for preview
-            )
+
         }
     }
 }

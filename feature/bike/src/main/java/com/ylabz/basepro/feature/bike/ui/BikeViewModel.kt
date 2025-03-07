@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.data.repository.location.LocationRepository
 import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -38,7 +39,42 @@ class BikeViewModel @Inject constructor(
         // Optionally, trigger an initial location fetch
         viewModelScope.launch {
             locationRepository.updateLocation()
+
         }
+        // Fake data: increment speed & distance in a loop
+        viewModelScope.launch {
+            var speed = 0.0
+            var distance = 0.0
+            val totalDist = 50.0  // Suppose total planned distance is 50 km
+
+            while (true) {
+                // Increment speed up to 60 km/h, then cycle back to 0
+                speed = (speed + 2.0).coerceAtMost(60.0)
+                if (speed >= 60.0) {
+                    speed = 0.0
+                }
+
+                // Increment distance up to totalDist
+                distance = (distance + 0.2).coerceAtMost(totalDist)
+                // If we reach the total distance, reset to see the progress line start over
+                if (distance >= totalDist) {
+                    distance = 0.0
+                }
+
+                // Update UI state
+                val currentState = _uiState.value
+                if (currentState is BikeUiState.Success) {
+                    // Copy the existing settings, update the location
+                    _uiState.value = currentState.copy(
+                        currentSpeed = speed,
+                        currentDistance = distance,
+                        totalDistance = totalDist
+                    )
+                }
+                delay(1000) // update every second
+            }
+        }
+
     }
 
     fun onEvent(event: BikeEvent) {
