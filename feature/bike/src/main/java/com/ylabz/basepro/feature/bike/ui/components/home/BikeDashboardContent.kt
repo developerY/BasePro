@@ -41,6 +41,9 @@ fun BikeDashboardContent(
             currentSpeed = currentSpeed,
             currentTripDistance = currentTripDistance,
             totalDistance = totalDistance,
+            windDegree = 120f,
+            windSpeed = 5.0f,
+           weatherConditionText = WeatherConditionUnif.RAINY.name,
             modifier = Modifier.fillMaxWidth()
         )
 
