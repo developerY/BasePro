@@ -1,5 +1,6 @@
 package com.ylabz.basepro.feature.bike.ui.components.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -15,6 +16,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.tooling.preview.Preview
+
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,7 +35,7 @@ fun WeatherBadge(
     conditionText: String,
     modifier: Modifier = Modifier
 ) {
-    // Pick an icon based on condition (you can expand this logic)
+    // Simple example: map certain keywords to icons
     val icon = remember(conditionText) {
         when {
             conditionText.contains("rain", ignoreCase = true) -> Icons.Default.Cloud
@@ -65,3 +68,9 @@ fun WeatherBadge(
     }
 }
 
+@Preview
+@Composable
+fun WeatherBadgePreview() {
+    val condition = "Sunny"
+    WeatherBadge(conditionText = condition)
+}

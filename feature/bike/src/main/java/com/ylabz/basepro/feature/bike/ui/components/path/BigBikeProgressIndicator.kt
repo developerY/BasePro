@@ -3,6 +3,8 @@ package com.ylabz.basepro.feature.bike.ui.components.path
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -22,38 +24,34 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun BigBikeProgressIndicator(
-    currentDistance: Double,  // how far the rider has gone
-    totalDistance: Double,    // total distance of the route
+    currentDistance: Double,
+    totalDistance: Double,
     modifier: Modifier = Modifier,
-    trackHeight: Dp = 12.dp,
-    iconSize: Dp = 80.dp,     // make the bike icon large
-    containerHeight: Dp = 120.dp  // enough vertical space
+    trackHeight: Dp = 8.dp,
+    iconSize: Dp = 48.dp,
+    containerHeight: Dp = 70.dp // enough space for half the icon above & below the line
 ) {
-    // Calculate progress fraction (0..1)
     val fraction = if (totalDistance > 0) {
         (currentDistance / totalDistance).coerceIn(0.0, 1.0).toFloat()
     } else 0f
 
-    // We use BoxWithConstraints to measure available width/height in Dp.
     BoxWithConstraints(
         modifier = modifier
-            .size(width = Dp.Unspecified, height = containerHeight) // fix the height
-            .clipToBounds()  // ensure we don’t clip the icon if it extends
+            .fillMaxWidth()
+            .height(containerHeight)
     ) {
-        // Convert Dp to pixels
+        // Convert DP to pixels for precise offsets
         val density = LocalDensity.current
         val containerWidthPx = with(density) { maxWidth.toPx() }
         val containerHeightPx = with(density) { maxHeight.toPx() }
         val trackHeightPx = with(density) { trackHeight.toPx() }
         val iconSizePx = with(density) { iconSize.toPx() }
 
-        // We place the line near the bottom. Let's leave some padding (say 8px) from the bottom.
-        val bottomPaddingPx = 8f
-        // So the line’s vertical position (y) is:
-        val lineY = containerHeightPx - trackHeightPx - bottomPaddingPx
+        // We'll place the bar near the center, or a bit lower
+        // so there's room above & below the bar for the icon.
+        val lineY = containerHeightPx / 2  // The line is horizontally centered
 
-        // We also want to pad the line horizontally by half the icon size,
-        // so the icon doesn’t go off-screen on either side.
+        // Horizontal padding so the icon doesn't clip off screen
         val horizontalPaddingPx = iconSizePx / 2
         val trackLeftX = horizontalPaddingPx
         val trackRightX = containerWidthPx - horizontalPaddingPx
@@ -61,12 +59,14 @@ fun BigBikeProgressIndicator(
 
         // The icon’s horizontal offset is fraction * trackWidthPx
         val iconX = trackLeftX + trackWidthPx * fraction
-        // We want the icon’s bottom to align with lineY
-        val iconY = lineY - iconSizePx
+        // To place the line behind the icon’s center, offset the icon so its center is at lineY
+        val iconY = lineY - (iconSizePx / 2)
 
         // 1) Draw the track
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            // Gray full track
+        Canvas(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            // Gray background line
             drawLine(
                 color = Color.LightGray,
                 start = Offset(trackLeftX, lineY),
@@ -82,18 +82,17 @@ fun BigBikeProgressIndicator(
             )
         }
 
-        // 2) Large bike icon, anchored so its bottom touches the line
+        // 2) Bike icon, centered vertically on the bar
         Icon(
             imageVector = Icons.AutoMirrored.Filled.DirectionsBike,
             contentDescription = "Trip Progress",
-            tint = Color(0xFF05C7BE),
+            tint = Color(0xFF4CAF50),
             modifier = Modifier
                 .align(Alignment.TopStart)
-                // Convert float offsets to IntOffset for .offset()
                 .offset {
                     IntOffset(
-                        x = iconX.roundToInt() - (iconSizePx / 2).roundToInt(), // center icon horizontally
-                        y = iconY.roundToInt()
+                        x = (iconX - iconSizePx / 2).roundToInt(),  // center horizontally
+                        y = iconY.roundToInt()                     // center vertically on the bar
                     )
                 }
                 .size(iconSize)
