@@ -10,7 +10,11 @@ sealed class BikeUiState {
         val currentSpeed: Double = 0.0,     // current speed (km/h)
         val currentDistance: Double = 0.0, // current trip distance (km)
         val totalDistance: Double = 50.0,   // total trip distance (km)
-        val locationString :String = "Santa Barbara, US"
+        val locationString :String = "Santa Barbara, US",
+
+        // Just a place holde
+        val speedKmh : Float = 0.0f,
+
     ) : BikeUiState()
     data class Error(val message: String) : BikeUiState()
 }

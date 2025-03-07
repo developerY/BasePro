@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.data.repository.location.LocationRepository
+import com.ylabz.basepro.core.data.repository.speed.SpeedRepository
 import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -15,7 +16,8 @@ import javax.inject.Inject
 @HiltViewModel
 class BikeViewModel @Inject constructor(
     private val repository: BaseProRepo,           // Your existing repo
-    private val locationRepository: LocationRepository // The location repo
+    private val locationRepository: LocationRepository, // The location repo
+    private val speedRepository: SpeedRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.Loading)
@@ -31,6 +33,19 @@ class BikeViewModel @Inject constructor(
                 if (currentState is BikeUiState.Success) {
                     _uiState.value = currentState.copy(location = latLng)
                     Log.d("BikeViewModel", "Location updated: $latLng")
+                }
+            }
+        }
+        viewModelScope.launch {
+            viewModelScope.launch {
+                speedRepository.speedFlow.collect { speedKmh ->
+                    val currentState = _uiState.value
+                    if (currentState is BikeUiState.Success) {
+                        _uiState.value = currentState.copy(
+                            speedKmh = speedKmh
+                        )
+                        Log.d("BikeViewModel", "Speed: ], $speedKmh")
+                    }
                 }
             }
         }
