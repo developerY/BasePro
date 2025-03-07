@@ -30,7 +30,7 @@ class BikeViewModel @Inject constructor(
         // Trigger initial load of settings.
         onEvent(BikeEvent.LoadBike)
 
-        // Combine location, speed, and distance flows.
+        /* Combine location, speed, and distance flows.
         viewModelScope.launch {
             combine(
                 locationRepository.currentLocation,
@@ -55,16 +55,10 @@ class BikeViewModel @Inject constructor(
                     )
                 }
             }
-        }
-
-        // Optionally, trigger an initial location fetch.
-        viewModelScope.launch {
-            locationRepository.updateLocation()
-        }
+        }*/
 
         // (Optional) If you want to use fake data instead, comment out the combine block above
         // and use the following fake update loop.
-        /*
         viewModelScope.launch {
             var speed = 0.0
             var traveledDistance = 0.0
@@ -87,7 +81,12 @@ class BikeViewModel @Inject constructor(
                 delay(500L)
             }
         }
-        */
+
+        // Optionally, trigger an initial location fetch.
+        viewModelScope.launch {
+            locationRepository.updateLocation()
+        }
+
     }
 
     fun onEvent(event: BikeEvent) {

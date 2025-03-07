@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.bike.ui.components.home
+package com.ylabz.basepro.feature.bike.ui.components.home.dials
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle//DirectionsBike

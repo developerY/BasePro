@@ -1,6 +1,5 @@
-package com.ylabz.basepro.feature.bike.ui.components.home
+package com.ylabz.basepro.feature.bike.ui.components.home.dials
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*

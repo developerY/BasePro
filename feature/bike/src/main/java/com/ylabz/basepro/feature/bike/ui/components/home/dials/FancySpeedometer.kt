@@ -1,10 +1,8 @@
-package com.ylabz.basepro.feature.bike.ui.components.home
+package com.ylabz.basepro.feature.bike.ui.components.home.dials
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier

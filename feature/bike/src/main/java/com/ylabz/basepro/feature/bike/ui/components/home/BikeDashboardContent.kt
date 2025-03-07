@@ -8,13 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import kotlin.math.roundToLong
 import androidx.compose.ui.tooling.preview.Preview
-import com.ylabz.basepro.feature.bike.ui.components.path.TripProgressIndicator
+import com.ylabz.basepro.feature.bike.ui.components.home.dials.AnimatedHeartRateCard
+import com.ylabz.basepro.feature.bike.ui.components.home.dials.BikeDashboardScreen
+import com.ylabz.basepro.feature.bike.ui.components.home.dials.SpeedAndProgressCard
+import com.ylabz.basepro.feature.bike.ui.components.home.dials.StatsRow
 import com.ylabz.basepro.feature.weather.ui.components.combine.UnifiedWeatherCard
 import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionUnif
 

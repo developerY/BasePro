@@ -1,20 +1,14 @@
-package com.ylabz.basepro.feature.bike.ui.components.home
+package com.ylabz.basepro.feature.bike.ui.components.home.dials
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsBike
-import androidx.compose.material.icons.filled.DirectionsBike
 import androidx.compose.material.icons.filled.BatteryChargingFull
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Fireplace
-import androidx.compose.material.icons.filled.Speed
-import androidx.compose.material.icons.filled.Terrain
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun BikeDashboardScreen(

@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.bike.ui.components.home
+package com.ylabz.basepro.feature.bike.ui.components.home.dials
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

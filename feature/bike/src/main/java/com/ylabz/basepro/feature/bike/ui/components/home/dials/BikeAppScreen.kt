@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.bike.ui.components.home
+package com.ylabz.basepro.feature.bike.ui.components.home.dials
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -11,13 +11,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.feature.bike.ui.BikeEvent
+import com.ylabz.basepro.feature.bike.ui.components.home.BikeDashboardContent
 import com.ylabz.basepro.feature.bike.ui.components.path.BikePathScreen
 import com.ylabz.basepro.settings.ui.components.BikeSettingsScreen
 
