@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,60 +27,47 @@ class BikeViewModel @Inject constructor(
     val uiState: StateFlow<BikeUiState> = _uiState
 
     init {
-        // Trigger initial load of settings
+        // Trigger initial load of settings.
         onEvent(BikeEvent.LoadBike)
-        // Start collecting location changes
+
+        // Combine location, speed, and distance flows into one stream.
         viewModelScope.launch {
-            locationRepository.currentLocation.collect { latLng ->
+            combine(
+                locationRepository.currentLocation,
+                speedRepository.speedFlow,
+                distanceRepository.remainingDistanceFlow
+            ) { location, speedKmh, remaining ->
                 val currentState = _uiState.value
                 if (currentState is BikeUiState.Success) {
-                    _uiState.value = currentState.copy(location = latLng)
-                    Log.d("BikeViewModel", "Location updated: $latLng")
+                    _uiState.value = currentState.copy(
+                        location = location,
+                        currentSpeed = speedKmh.toDouble(),
+                        remainingDistance = remaining //.toDouble()
+                    )
+                    Log.d("BikeViewModel", "Combined update: location=$location, speed=$speedKmh, remaining=$remaining")
                 }
-            }
+            }.collect(
+                collector = TODO()
+            )
         }
-        viewModelScope.launch {
-            viewModelScope.launch {
-                speedRepository.speedFlow.collect { speedKmh ->
-                    val currentState = _uiState.value
-                    if (currentState is BikeUiState.Success) {
-                        _uiState.value = currentState.copy(
-                            speedKmh = speedKmh
-                        )
-                        Log.d("BikeViewModel", "Speed: ], $speedKmh")
-                    }
-                }
-            }
-        }
-        // Optionally, trigger an initial location fetch
+
+        // Optionally trigger an initial location fetch.
         viewModelScope.launch {
             locationRepository.updateLocation()
         }
 
-        viewModelScope.launch {
-            distanceRepository.remainingDistanceFlow.collect { remaining ->
-                val currentState = _uiState.value
-                if (currentState is BikeUiState.Success) {
-                    _uiState.value = currentState.copy(
-                        remainingDistance = remaining
-                    )
-                }
-            }
-        }
-
-
-        // Fake data: increment speed & distance in a loop
+        // [Optional Demo Code]
+        // If you want to demo with fake data rather than real sensor data,
+        // comment out the combine block above and use this fake update loop instead.
+        /*
         viewModelScope.launch {
             var speed = 0.0
             var distance = 0.0
-            val totalDist = 50.0  // Total planned distance (km)
+            val totalDist = 50.0  // Total planned distance in km.
             while (true) {
-                // Increment speed up to 60 km/h, then cycle back to 0
-                speed = (speed + 4.0).coerceAtMost(60.0)  // Increased increment
+                speed = (speed + 4.0).coerceAtMost(60.0)
                 if (speed >= 60.0) speed = 0.0
-
-                // Increment distance up to totalDist
-                distance = (distance + 0.4).coerceAtMost(totalDist)  // Increased increment
+                distance = (distance + 0.4).coerceAtMost(totalDist)
                 if (distance >= totalDist) distance = 0.0
 
                 val currentState = _uiState.value
@@ -89,11 +77,12 @@ class BikeViewModel @Inject constructor(
                         currentDistance = distance,
                         totalDistance = totalDist
                     )
-                    Log.d("BikeViewModel", "Speed: $speed, Distance: $distance")
+                    Log.d("BikeViewModel", "Fake update: speed=$speed, distance=$distance")
                 }
-                delay(500L) // update every 500ms for smoother motion
+                delay(500L)
             }
         }
+        */
     }
 
     fun onEvent(event: BikeEvent) {
