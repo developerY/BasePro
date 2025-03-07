@@ -1,5 +1,6 @@
 package com.ylabz.basepro.feature.bike.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.data.repository.location.LocationRepository
@@ -21,108 +22,97 @@ class BikeViewModel @Inject constructor(
     val uiState: StateFlow<BikeUiState> = _uiState
 
     init {
-        // Trigger initial load of settings
-        onEvent(BikeEvent.LoadBike)
-
-        // Start collecting location changes
-        viewModelScope.launch {
-            locationRepository.currentLocation.collect { latLng ->
-                // Only update if we're in the Success state
-                val currentState = _uiState.value
-                if (currentState is BikeUiState.Success) {
-                    // Copy the existing settings, update the location
-                    _uiState.value = currentState.copy(location = latLng)
-                }
-            }
-        }
-
-        // Optionally, trigger an initial location fetch
-        viewModelScope.launch {
-            locationRepository.updateLocation()
-
-        }
-        // Fake data: increment speed & distance in a loop
-        viewModelScope.launch {
-            var speed = 0.0
-            var distance = 0.0
-            val totalDist = 50.0  // Suppose total planned distance is 50 km
-
-            while (true) {
-                // Increment speed up to 60 km/h, then cycle back to 0
-                speed = (speed + 2.0).coerceAtMost(60.0)
-                if (speed >= 60.0) {
-                    speed = 0.0
-                }
-
-                // Increment distance up to totalDist
-                distance = (distance + 0.2).coerceAtMost(totalDist)
-                // If we reach the total distance, reset to see the progress line start over
-                if (distance >= totalDist) {
-                    distance = 0.0
-                }
-
-                // Update UI state
-                val currentState = _uiState.value
-                if (currentState is BikeUiState.Success) {
-                    // Copy the existing settings, update the location
-                    _uiState.value = currentState.copy(
-                        currentSpeed = speed,
-                        currentDistance = distance,
-                        totalDistance = totalDist
-                    )
-                }
-                delay(1000) // update every second
-            }
-        }
-
-    }
-
-    fun onEvent(event: BikeEvent) {
-        when (event) {
-            is BikeEvent.LoadBike -> {
-                loadSettings()
-            }
-            is BikeEvent.UpdateSetting -> {
-                updateSetting(event.settingKey, event.settingValue)
-            }
-            is BikeEvent.DeleteAllEntries -> {
-                deleteAllEntries()
-            }
-        }
+        // Trigger initial load of settings.
+        loadSettings()
+        // Start collecting location changes and updating the UI state.
+        collectLocationUpdates()
+        // Start faking speed & distance updates.
+        startFakeDataUpdates()
     }
 
     private fun loadSettings() {
         viewModelScope.launch {
-            // Simulate loading settings data
-            // In a real app, you'd retrieve these from your repository
+            // Simulate loading settings data. In a real app, you'd retrieve these from your repository.
             _uiState.value = BikeUiState.Success(
                 settings = mapOf(
                     "Theme" to listOf("Light", "Dark", "System Default"),
                     "Language" to listOf("English", "Spanish", "French"),
                     "Notifications" to listOf("Enabled", "Disabled")
                 ),
-                location = null // We'll update this once location flow emits
+                location = null,
+                // Provide default values for speed/distance if needed.
+                currentSpeed = 0.0,
+                currentDistance = 0.0,
+                totalDistance = 50.0,
+                locationString = "Santa Barbara, US"
             )
+        }
+    }
+
+    private fun collectLocationUpdates() {
+        viewModelScope.launch {
+            // Optionally trigger an initial fetch
+            locationRepository.updateLocation()
+            // Collect location updates.
+            locationRepository.currentLocation.collect { latLng ->
+                val currentState = _uiState.value
+                if (currentState is BikeUiState.Success) {
+                    // Update the UI state with the new location.
+                    _uiState.value = currentState.copy(location = latLng)
+                }
+            }
+        }
+    }
+
+    private fun startFakeDataUpdates() {
+        viewModelScope.launch {
+            var speed = 0.0
+            var distance = 0.0
+            val totalDist = 50.0  // Total planned distance (km)
+            while (true) {
+                // Increment speed up to 60 km/h, then reset to 0.
+                speed = (speed + 2.0).coerceAtMost(60.0)
+                if (speed >= 60.0) speed = 0.0
+
+                // Increment distance up to totalDist, then reset.
+                distance = (distance + 0.2).coerceAtMost(totalDist)
+                if (distance >= totalDist) distance = 0.0
+
+                val currentState = _uiState.value
+                if (currentState is BikeUiState.Success) {
+                    _uiState.value = currentState.copy(
+                        currentSpeed = speed,
+                        currentDistance = distance,
+                        totalDistance = totalDist
+                    )
+                }
+                delay(1000L) // Update every second.
+            }
+        }
+    }
+
+    fun onEvent(event: BikeEvent) {
+        when (event) {
+            is BikeEvent.LoadBike -> loadSettings()
+            is BikeEvent.UpdateSetting -> updateSetting(event.settingKey, event.settingValue)
+            is BikeEvent.DeleteAllEntries -> deleteAllEntries()
         }
     }
 
     private fun updateSetting(key: String, value: String) {
         viewModelScope.launch {
-            val currentSettings = (_uiState.value as? BikeUiState.Success)?.settings ?: emptyMap()
-            val updatedSettings = currentSettings.toMutableMap().apply {
-                // e.g., handle your setting changes here
+            val currentState = _uiState.value as? BikeUiState.Success ?: return@launch
+            val updatedSettings = currentState.settings.toMutableMap().apply {
+                this[key] = listOf(value)
             }
-            _uiState.value = BikeUiState.Success(
-                settings = updatedSettings,
-                location = (_uiState.value as? BikeUiState.Success)?.location
-            )
+            _uiState.value = currentState.copy(settings = updatedSettings)
         }
     }
 
     private fun deleteAllEntries() {
         viewModelScope.launch {
             repository.deleteAll()
-            // Optionally, update UI state or reload settings
+            Log.d("BikeViewModel", "All entries deleted from repository.")
         }
     }
 }
