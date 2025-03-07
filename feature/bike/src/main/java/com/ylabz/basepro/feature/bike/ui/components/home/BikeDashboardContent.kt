@@ -55,7 +55,7 @@ fun BikeDashboardContent(
         ) {
             StatsRow(
                 distance = 12.5,
-                duration = "1h 30m",
+                duration = tripDuration,
                 avgSpeed = 8.3,
                 elevation = 150.0,
             )

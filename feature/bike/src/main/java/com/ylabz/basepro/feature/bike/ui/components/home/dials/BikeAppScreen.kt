@@ -26,6 +26,7 @@ fun BikeAppScreen(
     currentSpeed : Double,
     currentTripDistance: Double,  // current progress (km)
     totalDistance: Double,
+    tripDuration: String,
     settings: Map<String, List<String>>,
     location: LatLng?,
     onEvent: (BikeEvent) -> Unit,
@@ -97,7 +98,7 @@ fun BikeAppScreen(
                         currentSpeed = currentSpeed,
                         currentTripDistance = currentTripDistance,  // current progress (km)
                         totalDistance = totalDistance,
-                        tripDuration = "00:45:30",
+                        tripDuration = tripDuration,
                         averageSpeed = 25.0,
                         elevation = 150.0
                     )
@@ -158,6 +159,7 @@ fun BikeAppMapScreenPreview() {
             modifier = Modifier,
             currentSpeed = 20.7,
             currentTripDistance = 7.0,  // current progress (km)
+            tripDuration = "1H 27M",
             totalDistance =  20.7,
             settings = sampleSettings,
             location = LatLng(0.0, 0.0),

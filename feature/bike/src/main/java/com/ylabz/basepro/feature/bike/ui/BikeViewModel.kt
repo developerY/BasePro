@@ -96,6 +96,8 @@ class BikeViewModel @Inject constructor(
 
     }
 
+
+
     // Helper to format milliseconds as HH:MM:SS
     private fun formatDuration(millis: Long): String {
         val seconds = millis / 1000 % 60
@@ -104,12 +106,24 @@ class BikeViewModel @Inject constructor(
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
+    // Format milliseconds to a string like "1h 30m"
+    private fun formatDurationToHM(millis: Long): String {
+        val totalMinutes = millis / 1000 / 60
+        val hours = totalMinutes / 60
+        val minutes = totalMinutes % 60
+        return if (hours > 0) {
+            "${hours}h ${minutes}m"
+        } else {
+            "${minutes}m"
+        }
+    }
+
     private fun startRideDurationUpdates() {
         rideStartTime = System.currentTimeMillis() // Record ride start time.
         viewModelScope.launch {
             while (true) {
                 val elapsedMillis = System.currentTimeMillis() - rideStartTime
-                val formatted = formatDuration(elapsedMillis)
+                val formatted = formatDurationToHM(elapsedMillis)
                 val currentState = _uiState.value
                 if (currentState is BikeUiState.Success) {
                     _uiState.value = currentState.copy(rideDuration = formatted)

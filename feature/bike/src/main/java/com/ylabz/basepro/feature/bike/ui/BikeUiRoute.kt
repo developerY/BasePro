@@ -38,6 +38,7 @@ fun BikeUiRoute(
                 currentSpeed = uiState.currentSpeed,
                 currentTripDistance = uiState.currentDistance,  // current progress (km)
                 totalDistance = uiState.totalDistance,
+                tripDuration = uiState.rideDuration,
                 settings = sampleSettings,
                 onEvent = {},
                 location = LatLng(0.0,0.0),
