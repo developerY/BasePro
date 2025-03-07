@@ -25,6 +25,9 @@ import com.ylabz.basepro.settings.ui.components.BikeSettingsScreen
 @Composable
 fun BikeAppScreen(
     modifier: Modifier = Modifier,
+    currentSpeed : Double,
+    currentTripDistance: Double,  // current progress (km)
+    totalDistance: Double,
     settings: Map<String, List<String>>,
     location: LatLng?,
     onEvent: (BikeEvent) -> Unit,
@@ -93,9 +96,9 @@ fun BikeAppScreen(
                 "ride" -> {
                     BikeDashboardContent(
                         modifier = Modifier.padding(innerPadding),
-                        currentSpeed = 28.3,
-                        totalDistance = 12.5,
-                        currentTripDistance = 7.2,  // current progress (km)
+                        currentSpeed = currentSpeed,
+                        currentTripDistance = currentTripDistance,  // current progress (km)
+                        totalDistance = totalDistance,
                         tripDuration = "00:45:30",
                         averageSpeed = 25.0,
                         elevation = 150.0
@@ -154,6 +157,10 @@ fun BikeAppMapScreenPreview() {
     )
     MaterialTheme {
         BikeAppScreen(
+            modifier = Modifier,
+            currentSpeed = 20.7,
+            currentTripDistance = 7.0,  // current progress (km)
+            totalDistance =  20.7,
             settings = sampleSettings,
             location = LatLng(0.0, 0.0),
             onEvent = {},

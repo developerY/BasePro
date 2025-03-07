@@ -22,8 +22,8 @@ import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionU
 fun BikeDashboardContent(
     modifier: Modifier = Modifier,
     currentSpeed: Double,
-    totalDistance: Double,
     currentTripDistance: Double,  // current progress (km)
+    totalDistance: Double,
     tripDuration: String,
     averageSpeed: Double,
     elevation: Double

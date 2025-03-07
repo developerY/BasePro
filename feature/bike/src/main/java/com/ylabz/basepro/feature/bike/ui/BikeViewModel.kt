@@ -22,60 +22,34 @@ class BikeViewModel @Inject constructor(
     val uiState: StateFlow<BikeUiState> = _uiState
 
     init {
-        // Trigger initial load of settings.
-        loadSettings()
-        // Start collecting location changes and updating the UI state.
-        collectLocationUpdates()
-        // Start faking speed & distance updates.
-        startFakeDataUpdates()
-    }
-
-    private fun loadSettings() {
+        // Trigger initial load of settings
+        onEvent(BikeEvent.LoadBike)
+        // Start collecting location changes
         viewModelScope.launch {
-            // Simulate loading settings data. In a real app, you'd retrieve these from your repository.
-            _uiState.value = BikeUiState.Success(
-                settings = mapOf(
-                    "Theme" to listOf("Light", "Dark", "System Default"),
-                    "Language" to listOf("English", "Spanish", "French"),
-                    "Notifications" to listOf("Enabled", "Disabled")
-                ),
-                location = null,
-                // Provide default values for speed/distance if needed.
-                currentSpeed = 0.0,
-                currentDistance = 0.0,
-                totalDistance = 50.0,
-                locationString = "Santa Barbara, US"
-            )
-        }
-    }
-
-    private fun collectLocationUpdates() {
-        viewModelScope.launch {
-            // Optionally trigger an initial fetch
-            locationRepository.updateLocation()
-            // Collect location updates.
             locationRepository.currentLocation.collect { latLng ->
                 val currentState = _uiState.value
                 if (currentState is BikeUiState.Success) {
-                    // Update the UI state with the new location.
                     _uiState.value = currentState.copy(location = latLng)
+                    Log.d("BikeViewModel", "Location updated: $latLng")
                 }
             }
         }
-    }
-
-    private fun startFakeDataUpdates() {
+        // Optionally, trigger an initial location fetch
+        viewModelScope.launch {
+            locationRepository.updateLocation()
+        }
+        // Fake data: increment speed & distance in a loop
         viewModelScope.launch {
             var speed = 0.0
             var distance = 0.0
             val totalDist = 50.0  // Total planned distance (km)
             while (true) {
-                // Increment speed up to 60 km/h, then reset to 0.
-                speed = (speed + 2.0).coerceAtMost(60.0)
+                // Increment speed up to 60 km/h, then cycle back to 0
+                speed = (speed + 4.0).coerceAtMost(60.0)  // Increased increment
                 if (speed >= 60.0) speed = 0.0
 
-                // Increment distance up to totalDist, then reset.
-                distance = (distance + 0.2).coerceAtMost(totalDist)
+                // Increment distance up to totalDist
+                distance = (distance + 0.4).coerceAtMost(totalDist)  // Increased increment
                 if (distance >= totalDist) distance = 0.0
 
                 val currentState = _uiState.value
@@ -85,8 +59,9 @@ class BikeViewModel @Inject constructor(
                         currentDistance = distance,
                         totalDistance = totalDist
                     )
+                    Log.d("BikeViewModel", "Speed: $speed, Distance: $distance")
                 }
-                delay(1000L) // Update every second.
+                delay(500L) // update every 500ms for smoother motion
             }
         }
     }
@@ -96,6 +71,24 @@ class BikeViewModel @Inject constructor(
             is BikeEvent.LoadBike -> loadSettings()
             is BikeEvent.UpdateSetting -> updateSetting(event.settingKey, event.settingValue)
             is BikeEvent.DeleteAllEntries -> deleteAllEntries()
+        }
+    }
+
+    private fun loadSettings() {
+        viewModelScope.launch {
+            _uiState.value = BikeUiState.Success(
+                settings = mapOf(
+                    "Theme" to listOf("Light", "Dark", "System Default"),
+                    "Language" to listOf("English", "Spanish", "French"),
+                    "Notifications" to listOf("Enabled", "Disabled")
+                ),
+                location = null, // will update later
+                currentSpeed = 0.0,
+                currentDistance = 0.0,
+                totalDistance = 50.0,
+                locationString = "Santa Barbara, US"
+            )
+            Log.d("BikeViewModel", "Settings loaded.")
         }
     }
 

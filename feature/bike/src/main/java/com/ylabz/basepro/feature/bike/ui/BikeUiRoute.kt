@@ -34,6 +34,10 @@ fun BikeUiRoute(
         }
         is BikeUiState.Success -> {
             BikeAppScreen(
+                modifier = modifier,
+                currentSpeed = uiState.currentSpeed,
+                currentTripDistance = uiState.currentDistance,  // current progress (km)
+                totalDistance = uiState.totalDistance,
                 settings = sampleSettings,
                 onEvent = {},
                 location = LatLng(0.0,0.0),
