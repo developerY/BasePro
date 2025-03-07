@@ -30,54 +30,59 @@ class BikeViewModel @Inject constructor(
         // Trigger initial load of settings.
         onEvent(BikeEvent.LoadBike)
 
-        // Combine location, speed, and distance flows into one stream.
+        // Combine location, speed, and distance flows.
         viewModelScope.launch {
             combine(
                 locationRepository.currentLocation,
                 speedRepository.speedFlow,
                 distanceRepository.remainingDistanceFlow
-            ) { location, speedKmh, remaining ->
+            ) { location, speedKmh, remainingDistance ->
+                Triple(location, speedKmh, remainingDistance)
+            }.collect { (location, speedKmh, remainingDistance) ->
                 val currentState = _uiState.value
                 if (currentState is BikeUiState.Success) {
+                    // Assume totalDistance is set in the UI state.
+                    // Calculate traveled distance as: totalDistance - remainingDistance.
+                    val traveledDistance = currentState.totalDistance - remainingDistance.toDouble()
                     _uiState.value = currentState.copy(
                         location = location,
                         currentSpeed = speedKmh.toDouble(),
-                        remainingDistance = remaining //.toDouble()
+                        currentDistance = traveledDistance
                     )
-                    Log.d("BikeViewModel", "Combined update: location=$location, speed=$speedKmh, remaining=$remaining")
+                    Log.d(
+                        "BikeViewModel",
+                        "Combined update: location=$location, speed=$speedKmh, remaining=$remainingDistance"
+                    )
                 }
-            }.collect(
-                collector = TODO()
-            )
+            }
         }
 
-        // Optionally trigger an initial location fetch.
+        // Optionally, trigger an initial location fetch.
         viewModelScope.launch {
             locationRepository.updateLocation()
         }
 
-        // [Optional Demo Code]
-        // If you want to demo with fake data rather than real sensor data,
-        // comment out the combine block above and use this fake update loop instead.
+        // (Optional) If you want to use fake data instead, comment out the combine block above
+        // and use the following fake update loop.
         /*
         viewModelScope.launch {
             var speed = 0.0
-            var distance = 0.0
-            val totalDist = 50.0  // Total planned distance in km.
+            var traveledDistance = 0.0
+            val totalDist = 50.0  // Total planned distance (km)
             while (true) {
                 speed = (speed + 4.0).coerceAtMost(60.0)
                 if (speed >= 60.0) speed = 0.0
-                distance = (distance + 0.4).coerceAtMost(totalDist)
-                if (distance >= totalDist) distance = 0.0
+                traveledDistance = (traveledDistance + 0.4).coerceAtMost(totalDist)
+                if (traveledDistance >= totalDist) traveledDistance = 0.0
 
                 val currentState = _uiState.value
                 if (currentState is BikeUiState.Success) {
                     _uiState.value = currentState.copy(
                         currentSpeed = speed,
-                        currentDistance = distance,
+                        currentDistance = traveledDistance,
                         totalDistance = totalDist
                     )
-                    Log.d("BikeViewModel", "Fake update: speed=$speed, distance=$distance")
+                    Log.d("BikeViewModel", "Fake update: speed=$speed, traveledDistance=$traveledDistance")
                 }
                 delay(500L)
             }
@@ -101,7 +106,7 @@ class BikeViewModel @Inject constructor(
                     "Language" to listOf("English", "Spanish", "French"),
                     "Notifications" to listOf("Enabled", "Disabled")
                 ),
-                location = null, // will update later
+                location = null,
                 currentSpeed = 0.0,
                 currentDistance = 0.0,
                 totalDistance = 50.0,
