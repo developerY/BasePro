@@ -13,11 +13,12 @@ import androidx.compose.runtime.getValue
 @Composable
 fun BikeUiRoute(
     modifier: Modifier = Modifier,
-    navTo: (String) -> Unit
+    navTo: (String) -> Unit,
+    bikeViewModel: BikeViewModel = hiltViewModel(),
+    healthViewModel: HealthViewModel = hiltViewModel()
 ) {
     // Obtain both viewmodels from Hilt.
-    val bikeViewModel: BikeViewModel = hiltViewModel()
-    val healthViewModel: HealthViewModel = hiltViewModel()
+
 
     // Collect the UI states from both.
     val bikeUiState by bikeViewModel.uiState.collectAsState()

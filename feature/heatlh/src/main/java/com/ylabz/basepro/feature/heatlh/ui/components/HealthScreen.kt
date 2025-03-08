@@ -37,6 +37,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ylabz.basepro.feature.heatlh.R
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
+import com.ylabz.basepro.feature.heatlh.ui.HealthScreenState
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 import com.ylabz.basepro.feature.heatlh.ui.HealthViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -44,37 +45,27 @@ import java.time.ZonedDateTime
 
 @Composable
 fun HealthStartScreen(
-    viewModel: HealthViewModel = hiltViewModel(),
-    navController: NavController,
-    paddingValues: PaddingValues,
+    modifier: Modifier = Modifier,
+    healthPermState: HealthScreenState,
+    sessionsList: List<ExerciseSessionRecord>,
     scope: CoroutineScope = rememberCoroutineScope(),
     onEvent: (HealthEvent) -> Unit,
-    sessionsList: List<ExerciseSessionRecord>,
     onPermissionsLaunch: (Set<String>) -> Unit,
+    navTo: (String) -> Unit,
 ) {
-    val isHealthConnectAvailable = remember { viewModel.healthSessionManager.availability.value == HealthConnectClient.SDK_AVAILABLE }
-    val permissionsGranted by viewModel.permissionsGranted
-    val permissions = viewModel.permissions
-    val backgroundReadPermissions = viewModel.backgroundReadPermissions
-    val backgroundReadAvailable by viewModel.backgroundReadAvailable
-    val backgroundReadGranted by viewModel.backgroundReadGranted
-    val healthUiState by viewModel.uiState.collectAsState()
+
     val activity = LocalContext.current as? ComponentActivity
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .padding(paddingValues)
             .background(MaterialTheme.colorScheme.background)
     ) {
         // Header: Availability and Settings
         HealthHeader(
-            isHealthConnectAvailable = isHealthConnectAvailable,
-            backgroundReadGranted = backgroundReadGranted,
-            backgroundReadAvailable = backgroundReadAvailable,
-            permissions = permissions,
+            healthPermState = healthPermState,
             onPermissionsLaunch = onPermissionsLaunch,
-            backgroundReadPermissions = backgroundReadPermissions,
+            backgroundReadPermissions = healthPermState.backgroundReadPermissions,
             activity = activity
         )
 
@@ -99,7 +90,7 @@ fun HealthStartScreen(
                 .weight(2f)
                 .fillMaxWidth(),
             sessionsList = sessionsList,
-            navController = navController
+            navTo = navTo
         )
     }
 }

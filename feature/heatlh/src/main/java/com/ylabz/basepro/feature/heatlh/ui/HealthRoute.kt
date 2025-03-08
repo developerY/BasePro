@@ -20,16 +20,46 @@ import com.ylabz.basepro.feature.heatlh.ui.components.ErrorScreen
 import com.ylabz.basepro.feature.heatlh.ui.components.HealthStartScreen
 import com.ylabz.basepro.feature.heatlh.ui.components.LoadingScreen
 import java.util.UUID
+data class HealthScreenState(
+    val isHealthConnectAvailable: Boolean,
+    val permissionsGranted: Boolean,
+    val permissions: Set<String>,
+    val backgroundReadPermissions: Set<String>,
+    val backgroundReadAvailable: Boolean,
+    val backgroundReadGranted: Boolean,
+    val healthUiState: HealthUiState
+)
+
 
 @Composable
 fun HealthRoute(
-    navController: NavController,
-    paddingValues: PaddingValues,
+    modifier: Modifier = Modifier,
+    navTo: (String) -> Unit,
     viewModel: HealthViewModel = hiltViewModel()
 ) {
 
-    //val healthUiState by remember { mutableStateOf(viewModel.uiState) }
+    // Gather state from the ViewModel.
+    val isHealthConnectAvailable = viewModel.healthSessionManager.availability.value == HealthConnectClient.SDK_AVAILABLE
+    val permissionsGranted by viewModel.permissionsGranted
+    val permissions = viewModel.permissions
+    val backgroundReadPermissions = viewModel.backgroundReadPermissions
+    val backgroundReadAvailable by viewModel.backgroundReadAvailable
+    val backgroundReadGranted by viewModel.backgroundReadGranted
     val healthUiState by viewModel.uiState.collectAsState()
+
+    // Bundle everything into one state object.
+    val bundledState = HealthScreenState(
+        isHealthConnectAvailable = isHealthConnectAvailable,
+        permissionsGranted = permissionsGranted,
+        permissions = permissions,
+        backgroundReadPermissions = backgroundReadPermissions,
+        backgroundReadAvailable = backgroundReadAvailable,
+        backgroundReadGranted = backgroundReadGranted,
+        healthUiState = healthUiState
+    )
+
+
+    //val healthUiState by remember { mutableStateOf(viewModel.uiState) }
     val errorId = rememberSaveable { mutableStateOf(UUID.randomUUID()) }
     val onPermissionsResult = { viewModel.initialLoad() }
     val permissionsLauncher =
@@ -55,9 +85,9 @@ fun HealthRoute(
     }
 
     Column(
-       modifier = Modifier
+       modifier = modifier
            .fillMaxSize()
-           .padding(paddingValues)
+
     ) {
         // Display the current UI state in a Text field for debugging purposes
 
@@ -71,13 +101,14 @@ fun HealthRoute(
 
             is HealthUiState.Success -> {
                 HealthStartScreen(
-                    navController = navController,
-                    paddingValues = paddingValues,
-                    onEvent = { event -> viewModel.onEvent(event) },
+                    modifier = modifier,
+                    healthPermState = bundledState,
                     sessionsList = (healthUiState as HealthUiState.Success).healthData,
                     onPermissionsLaunch = { values ->
                         permissionsLauncher.launch(values)
-                    }
+                    },
+                    onEvent = { event -> viewModel.onEvent(event) },
+                    navTo = navTo,
                 )
             }
 

@@ -31,22 +31,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.HealthConnectClient
+import com.ylabz.basepro.feature.heatlh.ui.HealthScreenState
+import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 
 @Composable
 fun HealthHeader(
-    isHealthConnectAvailable: Boolean,
-    backgroundReadGranted: Boolean,
-    backgroundReadAvailable: Boolean,
-    permissions: Set<String>,
+    healthPermState: HealthScreenState,
     onPermissionsLaunch: (Set<String>) -> Unit,
     backgroundReadPermissions: Set<String>,
     activity: ComponentActivity?
 ) {
     var isExpanded by remember { mutableStateOf(false) }
+    val isHealthConnectAvailable = healthPermState.isHealthConnectAvailable
+    val backgroundReadGranted = healthPermState.backgroundReadGranted
+    val backgroundReadAvailable = healthPermState.backgroundReadAvailable
+    val permissions = healthPermState.permissions
 
     Card(
+        // Modifier for the entire card
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
@@ -124,17 +129,36 @@ fun HealthHeader(
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
-fun HealthHeaderPreview() {
-    HealthHeader(
+fun HealthHeaderPreview(
+) {
+    val healthScreenState = HealthScreenState(
         isHealthConnectAvailable = true,
-        backgroundReadGranted = false,
-        backgroundReadAvailable = true,
+        permissionsGranted = false,
         permissions = setOf("android.permission.ACTIVITY_RECOGNITION"),
-        onPermissionsLaunch = { /* Mock permission launch */ },
         backgroundReadPermissions = setOf("android.permission.ACTIVITY_RECOGNITION"),
-        activity = null // We set this to null for preview purposes since it's not needed in Compose previews
+        backgroundReadAvailable = true,
+        backgroundReadGranted = false,
+        healthUiState = HealthUiState.Uninitialized
+    )
+
+    HealthHeaderPreviewComponent(healthScreenState)
+
+}
+
+@Composable
+fun HealthHeaderPreviewComponent(healthPermState: HealthScreenState) {
+    HealthHeader(
+        healthPermState = healthPermState,
+        onPermissionsLaunch = {}, // We set this to null for preview purposes since it's not needed in Compose previews
+        backgroundReadPermissions = setOf("android.permission.ACTIVITY_RECOGNITION"), // Mock permissions
+        activity = null
     )
 }
+
+
+
+
 

@@ -1,7 +1,9 @@
 package com.ylabz.basepro.ui.navigation.graphs
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -31,9 +33,10 @@ fun NavGraphBuilder.healthNavGraph(
                 drawerState = drawerState,
                 navController = navController
             ) { paddingVals ->
-
-
-                HealthRoute(navController = navController, paddingValues = paddingVals)
+                HealthRoute(
+                    modifier = Modifier.padding(paddingVals),
+                    navTo = { path -> navController.navigate(path) }
+                )
             }
         }
     }
