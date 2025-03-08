@@ -21,22 +21,22 @@ import com.ylabz.basepro.feature.bike.ui.components.path.BikePathScreen
 import com.ylabz.basepro.settings.ui.components.BikeSettingsScreen
 import androidx.compose.runtime.getValue
 import androidx.health.connect.client.records.ExerciseSessionRecord
-import com.ylabz.basepro.feature.bike.ui.HealthEvent
+import com.ylabz.basepro.core.model.bike.BikeScreenState
+import com.ylabz.basepro.core.model.health.HealthScreenState
+import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BikeAppScreen(
     modifier: Modifier = Modifier,
-    currentSpeed : Double,
-    currentTripDistance: Double,  // current progress (km)
-    totalDistance: Double,
-    tripDuration: String,
-    settings: Map<String, List<String>>,
-    location: LatLng?,
+    healthPermState: HealthScreenState,
+    sessionsList : List<ExerciseSessionRecord>,  // Assuming your HealthUiState.Success contains healthData.
+    onPermissionsLaunch: (Set<String>) -> Unit,
+    backgroundReadPermissions: Set<String>,
+    bikeScreenState: BikeScreenState,
     onBikeEvent: (BikeEvent) -> Unit,
     onHealthEvent: (HealthEvent) -> Unit,
-    sessionsList : List<ExerciseSessionRecord>,  // Assuming your HealthUiState.Success contains healthData.
     navTo: (String) -> Unit
 ) {
     // Local state to track the selected tab.
@@ -47,6 +47,11 @@ fun BikeAppScreen(
         "Language" to listOf("English", "Spanish", "French"),
         "Notifications" to listOf("Enabled", "Disabled")
     )
+
+    val currentSpeed = bikeScreenState.currentSpeed
+    val currentTripDistance = bikeScreenState.currentTripDistance
+    val totalDistance = bikeScreenState.totalDistance
+    val tripDuration =  bikeScreenState.rideDuration
 
     // Local navigation lambda that updates local state and calls external navTo.
     val localNavTo: (String) -> Unit = { route ->
@@ -107,7 +112,8 @@ fun BikeAppScreen(
                         totalDistance = totalDistance,
                         tripDuration = tripDuration,
                         averageSpeed = 25.0,
-                        elevation = 150.0
+                        elevation = 150.0,
+                        navTo = navTo
                     )
                 }
                 "path" -> {
@@ -116,7 +122,7 @@ fun BikeAppScreen(
                         settings = sampleSettings,
                         onEvent = {},
                         location = LatLng(0.0,0.0),
-                        navTo = {} // No-op for preview
+                        navTo = navTo // No-op for preview
                     )
                 }
                 "settings" -> {
@@ -124,7 +130,7 @@ fun BikeAppScreen(
                         modifier = Modifier.padding(innerPadding),
                         settings = sampleSettings,
                         onEvent = {},
-                        navTo = {} // No-op for preview
+                        navTo = navTo // No-op for preview
                     )
                 }
                 "startRide" -> {
@@ -152,27 +158,4 @@ fun BikeAppScreen(
         }
     )
 }
-
-@Preview
-@Composable
-fun BikeAppScreenPreview() {
-    val sampleSettings = mapOf(
-        "Theme" to listOf("Light", "Dark", "System Default"),
-        "Language" to listOf("English", "Spanish", "French"),
-        "Notifications" to listOf("Enabled", "Disabled")
-    )
-
-    BikeAppScreen(
-        currentSpeed = 25.0,
-        currentTripDistance = 10.5,
-        totalDistance = 50.0,
-        tripDuration = "00:30:00",
-        settings = sampleSettings,
-        location = LatLng(37.4219999, -122.0862462),
-        onBikeEvent = {},
-        onHealthEvent = {},
-        sessionsList = emptyList(), // provide sample data if necessary
-        navTo = {} // No-op for preview
-    )}
-
 

@@ -5,17 +5,22 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.health.connect.client.records.ExerciseSessionRecord
 import com.ylabz.basepro.feature.bike.ui.components.home.dials.AnimatedHeartRateCard
 import com.ylabz.basepro.feature.bike.ui.components.home.dials.BikeDashboardScreen
 import com.ylabz.basepro.feature.bike.ui.components.home.dials.SpeedAndProgressCard
 import com.ylabz.basepro.feature.bike.ui.components.home.dials.StatsRow
+import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
+import com.ylabz.basepro.feature.heatlh.ui.components.HealthStartScreen
 import com.ylabz.basepro.feature.weather.ui.components.combine.UnifiedWeatherCard
 import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionUnif
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun BikeDashboardContent(
@@ -25,7 +30,8 @@ fun BikeDashboardContent(
     totalDistance: Double,
     tripDuration: String,
     averageSpeed: Double,
-    elevation: Double
+    elevation: Double,
+    navTo: (String) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -72,6 +78,28 @@ fun BikeDashboardContent(
             calories = 300.0
         )
 
+
+
+        /*
+        modifier: Modifier = Modifier,
+            healthPermState: HealthScreenState,
+            sessionsList: List<ExerciseSessionRecord>,
+            scope: CoroutineScope = rememberCoroutineScope(),
+            onEvent: (HealthEvent) -> Unit,
+            onPermissionsLaunch: (Set<String>) -> Unit,
+            navTo: (String) -> Unit,
+         */
+        /*HealthStartScreen(
+            modifier = modifier,
+            healthPermState = bundledState,
+            sessionsList = (healthUiState as HealthUiState.Success).healthData,
+            onPermissionsLaunch = { values ->
+                permissionsLauncher.launch(values)
+            },
+            onEvent = { event -> viewModel.onEvent(event) },
+            navTo = navTo,
+        )*/
+
         AnimatedHeartRateCard(heartRate = 70)
 
         // 4) Unified Weather Card (Rainy example)
@@ -107,7 +135,8 @@ fun BikeDashboardContentPreview() {
             currentTripDistance =  7.2,  // current progress (km)
             tripDuration = "00:45:30",
             averageSpeed = 25.0,
-            elevation = 150.0
+            elevation = 150.0,
+            navTo = {}
         )
     }
 }

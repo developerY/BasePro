@@ -34,7 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.HealthConnectClient
-import com.ylabz.basepro.feature.heatlh.ui.HealthScreenState
+import com.ylabz.basepro.core.model.health.HealthScreenState
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 
 @Composable
@@ -141,7 +141,6 @@ fun HealthHeaderPreview(
         backgroundReadPermissions = setOf("android.permission.ACTIVITY_RECOGNITION"),
         backgroundReadAvailable = true,
         backgroundReadGranted = false,
-        healthUiState = HealthUiState.Uninitialized
     )
 
     HealthHeaderPreviewComponent(healthScreenState)

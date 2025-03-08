@@ -43,6 +43,8 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:util"))
     implementation(project(":feature:weather"))
+    implementation(project(":feature:heatlh"))
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

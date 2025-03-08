@@ -16,20 +16,11 @@ import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.records.WeightRecord
 import androidx.navigation.NavController
+import com.ylabz.basepro.core.model.health.HealthScreenState
 import com.ylabz.basepro.feature.heatlh.ui.components.ErrorScreen
 import com.ylabz.basepro.feature.heatlh.ui.components.HealthStartScreen
 import com.ylabz.basepro.feature.heatlh.ui.components.LoadingScreen
 import java.util.UUID
-data class HealthScreenState(
-    val isHealthConnectAvailable: Boolean,
-    val permissionsGranted: Boolean,
-    val permissions: Set<String>,
-    val backgroundReadPermissions: Set<String>,
-    val backgroundReadAvailable: Boolean,
-    val backgroundReadGranted: Boolean,
-    val healthUiState: HealthUiState
-)
-
 
 @Composable
 fun HealthRoute(
@@ -55,7 +46,6 @@ fun HealthRoute(
         backgroundReadPermissions = backgroundReadPermissions,
         backgroundReadAvailable = backgroundReadAvailable,
         backgroundReadGranted = backgroundReadGranted,
-        healthUiState = healthUiState
     )
 
 

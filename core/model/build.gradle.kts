@@ -46,6 +46,9 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.healthConnect)
+
+    //maps
+    implementation(libs.google.maps.compose)
     
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
