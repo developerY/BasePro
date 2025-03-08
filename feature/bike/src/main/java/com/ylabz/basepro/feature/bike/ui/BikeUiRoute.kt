@@ -8,57 +8,62 @@ import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.feature.bike.ui.components.home.dials.BikeAppScreen
 import com.ylabz.basepro.settings.ui.components.ErrorScreen
 import com.ylabz.basepro.settings.ui.components.LoadingScreen
+import androidx.compose.runtime.getValue
+
 
 @Composable
 fun BikeUiRoute(
     modifier: Modifier = Modifier,
-    navTo: (String) -> Unit,
-    viewModel: BikeViewModel = hiltViewModel()
+    navTo: (String) -> Unit
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
+    // Obtain both viewmodels from Hilt.
+    val bikeViewModel: BikeViewModel = hiltViewModel()
+    val healthViewModel: HealthViewModel = hiltViewModel()
 
+    // Collect the UI states from both.
+    val bikeUiState by bikeViewModel.uiState.collectAsState()
+    val healthUiState by healthViewModel.uiState.collectAsState()
+
+    // You can define a sample settings map, or use the one loaded in the BikeUiState.
     val sampleSettings = mapOf(
         "Theme" to listOf("Light", "Dark", "System Default"),
         "Language" to listOf("English", "Spanish", "French"),
         "Notifications" to listOf("Enabled", "Disabled")
     )
 
-    when (uiState) {
-        is BikeUiState.Loading -> {
-            LoadingScreen()
+    when {
+        bikeUiState is BikeUiState.Loading || healthUiState is HealthUiState.Loading -> {
+            LoadingScreen()//modifier)
         }
-        is BikeUiState.Error -> {
-            ErrorScreen(errorMessage = uiState.message) {
-                viewModel.onEvent(BikeEvent.LoadBike)
+        bikeUiState is BikeUiState.Error -> {
+            ErrorScreen(errorMessage = (bikeUiState as BikeUiState.Error).message) {
+                bikeViewModel.onEvent(BikeEvent.LoadBike)
             }
         }
-        is BikeUiState.Success -> {
+        healthUiState is HealthUiState.Error -> {
+            ErrorScreen(errorMessage = (healthUiState as HealthUiState.Error).message) {
+                healthViewModel.onEvent(HealthEvent.LoadHealthData)
+            }
+        }
+        bikeUiState is BikeUiState.Success && healthUiState is HealthUiState.Success -> {
+            val bikeState = bikeUiState as BikeUiState.Success
+            val healthState = healthUiState as HealthUiState.Success
+
             BikeAppScreen(
                 modifier = modifier,
-                currentSpeed = uiState.currentSpeed,
-                currentTripDistance = uiState.currentDistance,  // current progress (km)
-                totalDistance = uiState.totalDistance,
-                tripDuration = uiState.rideDuration,
-                settings = sampleSettings,
-                onEvent = {},
-                location = LatLng(0.0,0.0),
-                navTo = {} // No-op for preview
-            )
-            /*BikeCompose(
-                modifier = modifier,
-                settings = uiState.settings,
-                location = uiState.location,   // <-- Pass the location here
-                onEvent = { event -> viewModel.onEvent(event) },
+                currentSpeed = bikeState.currentSpeed,
+                currentTripDistance = bikeState.currentDistance,
+                totalDistance = bikeState.totalDistance,
+                tripDuration = bikeState.rideDuration,
+                settings = bikeState.settings, // or use sampleSettings if preferred
+                onEvent = { event -> bikeViewModel.onEvent(event) },
+                location = bikeState.location ?: LatLng(0.0, 0.0),
+                sessionsList  = healthState.healthData,  // Assuming your HealthUiState.Success contains healthData.
                 navTo = navTo
-            )*/
-            /*BikeHomeScreen(
-               modifier = modifier,
-               settings = uiState.settings,
-               location = uiState.location,   // <-- Pass the location here
-               onEvent = { event -> viewModel.onEvent(event) },
-               navTo = navTo
-           )*/
-
+            )
+        }
+        else -> {
+            LoadingScreen()//modifier)
         }
     }
 }

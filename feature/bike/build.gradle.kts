@@ -69,6 +69,9 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     // kapt(libs.hilt.compiler)
 
+    // Health Connect
+    implementation(libs.healthConnect)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

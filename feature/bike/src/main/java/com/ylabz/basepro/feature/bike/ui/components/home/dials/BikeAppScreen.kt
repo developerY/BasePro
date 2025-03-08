@@ -2,6 +2,7 @@ package com.ylabz.basepro.feature.bike.ui.components.home.dials
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.AltRoute
 import androidx.compose.material.icons.automirrored.filled.DirectionsBike
@@ -18,6 +19,10 @@ import com.ylabz.basepro.feature.bike.ui.BikeEvent
 import com.ylabz.basepro.feature.bike.ui.components.home.BikeDashboardContent
 import com.ylabz.basepro.feature.bike.ui.components.path.BikePathScreen
 import com.ylabz.basepro.settings.ui.components.BikeSettingsScreen
+import androidx.compose.runtime.getValue
+import androidx.health.connect.client.records.ExerciseSessionRecord
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,6 +35,7 @@ fun BikeAppScreen(
     settings: Map<String, List<String>>,
     location: LatLng?,
     onEvent: (BikeEvent) -> Unit,
+    sessionsList : List<ExerciseSessionRecord>,  // Assuming your HealthUiState.Success contains healthData.
     navTo: (String) -> Unit
 ) {
     // Local state to track the selected tab.
@@ -146,25 +152,25 @@ fun BikeAppScreen(
     )
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun BikeAppMapScreenPreview() {
+fun BikeAppScreenPreview() {
     val sampleSettings = mapOf(
         "Theme" to listOf("Light", "Dark", "System Default"),
         "Language" to listOf("English", "Spanish", "French"),
         "Notifications" to listOf("Enabled", "Disabled")
     )
-    MaterialTheme {
-        BikeAppScreen(
-            modifier = Modifier,
-            currentSpeed = 20.7,
-            currentTripDistance = 7.0,  // current progress (km)
-            tripDuration = "1H 27M",
-            totalDistance =  20.7,
-            settings = sampleSettings,
-            location = LatLng(0.0, 0.0),
-            onEvent = {},
-            navTo = {}
-        )
-    }
-}
+
+    BikeAppScreen(
+        currentSpeed = 25.0,
+        currentTripDistance = 10.5,
+        totalDistance = 50.0,
+        tripDuration = "00:30:00",
+        settings = sampleSettings,
+        location = LatLng(37.4219999, -122.0862462),
+        onEvent = {},
+        sessionsList = emptyList(), // provide sample data if necessary
+        navTo = {} // No-op for preview
+    )}
+
+
