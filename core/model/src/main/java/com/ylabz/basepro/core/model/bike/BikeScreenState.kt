@@ -8,5 +8,7 @@ data class BikeScreenState(
     val totalDistance: Double,
     val rideDuration: String,
     val settings: Map<String, List<String>>,
-    val location: LatLng?
+    val location: LatLng?,
+    val averageSpeed: Double = 25.0,
+    val elevation : Double = 150.0
 )

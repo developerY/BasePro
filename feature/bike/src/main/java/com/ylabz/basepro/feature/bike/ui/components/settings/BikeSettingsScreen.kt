@@ -12,6 +12,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import com.ylabz.basepro.feature.bike.ui.BikeEvent
+import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
+import com.ylabz.basepro.feature.heatlh.ui.components.HealthStartScreen
 
 
 @Composable
@@ -105,6 +107,24 @@ fun BikeSettingsScreen(
             ) {
                 Text("Delete All Entries")
             }
+
+            /*
+            HealthStartScreen (
+                modifier = modifier,
+                healthPermState = bundledState,
+                sessionsList = (healthUiState as HealthUiState.Success).healthData,
+
+                onPermissionsLaunch = { values ->
+                    permissionsLauncher.launch(values)
+                },
+                onEvent = { event -> viewModel.onEvent(event) },
+                navTo = navTo,
+
+
+                )
+
+            */
+
         }
     }
 }

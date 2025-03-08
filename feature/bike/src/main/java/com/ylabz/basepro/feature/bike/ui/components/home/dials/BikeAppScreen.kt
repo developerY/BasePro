@@ -48,11 +48,6 @@ fun BikeAppScreen(
         "Notifications" to listOf("Enabled", "Disabled")
     )
 
-    val currentSpeed = bikeScreenState.currentSpeed
-    val currentTripDistance = bikeScreenState.currentTripDistance
-    val totalDistance = bikeScreenState.totalDistance
-    val tripDuration =  bikeScreenState.rideDuration
-
     // Local navigation lambda that updates local state and calls external navTo.
     val localNavTo: (String) -> Unit = { route ->
         selectedTab = route
@@ -107,12 +102,7 @@ fun BikeAppScreen(
                 "ride" -> {
                     BikeDashboardContent(
                         modifier = Modifier.padding(innerPadding),
-                        currentSpeed = currentSpeed,
-                        currentTripDistance = currentTripDistance,  // current progress (km)
-                        totalDistance = totalDistance,
-                        tripDuration = tripDuration,
-                        averageSpeed = 25.0,
-                        elevation = 150.0,
+                        bikeScreenState = bikeScreenState,
                         navTo = navTo
                     )
                 }
@@ -128,6 +118,10 @@ fun BikeAppScreen(
                 "settings" -> {
                     BikeSettingsScreen(
                         modifier = Modifier.padding(innerPadding),
+                        /*healthPermState: HealthScreenState,
+                        sessionsList : List<ExerciseSessionRecord>,  // Assuming your HealthUiState.Success contains healthData.
+                    onPermissionsLaunch: (Set<String>) -> Unit,
+                    backgroundReadPermissions: Set<String>,*/
                         settings = sampleSettings,
                         onEvent = {},
                         navTo = navTo // No-op for preview

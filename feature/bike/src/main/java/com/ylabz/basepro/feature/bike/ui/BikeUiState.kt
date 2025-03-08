@@ -11,6 +11,8 @@ sealed class BikeUiState {
         val currentDistance: Double = 0.0, // current trip distance (km)
         val totalDistance: Double = 50.0,   // total trip distance (km)
         val locationString :String = "Santa Barbara, US",
+        val averageSpeed : Double = 25.0,
+        val elevation : Double = 150.0,
 
         // Just a place holder
         val speedKmh : Float = 0.0f,

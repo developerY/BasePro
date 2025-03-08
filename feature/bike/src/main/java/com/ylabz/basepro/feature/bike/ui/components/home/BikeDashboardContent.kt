@@ -11,7 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.android.gms.maps.model.LatLng
 import androidx.health.connect.client.records.ExerciseSessionRecord
+import com.ylabz.basepro.core.model.bike.BikeScreenState
 import com.ylabz.basepro.feature.bike.ui.components.home.dials.AnimatedHeartRateCard
 import com.ylabz.basepro.feature.bike.ui.components.home.dials.BikeDashboardScreen
 import com.ylabz.basepro.feature.bike.ui.components.home.dials.SpeedAndProgressCard
@@ -25,14 +27,17 @@ import kotlinx.coroutines.CoroutineScope
 @Composable
 fun BikeDashboardContent(
     modifier: Modifier = Modifier,
-    currentSpeed: Double,
-    currentTripDistance: Double,  // current progress (km)
-    totalDistance: Double,
-    tripDuration: String,
-    averageSpeed: Double,
-    elevation: Double,
+    bikeScreenState : BikeScreenState,
     navTo: (String) -> Unit,
 ) {
+
+    val currentSpeed = bikeScreenState.currentSpeed
+    val currentTripDistance = bikeScreenState.currentTripDistance
+    val totalDistance = bikeScreenState.totalDistance
+    val tripDuration =  bikeScreenState.rideDuration
+    val averageSpeed = bikeScreenState.averageSpeed
+    val elevation = bikeScreenState.elevation
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -128,15 +133,22 @@ fun BikeDashboardContent(
 @Preview(showBackground = true)
 @Composable
 fun BikeDashboardContentPreview() {
+
+    val dummyBikeScreenState = BikeScreenState(
+        currentSpeed = 28.0,
+        totalDistance = 12.5,
+        currentTripDistance = 7.2,  // current progress (km)
+        rideDuration = "00:45:30",
+        averageSpeed = 25.0,
+        elevation = 150.0,
+        settings = emptyMap(), // You may set appropriate values
+        location = LatLng(34.0522, -118.2437) // Dummy location
+    )
+
     MaterialTheme {
         BikeDashboardContent(
-            currentSpeed = 28.0,
-            totalDistance = 12.5,
-            currentTripDistance =  7.2,  // current progress (km)
-            tripDuration = "00:45:30",
-            averageSpeed = 25.0,
-            elevation = 150.0,
-            navTo = {}
+            bikeScreenState = dummyBikeScreenState,
+            navTo = { /*TODO*/ }
         )
     }
 }
