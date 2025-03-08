@@ -21,7 +21,7 @@ import com.ylabz.basepro.feature.bike.ui.components.path.BikePathScreen
 import com.ylabz.basepro.settings.ui.components.BikeSettingsScreen
 import androidx.compose.runtime.getValue
 import androidx.health.connect.client.records.ExerciseSessionRecord
-
+import com.ylabz.basepro.feature.bike.ui.HealthEvent
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,7 +34,8 @@ fun BikeAppScreen(
     tripDuration: String,
     settings: Map<String, List<String>>,
     location: LatLng?,
-    onEvent: (BikeEvent) -> Unit,
+    onBikeEvent: (BikeEvent) -> Unit,
+    onHealthEvent: (HealthEvent) -> Unit,
     sessionsList : List<ExerciseSessionRecord>,  // Assuming your HealthUiState.Success contains healthData.
     navTo: (String) -> Unit
 ) {
@@ -168,7 +169,8 @@ fun BikeAppScreenPreview() {
         tripDuration = "00:30:00",
         settings = sampleSettings,
         location = LatLng(37.4219999, -122.0862462),
-        onEvent = {},
+        onBikeEvent = {},
+        onHealthEvent = {},
         sessionsList = emptyList(), // provide sample data if necessary
         navTo = {} // No-op for preview
     )}

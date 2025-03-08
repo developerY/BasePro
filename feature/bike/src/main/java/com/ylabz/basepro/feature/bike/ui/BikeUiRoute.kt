@@ -10,7 +10,6 @@ import com.ylabz.basepro.settings.ui.components.ErrorScreen
 import com.ylabz.basepro.settings.ui.components.LoadingScreen
 import androidx.compose.runtime.getValue
 
-
 @Composable
 fun BikeUiRoute(
     modifier: Modifier = Modifier,
@@ -24,7 +23,7 @@ fun BikeUiRoute(
     val bikeUiState by bikeViewModel.uiState.collectAsState()
     val healthUiState by healthViewModel.uiState.collectAsState()
 
-    // You can define a sample settings map, or use the one loaded in the BikeUiState.
+    // Sample settings (or use bikeUiState.settings if already loaded)
     val sampleSettings = mapOf(
         "Theme" to listOf("Light", "Dark", "System Default"),
         "Language" to listOf("English", "Spanish", "French"),
@@ -55,10 +54,11 @@ fun BikeUiRoute(
                 currentTripDistance = bikeState.currentDistance,
                 totalDistance = bikeState.totalDistance,
                 tripDuration = bikeState.rideDuration,
-                settings = bikeState.settings, // or use sampleSettings if preferred
-                onEvent = { event -> bikeViewModel.onEvent(event) },
+                settings = bikeState.settings, // or sampleSettings if you prefer
+                onBikeEvent = { event -> bikeViewModel.onEvent(event) },
+                onHealthEvent = { event -> healthViewModel.onEvent(event) }, // Use the instance, not the class name
                 location = bikeState.location ?: LatLng(0.0, 0.0),
-                sessionsList  = healthState.healthData,  // Assuming your HealthUiState.Success contains healthData.
+                sessionsList = healthState.healthData, // Assuming HealthUiState.Success contains healthData.
                 navTo = navTo
             )
         }
@@ -67,4 +67,3 @@ fun BikeUiRoute(
         }
     }
 }
-
