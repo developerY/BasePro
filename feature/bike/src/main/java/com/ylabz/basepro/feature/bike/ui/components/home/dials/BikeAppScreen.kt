@@ -2,6 +2,7 @@ package com.ylabz.basepro.feature.bike.ui.components.home.dials
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.runtime.getValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.AltRoute
@@ -19,11 +20,11 @@ import com.ylabz.basepro.feature.bike.ui.BikeEvent
 import com.ylabz.basepro.feature.bike.ui.components.home.BikeDashboardContent
 import com.ylabz.basepro.feature.bike.ui.components.path.BikePathScreen
 import com.ylabz.basepro.settings.ui.components.BikeSettingsScreen
-import androidx.compose.runtime.getValue
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import com.ylabz.basepro.core.model.bike.BikeScreenState
 import com.ylabz.basepro.core.model.health.HealthScreenState
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
+import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,6 +32,7 @@ import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 fun BikeAppScreen(
     modifier: Modifier = Modifier,
     healthPermState: HealthScreenState,
+    healthState: HealthUiState,
     sessionsList : List<ExerciseSessionRecord>,  // Assuming your HealthUiState.Success contains healthData.
     onPermissionsLaunch: (Set<String>) -> Unit,
     backgroundReadPermissions: Set<String>,
@@ -117,13 +119,14 @@ fun BikeAppScreen(
                 }
                 "settings" -> {
                     BikeSettingsScreen(
-                        modifier = Modifier.padding(innerPadding),
-                        /*healthPermState: HealthScreenState,
-                        sessionsList : List<ExerciseSessionRecord>,  // Assuming your HealthUiState.Success contains healthData.
-                    onPermissionsLaunch: (Set<String>) -> Unit,
-                    backgroundReadPermissions: Set<String>,*/
+                        modifier = modifier,
+                        bundledState = healthPermState,
+                        healthUiState = healthState,
+                        sessionsList = sessionsList,  // Assuming your HealthUiState.Success contains healthData.
+                        permissionsLauncher = onPermissionsLaunch,
                         settings = sampleSettings,
-                        onEvent = {},
+                        onBikeEvent = onBikeEvent,
+                        onHealthEvent = onHealthEvent,
                         navTo = navTo // No-op for preview
                     )
                 }
@@ -152,4 +155,45 @@ fun BikeAppScreen(
         }
     )
 }
+
+@Preview
+@Composable
+fun BikeAppScreenPreview() {
+    val healthPermState = HealthScreenState(
+        isHealthConnectAvailable = true,
+        permissionsGranted = true,
+        permissions = emptySet(),
+        backgroundReadPermissions = emptySet(),
+        backgroundReadAvailable = true,
+        backgroundReadGranted = true
+    )
+
+    val healthState = HealthUiState.Success(emptyList())
+
+    val bikeScreenState = BikeScreenState(
+        currentSpeed = 20.0,
+        currentTripDistance = 5.0,
+        totalDistance = 100.0,
+        rideDuration = "00:15:00",
+        settings = mapOf("Theme" to listOf("Light", "Dark", "System Default"),
+        "Language" to listOf("English", "Spanish", "French"),
+        "Notifications" to listOf("Enabled", "Disabled")),
+        location = LatLng(37.4219999, -122.0862462)
+    )
+
+    BikeAppScreen(
+        healthPermState = healthPermState,
+        healthState = healthState,
+        sessionsList = emptyList(),
+        onPermissionsLaunch = {},
+        backgroundReadPermissions = emptySet(),
+        bikeScreenState = bikeScreenState,
+        onBikeEvent = {},
+        onHealthEvent = {},
+        navTo = {}
+    )
+}
+
+
+
 

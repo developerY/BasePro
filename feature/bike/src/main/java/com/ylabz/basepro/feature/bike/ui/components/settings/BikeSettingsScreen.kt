@@ -2,25 +2,33 @@ package com.ylabz.basepro.settings.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.Icon
+import androidx.health.connect.client.records.ExerciseSessionRecord
+import com.ylabz.basepro.core.model.health.HealthScreenState
 import com.ylabz.basepro.feature.bike.ui.BikeEvent
+import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 import com.ylabz.basepro.feature.heatlh.ui.components.HealthStartScreen
+import java.util.UUID
 
 
 @Composable
 fun BikeSettingsScreen(
     modifier: Modifier = Modifier,
+    bundledState: HealthScreenState,
+    healthUiState: HealthUiState,
+    sessionsList : List<ExerciseSessionRecord>,  // Assuming your HealthUiState.Success contains healthData.
+    permissionsLauncher: (Set<String>) -> Unit,
     settings: Map<String, List<String>>, // Each setting now has a list of options
-    onEvent: (BikeEvent) -> Unit,
+    onBikeEvent: (BikeEvent) -> Unit,
+    onHealthEvent: (HealthEvent) -> Unit,
     navTo: (String) -> Unit // Navigation callback for FAB
 ) {
     Scaffold(
@@ -86,7 +94,7 @@ fun BikeSettingsScreen(
                     }
 
                     Button(
-                        onClick = { onEvent(BikeEvent.UpdateSetting(key, selectedOption)) },
+                        onClick = { onBikeEvent(BikeEvent.UpdateSetting(key, selectedOption)) },
                         modifier = Modifier.align(Alignment.End)
                     ) {
                         Text("Save $key")
@@ -98,7 +106,7 @@ fun BikeSettingsScreen(
 
             // Button to delete all entries
             Button(
-                onClick = { onEvent(BikeEvent.DeleteAllEntries) },
+                onClick = { onBikeEvent(BikeEvent.DeleteAllEntries) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error,
@@ -108,43 +116,46 @@ fun BikeSettingsScreen(
                 Text("Delete All Entries")
             }
 
-            /*
-            HealthStartScreen (
+
+            HealthStartScreen(
                 modifier = modifier,
                 healthPermState = bundledState,
                 sessionsList = (healthUiState as HealthUiState.Success).healthData,
-
-                onPermissionsLaunch = { values ->
-                    permissionsLauncher.launch(values)
-                },
-                onEvent = { event -> viewModel.onEvent(event) },
+                onPermissionsLaunch = permissionsLauncher,
+                onEvent = onHealthEvent,
                 navTo = navTo,
-
-
                 )
 
-            */
 
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun BikeRouteScreenPreview() {
-    val sampleSettings = mapOf(
-        "Theme" to listOf("Light", "Dark", "System Default"),
-        "Language" to listOf("English", "Spanish", "French"),
-        "Notifications" to listOf("Enabled", "Disabled")
+fun BikeSettingsScreenPreview() {
+    val settings = mapOf(
+        "Setting 1" to listOf("Option A", "Option B", "Option C"),
+        "Setting 2" to listOf("Option X", "Option Y")
     )
 
+    val bundledState = HealthScreenState(
+        isHealthConnectAvailable = true,
+        permissionsGranted = true,
+        permissions = emptySet(),
+        backgroundReadPermissions = emptySet(),
+        backgroundReadAvailable = true,
+        backgroundReadGranted = true
+    )
+    val healthUiState = HealthUiState.Success(listOf())
+    val sessionsList = listOf<ExerciseSessionRecord>()
     BikeSettingsScreen(
-        settings = sampleSettings,
-        onEvent = {},
-        navTo = {} // No-op for preview
-    )
+        bundledState = bundledState,
+        healthUiState = healthUiState,
+        sessionsList = sessionsList,
+        permissionsLauncher = { },
+        settings = settings, onBikeEvent = { }, onHealthEvent = { }, navTo = { })
 }
-
 
 
 // These will be move to a common directory.
@@ -155,7 +166,9 @@ fun LoadingScreen() {
 
 @Composable
 fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
         Text(
             text = "Error: $errorMessage",
             style = MaterialTheme.typography.bodyLarge,
@@ -170,3 +183,4 @@ fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
         )
     }
 }
+

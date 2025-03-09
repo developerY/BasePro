@@ -124,6 +124,7 @@ fun BikeUiRoute(
             BikeAppScreen(
                 modifier = modifier,
                 healthPermState = bundledState,
+                healthState = healthState,
                 sessionsList = (healthUiState as HealthUiState.Success).healthData,
                 onPermissionsLaunch = { values ->
                     permissionsLauncher.launch(values)
