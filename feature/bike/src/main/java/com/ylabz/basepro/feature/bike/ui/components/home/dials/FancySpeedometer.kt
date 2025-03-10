@@ -1,33 +1,34 @@
 package com.ylabz.basepro.feature.bike.ui.components.home.dials
 
-import android.R.attr.maxHeight
-import android.R.attr.maxWidth
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.*
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.*
-import androidx.compose.ui.tooling.preview.Preview
-import kotlin.math.*
-import androidx.compose.animation.core.Easing
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-
-
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import kotlin.math.cos
+import kotlin.math.roundToInt
+import kotlin.math.sin
 
 
 @Composable
 fun FancySpeedometer(
-    currentSpeed: Float,      // Current speed
-    maxSpeed: Float = 60f,    // Max speed for the gauge
+    currentSpeed: Float,
+    maxSpeed: Float = 60f,
     modifier: Modifier = Modifier.size(250.dp)
 ) {
     // Arc angles
@@ -38,8 +39,8 @@ fun FancySpeedometer(
     // Convert speed to fraction [0..1]
     val speedFraction = (currentSpeed / maxSpeed).coerceIn(0f, 1f)
 
-    val OvershootEasing: Easing = Easing { fraction ->
-        // A simple overshoot function; adjust 'tension' to control the overshoot amount.
+    // Example overshoot easing
+    val overshootEasing: Easing = Easing { fraction ->
         val tension = 2.0f
         val x = fraction - 1.0f
         x * x * ((tension + 1) * x + tension) + 1.0f
@@ -51,140 +52,139 @@ fun FancySpeedometer(
         targetValue = targetNeedleAngle,
         animationSpec = tween(
             durationMillis = 800,
-            easing = OvershootEasing
+            easing = overshootEasing
         )
     )
 
-    //BoxWithConstraints(modifier = modifier) {
-        // Convert the smaller dimension from dp to pixels
-        // Start drawing
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            // Use 'size.minDimension' to get the smaller dimension if needed
-            // Use 'size.minDimension' to get the smaller dimension if needed
-            val center = Offset(size.width / 2, size.height / 2)
-            val radius = size.minDimension / 2.2f
-            // 1) Draw the background arc (light gray)
-            drawArc(
-                color = Color.LightGray,
-                startAngle = startAngle,
-                sweepAngle = sweepAngle,
-                useCenter = false,
-                topLeft = Offset(center.x - radius, center.y - radius),
-                size = Size(radius * 2, radius * 2),
-                style = Stroke(width = 25f, cap = StrokeCap.Round)
-            )
+    // Multi-step gradient from green to red
+    // You can adjust the color stops to match the speeds you consider “dangerous.”
+    val progressBrush = Brush.sweepGradient(
+        colorStops = arrayOf(
+            0.0f to Color(0xFF1E561F),  // Green at 0% of arc
+            0.1f to Color(0xFF349439), // Yellow around 40%
+            0.2f to Color(0xFF349439), // Yellow around 40%
+            0.3f to Color(0xFF82C476), // Yellow around 40%
+            0.4f to Color(0xFFD2FF07), // Yellow around 40%
+            0.5f to Color(0xFFCFFF22), // Orange around 70%
+            0.6f to Color(0xFFFFE607), // Yellow around 40%
+            0.7f to Color(0xFFFFB13B),  // Red near 100%
+            0.8f to Color(0xFFFF9800), // Yellow around 40%
+            0.9f to Color(0xFFFF5722), // Yellow around 40%
+            1.0f to Color(0xFF792209), // Yellow around 40%
+        )
+    )
 
-            // 2) Draw the “progress” arc in a multi-step gradient
-            val progressBrush = Brush.sweepGradient(
-                listOf(
-                    Color(0xFF4CAF50), // green
-                    Color(0xFFFFC107), // yellow
-                    Color(0xFFFF5722), // orange
-                    Color(0xFFF44336), // red
-                    Color(0xFF4CAF50)  // back to green to complete the sweep
-                )
-            )
-            val arcSweep = (animatedNeedleAngle - startAngle).coerceAtLeast(0f)
-            drawArc(
-                brush = progressBrush,
-                startAngle = startAngle,
-                sweepAngle = arcSweep,
-                useCenter = false,
-                topLeft = Offset(center.x - radius, center.y - radius),
-                size = Size(radius * 2, radius * 2),
-                style = Stroke(width = 25f, cap = StrokeCap.Round)
-            )
 
-            // 3) Major tick lines + labels
-            val tickCount = ((maxSpeed / 10).toInt()).coerceAtLeast(1)
-            val tickAngleStep = sweepAngle / tickCount
-            val labelStyle = TextStyle(
-                color = Color.White,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-            for (i in 0..tickCount) {
-                val tickSpeed = i * 10
-                val angle = startAngle + i * tickAngleStep
-                val angleRad = angle.toRadians()
 
-                // Tick lines
-                val outerRadius = radius
-                val innerRadius = radius - 25
-                val sx = center.x + cos(angleRad) * outerRadius
-                val sy = center.y + sin(angleRad) * outerRadius
-                val ex = center.x + cos(angleRad) * innerRadius
-                val ey = center.y + sin(angleRad) * innerRadius
-                drawLine(
-                    color = Color.DarkGray,
-                    start = Offset(sx, sy),
-                    end = Offset(ex, ey),
-                    strokeWidth = 3f
-                )
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        // Use 'size.minDimension' to get the smaller dimension if needed
+        val center = Offset(size.width / 2, size.height / 2)
+        val radius = size.minDimension / 2.2f
 
-                // Label position
-                val labelRadius = radius - 45
-                val lx = center.x + cos(angleRad) * labelRadius
-                val ly = center.y + sin(angleRad) * labelRadius
+        // 1) Background arc (light gray)
+        drawArc(
+            color = Color.LightGray,
+            startAngle = startAngle,
+            sweepAngle = sweepAngle,
+            useCenter = false,
+            topLeft = Offset(center.x - radius, center.y - radius),
+            size = Size(radius * 2, radius * 2),
+            style = Stroke(width = 25f, cap = StrokeCap.Round)
+        )
 
-                // We can draw text using drawContext.canvas.nativeCanvas
-                // Or we can measure/draw text. For simplicity, we use a quick approach:
-                drawContext.canvas.nativeCanvas.apply {
-                    val labelText = "$tickSpeed"
-                    val paint = android.graphics.Paint().apply {
-                        color = android.graphics.Color.WHITE
-                        textSize = 32f
-                        textAlign = android.graphics.Paint.Align.CENTER
-                        isAntiAlias = true
-                        typeface = android.graphics.Typeface.create("", android.graphics.Typeface.BOLD)
-                    }
-                    // Slight vertical offset to center text
-                    drawText(labelText, lx, ly + 10f, paint)
-                }
-            }
+        // 2) Progress arc (green → red)
+        // Arc is from startAngle to animatedNeedleAngle
+        val arcSweep = (animatedNeedleAngle - startAngle).coerceAtLeast(0f)
+        drawArc(
+            brush = progressBrush,
+            startAngle = startAngle,
+            sweepAngle = arcSweep,
+            useCenter = false,
+            topLeft = Offset(center.x - radius, center.y - radius),
+            size = Size(radius * 2, radius * 2),
+            style = Stroke(width = 25f, cap = StrokeCap.Round)
+        )
 
-            // 4) Needle
-            val needleAngleRad = animatedNeedleAngle.toRadians()
-            val needleLength = radius - 35
-            val needleEnd = Offset(
-                x = center.x + cos(needleAngleRad) * needleLength,
-                y = center.y + sin(needleAngleRad) * needleLength
-            )
+        // 3) Tick lines & labels
+        val tickCount = ((maxSpeed / 10).toInt()).coerceAtLeast(1)
+        val tickAngleStep = sweepAngle / tickCount
+        for (i in 0..tickCount) {
+            val tickSpeed = i * 10
+            val angle = startAngle + i * tickAngleStep
+            val angleRad = Math.toRadians(angle.toDouble())
+
+            // Tick lines
+            val outerRadius = radius
+            val innerRadius = radius - 25
+            val sx = center.x + cos(angleRad).toFloat() * outerRadius
+            val sy = center.y + sin(angleRad).toFloat() * outerRadius
+            val ex = center.x + cos(angleRad).toFloat() * innerRadius
+            val ey = center.y + sin(angleRad).toFloat() * innerRadius
             drawLine(
-                color = Color.Red,
-                start = center,
-                end = needleEnd,
-                strokeWidth = 8f,
-                cap = StrokeCap.Round
+                color = Color.DarkGray,
+                start = Offset(sx, sy),
+                end = Offset(ex, ey),
+                strokeWidth = 3f
             )
 
-            // 5) Center cap
-            drawCircle(
-                color = Color.Red,
-                radius = 12f,
-                center = center
-            )
+            // Speed labels
+            val labelRadius = radius - 45
+            val lx = center.x + cos(angleRad).toFloat() * labelRadius
+            val ly = center.y + sin(angleRad).toFloat() * labelRadius
 
-            // 6) Speed text in center
-            val speedText = "${currentSpeed.roundToInt()} km/h"
             drawContext.canvas.nativeCanvas.apply {
-                val textPaint = android.graphics.Paint().apply {
+                val paint = android.graphics.Paint().apply {
                     color = android.graphics.Color.WHITE
-                    textSize = 50f
+                    textSize = 32f
                     textAlign = android.graphics.Paint.Align.CENTER
                     isAntiAlias = true
                     typeface = android.graphics.Typeface.create("", android.graphics.Typeface.BOLD)
                 }
-                drawText(
-                    speedText,
-                    center.x,
-                    center.y + 20f, // shift downward to center text vertically
-                    textPaint
-                )
+                drawText(tickSpeed.toString(), lx, ly + 10f, paint)
             }
         }
-    //}
+
+        // 4) Needle
+        val needleAngleRad = Math.toRadians(animatedNeedleAngle.toDouble())
+        val needleLength = radius - 35
+        val needleEnd = Offset(
+            x = center.x + cos(needleAngleRad).toFloat() * needleLength,
+            y = center.y + sin(needleAngleRad).toFloat() * needleLength
+        )
+        drawLine(
+            color = Color.Red,
+            start = center,
+            end = needleEnd,
+            strokeWidth = 8f,
+            cap = StrokeCap.Round
+        )
+
+        // 5) Center cap
+        drawCircle(
+            color = Color.Red,
+            radius = 12f,
+            center = center
+        )
+
+        // 6) Speed text in center
+        val speedText = "${currentSpeed.roundToInt()} km/h"
+        drawContext.canvas.nativeCanvas.apply {
+            val textPaint = android.graphics.Paint().apply {
+                color = android.graphics.Color.WHITE
+                textSize = 50f
+                textAlign = android.graphics.Paint.Align.CENTER
+                isAntiAlias = true
+                typeface = android.graphics.Typeface.create("", android.graphics.Typeface.BOLD)
+            }
+            drawText(
+                speedText,
+                center.x,
+                center.y + 20f,
+                textPaint
+            )
+        }
+    }
+
 }
 
 private fun Float.toRadians() = this * (Math.PI / 180f).toFloat()
@@ -192,7 +192,7 @@ private fun Float.toRadians() = this * (Math.PI / 180f).toFloat()
 @Preview(showBackground = true)
 @Composable
 fun FancySpeedometerPreview() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-        FancySpeedometer(currentSpeed = 45f)
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        FancySpeedometer(currentSpeed = 55f)
     }
 }
