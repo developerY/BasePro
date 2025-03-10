@@ -1,5 +1,7 @@
 package com.ylabz.basepro.feature.bike.ui.components.home.dials
 
+import android.R.attr.maxHeight
+import android.R.attr.maxWidth
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
@@ -53,16 +55,14 @@ fun FancySpeedometer(
         )
     )
 
-    BoxWithConstraints(modifier = modifier) {
+    //BoxWithConstraints(modifier = modifier) {
         // Convert the smaller dimension from dp to pixels
-        val density = LocalDensity.current
-        val gaugePx = with(density) { min(maxWidth, maxHeight).toPx() }
-
         // Start drawing
         Canvas(modifier = Modifier.fillMaxSize()) {
+            // Use 'size.minDimension' to get the smaller dimension if needed
+            // Use 'size.minDimension' to get the smaller dimension if needed
             val center = Offset(size.width / 2, size.height / 2)
-            val radius = gaugePx / 2.2f
-
+            val radius = size.minDimension / 2.2f
             // 1) Draw the background arc (light gray)
             drawArc(
                 color = Color.LightGray,
@@ -184,7 +184,7 @@ fun FancySpeedometer(
                 )
             }
         }
-    }
+    //}
 }
 
 private fun Float.toRadians() = this * (Math.PI / 180f).toFloat()
