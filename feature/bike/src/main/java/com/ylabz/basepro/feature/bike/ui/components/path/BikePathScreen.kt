@@ -1,5 +1,9 @@
 package com.ylabz.basepro.feature.bike.ui.components.path
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -12,6 +16,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,6 +38,44 @@ fun BikePathScreen(
     onEvent: (BikeEvent) -> Unit,
     navTo: (String) -> Unit
 ) {
+
+     val context = LocalContext.current
+    // Create a launcher for requesting permissions.
+    val permissionsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        // You can log or handle the permissions result if needed.
+    }
+
+    // Launch the permissions request when the composable is first composed.
+    LaunchedEffect(Unit) {
+        permissionsLauncher.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        )
+    }
+
+    // Check if permissions are granted.
+    val fineLocationGranted = remember { mutableStateOf(false) }
+    val coarseLocationGranted = remember { mutableStateOf(false) }
+
+    // In a real app, you should observe the current permission state.
+    // For demo purposes, let's assume permissions are granted if the check passes:
+    LaunchedEffect(Unit) {
+        fineLocationGranted.value =
+            androidx.core.content.ContextCompat.checkSelfPermission(
+                context, Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        coarseLocationGranted.value =
+            androidx.core.content.ContextCompat.checkSelfPermission(
+                context, Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    val isLocationEnabled = fineLocationGranted.value || coarseLocationGranted.value
+
     // Background gradient
     val backgroundGradient = Brush.verticalGradient(
         colors = listOf(Color(0xFF58B5EB), Color(0xFF6AD8AC))

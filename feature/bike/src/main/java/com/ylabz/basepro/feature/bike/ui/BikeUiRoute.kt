@@ -133,7 +133,7 @@ fun BikeUiRoute(
                 bikeScreenState = bikeScreenState,
                 onBikeEvent = { event -> bikeViewModel.onEvent(event) },
                 onHealthEvent = { event -> healthViewModel.onEvent(event) }, // Use the instance, not the class name
-                navTo = navTo
+                navTo = {} // No-op for preview // Lost a day of coding
             )
         }
         else -> {
