@@ -107,9 +107,10 @@ fun SpeedAndProgressCard(
                     val availableWidth = maxWidth
                     // Use a fraction of availableWidth or clamp it to some range
                     val gaugeSize = availableWidth.coerceAtMost(450.dp) // up to 340dp
-                    FancySpeedometer(
+                    SpeedometerWithCompassOverlay(
                         currentSpeed = currentSpeed.toFloat(),
                         maxSpeed = 60f,
+                        heading = 45f,
                         modifier = Modifier.size(gaugeSize)
                     )
                 }

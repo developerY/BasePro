@@ -19,10 +19,48 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.ui.tooling.preview.Preview
 
+
+
+@Composable
+fun DigitalCompassCard(
+    headingDegrees: Float,
+    modifier: Modifier = Modifier
+) {
+    val direction = getCardinalDirection(headingDegrees)
+    Card(
+        modifier = modifier
+            .width(80.dp)
+            .height(60.dp),
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF90CAF9).copy(alpha = 0.8f)
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(4.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Show heading in degrees, e.g. "28° NE"
+            Text(
+                text = "${headingDegrees.toInt()}° $direction",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+                ),
+                color = Color.Black
+            )
+        }
+    }
+}
+
+/**
+ * Convert heading (0–360) to an 8-direction label (N, NE, E, SE, S, SW, W, NW).
+ */
 fun getCardinalDirection(headingDegrees: Float): String {
-    // We'll divide 360° into 8 segments of 45° each.
-    // heading 0° is N, 45° is NE, 90° is E, etc.
-    val normalized = (headingDegrees % 360 + 360) % 360 // ensure 0..359
+    val normalized = (headingDegrees % 360 + 360) % 360
     return when {
         normalized < 22.5f -> "N"
         normalized < 67.5f -> "NE"
@@ -36,50 +74,6 @@ fun getCardinalDirection(headingDegrees: Float): String {
     }
 }
 
-
-@Composable
-fun DigitalCompassCard(
-    headingDegrees: Float,
-    modifier: Modifier = Modifier
-) {
-    val direction = getCardinalDirection(headingDegrees)
-    Card(
-        modifier = modifier
-            .width(120.dp)
-            .height(80.dp),
-        shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF90CAF9).copy(alpha = 0.8f)
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Optionally, show a small compass icon
-            Icon(
-                imageVector = Icons.Filled.Explore,
-                contentDescription = "Compass",
-                tint = Color.DarkGray,
-                modifier = Modifier.size(20.dp)
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-
-            // Show heading in degrees, e.g. "28°"
-            Text(
-                text = "${headingDegrees.toInt()}° $direction",
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                ),
-                color = Color.Black
-            )
-        }
-    }
-}
 
 @Preview
 @Composable
