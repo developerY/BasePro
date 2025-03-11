@@ -56,25 +56,20 @@ fun FancySpeedometer(
         )
     )
 
-    // Multi-step gradient from green to red
-    // You can adjust the color stops to match the speeds you consider “dangerous.”
     val progressBrush = Brush.sweepGradient(
         colorStops = arrayOf(
-            0.0f to Color(0xFF1E561F),  // Green at 0% of arc
-            0.1f to Color(0xFF349439), // Yellow around 40%
-            0.2f to Color(0xFF349439), // Yellow around 40%
-            0.3f to Color(0xFF82C476), // Yellow around 40%
-            0.4f to Color(0xFFD2FF07), // Yellow around 40%
-            0.5f to Color(0xFFCFFF22), // Orange around 70%
-            0.6f to Color(0xFFFFE607), // Yellow around 40%
-            0.7f to Color(0xFFFFB13B),  // Red near 100%
-            0.8f to Color(0xFFFF9800), // Yellow around 40%
-            0.9f to Color(0xFFFF5722), // Yellow around 40%
-            1.0f to Color(0xFF792209), // Yellow around 40%
+            0.0f to Color(0xFFFF5722),  // dark green
+            0.2f to Color(0xFFF44336),
+            0.3f to Color(0xFF1E561F),
+            0.4f to Color(0xFF349439),
+            0.5f to Color(0xFF68B739),
+            0.6f to Color(0xFFA6C476),
+            0.7f to Color(0xFFCFFF22),
+            0.8f to Color(0xFFFFE607),
+            0.9f to Color(0xFFFFB13B),
+            1.0f to Color(0xFFFF5722)// Color(0xFFFF9800)
         )
     )
-
-
 
     Canvas(modifier = Modifier.fillMaxSize()) {
         // Use 'size.minDimension' to get the smaller dimension if needed
@@ -193,6 +188,6 @@ private fun Float.toRadians() = this * (Math.PI / 180f).toFloat()
 @Composable
 fun FancySpeedometerPreview() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        FancySpeedometer(currentSpeed = 55f)
+        FancySpeedometer(currentSpeed = 59f)
     }
 }
