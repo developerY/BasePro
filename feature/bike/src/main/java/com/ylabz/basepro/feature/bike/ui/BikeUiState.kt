@@ -1,12 +1,13 @@
 package com.ylabz.basepro.feature.bike.ui
 
+import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 
 sealed class BikeUiState {
     object Loading : BikeUiState()
     data class Success(
         val settings: Map<String, List<String>>,
-        val location: LatLng? = null,
+        val location: Location? = null,
         val currentSpeed: Double = 0.0,     // current speed (km/h)
         val currentDistance: Double = 0.0, // current trip distance (km)
         val totalDistance: Double = 50.0,   // total trip distance (km)

@@ -118,7 +118,7 @@ fun BikeUiRoute(
                 totalDistance = bikeState.totalDistance,
                 rideDuration = bikeState.rideDuration,
                 settings = bikeState.settings,
-                location = bikeState.location,
+                location = bikeState.location.let { LatLng(it?.longitude ?: 0.0, it?.longitude ?: 0.0) },
                 heading = bikeState.heading
             )
 

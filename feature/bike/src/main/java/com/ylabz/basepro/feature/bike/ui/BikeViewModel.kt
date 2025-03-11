@@ -1,13 +1,16 @@
 package com.ylabz.basepro.feature.bike.ui
 
+import android.location.Location
 import android.util.Log
 import androidx.core.util.TimeUtils.formatDuration
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.core.data.repository.travel.CompassRepository
 import com.ylabz.basepro.core.data.repository.travel.DistanceRepository
 import com.ylabz.basepro.core.data.repository.travel.LocationRepository
 import com.ylabz.basepro.core.data.repository.travel.SpeedRepository
+import com.ylabz.basepro.core.data.repository.travel.UnifiedLocationRepository
 import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -17,13 +20,22 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
+// Define a data class to hold the combined sensor data
+data class CombinedSensorData(
+    val location: Location,
+    val speedKmh: Float,
+    val remainingDistance: Float,
+    val heading: Float,
+    val elevation: Float
+)
+
+
 @HiltViewModel
 class BikeViewModel @Inject constructor(
     private val repository: BaseProRepo,           // Your existing repo
-    private val locationRepository: LocationRepository, // The location repo
-    private val speedRepository: SpeedRepository,
-    private val distanceRepository: DistanceRepository,
-    private val compassRepository: CompassRepository
+    private val unifiedLocationRepository: UnifiedLocationRepository,
+    private val compassRepository : CompassRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.Loading)
@@ -35,6 +47,36 @@ class BikeViewModel @Inject constructor(
     init {
         // Trigger initial load of settings.
         onEvent(BikeEvent.LoadBike)
+
+        /*viewModelScope.launch {
+            combine(
+                unifiedLocationRepository.locationFlow,
+                unifiedLocationRepository.speedFlow,
+                unifiedLocationRepository.remainingDistanceFlow,
+                unifiedLocationRepository.elevationFlow,
+                compassRepository.headingFlow
+            ) { location, speedKmh, remainingDistance, elevation, heading  ->
+                CombinedSensorData(location, speedKmh, remainingDistance, heading, elevation)
+            }.collect { data ->
+                val currentState = _uiState.value
+                if (currentState is BikeUiState.Success) {
+                    // Calculate traveled distance as: totalDistance - remainingDistance
+                    val traveledDistance = currentState.totalDistance - data.remainingDistance.toDouble()
+                    _uiState.value = currentState.copy(
+                        location = data.location,
+                        currentSpeed = data.speedKmh.toDouble(),
+                        remainingDistance = data.remainingDistance,
+                        currentDistance = traveledDistance,
+                        heading = data.heading,
+                        elevation = data.elevation.toDouble()
+                    )
+                    Log.d(
+                        "BikeViewModel",
+                        "Combined update: location=${data.location}, speed=${data.speedKmh}, remaining=${data.remainingDistance}, heading=${data.heading}, elevation=${data.elevation}"
+                    )
+                }
+            }
+        }*/
 
         /*viewModelScope.launch {
             combine(
@@ -124,12 +166,6 @@ class BikeViewModel @Inject constructor(
                 }
                 delay(500L) // update every 500ms
             }
-        }
-
-
-        // Optionally, trigger an initial location fetch.
-        viewModelScope.launch {
-            locationRepository.updateLocation()
         }
 
         // Start ride duration updates.
