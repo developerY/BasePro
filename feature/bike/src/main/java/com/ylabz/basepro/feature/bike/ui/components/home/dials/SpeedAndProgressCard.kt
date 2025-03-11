@@ -41,6 +41,7 @@ fun SpeedAndProgressCard(
     windDegree: Float,
     windSpeed: Float,
     weatherConditionText: String,
+    heading: Float,
     modifier: Modifier = Modifier
 ) {
     // Control the visibility of the wind dial & weather badge for a subtle fade/slide in
@@ -110,7 +111,7 @@ fun SpeedAndProgressCard(
                     SpeedometerWithCompassOverlay(
                         currentSpeed = currentSpeed.toFloat(),
                         maxSpeed = 60f,
-                        heading = 45f,
+                        heading = heading,
                         modifier = Modifier.size(gaugeSize)
                     )
                 }
@@ -146,6 +147,7 @@ fun SpeedAndProgressCardPreview() {
         windDegree = 120f,
         windSpeed = 5.0f,
         weatherConditionText = WeatherConditionUnif.RAINY.name,
+        heading = 45f,
         modifier = Modifier
     )
 }

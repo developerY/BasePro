@@ -118,7 +118,8 @@ fun BikeUiRoute(
                 totalDistance = bikeState.totalDistance,
                 rideDuration = bikeState.rideDuration,
                 settings = bikeState.settings,
-                location = bikeState.location
+                location = bikeState.location,
+                heading = bikeState.heading
             )
 
             BikeAppScreen(

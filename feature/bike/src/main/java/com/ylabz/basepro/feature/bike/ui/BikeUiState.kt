@@ -13,6 +13,7 @@ sealed class BikeUiState {
         val locationString :String = "Santa Barbara, US",
         val averageSpeed : Double = 25.0,
         val elevation : Double = 150.0,
+        val heading : Float = 0f,
 
         // Just a place holder
         val speedKmh : Float = 0.0f,

@@ -37,6 +37,7 @@ fun BikeDashboardContent(
     val tripDuration =  bikeScreenState.rideDuration
     val averageSpeed = bikeScreenState.averageSpeed
     val elevation = bikeScreenState.elevation
+    val heading : Float = bikeScreenState.heading
 
     Column(
         modifier = modifier
@@ -54,6 +55,7 @@ fun BikeDashboardContent(
             windDegree = 120f,
             windSpeed = 5.0f,
            weatherConditionText = WeatherConditionUnif.RAINY.name,
+            heading = heading,
             modifier = Modifier.fillMaxWidth()
         )
 

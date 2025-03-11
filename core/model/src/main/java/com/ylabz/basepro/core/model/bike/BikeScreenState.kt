@@ -10,5 +10,6 @@ data class BikeScreenState(
     val settings: Map<String, List<String>>,
     val location: LatLng?,
     val averageSpeed: Double = 25.0,
-    val elevation : Double = 150.0
+    val elevation : Double = 150.0,
+    val heading : Float = 45f
 )
