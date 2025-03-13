@@ -27,6 +27,8 @@ class BikeBleRepositoryImpl @Inject constructor(
     private val BIKE_SERVICE_UUID = "00001816-0000-1000-8000-00805f9b34fb"
     private val BIKE_CHAR_UUID = "00002a5b-0000-1000-8000-00805f9b34fb"
 
+
+
     @SuppressLint("MissingPermission")
     override fun connectToBike(deviceName: String): Flow<BikeBleRepository.BikeBleData> = callbackFlow {
         // 1) Check if BLE is supported
@@ -34,47 +36,6 @@ class BikeBleRepositoryImpl @Inject constructor(
             close(Exception("Bluetooth not available or disabled"))
             return@callbackFlow
         }
-
-        // 2) Build a BLE scanner
-        val scanner = bluetoothAdapter.bluetoothLeScanner
-        if (scanner == null) {
-            close(Exception("BluetoothLeScanner not available"))
-            return@callbackFlow
-        }
-
-        // 3) Create a ScanCallback to find the target device
-        val scanCallback = object : ScanCallback() {
-            override fun onScanResult(callbackType: Int, result: ScanResult) {
-                val device = result.device
-                if (device.name == deviceName) {
-                    Log.d("BikeBleRepository", "Found target device: $deviceName")
-                    // Stop scanning
-                    scanner.stopScan(this)
-                    // Connect to the device
-                    //connectToDevice(device)
-                }
-            }
-
-            override fun onBatchScanResults(results: MutableList<ScanResult>) {
-                results.forEach { result ->
-                    if (result.device.name == deviceName) {
-                        scanner.stopScan(this)
-                        //connectToDevice(result.device)
-                    }
-                }
-            }
-
-            override fun onScanFailed(errorCode: Int) {
-                close(Exception("BLE Scan failed with code $errorCode"))
-            }
-        }
-
-        // 4) Start scanning for the target device
-        val scanSettings = ScanSettings.Builder()
-            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-            .build()
-        val filters = listOf<ScanFilter>() // or filter by service UUID if needed
-        scanner.startScan(filters, scanSettings, scanCallback)
 
         // 5) Inner function to connect & discover GATT
         @SuppressLint("MissingPermission")
@@ -136,6 +97,49 @@ class BikeBleRepositoryImpl @Inject constructor(
                 }
             })
         }
+
+        // 2) Build a BLE scanner
+        val scanner = bluetoothAdapter.bluetoothLeScanner
+        if (scanner == null) {
+            close(Exception("BluetoothLeScanner not available"))
+            return@callbackFlow
+        }
+
+        // 3) Create a ScanCallback to find the target device
+        val scanCallback = object : ScanCallback() {
+            override fun onScanResult(callbackType: Int, result: ScanResult) {
+                val device = result.device
+                if (device.name == deviceName) {
+                    Log.d("BikeBleRepository", "Found target device: $deviceName")
+                    // Stop scanning
+                    scanner.stopScan(this)
+                    // Connect to the device
+                    connectToDevice(device)
+                }
+            }
+
+            override fun onBatchScanResults(results: MutableList<ScanResult>) {
+                results.forEach { result ->
+                    if (result.device.name == deviceName) {
+                        scanner.stopScan(this)
+                        connectToDevice(result.device)
+                    }
+                }
+            }
+
+            override fun onScanFailed(errorCode: Int) {
+                close(Exception("BLE Scan failed with code $errorCode"))
+            }
+        }
+
+        // 4) Start scanning for the target device
+        val scanSettings = ScanSettings.Builder()
+            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+            .build()
+        val filters = listOf<ScanFilter>() // or filter by service UUID if needed
+        scanner.startScan(filters, scanSettings, scanCallback)
+
+
 
         // 6) Provide a way to close the flow
         awaitClose {
