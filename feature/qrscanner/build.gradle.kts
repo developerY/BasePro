@@ -60,6 +60,8 @@ dependencies {
     // Icons
     implementation(libs.androidx.material.icons.extended)
 
+    implementation(libs.play.services.code.scanner)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

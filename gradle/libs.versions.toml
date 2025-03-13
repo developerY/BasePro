@@ -52,6 +52,8 @@ playServicesLocation = "21.3.0" # apollo-graphql
 playServicesCoroutines = "1.6.4"
 playServicesMaps = "19.1.0"
 
+qrScannerVersion = "16.1.0" # QR Scanner
+
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }  # Core KTX library
 junit = { module = "junit:junit", version.ref = "junit" }  # JUnit testing library
@@ -162,6 +164,10 @@ google-maps-compose = { module = 'com.google.maps.android:maps-compose', version
 healthConnect = { module = 'androidx.health.connect:connect-client', version.ref = "healthConnect" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
+
+
+# QR Scanner
+play-services-code-scanner = { module = "com.google.android.gms:play-services-code-scanner", version = "qrScannerVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }  # Android application plugin
