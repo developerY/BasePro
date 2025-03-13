@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.ylabz.basepro.feature.bike"
+    namespace = "com.ylabz.basepro.feature.gbird"
     compileSdk = 35
 
     defaultConfig {
@@ -26,7 +26,6 @@ android {
             )
         }
     }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
@@ -42,23 +41,18 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
     implementation(project(":core:util"))
-    implementation(project(":feature:weather"))
-    implementation(project(":feature:heatlh"))
 
-    // androidx-lifecycle-viewmodel-compose
-    implementation(libs.lifecycle.viewmodel.compose)
-    implementation(libs.lifecycle.viewmodel.android)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.tooling)
+    implementation(libs.material)
 
     // Icons
     implementation(libs.androidx.material.icons.extended)
-
-    // maps
-    implementation(libs.google.maps.compose)
 
     // Hilt Dependency Injection
     implementation(libs.hilt.navigation.compose)
@@ -66,15 +60,10 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     // kapt(libs.hilt.compiler)
 
-    // Health Connect
-    implementation(libs.healthConnect)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    // Preview
-    debugImplementation(libs.androidx.ui.tooling)
 }
