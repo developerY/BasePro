@@ -41,6 +41,8 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
     implementation(project(":core:util"))
+    implementation(project(":feature:heatlh"))
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -59,6 +61,9 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     // kapt(libs.hilt.compiler)
+
+    // Health Connect
+    implementation(libs.healthConnect)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
