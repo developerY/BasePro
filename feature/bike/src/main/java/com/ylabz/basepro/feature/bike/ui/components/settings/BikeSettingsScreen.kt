@@ -18,6 +18,7 @@ import com.ylabz.basepro.feature.bike.ui.BikeEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 import com.ylabz.basepro.feature.heatlh.ui.components.HealthStartScreen
+import com.ylabz.basepro.feature.qrscanner.ui.QRCodeScannerScreen
 import java.util.UUID
 
 
@@ -128,6 +129,8 @@ fun BikeSettingsScreen(
                 onEvent = onHealthEvent,
                 navTo = navTo,
                 )
+
+            QRCodeScannerScreen()
 
 
         }

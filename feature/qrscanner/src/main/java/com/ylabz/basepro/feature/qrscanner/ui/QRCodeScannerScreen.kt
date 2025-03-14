@@ -1,28 +1,35 @@
 package com.ylabz.basepro.feature.qrscanner.ui
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.gms.tasks.Task
-import com.google.mlkit.vision.barcode.Barcode
-import com.google.android.gms.vision.barcode.Barcode as GmsBarcode  // In some cases, the Barcode class may be directly imported from ML Kit.
-import com.google.mlkit.vision.barcode.GmsBarcodeScanner
-import com.google.mlkit.vision.barcode.GmsBarcodeScannerOptions
+import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
+
 
 @Composable
 fun QRCodeScannerScreen() {
     val context = LocalContext.current
     var scanResult by remember { mutableStateOf("No result") }
 
-    // Build options for scanning QR and Aztec codes.
-    // These options come from the play-services-code-scanner library.
+    // Build options for scanning QR and Aztec codes
     val options = remember {
         GmsBarcodeScannerOptions.Builder()
             .setBarcodeFormats(Barcode.FORMAT_QR_CODE, Barcode.FORMAT_AZTEC)
@@ -35,15 +42,15 @@ fun QRCodeScannerScreen() {
         verticalArrangement = Arrangement.Center
     ) {
         Button(onClick = {
-            // Get the scanner client from Google Play Services Code Scanner
-            val scanner: GmsBarcodeScanner = GmsBarcodeScanner.getClient(context, options)
-            scanner.startScan()
-                .addOnSuccessListener { barcode ->
-                    scanResult = barcode.rawValue ?: "No value"
-                }
-                .addOnFailureListener { exception ->
-                    scanResult = "Error: ${exception.message}"
-                }
+            // NOTE: The correct call for Play Services Code Scanner is GmsBarcodeScanning.getClient
+            val scanner = GmsBarcodeScanning.getClient(context, options)
+            val result: Task<Barcode> = scanner.startScan()
+            result.addOnSuccessListener { barcode ->
+                // barcode.rawValue contains the scanned text
+                scanResult = barcode.rawValue ?: "No value"
+            }.addOnFailureListener { exception ->
+                scanResult = "Error: ${exception.message}"
+            }
         }) {
             Text("Scan QR Code")
         }
@@ -51,3 +58,10 @@ fun QRCodeScannerScreen() {
         Text(text = "Result: $scanResult")
     }
 }
+
+@Preview
+@Composable
+fun QRCodeScannerScreenPreview() {
+    QRCodeScannerScreen()
+}
+

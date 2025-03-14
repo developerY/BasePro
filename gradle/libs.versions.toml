@@ -52,7 +52,8 @@ playServicesLocation = "21.3.0" # apollo-graphql
 playServicesCoroutines = "1.6.4"
 playServicesMaps = "19.1.0"
 
-qrScannerVersion = "16.1.0" # QR Scanner
+qrScannerVersion = "16.1.0"
+playServicesCodeScanner = "16.1.0" # QR Scanner
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }  # Core KTX library
@@ -167,7 +168,8 @@ play-services-maps = { group = "com.google.android.gms", name = "play-services-m
 
 
 # QR Scanner
-play-services-code-scanner = { module = "com.google.android.gms:play-services-code-scanner", version = "qrScannerVersion" }
+gms-play-services-code-scanner = { module = "com.google.android.gms:play-services-code-scanner", version.ref = "playServicesCodeScanner" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }  # Android application plugin
