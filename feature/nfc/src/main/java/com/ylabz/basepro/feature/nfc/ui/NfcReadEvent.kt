@@ -8,6 +8,7 @@ sealed class NfcReadEventOld {
 
 sealed class NfcReadEvent {
     object StartScan : NfcReadEvent()
+    object StopScan : NfcReadEvent()
     object Retry : NfcReadEvent()
     object EnableNfc : NfcReadEvent()
 }

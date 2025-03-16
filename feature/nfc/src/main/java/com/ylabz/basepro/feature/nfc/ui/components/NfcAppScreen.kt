@@ -1,6 +1,7 @@
 package com.ylabz.basepro.feature.nfc.ui.components
 
 import android.nfc.NfcEvent
+import androidx.compose.foundation.background
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Nfc
+import androidx.compose.ui.graphics.Color
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.feature.nfc.ui.NfcReadEvent
@@ -23,6 +25,7 @@ import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
 import com.ylabz.basepro.feature.nfc.ui.components.parts.NfcDisabledScreen
 import com.ylabz.basepro.feature.nfc.ui.components.parts.NfcNotSupportedScreen
+import com.ylabz.basepro.feature.nfc.ui.components.parts.NfcWaitingScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,54 +66,127 @@ fun NfcAppScreen(
             }
         },
         content = { innerPadding ->
-            when (selectedTab) {
-                "scan" -> {
-                    // Render NFC scanning UI based on the current NFC UI state.
-                    when (uiState) {
-                        is NfcUiState.NfcNotSupported -> {
-                            NfcNotSupportedScreen(onRetry = { /*onEvent(NfcEvent.Retry)*/ })
-                        }
-                        is NfcUiState.NfcDisabled -> {
-                            NfcDisabledScreen(onEnableNfc = { /*onEvent(NfcEvent.EnableNfc)*/ })
-                        }
-                        is NfcUiState.WaitingForTag -> {
-                            NfcWaitingScreen()
-                        }
-                        is NfcUiState.TagScanned -> {
-                            NfcTagScannedScreen(
-                                tagInfo = uiState.tagInfo,
-                                onDone = { navTo("nextScreen") }
-                            )
-                        }
-                        is NfcUiState.Idle -> {
-                            // Optionally show the waiting screen if idle.
-                            NfcWaitingScreen()
-                        }
-                        else -> {
-                            // Fallback to loading.
-                            LoadingScreen()
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                // Status bar to show current NFC status (you can customize this further)
+                NfcStatusBar(uiState = uiState)
+                Spacer(modifier = Modifier.height(16.dp))
+
+                when (selectedTab) {
+                    "scan" -> {
+                        when (uiState) {
+                            is NfcUiState.NfcNotSupported -> {
+                                NfcNotSupportedScreen(
+                                    onRetry = { onEvent(NfcReadEvent.Retry) }
+                                )
+                            }
+                            is NfcUiState.NfcDisabled -> {
+                                NfcDisabledScreen(
+                                    onEnableNfc = { onEvent(NfcReadEvent.EnableNfc) }
+                                )
+                            }
+                            is NfcUiState.Stopped -> {
+                                // NFC available but not scanning yet.
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text("NFC is ready. Tap the button to start scanning.")
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Button(onClick = { onEvent(NfcReadEvent.StartScan) }) {
+                                        Text("Start Scan")
+                                    }
+                                }
+                            }
+                            is NfcUiState.WaitingForTag -> {
+                                // Actively scanning – offer an option to stop scanning.
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text("Scanning... Please tap an NFC tag.")
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Button(onClick = { onEvent(NfcReadEvent.StopScan) }) {
+                                        Text("Stop Scan")
+                                    }
+                                }
+                            }
+                            is NfcUiState.TagScanned -> {
+                                // Display scanned tag data and offer options to stop or restart scanning.
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text("NFC Tag Scanned Successfully!")
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text("Tag Info: ${uiState.tagInfo}")
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Row {
+                                        Button(onClick = { onEvent(NfcReadEvent.StopScan) }) {
+                                            Text("Stop Scan")
+                                        }
+                                        Spacer(modifier = Modifier.width(16.dp))
+                                        Button(onClick = { onEvent(NfcReadEvent.StartScan) }) {
+                                            Text("Scan Again")
+                                        }
+                                    }
+                                }
+                            }
+                            is NfcUiState.Loading -> {
+                                LoadingScreen()
+                            }
+                            is NfcUiState.Error -> {
+                                ErrorScreen(
+                                    message = uiState.message,
+                                    onRetry = { onEvent(NfcReadEvent.Retry) }
+                                )
+                            }
                         }
                     }
-                }
-                "history" -> {
-                    NfcHistoryScreen(modifier = Modifier.padding(innerPadding))
-                }
-                "settings" -> {
-                    NfcSettingsScreen(modifier = Modifier.padding(innerPadding))
-                }
-                else -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("Unknown Tab")
+                    "history" -> {
+                        NfcHistoryScreen(modifier = Modifier.padding(innerPadding))
+                    }
+                    "settings" -> {
+                        NfcSettingsScreen(modifier = Modifier.padding(innerPadding))
+                    }
+                    else -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("Unknown Tab")
+                        }
                     }
                 }
             }
         }
     )
+}
+
+@Preview
+@Composable
+fun NfcAppScreenPreview() {
+    // Sample data for the preview
+    val sampleUiState = NfcUiState.Stopped // or any other state like NfcUiState.TagScanned("Sample Tag Info")
+    val sampleNavTo: (String) -> Unit = { route -> println("Navigating to $route") }
+    val sampleOnEvent: (com.ylabz.basepro.feature.nfc.ui.NfcReadEvent) -> Unit = { event -> println("Event: $event") }
+
+    // Use a Box to provide a background
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.LightGray) // Example background color
+    ) {
+        NfcAppScreen(uiState = sampleUiState, navTo = sampleNavTo, onEvent = sampleOnEvent)
+    }
 }
 
 

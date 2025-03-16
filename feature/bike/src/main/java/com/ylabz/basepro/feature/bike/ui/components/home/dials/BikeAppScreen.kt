@@ -171,7 +171,7 @@ fun BikeAppScreenPreview() {
     val healthState = HealthUiState.Success(emptyList())
 
     val bikeScreenState = BikeScreenState(
-        currentSpeed = 20.0,
+        currentSpeed = 55.0,
         currentTripDistance = 5.0,
         totalDistance = 100.0,
         rideDuration = "00:15:00",

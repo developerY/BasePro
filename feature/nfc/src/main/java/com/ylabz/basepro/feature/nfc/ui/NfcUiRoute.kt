@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ylabz.basepro.feature.nfc.ui.components.ErrorScreen
@@ -36,91 +37,30 @@ fun NfcUiRoute(
     navTo: (String) -> Unit,
     viewModel: NfcViewModel = hiltViewModel()
 ) {
-
     val uiState by viewModel.uiState.collectAsState()
 
     when (uiState) {
-        is NfcUiState.Loading -> {
-            LoadingScreen()
-        }
         is NfcUiState.Error -> {
             ErrorScreen(
                 message = (uiState as NfcUiState.Error).message,
                 onRetry = { viewModel.onEvent(NfcReadEvent.Retry) }
             )
         }
+        is NfcUiState.Loading -> {
+            LoadingScreen()
+        }
+        // For all other states, show the main NfcAppScreen
         is NfcUiState.NfcNotSupported,
         is NfcUiState.NfcDisabled,
+        is NfcUiState.Stopped,       // <-- Newly added (replaces Idle)
         is NfcUiState.WaitingForTag,
-        is NfcUiState.TagScanned,
-        is NfcUiState.Idle -> {
+        is NfcUiState.TagScanned -> {
             NfcAppScreen(
                 modifier = modifier,
                 uiState = uiState,
                 navTo = navTo,
                 onEvent = { event -> viewModel.onEvent(event) }
             )
-        }
-    }
-}
-
-@Composable
-fun NfcReaderRouteOld(
-    paddingValues: PaddingValues,
-    navTo: (String) -> Unit,
-    viewModel: NfcViewModel = hiltViewModel()
-) {
-    // Collect the current UI state from our ViewModel
-    val uiState = viewModel.uiState.collectAsState().value
-
-    // (Optional) We can also collect other flows, e.g. scanning state, error messages, etc.
-    // val scanningState by viewModel.scanningState.collectAsState()
-
-    // Provide some container for the UI
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-    ) {
-        // Render different screens based on uiState
-        when (uiState) {
-            is NfcUiState.NfcNotSupported -> {
-                NfcNotSupportedScreen(
-                    onRetry = { viewModel.onEvent(NfcReadEvent.Retry) }
-                )
-            }
-
-            is NfcUiState.NfcDisabled -> {
-                NfcDisabledScreen(
-                    onEnableNfc = { /*viewModel.onEvent(NfcReadEvent.EnableNfcRead)*/ }
-                )
-            }
-
-            is NfcUiState.WaitingForTag -> {
-                NfcWaitingScreen(
-                    // Maybe a button or instructions to say "Tap your NFC tag now."
-                )
-            }
-
-            is NfcUiState.TagScanned -> {
-                NfcTagScannedScreen(
-                    tagInfo = uiState.tagInfo,
-                    onDone = { navTo("SomeNextScreen") }
-                )
-            }
-
-            is NfcUiState.Loading -> {
-                LoadingScreen()
-            }
-
-            is NfcUiState.Error -> {
-                ErrorScreen(
-                    message = uiState.message,
-                    onRetry = { viewModel.onEvent(NfcReadEvent.Retry) }
-                )
-            }
-
-            NfcUiState.Idle -> TODO()
         }
     }
 }

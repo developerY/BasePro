@@ -19,7 +19,7 @@ Loops:
 onEvent - ViewModel
 when(UiState) - ComposeRoute
 
-~~~
+---
 **Short Answer**  
 Yes, the “multi-module + shared repository + unidirectional data flow” approach described is a **very modern, highly recommended architecture** for Android—often referred to as **MAD (Modern Android Development) best practices**. It’s exactly the style that Google’s official samples and advanced community projects follow: a clean separation of concerns, modularization for reusability, testability, and scaling across different form factors (phone, Wear, XR, etc.). If you’re aiming to build a robust, large-scale Android codebase, this is definitely one of the best architectures to use.
 
@@ -89,7 +89,7 @@ Yes, the “multi-module + shared repository + unidirectional data flow” appro
 
 In short: **Yes, this is effectively the “most advanced” or at least the *recommended modern* architecture for Android**—and definitely the one I’d use (and do use) for serious, production-ready apps.
 
-~~~ 
+---
 
 ## Share ViewModel 
 

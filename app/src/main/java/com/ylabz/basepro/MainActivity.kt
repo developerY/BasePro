@@ -42,9 +42,6 @@ class MainActivity : ComponentActivity() {
     // Use the non-compose property delegate to obtain the ViewModel
     private val nfcViewModel: NfcViewModel by viewModels()
 
-    // NFC adapter reference
-    private lateinit var nfcAdapter: NfcAdapter
-
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         if (intent.action in listOf(
@@ -53,7 +50,7 @@ class MainActivity : ComponentActivity() {
                 NfcAdapter.ACTION_TAG_DISCOVERED
             )
         ) {
-            val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
+            val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG)
             tag?.let {
                 nfcViewModel.onNfcTagScanned(it)
             }
@@ -73,37 +70,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-
-    /*override fun onResume() {
-        super.onResume()
-        // Enable NFC foreground dispatch so your activity
-        // gets NFC Intents while in the foreground
-        val intent = Intent(this, this.javaClass).apply {
-            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        }
-
-        // Depending on your targetSdkVersion, use the proper FLAG
-        val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
-            PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-        // Optionally specify intent filters if you only want to handle specific NFC types
-        val filters = arrayOf<IntentFilter>() // e.g. create NDEF filter, etc.
-        // If you only want certain technologies, specify them here:
-        val techList = arrayOf(arrayOf<String>())
-
-        // This makes sure that any discovered NFC tag is directed to your activity
-        nfcAdapter.enableForegroundDispatch(this, pendingIntent, filters, techList)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        // Disable foreground dispatch when the activity is not in the foreground
-        nfcAdapter.disableForegroundDispatch(this)
-    }*/
-
 }
 
 @OptIn(
