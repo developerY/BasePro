@@ -104,6 +104,13 @@ fun DrawerContent(onNavigate: (String) -> Unit) {
                 onClick = { onNavigate("weather") }
             )
 
+            //NFC
+            NavigationDrawerItem(
+                label = { Text("NFC") },
+                selected = false,
+                onClick = { onNavigate("nfc") }
+            )
+
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 

@@ -18,5 +18,12 @@ interface NfcRepository {
      * Called when a new NFC tag is scanned.
      */
     fun onTagScanned(tag: Tag)
+
+    fun isNfcSupported(): Boolean
+
+    fun isNfcEnabled(): Boolean
+
+    // fun onNfcTagScanned(tag: Tag)
+
 }
 

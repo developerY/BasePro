@@ -23,6 +23,7 @@ import com.ylabz.basepro.ui.navigation.graphs.bikeNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.bluetoothLeNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.gmapNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.healthNavGraph
+import com.ylabz.basepro.ui.navigation.graphs.nfcNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.photodoNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.placesNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.settingsNavGraph
@@ -123,6 +124,12 @@ fun MainNavGraph(
         )
 
         weatherNavGraph(
+            drawerState,
+            scope,
+            navController
+        )
+
+        nfcNavGraph(
             drawerState,
             scope,
             navController
