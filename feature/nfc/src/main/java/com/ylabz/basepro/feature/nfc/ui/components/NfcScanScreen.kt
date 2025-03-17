@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.nfc.NfcAdapter
 import android.nfc.Tag
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -49,7 +50,10 @@ fun NfcScanScreen(
 }
 
 fun Activity.enableForegroundDispatch(nfcAdapter: NfcAdapter?) {
-    if (nfcAdapter == null) return
+    if (nfcAdapter == null) {
+        Log.w("NFC", "enableForegroundDispatch: NFC adapter is null. Cannot enable dispatch.")
+        return
+    }
     val pendingIntent = PendingIntent.getActivity(
         this,
         0,
@@ -57,9 +61,14 @@ fun Activity.enableForegroundDispatch(nfcAdapter: NfcAdapter?) {
         PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
     )
     nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null)
+    Log.d("NFC", "enableForegroundDispatch: Enabled NFC foreground dispatch for ${this.localClassName}")
 }
 
 fun Activity.disableForegroundDispatch(nfcAdapter: NfcAdapter?) {
-    nfcAdapter?.disableForegroundDispatch(this)
+    if (nfcAdapter == null) {
+        Log.w("NFC", "disableForegroundDispatch: NFC adapter is null. Cannot disable dispatch.")
+        return
+    }
+    nfcAdapter.disableForegroundDispatch(this)
+    Log.d("NFC", "disableForegroundDispatch: Disabled NFC foreground dispatch for ${this.localClassName}")
 }
-
