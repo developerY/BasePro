@@ -8,7 +8,10 @@ import android.nfc.Tag
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -16,38 +19,42 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun NfcScanScreen(
     onTagScanned: (Tag) -> Unit,
-    onError: (String) -> Unit
+    onError: (String) -> Unit,
+    onStopScan: () -> Unit
 ) {
-    // Obtain the current Activity from the Composition
+    // Obtain the current Activity from the Composition.
     val activity = LocalContext.current as? Activity
-    // Get the NFC adapter (may be null if device does not support NFC)
+    // Get the NFC adapter (null if the device doesn't support NFC).
     val nfcAdapter = remember { NfcAdapter.getDefaultAdapter(activity) }
 
-    // Enable/disable NFC scanning as this Composable enters/leaves the composition
+    // Enable NFC foreground dispatch when this composable is in composition,
+    // and disable it when leaving.
     DisposableEffect(Unit) {
-        // Enable scanning
         activity?.enableForegroundDispatch(nfcAdapter)
-
-        // On dispose, disable scanning
         onDispose {
             activity?.disableForegroundDispatch(nfcAdapter)
         }
     }
 
-    // Now your UI can simply say "Waiting for NFC tag..."
-    // or display any additional scanning instructions
+    // UI: Inform the user scanning is active and provide a Stop button.
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Waiting for an NFC tag...\nTap your NFC tag now.")
+        Text("Scanning... Please tap an NFC tag.")
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = onStopScan) {
+            Text("Stop Scan")
+        }
     }
 }
+
 
 fun Activity.enableForegroundDispatch(nfcAdapter: NfcAdapter?) {
     if (nfcAdapter == null) {

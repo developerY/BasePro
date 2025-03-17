@@ -103,18 +103,16 @@ fun NfcAppScreen(
                                 }
                             }
                             is NfcUiState.WaitingForTag -> {
-                                // Actively scanning – offer an option to stop scanning.
-                                Column(
-                                    modifier = Modifier.fillMaxSize(),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text("Scanning... Please tap an NFC tag.")
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Button(onClick = { onEvent(NfcReadEvent.StopScan) }) {
-                                        Text("Stop Scan")
-                                    }
-                                }
+                                NfcScanScreen(
+                                    onTagScanned = { tag ->
+                                        // Optionally forward the scanned tag data to the ViewModel
+                                        // viewModel.onNfcTagScanned(tag)
+                                    },
+                                    onError = { errorMsg ->
+                                        // Optionally handle errors here
+                                    },
+                                    onStopScan = { onEvent(NfcReadEvent.StopScan) }
+                                )
                             }
                             is NfcUiState.TagScanned -> {
                                 // Display scanned tag data and offer options to stop or restart scanning.
