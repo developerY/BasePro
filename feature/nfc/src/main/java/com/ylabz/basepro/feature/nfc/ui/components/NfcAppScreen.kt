@@ -104,16 +104,17 @@ fun NfcAppScreen(
                             }
                             is NfcUiState.WaitingForTag -> {
                                 NfcScanScreen(
+                                    isScanning = true,
                                     onTagScanned = { tag ->
-                                        // Optionally forward the scanned tag data to the ViewModel
-                                        // viewModel.onNfcTagScanned(tag)
+                                        // Optionally forward the scanned tag to the ViewModel
                                     },
                                     onError = { errorMsg ->
-                                        // Optionally handle errors here
+                                        // Optionally handle errors
                                     },
                                     onStopScan = { onEvent(NfcReadEvent.StopScan) }
                                 )
                             }
+
                             is NfcUiState.TagScanned -> {
                                 // Display scanned tag data and offer options to stop or restart scanning.
                                 Column(

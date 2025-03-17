@@ -23,25 +23,29 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun NfcScanScreen(
+    isScanning: Boolean, // True when we want NFC scanning enabled
     onTagScanned: (Tag) -> Unit,
     onError: (String) -> Unit,
     onStopScan: () -> Unit
 ) {
     // Obtain the current Activity from the Composition.
     val activity = LocalContext.current as? Activity
-    // Get the NFC adapter (null if the device doesn't support NFC).
+    // Get the NFC adapter (may be null if device does not support NFC).
     val nfcAdapter = remember { NfcAdapter.getDefaultAdapter(activity) }
 
-    // Enable NFC foreground dispatch when this composable is in composition,
-    // and disable it when leaving.
-    DisposableEffect(Unit) {
-        activity?.enableForegroundDispatch(nfcAdapter)
+    // Use 'isScanning' as a key so that when it changes the DisposableEffect re-runs.
+    DisposableEffect(isScanning) {
+        if (isScanning) {
+            activity?.enableForegroundDispatch(nfcAdapter)
+        }
         onDispose {
-            activity?.disableForegroundDispatch(nfcAdapter)
+            if (isScanning) {
+                activity?.disableForegroundDispatch(nfcAdapter)
+            }
         }
     }
 
-    // UI: Inform the user scanning is active and provide a Stop button.
+    // UI: Show scanning instructions and a Stop Scan button.
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
