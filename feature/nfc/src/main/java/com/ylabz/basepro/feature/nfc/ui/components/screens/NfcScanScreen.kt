@@ -15,19 +15,27 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 @Composable
-fun NfcScanScreen(
+internal fun NfcScanScreen(
     isScanning: Boolean, // True when we want NFC scanning enabled
     onTagScanned: (Tag) -> Unit,
     onError: (String) -> Unit,
     onStopScan: () -> Unit
 ) {
+    Log.d("NfcScanScreen", "isScanning: $isScanning")
+
     // Obtain the current Activity from the Composition.
     val activity = LocalContext.current as? Activity
     // Get the NFC adapter (may be null if device does not support NFC).
@@ -59,6 +67,33 @@ fun NfcScanScreen(
     }
 }
 
+
+
+@Preview
+@Composable
+fun NfcScanScreenPreview() {
+
+    var isScanning by remember { mutableStateOf(false) }
+
+    NfcScanScreen(
+        isScanning = isScanning,
+        onTagScanned = { tag ->
+            // Handle the scanned tag
+            Log.d("NfcScanScreenPreview", "Tag scanned: $tag")
+            isScanning = false
+        },
+        onError = { error ->
+            // Handle the error
+            Log.e("NfcScanScreenPreview", "Error: $error")
+            isScanning = false
+        },
+        onStopScan = {
+            // Handle the stop scan
+            Log.d("NfcScanScreenPreview", "Stop scan")
+            isScanning = false
+        }
+    )
+}
 
 fun Activity.enableForegroundDispatch(nfcAdapter: NfcAdapter?) {
     if (nfcAdapter == null) {
