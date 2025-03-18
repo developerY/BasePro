@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.nfc.ui.components
+package com.ylabz.basepro.feature.nfc.ui.components.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,13 +9,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun NfcHistoryScreen(modifier: Modifier = Modifier) {
-    // This is a stub. You can fill it with your history list of scanned NFC tags.
+fun NfcSettingsScreen(modifier: Modifier = Modifier) {
+    // This is a stub. Add any NFC-related settings or app preferences here.
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("History Screen: List of scanned tags")
+        Text("Settings Screen")
     }
 }

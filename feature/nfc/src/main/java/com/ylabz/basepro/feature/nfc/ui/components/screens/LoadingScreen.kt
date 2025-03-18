@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.nfc.ui.components.parts
+package com.ylabz.basepro.feature.nfc.ui.components.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

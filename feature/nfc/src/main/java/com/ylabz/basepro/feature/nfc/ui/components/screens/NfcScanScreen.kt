@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.nfc.ui.components
+package com.ylabz.basepro.feature.nfc.ui.components.screens
 
 import android.app.Activity
 import android.app.PendingIntent

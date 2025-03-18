@@ -1,6 +1,5 @@
 package com.ylabz.basepro.feature.nfc.ui.components
 
-import android.nfc.NfcEvent
 import androidx.compose.foundation.background
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -13,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Nfc
@@ -22,12 +20,14 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.feature.nfc.ui.NfcReadEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
-import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
-import com.ylabz.basepro.feature.nfc.ui.components.parts.ErrorScreen
-import com.ylabz.basepro.feature.nfc.ui.components.parts.LoadingScreen
+import com.ylabz.basepro.feature.nfc.ui.components.screens.ErrorScreen
+import com.ylabz.basepro.feature.nfc.ui.components.screens.LoadingScreen
 import com.ylabz.basepro.feature.nfc.ui.components.parts.NfcDisabledScreen
 import com.ylabz.basepro.feature.nfc.ui.components.parts.NfcNotSupportedScreen
-import com.ylabz.basepro.feature.nfc.ui.components.parts.NfcWaitingScreen
+import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcHistoryScreen
+import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcScanScreen
+import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcSettingsScreen
+import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcStatusBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

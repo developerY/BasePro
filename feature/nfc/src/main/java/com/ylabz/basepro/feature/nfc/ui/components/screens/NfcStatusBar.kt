@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.nfc.ui.components
+package com.ylabz.basepro.feature.nfc.ui.components.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 
 /**
@@ -44,3 +45,11 @@ fun NfcStatusBar(uiState: NfcUiState) {
         Text(text = statusMessage, style = MaterialTheme.typography.bodyMedium)
     }
 }
+
+@Preview
+@Composable
+fun NfcStatusBarPreview() {
+    val uiState = NfcUiState.Stopped
+    NfcStatusBar(uiState = uiState)
+}
+
