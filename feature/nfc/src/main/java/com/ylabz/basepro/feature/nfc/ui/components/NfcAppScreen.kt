@@ -22,12 +22,14 @@ import com.ylabz.basepro.feature.nfc.ui.NfcReadEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.nfc.ui.components.screens.ErrorScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.LoadingScreen
-import com.ylabz.basepro.feature.nfc.ui.components.parts.NfcDisabledScreen
-import com.ylabz.basepro.feature.nfc.ui.components.parts.NfcNotSupportedScreen
+import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcDisabledScreen
+import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcNotSupportedScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcHistoryScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcScanScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcSettingsScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcStatusBar
+import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcStoppedScreen
+import com.ylabz.basepro.feature.nfc.ui.components.screens.TagScanned
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,18 +93,9 @@ fun NfcAppScreen(
                                 )
                             }
                             is NfcUiState.Stopped -> {
-                                // NFC available but not scanning yet.
-                                Column(
-                                    modifier = Modifier.fillMaxSize(),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text("NFC is ready. Tap the button to start scanning.")
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Button(onClick = { onEvent(NfcReadEvent.StartScan) }) {
-                                        Text("Start Scan")
-                                    }
-                                }
+                                NfcStoppedScreen(
+                                    onEvent = { onEvent(NfcReadEvent.StartScan) }
+                                )
                             }
                             is NfcUiState.WaitingForTag -> {
                                 NfcScanScreen(
@@ -119,25 +112,10 @@ fun NfcAppScreen(
 
                             is NfcUiState.TagScanned -> {
                                 // Display scanned tag data and offer options to stop or restart scanning.
-                                Column(
-                                    modifier = Modifier.fillMaxSize(),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text("NFC Tag Scanned Successfully!")
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    Text("Tag Info: ${uiState.tagInfo}")
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Row {
-                                        Button(onClick = { onEvent(NfcReadEvent.StopScan) }) {
-                                            Text("Stop Scan")
-                                        }
-                                        Spacer(modifier = Modifier.width(16.dp))
-                                        Button(onClick = { onEvent(NfcReadEvent.StartScan) }) {
-                                            Text("Scan Again")
-                                        }
-                                    }
-                                }
+                               TagScanned(
+                                    uiState = uiState,
+                                    onEvent = onEvent
+                                )
                             }
                             is NfcUiState.Loading -> {
                                 LoadingScreen()

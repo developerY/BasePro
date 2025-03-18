@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.nfc.ui.components.parts
+package com.ylabz.basepro.feature.nfc.ui.components.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,24 +15,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun NfcDisabledScreen(onEnableNfc: () -> Unit) {
+fun NfcNotSupportedScreen(onRetry: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("NFC is disabled. Please enable NFC in your device settings.")
+        Text(text = "Your device does not support NFC.")
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onEnableNfc) {
-            Text("Enable NFC")
+        Button(onClick = onRetry) {
+            Text("Retry")
         }
     }
 }
 
 @Preview
 @Composable
-fun NfcDisabledScreenPreview() {
-    NfcDisabledScreen(onEnableNfc = {
-        // Handle NFC enabling here if needed for preview
+fun NfcNotSupportedScreenPreview() {
+    NfcNotSupportedScreen(onRetry = {
+        // Do nothing
     })
 }
