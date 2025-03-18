@@ -23,6 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.feature.nfc.ui.NfcReadEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
+import com.ylabz.basepro.feature.nfc.ui.components.parts.ErrorScreen
+import com.ylabz.basepro.feature.nfc.ui.components.parts.LoadingScreen
 import com.ylabz.basepro.feature.nfc.ui.components.parts.NfcDisabledScreen
 import com.ylabz.basepro.feature.nfc.ui.components.parts.NfcNotSupportedScreen
 import com.ylabz.basepro.feature.nfc.ui.components.parts.NfcWaitingScreen
@@ -188,57 +190,3 @@ fun NfcAppScreenPreview() {
     }
 }
 
-
-
-@Composable
-fun NfcWaitingScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Waiting for an NFC tag...\nPlease tap your NFC tag now.")
-    }
-}
-
-@Composable
-fun NfcTagScannedScreen(tagInfo: String, onDone: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("NFC Tag Scanned Successfully!")
-        Spacer(modifier = Modifier.height(8.dp))
-        Text("Tag Info: $tagInfo")
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onDone) {
-            Text("Done")
-        }
-    }
-}
-
-@Composable
-fun LoadingScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
-    }
-}
-
-@Composable
-fun ErrorScreen(message: String, onRetry: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Error: $message")
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onRetry) {
-            Text("Retry")
-        }
-    }
-}

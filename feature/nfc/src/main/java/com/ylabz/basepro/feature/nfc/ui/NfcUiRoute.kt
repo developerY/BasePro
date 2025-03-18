@@ -21,9 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ylabz.basepro.feature.nfc.ui.components.ErrorScreen
-import com.ylabz.basepro.feature.nfc.ui.components.LoadingScreen
 import com.ylabz.basepro.feature.nfc.ui.components.NfcAppScreen
+import com.ylabz.basepro.feature.nfc.ui.components.parts.ErrorScreen
+import com.ylabz.basepro.feature.nfc.ui.components.parts.LoadingScreen
 import com.ylabz.basepro.feature.nfc.ui.components.parts.NfcDisabledScreen
 import com.ylabz.basepro.feature.nfc.ui.components.parts.NfcNotSupportedScreen
 import com.ylabz.basepro.feature.nfc.ui.components.parts.NfcTagScannedScreen
@@ -62,62 +62,5 @@ fun NfcUiRoute(
                 onEvent = { event -> viewModel.onEvent(event) }
             )
         }
-    }
-}
-
-@Composable
-fun ErrorScreen(
-    message: String,
-    onRetry: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.Black), // Background color can be adjusted
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Error: $message",
-                color = Color.Red,
-                fontSize = 18.sp,
-                //fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(16.dp)
-            )
-            onRetry?.let {
-                Button(
-                    onClick = it,
-                    colors = ButtonDefaults.buttonColors(
-                        //backgroundColor = Color.Red
-                    )
-                ) {
-                    Text(
-                        text = "Retry",
-                        color = Color.White,
-                        fontSize = 18.sp,
-                        //fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(16.dp)
-                        //fontSize = 16.sp,
-                        //fontWeight = FontWeight.Bold,
-                    )
-                }
-            }
-        }
-    }
-}
-
-
-@Composable
-fun LoadingScreen(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.Black), // Background color can be adjusted
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator(color = Color.White)
     }
 }
