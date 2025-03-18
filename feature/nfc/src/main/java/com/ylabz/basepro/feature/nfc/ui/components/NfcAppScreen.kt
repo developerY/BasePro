@@ -188,34 +188,6 @@ fun NfcAppScreenPreview() {
     }
 }
 
-
-
-// ----- Example Stub Composables for Additional Screens -----
-
-@Composable
-fun NfcHistoryScreen(modifier: Modifier = Modifier) {
-    // This is a stub. You can fill it with your history list of scanned NFC tags.
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("History Screen: List of scanned tags")
-    }
-}
-
-@Composable
-fun NfcSettingsScreen(modifier: Modifier = Modifier) {
-    // This is a stub. Add any NFC-related settings or app preferences here.
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Settings Screen")
-    }
-}
-
 // ----- Pre-existing NFC State Screens -----
 
 @Composable
