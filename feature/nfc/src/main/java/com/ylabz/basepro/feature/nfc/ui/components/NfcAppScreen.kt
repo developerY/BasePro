@@ -188,37 +188,7 @@ fun NfcAppScreenPreview() {
     }
 }
 
-// ----- Pre-existing NFC State Screens -----
 
-@Composable
-fun NfcNotSupportedScreen(onRetry: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Your device does not support NFC.")
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onRetry) {
-            Text("Retry")
-        }
-    }
-}
-
-@Composable
-fun NfcDisabledScreen(onEnableNfc: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("NFC is disabled. Please enable NFC in your device settings.")
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onEnableNfc) {
-            Text("Enable NFC")
-        }
-    }
-}
 
 @Composable
 fun NfcWaitingScreen() {
