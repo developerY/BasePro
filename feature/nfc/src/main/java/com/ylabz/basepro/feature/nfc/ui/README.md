@@ -1,4 +1,6 @@
-Below is an updated `NfcViewModel` that **does not** start scanning automatically. Instead, it sets the state to **Stopped** (meaning NFC is supported and enabled but not actively scanning) until the user explicitly triggers `NfcReadEvent.StartScan`. At that point, it transitions to **WaitingForTag** and begins collecting from `scannedDataFlow`.
+Below is an updated `NfcViewModel` that **does not** start scanning automatically. 
+Instead, it sets the state to **Stopped** (meaning NFC is supported and enabled but not actively scanning) 
+until the user explicitly triggers `NfcReadEvent.StartScan`. At that point, it transitions to **WaitingForTag** and begins collecting from `scannedDataFlow`.
 
 Make sure your `NfcUiState` includes a **Stopped** state (or **Idle**, if you prefer) to represent “NFC is available but not currently scanning.”
 

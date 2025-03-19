@@ -1,11 +1,11 @@
 
-Yes, that's correct. Using a single-Activity approach with Hilt for DI and a ViewModel to manage NFC 
+Using a single-Activity approach with Hilt for DI and a ViewModel to manage NFC 
 state—where the Activity's `onNewIntent` passes tag data to the ViewModel, and the UI observes that 
-state—is an effective and modern approach for a multi-module app. This method keeps your NFC logic centralized, 
+state—is an effective and modern approach for a multi-module app. This method keeps our NFC logic centralized, 
 promotes a clean separation of concerns, and scales well across different modules.
 
 
-Here's a concise summary of the recommended architecture for your multi-module NFC feature:
+Concise summary of the recommended architecture for our multi-module NFC feature:
 
 1. **NFC Module:**
     - Contains its own **Route Composable**, **UIState/Events**, and a dedicated **NfcViewModel**.
@@ -14,14 +14,14 @@ Here's a concise summary of the recommended architecture for your multi-module N
 2. **Main Activity:**
     - Remains in the main module and is responsible for receiving NFC intents in `onNewIntent()`.
     - It forwards any NFC tag received (via `onNewIntent`) to the NFC module’s ViewModel.
-    - You can do this via Hilt: either by using an **EntryPoint** to get the NFC ViewModel or by having your NFC route composable in the navigation graph and ensuring that the NFC intent is forwarded to that same instance.
+    - You can do this via Hilt: either by using an **EntryPoint** to get the NFC ViewModel or by having our NFC route composable in the navigation graph and ensuring that the NFC intent is forwarded to that same instance.
 
 3. **Integration via Navigation:**
     - Your NFC module exposes a **route composable** (e.g. `NfcReaderRoute()`) that obtains the NFC ViewModel with `hiltViewModel()` and drives the UI solely based on its state and events.
-    - The main module’s NavGraph includes this route just like your other modules.
+    - The main module’s NavGraph includes this route just like our other modules.
     - MainActivity calls `setContent { NavHost(...) }` and in `onNewIntent()`, it simply passes the tag to the NFC ViewModel (or via an entry point), so the NFC module is fully in charge of its UI logic.
 
-This pattern keeps your NFC logic self-contained in its module while letting MainActivity do what it must (receiving NFC intents). The ViewModel in the NFC module then drives the UI using its UIState/Events, making your composables "dumb" and easy to test.
+This pattern keeps our NFC logic self-contained in its module while letting MainActivity do what it must (receiving NFC intents). The ViewModel in the NFC module then drives the UI using its UIState/Events, making your composables "dumb" and easy to test.
 
 This approach adheres to Modern Android Architecture principles, maintains separation of concerns, and works well in a multi-module setup.
 
@@ -29,19 +29,19 @@ This approach adheres to Modern Android Architecture principles, maintains separ
 
 Below is a **high-level explanation** of how NFC scanning typically works in Android, along with 
 **why you usually don’t need a separate “Start Scan” button**. 
-Instead, you rely on the system’s NFC **foreground dispatch** mechanism and your `Activity` lifecycle.
+Instead, you rely on the system’s NFC **foreground dispatch** mechanism and our `Activity` lifecycle.
 
 ---
 
 ## 1. NFC Flow in Android
 
 1. **Activity-Level Setup**  
-   - In your `Activity` (usually `MainActivity`), you obtain the `NfcAdapter` and call `enableForegroundDispatch` in `onResume`, then `disableForegroundDispatch` in `onPause`.  
-   - Whenever a user taps an NFC tag while your `Activity` is in the foreground, Android delivers an `Intent` to your `Activity`’s `onNewIntent`.
+   - In our `Activity` (usually `MainActivity`), you obtain the `NfcAdapter` and call `enableForegroundDispatch` in `onResume`, then `disableForegroundDispatch` in `onPause`.  
+   - Whenever a user taps an NFC tag while our `Activity` is in the foreground, Android delivers an `Intent` to our `Activity`’s `onNewIntent`.
 
 2. **Handling `onNewIntent`**  
    - In `onNewIntent(intent)`, you check if the intent action is one of the NFC actions (e.g. `ACTION_NDEF_DISCOVERED`).  
-   - If so, you retrieve the `Tag` object and pass it to your `NfcViewModel` (e.g. `viewModel.onNfcTagScanned(tag)`).
+   - If so, you retrieve the `Tag` object and pass it to our `NfcViewModel` (e.g. `viewModel.onNfcTagScanned(tag)`).
 
 3. **ViewModel Updates UI**  
    - The `NfcViewModel` processes the tag data (reading NDEF records, etc.) and updates the `uiState` accordingly (e.g. `TagScanned`, `Error`, etc.).  
@@ -54,11 +54,11 @@ Instead, you rely on the system’s NFC **foreground dispatch** mechanism and yo
 ## 2. Do We Need a “Start Scan” Button?
 
 ### Typical Approach: **No Button**  
-- **Seamless**: The user simply opens your “Scan” screen, sees “Waiting for Tag…,” and taps the NFC tag. The system automatically dispatches the tag intent.  
+- **Seamless**: The user simply opens our “Scan” screen, sees “Waiting for Tag…,” and taps the NFC tag. The system automatically dispatches the tag intent.  
 - **Expected Behavior**: This is how most NFC apps work (e.g., payment apps). The user expects “tap and go.”
 
 ### Possible Use-Cases for a Button  
-- **User Workflow**: If your app requires a multi-step process (e.g., “configure something” before scanning), you might want an explicit button that says “Ready to Scan.”  
+- **User Workflow**: If our app requires a multi-step process (e.g., “configure something” before scanning), you might want an explicit button that says “Ready to Scan.”  
 - **Prevent Accidental Reads**: In some scenarios, you might want to disable scanning until the user explicitly consents to start scanning.
 
 > However, for most apps, letting the system deliver the NFC intent while the user is on the “Scan” screen is simpler and more user-friendly. 
@@ -69,7 +69,7 @@ Instead, you rely on the system’s NFC **foreground dispatch** mechanism and yo
 
 Below is a **common pattern** using a single “Scan” screen (a Composable) and a `MainActivity` that manages NFC foreground dispatch:
 
-1. **User navigates to the “Scan” tab** in your multi-module Compose UI.  
+1. **User navigates to the “Scan” tab** in our multi-module Compose UI.  
 2. **`MainActivity.onResume`**:  
    ```kotlin
    override fun onResume() {
@@ -117,8 +117,6 @@ Below is a **common pattern** using a single “Scan” screen (a Composable) an
    }
    ```
 
-No extra “Start Scan” button is needed—the system automatically triggers scanning when the device is near a tag.
-
 ---
 
 ## 4. Putting It All Together
@@ -128,4 +126,3 @@ No extra “Start Scan” button is needed—the system automatically triggers s
 - **When the user taps a tag**, `onNewIntent` fires, and you read the tag in your ViewModel.  
 - **The ViewModel** updates the UI state to “TagScanned,” and the “Scan” screen shows the scanned data.
 
-This is the **most common, user-friendly** approach for NFC scanning on Android. You can add a manual “Start Scan” button if your workflow demands it, but typically for NFC, letting the system handle scanning is both simpler and more intuitive.
