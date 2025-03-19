@@ -27,6 +27,7 @@ import com.ylabz.basepro.feature.nfc.ui.components.screens.enableForegroundDispa
 
 @Composable
 fun NfcWriteScreen(
+    modifier: Modifier = Modifier,
     isWriting: Boolean,                     // Whether the app is in write mode.
     textToWrite: String,                    // The text to be written to the NFC tag.
     onTextChange: (String) -> Unit,         // Callback when the user types in the text field.

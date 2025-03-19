@@ -15,11 +15,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Nfc
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.feature.nfc.ui.NfcReadEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
+import com.ylabz.basepro.feature.nfc.ui.components.parts.NfcWriteScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.ErrorScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.LoadingScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcDisabledScreen
@@ -56,10 +58,10 @@ fun NfcAppScreen(
                     label = { Text("Scan") }
                 )
                 NavigationBarItem(
-                    selected = selectedTab == "history",
-                    onClick = { selectedTab = "history" },
-                    icon = { Icon(Icons.Default.List, contentDescription = "History") },
-                    label = { Text("History") }
+                    selected = selectedTab == "save",
+                    onClick = { selectedTab = "save" },
+                    icon = { Icon(Icons.Default.Save, contentDescription = "Save") },
+                    label = { Text("Write") }
                 )
                 NavigationBarItem(
                     selected = selectedTab == "settings",
@@ -128,8 +130,15 @@ fun NfcAppScreen(
                             }
                         }
                     }
-                    "history" -> {
-                        NfcHistoryScreen(modifier = Modifier.padding(innerPadding))
+                    "save" -> {
+                        NfcWriteScreen(
+                            modifier = Modifier.padding(innerPadding),
+                            isWriting = uiState is NfcUiState.TagScanned,
+                            textToWrite = (uiState as? NfcUiState.TagScanned)?.tagInfo ?: "",
+                            onTextChange = TODO(),
+                            onStartWrite = TODO(),
+                            onStopWrite = TODO(),
+                        )
                     }
                     "settings" -> {
                         NfcSettingsScreen(modifier = Modifier.padding(innerPadding))
@@ -156,7 +165,7 @@ fun NfcAppScreenPreview() {
     // Sample data for the preview
     val sampleUiState = NfcUiState.Stopped // or any other state like NfcUiState.TagScanned("Sample Tag Info")
     val sampleNavTo: (String) -> Unit = { route -> println("Navigating to $route") }
-    val sampleOnEvent: (com.ylabz.basepro.feature.nfc.ui.NfcReadEvent) -> Unit = { event -> println("Event: $event") }
+    val sampleOnEvent: (NfcReadEvent) -> Unit = { event -> println("Event: $event") }
 
     // Use a Box to provide a background
     Box(
