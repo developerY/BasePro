@@ -75,8 +75,7 @@ class NfcViewModel @Inject constructor(
         when (event) {
             NfcReadEvent.StartScan -> {
                 checkNfcCapabilities()
-                // If the current state is TagScanned, reset it to Stopped first so that
-                // scanning can restart properly.
+                // Reset state to clear any previously scanned tag info.
                 if (_uiState.value is NfcUiState.TagScanned) {
                     _uiState.value = NfcUiState.Stopped
                 }
@@ -95,7 +94,6 @@ class NfcViewModel @Inject constructor(
                 // Remain in Stopped state until the user taps StartScan.
             }
             NfcReadEvent.StopScan -> {
-                // Cancel scanning and update the state to Stopped.
                 scanningJob?.cancel()
                 _uiState.value = NfcUiState.Stopped
             }
