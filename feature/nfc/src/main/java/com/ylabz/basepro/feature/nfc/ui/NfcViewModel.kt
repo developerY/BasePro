@@ -31,30 +31,20 @@ class NfcViewModel @Inject constructor(
         checkNfcCapabilities()
     }
 
-    /**
-     * Check if NFC is supported and enabled; update state accordingly.
-     */
     private fun checkNfcCapabilities() {
         if (!nfcRepository.isNfcSupported()) {
             _uiState.value = NfcUiState.NfcNotSupported
         } else if (!nfcRepository.isNfcEnabled()) {
             _uiState.value = NfcUiState.NfcDisabled
         } else {
-            // NFC is supported and enabled; start in a Stopped state until the user triggers scanning.
             _uiState.value = NfcUiState.Stopped
         }
     }
 
-    /**
-     * Start scanning by collecting data from scannedDataFlow.
-     */
     private fun startScanning() {
-        // Cancel any existing scanning job
         scanningJob?.cancel()
         scanningJob = viewModelScope.launch {
-            // Transition to actively scanning
             _uiState.value = NfcUiState.WaitingForTag
-
             nfcRepository.scannedDataFlow
                 .catch { e ->
                     _uiState.value = NfcUiState.Error("Error scanning NFC tag: ${e.message}")
@@ -69,24 +59,16 @@ class NfcViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Handle user-driven events from the UI layer.
-     */
     fun onEvent(event: NfcReadEvent) {
         when (event) {
             NfcReadEvent.StartScan -> {
                 checkNfcCapabilities()
                 if (_uiState.value is NfcUiState.TagScanned) {
-                    // Reset state to clear tag info
+                    // Clear the old tag info.
+                    nfcRepository.clearScannedData()
                     _uiState.value = NfcUiState.Stopped
-                    // Delay briefly to allow UI recomposition before starting a new scan.
-                    viewModelScope.launch {
-                        delay(50) // 50ms delay (adjust as needed)
-                        if (_uiState.value is NfcUiState.Stopped) {
-                            startScanning()
-                        }
-                    }
-                } else if (_uiState.value is NfcUiState.Stopped) {
+                }
+                if (_uiState.value is NfcUiState.Stopped) {
                     startScanning()
                 }
             }
@@ -98,19 +80,15 @@ class NfcViewModel @Inject constructor(
             }
             NfcReadEvent.EnableNfc -> {
                 checkNfcCapabilities()
-                // Remain in Stopped state until the user taps StartScan.
             }
             NfcReadEvent.StopScan -> {
                 scanningJob?.cancel()
                 _uiState.value = NfcUiState.Stopped
+                nfcRepository.clearScannedData()
             }
         }
     }
 
-
-    /**
-     * Called by the Activity's onNewIntent when an NFC tag is detected.
-     */
     fun onNfcTagScanned(tag: Tag) {
         nfcRepository.onTagScanned(tag)
     }
