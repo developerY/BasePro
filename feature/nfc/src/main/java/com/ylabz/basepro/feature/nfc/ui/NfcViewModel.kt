@@ -24,10 +24,17 @@ class NfcViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<NfcUiState>(NfcUiState.Loading)
     val uiState: StateFlow<NfcUiState> = _uiState.asStateFlow()
 
+    // Flag to indicate whether we're in write mode.
+    var isWritingMode: Boolean = false
+        private set
+
+    // Text that will be written to the tag.
+    var textToWrite: String = ""
+        private set
+
     private var scanningJob: Job? = null
 
     init {
-        // Check NFC capabilities immediately, but do NOT start scanning.
         checkNfcCapabilities()
     }
 
@@ -62,16 +69,14 @@ class NfcViewModel @Inject constructor(
     fun onEvent(event: NfcReadEvent) {
         when (event) {
             NfcReadEvent.StartScan -> {
-                // Always cancel any active scanning job and clear old tag data.
                 scanningJob?.cancel()
                 nfcRepository.clearScannedData()
                 _uiState.value = NfcUiState.Stopped
-
-                // Delay briefly to allow the state change (and UI recomposition) to take effect.
                 viewModelScope.launch {
-                    delay(50) // Adjust delay if necessary.
-                    // Now start scanning afresh.
-                    startScanning()
+                    delay(50)
+                    if (_uiState.value is NfcUiState.Stopped) {
+                        startScanning()
+                    }
                 }
             }
             NfcReadEvent.Retry -> {
@@ -88,11 +93,44 @@ class NfcViewModel @Inject constructor(
                 _uiState.value = NfcUiState.Stopped
                 nfcRepository.clearScannedData()
             }
+
+            NfcReadEvent.StartWrite -> TODO()
+            NfcReadEvent.StopWrite -> TODO()
+            is NfcReadEvent.UpdateWriteText -> TODO()
         }
     }
 
-
+    // Called when a tag is detected in read mode.
     fun onNfcTagScanned(tag: Tag) {
         nfcRepository.onTagScanned(tag)
+    }
+
+    // Called when a tag is detected in write mode.
+    fun onNfcWriteTag(tag: Tag) {
+        viewModelScope.launch {
+            _uiState.value = NfcUiState.Writing
+            val success = nfcRepository.writeTag(tag, textToWrite)
+            if (success) {
+                _uiState.value = NfcUiState.WriteSuccess("Write successful!")
+            } else {
+                _uiState.value = NfcUiState.WriteError("Failed to write to the tag.")
+            }
+        }
+    }
+
+    // Methods to control writing mode.
+    fun startWriting(text: String) {
+        isWritingMode = true
+        textToWrite = text
+        _uiState.value = NfcUiState.Stopped // Clear previous write states.
+    }
+
+    fun stopWriting() {
+        isWritingMode = false
+        _uiState.value = NfcUiState.Stopped
+    }
+
+    fun updateTextToWrite(text: String) {
+        textToWrite = text
     }
 }

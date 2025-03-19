@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.nfc.ui.components.parts
+package com.ylabz.basepro.feature.nfc.ui.components.screens
 
 import android.app.Activity
 import android.nfc.NfcAdapter
@@ -21,24 +21,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.feature.nfc.ui.components.screens.disableForegroundDispatch
 import androidx.compose.ui.tooling.preview.Preview
-import com.ylabz.basepro.feature.nfc.ui.components.screens.enableForegroundDispatch
 
 @Composable
 fun NfcWriteScreen(
     modifier: Modifier = Modifier,
-    isWriting: Boolean,                     // Whether the app is in write mode.
-    textToWrite: String,                    // The text to be written to the NFC tag.
-    onTextChange: (String) -> Unit,         // Callback when the user types in the text field.
-    onStartWrite: () -> Unit,               // Called when the user taps "Start Write".
-    onStopWrite: () -> Unit                 // Called when the user taps "Stop Write".
+    isWriting: Boolean,                     // Whether write mode is active.
+    textToWrite: String,                    // Text to be written.
+    onTextChange: (String) -> Unit,         // Update the text.
+    onStartWrite: () -> Unit,               // Start write mode.
+    onStopWrite: () -> Unit                 // Stop write mode.
 ) {
-    // Obtain the current Activity and NFC adapter.
     val activity = LocalContext.current as? Activity
     val nfcAdapter = remember { NfcAdapter.getDefaultAdapter(activity) }
 
-    // When isWriting is true, enable foreground dispatch.
     DisposableEffect(isWriting) {
         if (isWriting) {
             activity?.enableForegroundDispatch(nfcAdapter)
@@ -52,9 +48,8 @@ fun NfcWriteScreen(
         }
     }
 
-    // Build the UI.
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
@@ -83,6 +78,7 @@ fun NfcWriteScreen(
         }
     }
 }
+
 
 @Preview
 @Composable

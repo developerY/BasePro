@@ -42,5 +42,9 @@ fun NfcUiRoute(
                 onEvent = { event -> viewModel.onEvent(event) }
             )
         }
+
+        is NfcUiState.WriteError -> TODO()
+        is NfcUiState.WriteSuccess -> TODO()
+        NfcUiState.Writing -> TODO()
     }
 }

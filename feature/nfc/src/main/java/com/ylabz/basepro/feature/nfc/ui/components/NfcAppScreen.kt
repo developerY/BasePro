@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Nfc
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.ui.graphics.Color
@@ -21,12 +20,11 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.feature.nfc.ui.NfcReadEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
-import com.ylabz.basepro.feature.nfc.ui.components.parts.NfcWriteScreen
+import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcWriteScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.ErrorScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.LoadingScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcDisabledScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcNotSupportedScreen
-import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcHistoryScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcScanScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcSettingsScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcStatusBar
@@ -58,9 +56,9 @@ fun NfcAppScreen(
                     label = { Text("Scan") }
                 )
                 NavigationBarItem(
-                    selected = selectedTab == "save",
-                    onClick = { selectedTab = "save" },
-                    icon = { Icon(Icons.Default.Save, contentDescription = "Save") },
+                    selected = selectedTab == "write",
+                    onClick = { selectedTab = "write" },
+                    icon = { Icon(Icons.Default.Save, contentDescription = "Write") },
                     label = { Text("Write") }
                 )
                 NavigationBarItem(
@@ -77,7 +75,7 @@ fun NfcAppScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                // Status bar to show current NFC status (you can customize this further)
+                // Status bar showing current NFC status.
                 NfcStatusBar(uiState = uiState)
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -111,10 +109,8 @@ fun NfcAppScreen(
                                     onStopScan = { onEvent(NfcReadEvent.StopScan) }
                                 )
                             }
-
                             is NfcUiState.TagScanned -> {
-                                // Display scanned tag data and offer options to stop or restart scanning.
-                               TagScanned(
+                                TagScanned(
                                     uiState = uiState,
                                     onEvent = onEvent
                                 )
@@ -128,16 +124,25 @@ fun NfcAppScreen(
                                     onRetry = { onEvent(NfcReadEvent.Retry) }
                                 )
                             }
+                            is NfcUiState.Writing,
+                            is NfcUiState.WriteSuccess,
+                            is NfcUiState.WriteError -> {
+                                // When in any write-related state while on the scan tab,
+                                // you can decide how to handle it. For now, we'll simply show Loading.
+                                LoadingScreen()
+                            }
                         }
                     }
-                    "save" -> {
+                    "write" -> {
                         NfcWriteScreen(
                             modifier = Modifier.padding(innerPadding),
-                            isWriting = uiState is NfcUiState.TagScanned,
-                            textToWrite = (uiState as? NfcUiState.TagScanned)?.tagInfo ?: "",
-                            onTextChange = TODO(),
-                            onStartWrite = TODO(),
-                            onStopWrite = TODO(),
+                            isWriting = uiState is NfcUiState.Writing || uiState is NfcUiState.WriteError || uiState is NfcUiState.WriteSuccess,
+                            // Here, we assume that the text to write is managed separately in your ViewModel.
+                            // For example, your ViewModel might expose a "writeText" property.
+                            textToWrite = if (uiState is NfcUiState.TagScanned) uiState.tagInfo else "",
+                            onTextChange = { onEvent(NfcReadEvent.UpdateWriteText(it)) },
+                            onStartWrite = { onEvent(NfcReadEvent.StartWrite) },
+                            onStopWrite = { onEvent(NfcReadEvent.StopWrite) }
                         )
                     }
                     "settings" -> {
@@ -158,6 +163,7 @@ fun NfcAppScreen(
         }
     )
 }
+
 
 @Preview
 @Composable

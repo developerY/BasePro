@@ -32,6 +32,9 @@ fun NfcStatusBar(uiState: NfcUiState) {
         is NfcUiState.TagScanned -> "Tag Scanned"
         is NfcUiState.Loading -> "Loading..."
         is NfcUiState.Error -> "Error: ${uiState.message}"
+        is NfcUiState.WriteError -> TODO()
+        is NfcUiState.WriteSuccess -> TODO()
+        NfcUiState.Writing -> TODO()
     }
     Row(
         modifier = Modifier

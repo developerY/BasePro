@@ -11,13 +11,16 @@ package com.ylabz.basepro.feature.nfc.ui
 
 // Example of an updated NfcUiState
 sealed class NfcUiState {
-    object Stopped : NfcUiState()            // NFC is supported/enabled, but scanning not started
-    object Loading : NfcUiState()           // For initial checks or transitions
+    object Stopped : NfcUiState()                // NFC is available but not scanning.
+    object Loading : NfcUiState()
     data class Error(val message: String) : NfcUiState()
     object NfcNotSupported : NfcUiState()
     object NfcDisabled : NfcUiState()
-    object WaitingForTag : NfcUiState()     // Actively scanning for a tag
+    object WaitingForTag : NfcUiState()          // Actively scanning for reading.
     data class TagScanned(val tagInfo: String) : NfcUiState()
+    object Writing : NfcUiState()                // Actively writing.
+    data class WriteSuccess(val message: String) : NfcUiState()
+    data class WriteError(val error: String) : NfcUiState()
 }
 
 sealed class NfcUiStateOld {

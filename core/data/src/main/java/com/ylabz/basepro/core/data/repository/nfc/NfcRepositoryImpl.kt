@@ -1,6 +1,8 @@
 package com.ylabz.basepro.core.data.repository.nfc
 
 import android.content.Context
+import android.nfc.NdefMessage
+import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
 import android.nfc.tech.Ndef
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +18,6 @@ class NfcRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : NfcRepository {
 
-    // Use a SharedFlow so multiple collectors get the same result.
     private val _scannedDataFlow = MutableSharedFlow<String>(replay = 1)
     override val scannedDataFlow: Flow<String> = _scannedDataFlow
 
@@ -39,7 +40,7 @@ class NfcRepositoryImpl @Inject constructor(
      * the result (or an error message) to the shared flow.
      */
     override fun onTagScanned(tag: Tag) {
-        // (Existing logic for reading the tag)
+        // Reading logic: Read NDEF data from the tag.
         val ndef = Ndef.get(tag)
         if (ndef != null) {
             try {
@@ -52,9 +53,7 @@ class NfcRepositoryImpl @Inject constructor(
             } catch (e: Exception) {
                 _scannedDataFlow.tryEmit("Error reading tag: ${e.message}")
             } finally {
-                try {
-                    ndef.close()
-                } catch (_: Exception) { }
+                try { ndef.close() } catch (ignored: Exception) { }
             }
         } else {
             _scannedDataFlow.tryEmit("NDEF not supported on this tag")
@@ -64,4 +63,24 @@ class NfcRepositoryImpl @Inject constructor(
     override fun clearScannedData() {
         _scannedDataFlow.resetReplayCache()
     }
+
+    override suspend fun writeTag(tag: Tag, text: String): Boolean {
+        val ndef = Ndef.get(tag) ?: return false  // Tag doesn't support NDEF.
+        try {
+            ndef.connect()
+            if (!ndef.isWritable) return false
+            // Create a text record with language code "en"
+            val record = NdefRecord.createTextRecord("en", text)
+            val message = NdefMessage(arrayOf(record))
+            if (ndef.maxSize < message.toByteArray().size) return false
+            ndef.writeNdefMessage(message)
+            return true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
+        } finally {
+            try { ndef.close() } catch (ignored: Exception) { }
+        }
+    }
 }
+

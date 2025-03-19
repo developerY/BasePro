@@ -27,5 +27,8 @@ interface NfcRepository {
 
     fun clearScannedData()
 
+    suspend fun writeTag(tag: Tag, text: String): Boolean
+
+
 }
 

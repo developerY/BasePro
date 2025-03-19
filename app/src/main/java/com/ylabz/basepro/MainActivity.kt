@@ -60,7 +60,11 @@ class MainActivity : ComponentActivity() {
             }
 
             tag?.let {
-                nfcViewModel.onNfcTagScanned(it)
+                if (nfcViewModel.isWritingMode) {
+                    nfcViewModel.onNfcWriteTag(it)
+                } else {
+                    nfcViewModel.onNfcTagScanned(it)
+                }
             }
         }
     }
