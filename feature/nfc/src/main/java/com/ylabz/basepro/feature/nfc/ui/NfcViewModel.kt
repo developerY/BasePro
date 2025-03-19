@@ -62,13 +62,15 @@ class NfcViewModel @Inject constructor(
     fun onEvent(event: NfcReadEvent) {
         when (event) {
             NfcReadEvent.StartScan -> {
-                checkNfcCapabilities()
-                if (_uiState.value is NfcUiState.TagScanned) {
-                    // Clear the old tag info.
-                    nfcRepository.clearScannedData()
-                    _uiState.value = NfcUiState.Stopped
-                }
-                if (_uiState.value is NfcUiState.Stopped) {
+                // Always cancel any active scanning job and clear old tag data.
+                scanningJob?.cancel()
+                nfcRepository.clearScannedData()
+                _uiState.value = NfcUiState.Stopped
+
+                // Delay briefly to allow the state change (and UI recomposition) to take effect.
+                viewModelScope.launch {
+                    delay(50) // Adjust delay if necessary.
+                    // Now start scanning afresh.
                     startScanning()
                 }
             }
@@ -88,6 +90,7 @@ class NfcViewModel @Inject constructor(
             }
         }
     }
+
 
     fun onNfcTagScanned(tag: Tag) {
         nfcRepository.onTagScanned(tag)
