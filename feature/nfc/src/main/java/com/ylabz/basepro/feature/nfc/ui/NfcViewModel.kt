@@ -48,6 +48,7 @@ class NfcViewModel @Inject constructor(
      * Start scanning by collecting data from scannedDataFlow.
      */
     private fun startScanning() {
+        // Cancel any existing scanning job
         scanningJob?.cancel()
         scanningJob = viewModelScope.launch {
             // Transition to actively scanning
@@ -74,21 +75,24 @@ class NfcViewModel @Inject constructor(
         when (event) {
             NfcReadEvent.StartScan -> {
                 checkNfcCapabilities()
-                // Allow starting scan if the current state is Stopped or TagScanned.
-                if (_uiState.value is NfcUiState.Stopped || _uiState.value is NfcUiState.TagScanned) {
+                // If the current state is TagScanned, reset it to Stopped first so that
+                // scanning can restart properly.
+                if (_uiState.value is NfcUiState.TagScanned) {
+                    _uiState.value = NfcUiState.Stopped
+                }
+                if (_uiState.value is NfcUiState.Stopped) {
                     startScanning()
                 }
             }
             NfcReadEvent.Retry -> {
                 checkNfcCapabilities()
-                // Restart scanning if we are currently stopped.
                 if (_uiState.value is NfcUiState.Stopped) {
                     startScanning()
                 }
             }
             NfcReadEvent.EnableNfc -> {
-                // The user is prompted to enable NFC in settings; re-check capabilities when returning.
                 checkNfcCapabilities()
+                // Remain in Stopped state until the user taps StartScan.
             }
             NfcReadEvent.StopScan -> {
                 // Cancel scanning and update the state to Stopped.
@@ -105,4 +109,3 @@ class NfcViewModel @Inject constructor(
         nfcRepository.onTagScanned(tag)
     }
 }
-
