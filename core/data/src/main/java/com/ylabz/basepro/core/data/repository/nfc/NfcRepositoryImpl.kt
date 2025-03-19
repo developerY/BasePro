@@ -39,17 +39,15 @@ class NfcRepositoryImpl @Inject constructor(
      * the result (or an error message) to the shared flow.
      */
     override fun onTagScanned(tag: Tag) {
-        // Attempt to read the tag as NDEF.
+        // (Existing logic for reading the tag)
         val ndef = Ndef.get(tag)
         if (ndef != null) {
             try {
                 ndef.connect()
                 val ndefMessage = ndef.ndefMessage
-                val result = ndefMessage?.records
-                    ?.joinToString(separator = "\n") { record ->
-                        // Decode the payload of each record.
-                        record.payload.decodeToString().trim()
-                    } ?: "Empty Tag"
+                val result = ndefMessage?.records?.joinToString(separator = "\n") { record ->
+                    record.payload.decodeToString().trim()
+                } ?: "Empty Tag"
                 _scannedDataFlow.tryEmit(result)
             } catch (e: Exception) {
                 _scannedDataFlow.tryEmit("Error reading tag: ${e.message}")
@@ -61,5 +59,9 @@ class NfcRepositoryImpl @Inject constructor(
         } else {
             _scannedDataFlow.tryEmit("NDEF not supported on this tag")
         }
+    }
+
+    override fun clearScannedData() {
+        _scannedDataFlow.resetReplayCache()
     }
 }

@@ -25,5 +25,7 @@ interface NfcRepository {
 
     // fun onNfcTagScanned(tag: Tag)
 
+    fun clearScannedData()
+
 }
 

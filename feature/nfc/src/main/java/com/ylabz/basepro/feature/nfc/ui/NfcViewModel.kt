@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.data.repository.nfc.NfcRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -75,11 +76,17 @@ class NfcViewModel @Inject constructor(
         when (event) {
             NfcReadEvent.StartScan -> {
                 checkNfcCapabilities()
-                // Reset state to clear any previously scanned tag info.
                 if (_uiState.value is NfcUiState.TagScanned) {
+                    // Reset state to clear tag info
                     _uiState.value = NfcUiState.Stopped
-                }
-                if (_uiState.value is NfcUiState.Stopped) {
+                    // Delay briefly to allow UI recomposition before starting a new scan.
+                    viewModelScope.launch {
+                        delay(50) // 50ms delay (adjust as needed)
+                        if (_uiState.value is NfcUiState.Stopped) {
+                            startScanning()
+                        }
+                    }
+                } else if (_uiState.value is NfcUiState.Stopped) {
                     startScanning()
                 }
             }
@@ -99,6 +106,7 @@ class NfcViewModel @Inject constructor(
             }
         }
     }
+
 
     /**
      * Called by the Activity's onNewIntent when an NFC tag is detected.
