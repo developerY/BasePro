@@ -99,14 +99,8 @@ fun NfcAppScreen(
                             }
                             is NfcUiState.WaitingForTag -> {
                                 NfcScanScreen(
-                                    isScanning = true,
-                                    onTagScanned = { tag ->
-                                        // Optionally forward the scanned tag to the ViewModel
-                                    },
-                                    onError = { errorMsg ->
-                                        // Optionally handle errors
-                                    },
-                                    onStopScan = { onEvent(NfcReadEvent.StopScan) }
+                                    state = uiState as NfcUiState.WaitingForTag,
+                                    onEvent = { event -> onEvent(event) }
                                 )
                             }
                             is NfcUiState.TagScanned -> {
@@ -135,14 +129,8 @@ fun NfcAppScreen(
                     }
                     "write" -> {
                         NfcWriteScreen(
-                            modifier = Modifier.padding(innerPadding),
-                            isWriting = uiState is NfcUiState.Writing || uiState is NfcUiState.WriteError || uiState is NfcUiState.WriteSuccess,
-                            // Here, we assume that the text to write is managed separately in your ViewModel.
-                            // For example, your ViewModel might expose a "writeText" property.
-                            textToWrite = if (uiState is NfcUiState.TagScanned) uiState.tagInfo else "",
-                            onTextChange = { onEvent(NfcReadEvent.UpdateWriteText(it)) },
-                            onStartWrite = { onEvent(NfcReadEvent.StartWrite) },
-                            onStopWrite = { onEvent(NfcReadEvent.StopWrite) }
+                            state = uiState,
+                            onEvent = { event -> onEvent(event) }
                         )
                     }
                     "settings" -> {

@@ -29,12 +29,15 @@ fun NfcUiRoute(
         is NfcUiState.Loading -> {
             LoadingScreen()
         }
-        // For all other states, show the main NfcAppScreen
+        // For all other states—read and write—we show the main NfcAppScreen.
         is NfcUiState.NfcNotSupported,
         is NfcUiState.NfcDisabled,
-        is NfcUiState.Stopped,       // <-- Newly added (replaces Idle)
+        is NfcUiState.Stopped,
         is NfcUiState.WaitingForTag,
-        is NfcUiState.TagScanned -> {
+        is NfcUiState.TagScanned,
+        is NfcUiState.Writing,
+        is NfcUiState.WriteError,
+        is NfcUiState.WriteSuccess -> {
             NfcAppScreen(
                 modifier = modifier,
                 uiState = uiState,
@@ -42,9 +45,6 @@ fun NfcUiRoute(
                 onEvent = { event -> viewModel.onEvent(event) }
             )
         }
-
-        is NfcUiState.WriteError -> TODO()
-        is NfcUiState.WriteSuccess -> TODO()
-        NfcUiState.Writing -> TODO()
     }
 }
+

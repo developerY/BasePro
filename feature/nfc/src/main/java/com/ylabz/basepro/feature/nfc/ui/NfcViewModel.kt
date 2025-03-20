@@ -93,10 +93,22 @@ class NfcViewModel @Inject constructor(
                 _uiState.value = NfcUiState.Stopped
                 nfcRepository.clearScannedData()
             }
-
-            NfcReadEvent.StartWrite -> TODO()
-            NfcReadEvent.StopWrite -> TODO()
-            is NfcReadEvent.UpdateWriteText -> TODO()
+            NfcReadEvent.StartWrite -> {
+                // Cancel any active scanning and clear previous tag data.
+                scanningJob?.cancel()
+                nfcRepository.clearScannedData()
+                // Enter write mode.
+                isWritingMode = true
+                _uiState.value = NfcUiState.Writing
+            }
+            NfcReadEvent.StopWrite -> {
+                // Exit write mode.
+                isWritingMode = false
+                _uiState.value = NfcUiState.Stopped
+            }
+            is NfcReadEvent.UpdateWriteText -> {
+                updateTextToWrite(event.text)
+            }
         }
     }
 

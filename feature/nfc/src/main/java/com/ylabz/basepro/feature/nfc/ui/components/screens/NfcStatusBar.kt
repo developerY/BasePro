@@ -32,9 +32,9 @@ fun NfcStatusBar(uiState: NfcUiState) {
         is NfcUiState.TagScanned -> "Tag Scanned"
         is NfcUiState.Loading -> "Loading..."
         is NfcUiState.Error -> "Error: ${uiState.message}"
-        is NfcUiState.WriteError -> TODO()
-        is NfcUiState.WriteSuccess -> TODO()
-        NfcUiState.Writing -> TODO()
+        is NfcUiState.WriteError -> "Write Error: ${uiState.error}"
+        is NfcUiState.WriteSuccess -> "Write Success: ${uiState.message}"
+        NfcUiState.Writing -> "Writing to Tag..."
     }
     Row(
         modifier = Modifier
@@ -48,6 +48,7 @@ fun NfcStatusBar(uiState: NfcUiState) {
         Text(text = statusMessage, style = MaterialTheme.typography.bodyMedium)
     }
 }
+
 
 @Preview
 @Composable

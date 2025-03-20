@@ -2,6 +2,7 @@ package com.ylabz.basepro.feature.nfc.ui.components.screens
 
 import android.app.Activity
 import android.nfc.NfcAdapter
+import android.nfc.NfcEvent
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,25 +17,38 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import com.ylabz.basepro.feature.nfc.ui.NfcReadEvent
+import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 
 @Composable
 fun NfcWriteScreen(
-    modifier: Modifier = Modifier,
-    isWriting: Boolean,                     // Whether write mode is active.
-    textToWrite: String,                    // Text to be written.
-    onTextChange: (String) -> Unit,         // Update the text.
-    onStartWrite: () -> Unit,               // Start write mode.
-    onStopWrite: () -> Unit                 // Stop write mode.
+    state: NfcUiState,
+    onEvent: (NfcReadEvent) -> Unit
 ) {
+    // We'll use a local text state to hold the value to write.
+    // In a real app, you might drive this from your ViewModel instead.
+    var text by rememberSaveable { mutableStateOf("") }
+
+    // Determine if we're in writing mode based on the state.
+    // For simplicity, assume that if the state is one of these, we're in write mode.
+    val isWriting = state is NfcUiState.Writing ||
+            state is NfcUiState.WriteSuccess ||
+            state is NfcUiState.WriteError
+
     val activity = LocalContext.current as? Activity
     val nfcAdapter = remember { NfcAdapter.getDefaultAdapter(activity) }
 
+    // Enable or disable NFC foreground dispatch based on isWriting.
     DisposableEffect(isWriting) {
         if (isWriting) {
             activity?.enableForegroundDispatch(nfcAdapter)
@@ -48,8 +62,9 @@ fun NfcWriteScreen(
         }
     }
 
+    // Build the UI.
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
@@ -58,8 +73,11 @@ fun NfcWriteScreen(
         Text("Write to NFC Tag", style = MaterialTheme.typography.headlineSmall)
         Spacer(modifier = Modifier.height(8.dp))
         TextField(
-            value = textToWrite,
-            onValueChange = onTextChange,
+            value = text,
+            onValueChange = { newText ->
+                text = newText
+                onEvent(NfcReadEvent.UpdateWriteText(newText))
+            },
             label = { Text("Text to Write") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
@@ -68,34 +86,14 @@ fun NfcWriteScreen(
         if (isWriting) {
             Text("Approach an NFC tag to write the above text.")
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = onStopWrite) {
+            Button(onClick = { onEvent(NfcReadEvent.StopWrite) }) {
                 Text("Stop Write")
             }
         } else {
-            Button(onClick = onStartWrite) {
+            Button(onClick = { onEvent(NfcReadEvent.StartWrite) }) {
                 Text("Start Write")
             }
         }
     }
 }
 
-
-@Preview
-@Composable
-fun NfcWriteScreenPreview() {
-    var isWriting = false
-    var textToWrite = ""
-
-    NfcWriteScreen(
-        isWriting = isWriting,
-        textToWrite = textToWrite,
-        onTextChange = { text ->
-            textToWrite = text
-        },
-        onStartWrite = {
-            isWriting = true
-        },
-        onStopWrite = {
-            isWriting = false
-        })
-}

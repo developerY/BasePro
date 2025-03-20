@@ -17,4 +17,3 @@ sealed class NfcReadEvent {
     object StartWrite : NfcReadEvent()
     object StopWrite : NfcReadEvent()
 }
-

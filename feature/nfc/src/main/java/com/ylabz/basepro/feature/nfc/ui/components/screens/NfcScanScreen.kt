@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.PendingIntent
 import android.content.Intent
 import android.nfc.NfcAdapter
+import android.nfc.NfcEvent
 import android.nfc.Tag
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -19,37 +20,32 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.ylabz.basepro.feature.nfc.ui.NfcReadEvent
+import androidx.compose.ui.Modifier
+import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 
 @Composable
 internal fun NfcScanScreen(
-    isScanning: Boolean, // True when we want NFC scanning enabled
-    onTagScanned: (Tag) -> Unit,
-    onError: (String) -> Unit,
-    onStopScan: () -> Unit
+    state: NfcUiState.WaitingForTag,  // Represents that scanning is active
+    onEvent: (NfcReadEvent) -> Unit
 ) {
-    Log.d("NfcScanScreen", "isScanning: $isScanning")
+    Log.d("NfcScanScreen", "Scanning active: $state")
 
-    // Obtain the current Activity from the Composition.
+    // Obtain the current Activity and NFC adapter.
     val activity = LocalContext.current as? Activity
-    // Get the NFC adapter (may be null if device does not support NFC).
     val nfcAdapter = remember { NfcAdapter.getDefaultAdapter(activity) }
 
-    // Use 'isScanning' as a key so that when it changes the DisposableEffect re-runs.
-    DisposableEffect(isScanning) {
-        if (isScanning) {
-            activity?.enableForegroundDispatch(nfcAdapter)
-        }
+    // Enable foreground dispatch while in scanning state.
+    DisposableEffect(state) {
+        activity?.enableForegroundDispatch(nfcAdapter)
         onDispose {
-            if (isScanning) {
-                activity?.disableForegroundDispatch(nfcAdapter)
-            }
+            activity?.disableForegroundDispatch(nfcAdapter)
         }
     }
 
@@ -61,39 +57,24 @@ internal fun NfcScanScreen(
     ) {
         Text("Scanning... Please tap an NFC tag.")
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onStopScan) {
+        Button(onClick = { onEvent(NfcReadEvent.StopScan) }) {
             Text("Stop Scan")
         }
     }
 }
 
-
-
 @Preview
 @Composable
 fun NfcScanScreenPreview() {
-
-    var isScanning by remember { mutableStateOf(false) }
-
     NfcScanScreen(
-        isScanning = isScanning,
-        onTagScanned = { tag ->
-            // Handle the scanned tag
-            Log.d("NfcScanScreenPreview", "Tag scanned: $tag")
-            isScanning = false
-        },
-        onError = { error ->
-            // Handle the error
-            Log.e("NfcScanScreenPreview", "Error: $error")
-            isScanning = false
-        },
-        onStopScan = {
-            // Handle the stop scan
-            Log.d("NfcScanScreenPreview", "Stop scan")
-            isScanning = false
-        }
+        state = NfcUiState.WaitingForTag,
+        onEvent = {}
     )
 }
+
+
+
+
 
 fun Activity.enableForegroundDispatch(nfcAdapter: NfcAdapter?) {
     if (nfcAdapter == null) {
