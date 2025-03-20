@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
+import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
 import com.ylabz.basepro.ui.navigation.root.RootNavGraph
 import com.ylabz.basepro.ui.theme.BaseProTheme
@@ -46,7 +47,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-
         if (intent.action in listOf(
                 NfcAdapter.ACTION_NDEF_DISCOVERED,
                 NfcAdapter.ACTION_TECH_DISCOVERED,
@@ -60,13 +60,18 @@ class MainActivity : ComponentActivity() {
                 intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG)
             }
             Log.d("NFC", "onNewIntent: Tag detected: ${tag?.id?.joinToString("") { "%02x".format(it) }}")
-            Log.d("NFC", "onNewIntent: isWritingMode = ${nfcViewModel.isWritingMode}")
-
+            // Check UI state instead of isWritingMode:
+            val currentState = nfcViewModel.uiState.value
+            Log.d("NFC", "onNewIntent: uiState = $currentState")
             tag?.let {
-                if (nfcViewModel.isWritingMode) {
+                if (currentState is NfcUiState.Writing ||
+                    currentState is NfcUiState.WriteError ||
+                    currentState is NfcUiState.WriteSuccess
+                ) {
                     Log.d("NFC", "onNewIntent: Writing mode active, calling onNfcWriteTag.")
                     nfcViewModel.onNfcWriteTag(it)
                 } else {
+                    Log.d("NFC", "onNewIntent: Writing mode NOT active")
                     nfcViewModel.onNfcTagScanned(it)
                 }
             }

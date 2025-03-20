@@ -25,9 +25,9 @@ class NfcViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<NfcUiState>(NfcUiState.Loading)
     val uiState: StateFlow<NfcUiState> = _uiState.asStateFlow()
 
-    // Flag to indicate whether we're in write mode.
-    var isWritingMode: Boolean = false
-        private set
+    // Replace plain isWritingMode with a StateFlow.
+    private val _isWritingMode = MutableStateFlow(false)
+    val isWritingMode: StateFlow<Boolean> get() = _isWritingMode.asStateFlow()
 
     // Text that will be written to the tag.
     var textToWrite: String = ""
@@ -95,18 +95,17 @@ class NfcViewModel @Inject constructor(
                 nfcRepository.clearScannedData()
             }
             NfcReadEvent.StartWrite -> {
-                // Cancel any active scanning and clear previous tag data.
                 scanningJob?.cancel()
                 nfcRepository.clearScannedData()
-                // Enter write mode.
-                isWritingMode = true
+                //_isWritingMode.value = true
                 Log.d("NFC", "StartWrite event: isWritingMode set to true.")
                 _uiState.value = NfcUiState.Writing
             }
             NfcReadEvent.StopWrite -> {
-                // Exit write mode.
-                isWritingMode = false
+                scanningJob?.cancel()
+                _isWritingMode.value = false
                 _uiState.value = NfcUiState.Stopped
+                nfcRepository.clearScannedData()
             }
             is NfcReadEvent.UpdateWriteText -> {
                 updateTextToWrite(event.text)
@@ -121,30 +120,25 @@ class NfcViewModel @Inject constructor(
 
     // Called when a tag is detected in write mode.
     fun onNfcWriteTag(tag: Tag) {
-        Log.d("NFC", "onNfcWriteTag: Received tag for writing: ${tag.id.joinToString("") { "%02x".format(it) }}")
         viewModelScope.launch {
             _uiState.value = NfcUiState.Writing
             val success = nfcRepository.writeTag(tag, textToWrite)
             if (success) {
                 _uiState.value = NfcUiState.WriteSuccess("Write successful!")
-                Log.d("NFC", "onNfcWriteTag: Write successful!")
             } else {
                 _uiState.value = NfcUiState.WriteError("Failed to write to the tag.")
-                Log.e("NFC", "onNfcWriteTag: Write failed.")
             }
         }
     }
 
-
-    // Methods to control writing mode.
     fun startWriting(text: String) {
-        isWritingMode = true
+        _isWritingMode.value = true
         textToWrite = text
         _uiState.value = NfcUiState.Stopped // Clear previous write states.
     }
 
     fun stopWriting() {
-        isWritingMode = false
+        _isWritingMode.value = false
         _uiState.value = NfcUiState.Stopped
     }
 
