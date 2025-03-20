@@ -1,6 +1,7 @@
 package com.ylabz.basepro.feature.nfc.ui
 
 import android.nfc.Tag
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.data.repository.nfc.NfcRepository
@@ -99,6 +100,7 @@ class NfcViewModel @Inject constructor(
                 nfcRepository.clearScannedData()
                 // Enter write mode.
                 isWritingMode = true
+                Log.d("NFC", "StartWrite event: isWritingMode set to true.")
                 _uiState.value = NfcUiState.Writing
             }
             NfcReadEvent.StopWrite -> {
@@ -119,16 +121,20 @@ class NfcViewModel @Inject constructor(
 
     // Called when a tag is detected in write mode.
     fun onNfcWriteTag(tag: Tag) {
+        Log.d("NFC", "onNfcWriteTag: Received tag for writing: ${tag.id.joinToString("") { "%02x".format(it) }}")
         viewModelScope.launch {
             _uiState.value = NfcUiState.Writing
             val success = nfcRepository.writeTag(tag, textToWrite)
             if (success) {
                 _uiState.value = NfcUiState.WriteSuccess("Write successful!")
+                Log.d("NFC", "onNfcWriteTag: Write successful!")
             } else {
                 _uiState.value = NfcUiState.WriteError("Failed to write to the tag.")
+                Log.e("NFC", "onNfcWriteTag: Write failed.")
             }
         }
     }
+
 
     // Methods to control writing mode.
     fun startWriting(text: String) {

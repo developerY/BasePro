@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 import android.nfc.Tag
+import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 
 
@@ -65,22 +66,47 @@ class NfcRepositoryImpl @Inject constructor(
     }
 
     override suspend fun writeTag(tag: Tag, text: String): Boolean {
-        val ndef = Ndef.get(tag) ?: return false  // Tag doesn't support NDEF.
+        val ndef = Ndef.get(tag)
+        if (ndef == null) {
+            Log.e("NFC", "writeTag: Tag does not support NDEF.")
+            return false
+        }
         try {
+            Log.d("NFC", "writeTag: Connecting to tag...")
             ndef.connect()
-            if (!ndef.isWritable) return false
-            // Create a text record with language code "en"
+
+            if (!ndef.isWritable) {
+                Log.e("NFC", "writeTag: Tag is not writable.")
+                return false
+            }
+
+            // Create an NDEF text record. Adjust language code ("en") as needed.
             val record = NdefRecord.createTextRecord("en", text)
             val message = NdefMessage(arrayOf(record))
-            if (ndef.maxSize < message.toByteArray().size) return false
+            val messageSize = message.toByteArray().size
+
+            Log.d("NFC", "writeTag: NDEF message size: $messageSize bytes. Tag max size: ${ndef.maxSize} bytes.")
+            if (ndef.maxSize < messageSize) {
+                Log.e("NFC", "writeTag: Not enough space on tag. Required: $messageSize, available: ${ndef.maxSize}.")
+                return false
+            }
+
+            Log.d("NFC", "writeTag: Writing NDEF message to tag...")
             ndef.writeNdefMessage(message)
+            Log.d("NFC", "writeTag: Write successful!")
             return true
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("NFC", "writeTag: Exception during writing: ${e.message}", e)
             return false
         } finally {
-            try { ndef.close() } catch (ignored: Exception) { }
+            try {
+                ndef.close()
+                Log.d("NFC", "writeTag: Tag connection closed.")
+            } catch (e: Exception) {
+                Log.w("NFC", "writeTag: Exception while closing tag: ${e.message}", e)
+            }
         }
     }
+
 }
 

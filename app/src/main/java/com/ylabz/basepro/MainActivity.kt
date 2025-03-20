@@ -11,6 +11,7 @@ import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -58,9 +59,12 @@ class MainActivity : ComponentActivity() {
                 @Suppress("DEPRECATION")
                 intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG)
             }
+            Log.d("NFC", "onNewIntent: Tag detected: ${tag?.id?.joinToString("") { "%02x".format(it) }}")
+            Log.d("NFC", "onNewIntent: isWritingMode = ${nfcViewModel.isWritingMode}")
 
             tag?.let {
                 if (nfcViewModel.isWritingMode) {
+                    Log.d("NFC", "onNewIntent: Writing mode active, calling onNfcWriteTag.")
                     nfcViewModel.onNfcWriteTag(it)
                 } else {
                     nfcViewModel.onNfcTagScanned(it)
