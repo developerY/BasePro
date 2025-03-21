@@ -26,6 +26,7 @@
             <option value="$PROJECT_DIR$/feature/home" />
             <option value="$PROJECT_DIR$/feature/listings" />
             <option value="$PROJECT_DIR$/feature/maps" />
+            <option value="$PROJECT_DIR$/feature/ml" />
             <option value="$PROJECT_DIR$/feature/nfc" />
             <option value="$PROJECT_DIR$/feature/places" />
             <option value="$PROJECT_DIR$/feature/qrscanner" />
