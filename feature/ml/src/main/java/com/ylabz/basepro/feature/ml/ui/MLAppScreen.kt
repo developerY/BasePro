@@ -1,5 +1,6 @@
 package com.ylabz.basepro.feature.ml.ui
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,5 +12,9 @@ fun MLAppScreen(
     //navTo: (String) -> Unit,
     //onEvent: (NfcReadEvent) -> Unit
 ) {
-    Text(text = "NFC App")
+    Column(
+        modifier = modifier
+    ) {
+        Text(text = "ML App")
+    }
 }

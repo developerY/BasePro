@@ -69,6 +69,12 @@ fun DrawerContent(onNavigate: (String) -> Unit) {
                 onClick = { onNavigate("places") }
             )
 
+            NavigationDrawerItem(
+                label = { Text("ML") },
+                selected = false,
+                onClick = { onNavigate("ml") }
+            )
+
             //health
             NavigationDrawerItem(
                 label = { Text("Health") },

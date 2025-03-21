@@ -41,6 +41,7 @@ const val ALARM = "alarm"
 const val BIKE = "bike"
 const val WEATHER = "weather"
 const val NFC = "nfc"
+const val ML = "ml"
 
 
 sealed class Screen(val route: String) {

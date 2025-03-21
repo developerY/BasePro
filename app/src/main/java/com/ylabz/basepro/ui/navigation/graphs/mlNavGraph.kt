@@ -7,7 +7,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.ylabz.basepro.core.ui.NFC
+import com.ylabz.basepro.core.ui.ML
 import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.feature.ml.ui.MLAppScreen
 import com.ylabz.basepro.feature.nfc.ui.NfcUiRoute
@@ -21,7 +21,7 @@ fun NavGraphBuilder.mlNavGraph(
 ) {
     navigation(
         startDestination = Screen.MLScreen.route,
-        route = NFC
+        route = ML
     ) {
         composable(
             Screen.MLScreen.route
@@ -32,7 +32,9 @@ fun NavGraphBuilder.mlNavGraph(
                 drawerState = drawerState,
                 navController = navController
             ) { paddingVals ->
-               MLAppScreen()
+               MLAppScreen(
+                   modifier = Modifier.padding(paddingVals)
+               )
             }
         }
     }
