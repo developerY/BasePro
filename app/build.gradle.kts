@@ -74,6 +74,7 @@ dependencies {
     implementation(project(":feature:bike"))
     implementation(project(":feature:weather"))
     implementation(project(":feature:nfc"))
+    implementation(project(":feature:ml"))
 
     // feature module  dependency
     implementation(project(":feature:settings"))  // feature module  dependency

@@ -58,6 +58,7 @@ sealed class Screen(val route: String) {
     data object BikeScreen : Screen("bike_screen")
     data object WeatherScreen : Screen("weather_screen")
     data object NfcScreen : Screen("nfc_screen")
+    data object MLScreen : Screen("ml_screen")
 }
 
 @Serializable
