@@ -16,5 +16,6 @@ fun MLAppScreen(
         modifier = modifier
     ) {
         Text(text = "ML App")
+        MLKitTextReaderApp()
     }
 }
