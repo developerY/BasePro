@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.ylabz.basepro.core.ui.BIKE
 import com.ylabz.basepro.core.ui.Screen
-import com.ylabz.basepro.feature.bike.ui.BikeUiRoute
+import com.ylabz.basepro.applications.bike.ui.BikeUiRoute
 import com.ylabz.basepro.ui.bar.AppScaffold
 import kotlinx.coroutines.CoroutineScope
 

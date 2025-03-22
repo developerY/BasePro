@@ -71,7 +71,7 @@ dependencies {
     implementation(project(":feature:settings"))
     implementation(project(":feature:shotime"))
     implementation(project(":feature:alarm"))
-    implementation(project(":feature:bike"))
+    implementation(project(":applications:bike"))
     implementation(project(":feature:weather"))
     implementation(project(":feature:nfc"))
     implementation(project(":feature:ml"))
