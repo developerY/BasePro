@@ -60,9 +60,9 @@ android {
 }
 
 dependencies {
+    // Core module dependencies
     implementation(project(":core:data"))
     implementation(project(":feature:listings"))
-    implementation(project(":feature:home"))
     implementation(project(":feature:camera"))
     implementation(project(":feature:places"))
     implementation(project(":feature:heatlh"))
@@ -71,10 +71,16 @@ dependencies {
     implementation(project(":feature:settings"))
     implementation(project(":feature:shotime"))
     implementation(project(":feature:alarm"))
-    implementation(project(":applications:bike"))
     implementation(project(":feature:weather"))
     implementation(project(":feature:nfc"))
     implementation(project(":feature:ml"))
+
+    // Application module dependencies
+    implementation(project(":applications:home"))
+    implementation(project(":applications:bike"))
+
+
+
 
     // feature module  dependency
     implementation(project(":feature:settings"))  // feature module  dependency

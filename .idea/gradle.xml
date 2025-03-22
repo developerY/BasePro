@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/applications" />
             <option value="$PROJECT_DIR$/applications/bike" />
+            <option value="$PROJECT_DIR$/applications/home" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core/data" />
             <option value="$PROJECT_DIR$/core/database" />
@@ -24,7 +25,6 @@
             <option value="$PROJECT_DIR$/feature/ble" />
             <option value="$PROJECT_DIR$/feature/camera" />
             <option value="$PROJECT_DIR$/feature/heatlh" />
-            <option value="$PROJECT_DIR$/feature/home" />
             <option value="$PROJECT_DIR$/feature/listings" />
             <option value="$PROJECT_DIR$/feature/maps" />
             <option value="$PROJECT_DIR$/feature/ml" />
