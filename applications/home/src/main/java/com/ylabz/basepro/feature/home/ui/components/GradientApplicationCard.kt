@@ -26,7 +26,8 @@ fun GradientApplicationCard(
     onLaunch: (() -> Unit)? = null  // optional launch callback
 ) {
     // Pick a random gradient once per card, then remember it
-    val pastelBrush = remember { randomPastelBrush() }
+    // Only generate once per card instance
+    val pastelBrush = remember { randomPastelFamilyBrush() }
 
     Card(
         modifier = Modifier
