@@ -77,9 +77,7 @@ dependencies {
     // Application module dependencies
     implementation(project(":applications:home"))
     implementation(project(":applications:bike"))
-    implementation(project(":applications:shotime"))
-
-
+    implementation(project(":applications:medtime"))
 
 
     // feature module  dependency
