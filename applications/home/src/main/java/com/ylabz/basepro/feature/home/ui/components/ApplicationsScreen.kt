@@ -37,17 +37,13 @@ fun ApplicationsScreen(
         itemsIndexed(apps) { index, app ->
             FlippableCard( front = {
                 GradientApplicationCard(
-                    title = app.name,
-                    description = "",
-                    icon = app.icon,                  // Pass the icon from the model
+                   appModel= app,             // Pass the icon from the model
                     navTo = null //  onLaunchApp(app)
                 )
             },
                 back = {
                     GradientApplicationCard(
-                        title = app.name,
-                        description = app.description,
-                        icon = app.icon,                  // Pass the icon from the model
+                        appModel= app,              // Pass the icon from the model
                         navTo = navTo //  onLaunchApp(app)
                     )
                 }
@@ -57,12 +53,12 @@ fun ApplicationsScreen(
 }
 
 val appList = listOf(
-    AppModel("Bike", "Electric Bike Application", Icons.Filled.ElectricBike),
-    AppModel("Camera", "Camera functionality", Icons.Filled.CameraAlt),
-    AppModel("Maps", "Maps functionality", Icons.Filled.Map),
-    AppModel("Places", "Places functionality", Icons.Filled.Place),
-    AppModel("Health", "Health functionality", Icons.Filled.HealthAndSafety),
-    AppModel("BLE", "Bluetooth Low Energy", Icons.Filled.Bluetooth)
+    AppModel("Bike", "Electric Bike Application", Icons.Filled.ElectricBike,""),
+    AppModel("Camera", "Camera functionality", Icons.Filled.CameraAlt,""),
+    AppModel("Maps", "Maps functionality", Icons.Filled.Map,""),
+    AppModel("Places", "Places functionality", Icons.Filled.Place,""),
+    AppModel("Health", "Health functionality", Icons.Filled.HealthAndSafety,""),
+    AppModel("BLE", "Bluetooth Low Energy", Icons.Filled.Bluetooth,"")
 )
 
 @Preview(showBackground = true)

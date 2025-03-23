@@ -1,5 +1,6 @@
 package com.ylabz.basepro.feature.home.ui.components
 
+import android.R.attr.description
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,9 +17,7 @@ import com.ylabz.basepro.feature.home.ui.components.colors.randomPastelFamilyBru
 
 @Composable
 fun GradientApplicationCard(
-    title: String,
-    description: String,
-    icon: ImageVector,
+    appModel: AppModel,
     navTo : ((String) -> Unit)? = null  // optional launch callback
 ) {
     // Pick a random gradient once per card, then remember it
@@ -43,7 +42,7 @@ fun GradientApplicationCard(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = icon,
+                    imageVector = appModel.icon,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(48.dp)
@@ -51,19 +50,19 @@ fun GradientApplicationCard(
                 Spacer(Modifier.width(16.dp))
                 Column {
                     Text(
-                        text = title,
+                        text = appModel.name,
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = description,
+                        text = appModel.description,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(Modifier.height(8.dp))
                     // Only show the button if onLaunch is provided
                     navTo?.let { safeOnLaunch  ->
-                        Button(onClick = {safeOnLaunch("bike")}) {
+                        Button(onClick = {safeOnLaunch(appModel.path)}) {
                             Text("Launch")
                         }
                     }

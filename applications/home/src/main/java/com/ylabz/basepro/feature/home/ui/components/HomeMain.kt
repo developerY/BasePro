@@ -27,7 +27,8 @@ import com.ylabz.basepro.feature.home.ui.HomeEvent
 data class AppModel(
     val name: String,
     val description: String,
-    val icon: ImageVector
+    val icon: ImageVector,
+    val path: String
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,8 +40,8 @@ fun HomeMainScreen(
 ) {
 
     val appList = listOf(
-        AppModel("Bike", "Electric Bike Application", Icons.Filled.ElectricBike),
-        AppModel("Shot", "Electric Bike Application", Icons.Filled.Medication),
+        AppModel("Bike", "Electric Bike Application", Icons.Filled.ElectricBike, "bike"),
+        AppModel("Shot", "Electric Bike Application", Icons.Filled.Medication, "shotime"),
     )
 
     Scaffold(
