@@ -32,7 +32,7 @@ fun ApplicationsScreen(
                     title = app.name,
                     description = "",
                     icon = app.icon,                  // Pass the icon from the model
-                    onLaunch = {} //  onLaunchApp(app)
+                    onLaunch = null //  onLaunchApp(app)
                 )
             },
                 back = {
