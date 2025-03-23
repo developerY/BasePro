@@ -20,6 +20,7 @@ import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthFeatureWithPermissions
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 import com.ylabz.basepro.feature.heatlh.ui.HealthViewModel
+import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
 import java.util.UUID
 
 @Composable
@@ -27,7 +28,8 @@ fun BikeUiRoute(
     modifier: Modifier = Modifier,
     navTo: (String) -> Unit,
     bikeViewModel: BikeViewModel = hiltViewModel(),
-    healthViewModel: HealthViewModel = hiltViewModel()
+    healthViewModel: HealthViewModel = hiltViewModel(),
+    nfcViewModel: NfcViewModel = hiltViewModel()
 ) {
 
     val healthUiState by healthViewModel.uiState.collectAsState()

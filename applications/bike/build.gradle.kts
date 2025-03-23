@@ -45,6 +45,8 @@ dependencies {
     implementation(project(":feature:weather"))
     implementation(project(":feature:heatlh"))
     implementation(project(":feature:qrscanner"))
+    implementation(project(":feature:nfc"))
+    implementation(project(":feature:ml"))
 
     // androidx-lifecycle-viewmodel-compose
     implementation(libs.lifecycle.viewmodel.compose)
