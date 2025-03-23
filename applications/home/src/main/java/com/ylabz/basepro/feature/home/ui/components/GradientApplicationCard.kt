@@ -4,26 +4,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.paint
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.feature.home.ui.components.colors.randomPastelFamilyBrush
 
 @Composable
 fun GradientApplicationCard(
     title: String,
     description: String,
     icon: ImageVector,
-    onLaunch: (() -> Unit)? = null  // optional launch callback
+    navTo : ((String) -> Unit)? = null  // optional launch callback
 ) {
     // Pick a random gradient once per card, then remember it
     // Only generate once per card instance
@@ -66,8 +62,8 @@ fun GradientApplicationCard(
                     )
                     Spacer(Modifier.height(8.dp))
                     // Only show the button if onLaunch is provided
-                    onLaunch?.let { safeOnLaunch ->
-                        Button(onClick = safeOnLaunch) {
+                    navTo?.let { safeOnLaunch  ->
+                        Button(onClick = {safeOnLaunch("bike")}) {
                             Text("Launch")
                         }
                     }

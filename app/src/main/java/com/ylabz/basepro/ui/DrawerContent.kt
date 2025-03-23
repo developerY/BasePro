@@ -89,19 +89,6 @@ fun DrawerContent(onNavigate: (String) -> Unit) {
                 onClick = { onNavigate("alarm") }
             )
 
-            //Shot Time
-            NavigationDrawerItem(
-                label = { Text("Shot Time") },
-                selected = false,
-                onClick = { onNavigate("shotime") }
-            )
-
-            //Bike
-            NavigationDrawerItem(
-                label = { Text("Bike") },
-                selected = false,
-                onClick = { onNavigate("bike") }
-            )
 
             //Weather
             NavigationDrawerItem(

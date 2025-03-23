@@ -69,7 +69,6 @@ dependencies {
     implementation(project(":feature:maps"))
     implementation(project(":feature:ble"))
     implementation(project(":feature:settings"))
-    implementation(project(":feature:shotime"))
     implementation(project(":feature:alarm"))
     implementation(project(":feature:weather"))
     implementation(project(":feature:nfc"))
@@ -78,6 +77,7 @@ dependencies {
     // Application module dependencies
     implementation(project(":applications:home"))
     implementation(project(":applications:bike"))
+    implementation(project(":applications:shotime"))
 
 
 

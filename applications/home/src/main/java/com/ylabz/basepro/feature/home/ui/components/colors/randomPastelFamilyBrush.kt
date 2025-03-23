@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.home.ui.components
+package com.ylabz.basepro.feature.home.ui.components.colors
 
 import androidx.compose.ui.graphics.Brush
 import kotlin.random.Random

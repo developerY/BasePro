@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.ElectricBike
 import androidx.compose.material.icons.filled.HealthAndSafety
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,26 +34,13 @@ data class AppModel(
 @Composable
 fun HomeMainScreen(
     modifier: Modifier = Modifier,
-    //data: List<AndFrameworks>,
     onEvent: (HomeEvent) -> Unit,
     navTo: (String) -> Unit,
 ) {
-    val frameworkList = listOf(
-        AndFrameworks("BLE", "Bluetooth Low Energy"),
-        AndFrameworks("Camera", "Camera functionality"),
-        AndFrameworks("Location", "Location services"),
-        AndFrameworks("Sensors", "Device Sensors"),
-        AndFrameworks("Contacts", "Contacts access")
-    )
-
 
     val appList = listOf(
         AppModel("Bike", "Electric Bike Application", Icons.Filled.ElectricBike),
-        AppModel("Camera", "Camera functionality", Icons.Filled.CameraAlt),
-        AppModel("Maps", "Maps functionality", Icons.Filled.Map),
-        AppModel("Places", "Places functionality", Icons.Filled.Place),
-        AppModel("Health", "Health functionality", Icons.Filled.HealthAndSafety),
-        AppModel("BLE", "Bluetooth Low Energy", Icons.Filled.Bluetooth)
+        AppModel("Shot", "Electric Bike Application", Icons.Filled.Medication),
     )
 
     Scaffold(
@@ -64,44 +52,10 @@ fun HomeMainScreen(
             Text(
                 modifier = Modifier.padding(paddingValues), text = "Android AndFrameworks"
             )
-
-            Button(onClick = {
-                navTo("photo")
-            }) {
-                Text(text = "Navigate to Camera Screen")
-            }
-
             ApplicationsScreen(
                 appList,
-                {}
+                navTo,
             )
-
-            /*Button(onClick = {
-                navTo("maps")
-            }) {
-                Text(text = "Navigate to Maps Screen")
-            }
-
-            Button(onClick = {
-                navTo("places")
-            }) {
-                Text(text = "Navigate to Places Screen")
-            }
-
-            Button(onClick = {
-                navTo("health")
-            }) {
-                Text(text = "Navigate to Health Screen")
-            }
-
-            Button(onClick = {
-                navTo("ble")
-            }) {
-                Text(text = "Navigate to BLE Screen")
-            }*/
-
-
-
         }
     }
 }

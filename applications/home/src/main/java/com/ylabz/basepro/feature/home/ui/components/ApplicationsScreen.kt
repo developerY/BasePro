@@ -7,8 +7,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bluetooth
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.ElectricBike
+import androidx.compose.material.icons.filled.HealthAndSafety
+import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 
@@ -17,7 +25,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ApplicationsScreen(
     apps: List<AppModel>,          // your data model for each app
-    onLaunchApp: (AppModel) -> Unit
+    navTo : (String) -> Unit,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 180.dp),
@@ -32,7 +40,7 @@ fun ApplicationsScreen(
                     title = app.name,
                     description = "",
                     icon = app.icon,                  // Pass the icon from the model
-                    onLaunch = null //  onLaunchApp(app)
+                    navTo = null //  onLaunchApp(app)
                 )
             },
                 back = {
@@ -40,11 +48,26 @@ fun ApplicationsScreen(
                         title = app.name,
                         description = app.description,
                         icon = app.icon,                  // Pass the icon from the model
-                        onLaunch = {} //  onLaunchApp(app)
+                        navTo = navTo //  onLaunchApp(app)
                     )
                 }
             )
         }
     }
+}
+
+val appList = listOf(
+    AppModel("Bike", "Electric Bike Application", Icons.Filled.ElectricBike),
+    AppModel("Camera", "Camera functionality", Icons.Filled.CameraAlt),
+    AppModel("Maps", "Maps functionality", Icons.Filled.Map),
+    AppModel("Places", "Places functionality", Icons.Filled.Place),
+    AppModel("Health", "Health functionality", Icons.Filled.HealthAndSafety),
+    AppModel("BLE", "Bluetooth Low Energy", Icons.Filled.Bluetooth)
+)
+
+@Preview(showBackground = true)
+@Composable
+fun ApplicationsScreenPreview() {
+    ApplicationsScreen(apps = appList, navTo = {})
 }
 
