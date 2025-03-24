@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.nfc.ui.components
+package com.ylabz.basepro.feature.nfc.ui.components.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.material3.Scaffold
@@ -18,18 +18,8 @@ import androidx.compose.material.icons.filled.Save
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.tooling.preview.Preview
-import com.ylabz.basepro.feature.nfc.ui.NfcReadEvent
+import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
-import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcWriteScreen
-import com.ylabz.basepro.feature.nfc.ui.components.screens.ErrorScreen
-import com.ylabz.basepro.feature.nfc.ui.components.screens.LoadingScreen
-import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcDisabledScreen
-import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcNotSupportedScreen
-import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcScanScreen
-import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcSettingsScreen
-import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcStatusBar
-import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcStoppedScreen
-import com.ylabz.basepro.feature.nfc.ui.components.screens.TagScanned
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,7 +27,7 @@ fun NfcAppScreen(
     modifier: Modifier = Modifier,
     uiState: NfcUiState,
     navTo: (String) -> Unit,
-    onEvent: (NfcReadEvent) -> Unit
+    onEvent: (NfcRwEvent) -> Unit
 ) {
     var selectedTab by remember { mutableStateOf("scan") }
 
@@ -84,17 +74,17 @@ fun NfcAppScreen(
                         when (uiState) {
                             is NfcUiState.NfcNotSupported -> {
                                 NfcNotSupportedScreen(
-                                    onRetry = { onEvent(NfcReadEvent.Retry) }
+                                    onRetry = { onEvent(NfcRwEvent.Retry) }
                                 )
                             }
                             is NfcUiState.NfcDisabled -> {
                                 NfcDisabledScreen(
-                                    onEnableNfc = { onEvent(NfcReadEvent.EnableNfc) }
+                                    onEnableNfc = { onEvent(NfcRwEvent.EnableNfc) }
                                 )
                             }
                             is NfcUiState.Stopped -> {
                                 NfcStoppedScreen(
-                                    onEvent = { onEvent(NfcReadEvent.StartScan) }
+                                    onEvent = { onEvent(NfcRwEvent.StartScan) }
                                 )
                             }
                             is NfcUiState.WaitingForTag -> {
@@ -115,7 +105,7 @@ fun NfcAppScreen(
                             is NfcUiState.Error -> {
                                 ErrorScreen(
                                     message = uiState.message,
-                                    onRetry = { onEvent(NfcReadEvent.Retry) }
+                                    onRetry = { onEvent(NfcRwEvent.Retry) }
                                 )
                             }
                             is NfcUiState.Writing,
@@ -159,7 +149,7 @@ fun NfcAppScreenPreview() {
     // Sample data for the preview
     val sampleUiState = NfcUiState.Stopped // or any other state like NfcUiState.TagScanned("Sample Tag Info")
     val sampleNavTo: (String) -> Unit = { route -> println("Navigating to $route") }
-    val sampleOnEvent: (NfcReadEvent) -> Unit = { event -> println("Event: $event") }
+    val sampleOnEvent: (NfcRwEvent) -> Unit = { event -> println("Event: $event") }
 
     // Use a Box to provide a background
     Box(

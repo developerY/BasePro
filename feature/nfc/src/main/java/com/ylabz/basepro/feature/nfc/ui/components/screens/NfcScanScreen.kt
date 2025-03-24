@@ -4,8 +4,6 @@ import android.app.Activity
 import android.app.PendingIntent
 import android.content.Intent
 import android.nfc.NfcAdapter
-import android.nfc.NfcEvent
-import android.nfc.Tag
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,24 +14,19 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import com.ylabz.basepro.feature.nfc.ui.NfcReadEvent
+import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
 import androidx.compose.ui.Modifier
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 
 @Composable
 internal fun NfcScanScreen(
     state: NfcUiState.WaitingForTag,  // Represents that scanning is active
-    onEvent: (NfcReadEvent) -> Unit
+    onEvent: (NfcRwEvent) -> Unit
 ) {
     Log.d("NfcScanScreen", "Scanning active: $state")
 
@@ -57,7 +50,7 @@ internal fun NfcScanScreen(
     ) {
         Text("Scanning... Please tap an NFC tag.")
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { onEvent(NfcReadEvent.StopScan) }) {
+        Button(onClick = { onEvent(NfcRwEvent.StopScan) }) {
             Text("Stop Scan")
         }
     }

@@ -18,6 +18,10 @@ import com.ylabz.basepro.applications.bike.ui.BikeEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 import com.ylabz.basepro.feature.heatlh.ui.components.HealthStartScreen
+import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
+import com.ylabz.basepro.feature.nfc.ui.NfcUiState
+import com.ylabz.basepro.feature.nfc.ui.components.NfcScanScreen
+import com.ylabz.basepro.feature.nfc.ui.components.screens.TagScanned
 import com.ylabz.basepro.feature.qrscanner.ui.QRCodeScannerScreen
 import java.util.UUID
 
@@ -27,11 +31,13 @@ fun BikeSettingsScreen(
     modifier: Modifier = Modifier,
     bundledState: HealthScreenState,
     healthUiState: HealthUiState,
+    nfcUiState: NfcUiState,
     sessionsList : List<ExerciseSessionRecord>,  // Assuming your HealthUiState.Success contains healthData.
     permissionsLauncher: (Set<String>) -> Unit,
     settings: Map<String, List<String>>, // Each setting now has a list of options
     onBikeEvent: (BikeEvent) -> Unit,
     onHealthEvent: (HealthEvent) -> Unit,
+    nfcEvent: (NfcRwEvent) -> Unit,
     navTo: (String) -> Unit // Navigation callback for FAB
 ) {
     Scaffold(
@@ -120,6 +126,12 @@ fun BikeSettingsScreen(
                 Text("Delete All Entries")
             }
 
+            NfcScanScreen(
+                uiState = nfcUiState,
+                onEvent = nfcEvent,
+                navTo = navTo
+            )
+
 
             HealthStartScreen(
                 modifier = modifier,
@@ -154,13 +166,19 @@ fun BikeSettingsScreenPreview() {
         backgroundReadGranted = true
     )
     val healthUiState = HealthUiState.Success(listOf())
+    val nfcUiState = NfcUiState.NfcNotSupported
     val sessionsList = listOf<ExerciseSessionRecord>()
     BikeSettingsScreen(
         bundledState = bundledState,
         healthUiState = healthUiState,
+        nfcUiState = nfcUiState,
         sessionsList = sessionsList,
         permissionsLauncher = { },
-        settings = settings, onBikeEvent = { }, onHealthEvent = { }, navTo = { })
+        settings = settings,
+        onBikeEvent = { },
+        onHealthEvent = { },
+        nfcEvent = {},
+        navTo = { })
 }
 
 

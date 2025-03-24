@@ -25,6 +25,7 @@ import com.ylabz.basepro.core.model.bike.BikeScreenState
 import com.ylabz.basepro.core.model.health.HealthScreenState
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
+import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,6 +34,7 @@ fun BikeAppScreen(
     modifier: Modifier = Modifier,
     healthPermState: HealthScreenState,
     healthState: HealthUiState,
+    nfcUiState: NfcUiState,
     sessionsList : List<ExerciseSessionRecord>,  // Assuming your HealthUiState.Success contains healthData.
     onPermissionsLaunch: (Set<String>) -> Unit,
     backgroundReadPermissions: Set<String>,
@@ -122,11 +124,13 @@ fun BikeAppScreen(
                         modifier = modifier,
                         bundledState = healthPermState,
                         healthUiState = healthState,
+                        nfcUiState = nfcUiState,
                         sessionsList = sessionsList,  // Assuming your HealthUiState.Success contains healthData.
                         permissionsLauncher = onPermissionsLaunch,
                         settings = sampleSettings,
                         onBikeEvent = onBikeEvent,
                         onHealthEvent = onHealthEvent,
+                        nfcEvent = {},
                         navTo = navTo // No-op for preview
                     )
                 }
@@ -184,6 +188,7 @@ fun BikeAppScreenPreview() {
     BikeAppScreen(
         healthPermState = healthPermState,
         healthState = healthState,
+        nfcUiState = NfcUiState.WaitingForTag,
         sessionsList = emptyList(),
         onPermissionsLaunch = {},
         backgroundReadPermissions = emptySet(),

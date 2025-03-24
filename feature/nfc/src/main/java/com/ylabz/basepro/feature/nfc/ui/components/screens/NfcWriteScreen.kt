@@ -2,7 +2,6 @@ package com.ylabz.basepro.feature.nfc.ui.components.screens
 
 import android.app.Activity
 import android.nfc.NfcAdapter
-import android.nfc.NfcEvent
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,14 +25,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
-import com.ylabz.basepro.feature.nfc.ui.NfcReadEvent
+import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 
 @Composable
 fun NfcWriteScreen(
     state: NfcUiState,
-    onEvent: (NfcReadEvent) -> Unit
+    onEvent: (NfcRwEvent) -> Unit
 ) {
     // We'll use a local text state to hold the value to write.
     // In a real app, you might drive this from your ViewModel instead.
@@ -76,7 +74,7 @@ fun NfcWriteScreen(
             value = text,
             onValueChange = { newText ->
                 text = newText
-                onEvent(NfcReadEvent.UpdateWriteText(newText))
+                onEvent(NfcRwEvent.UpdateWriteText(newText))
             },
             label = { Text("Text to Write") },
             singleLine = true,
@@ -86,11 +84,11 @@ fun NfcWriteScreen(
         if (isWriting) {
             Text("Approach an NFC tag to write the above text.")
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { onEvent(NfcReadEvent.StopWrite) }) {
+            Button(onClick = { onEvent(NfcRwEvent.StopWrite) }) {
                 Text("Stop Write")
             }
         } else {
-            Button(onClick = { onEvent(NfcReadEvent.StartWrite) }) {
+            Button(onClick = { onEvent(NfcRwEvent.StartWrite) }) {
                 Text("Start Write")
             }
         }

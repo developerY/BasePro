@@ -6,7 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ylabz.basepro.feature.nfc.ui.components.NfcAppScreen
+import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcAppScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.ErrorScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.LoadingScreen
 
@@ -23,7 +23,7 @@ fun NfcUiRoute(
         is NfcUiState.Error -> {
             ErrorScreen(
                 message = (uiState as NfcUiState.Error).message,
-                onRetry = { viewModel.onEvent(NfcReadEvent.Retry) }
+                onRetry = { viewModel.onEvent(NfcRwEvent.Retry) }
             )
         }
         is NfcUiState.Loading -> {

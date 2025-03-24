@@ -31,7 +31,7 @@ fun BikeUiRoute(
     healthViewModel: HealthViewModel = hiltViewModel(),
     nfcViewModel: NfcViewModel = hiltViewModel()
 ) {
-
+    val nfcUiState by nfcViewModel.uiState.collectAsState()
     val healthUiState by healthViewModel.uiState.collectAsState()
     // Gather state from the ViewModel.
     val isHealthConnectAvailable = healthViewModel.healthSessionManager.availability.value == HealthConnectClient.SDK_AVAILABLE
@@ -128,6 +128,7 @@ fun BikeUiRoute(
                 modifier = modifier,
                 healthPermState = bundledState,
                 healthState = healthState,
+                nfcUiState = nfcUiState,
                 sessionsList = (healthUiState as HealthUiState.Success).healthData,
                 onPermissionsLaunch = { values ->
                     permissionsLauncher.launch(values)

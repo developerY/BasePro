@@ -11,12 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.feature.nfc.ui.NfcReadEvent
+import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
 
 // NFC available but not scanning yet.
 @Composable
 fun NfcStoppedScreen(
-    onEvent: (NfcReadEvent) -> Unit
+    onEvent: (NfcRwEvent) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -25,7 +25,7 @@ fun NfcStoppedScreen(
     ) {
         Text("NFC is ready. Tap the button to start scanning.")
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { onEvent(NfcReadEvent.StartScan) }) {
+        Button(onClick = { onEvent(NfcRwEvent.StartScan) }) {
             Text("Start Scan")
         }
     }

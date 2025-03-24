@@ -67,9 +67,9 @@ class NfcViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: NfcReadEvent) {
+    fun onEvent(event: NfcRwEvent) {
         when (event) {
-            NfcReadEvent.StartScan -> {
+            NfcRwEvent.StartScan -> {
                 scanningJob?.cancel()
                 nfcRepository.clearScannedData()
                 _uiState.value = NfcUiState.Stopped
@@ -80,34 +80,34 @@ class NfcViewModel @Inject constructor(
                     }
                 }
             }
-            NfcReadEvent.Retry -> {
+            NfcRwEvent.Retry -> {
                 checkNfcCapabilities()
                 if (_uiState.value is NfcUiState.Stopped) {
                     startScanning()
                 }
             }
-            NfcReadEvent.EnableNfc -> {
+            NfcRwEvent.EnableNfc -> {
                 checkNfcCapabilities()
             }
-            NfcReadEvent.StopScan -> {
+            NfcRwEvent.StopScan -> {
                 scanningJob?.cancel()
                 _uiState.value = NfcUiState.Stopped
                 nfcRepository.clearScannedData()
             }
-            NfcReadEvent.StartWrite -> {
+            NfcRwEvent.StartWrite -> {
                 scanningJob?.cancel()
                 nfcRepository.clearScannedData()
                 //_isWritingMode.value = true
                 Log.d("NFC", "StartWrite event: isWritingMode set to true.")
                 _uiState.value = NfcUiState.Writing
             }
-            NfcReadEvent.StopWrite -> {
+            NfcRwEvent.StopWrite -> {
                 scanningJob?.cancel()
                 _isWritingMode.value = false
                 _uiState.value = NfcUiState.Stopped
                 nfcRepository.clearScannedData()
             }
-            is NfcReadEvent.UpdateWriteText -> {
+            is NfcRwEvent.UpdateWriteText -> {
                 updateTextToWrite(event.text)
             }
         }
