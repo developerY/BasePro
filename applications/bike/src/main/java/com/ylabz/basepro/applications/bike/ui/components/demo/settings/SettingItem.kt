@@ -99,6 +99,11 @@ fun FancySettingsScreen(
             }
         }
     }
+    BikeConfigurationExpandable(
+        expanded = false,
+        onExpandToggle = {},
+        onAdvancedClick = {}
+    )
 }
 
 // A card at the top that shows user/bike info

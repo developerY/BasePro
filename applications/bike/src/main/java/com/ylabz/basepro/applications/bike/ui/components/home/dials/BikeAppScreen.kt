@@ -21,6 +21,7 @@ import com.ylabz.basepro.applications.bike.ui.components.home.BikeDashboardConte
 import com.ylabz.basepro.applications.bike.ui.components.path.BikePathScreen
 import com.ylabz.basepro.settings.ui.components.BikeSettingsScreen
 import androidx.health.connect.client.records.ExerciseSessionRecord
+import com.ylabz.basepro.applications.bike.ui.components.demo.settings.FancySettingsScreen
 import com.ylabz.basepro.core.model.bike.BikeScreenState
 import com.ylabz.basepro.core.model.health.HealthScreenState
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
@@ -120,7 +121,13 @@ fun BikeAppScreen(
                     )
                 }
                 "settings" -> {
-                    BikeSettingsScreen(
+                    FancySettingsScreen(
+                        onAppPreferencesClick = {},// navTo("app_preferences") },
+                        onBikeConfigurationClick = {},// navTo("bike_configuration") },
+                        onProfileClick = {},// navTo("profile") },
+                        onAboutClick = {},// navTo("about") }
+                    )
+                    /*BikeSettingsScreen(
                         modifier = modifier,
                         bundledState = healthPermState,
                         healthUiState = healthState,
@@ -132,7 +139,7 @@ fun BikeAppScreen(
                         onHealthEvent = onHealthEvent,
                         nfcEvent = {},
                         navTo = navTo // No-op for preview
-                    )
+                    )*/
                 }
                 "startRide" -> {
                     // Start Ride screen placeholder.
