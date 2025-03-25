@@ -208,3 +208,10 @@ fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
     }
 }
 
+// Preview
+@Preview
+@Composable
+fun LoadingScreenPreview() {
+    LoadingScreen()
+}
+
