@@ -16,7 +16,10 @@ import com.ylabz.basepro.applications.bike.ui.components.settings.GearingScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(navController: NavController) {
+fun SettingsScreen(
+    navTo : (String) -> Unit,
+    // navController: NavController
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -34,7 +37,7 @@ fun SettingsScreen(navController: NavController) {
                 title = "App Preferences",
                 onClick = {
                     // Navigate to a separate screen (AppPreferencesScreen)
-                    navController.navigate("appPreferences")
+                    navTo("appPreferences")
                 }
             )
 
@@ -43,7 +46,7 @@ fun SettingsScreen(navController: NavController) {
                 title = "Bike Configuration",
                 onClick = {
                     // Navigate to a separate screen (BikeConfigurationScreen)
-                    navController.navigate("bikeConfiguration")
+                    navTo("bikeConfiguration")
                 }
             )
         }
@@ -117,5 +120,5 @@ fun BikeConfigurationScreen(navController: NavController) {
 @Preview
 @Composable
 fun GearingScreenPreview() {
-    SettingsScreen(navController = NavController(LocalContext.current))
+    SettingsScreen(navTo = {})
 }

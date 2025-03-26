@@ -93,17 +93,21 @@ fun FancySettingsScreen(
                 )
             }
 
+            item {
+                BikeConfigurationExpandable(
+                    expanded = false,
+                    onExpandToggle = {},
+                    onAdvancedClick = {}
+                )
+            }
+
             // 3) List out each setting item as a card or row
             items(settingsItems) { item ->
                 SettingCard(item)
             }
+
         }
     }
-    BikeConfigurationExpandable(
-        expanded = false,
-        onExpandToggle = {},
-        onAdvancedClick = {}
-    )
 }
 
 // A card at the top that shows user/bike info
