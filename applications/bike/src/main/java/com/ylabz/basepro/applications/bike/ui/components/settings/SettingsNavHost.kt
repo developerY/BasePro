@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.Modifier
+import com.ylabz.basepro.applications.bike.ui.components.settings.screens.PerformanceTuningScreen
 
 
 sealed class SettingsRoute(val route: String) {
@@ -49,9 +50,10 @@ fun SettingsNavHost(
 
         // 2) Advanced Bike Screen
         composable(SettingsRoute.AdvancedBike.route) {
-            GearingScreen(
-                modifier = modifier,
+            PerformanceTuningScreen(
+                modifier = modifier
             )
+
             /*AdvancedBikeSettingsScreen(
                 onBackClick = {
                     // Pop back to the main settings
