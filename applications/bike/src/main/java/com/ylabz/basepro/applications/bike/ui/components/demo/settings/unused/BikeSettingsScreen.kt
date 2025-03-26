@@ -1,8 +1,7 @@
-package com.ylabz.basepro.applications.bike.ui.components.demo
+package com.ylabz.basepro.applications.bike.ui.components.demo.settings.unused
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,8 +11,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
@@ -36,27 +33,11 @@ import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.nfc.ui.components.NfcScanScreen
 import com.ylabz.basepro.feature.qrscanner.ui.QRCodeScannerScreen
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.BikeScooter
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.records.ExerciseSessionRecord
-import com.ylabz.basepro.settings.ui.components.BikeSettingsScreen
+import com.ylabz.basepro.applications.bike.ui.components.demo.ExpandableSection
 import com.ylabz.basepro.settings.ui.components.ErrorScreen
 import com.ylabz.basepro.settings.ui.components.LoadingScreen
 
@@ -188,6 +169,7 @@ fun BikeSettingsScreenEx(
                     is HealthUiState.Loading -> {
                         LoadingScreen()
                     }
+
                     is HealthUiState.Error -> {
                         ErrorScreen(
                             errorMessage = healthUiState.message,
@@ -197,6 +179,7 @@ fun BikeSettingsScreenEx(
                             }
                         )
                     }
+
                     is HealthUiState.Success -> {
                         HealthStartScreen(
                             modifier = modifier,

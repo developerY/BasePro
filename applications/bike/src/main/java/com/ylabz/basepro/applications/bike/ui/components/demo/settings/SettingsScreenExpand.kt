@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
+import com.ylabz.basepro.applications.bike.ui.components.demo.settings.SettingsScreenEx
 
 
 // ---------------------------------------------
@@ -311,13 +311,6 @@ fun QrExpandableEx(
         }
     }
 }
-
-@Preview(showSystemUi = true)
-@Composable
-fun PreviewSettingsScreenEx() {
-    SettingsScreenEx(navTo = {})
-}
-
 
 // ---------------------------------------------
 // PROFILE / BIKE INFO CARD

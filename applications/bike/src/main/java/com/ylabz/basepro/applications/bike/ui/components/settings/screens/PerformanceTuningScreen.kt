@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -29,22 +31,31 @@ import com.ylabz.basepro.feature.nfc.ui.components.screens.TagScanned
 import com.ylabz.basepro.feature.qrscanner.ui.QRCodeScannerScreen
 import java.util.UUID
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PerformanceTuningScreen(
     modifier: Modifier = Modifier
 ) {
-    // Track which tab is selected
     var selectedTab by remember { mutableStateOf(0) }
     val tabTitles = listOf("Suspension", "Gearing", "Brakes")
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Performance Tuning") })
+            TopAppBar(
+                title = { Text("Performance Tuning") },
+                navigationIcon = {
+                    IconButton(onClick = { } ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                }
+            )
         }
     ) { innerPadding ->
         Column(modifier.padding(innerPadding)) {
-            // TabRow
             TabRow(selectedTabIndex = selectedTab) {
                 tabTitles.forEachIndexed { index, title ->
                     Tab(
@@ -55,7 +66,6 @@ fun PerformanceTuningScreen(
                 }
             }
 
-            // Show the composable for the selected tab
             when (selectedTab) {
                 0 -> SuspensionScreen()
                 1 -> GearingScreen()
@@ -64,6 +74,7 @@ fun PerformanceTuningScreen(
         }
     }
 }
+
 
 // Preview
 @Preview
