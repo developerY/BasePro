@@ -129,6 +129,7 @@ fun BikeAppScreen(
                     )*/
 
                     SettingsNavHost(
+                        modifier = Modifier.padding(innerPadding),
                         onBack = {}
                     )
 

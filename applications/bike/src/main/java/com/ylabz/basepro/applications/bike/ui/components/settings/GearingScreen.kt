@@ -37,14 +37,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun GearingScreen() {
+fun GearingScreen(
+    modifier: Modifier = Modifier
+) {
     // UI state
     var autoShiftingEnabled by remember { mutableStateOf(true) }
     var targetCadence by remember { mutableStateOf(85f) }
 
     // Optional gradient background
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(

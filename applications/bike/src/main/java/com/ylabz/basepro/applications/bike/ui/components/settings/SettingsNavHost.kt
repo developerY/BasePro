@@ -28,6 +28,7 @@ sealed class SettingsRoute(val route: String) {
 
 @Composable
 fun SettingsNavHost(
+    modifier: Modifier = Modifier,
     onBack: () -> Unit  // If you need to communicate “go back” to the parent
 ) {
     // Local NavController just for settings
@@ -48,12 +49,15 @@ fun SettingsNavHost(
 
         // 2) Advanced Bike Screen
         composable(SettingsRoute.AdvancedBike.route) {
-            AdvancedBikeSettingsScreen(
+            GearingScreen(
+                modifier = modifier,
+            )
+            /*AdvancedBikeSettingsScreen(
                 onBackClick = {
                     // Pop back to the main settings
                     //navController.popBackStack()
                 }
-            )
+            )*/
         }
     }
 }
