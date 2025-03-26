@@ -24,6 +24,7 @@ import androidx.health.connect.client.records.ExerciseSessionRecord
 import com.ylabz.basepro.applications.bike.ui.components.demo.settings.FancySettingsScreen
 import com.ylabz.basepro.applications.bike.ui.components.demo.settings.SettingsScreen
 import com.ylabz.basepro.applications.bike.ui.components.demo.settings.SettingsScreenEx
+import com.ylabz.basepro.applications.bike.ui.components.settings.SettingsNavHost
 import com.ylabz.basepro.core.model.bike.BikeScreenState
 import com.ylabz.basepro.core.model.health.HealthScreenState
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
@@ -123,9 +124,14 @@ fun BikeAppScreen(
                     )
                 }
                 "settings" -> {
-                    SettingsScreenEx(
+                    /*SettingsScreenEx(
                         navTo = navTo
+                    )*/
+
+                    SettingsNavHost(
+                        onBack = {}
                     )
+
                     /*FancySettingsScreen(
                         onAppPreferencesClick = {},// navTo("app_preferences") },
                         onBikeConfigurationClick = {},// navTo("bike_configuration") },

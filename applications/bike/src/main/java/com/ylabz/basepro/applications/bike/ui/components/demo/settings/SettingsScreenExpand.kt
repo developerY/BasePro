@@ -16,6 +16,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
+
 
 // ---------------------------------------------
 // MAIN SETTINGS SCREEN
@@ -29,6 +31,8 @@ fun SettingsScreenEx(
     var bikeConfigExpanded by remember { mutableStateOf(false) }
     var appPreferencesExpanded by remember { mutableStateOf(false) }
     var aboutExpanded by remember { mutableStateOf(false) }
+
+    val navController = rememberNavController()
 
     Scaffold(
         topBar = {
@@ -67,7 +71,7 @@ fun SettingsScreenEx(
                 BikeConfigurationEx(
                     expanded = bikeConfigExpanded,
                     onExpandToggle = { bikeConfigExpanded = !bikeConfigExpanded },
-                    onAdvancedClick = {}
+                    navTo = navTo
                 )
             }
 
@@ -147,7 +151,7 @@ fun ProfileBikeInfoCardEx(
 fun BikeConfigurationEx(
     expanded: Boolean,
     onExpandToggle: () -> Unit,
-    onAdvancedClick: () -> Unit
+    navTo: (String) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -209,7 +213,7 @@ fun BikeConfigurationEx(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Button to advanced screen
-                    Button(onClick = onAdvancedClick) {
+                    Button(onClick = {navTo("settings_bike_advanced")}) {
                         Text("Advanced Bike Settings")
                     }
                 }
