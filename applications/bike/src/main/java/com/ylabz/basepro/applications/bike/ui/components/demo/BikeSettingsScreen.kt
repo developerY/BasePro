@@ -56,9 +56,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.records.ExerciseSessionRecord
+import com.ylabz.basepro.settings.ui.components.BikeSettingsScreen
+import com.ylabz.basepro.settings.ui.components.ErrorScreen
+import com.ylabz.basepro.settings.ui.components.LoadingScreen
 
 @Composable
-fun BikeSettingsScreen(
+fun BikeSettingsScreenEx(
     modifier: Modifier = Modifier,
     bundledState: HealthScreenState,
     healthUiState: HealthUiState,
@@ -190,7 +193,7 @@ fun BikeSettingsScreen(
                             errorMessage = healthUiState.message,
                             onRetry = {
                                 // For example, re-check permissions or re-load data
-                                onHealthEvent(HealthEvent.CheckPermissions)
+                                //onHealthEvent(HealthEvent.CheckPermissions)
                             }
                         )
                     }
@@ -204,6 +207,9 @@ fun BikeSettingsScreen(
                             navTo = navTo
                         )
                     }
+
+                    is HealthUiState.PermissionsRequired -> TODO()
+                    HealthUiState.Uninitialized -> TODO()
                 }
             }
 
@@ -226,6 +232,49 @@ fun BikeSettingsScreen(
 private fun NfcUiState.toReadableString(): String = when (this) {
     NfcUiState.NfcNotSupported -> "NFC Not Supported"
     NfcUiState.NfcDisabled -> "NFC Disabled"
-    NfcUiState.NfcEnabled -> "NFC Enabled"
+   // NfcUiState.NfcEnabled -> "NFC Enabled"
     // etc.
+    is NfcUiState.Error -> TODO()
+    NfcUiState.Loading -> TODO()
+    NfcUiState.Stopped -> TODO()
+    is NfcUiState.TagScanned -> TODO()
+    NfcUiState.WaitingForTag -> TODO()
+    is NfcUiState.WriteError -> TODO()
+    is NfcUiState.WriteSuccess -> TODO()
+    NfcUiState.Writing -> TODO()
 }
+
+
+@Preview
+@Composable
+fun BikeSettingsScreenPreview() {
+    val settings = mapOf(
+        "Setting 1" to listOf("Option A", "Option B", "Option C"),
+        "Setting 2" to listOf("Option X", "Option Y")
+    )
+
+    val bundledState = HealthScreenState(
+        isHealthConnectAvailable = true,
+        permissionsGranted = true,
+        permissions = emptySet(),
+        backgroundReadPermissions = emptySet(),
+        backgroundReadAvailable = true,
+        backgroundReadGranted = true
+    )
+    val healthUiState = HealthUiState.Success(listOf())
+    val nfcUiState = NfcUiState.NfcNotSupported
+    val sessionsList = listOf<ExerciseSessionRecord>()
+    BikeSettingsScreenEx(
+        modifier = Modifier,
+        bundledState = bundledState,
+        healthUiState = healthUiState,
+        nfcUiState = nfcUiState,
+        sessionsList = sessionsList,
+        permissionsLauncher = { },
+        settings = settings,
+        onBikeEvent = { },
+        onHealthEvent = { },
+        nfcEvent = {},
+        navTo = { })
+}
+
