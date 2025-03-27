@@ -17,6 +17,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.ui.components.demo.settings.SettingsScreenEx
+import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
+import com.ylabz.basepro.feature.nfc.ui.NfcUiState
+import com.ylabz.basepro.feature.nfc.ui.components.NfcScanScreen
 
 
 // ---------------------------------------------
@@ -25,6 +28,9 @@ import com.ylabz.basepro.applications.bike.ui.components.demo.settings.SettingsS
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreenEx(
+    modifier: Modifier = Modifier,
+    nfcUiState : NfcUiState,
+    nfcEvent : (NfcRwEvent) -> Unit,
     navToSettings: (String) -> Unit,
     navTo: (String) -> Unit
 ) {
@@ -102,6 +108,8 @@ fun SettingsScreenEx(
             // 6) NFC Expandable
             item {
                 NfcExpandableEx(
+                    nfcUiState = nfcUiState,
+                    nfcEvent = {},
                     expanded = nfcExpanded,
                     onExpandToggle = { nfcExpanded = !nfcExpanded },
                     navTo = navTo
@@ -139,6 +147,8 @@ fun SettingsScreenEx(
 // ---------------------------------------------
 @Composable
 fun NfcExpandableEx(
+    nfcUiState: NfcUiState,
+    nfcEvent: (NfcRwEvent) -> Unit,
     expanded: Boolean,
     onExpandToggle: () -> Unit,
     navTo: (String) -> Unit
@@ -178,22 +188,13 @@ fun NfcExpandableEx(
             if (expanded) {
                 HorizontalDivider()
                 Column(modifier = Modifier.padding(16.dp)) {
-                    // TODO: Insert your real NFC UI or pass in your nfcUiState, nfcEvent, etc.
-                    // Example:
-                    Text(text = "NFC Status: (Placeholder)")
-
                     Spacer(modifier = Modifier.height(8.dp))
+                    NfcScanScreen(
+                        uiState = nfcUiState,
+                        onEvent = nfcEvent,
+                        navTo = navTo
+                    )
 
-                    Button(
-                        onClick = { navTo("nfc") },
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    ) {
-                        Text("Scan NFC")
-                    }
-
-                    // For example, show your NfcScanScreen here:
-                    // NfcScanScreen(uiState = ..., onEvent = ..., navTo = ...)
-                    Text(text = "NfcScanScreen() goes here.")
                 }
             }
         }
@@ -649,6 +650,8 @@ fun AboutExpandable(
 @Composable
 fun PreviewSettingsScreen() {
     SettingsScreenEx(
+        nfcUiState = NfcUiState.NfcNotSupported,
+        nfcEvent = {},
         navToSettings = {},
         navTo = {}
     )

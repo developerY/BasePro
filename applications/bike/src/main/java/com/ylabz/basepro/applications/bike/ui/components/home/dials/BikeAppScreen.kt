@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.ui.components.home.dials
 
+import android.nfc.NfcEvent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.getValue
@@ -27,6 +28,7 @@ import com.ylabz.basepro.core.model.bike.BikeScreenState
 import com.ylabz.basepro.core.model.health.HealthScreenState
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
+import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 
 
@@ -37,6 +39,7 @@ fun BikeAppScreen(
     healthPermState: HealthScreenState,
     healthState: HealthUiState,
     nfcUiState: NfcUiState,
+    nfcEvent: (NfcRwEvent) -> Unit,
     sessionsList : List<ExerciseSessionRecord>,  // Assuming your HealthUiState.Success contains healthData.
     onPermissionsLaunch: (Set<String>) -> Unit,
     backgroundReadPermissions: Set<String>,
@@ -127,6 +130,8 @@ fun BikeAppScreen(
 
                     SettingsNavHost(
                         modifier = Modifier.padding(innerPadding),
+                        nfcUiState = nfcUiState,
+                        nfcEvent = nfcEvent,
                         navTo = navTo
                     )
 
@@ -205,6 +210,7 @@ fun BikeAppScreenPreview() {
         healthPermState = healthPermState,
         healthState = healthState,
         nfcUiState = NfcUiState.WaitingForTag,
+        nfcEvent = {},
         sessionsList = emptyList(),
         onPermissionsLaunch = {},
         backgroundReadPermissions = emptySet(),

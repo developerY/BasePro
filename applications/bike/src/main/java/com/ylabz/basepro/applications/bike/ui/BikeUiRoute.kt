@@ -129,6 +129,7 @@ fun BikeUiRoute(
                 healthPermState = bundledState,
                 healthState = healthState,
                 nfcUiState = nfcUiState,
+                nfcEvent = { event -> nfcViewModel.onEvent(event) },
                 sessionsList = (healthUiState as HealthUiState.Success).healthData,
                 onPermissionsLaunch = { values ->
                     permissionsLauncher.launch(values)

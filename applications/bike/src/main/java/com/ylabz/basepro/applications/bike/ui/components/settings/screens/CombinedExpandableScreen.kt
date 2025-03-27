@@ -110,3 +110,10 @@ fun ExpandableCard(
         }
     }
 }
+
+// Preivew
+@Preview
+@Composable
+fun PreviewCombinedExpandableScreen() {
+    CombinedExpandableScreen()
+}

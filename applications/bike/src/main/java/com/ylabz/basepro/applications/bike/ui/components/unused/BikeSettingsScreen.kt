@@ -21,9 +21,7 @@ import com.ylabz.basepro.feature.heatlh.ui.components.HealthStartScreen
 import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.nfc.ui.components.NfcScanScreen
-import com.ylabz.basepro.feature.nfc.ui.components.screens.TagScanned
 import com.ylabz.basepro.feature.qrscanner.ui.QRCodeScannerScreen
-import java.util.UUID
 
 
 @Composable
