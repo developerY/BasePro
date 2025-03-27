@@ -57,7 +57,6 @@ fun BikeAppScreen(
     // Local navigation lambda that updates local state and calls external navTo.
     val localNavTo: (String) -> Unit = { route ->
         selectedTab = route
-        navTo(route)
     }
 
     // Set up the initial camera position for the map.
@@ -128,7 +127,7 @@ fun BikeAppScreen(
 
                     SettingsNavHost(
                         modifier = Modifier.padding(innerPadding),
-                        onBack = {}
+                        navTo = navTo
                     )
 
                     /*FancySettingsScreen(

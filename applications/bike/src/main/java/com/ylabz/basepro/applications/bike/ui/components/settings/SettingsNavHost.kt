@@ -29,11 +29,11 @@ sealed class SettingsRoute(val route: String) {
 @Composable
 fun SettingsNavHost(
     modifier: Modifier = Modifier,
-    onBack: () -> Unit  // If you need to communicate “go back” to the parent
+    navTo: (String) -> Unit  // If you need to communicate “go back” to the parent
 ) {
     // Local NavController just for settings
     val navController = rememberNavController()
-    val navTo : (String) -> Unit = { route -> navController.navigate(route) }
+    val navToSettings : (String) -> Unit = { route -> navController.navigate(route) }
 
     NavHost(
         navController = navController,
@@ -42,8 +42,8 @@ fun SettingsNavHost(
         // 1) Main Settings Screen
         composable(SettingsRoute.Main.route) {
             SettingsScreenEx(
-                navTo = navTo,
-                // onBack = onBack
+                navToSettings = navToSettings,
+                navTo = navTo
             )
         }
 

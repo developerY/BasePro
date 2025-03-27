@@ -25,6 +25,7 @@ import com.ylabz.basepro.applications.bike.ui.components.demo.settings.SettingsS
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreenEx(
+    navToSettings: (String) -> Unit,
     navTo: (String) -> Unit
 ) {
     // Track each expandable’s state
@@ -102,7 +103,8 @@ fun SettingsScreenEx(
             item {
                 NfcExpandableEx(
                     expanded = nfcExpanded,
-                    onExpandToggle = { nfcExpanded = !nfcExpanded }
+                    onExpandToggle = { nfcExpanded = !nfcExpanded },
+                    navTo = navTo
                 )
             }
 
@@ -138,7 +140,8 @@ fun SettingsScreenEx(
 @Composable
 fun NfcExpandableEx(
     expanded: Boolean,
-    onExpandToggle: () -> Unit
+    onExpandToggle: () -> Unit,
+    navTo: (String) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -173,13 +176,20 @@ fun NfcExpandableEx(
 
             // Expanded content
             if (expanded) {
-                Divider()
+                HorizontalDivider()
                 Column(modifier = Modifier.padding(16.dp)) {
                     // TODO: Insert your real NFC UI or pass in your nfcUiState, nfcEvent, etc.
                     // Example:
                     Text(text = "NFC Status: (Placeholder)")
 
                     Spacer(modifier = Modifier.height(8.dp))
+
+                    Button(
+                        onClick = { navTo("nfc") },
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    ) {
+                        Text("Scan NFC")
+                    }
 
                     // For example, show your NfcScanScreen here:
                     // NfcScanScreen(uiState = ..., onEvent = ..., navTo = ...)
@@ -639,7 +649,8 @@ fun AboutExpandable(
 @Composable
 fun PreviewSettingsScreen() {
     SettingsScreenEx(
-       navTo = {}
+        navToSettings = {},
+        navTo = {}
     )
 }
 
