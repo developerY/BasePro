@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.Modifier
+import com.ylabz.basepro.applications.bike.ui.BikeUiState
 import com.ylabz.basepro.applications.bike.ui.components.settings.screens.PerformanceTuningScreen
 import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
@@ -31,6 +32,7 @@ sealed class SettingsRoute(val route: String) {
 @Composable
 fun SettingsNavHost(
     modifier: Modifier = Modifier,
+    bikeUiState: BikeUiState,
     nfcUiState : NfcUiState,
     nfcEvent : (NfcRwEvent) -> Unit,
     navTo: (String) -> Unit  // If you need to communicate “go back” to the parent
@@ -47,6 +49,7 @@ fun SettingsNavHost(
         composable(SettingsRoute.Main.route) {
             SettingsScreenEx(
                 modifier = modifier,
+                bikeUiState = bikeUiState,
                 nfcUiState = nfcUiState,
                 nfcEvent = nfcEvent,
                 navToSettings = navToSettings,

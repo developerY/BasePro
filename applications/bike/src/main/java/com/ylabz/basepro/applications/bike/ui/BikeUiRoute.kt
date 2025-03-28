@@ -14,7 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.health.connect.client.HealthConnectClient
-import com.ylabz.basepro.core.model.bike.BikeScreenState
+import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.health.HealthScreenState
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthFeatureWithPermissions
@@ -114,7 +114,7 @@ fun BikeUiRoute(
             val bikeState = bikeUiState as BikeUiState.Success
             val healthState = healthUiState as HealthUiState.Success
 
-            val bikeScreenState = BikeScreenState(
+            val bikeRideInfo = BikeRideInfo(
                 currentSpeed = bikeState.currentSpeed,
                 currentTripDistance = bikeState.currentDistance,
                 totalDistance = bikeState.totalDistance,
@@ -135,7 +135,8 @@ fun BikeUiRoute(
                     permissionsLauncher.launch(values)
                 },
                 backgroundReadPermissions = backgroundReadPermissions,
-                bikeScreenState = bikeScreenState,
+                bikeRideInfo = bikeRideInfo,
+                bikeUiState = bikeUiState,
                 onBikeEvent = { event -> bikeViewModel.onEvent(event) },
                 onHealthEvent = { event -> healthViewModel.onEvent(event) }, // Use the instance, not the class name
                 navTo = navTo // No-op for preview // Lost a day of coding

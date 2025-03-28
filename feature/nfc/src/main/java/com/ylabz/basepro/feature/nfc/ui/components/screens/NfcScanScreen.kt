@@ -48,6 +48,7 @@ internal fun NfcScanScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // TODO  --
         Text("Scanning... Please tap an NFC tag.")
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = { onEvent(NfcRwEvent.StopScan) }) {

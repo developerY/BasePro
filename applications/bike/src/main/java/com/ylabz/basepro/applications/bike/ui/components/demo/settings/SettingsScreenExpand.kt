@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.ui.BikeUiState
 import com.ylabz.basepro.applications.bike.ui.components.demo.settings.SettingsScreenEx
 import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
@@ -29,6 +30,7 @@ import com.ylabz.basepro.feature.nfc.ui.components.NfcScanScreen
 @Composable
 fun SettingsScreenEx(
     modifier: Modifier = Modifier,
+    bikeUiState: BikeUiState,
     nfcUiState : NfcUiState,
     nfcEvent : (NfcRwEvent) -> Unit,
     navToSettings: (String) -> Unit,
@@ -109,7 +111,7 @@ fun SettingsScreenEx(
             item {
                 NfcExpandableEx(
                     nfcUiState = nfcUiState,
-                    nfcEvent = {},
+                    nfcEvent = nfcEvent,
                     expanded = nfcExpanded,
                     onExpandToggle = { nfcExpanded = !nfcExpanded },
                     navTo = navTo
@@ -650,6 +652,7 @@ fun AboutExpandable(
 @Composable
 fun PreviewSettingsScreen() {
     SettingsScreenEx(
+        bikeUiState = BikeUiState.Loading,
         nfcUiState = NfcUiState.NfcNotSupported,
         nfcEvent = {},
         navToSettings = {},

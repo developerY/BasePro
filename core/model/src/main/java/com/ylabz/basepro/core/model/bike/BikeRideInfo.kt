@@ -2,7 +2,7 @@ package com.ylabz.basepro.core.model.bike
 
 import com.google.android.gms.maps.model.LatLng
 
-data class BikeScreenState(
+data class BikeRideInfo(
     val currentSpeed: Double,
     val currentTripDistance: Double,
     val totalDistance: Double,

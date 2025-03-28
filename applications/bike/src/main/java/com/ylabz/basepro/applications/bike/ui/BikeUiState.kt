@@ -15,6 +15,7 @@ sealed class BikeUiState {
         val averageSpeed : Double = 25.0,
         val elevation : Double = 150.0,
         val heading : Float = 0f,
+        val bikeID : String? = null,
 
         // Just a place holder
         val speedKmh : Float = 0.0f,

@@ -5,7 +5,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -16,24 +15,24 @@ import com.ylabz.basepro.applications.bike.ui.components.home.dials.AnimatedHear
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.BikeDashboardScreen
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.SpeedAndProgressCard
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.StatsRow
-import com.ylabz.basepro.core.model.bike.BikeScreenState
+import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.feature.weather.ui.components.combine.UnifiedWeatherCard
 import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionUnif
 
 @Composable
 fun BikeDashboardContent(
     modifier: Modifier = Modifier,
-    bikeScreenState : BikeScreenState,
+    bikeRideInfo : BikeRideInfo,
     navTo: (String) -> Unit,
 ) {
 
-    val currentSpeed = bikeScreenState.currentSpeed
-    val currentTripDistance = bikeScreenState.currentTripDistance
-    val totalDistance = bikeScreenState.totalDistance
-    val tripDuration =  bikeScreenState.rideDuration
-    val averageSpeed = bikeScreenState.averageSpeed
-    val elevation = bikeScreenState.elevation
-    val heading : Float = bikeScreenState.heading
+    val currentSpeed = bikeRideInfo.currentSpeed
+    val currentTripDistance = bikeRideInfo.currentTripDistance
+    val totalDistance = bikeRideInfo.totalDistance
+    val tripDuration =  bikeRideInfo.rideDuration
+    val averageSpeed = bikeRideInfo.averageSpeed
+    val elevation = bikeRideInfo.elevation
+    val heading : Float = bikeRideInfo.heading
 
     Column(
         modifier = modifier
@@ -132,7 +131,7 @@ fun BikeDashboardContent(
 @Composable
 fun BikeDashboardContentPreview() {
 
-    val dummyBikeScreenState = BikeScreenState(
+    val dummyBikeRideInfo = BikeRideInfo(
         currentSpeed = 28.0,
         totalDistance = 12.5,
         currentTripDistance = 7.2,  // current progress (km)
@@ -145,7 +144,7 @@ fun BikeDashboardContentPreview() {
 
     MaterialTheme {
         BikeDashboardContent(
-            bikeScreenState = dummyBikeScreenState,
+            bikeRideInfo = dummyBikeRideInfo,
             navTo = { /*TODO*/ }
         )
     }

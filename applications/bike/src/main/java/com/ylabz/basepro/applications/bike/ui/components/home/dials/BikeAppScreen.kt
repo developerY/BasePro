@@ -1,6 +1,5 @@
 package com.ylabz.basepro.applications.bike.ui.components.home.dials
 
-import android.nfc.NfcEvent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.getValue
@@ -20,11 +19,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.ui.components.home.BikeDashboardContent
 import com.ylabz.basepro.applications.bike.ui.components.path.BikePathScreen
-import com.ylabz.basepro.settings.ui.components.BikeSettingsScreen
 import androidx.health.connect.client.records.ExerciseSessionRecord
-import com.ylabz.basepro.applications.bike.ui.components.demo.settings.SettingsScreenEx
+import com.ylabz.basepro.applications.bike.ui.BikeUiState
 import com.ylabz.basepro.applications.bike.ui.components.settings.SettingsNavHost
-import com.ylabz.basepro.core.model.bike.BikeScreenState
+import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.health.HealthScreenState
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
@@ -43,7 +41,8 @@ fun BikeAppScreen(
     sessionsList : List<ExerciseSessionRecord>,  // Assuming your HealthUiState.Success contains healthData.
     onPermissionsLaunch: (Set<String>) -> Unit,
     backgroundReadPermissions: Set<String>,
-    bikeScreenState: BikeScreenState,
+    bikeRideInfo: BikeRideInfo,
+    bikeUiState : BikeUiState,
     onBikeEvent: (BikeEvent) -> Unit,
     onHealthEvent: (HealthEvent) -> Unit,
     navTo: (String) -> Unit
@@ -110,7 +109,7 @@ fun BikeAppScreen(
                 "ride" -> {
                     BikeDashboardContent(
                         modifier = Modifier.padding(innerPadding),
-                        bikeScreenState = bikeScreenState,
+                        bikeRideInfo = bikeRideInfo,
                         navTo = navTo
                     )
                 }
@@ -130,6 +129,7 @@ fun BikeAppScreen(
 
                     SettingsNavHost(
                         modifier = Modifier.padding(innerPadding),
+                        bikeUiState = bikeUiState,
                         nfcUiState = nfcUiState,
                         nfcEvent = nfcEvent,
                         navTo = navTo
@@ -195,7 +195,7 @@ fun BikeAppScreenPreview() {
 
     val healthState = HealthUiState.Success(emptyList())
 
-    val bikeScreenState = BikeScreenState(
+    val bikeRideInfo = BikeRideInfo(
         currentSpeed = 55.0,
         currentTripDistance = 5.0,
         totalDistance = 100.0,
@@ -214,7 +214,8 @@ fun BikeAppScreenPreview() {
         sessionsList = emptyList(),
         onPermissionsLaunch = {},
         backgroundReadPermissions = emptySet(),
-        bikeScreenState = bikeScreenState,
+        bikeRideInfo = bikeRideInfo,
+        bikeUiState = BikeUiState.Loading,
         onBikeEvent = {},
         onHealthEvent = {},
         navTo = {}
