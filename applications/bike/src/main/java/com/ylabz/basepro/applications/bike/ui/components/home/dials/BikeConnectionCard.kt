@@ -13,6 +13,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.lerp
+
+fun interpolatedBatteryColor(batteryLevel: Int): Color {
+    // Clamp the battery level between 0 and 100.
+    val clampedLevel = batteryLevel.coerceIn(0, 100)
+    // Convert battery level to a fraction between 0f and 1f.
+    val fraction = clampedLevel / 100f
+    // Interpolate from Red at 0% to Green at 100%.
+    return lerp(Color.Red, Color.Green, fraction)
+}
+
+
+@Composable
+fun InterpolatedBatteryIndicator(
+    batteryLevel: Int,
+    modifier: Modifier = Modifier
+) {
+    // Get the interpolated color based on the battery level.
+    val batteryColor = interpolatedBatteryColor(batteryLevel)
+
+    // Show a simple box with the computed background color.
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(16.dp)
+            .background(batteryColor)
+    )
+}
+
+
 
 @Composable
 fun SegmentedBatteryIndicator(
@@ -114,6 +144,24 @@ fun BikeConnectionCard(
         }
     }
 }
+
+
+@Preview(showBackground = true)
+@Composable
+fun InterpolatedBatteryIndicatorPreview() {
+    Column(modifier = Modifier.padding(16.dp)) {
+        InterpolatedBatteryIndicator(batteryLevel = 0)
+        Spacer(modifier = Modifier.height(8.dp))
+        InterpolatedBatteryIndicator(batteryLevel = 25)
+        Spacer(modifier = Modifier.height(8.dp))
+        InterpolatedBatteryIndicator(batteryLevel = 50)
+        Spacer(modifier = Modifier.height(8.dp))
+        InterpolatedBatteryIndicator(batteryLevel = 75)
+        Spacer(modifier = Modifier.height(8.dp))
+        InterpolatedBatteryIndicator(batteryLevel = 100)
+    }
+}
+
 
 
 @Preview(showBackground = true)

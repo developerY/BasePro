@@ -1,0 +1,80 @@
+package com.ylabz.basepro.applications.bike.ui.components.home.dials
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
+
+@Composable
+fun BatteryIndicator(
+    batteryLevel: Int,
+    modifier: Modifier = Modifier
+) {
+    // Clamp battery level between 0 and 100
+    val clampedLevel = batteryLevel.coerceIn(0, 100)
+    // Convert to fraction (0f..1f)
+    val fraction = clampedLevel / 100f
+    // Interpolate color from Red (0%) to Green (100%)
+    val batteryColor = lerp(Color.Red, Color.Green, fraction)
+
+    Row(
+        modifier = modifier
+            .height(24.dp)
+            .clipToBounds(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // 1) Battery Body (with border)
+        Box(
+            modifier = Modifier
+                .width(48.dp)
+                .fillMaxHeight()
+                .border(width = 2.dp, color = Color.Black, shape = RectangleShape)
+        ) {
+            // Fill the inside according to battery level
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(fraction)
+                    .background(batteryColor)
+            )
+        }
+
+        // 2) Small terminal on the right
+        Spacer(modifier = Modifier.width(2.dp)) // small gap
+        Box(
+            modifier = Modifier
+                .width(4.dp)
+                .height(12.dp)
+                .background(Color.Black)
+        )
+    }
+}
+
+//Preview
+@Preview
+@Composable
+fun BatteryIndicatorPreview() {
+    MaterialTheme {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            BatteryIndicator(batteryLevel = 0)
+            BatteryIndicator(batteryLevel = 25)
+            BatteryIndicator(batteryLevel = 50)
+            BatteryIndicator(batteryLevel = 75)
+            BatteryIndicator(batteryLevel = 100)
+        }
+    }
+}
+
