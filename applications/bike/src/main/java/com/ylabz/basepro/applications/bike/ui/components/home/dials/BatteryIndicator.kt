@@ -8,12 +8,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
+
+
+@Composable
+fun RotatedBatteryIndicator(
+    batteryLevel: Int,
+    modifier: Modifier = Modifier
+) {
+    // Wrap the BatteryIndicator in a Box with a rotation modifier.
+    Box(modifier = modifier.rotate(-90f)) {
+        BatteryIndicator(batteryLevel = batteryLevel)
+    }
+}
+
 
 @Composable
 fun BatteryIndicator(
@@ -59,6 +73,15 @@ fun BatteryIndicator(
         )
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun RotatedBatteryIndicatorPreview() {
+    Column(Modifier.padding(16.dp)) {
+        RotatedBatteryIndicator(batteryLevel = 50)
+    }
+}
+
 
 //Preview
 @Preview
