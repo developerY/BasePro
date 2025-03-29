@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.ui.components.home.dials
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -14,13 +15,59 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
+fun SegmentedBatteryIndicator(
+    batteryLevel: Int,
+    modifier: Modifier = Modifier
+) {
+    val segments = 10
+    // Calculate how many segments to fill: battery level is from 0 to 100.
+    val filledSegments = batteryLevel / (100 / segments)
+    // Choose color based on battery level.
+    // Define a list of 10 colors representing battery levels from low (red) to high (green)
+    val batteryColors = listOf(
+        Color(0xFFB71C1C), // 0-10%
+        Color(0xFFC62828), // 11-20%
+        Color(0xFFD32F2F), // 21-30%
+        Color(0xFFE53935), // 31-40%
+        Color(0xFFF44336), // 41-50%
+        Color(0xFFFFC107), // 51-60%
+        Color(0xFFFFB300), // 61-70%
+        Color(0xFF4CAF50), // 71-80%
+        Color(0xFF43A047), // 81-90%
+        Color(0xFF388E3C)  // 91-100%
+    )
+
+// Compute the index based on battery level (ensuring it doesn't exceed the list bounds)
+    val index = (batteryLevel / 10).coerceAtMost(9)
+    val segmentColor = batteryColors[index]
+
+
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        repeat(segments) { index ->
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(8.dp)
+                    .background(
+                        color = if (index < filledSegments) segmentColor else Color.LightGray,
+                        shape = MaterialTheme.shapes.small
+                    )
+            )
+        }
+    }
+}
+
+@Composable
 fun BikeConnectionCard(
     isConnected: Boolean,
     batteryLevel: Int?, // Battery percentage when connected, null if not connected
     onConnectClick: () -> Unit
 ) {
     // Choose colors based on connection state
-    val backgroundColor = if (isConnected) Color(0xFF4CAF50) else Color(0xFF2196F3)
+    val backgroundColor = if (isConnected) Color(0xFF74FFA5) else Color(0xFF2196F3)
     val cardText = if (isConnected) "Battery: ${batteryLevel ?: 0}%" else "Tap to Connect Bike"
     // Choose icon based on connection state
     val connectionIcon = if (isConnected) Icons.Filled.BluetoothConnected else Icons.Filled.BluetoothDisabled
@@ -32,12 +79,13 @@ fun BikeConnectionCard(
             .clickable { onConnectClick() },
         colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(24.dp),
-            contentAlignment = Alignment.Center
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Row with icon and text.
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
@@ -55,6 +103,14 @@ fun BikeConnectionCard(
                     color = Color.White
                 )
             }
+            // If connected, show the segmented battery indicator.
+            if (isConnected && batteryLevel != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                SegmentedBatteryIndicator(
+                    batteryLevel = batteryLevel,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }
@@ -63,10 +119,33 @@ fun BikeConnectionCard(
 // Preview
 @Preview
 @Composable
-fun BikeConnectionCardPreview() {
+fun BikeConnectionCardPreview90() {
     BikeConnectionCard(
         isConnected = true,
-        batteryLevel = 80,
+        batteryLevel = 90,
+        onConnectClick = {},
+    )
+
+}
+// Preview
+@Preview
+@Composable
+fun BikeConnectionCardPreview50() {
+    BikeConnectionCard(
+        isConnected = true,
+        batteryLevel = 50,
+        onConnectClick = {},
+    )
+
+}
+
+// Preview
+@Preview
+@Composable
+fun BikeConnectionCardPreview30() {
+    BikeConnectionCard(
+        isConnected = true,
+        batteryLevel = 30,
         onConnectClick = {},
     )
 
