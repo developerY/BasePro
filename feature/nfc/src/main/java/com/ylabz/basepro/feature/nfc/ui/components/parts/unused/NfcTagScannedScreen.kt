@@ -1,9 +1,12 @@
-package com.ylabz.basepro.feature.nfc.ui.components.parts
+package com.ylabz.basepro.feature.nfc.ui.components.parts.unused
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun NfcWaitingScreen() {
+fun NfcTagScannedScreen(tagInfo: String, onDone: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -20,13 +23,18 @@ fun NfcWaitingScreen() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Waiting for an NFC tag...\nPlease tap your NFC tag now.")
+        Text(text = "NFC Tag Scanned Successfully!")
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = "Tag Info: $tagInfo")
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = onDone) {
+            Text("Done")
+        }
     }
 }
 
 @Preview
 @Composable
-fun NfcWaitingScreenPreview() {
-    NfcWaitingScreen()
+fun NfcTagScannedScreenPreview() {
+    NfcTagScannedScreen(tagInfo = "Sample Tag Info", onDone = {})
 }
-

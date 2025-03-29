@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.nfc.ui.components.parts
+package com.ylabz.basepro.feature.nfc.ui.components.parts.unused
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

@@ -16,6 +16,7 @@ import com.ylabz.basepro.applications.bike.ui.components.home.dials.BikeDashboar
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.SpeedAndProgressCard
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.StatsRow
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
+import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.weather.ui.components.combine.UnifiedWeatherCard
 import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionUnif
 
@@ -23,6 +24,7 @@ import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionU
 fun BikeDashboardContent(
     modifier: Modifier = Modifier,
     bikeRideInfo : BikeRideInfo,
+    nfcUiState : NfcUiState,
     navTo: (String) -> Unit,
 ) {
 
@@ -54,7 +56,9 @@ fun BikeDashboardContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-
+        if (nfcUiState is NfcUiState.TagScanned) {
+            Text("NFC Tag Data: ${nfcUiState.tagInfo}")
+        }
 
         // 2) Trip stats row: Distance, Duration, Avg Speed
         Row(
@@ -145,6 +149,7 @@ fun BikeDashboardContentPreview() {
     MaterialTheme {
         BikeDashboardContent(
             bikeRideInfo = dummyBikeRideInfo,
+            nfcUiState = NfcUiState.TagScanned("Dummy NFC Data"),
             navTo = { /*TODO*/ }
         )
     }
