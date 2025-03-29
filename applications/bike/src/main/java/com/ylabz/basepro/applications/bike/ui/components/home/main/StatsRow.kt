@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.ui.components.home.dials
+package com.ylabz.basepro.applications.bike.ui.components.home.main
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Terrain
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import com.ylabz.basepro.applications.bike.ui.components.unused.StatCard
 
 
 @Composable
@@ -69,12 +70,12 @@ fun StatsRow(
             )
 
             //Column(modifier = Modifier.background(gradientBrush)) {
-                StatCard(
-                    icon = stat.icon,
-                    label = stat.label,
-                    value = stat.value,
-                    modifier = Modifier.weight(1f, fill = false)
-                )
+            StatCard(
+                icon = stat.icon,
+                label = stat.label,
+                value = stat.value,
+                modifier = Modifier.weight(1f, fill = false)
+            )
             //}
             Spacer(modifier = Modifier.width(8.dp))
         }

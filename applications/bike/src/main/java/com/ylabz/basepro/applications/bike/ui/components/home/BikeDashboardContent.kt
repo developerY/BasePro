@@ -10,11 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.health.connect.client.units.Energy.Companion.calories
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.AnimatedHeartRateCard
-import com.ylabz.basepro.applications.bike.ui.components.home.dials.BikeDashboardScreen
-import com.ylabz.basepro.applications.bike.ui.components.home.dials.SpeedAndProgressCard
-import com.ylabz.basepro.applications.bike.ui.components.home.dials.StatsRow
+import com.ylabz.basepro.applications.bike.ui.components.home.dials.BikeConnectionCard
+import com.ylabz.basepro.applications.bike.ui.components.home.main.SpeedAndProgressCard
+import com.ylabz.basepro.applications.bike.ui.components.home.main.StatsRow
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.weather.ui.components.combine.UnifiedWeatherCard
@@ -60,6 +61,12 @@ fun BikeDashboardContent(
             Text("NFC Tag Data: ${nfcUiState.tagInfo}")
         }
 
+        BikeConnectionCard(
+            isConnected = false,
+            batteryLevel = 75,
+            onConnectClick = {}
+        )
+
         // 2) Trip stats row: Distance, Duration, Avg Speed
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -72,20 +79,6 @@ fun BikeDashboardContent(
                 elevation = 150.0,
             )
         }
-
-        BikeDashboardScreen(
-            distance = 10.5,
-            duration = "30:00",
-            avgSpeed = 21.0,
-            elevation = 150.0,
-            battery = 80,
-            motorPower = 250.0,
-            heartRate = 120,
-            calories = 300.0
-        )
-
-
-
         /*
         modifier: Modifier = Modifier,
             healthPermState: HealthScreenState,

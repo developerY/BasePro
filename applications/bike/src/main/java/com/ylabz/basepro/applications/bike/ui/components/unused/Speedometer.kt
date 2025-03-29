@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.ui.components.home.dials
+package com.ylabz.basepro.applications.bike.ui.components.unused
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas

@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.ui.components.home.dials
+package com.ylabz.basepro.applications.bike.ui.components.home.main
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

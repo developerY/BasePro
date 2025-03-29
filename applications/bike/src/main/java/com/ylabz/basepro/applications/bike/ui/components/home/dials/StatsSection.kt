@@ -8,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.ui.components.home.main.StatItem
+import com.ylabz.basepro.applications.bike.ui.components.unused.StatCard
 
 @Composable
 fun StatsSection(

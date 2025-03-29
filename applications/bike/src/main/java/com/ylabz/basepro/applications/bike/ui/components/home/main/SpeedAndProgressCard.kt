@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.ui.components.home.dials
+package com.ylabz.basepro.applications.bike.ui.components.home.main
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -29,6 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.ui.components.home.dials.SpeedometerWithCompassOverlay
+import com.ylabz.basepro.applications.bike.ui.components.home.dials.WeatherBadge
 import com.ylabz.basepro.applications.bike.ui.components.path.BigBikeProgressIndicator
 import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionUnif
 import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDialWithSpeed

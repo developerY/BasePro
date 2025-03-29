@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.ui.components.home.dials
+package com.ylabz.basepro.applications.bike.ui.components.unused
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -78,7 +79,7 @@ fun StatCard(
 @Composable
 fun StatCardPreview() {
     // Dummy data for preview
-    val dummyIcon = androidx.compose.material.icons.Icons.Filled.Info // Replace with actual icon if available
+    val dummyIcon = Icons.Filled.Info // Replace with actual icon if available
     val dummyLabel = "Dummy Label"
     val dummyValue = "123"
 
