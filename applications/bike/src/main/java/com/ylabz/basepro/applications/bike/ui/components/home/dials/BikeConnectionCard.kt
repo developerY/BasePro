@@ -116,37 +116,29 @@ fun BikeConnectionCard(
 }
 
 
-// Preview
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun BikeConnectionCardPreview90() {
-    BikeConnectionCard(
-        isConnected = true,
-        batteryLevel = 90,
-        onConnectClick = {},
-    )
-
-}
-// Preview
-@Preview
-@Composable
-fun BikeConnectionCardPreview50() {
-    BikeConnectionCard(
-        isConnected = true,
-        batteryLevel = 50,
-        onConnectClick = {},
-    )
-
-}
-
-// Preview
-@Preview
-@Composable
-fun BikeConnectionCardPreview30() {
-    BikeConnectionCard(
-        isConnected = true,
-        batteryLevel = 30,
-        onConnectClick = {},
-    )
-
+fun CombinedBikeConnectionCardPreviews() {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        BikeConnectionCard(
+            isConnected = true,
+            batteryLevel = 90,
+            onConnectClick = {}
+        )
+        BikeConnectionCard(
+            isConnected = true,
+            batteryLevel = 50,
+            onConnectClick = {}
+        )
+        BikeConnectionCard(
+            isConnected = true,
+            batteryLevel = 30,
+            onConnectClick = {}
+        )
+        BikeConnectionCard(
+            isConnected = true,
+            batteryLevel = 10,
+            onConnectClick = {}
+        )
+    }
 }
