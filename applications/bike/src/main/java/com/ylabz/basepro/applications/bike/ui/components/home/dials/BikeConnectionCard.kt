@@ -1,13 +1,11 @@
 package com.ylabz.basepro.applications.bike.ui.components.home.dials
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BluetoothConnected
+import androidx.compose.material.icons.filled.BluetoothDisabled
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,12 +16,14 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun BikeConnectionCard(
     isConnected: Boolean,
-    batteryLevel: Int?, // e.g., battery percentage when connected, null if not
+    batteryLevel: Int?, // Battery percentage when connected, null if not connected
     onConnectClick: () -> Unit
 ) {
     // Choose colors based on connection state
     val backgroundColor = if (isConnected) Color(0xFF4CAF50) else Color(0xFF2196F3)
     val cardText = if (isConnected) "Battery: ${batteryLevel ?: 0}%" else "Tap to Connect Bike"
+    // Choose icon based on connection state
+    val connectionIcon = if (isConnected) Icons.Filled.BluetoothConnected else Icons.Filled.BluetoothDisabled
 
     Card(
         modifier = Modifier
@@ -38,21 +38,34 @@ fun BikeConnectionCard(
                 .padding(24.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = cardText,
-                style = MaterialTheme.typography.titleMedium,
-                color = Color.White
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = connectionIcon,
+                    contentDescription = if (isConnected) "Connected to Bike" else "Not Connected",
+                    tint = Color.White,
+                    modifier = Modifier.size(32.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = cardText,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White
+                )
+            }
         }
     }
 }
+
 
 // Preview
 @Preview
 @Composable
 fun BikeConnectionCardPreview() {
     BikeConnectionCard(
-        isConnected = false,
+        isConnected = true,
         batteryLevel = 80,
         onConnectClick = {},
     )
