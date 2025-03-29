@@ -26,15 +26,15 @@ fun SegmentedBatteryIndicator(
     // Define a list of 10 colors representing battery levels from low (red) to high (green)
     val batteryColors = listOf(
         Color(0xFFB71C1C), // 0-10%
-        Color(0xFFC62828), // 11-20%
-        Color(0xFFD32F2F), // 21-30%
-        Color(0xFFE53935), // 31-40%
-        Color(0xFFF44336), // 41-50%
-        Color(0xFFFFC107), // 51-60%
-        Color(0xFFFFB300), // 61-70%
-        Color(0xFF4CAF50), // 71-80%
-        Color(0xFF43A047), // 81-90%
-        Color(0xFF388E3C)  // 91-100%
+        Color(0xFFFF5722), // 11-20%
+        Color(0xFFFF9800), // 21-30%
+        Color(0xFFFFC107), // 31-40%
+        Color(0xFFD7DC39), // 41-50%
+        Color(0xFF6F8C41), // 51-60%
+        Color(0xFF698C41), // 61-70%
+        Color(0xFF409343), // 71-80%
+        Color(0xFF37853B), // 81-90%
+        Color(0xFF2A6E2D)  // 91-100%
     )
 
 // Compute the index based on battery level (ensuring it doesn't exceed the list bounds)
@@ -119,7 +119,7 @@ fun BikeConnectionCard(
 @Preview(showBackground = true)
 @Composable
 fun BikeConnectionCardLoopPreview() {
-    val batteryLevels = listOf(10,30,50,70,100) //listOf(10,20,30,40,50,70,80,90,100)
+    val batteryLevels = listOf(10,20,30,40,50,70) //listOf(10,20,30,40,50,70,80,90,100)
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.padding(16.dp)
