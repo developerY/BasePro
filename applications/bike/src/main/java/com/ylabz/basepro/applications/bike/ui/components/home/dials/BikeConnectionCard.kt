@@ -118,27 +118,18 @@ fun BikeConnectionCard(
 
 @Preview(showBackground = true)
 @Composable
-fun CombinedBikeConnectionCardPreviews() {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        BikeConnectionCard(
-            isConnected = true,
-            batteryLevel = 90,
-            onConnectClick = {}
-        )
-        BikeConnectionCard(
-            isConnected = true,
-            batteryLevel = 50,
-            onConnectClick = {}
-        )
-        BikeConnectionCard(
-            isConnected = true,
-            batteryLevel = 30,
-            onConnectClick = {}
-        )
-        BikeConnectionCard(
-            isConnected = true,
-            batteryLevel = 10,
-            onConnectClick = {}
-        )
+fun BikeConnectionCardLoopPreview() {
+    val batteryLevels = listOf(10,30,50,70,100) //listOf(10,20,30,40,50,70,80,90,100)
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.padding(16.dp)
+    ) {
+        batteryLevels.forEach { level ->
+            BikeConnectionCard(
+                isConnected = true,
+                batteryLevel = level,
+                onConnectClick = {}
+            )
+        }
     }
 }
