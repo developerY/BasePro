@@ -11,5 +11,9 @@ data class BikeRideInfo(
     val location: LatLng?,
     val averageSpeed: Double = 25.0,
     val elevation : Double = 150.0,
-    val heading : Float = 45f
+    val heading : Float = 45f,
+    val batteryLevel: Int? = null,
+    val heartRate: Float? = null,
+    val calories: Float? = null,
+    val motorPower: Float? = null
 )

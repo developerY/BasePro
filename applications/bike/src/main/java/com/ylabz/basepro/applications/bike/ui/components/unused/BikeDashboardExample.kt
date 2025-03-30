@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.ui.components.home.main
+package com.ylabz.basepro.applications.bike.ui.components.unused
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,15 +13,21 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Fireplace
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.StatsSection
+import com.ylabz.basepro.applications.bike.ui.components.home.main.BikeConnectionCard
+import com.ylabz.basepro.applications.bike.ui.components.home.main.SpeedAndProgressCard
+import com.ylabz.basepro.applications.bike.ui.components.home.main.StatItem
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 
+
+// Combine with BikeDashboardContent
+
 @Composable
-fun BikeDashboardContent(
+fun BikeDashboardExample(
     bikeRideInfo: BikeRideInfo,
     // If you have a separate field for connected status
     isBikeConnected: Boolean,
@@ -112,10 +118,11 @@ val bikeRideInfo = BikeRideInfo(
     onConnectClick: () -> Unit
  */
 
+
 @Preview
 @Composable
 fun BikeDashboardScreenPreviewFalse() {
-    BikeDashboardContent(
+    BikeDashboardExample(
         bikeRideInfo = bikeRideInfo,
         batteryLevel = 75,
         motorPower = 100.0,
@@ -129,7 +136,7 @@ fun BikeDashboardScreenPreviewFalse() {
 @Preview
 @Composable
 fun BikeDashboardScreenPreviewTrue() {
-    BikeDashboardContent(
+    BikeDashboardExample(
         bikeRideInfo = bikeRideInfo,
         batteryLevel = 75,
         motorPower = 100.0,

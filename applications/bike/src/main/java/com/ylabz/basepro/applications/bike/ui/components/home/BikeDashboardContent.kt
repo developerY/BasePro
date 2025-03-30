@@ -3,6 +3,11 @@ package com.ylabz.basepro.applications.bike.ui.components.home
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.DirectionsBike
+import androidx.compose.material.icons.filled.BatteryChargingFull
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Fireplace
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,19 +17,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.health.connect.client.units.Energy.Companion.calories
 import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.applications.bike.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.AnimatedHeartRateCard
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.BikeConnectionCard
+import com.ylabz.basepro.applications.bike.ui.components.home.dials.StatsSection
 import com.ylabz.basepro.applications.bike.ui.components.home.main.SpeedAndProgressCard
+import com.ylabz.basepro.applications.bike.ui.components.home.main.StatItem
 import com.ylabz.basepro.applications.bike.ui.components.home.main.StatsRow
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.weather.ui.components.combine.UnifiedWeatherCard
 import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionUnif
 
+// Combine with BikeDashboardExample --
+
 @Composable
 fun BikeDashboardContent(
     modifier: Modifier = Modifier,
+    isBikeConnected: Boolean = false,
     bikeRideInfo : BikeRideInfo,
+    onBikeEvent : (BikeEvent) -> Unit,
     nfcUiState : NfcUiState,
     navTo: (String) -> Unit,
 ) {
@@ -36,6 +48,10 @@ fun BikeDashboardContent(
     val averageSpeed = bikeRideInfo.averageSpeed
     val elevation = bikeRideInfo.elevation
     val heading : Float = bikeRideInfo.heading
+    val batteryLevel = bikeRideInfo.batteryLevel
+    val motorPower = bikeRideInfo.motorPower
+    val heartRate = bikeRideInfo.heartRate
+    val calories = bikeRideInfo.calories
 
     Column(
         modifier = modifier
@@ -52,7 +68,7 @@ fun BikeDashboardContent(
             totalDistance = totalDistance,
             windDegree = 120f,
             windSpeed = 5.0f,
-           weatherConditionText = WeatherConditionUnif.RAINY.name,
+            weatherConditionText = WeatherConditionUnif.RAINY.name,
             heading = heading,
             modifier = Modifier.fillMaxWidth()
         )
@@ -62,10 +78,41 @@ fun BikeDashboardContent(
         }
 
         BikeConnectionCard(
-            isConnected = false,
-            batteryLevel = 75,
-            onConnectClick = {}
+            isConnected = isBikeConnected,
+            batteryLevel = batteryLevel,
+            onConnectClick = { onBikeEvent(BikeEvent.Connect) }
         )
+
+        // 3) Stats row: e-bike stats
+        // Only show motor if connected, or maybe show 0 W if not
+        val eBikeStats = listOf(
+            StatItem(
+                icon = Icons.Filled.BatteryChargingFull,
+                label = "Battery",
+                value = if (isBikeConnected && batteryLevel != null) "$batteryLevel%" else "--%"
+            ),
+            StatItem(
+                icon = Icons.AutoMirrored.Filled.DirectionsBike,
+                label = "Motor",
+                value = if (isBikeConnected && motorPower != null) "$motorPower W" else "-- W"
+            )
+        )
+        StatsSection(stats = eBikeStats)
+
+        // 4) Health stats row
+        val healthStats = listOf(
+            StatItem(
+                icon = Icons.Filled.Favorite,
+                label = "Heart Rate",
+                value = if (heartRate != null) "$heartRate bpm" else "-- bpm"
+            ),
+            StatItem(
+                icon = Icons.Filled.Fireplace,
+                label = "Calories",
+                value = if (calories != null) "$calories" else "--"
+            )
+        )
+        StatsSection(stats = healthStats)
 
         // 2) Trip stats row: Distance, Duration, Avg Speed
         Row(
@@ -142,6 +189,7 @@ fun BikeDashboardContentPreview() {
     MaterialTheme {
         BikeDashboardContent(
             bikeRideInfo = dummyBikeRideInfo,
+            onBikeEvent = { /*TODO*/ },
             nfcUiState = NfcUiState.TagScanned("Dummy NFC Data"),
             navTo = { /*TODO*/ }
         )

@@ -110,6 +110,7 @@ fun BikeAppScreen(
                     BikeDashboardContent(
                         modifier = Modifier.padding(innerPadding),
                         bikeRideInfo = bikeRideInfo,
+                        onBikeEvent = onBikeEvent,
                         nfcUiState = nfcUiState,
                         navTo = navTo
                     )

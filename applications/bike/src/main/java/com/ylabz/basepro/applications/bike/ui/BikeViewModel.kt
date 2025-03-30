@@ -215,7 +215,13 @@ class BikeViewModel @Inject constructor(
             is BikeEvent.LoadBike -> loadSettings()
             is BikeEvent.UpdateSetting -> updateSetting(event.settingKey, event.settingValue)
             is BikeEvent.DeleteAllEntries -> deleteAllEntries()
+            is BikeEvent.Connect -> bikeConnect()
         }
+    }
+
+    private fun bikeConnect() {
+        // Implement your bike connection logic here
+
     }
 
     private fun loadSettings() {
