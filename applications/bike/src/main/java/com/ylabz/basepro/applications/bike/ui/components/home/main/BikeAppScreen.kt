@@ -22,7 +22,6 @@ import com.ylabz.basepro.applications.bike.ui.components.path.BikePathScreen
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import com.ylabz.basepro.applications.bike.ui.BikeUiState
 import com.ylabz.basepro.applications.bike.ui.components.settings.SettingsNavHost
-import com.ylabz.basepro.applications.bike.ui.components.unused.bikeRideInfo
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.health.HealthScreenState
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
@@ -37,9 +36,8 @@ fun BikeAppScreen(
     modifier: Modifier = Modifier,
     nfcUiState: NfcUiState,
     nfcEvent: (NfcRwEvent) -> Unit,
-    bikeUiState : BikeUiState,
+    bikeRideInfo : BikeRideInfo,
     onBikeEvent: (BikeEvent) -> Unit,
-    onHealthEvent: (HealthEvent) -> Unit,
     navTo: (String) -> Unit
 ) {
     // Local state to track the selected tab.
@@ -106,7 +104,6 @@ fun BikeAppScreen(
                         modifier = Modifier.padding(innerPadding),
                         bikeRideInfo = bikeRideInfo,
                         onBikeEvent = onBikeEvent,
-                        nfcUiState = nfcUiState,
                         navTo = navTo
                     )
                 }
@@ -126,7 +123,6 @@ fun BikeAppScreen(
 
                     SettingsNavHost(
                         modifier = Modifier.padding(innerPadding),
-                        bikeUiState = bikeUiState,
                         nfcUiState = nfcUiState,
                         nfcEvent = nfcEvent,
                         navTo = navTo
@@ -212,9 +208,8 @@ fun BikeAppScreenPreview() {
     BikeAppScreen(
         nfcUiState = NfcUiState.WaitingForTag,
         nfcEvent = {},
-        bikeUiState = BikeUiState.Loading,
+        bikeRideInfo = bikeRideInfo,
         onBikeEvent = {},
-        onHealthEvent = {},
         navTo = {}
     )
 }

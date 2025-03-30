@@ -12,6 +12,7 @@ import com.ylabz.basepro.core.data.repository.travel.LocationRepository
 import com.ylabz.basepro.core.data.repository.travel.SpeedRepository
 import com.ylabz.basepro.core.data.repository.travel.UnifiedLocationRepository
 import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
+import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -156,11 +157,14 @@ class BikeViewModel @Inject constructor(
 
                 val currentState = _uiState.value
                 if (currentState is BikeUiState.Success) {
+                    // Update the nested bikeData immutably using copy
                     _uiState.value = currentState.copy(
-                        currentSpeed = speed,
-                        currentDistance = traveledDistance,
-                        totalDistance = totalDist,
-                        heading = heading
+                        bikeData = currentState.bikeData.copy(
+                            currentSpeed = speed,
+                            currentTripDistance = traveledDistance,
+                            totalDistance = totalDist,
+                            heading = heading
+                        )
                     )
                     Log.d("BikeViewModel", "Fake update: speed=$speed, traveledDistance=$traveledDistance, heading=$heading")
                 }
@@ -202,8 +206,14 @@ class BikeViewModel @Inject constructor(
                 val elapsedMillis = System.currentTimeMillis() - rideStartTime
                 val formatted = formatDurationToHM(elapsedMillis)
                 val currentState = _uiState.value
+
                 if (currentState is BikeUiState.Success) {
-                    _uiState.value = currentState.copy(rideDuration = formatted)
+                    // Update the nested bikeData immutably using copy
+                    _uiState.value = currentState.copy(
+                        bikeData = currentState.bikeData.copy(
+                            rideDuration = formatted
+                        )
+                    )
                 }
                 delay(1000L) // Update every second.
             }
@@ -232,12 +242,22 @@ class BikeViewModel @Inject constructor(
                     "Language" to listOf("English", "Spanish", "French"),
                     "Notifications" to listOf("Enabled", "Disabled")
                 ),
-                location = null,
-                currentSpeed = 0.0,
-                currentDistance = 0.0,
-                totalDistance = 50.0,
-                locationString = "Santa Barbara, US",
-                rideDuration = "00:00:00"
+                bikeData = BikeRideInfo(
+                    isBikeConnected = true,
+                    location = LatLng(37.4219999, -122.0862462),
+                    currentSpeed = 55.0,
+                    currentTripDistance = 5.0,
+                    totalDistance = 100.0,
+                    rideDuration = "00:15:00",
+                    settings = mapOf("Theme" to listOf("Light", "Dark", "System Default"),
+                        "Language" to listOf("English", "Spanish", "French"),
+                        "Notifications" to listOf("Enabled", "Disabled")),
+                    averageSpeed = 12.0,
+                    elevation = 12.0,
+                    heading = 12.0f,
+                    batteryLevel = 12,
+                    motorPower = 12.0f
+                )
             )
             Log.d("BikeViewModel", "Settings loaded.")
         }

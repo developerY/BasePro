@@ -32,7 +32,6 @@ sealed class SettingsRoute(val route: String) {
 @Composable
 fun SettingsNavHost(
     modifier: Modifier = Modifier,
-    bikeUiState: BikeUiState,
     nfcUiState : NfcUiState,
     nfcEvent : (NfcRwEvent) -> Unit,
     navTo: (String) -> Unit  // If you need to communicate “go back” to the parent
@@ -49,7 +48,6 @@ fun SettingsNavHost(
         composable(SettingsRoute.Main.route) {
             SettingsScreenEx(
                 modifier = modifier,
-                bikeUiState = bikeUiState,
                 nfcUiState = nfcUiState,
                 nfcEvent = nfcEvent,
                 navToSettings = navToSettings,

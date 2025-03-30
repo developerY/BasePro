@@ -6,7 +6,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.ui.components.home.main.BikeAppScreen
 import com.ylabz.basepro.settings.ui.components.ErrorScreen
 import com.ylabz.basepro.settings.ui.components.LoadingScreen
@@ -14,13 +13,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.health.connect.client.HealthConnectClient
-import androidx.health.connect.client.units.Energy.Companion.calories
-import com.ylabz.basepro.core.model.bike.BikeRideInfo
+import com.ylabz.basepro.core.model.bike.ConnectionStatus
+import com.ylabz.basepro.core.model.bike.NfcData
 import com.ylabz.basepro.core.model.health.HealthScreenState
-import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
-import com.ylabz.basepro.feature.heatlh.ui.HealthFeatureWithPermissions
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 import com.ylabz.basepro.feature.heatlh.ui.HealthViewModel
+import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
 import java.util.UUID
 
@@ -91,53 +89,48 @@ fun BikeUiRoute(
 
 
 
+    // We assume that BikeUiState and HealthUiState must be Success to show the main screen.
     when {
-        bikeUiState is BikeUiState.Loading || healthUiState is HealthUiState.Loading -> {
-            LoadingScreen()//modifier)
+        bikeUiState is BikeUiState.Loading -> {
+            LoadingScreen()
         }
         bikeUiState is BikeUiState.Error -> {
             ErrorScreen(errorMessage = (bikeUiState as BikeUiState.Error).message) {
                 bikeViewModel.onEvent(BikeEvent.LoadBike)
             }
         }
-        healthUiState is HealthUiState.Error -> {
-            ErrorScreen(errorMessage = (healthUiState as HealthUiState.Error).message) {
-                healthViewModel.onEvent(HealthEvent.LoadHealthData)
-            }
-        }
-
-        healthUiState is HealthUiState.PermissionsRequired -> HealthFeatureWithPermissions {
-            // Launch the permissions request
-            permissionsLauncher.launch(healthViewModel.permissions)
-        }
-
-        bikeUiState is BikeUiState.Success && healthUiState is HealthUiState.Success -> {
+        // Require only bike to be Success. Health is optional/controlled via settings.
+        bikeUiState is BikeUiState.Success -> {
             val bikeState = bikeUiState as BikeUiState.Success
-            val healthState = healthUiState as HealthUiState.Success
 
-            val bikeRideInfo = BikeRideInfo(
-                isBikeConnected = bikeState.isBikeConnected,
-                currentSpeed = bikeState.currentSpeed,
-                currentTripDistance = bikeState.currentDistance,
-                totalDistance = bikeState.totalDistance,
-                rideDuration = bikeState.rideDuration,
-                settings = bikeState.settings,
-                location = bikeState.location.let { LatLng(it?.longitude ?: 0.0, it?.longitude ?: 0.0) },
-                heading = bikeState.heading,
-                averageSpeed = bikeState.averageSpeed,
-                elevation = bikeState.elevation,
-                batteryLevel = bikeState.batteryLevel,
-                motorPower = bikeState.motorPower
+            // Health: if available, use the success data; otherwise, use a default and flag it as not enabled.
+            val healthStats = when (healthUiState) {
+                is HealthUiState.Success -> (healthUiState as HealthUiState.Success).healthData
+                else -> null //HealthStats(heartRate = 0, calories = 0.0)
+            }
+            // Flag whether Health integration is enabled/available.
+            val healthEnabled = healthUiState is HealthUiState.Success
+
+            // NFC: if a tag has been scanned, use its data; otherwise, pass null.
+            val nfcData = when (nfcUiState) {
+                is NfcUiState.TagScanned -> NfcData((nfcUiState as NfcUiState.TagScanned).tagInfo)
+                else -> null
+            }
+
+            // Assume the bike state includes a bikeID and battery when connected.
+            val connectionStatus = ConnectionStatus(
+                isConnected = false, //bikeState.bikeID != null,
+                batteryLevel = 50, //bikeState.battery
             )
 
+            // Pass only the required data to the dumb BikeAppScreen.
             BikeAppScreen(
                 modifier = modifier,
                 nfcUiState = nfcUiState,
-                nfcEvent = { event -> nfcViewModel.onEvent(event) },
-                bikeUiState = bikeUiState,
-                onBikeEvent = { event -> bikeViewModel.onEvent(event) },
-                onHealthEvent = { event -> healthViewModel.onEvent(event) }, // Use the instance, not the class name
-                navTo = navTo // No-op for preview // Lost a day of coding
+                nfcEvent = { nfcViewModel.onEvent(it) },
+                bikeRideInfo = bikeState.bikeData,
+                onBikeEvent = { bikeViewModel.onEvent(it) },
+                navTo = navTo,
             )
         }
         else -> {

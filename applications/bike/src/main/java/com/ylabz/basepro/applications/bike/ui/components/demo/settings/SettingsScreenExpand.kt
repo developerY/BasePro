@@ -30,7 +30,6 @@ import com.ylabz.basepro.feature.nfc.ui.components.NfcScanScreen
 @Composable
 fun SettingsScreenEx(
     modifier: Modifier = Modifier,
-    bikeUiState: BikeUiState,
     nfcUiState : NfcUiState,
     nfcEvent : (NfcRwEvent) -> Unit,
     navToSettings: (String) -> Unit,
@@ -652,12 +651,9 @@ fun AboutExpandable(
 @Composable
 fun PreviewSettingsScreen() {
     SettingsScreenEx(
-        bikeUiState = BikeUiState.Loading,
         nfcUiState = NfcUiState.NfcNotSupported,
         nfcEvent = {},
         navToSettings = {},
         navTo = {}
     )
 }
-
-

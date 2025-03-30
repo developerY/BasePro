@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.health.connect.client.units.Energy.Companion.calories
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.ui.BikeEvent
+import com.ylabz.basepro.applications.bike.ui.BikeUiState
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.AnimatedHeartRateCard
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.BikeConnectionCard
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.StatsSection
@@ -36,7 +37,6 @@ fun BikeDashboardContent(
     modifier: Modifier = Modifier,
     bikeRideInfo : BikeRideInfo,
     onBikeEvent : (BikeEvent) -> Unit,
-    nfcUiState : NfcUiState,
     navTo: (String) -> Unit,
 ) {
     val isBikeConnected = bikeRideInfo.isBikeConnected
@@ -72,10 +72,6 @@ fun BikeDashboardContent(
             heading = heading,
             modifier = Modifier.fillMaxWidth()
         )
-
-        if (nfcUiState is NfcUiState.TagScanned) {
-            Text("NFC Tag Data: ${nfcUiState.tagInfo}")
-        }
 
         BikeConnectionCard(
             isConnected = isBikeConnected,
@@ -194,7 +190,6 @@ fun BikeDashboardContentPreview() {
         BikeDashboardContent(
             bikeRideInfo = dummyBikeRideInfo,
             onBikeEvent = { /*TODO*/ },
-            nfcUiState = NfcUiState.TagScanned("Dummy NFC Data"),
             navTo = { /*TODO*/ }
         )
     }
