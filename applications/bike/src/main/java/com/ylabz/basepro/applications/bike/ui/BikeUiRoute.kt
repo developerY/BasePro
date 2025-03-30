@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.units.Energy.Companion.calories
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.health.HealthScreenState
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
@@ -121,7 +122,11 @@ fun BikeUiRoute(
                 rideDuration = bikeState.rideDuration,
                 settings = bikeState.settings,
                 location = bikeState.location.let { LatLng(it?.longitude ?: 0.0, it?.longitude ?: 0.0) },
-                heading = bikeState.heading
+                heading = bikeState.heading,
+                averageSpeed = bikeState.averageSpeed,
+                elevation = bikeState.elevation,
+                batteryLevel = bikeState.batteryLevel,
+                motorPower = bikeState.motorPower
             )
 
             BikeAppScreen(

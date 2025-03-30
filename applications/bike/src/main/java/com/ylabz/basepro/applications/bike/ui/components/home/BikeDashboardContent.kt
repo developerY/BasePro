@@ -50,8 +50,8 @@ fun BikeDashboardContent(
     val heading : Float = bikeRideInfo.heading
     val batteryLevel = bikeRideInfo.batteryLevel
     val motorPower = bikeRideInfo.motorPower
-    val heartRate = bikeRideInfo.heartRate
-    val calories = bikeRideInfo.calories
+    val heartRate = null
+    val calories = null
 
     Column(
         modifier = modifier
@@ -176,6 +176,7 @@ fun BikeDashboardContent(
 fun BikeDashboardContentPreview() {
 
     val dummyBikeRideInfo = BikeRideInfo(
+        location = LatLng(34.0522, -118.2437), // Dummy location
         currentSpeed = 28.0,
         totalDistance = 12.5,
         currentTripDistance = 7.2,  // current progress (km)
@@ -183,7 +184,9 @@ fun BikeDashboardContentPreview() {
         averageSpeed = 25.0,
         elevation = 150.0,
         settings = emptyMap(), // You may set appropriate values
-        location = LatLng(34.0522, -118.2437) // Dummy location
+        heading = 45f,
+        batteryLevel = 80,
+        motorPower = 1500f,
     )
 
     MaterialTheme {

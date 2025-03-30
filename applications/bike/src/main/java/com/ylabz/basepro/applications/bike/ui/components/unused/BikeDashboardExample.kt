@@ -99,6 +99,7 @@ fun BikeDashboardExample(
 
 
 val bikeRideInfo = BikeRideInfo(
+    location = LatLng(37.4219999, -122.0862462),
     currentSpeed = 55.0,
     currentTripDistance = 5.0,
     totalDistance = 100.0,
@@ -106,7 +107,11 @@ val bikeRideInfo = BikeRideInfo(
     settings = mapOf("Theme" to listOf("Light", "Dark", "System Default"),
         "Language" to listOf("English", "Spanish", "French"),
         "Notifications" to listOf("Enabled", "Disabled")),
-    location = LatLng(37.4219999, -122.0862462)
+    averageSpeed = 12.0,
+    elevation = 12.0,
+    heading = 12.0f,
+    batteryLevel = 12,
+    motorPower = 12.0f
 )
 
 /*
