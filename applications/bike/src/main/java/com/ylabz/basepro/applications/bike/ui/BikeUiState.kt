@@ -18,6 +18,7 @@ sealed class BikeUiState {
         val bikeID : String? = null,
         val batteryLevel : Int? = null,
         val motorPower : Float? = null,
+        val isBikeConnected : Boolean = false,
 
         // Just a place holder
         val speedKmh : Float = 0.0f,

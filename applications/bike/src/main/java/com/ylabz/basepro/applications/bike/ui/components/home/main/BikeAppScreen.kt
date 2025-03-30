@@ -22,6 +22,7 @@ import com.ylabz.basepro.applications.bike.ui.components.path.BikePathScreen
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import com.ylabz.basepro.applications.bike.ui.BikeUiState
 import com.ylabz.basepro.applications.bike.ui.components.settings.SettingsNavHost
+import com.ylabz.basepro.applications.bike.ui.components.unused.bikeRideInfo
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.health.HealthScreenState
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
@@ -34,14 +35,8 @@ import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 @Composable
 fun BikeAppScreen(
     modifier: Modifier = Modifier,
-    healthPermState: HealthScreenState,
-    healthState: HealthUiState,
     nfcUiState: NfcUiState,
     nfcEvent: (NfcRwEvent) -> Unit,
-    sessionsList : List<ExerciseSessionRecord>,  // Assuming your HealthUiState.Success contains healthData.
-    onPermissionsLaunch: (Set<String>) -> Unit,
-    backgroundReadPermissions: Set<String>,
-    bikeRideInfo: BikeRideInfo,
     bikeUiState : BikeUiState,
     onBikeEvent: (BikeEvent) -> Unit,
     onHealthEvent: (HealthEvent) -> Unit,
@@ -198,6 +193,7 @@ fun BikeAppScreenPreview() {
     val healthState = HealthUiState.Success(emptyList())
 
     val bikeRideInfo = BikeRideInfo(
+        isBikeConnected = true,
         location = LatLng(37.4219999, -122.0862462),
         currentSpeed = 55.0,
         currentTripDistance = 5.0,
@@ -214,14 +210,8 @@ fun BikeAppScreenPreview() {
     )
 
     BikeAppScreen(
-        healthPermState = healthPermState,
-        healthState = healthState,
         nfcUiState = NfcUiState.WaitingForTag,
         nfcEvent = {},
-        sessionsList = emptyList(),
-        onPermissionsLaunch = {},
-        backgroundReadPermissions = emptySet(),
-        bikeRideInfo = bikeRideInfo,
         bikeUiState = BikeUiState.Loading,
         onBikeEvent = {},
         onHealthEvent = {},

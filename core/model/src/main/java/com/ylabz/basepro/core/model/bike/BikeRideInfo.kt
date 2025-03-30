@@ -3,6 +3,8 @@ package com.ylabz.basepro.core.model.bike
 import com.google.android.gms.maps.model.LatLng
 
 data class BikeRideInfo(
+    val isBikeConnected: Boolean,
+
     val location: LatLng?,
     val currentSpeed: Double,
     val currentTripDistance: Double,

@@ -116,6 +116,7 @@ fun BikeUiRoute(
             val healthState = healthUiState as HealthUiState.Success
 
             val bikeRideInfo = BikeRideInfo(
+                isBikeConnected = bikeState.isBikeConnected,
                 currentSpeed = bikeState.currentSpeed,
                 currentTripDistance = bikeState.currentDistance,
                 totalDistance = bikeState.totalDistance,
@@ -131,16 +132,8 @@ fun BikeUiRoute(
 
             BikeAppScreen(
                 modifier = modifier,
-                healthPermState = bundledState,
-                healthState = healthState,
                 nfcUiState = nfcUiState,
                 nfcEvent = { event -> nfcViewModel.onEvent(event) },
-                sessionsList = (healthUiState as HealthUiState.Success).healthData,
-                onPermissionsLaunch = { values ->
-                    permissionsLauncher.launch(values)
-                },
-                backgroundReadPermissions = backgroundReadPermissions,
-                bikeRideInfo = bikeRideInfo,
                 bikeUiState = bikeUiState,
                 onBikeEvent = { event -> bikeViewModel.onEvent(event) },
                 onHealthEvent = { event -> healthViewModel.onEvent(event) }, // Use the instance, not the class name

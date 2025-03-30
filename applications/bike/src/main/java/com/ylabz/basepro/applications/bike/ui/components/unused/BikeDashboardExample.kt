@@ -99,6 +99,7 @@ fun BikeDashboardExample(
 
 
 val bikeRideInfo = BikeRideInfo(
+    isBikeConnected = true,
     location = LatLng(37.4219999, -122.0862462),
     currentSpeed = 55.0,
     currentTripDistance = 5.0,

@@ -34,12 +34,12 @@ import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionU
 @Composable
 fun BikeDashboardContent(
     modifier: Modifier = Modifier,
-    isBikeConnected: Boolean = false,
     bikeRideInfo : BikeRideInfo,
     onBikeEvent : (BikeEvent) -> Unit,
     nfcUiState : NfcUiState,
     navTo: (String) -> Unit,
 ) {
+    val isBikeConnected = bikeRideInfo.isBikeConnected
 
     val currentSpeed = bikeRideInfo.currentSpeed
     val currentTripDistance = bikeRideInfo.currentTripDistance
@@ -176,6 +176,7 @@ fun BikeDashboardContent(
 fun BikeDashboardContentPreview() {
 
     val dummyBikeRideInfo = BikeRideInfo(
+        isBikeConnected = true,
         location = LatLng(34.0522, -118.2437), // Dummy location
         currentSpeed = 28.0,
         totalDistance = 12.5,
