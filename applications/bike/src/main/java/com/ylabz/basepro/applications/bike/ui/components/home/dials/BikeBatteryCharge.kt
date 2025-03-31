@@ -156,7 +156,7 @@ fun BikeConnectionCardLoopPreview() {
     ) {
         batteryLevels.forEach { level ->
             BikeBatteryCharge(
-                isConnected = true,
+                isConnected = false,
                 batteryLevel = level,
                 onConnectClick = {}
             )

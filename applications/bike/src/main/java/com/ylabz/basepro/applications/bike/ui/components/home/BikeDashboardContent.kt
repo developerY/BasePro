@@ -23,6 +23,7 @@ import com.ylabz.basepro.applications.bike.ui.components.home.dials.StatsSection
 import com.ylabz.basepro.applications.bike.ui.components.home.main.SpeedAndProgressCard
 import com.ylabz.basepro.applications.bike.ui.components.home.main.StatItem
 import com.ylabz.basepro.applications.bike.ui.components.home.main.StatsRow
+import com.ylabz.basepro.applications.bike.ui.components.unused.BikeBatteryLevels
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.feature.weather.ui.components.combine.UnifiedWeatherCard
 import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionUnif
@@ -70,7 +71,7 @@ fun BikeDashboardContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-        BikeBatteryCharge(
+        BikeBatteryLevels( //BikeBatteryCharge(
             isConnected = isBikeConnected,
             batteryLevel = batteryLevel,
             onConnectClick = { onBikeEvent(BikeEvent.Connect) }
@@ -169,7 +170,7 @@ fun BikeDashboardContent(
 fun BikeDashboardContentPreview() {
 
     val dummyBikeRideInfo = BikeRideInfo(
-        isBikeConnected = true,
+        isBikeConnected = false,
         location = LatLng(34.0522, -118.2437), // Dummy location
         currentSpeed = 28.0,
         totalDistance = 12.5,

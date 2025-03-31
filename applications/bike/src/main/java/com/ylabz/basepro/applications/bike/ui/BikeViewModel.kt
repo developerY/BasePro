@@ -241,6 +241,23 @@ class BikeViewModel @Inject constructor(
 
     private fun bikeConnect() {
         // Implement your bike connection logic here
+        viewModelScope.launch {
+
+
+                val currentState = _uiState.value
+
+                if (currentState is BikeUiState.Success) {
+
+                        // Update the nested bikeData immutably using copy
+                        _uiState.value = currentState.copy(
+                            bikeData = currentState.bikeData.copy(
+                                isBikeConnected = true,
+                            )
+                        )
+
+                }
+
+        }
 
     }
 
@@ -253,7 +270,7 @@ class BikeViewModel @Inject constructor(
                     "Notifications" to listOf("Enabled", "Disabled")
                 ),
                 bikeData = BikeRideInfo(
-                    isBikeConnected = true,
+                    isBikeConnected = false,
                     location = LatLng(37.4219999, -122.0862462),
                     currentSpeed = 55.0,
                     currentTripDistance = 5.0,
