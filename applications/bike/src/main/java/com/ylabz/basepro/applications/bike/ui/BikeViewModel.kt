@@ -45,6 +45,9 @@ class BikeViewModel @Inject constructor(
     // Store the ride start time.
     private var rideStartTime: Long = 0L
 
+    var batteryLevel = 100  // Start at 100%
+
+
     init {
         // Trigger initial load of settings.
         onEvent(BikeEvent.LoadBike)
@@ -155,6 +158,12 @@ class BikeViewModel @Inject constructor(
                 // Simulate heading changes: increase by 3° each iteration and wrap around at 360
                 heading = ((heading +  1) % 360.0).toFloat()
 
+                // Simulate battery drain: decrement batteryLevel, then reset to 100 if it goes below 0
+                batteryLevel -= 1
+                if (batteryLevel < 0) {
+                    batteryLevel = 100
+                }
+
                 val currentState = _uiState.value
                 if (currentState is BikeUiState.Success) {
                     // Update the nested bikeData immutably using copy
@@ -163,7 +172,8 @@ class BikeViewModel @Inject constructor(
                             currentSpeed = speed,
                             currentTripDistance = traveledDistance,
                             totalDistance = totalDist,
-                            heading = heading
+                            heading = heading,
+                            batteryLevel = batteryLevel
                         )
                     )
                     Log.d("BikeViewModel", "Fake update: speed=$speed, traveledDistance=$traveledDistance, heading=$heading")

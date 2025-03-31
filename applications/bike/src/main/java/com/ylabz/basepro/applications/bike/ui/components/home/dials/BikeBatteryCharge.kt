@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.lerp
 
-fun interpolatedBatteryColor(batteryLevel: Int): Color {
+private fun interpolatedBatteryColor(batteryLevel: Int): Color {
     // Clamp the battery level between 0 and 100.
     val clampedLevel = batteryLevel.coerceIn(0, 100)
     // Convert battery level to a fraction between 0f and 1f.
@@ -26,7 +26,7 @@ fun interpolatedBatteryColor(batteryLevel: Int): Color {
 
 
 @Composable
-fun InterpolatedBatteryIndicator(
+private fun InterpolatedBatteryIndicator(
     batteryLevel: Int,
     modifier: Modifier = Modifier
 ) {
@@ -45,7 +45,7 @@ fun InterpolatedBatteryIndicator(
 
 
 @Composable
-fun SegmentedBatteryIndicator(
+private fun SegmentedBatteryIndicator(
     batteryLevel: Int,
     modifier: Modifier = Modifier
 ) {
@@ -91,7 +91,7 @@ fun SegmentedBatteryIndicator(
 }
 
 @Composable
-fun BikeConnectionCard(
+fun BikeBatteryCharge(
     isConnected: Boolean,
     batteryLevel: Int?, // Battery percentage when connected, null if not connected
     onConnectClick: () -> Unit
@@ -148,24 +148,6 @@ fun BikeConnectionCard(
 
 @Preview(showBackground = true)
 @Composable
-fun InterpolatedBatteryIndicatorPreview() {
-    Column(modifier = Modifier.padding(16.dp)) {
-        InterpolatedBatteryIndicator(batteryLevel = 0)
-        Spacer(modifier = Modifier.height(8.dp))
-        InterpolatedBatteryIndicator(batteryLevel = 25)
-        Spacer(modifier = Modifier.height(8.dp))
-        InterpolatedBatteryIndicator(batteryLevel = 50)
-        Spacer(modifier = Modifier.height(8.dp))
-        InterpolatedBatteryIndicator(batteryLevel = 75)
-        Spacer(modifier = Modifier.height(8.dp))
-        InterpolatedBatteryIndicator(batteryLevel = 100)
-    }
-}
-
-
-
-@Preview(showBackground = true)
-@Composable
 fun BikeConnectionCardLoopPreview() {
     val batteryLevels = listOf(10,20,30,40,50,70) //listOf(10,20,30,40,50,70,80,90,100)
     Column(
@@ -173,7 +155,7 @@ fun BikeConnectionCardLoopPreview() {
         modifier = Modifier.padding(16.dp)
     ) {
         batteryLevels.forEach { level ->
-            BikeConnectionCard(
+            BikeBatteryCharge(
                 isConnected = true,
                 batteryLevel = level,
                 onConnectClick = {}

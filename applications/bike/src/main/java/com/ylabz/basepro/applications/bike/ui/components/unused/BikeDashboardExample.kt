@@ -18,7 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.StatsSection
-import com.ylabz.basepro.applications.bike.ui.components.home.main.BikeConnectionCard
 import com.ylabz.basepro.applications.bike.ui.components.home.main.SpeedAndProgressCard
 import com.ylabz.basepro.applications.bike.ui.components.home.main.StatItem
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
@@ -58,7 +57,7 @@ fun BikeDashboardExample(
         )
 
         // 2) Bike connection or battery card
-        BikeConnectionCard(
+        BikeBatteryLevels(
             isConnected = isBikeConnected,
             batteryLevel = batteryLevel,
             onConnectClick = onConnectClick

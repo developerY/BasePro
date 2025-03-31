@@ -1,16 +1,9 @@
-package com.ylabz.basepro.applications.bike.ui.components.home.main
+package com.ylabz.basepro.applications.bike.ui.components.unused
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.getValue
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.AltRoute
-import androidx.compose.material.icons.automirrored.filled.DirectionsBike
-import androidx.compose.material.icons.filled.Navigation
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,23 +11,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.maps.android.compose.rememberCameraPositionState
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.ylabz.basepro.applications.bike.ui.BikeEvent
-import com.ylabz.basepro.applications.bike.ui.components.home.BikeDashboardContent
-import com.ylabz.basepro.applications.bike.ui.components.path.BikePathScreen
-import androidx.health.connect.client.records.ExerciseSessionRecord
-import com.ylabz.basepro.applications.bike.ui.BikeUiState
-import com.ylabz.basepro.applications.bike.ui.components.settings.SettingsNavHost
-import com.ylabz.basepro.core.model.bike.BikeRideInfo
-import com.ylabz.basepro.core.model.health.HealthScreenState
-import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
-import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
-import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
-import com.ylabz.basepro.feature.nfc.ui.NfcUiState
+
 @Composable
-fun BikeConnectionCard(
+fun BikeBatteryLevels(
     isConnected: Boolean,
     batteryLevel: Int?,
     onConnectClick: () -> Unit
@@ -124,8 +103,8 @@ fun batteryColor(batteryLevel: Int): Color {
 
 @Preview
 @Composable
-fun BikeConnectionCardPreview() {
-    BikeConnectionCard(
+fun BikeBatteryLevelsPreview() {
+    BikeBatteryLevels(
         isConnected = false,
         batteryLevel = 75,
         onConnectClick = {}
