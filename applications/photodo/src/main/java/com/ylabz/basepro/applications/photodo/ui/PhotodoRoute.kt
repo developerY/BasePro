@@ -18,8 +18,9 @@ import com.ylabz.basepro.applications.photodo.ui.components.PhotodoScreen
 @SuppressLint("MissingPermission")
 @Composable
 fun PhotodoRoute(
-    navController: NavController,
-    paddingValues: PaddingValues,
+    modifier: Modifier = Modifier,
+    navTo: (String) -> Unit,
+    //navController: NavController,
     viewModel: PhotodoViewModel = hiltViewModel()
 ) {
     val TAG = "PhotodoRoute"
@@ -27,9 +28,8 @@ fun PhotodoRoute(
     val context = LocalContext.current
     // Render the UI based on the current state
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .padding(paddingValues)
     ) {
         //PermissionStatusUI(permissionState) // Show BLE permission status visually
         // Status Bar at the top of the screen

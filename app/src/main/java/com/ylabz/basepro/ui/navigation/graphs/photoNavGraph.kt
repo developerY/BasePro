@@ -41,7 +41,7 @@ import kotlinx.coroutines.CoroutineScope
  * @param paddingVals The padding to apply to the navigation graph.
  */
 @RequiresApi(Build.VERSION_CODES.S)
-fun NavGraphBuilder.photodoNavGraph(
+fun NavGraphBuilder.photoNavGraph(
     drawerState: DrawerState,
     scope: CoroutineScope,
     navController: NavHostController

@@ -78,6 +78,7 @@ dependencies {
     implementation(project(":applications:home"))
     implementation(project(":applications:bike"))
     implementation(project(":applications:medtime"))
+    implementation(project(":applications:photodo"))
 
 
     // feature module  dependency

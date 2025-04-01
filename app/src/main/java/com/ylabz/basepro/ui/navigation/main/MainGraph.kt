@@ -25,6 +25,7 @@ import com.ylabz.basepro.ui.navigation.graphs.gmapNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.healthNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.mlNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.nfcNavGraph
+import com.ylabz.basepro.ui.navigation.graphs.photoNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.photodoNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.placesNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.settingsNavGraph
@@ -137,6 +138,12 @@ fun MainNavGraph(
         )
 
         mlNavGraph(
+            drawerState,
+            scope,
+            navController
+        )
+
+        photoNavGraph(
             drawerState,
             scope,
             navController
