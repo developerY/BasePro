@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/applications/bike" />
             <option value="$PROJECT_DIR$/applications/home" />
             <option value="$PROJECT_DIR$/applications/medtime" />
+            <option value="$PROJECT_DIR$/applications/photodo" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core/data" />
             <option value="$PROJECT_DIR$/core/database" />
