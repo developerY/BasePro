@@ -40,6 +40,12 @@ fun PhotodoScreen(
             modifier = Modifier.align(Alignment.TopCenter),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            item {
+                Text(
+                    text = "Photodo Applications",
+                    color = Color.White,
+                    fontSize = 24.sp)
+            }
             items(data) { item ->
                 Text(
                     text = item.shot,

@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.ElectricBike
+import androidx.compose.material.icons.filled.FormatListNumbered
 import androidx.compose.material.icons.filled.HealthAndSafety
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Map
@@ -42,7 +43,9 @@ fun HomeMainScreen(
     val appList = listOf(
         AppModel("Bike", "Electric Bike Application", Icons.Filled.ElectricBike, "bike"),
         AppModel("Shot", "Electric Bike Application", Icons.Filled.Medication, "shotime"),
-    )
+        AppModel("Photodo", "Todo Application", Icons.Filled.FormatListNumbered, "photodo"),
+
+        )
 
     Scaffold(
         topBar = {
