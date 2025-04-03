@@ -15,6 +15,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
+        // This gets overridden by flavors
         applicationId = "com.ylabz.basepro"
         minSdk = 31
         targetSdk = 34
@@ -33,6 +34,25 @@ android {
             )
         }
     }
+
+    flavorDimensions += "app"
+
+    productFlavors {
+        create("bike") {
+            dimension = "app"
+            applicationId = "com.ylabz.bike"
+            versionName = "1.0-bike"
+            resValue("string", "app_name", "Bike App")
+        }
+        create("home") {
+            dimension = "app"
+            applicationId = "com.ylabz.home"
+            versionName = "1.0-home"
+            resValue("string", "app_name", "Home App")
+        }
+        // Add other flavors like "medtime", "photodo" later
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
@@ -40,6 +60,7 @@ android {
     kotlinOptions {
         jvmTarget = "21"
     }
+
     buildFeatures {
         compose = true
         buildConfig = true
@@ -60,8 +81,12 @@ android {
 }
 
 dependencies {
-    // Core module dependencies
+    // Core + shared
     implementation(project(":core:data"))
+    implementation(project(":core:model"))
+    implementation(project(":core:ui"))
+
+    // Feature modules
     implementation(project(":feature:listings"))
     implementation(project(":feature:camera"))
     implementation(project(":feature:places"))
@@ -77,15 +102,11 @@ dependencies {
     // Application module dependencies
     implementation(project(":applications:home"))
     implementation(project(":applications:bike"))
+    implementation(project(":applications:home"))
     implementation(project(":applications:medtime"))
     implementation(project(":applications:photodo"))
 
-
-    // feature module  dependency
-    implementation(project(":feature:settings"))  // feature module  dependency
-    implementation(project(":core:ui"))
-    implementation(project(":core:model")) // feature module  dependency
-
+    // AndroidX + Compose
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -93,7 +114,9 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation.compose)
 
+    // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)   // Hilt compiler dependency for annotation processing
 
@@ -101,8 +124,12 @@ dependencies {
     implementation(libs.androidx.navigation.compose) // Added Compose Navigation dependency with safe args plugin
     implementation(libs.kotlinx.serialization.json) // Added Kotlin serialization dependency
     implementation(libs.hilt.navigation.compose)
+    ksp(libs.hilt.android.compiler)
 
+    // Serialization
+    implementation(libs.kotlinx.serialization.json)
 
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
