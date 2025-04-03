@@ -56,7 +56,7 @@ dependencies {
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.tooling)
     // WearOS
     // implementation(libs.androidx.wear.compose.material) <--- what is this?
     implementation(libs.androidx.wear.tooling.preview)
@@ -74,7 +74,7 @@ dependencies {
     implementation(libs.play.services.wearable)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.wear.compose.material)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.wear.tooling.preview)
