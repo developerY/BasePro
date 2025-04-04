@@ -37,6 +37,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import com.ylabz.basepro.applications.bike.ui.components.demo.ExpandableSection
+import com.ylabz.basepro.feature.qrscanner.ui.QRCodeScannerScreen
 import com.ylabz.basepro.settings.ui.components.ErrorScreen
 import com.ylabz.basepro.settings.ui.components.LoadingScreen
 
@@ -201,7 +202,7 @@ fun BikeSettingsScreenEx(
                 expanded = qrExpanded,
                 onExpandToggle = { qrExpanded = !qrExpanded }
             ) {
-                // QRCodeScannerScreen()
+                QRCodeScannerScreen()
             }
         }
     }

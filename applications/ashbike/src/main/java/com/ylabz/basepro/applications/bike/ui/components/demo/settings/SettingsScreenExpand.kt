@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.nfc.ui.components.NfcScanScreen
+import com.ylabz.basepro.feature.qrscanner.ui.QRCodeScannerScreen
 
 
 // ---------------------------------------------
@@ -314,7 +315,7 @@ fun QrExpandableEx(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     // For example:
-                    // QRCodeScannerScreen()
+                    QRCodeScannerScreen()
                     Text(text = "QRCodeScannerScreen() goes here.")
                 }
             }
