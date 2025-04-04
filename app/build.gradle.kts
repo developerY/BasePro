@@ -78,7 +78,6 @@ dependencies {
 
     // Application module dependencies
     implementation(project(":applications:home"))
-    implementation(project(":applications:bikeold"))
     implementation(project(":applications:home"))
     implementation(project(":applications:medtime"))
 

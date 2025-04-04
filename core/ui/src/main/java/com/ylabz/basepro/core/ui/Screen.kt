@@ -38,11 +38,9 @@ const val BLE = "ble"
 const val SETTINGS = "settings"
 const val SHOTIME = "shotime"
 const val ALARM = "alarm"
-const val BIKE = "bike"
 const val WEATHER = "weather"
 const val NFC = "nfc"
 const val ML = "ml"
-const val PHOTODO = "photodo"
 
 
 sealed class Screen(val route: String) {
@@ -57,11 +55,9 @@ sealed class Screen(val route: String) {
     data object BLEPermissionsScreen : Screen("ble_permissions_screen")
     data object ShotimeScreen : Screen("shotime_screen")
     data object AlarmScreen : Screen("alarm_screen")
-    data object BikeScreen : Screen("bike_screen")
     data object WeatherScreen : Screen("weather_screen")
     data object NfcScreen : Screen("nfc_screen")
     data object MLScreen : Screen("ml_screen")
-    data object PhotodoScreen : Screen("photodo_screen")
 }
 
 @Serializable

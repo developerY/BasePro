@@ -19,7 +19,6 @@ import com.ylabz.basepro.listings.ui.ListUIRoute
 import com.ylabz.basepro.listings.ui.components.DetailsRoute
 import com.ylabz.basepro.ui.bar.AppScaffold
 import com.ylabz.basepro.ui.navigation.graphs.alarmNavGraph
-import com.ylabz.basepro.ui.navigation.graphs.bikeNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.bluetoothLeNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.gmapNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.healthNavGraph
@@ -108,12 +107,6 @@ fun MainNavGraph(
         )
 
         settingsNavGraph(
-            drawerState,
-            scope,
-            navController
-        )
-
-        bikeNavGraph(
             drawerState,
             scope,
             navController

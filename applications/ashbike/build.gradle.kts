@@ -41,6 +41,11 @@ android {
         compose = true
         buildConfig = true
     }
+
+
+    secrets {
+        defaultPropertiesFileName = "secrets.defaults.properties"
+    }
 }
 
 dependencies {
