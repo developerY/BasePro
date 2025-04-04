@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
-
     alias(libs.plugins.mapsplatform.secrets)
 }
 
@@ -49,7 +48,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
-
+    implementation(project(":core:util"))
     // Feature modules
     implementation(project(":feature:listings"))
     implementation(project(":feature:camera"))
@@ -80,8 +79,17 @@ dependencies {
     implementation(libs.androidx.navigation.compose) // Added Compose Navigation dependency with safe args plugin
     implementation(libs.hilt.navigation.compose)
 
+    // Icons
+    implementation(libs.androidx.material.icons.extended)
+
     // Serialization
     implementation(libs.kotlinx.serialization.json)
+
+    // Health Connect
+    implementation(libs.healthConnect)
+
+    // maps
+    implementation(libs.google.maps.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -90,6 +98,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Preview
     debugImplementation(libs.androidx.ui.tooling)
 
 }
