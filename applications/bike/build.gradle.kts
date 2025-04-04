@@ -46,6 +46,7 @@ android {
 dependencies {
     // Core + shared
     implementation(project(":core:data"))
+    implementation(project(":core:database"))
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
     implementation(project(":core:util"))
@@ -59,8 +60,13 @@ dependencies {
     implementation(project(":feature:settings"))
     implementation(project(":feature:alarm"))
     implementation(project(":feature:weather"))
+    implementation(project(":feature:qrscanner"))
     implementation(project(":feature:nfc"))
     implementation(project(":feature:ml"))
+
+    // androidx-lifecycle-viewmodel-compose
+    implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.lifecycle.viewmodel.android)
 
     // AndroidX + Compose
     implementation(libs.androidx.core.ktx)
@@ -74,6 +80,8 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)   // Hilt compiler dependency for annotation processing
+    // Hilt Dependency Injection
+    // kapt(libs.hilt.compiler)
 
     // Compose Navigation
     implementation(libs.androidx.navigation.compose) // Added Compose Navigation dependency with safe args plugin
@@ -99,7 +107,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // Preview
-    debugImplementation(libs.androidx.ui.tooling)
+
+    //implementation(libs.androidx.appcompat)
+    //implementation(libs.material)
+
 
 }
