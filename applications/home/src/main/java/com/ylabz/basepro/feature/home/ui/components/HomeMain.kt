@@ -44,7 +44,6 @@ fun HomeMainScreen(
         AppModel("Bike", "Electric Bike Application", Icons.Filled.ElectricBike, "bike"),
         AppModel("Shot", "Electric Bike Application", Icons.Filled.Medication, "shotime"),
         AppModel("Photodo", "Todo Application", Icons.Filled.FormatListNumbered, "photodo"),
-
         )
 
     Scaffold(

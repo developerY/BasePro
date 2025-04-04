@@ -7,7 +7,6 @@ plugins {
     // alias(libs.plugins.kotlin.kapt) need to
     alias(libs.plugins.kotlin.serialization)  // Added Kotlin serialization plugin)
     alias(libs.plugins.mapsplatform.secrets)
-
 }
 
 android {
@@ -35,24 +34,6 @@ android {
         }
     }
 
-    flavorDimensions += "app"
-
-    productFlavors {
-        create("bike") {
-            dimension = "app"
-            applicationId = "com.ylabz.bike"
-            versionName = "1.0-bike"
-            resValue("string", "app_name", "Bike App")
-        }
-        create("home") {
-            dimension = "app"
-            applicationId = "com.ylabz.home"
-            versionName = "1.0-home"
-            resValue("string", "app_name", "Home App")
-        }
-        // Add other flavors like "medtime", "photodo" later
-    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
@@ -66,10 +47,6 @@ android {
         buildConfig = true
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
     kotlinOptions {
         jvmTarget = "21"
     }
@@ -101,10 +78,9 @@ dependencies {
 
     // Application module dependencies
     implementation(project(":applications:home"))
-    implementation(project(":applications:bike"))
+    implementation(project(":applications:bikeold"))
     implementation(project(":applications:home"))
     implementation(project(":applications:medtime"))
-    implementation(project(":applications:photodo"))
 
     // AndroidX + Compose
     implementation(libs.androidx.core.ktx)
@@ -114,7 +90,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.navigation.compose)
+
 
     // Hilt
     implementation(libs.hilt.android)
@@ -122,9 +98,7 @@ dependencies {
 
     // Compose Navigation
     implementation(libs.androidx.navigation.compose) // Added Compose Navigation dependency with safe args plugin
-    implementation(libs.kotlinx.serialization.json) // Added Kotlin serialization dependency
     implementation(libs.hilt.navigation.compose)
-    ksp(libs.hilt.android.compiler)
 
     // Serialization
     implementation(libs.kotlinx.serialization.json)

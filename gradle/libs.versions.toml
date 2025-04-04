@@ -176,6 +176,7 @@ play-services-maps = { group = "com.google.android.gms", name = "play-services-m
 
 # QR Scanner
 gms-play-services-code-scanner = { module = "com.google.android.gms:play-services-code-scanner", version.ref = "playServicesCodeScanner" }
+androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 
 
 [plugins]

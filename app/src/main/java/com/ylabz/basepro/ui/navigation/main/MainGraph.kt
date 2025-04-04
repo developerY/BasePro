@@ -26,7 +26,6 @@ import com.ylabz.basepro.ui.navigation.graphs.healthNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.mlNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.nfcNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.photoNavGraph
-import com.ylabz.basepro.ui.navigation.graphs.photodoNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.placesNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.settingsNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.shotimeNavGraph
@@ -74,11 +73,6 @@ fun MainNavGraph(
         route = MAIN,
         startDestination = Screen.HomeScreen.route
     ) {
-        photodoNavGraph(
-            drawerState,
-            scope,
-            navController
-        )
         gmapNavGraph(
             drawerState,
             navController,

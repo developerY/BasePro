@@ -45,6 +45,7 @@ include(":feature:ml")
 
 // Applications
 include(":applications:home")
-include(":applications:bike")
+include(":applications:bikeold")
 include(":applications:medtime")
 include(":applications:photodo")
+include(":applications:bike")
