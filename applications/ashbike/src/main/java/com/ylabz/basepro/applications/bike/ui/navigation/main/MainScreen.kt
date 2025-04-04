@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.automirrored.twotone.List
+import androidx.compose.material.icons.filled.Medication
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.twotone.Home
@@ -30,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -53,7 +57,7 @@ fun MainScreen() {
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("AshBike") }) },
-        bottomBar = {HomeBottomBar(navController = navController, items = bottomNavigationItems)},
+        bottomBar = { HomeBottomBar(navController = navController) },
     ) { paddingVals ->
         NavHost(navController, startDestination = BikeScreen.HomeBikeScreen.route) {
 
@@ -84,35 +88,14 @@ fun MainScreen() {
     }
 }
 
-@Composable
-fun HomeBottomBar(navController: NavHostController, items: List<BikeScreen>) {
-    BottomNavigation {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navController.currentBackStackEntry?.destination
-        items.forEach { screen ->
-            BottomNavigationItem(
-                icon = { Icon(screen.icon, contentDescription = null) },
-                label = { Text(stringResource(id = screen.resourceId)) },
-                selected = currentDestination?.hierarchy?.any {
-                    it.route == screen.route
-                } == true,
-                // alwaysShowLabels = false, // This hides the title for the unselected items
-                onClick = {
-                    // Log.d(TAG, "This is the route ${currentRoute} -> ${screen.route}")
-                    // This if check gives us a "singleTop" behavior where we do not create a
-                    // second instance of the composable if we are already on that destination
-                    navController.navigate(screen.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
-            )
-        }
-    }
+
+
+sealed class BottomNavItem(val route: String, val icon: ImageVector, val label: String) {
+    object Home : BottomNavItem("home", Icons.Default.Medication, "Home")
+    object Search : BottomNavItem("search", Icons.Default.Search, "Search")
+    object Profile : BottomNavItem("profile", Icons.Default.Person, "Profile")
 }
+
 
 
 data class BottomNavigationItem(
@@ -134,15 +117,13 @@ private fun navigateTo(tabTitle: String, navController: NavHostController) {
 
 @Composable
 fun HomeBottomBar(
-    route: String,
-    navController: NavHostController,
-    //state: MutableState<Boolean>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavHostController
 ) {
 
     val items = listOf(
         BottomNavigationItem(
-            title = route + "hi",
+            title = "home",
             selectedIcon = Icons.TwoTone.Home,
             unselectedIcon = Icons.Outlined.Home,
             hasNews = false,
