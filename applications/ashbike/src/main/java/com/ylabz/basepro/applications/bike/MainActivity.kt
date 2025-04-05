@@ -54,7 +54,7 @@ fun AppUI() {
         color = MaterialTheme.colorScheme.background
     ) {
         Scaffold(
-            topBar = { TopAppBar(title = { Text("AshBike") }) },
+            topBar = { TopAppBar(title = { Text("AshBike") }) }, //  MinTopAppBar()
             bottomBar = { HomeBottomBar(navController = navController) },
         ) { innerPadding ->
             RootNavGraph(

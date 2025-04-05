@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -101,10 +102,22 @@ data class BottomNavigationItem(
 
 // only used by the bottom bar
 private fun navigateTo(tabTitle: String, navController: NavHostController) {
-    when (tabTitle) {
-        "Home"-> navController.navigate(BikeScreen.HomeBikeScreen.route)
-        "List" -> navController.navigate(BikeScreen.TripBikeScreen.route)
-        "Settings" -> navController.navigate(BikeScreen.SettingsBikeScreen.route)
+    val route = when (tabTitle) {
+        "Home"-> BikeScreen.HomeBikeScreen.route
+        "Ride" -> BikeScreen.TripBikeScreen.route
+        "Settings" -> BikeScreen.SettingsBikeScreen.route
+        else -> BikeScreen.HomeBikeScreen.route
+    }
+
+    navController.navigate(route) {
+        // Avoid multiple copies of the same destination
+        popUpTo(navController.graph.findStartDestination().id) {
+            saveState = true
+        }
+        // Avoid reloading the same destination if already on it
+        launchSingleTop = true
+        // Restore state when reselecting a previously selected tab
+        restoreState = true
     }
 }
 
