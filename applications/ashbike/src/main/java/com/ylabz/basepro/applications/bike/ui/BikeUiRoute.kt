@@ -1,6 +1,7 @@
 package com.ylabz.basepro.applications.bike.ui
 
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -13,6 +14,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.health.connect.client.HealthConnectClient
+import com.ylabz.basepro.applications.bike.ui.components.home.BikeDashboardContent
+import com.ylabz.basepro.applications.bike.ui.navigation.main.MainScreen
 import com.ylabz.basepro.core.model.bike.ConnectionStatus
 import com.ylabz.basepro.core.model.bike.NfcData
 import com.ylabz.basepro.core.model.health.HealthScreenState
@@ -123,15 +126,22 @@ fun BikeUiRoute(
                 batteryLevel = 50, //bikeState.battery
             )
 
+            BikeDashboardContent(
+                modifier = modifier,
+                bikeRideInfo = (bikeUiState as BikeUiState.Success).bikeData,
+                onBikeEvent = { bikeViewModel.onEvent(it) },
+                navTo = navTo
+            )
+
             // Pass only the required data to the dumb BikeAppScreen.
-            BikeAppScreen(
+            /*BikeAppScreen(
                 modifier = modifier,
                 nfcUiState = nfcUiState,
                 nfcEvent = { nfcViewModel.onEvent(it) },
                 bikeRideInfo = bikeState.bikeData,
                 onBikeEvent = { bikeViewModel.onEvent(it) },
                 navTo = navTo,
-            )
+            )*/
         }
         else -> {
             LoadingScreen()//modifier)
