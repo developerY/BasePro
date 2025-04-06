@@ -98,7 +98,7 @@ fun BikeAppScreen(
             when (selectedTab) {
                 "ride" -> {
                     BikeDashboardContent(
-                        modifier = Modifier.padding(innerPadding),
+                        modifier = modifier,
                         bikeRideInfo = bikeRideInfo,
                         onBikeEvent = onBikeEvent,
                         navTo = navTo
@@ -106,7 +106,7 @@ fun BikeAppScreen(
                 }
                 "path" -> {
                     BikePathScreen(
-                        modifier = Modifier.padding(innerPadding),
+                        modifier = modifier,
                         settings = sampleSettings,
                         onEvent = {},
                         location = LatLng(0.0,0.0),
@@ -119,7 +119,7 @@ fun BikeAppScreen(
                     )*/
 
                     SettingsNavHost(
-                        modifier = Modifier.padding(innerPadding),
+                        modifier = modifier,
                         nfcUiState = nfcUiState,
                         nfcEvent = nfcEvent,
                         navTo = navTo

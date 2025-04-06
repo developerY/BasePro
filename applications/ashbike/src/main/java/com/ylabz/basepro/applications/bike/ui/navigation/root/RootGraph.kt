@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.ylabz.basepro.applications.bike.ui.BikeUiRoute
 import com.ylabz.basepro.applications.bike.ui.navigation.graphs.bikeNavGraph
+import com.ylabz.basepro.applications.bike.ui.navigation.main.MainScreen
 import com.ylabz.basepro.core.ui.BIKE
 import com.ylabz.basepro.core.ui.BikeScreen
 import com.ylabz.basepro.core.ui.ROOT
@@ -14,22 +15,10 @@ import com.ylabz.basepro.settings.ui.SettingsUiRoute
 
 
 @Composable
-fun RootNavGraph(
-    modifier: Modifier = Modifier,
-    navHostController: NavHostController,
-    startDestination: String = "bike_nav_graph"
-) {
-    NavHost(
-        modifier = modifier,
-        navController = navHostController,
-        startDestination = startDestination,
-        route = ROOT,
-    ) {
-        bikeNavGraph(
-            modifier = modifier,
-            navHostController = navHostController
-        )
-    }
+fun RootNavGraph(navController: NavHostController) {
+    // In this example, RootNavGraph simply delegates to MainScreen.
+    // If you have multiple flows (e.g., auth, bike, settings) you can switch here.
+    MainScreen(navController = navController)
 }
 
 /*

@@ -22,7 +22,6 @@ import com.ylabz.basepro.ui.navigation.main.MainScreen
 @Composable
 fun RootNavGraph(
     navHostController: NavHostController,
-    //padding:PaddingValues,
     startDestination: String = MAIN
 ) {
     NavHost(
@@ -33,7 +32,9 @@ fun RootNavGraph(
         //mainNavGraph(navHostController)
         //photoNavGraph(navHostController)
         composable(route = MAIN) {
-            MainScreen()
+            MainScreen(
+                navController = navHostController
+            )
         }
     }
 }

@@ -2,6 +2,7 @@ package com.ylabz.basepro.applications.bike.ui
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -126,6 +127,8 @@ fun BikeUiRoute(
                 batteryLevel = 50, //bikeState.battery
             )
 
+            Text("Start")
+
             BikeDashboardContent(
                 modifier = modifier,
                 bikeRideInfo = (bikeUiState as BikeUiState.Success).bikeData,
@@ -133,15 +136,8 @@ fun BikeUiRoute(
                 navTo = navTo
             )
 
-            // Pass only the required data to the dumb BikeAppScreen.
-            /*BikeAppScreen(
-                modifier = modifier,
-                nfcUiState = nfcUiState,
-                nfcEvent = { nfcViewModel.onEvent(it) },
-                bikeRideInfo = bikeState.bikeData,
-                onBikeEvent = { bikeViewModel.onEvent(it) },
-                navTo = navTo,
-            )*/
+            Text("End")
+
         }
         else -> {
             LoadingScreen()//modifier)

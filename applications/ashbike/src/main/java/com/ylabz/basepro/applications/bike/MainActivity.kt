@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.ylabz.basepro.applications.bike.ui.BikeUiRoute
 import com.ylabz.basepro.applications.bike.ui.navigation.main.HomeBottomBar
+import com.ylabz.basepro.applications.bike.ui.navigation.main.MainScreen
 import com.ylabz.basepro.applications.bike.ui.navigation.root.RootNavGraph
 import com.ylabz.basepro.applications.bike.ui.theme.BaseProTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,21 +48,13 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppUI() {
+    // Create navController in this composable so it gets the correct ViewModelStoreOwner.
     val navController = rememberNavController()
-    // padding in scaffold.
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        Scaffold(
-            topBar = { TopAppBar(title = { Text("AshBike") }) }, //  MinTopAppBar()
-            bottomBar = { HomeBottomBar(navController = navController) },
-        ) { innerPadding ->
-            RootNavGraph(
-                modifier = Modifier.padding(innerPadding),
-                navHostController = navController
-            )
-        }
+        RootNavGraph(navController = navController)
     }
 }
 

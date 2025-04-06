@@ -67,7 +67,7 @@ fun BikeDashboardContent(
             windSpeed = 5.0f,
             weatherConditionText = WeatherConditionUnif.RAINY.name,
             heading = heading,
-            modifier = Modifier.fillMaxWidth()
+            modifier = modifier.fillMaxWidth()
         )
 
         BikeBatteryLevels( //BikeBatteryCharge(
@@ -144,7 +144,7 @@ fun BikeDashboardContent(
         // 4) Unified Weather Card (Rainy example)
         Spacer(modifier = Modifier.height(16.dp))
         UnifiedWeatherCard(
-            modifier = Modifier
+            modifier = modifier
                 .shadow(4.dp, shape = MaterialTheme.shapes.medium),
             weatherCondition = WeatherConditionUnif.RAINY,  // or your dynamic condition
             temperature = 25.0,

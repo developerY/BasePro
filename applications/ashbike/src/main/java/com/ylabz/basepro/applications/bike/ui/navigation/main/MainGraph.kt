@@ -4,10 +4,12 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.ylabz.basepro.applications.bike.ui.BikeUiRoute
+import com.ylabz.basepro.applications.bike.ui.navigation.graphs.bikeNavGraph
 import com.ylabz.basepro.core.ui.BIKE
 import com.ylabz.basepro.core.ui.BikeScreen
 import com.ylabz.basepro.core.ui.MAIN
@@ -17,19 +19,18 @@ import kotlinx.coroutines.CoroutineScope
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun MainNavGraph(
+    modifier: Modifier,
     navController: NavHostController,
 ) {
     NavHost(
         navController = navController,
-        route = BIKE,
-        startDestination = BikeScreen.HomeBikeScreen.route
+        route = BIKE, // This identifies this NavHost as "BIKE"
+        startDestination = "bike_nav_graph"
     ) {
-        composable(
-            BikeScreen.HomeBikeScreen.route
-        ) {
-            BikeUiRoute(
-                navTo = { path -> navController.navigate(path) }
-            )
-        }
+        bikeNavGraph(
+            modifier = modifier,
+            navHostController = navController,
+        )
+
     }
 }
