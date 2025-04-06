@@ -35,7 +35,7 @@
       </SelectionState>
       <SelectionState runConfigName="applications.bike">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-04-06T00:23:21.206499Z">
+        <DropdownSelection timestamp="2025-04-06T01:20:21.615545Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ash/.android/avd/Medium_Phone.avd" />

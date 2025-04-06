@@ -22,21 +22,10 @@ import com.ylabz.basepro.ui.navigation.main.MainScreen
 @Composable
 fun RootNavGraph(
     navHostController: NavHostController,
-    startDestination: String = MAIN
 ) {
-    NavHost(
-        navController = navHostController,
-        startDestination = startDestination,
-        route = ROOT,
-    ) {
-        //mainNavGraph(navHostController)
-        //photoNavGraph(navHostController)
-        composable(route = MAIN) {
-            MainScreen(
-                navController = navHostController
-            )
-        }
-    }
+    //mainNavGraph(navHostController)
+    //photoNavGraph(navHostController)
+    MainScreen(navController = navHostController)
 }
 
 /*
