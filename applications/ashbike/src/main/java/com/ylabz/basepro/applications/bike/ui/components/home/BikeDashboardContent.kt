@@ -2,6 +2,7 @@ package com.ylabz.basepro.applications.bike.ui.components.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsBike
@@ -32,8 +33,8 @@ import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionU
 @Composable
 fun BikeDashboardContent(
     modifier: Modifier = Modifier,
-    bikeRideInfo : BikeRideInfo,
-    onBikeEvent : (BikeEvent) -> Unit,
+    bikeRideInfo: BikeRideInfo,
+    onBikeEvent: (BikeEvent) -> Unit,
     navTo: (String) -> Unit,
 ) {
     val isBikeConnected = bikeRideInfo.isBikeConnected
@@ -97,27 +98,47 @@ fun BikeDashboardContent(
         )
         StatsSection(stats = healthStats)
 
-        // 3) Stats row: e-bike stats
-        // Only show motor if connected, or maybe show 0 W if not
-        val eBikeStats = listOf(
-            StatItem(
-                icon = Icons.Filled.BatteryChargingFull,
-                label = "Battery",
-                value = if (isBikeConnected && batteryLevel != null) "$batteryLevel%" else "--%"
-            ),
-            StatItem(
-                icon = Icons.AutoMirrored.Filled.DirectionsBike,
-                label = "Motor",
-                value = if (isBikeConnected && motorPower != null) "$motorPower W" else "-- W"
-            )
-        )
-        StatsSection(stats = eBikeStats)
+        // 2) Combine Battery/Motor stats with Connect button in a single card.
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp), // or whatever horizontal spacing you prefer
+            shape = RoundedCornerShape(8.dp),
+            elevation = CardDefaults.cardElevation(4.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),           // internal padding
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // E-bike stats
+                val eBikeStats = listOf(
+                    StatItem(
+                        icon = Icons.Filled.BatteryChargingFull,
+                        label = "Battery",
+                        value = if (isBikeConnected && batteryLevel != null) "$batteryLevel%" else "--%"
+                    ),
+                    StatItem(
+                        icon = Icons.AutoMirrored.Filled.DirectionsBike,
+                        label = "Motor",
+                        value = if (isBikeConnected && motorPower != null) "$motorPower W" else "-- W"
+                    )
+                )
+                StatsSection(stats = eBikeStats)
 
-        BikeBatteryLevels( //BikeBatteryCharge(
-            isConnected = isBikeConnected,
-            batteryLevel = batteryLevel,
-            onConnectClick = { onBikeEvent(BikeEvent.Connect) }
-        )
+                // Connect Bike button or status
+                BikeBatteryLevels(
+                    isConnected = isBikeConnected,
+                    batteryLevel = batteryLevel,
+                    onConnectClick = { onBikeEvent(BikeEvent.Connect) }
+                )
+            }
+        }
+    }
+}
+
         /*
         modifier: Modifier = Modifier,
             healthPermState: HealthScreenState,
@@ -160,8 +181,6 @@ fun BikeDashboardContent(
         )*/
 
 
-    }
-}
 
 @Preview(showBackground = true)
 @Composable

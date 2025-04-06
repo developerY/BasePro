@@ -7,9 +7,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.BatteryUnknown
+import androidx.compose.material.icons.automirrored.filled.DirectionsBike
 import androidx.compose.material.icons.automirrored.filled.DirectionsRun
+import androidx.compose.material.icons.filled.DirectionsBike
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.Speed
+import androidx.compose.material.icons.filled.Straight
 import androidx.compose.material.icons.filled.Terrain
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -28,7 +32,7 @@ fun StatsRow(
     // Build a list of stat items (icon, label, value)
     val stats = mutableListOf(
         StatItem(
-            icon = Icons.AutoMirrored.Filled.DirectionsRun,
+            icon = Icons.Filled.DirectionsBike, //Straight,//DirectionsRun,
             label = "Distance",
             value = "${distance} km"
         ),

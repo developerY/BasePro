@@ -3,12 +3,14 @@ package com.ylabz.basepro.applications.bike.ui.components.unused
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -55,16 +57,23 @@ fun BikeBatteryLevels(
                 // 10-segment example or an interpolated bar
                 SegmentedBatteryIndicator(batteryLevel = batteryLevel)
             } else {
-                // Show "Tap to Connect"
-                Text(
-                    text = displayText,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.White
-                )
+                    // Show a centered, Material button to connect
+                    Button(
+                        onClick = onConnectClick,
+                        modifier = Modifier.fillMaxWidth(),  // full width
+                        shape = RoundedCornerShape(8.dp)     // optional rounding
+                    ) {
+                        Text(
+                            text = displayText,
+                            style = MaterialTheme.typography.titleMedium,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()  // ensures centered text
+                        )
+                    }
+                }
             }
         }
     }
-}
 
 // Example 10-segment indicator
 @Composable
