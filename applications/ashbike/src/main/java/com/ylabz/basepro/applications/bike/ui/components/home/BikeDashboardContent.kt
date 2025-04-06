@@ -66,15 +66,36 @@ fun BikeDashboardContent(
             windDegree = 120f,
             windSpeed = 5.0f,
             weatherConditionText = WeatherConditionUnif.RAINY.name,
-            heading = heading,
-            modifier = modifier.fillMaxWidth()
+            heading = heading
         )
 
-        BikeBatteryLevels( //BikeBatteryCharge(
-            isConnected = isBikeConnected,
-            batteryLevel = batteryLevel,
-            onConnectClick = { onBikeEvent(BikeEvent.Connect) }
+        // 2) Trip stats row: Distance, Duration, Avg Speed
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            StatsRow(
+                distance = 12.5,
+                duration = tripDuration,
+                avgSpeed = 8.3,
+                elevation = 150.0,
+            )
+        }
+
+        // 4) Health stats row
+        val healthStats = listOf(
+            StatItem(
+                icon = Icons.Filled.Favorite,
+                label = "Heart Rate",
+                value = if (heartRate != null) "$heartRate bpm" else "-- bpm"
+            ),
+            StatItem(
+                icon = Icons.Filled.Fireplace,
+                label = "Calories",
+                value = if (calories != null) "$calories" else "--"
+            )
         )
+        StatsSection(stats = healthStats)
 
         // 3) Stats row: e-bike stats
         // Only show motor if connected, or maybe show 0 W if not
@@ -92,33 +113,11 @@ fun BikeDashboardContent(
         )
         StatsSection(stats = eBikeStats)
 
-        // 4) Health stats row
-        val healthStats = listOf(
-            StatItem(
-                icon = Icons.Filled.Favorite,
-                label = "Heart Rate",
-                value = if (heartRate != null) "$heartRate bpm" else "-- bpm"
-            ),
-            StatItem(
-                icon = Icons.Filled.Fireplace,
-                label = "Calories",
-                value = if (calories != null) "$calories" else "--"
-            )
+        BikeBatteryLevels( //BikeBatteryCharge(
+            isConnected = isBikeConnected,
+            batteryLevel = batteryLevel,
+            onConnectClick = { onBikeEvent(BikeEvent.Connect) }
         )
-        StatsSection(stats = healthStats)
-
-        // 2) Trip stats row: Distance, Duration, Avg Speed
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            StatsRow(
-                distance = 12.5,
-                duration = tripDuration,
-                avgSpeed = 8.3,
-                elevation = 150.0,
-            )
-        }
         /*
         modifier: Modifier = Modifier,
             healthPermState: HealthScreenState,
@@ -139,10 +138,10 @@ fun BikeDashboardContent(
             navTo = navTo,
         )*/
 
-        AnimatedHeartRateCard(heartRate = 70)
+        // AnimatedHeartRateCard(heartRate = 70)
 
         // 4) Unified Weather Card (Rainy example)
-        Spacer(modifier = Modifier.height(16.dp))
+        /*Spacer(modifier = Modifier.height(16.dp))
         UnifiedWeatherCard(
             modifier = modifier
                 .shadow(4.dp, shape = MaterialTheme.shapes.medium),
@@ -151,7 +150,7 @@ fun BikeDashboardContent(
             conditionText = "Rain",
             location = "Los Angeles, CA",
             windDegree = 120,
-        )
+        )*/
 
         // 3) Full-width elevation stat card
         /*StatCard(
@@ -191,3 +190,40 @@ fun BikeDashboardContentPreview() {
         )
     }
 }
+
+val dummyBikeRideInfo = BikeRideInfo(
+    isBikeConnected = false,
+    location = LatLng(34.0522, -118.2437), // Dummy location
+    currentSpeed = 28.0,
+    totalDistance = 12.5,
+    currentTripDistance = 7.2,  // current progress (km)
+    rideDuration = "00:45:30",
+    averageSpeed = 25.0,
+    elevation = 150.0,
+    settings = emptyMap(), // You may set appropriate values
+    heading = 45f,
+    batteryLevel = 80,
+    motorPower = 1500f,
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun BikeDashboardScaffoldContentPreview() {
+
+
+     @androidx.compose.runtime.Composable {
+        Scaffold(
+            topBar = { TopAppBar(title = { Text("AshBike") }) },
+            bottomBar = { /* Example bottom bar */ }
+        ) { innerPadding ->
+            BikeDashboardContent(
+                modifier = Modifier.padding(innerPadding),
+                bikeRideInfo = dummyBikeRideInfo,
+                onBikeEvent = { /*TODO*/ },
+                navTo = { /*TODO*/ }
+            )
+        }
+    }
+}
+

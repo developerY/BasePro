@@ -1,14 +1,12 @@
 package com.ylabz.basepro.applications.bike.ui
 
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ylabz.basepro.applications.bike.ui.components.home.main.BikeAppScreen
 import com.ylabz.basepro.settings.ui.components.ErrorScreen
 import com.ylabz.basepro.settings.ui.components.LoadingScreen
 import androidx.compose.runtime.getValue
@@ -16,7 +14,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.health.connect.client.HealthConnectClient
 import com.ylabz.basepro.applications.bike.ui.components.home.BikeDashboardContent
-import com.ylabz.basepro.applications.bike.ui.navigation.main.MainScreen
 import com.ylabz.basepro.core.model.bike.ConnectionStatus
 import com.ylabz.basepro.core.model.bike.NfcData
 import com.ylabz.basepro.core.model.health.HealthScreenState
@@ -24,6 +21,9 @@ import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 import com.ylabz.basepro.feature.heatlh.ui.HealthViewModel
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
+import androidx.compose.ui.tooling.preview.Preview
+import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import java.util.UUID
 
 @Composable
@@ -126,21 +126,42 @@ fun BikeUiRoute(
                 isConnected = false, //bikeState.bikeID != null,
                 batteryLevel = 50, //bikeState.battery
             )
-
-            Text("Start")
-
             BikeDashboardContent(
                 modifier = modifier,
                 bikeRideInfo = (bikeUiState as BikeUiState.Success).bikeData,
                 onBikeEvent = { bikeViewModel.onEvent(it) },
                 navTo = navTo
             )
-
-            Text("End")
-
         }
         else -> {
             LoadingScreen()//modifier)
         }
     }
+}
+
+@Preview
+@Composable
+fun BikeUiRoutePreview() {
+    val bikeRideInfo = BikeRideInfo(
+        isBikeConnected = true,
+        location = LatLng(37.4219999, -122.0862462),
+        currentSpeed = 55.0,
+        currentTripDistance = 5.0,
+        totalDistance = 100.0,
+        rideDuration = "00:15:00",
+        settings = mapOf("Theme" to listOf("Light", "Dark", "System Default"),
+            "Language" to listOf("English", "Spanish", "French"),
+            "Notifications" to listOf("Enabled", "Disabled")),
+        averageSpeed = 12.0,
+        elevation = 12.0,
+        heading = 12.0f,
+        batteryLevel = 12,
+        motorPower = 12.0f
+    )
+
+    val mockNavTo: (String) -> Unit = {}
+    BikeUiRoute(
+        navTo = mockNavTo,
+    )
+
 }

@@ -37,6 +37,7 @@ import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDial
 
 @Composable
 fun SpeedAndProgressCard(
+    modifier: Modifier = Modifier.fillMaxSize(),
     currentSpeed: Double,
     currentTripDistance: Double,
     totalDistance: Double,
@@ -44,7 +45,6 @@ fun SpeedAndProgressCard(
     windSpeed: Float,
     weatherConditionText: String,
     heading: Float,
-    modifier: Modifier = Modifier
 ) {
     // Control the visibility of the wind dial & weather badge for a subtle fade/slide in
     var showOverlays by remember { mutableStateOf(false) }
