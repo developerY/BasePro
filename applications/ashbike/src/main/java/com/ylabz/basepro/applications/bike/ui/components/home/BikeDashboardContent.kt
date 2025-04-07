@@ -9,6 +9,7 @@ import androidx.compose.material.icons.automirrored.filled.DirectionsBike
 import androidx.compose.material.icons.filled.BatteryChargingFull
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Fireplace
+import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -39,28 +40,29 @@ fun BikeDashboardContent(
 ) {
     val isBikeConnected = bikeRideInfo.isBikeConnected
 
+    // Extract values from bikeRideInfo (if needed)
     val currentSpeed = bikeRideInfo.currentSpeed
     val currentTripDistance = bikeRideInfo.currentTripDistance
     val totalDistance = bikeRideInfo.totalDistance
-    val tripDuration =  bikeRideInfo.rideDuration
+    val tripDuration = bikeRideInfo.rideDuration
     val averageSpeed = bikeRideInfo.averageSpeed
     val elevation = bikeRideInfo.elevation
-    val heading : Float = bikeRideInfo.heading
+    val heading: Float = bikeRideInfo.heading
     val batteryLevel = bikeRideInfo.batteryLevel
     val motorPower = bikeRideInfo.motorPower
-    val heartRate = null
-    val calories = null
+    val heartRate = null // bikeRideInfo.heartRate  // May be null
+    val calories = null // bikeRideInfo.calories    // May be null
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()) // Enables vertical scrolling
+            .verticalScroll(rememberScrollState())
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 1) Current Speed Card
-       SpeedAndProgressCard(
+        // 1) Current Speed Card (assumed to be a custom composable)
+        SpeedAndProgressCard(
             currentSpeed = currentSpeed,
             currentTripDistance = currentTripDistance,
             totalDistance = totalDistance,
@@ -70,20 +72,16 @@ fun BikeDashboardContent(
             heading = heading
         )
 
-        // 2) Trip stats row: Distance, Duration, Avg Speed
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            StatsRow(
-                distance = 12.5,
-                duration = tripDuration,
-                avgSpeed = 8.3,
-                elevation = 150.0,
-            )
-        }
+        // 2) Trip Stats Row: Distance, Duration, Avg Speed, Elevation
+        StatsRow(
+            distance = 12.5,
+            duration = tripDuration,
+            avgSpeed = averageSpeed,
+            elevation = elevation
+        )
 
-        // 4) Health stats row
+
+        // 3) Health Stats Section: Heart Rate, Calories
         val healthStats = listOf(
             StatItem(
                 icon = Icons.Filled.Favorite,
@@ -91,29 +89,29 @@ fun BikeDashboardContent(
                 value = if (heartRate != null) "$heartRate bpm" else "-- bpm"
             ),
             StatItem(
-                icon = Icons.Filled.Fireplace,
+                icon = Icons.Filled.LocalFireDepartment, // Using a standard flame icon
                 label = "Calories",
                 value = if (calories != null) "$calories" else "--"
             )
         )
         StatsSection(stats = healthStats)
 
-        // 2) Combine Battery/Motor stats with Connect button in a single card.
+        // 4) Grouped E-bike Stats & Connect Bike Button in a Card
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp), // or whatever horizontal spacing you prefer
+                .padding(horizontal = 8.dp),
             shape = RoundedCornerShape(8.dp),
-            elevation = CardDefaults.cardElevation(4.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),           // internal padding
+                    .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // E-bike stats
+                // E-bike Stats Section: Battery and Motor Power
                 val eBikeStats = listOf(
                     StatItem(
                         icon = Icons.Filled.BatteryChargingFull,
@@ -128,7 +126,7 @@ fun BikeDashboardContent(
                 )
                 StatsSection(stats = eBikeStats)
 
-                // Connect Bike button or status
+                // Connect Bike Button / Status
                 BikeBatteryLevels(
                     isConnected = isBikeConnected,
                     batteryLevel = batteryLevel,
@@ -138,6 +136,7 @@ fun BikeDashboardContent(
         }
     }
 }
+
 
         /*
         modifier: Modifier = Modifier,
@@ -193,7 +192,7 @@ fun BikeDashboardContentPreview() {
         totalDistance = 12.5,
         currentTripDistance = 7.2,  // current progress (km)
         rideDuration = "00:45:30",
-        averageSpeed = 25.0,
+        averageSpeed = 15.2,
         elevation = 150.0,
         settings = emptyMap(), // You may set appropriate values
         heading = 45f,

@@ -32,7 +32,7 @@ fun StatsRow(
     // Build a list of stat items (icon, label, value)
     val stats = mutableListOf(
         StatItem(
-            icon = Icons.Filled.DirectionsBike, //Straight,//DirectionsRun,
+            icon = Icons.Filled.Straight, //Straight,//DirectionsRun,
             label = "Distance",
             value = "${distance} km"
         ),
@@ -62,7 +62,7 @@ fun StatsRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 8.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
