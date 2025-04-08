@@ -5,6 +5,8 @@ import androidx.room.Room
 import com.ylabz.basepro.core.database.BaseProDB
 import com.ylabz.basepro.core.database.BaseProDao
 import com.ylabz.basepro.core.database.BaseProRepo
+import com.ylabz.basepro.core.database.BikeDatabase
+import com.ylabz.basepro.core.database.OtherDatabase
 import com.ylabz.basepro.core.database.repository.BaseProRepoImpl
 import dagger.Module
 import dagger.Provides
@@ -41,6 +43,26 @@ object DatabaseModule {
     }
 
 
+    @BikeDatabase
+    @Provides
+    @Singleton
+    fun provideBikeDatabase(@ApplicationContext context: Context): BaseProDB {
+        return Room.databaseBuilder(
+            context,
+            BaseProDB::class.java,
+            "bike_database.db"
+        ).build()
+    }
 
+    @OtherDatabase
+    @Provides
+    @Singleton
+    fun provideOtherDatabase(@ApplicationContext context: Context): BaseProDB {
+        return Room.databaseBuilder(
+            context,
+            BaseProDB::class.java,
+            "list_database.db"
+        ).build()
+    }
 
 }
