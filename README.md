@@ -58,10 +58,10 @@ BasePro/
 │   │   │   │   │   ├── mapper/           # Mappers for converting between entities and models
 │   │   │   │   │   │   └── TwinCamMapper.kt
 │   │   │   │   │   ├── model/            # Data models specific to the data layer (Room entities, etc.)
-│   │   │   │   │   │   ├── BaseProEntity.kt
-│   │   │   │   │   │   ├── BaseProDB.kt
+│   │   │   │   │   │   ├── BikeProEntity.kt
+│   │   │   │   │   │   ├── BikeProDB.kt
 │   │   │   │   │   ├── repository/       # Data repositories
-│   │   │   │   │   │   ├── BaseProRepo.kt
+│   │   │   │   │   │   ├── BikeProRepo.kt
 │   │   │   │   │   │   └── BaseProRepoImpl.kt
 │   │   └── build.gradle.kts              # Build configuration for core-data module
 │   │

@@ -39,12 +39,12 @@ core/
     │   └── main/
     │       ├── java/com/ylabz/basepro/core/database
     │       │   ├── entity/                 # Entities for RoomDB
-    │       │   │   └── BaseProEntity.kt    # Example entity for Room database
+    │       │   │   └── BikeProEntity.kt    # Example entity for Room database
     │       │   ├── dao/                    # DAOs for database interactions
-    │       │   │   └── BaseProDao.kt       # Example DAO
+    │       │   │   └── BikeProDao.kt       # Example DAO
     │       │   ├── converter/              # Converters for Room types
     │       │   │   └── DateConverter.kt    # Example date converter for Room
-    │       │   └── BaseProDB.kt            # Database setup and configuration
+    │       │   └── BikeProDB.kt            # Database setup and configuration
     │       └── AndroidManifest.xml
     └── build.gradle.kts                    # Build configuration for core-database
 ```
@@ -61,7 +61,7 @@ core/
     - **entity/**: Holds the entity definitions for the Room database, defining the schema.
     - **dao/**: Contains DAO interfaces with methods to access and modify the database.
     - **converter/**: If needed, this is where you would put converters for custom types that Room cannot directly store (e.g., `DateConverter`).
-    - `BaseProDB.kt`: Sets up the Room database, connecting entities and DAOs.
+    - `BikeProDB.kt`: Sets up the Room database, connecting entities and DAOs.
 
 ### Advantages of This Approach
 
