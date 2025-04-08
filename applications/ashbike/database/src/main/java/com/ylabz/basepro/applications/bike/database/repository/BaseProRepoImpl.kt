@@ -1,12 +1,8 @@
-package com.ylabz.basepro.applications.bike.database.repository
+package com.ylabz.bikepro.applications.bike.database.repository
 
 import androidx.annotation.WorkerThread
 import com.ylabz.basepro.applications.bike.database.BikeProDao
-import com.ylabz.basepro.core.database.BikeProDao
-import com.ylabz.basepro.core.database.BikeProRepo
-import com.ylabz.basepro.core.database.mapper.BikePro
-import com.ylabz.basepro.core.database.mapper.toBikePro
-import com.ylabz.basepro.core.database.mapper.toBikeProEntity
+import com.ylabz.basepro.applications.bike.database.mapper.BikePro
 import com.ylabz.bikepro.applications.bike.database.BikeProRepo
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -45,25 +41,25 @@ class BikeProRepoImpl @Inject constructor (  // NOTE: constructor injection is n
     // implement anything else to ensure we're not doing long running database work
     // off the main thread.
     @WorkerThread
-    override suspend fun insert(basepro: BikePro) {
-        val baseproEnt = basepro.toBikeProEntity()
+    override suspend fun insert(bikepro: BikePro) {
+        val bikeproEnt = bikepro.toBikeProEntity()
         // Log.d(, "This is in todoDao --  ${photoEnt}")
-        BikeProDao.insert(baseproEnt)
+        BikeProDao.insert(bikeproEnt)
     }
 
     @WorkerThread
-    override suspend fun delete(basepro: BikePro) {
-        BikeProDao.delete(basepro.toBikeProEntity())
+    override suspend fun delete(bikepro: BikePro) {
+        BikeProDao.delete(bikepro.toBikeProEntity())
     }
 
     @WorkerThread
-    override suspend fun deleteById(baseproId: Int) {
-        BikeProDao.deleteById(baseproId)
+    override suspend fun deleteById(bikeproId: Int) {
+        BikeProDao.deleteById(bikeproId)
     }
 
     @WorkerThread
-    override suspend fun getBikeProById(baseproId: Int): BikePro? {
-        return BikeProDao.findByPhotoTodoId(baseproId)?.toBikePro()
+    override suspend fun getBikeProById(bikeproId: Int): BikePro? {
+        return BikeProDao.findByPhotoTodoId(bikeproId)?.toBikePro()
     }
 
     @WorkerThread
