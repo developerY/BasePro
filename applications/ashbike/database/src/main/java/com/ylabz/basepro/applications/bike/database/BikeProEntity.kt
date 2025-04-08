@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.ylabz.basepro.applications.bike.database.converter.Converters
 
-@Entity(tableName = "bike_table")
+@Entity(tableName = "bikepro_table")
 @TypeConverters(Converters::class)
 data class BikeProEntity(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val todoId: Int = 0,
