@@ -14,13 +14,11 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -41,7 +39,7 @@ import com.ylabz.basepro.core.ui.BikeScreen
 @Composable
 fun MainScreen(navController: NavHostController) {
     Scaffold(
-        topBar = { TopAppBar(title = { Text("AshBike") }) }, //  MinTopAppBar() //
+        topBar = { TopAppBar(title = { Text("AshBike") }) }, //  MinTopAppBar()
         bottomBar = { HomeBottomBar(navController = navController) },
     ) { innerPadding ->
         MainNavGraph(
@@ -91,13 +89,13 @@ fun HomeBottomBar(
 
     val items = listOf(
         BottomNavigationItem(
-            title = "home",
+            title = "Home",
             selectedIcon = Icons.TwoTone.Home,
             unselectedIcon = Icons.Outlined.Home,
             hasNews = false,
         ),
         BottomNavigationItem(
-            title = "List",
+            title = "Ride",
             selectedIcon = Icons.AutoMirrored.TwoTone.List,
             unselectedIcon = Icons.AutoMirrored.Outlined.List,
             hasNews = false,
