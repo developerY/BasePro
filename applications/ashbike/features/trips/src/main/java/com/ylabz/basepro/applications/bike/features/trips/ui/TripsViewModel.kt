@@ -1,38 +1,41 @@
-package com.ylabz.basepro.listings.ui
+package com.ylabz.basepro.applications.bike.features.trips.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.database.BikeProEntity
-import com.ylabz.bikepro.applications.bike.database.BikeProRepo
+import com.ylabz.basepro.applications.bike.database.BikeProRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+import com.ylabz.basepro.applications.bike.database.mapper.BikePro
+
+
 @HiltViewModel
-class ListViewModel @Inject constructor(
+class TripsViewModel @Inject constructor(
     private val repository: BikeProRepo
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<ListUIState>(ListUIState.Loading)
-    val uiState: StateFlow<ListUIState> = _uiState
+    private val _uiState = MutableStateFlow<TripsUIState>(TripsUIState.Loading)
+    val uiState: StateFlow<TripsUIState> = _uiState
 
     private val _selectedItem = MutableStateFlow<BikeProEntity?>(null)
     val selectedItem: StateFlow<BikeProEntity?> = _selectedItem
 
     init {
-        onEvent(ListEvent.LoadData)
+        onEvent(TripsEvent.LoadData)
     }
 
-    fun onEvent(event: ListEvent) {
+    fun onEvent(event: TripsEvent) {
         when (event) {
-            is ListEvent.LoadData -> loadData()
-            is ListEvent.AddItem -> addItem(event.name)
-            is ListEvent.DeleteItem -> deleteItem(event.itemId)
-            is ListEvent.DeleteAll -> deleteAll()
-            is ListEvent.OnRetry -> onEvent(ListEvent.LoadData)
-            is ListEvent.OnItemClicked -> selectItem(event.itemId)
+            is TripsEvent.LoadData -> loadData()
+            is TripsEvent.AddItem -> addItem(event.name)
+            is TripsEvent.DeleteItem -> deleteItem(event.itemId)
+            is TripsEvent.DeleteAll -> deleteAll()
+            is TripsEvent.OnRetry -> onEvent(TripsEvent.LoadData)
+            is TripsEvent.OnItemClicked -> selectItem(event.itemId)
         }
     }
 
@@ -50,7 +53,7 @@ class ListViewModel @Inject constructor(
             try {
                 repository.deleteAll()
                 // Optionally refresh data after deletion
-                onEvent(ListEvent.LoadData)
+                onEvent(TripsEvent.LoadData)
             } catch (e: Exception) {
                 handleError(e)
             }
@@ -60,9 +63,9 @@ class ListViewModel @Inject constructor(
     private fun loadData() {
         viewModelScope.launch {
             try {
-                _uiState.value = ListUIState.Loading
-                repository.allGetBasePros().collect { data ->
-                    _uiState.value = ListUIState.Success(data = data)
+                _uiState.value = TripsUIState.Loading
+                repository.allGetBikePros().collect { data ->
+                    _uiState.value = TripsUIState.Success(data = data)
                 }
             } catch (e: Exception) {
                 handleError(e)
@@ -73,9 +76,10 @@ class ListViewModel @Inject constructor(
     private fun addItem(name: String) {
         viewModelScope.launch {
             try {
-                repository.insert(com.ylabz.basepro.applications.bike.database.mapper.BikePro(title = name)
+                repository.insert(
+                    BikePro(title = name)
                 )
-                onEvent(ListEvent.LoadData)  // Refresh data after adding
+                onEvent(TripsEvent.LoadData)  // Refresh data after adding
             } catch (e: Exception) {
                 handleError(e)
             }
@@ -86,7 +90,7 @@ class ListViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 repository.deleteById(itemId)
-                onEvent(ListEvent.LoadData)  // Refresh data after deletion
+                onEvent(TripsEvent.LoadData)  // Refresh data after deletion
             } catch (e: Exception) {
                 handleError(e)
             }
@@ -95,6 +99,6 @@ class ListViewModel @Inject constructor(
 
     // Centralized error handling
     private fun handleError(e: Exception) {
-        _uiState.value = ListUIState.Error(message = e.localizedMessage ?: "Unknown error")
+        _uiState.value = TripsUIState.Error(message = e.localizedMessage ?: "Unknown error")
     }
 }

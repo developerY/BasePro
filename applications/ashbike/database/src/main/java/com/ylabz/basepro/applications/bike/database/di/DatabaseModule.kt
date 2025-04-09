@@ -7,7 +7,7 @@ import com.ylabz.basepro.applications.bike.database.BikeProDB
 import com.ylabz.basepro.applications.bike.database.BikeProDao
 import com.ylabz.basepro.applications.bike.database.OtherDatabase
 import com.ylabz.basepro.applications.bike.database.repository.BikeProRepoImpl
-import com.ylabz.bikepro.applications.bike.database.BikeProRepo
+import com.ylabz.basepro.applications.bike.database.BikeProRepo
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

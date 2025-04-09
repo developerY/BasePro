@@ -1,4 +1,4 @@
-package com.ylabz.basepro.listings.ui.components
+package com.ylabz.basepro.applications.bike.features.trips.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,16 +21,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.ylabz.basepro.listings.ui.ListViewModel
+import com.ylabz.basepro.applications.bike.features.trips.ui.TripsViewModel
 
 @Composable
-fun DetailsRoute(
+fun DetailsTripRoute(
     modifier: Modifier = Modifier,
-    viewModel: ListViewModel = hiltViewModel(),
+    viewModel: TripsViewModel = hiltViewModel(),
     navController: NavHostController,
     itemId: Int,
 ) {

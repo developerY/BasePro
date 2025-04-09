@@ -3,7 +3,7 @@ package com.ylabz.bikepro.applications.bike.database.repository
 import androidx.annotation.WorkerThread
 import com.ylabz.basepro.applications.bike.database.BikeProDao
 import com.ylabz.basepro.applications.bike.database.mapper.BikePro
-import com.ylabz.bikepro.applications.bike.database.BikeProRepo
+import com.ylabz.basepro.applications.bike.database.BikeProRepo
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

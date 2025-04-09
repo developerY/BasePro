@@ -1,5 +1,6 @@
-package com.ylabz.basepro.listings.ui.components
+package com.ylabz.basepro.applications.bike.features.trips.ui.components
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.compose.foundation.Image
@@ -31,7 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.listings.ui.ListEvent
+import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
 
 import androidx.compose.ui.graphics.Color
 
@@ -48,10 +49,10 @@ import com.ylabz.basepro.applications.bike.database.BikeProEntity
 
 
 @Composable
-fun ListCompose(
+fun BikeTripsCompose(
     modifier: Modifier = Modifier,
     data: List<BikeProEntity>,
-    onEvent: (ListEvent) -> Unit,
+    onEvent: (TripsEvent) -> Unit,
     navTo: (String) -> Unit
 ) {
     var newItemName by remember { mutableStateOf("") }
@@ -73,7 +74,7 @@ fun ListCompose(
             )
             Spacer(modifier = Modifier.weight(1f))
             Button(
-                onClick = { onEvent(ListEvent.DeleteAll) },
+                onClick = { onEvent(TripsEvent.DeleteAll) },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
             ) {
                 Text("Delete All!")
@@ -108,7 +109,7 @@ fun ListCompose(
             Button(
                 onClick = {
                     if (newItemName.isNotBlank()) {
-                        onEvent(ListEvent.AddItem(newItemName))
+                        onEvent(TripsEvent.AddItem(newItemName))
                         newItemName = ""
                     }
                 },
@@ -123,7 +124,7 @@ fun ListCompose(
 @Composable
 fun CamItemRow(
     item: BikeProEntity,
-    onEvent: (ListEvent) -> Unit,
+    onEvent: (TripsEvent) -> Unit,
     navTo: (String) -> Unit
 ) {
     Card(
@@ -154,7 +155,7 @@ fun CamItemRow(
                 CapturedImagePreview(item.imgPath!!.toUri())
             }
             IconButton(
-                onClick = { onEvent(ListEvent.DeleteItem(item.todoId)) },
+                onClick = { onEvent(TripsEvent.DeleteItem(item.todoId)) },
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
@@ -168,7 +169,7 @@ fun CamItemRow(
 @Composable
 fun CapturedImagePreview(imageUri: Uri) {
     val context = LocalContext.current
-    var bitmap by remember { mutableStateOf<android.graphics.Bitmap?>(null) }
+    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
 
     // Load the image from the file
     LaunchedEffect(imageUri) {
@@ -240,7 +241,7 @@ fun PreviewCamCompose() {
         BikeProEntity(todoId = 3, title = "Sample Task 3", description = "Description for Task 3")
     )
 
-    ListCompose(
+    BikeTripsCompose(
         data = sampleData,
         onEvent = {},
         navTo = {}

@@ -15,8 +15,4 @@ interface BaseProRepo {
     suspend fun getBaseProById(baseproId: Int): BasePro? // NOTE: wrap in Flow<Resource<<>>>
     suspend fun deleteAll()
     //abstract fun insert(BasePro: BasePro)
-
-
 }
-
-class InvalidTodoPhotoException(message: String) : Exception(message)
