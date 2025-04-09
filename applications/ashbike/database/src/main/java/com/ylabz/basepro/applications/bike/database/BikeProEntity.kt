@@ -7,24 +7,50 @@ import androidx.room.TypeConverters
 import com.ylabz.basepro.applications.bike.database.converter.Converters
 
 @Entity(tableName = "bikepro_table")
-@TypeConverters(Converters::class)
-data class BikeProEntity(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val todoId: Int = 0,
-    @ColumnInfo(name = "title") val title: String = "",
-    @ColumnInfo(name = "description") val description: String = "",
-    @ColumnInfo(name = "image_path") val imgPath: String? = null // Store image path as a String
-    // @ColumnInfo(name = "timestamp") val timestamp : ZonedDateTime = ZonedDateTime.now(),
-    // @ColumnInfo(name = "date") val timestamp: kotlinx.datetime.LocalDateTime? = null,
-    // kotlinx.datetime.Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-    /*@ColumnInfo(name = "lat") val lat: Double = 0.0,
-    @ColumnInfo(name = "lon") val lon: Double = 0.0,
-    @ColumnInfo(name = "alarmOn") val alarmOn: Boolean = false,
-    @ColumnInfo(name = "completed") val isCompleted: Boolean = false,
-    @ColumnInfo(name = "image_path") val imgPath: Uri? = null,
-    @ColumnInfo(name = "audio_path") val audioPath: Uri? = null*/
+data class Ride(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0L,
 
+    // Core Ride Information
+    val startTime: Long,  // Epoch time in milliseconds
+    val endTime: Long,
+
+    // Distance and Speed Metrics
+    val totalDistance: Float,   // in meters
+    val averageSpeed: Float,    // km/h
+    val maxSpeed: Float,        // km/h
+
+    // Elevation Data
+    val elevationGain: Float,   // in meters
+    val elevationLoss: Float,   // in meters
+
+    // Fitness-related Data
+    val caloriesBurned: Int,
+    val avgHeartRate: Int?,     // Optional if sensor available
+    val maxHeartRate: Int?,     // Optional if sensor available
+
+    // Location and Route Data
+    val startLat: Double,
+    val startLng: Double,
+    val endLat: Double,
+    val endLng: Double,
+    // Optionally store the route as a JSON string or manage in a separate table
+    val routeJson: String? = null,
+
+    // Environmental and Contextual Data
+    val weatherCondition: String?,  // e.g., "Sunny, 25°C"
+    val rideType: String?,          // e.g., "Commute", "Training"
+
+    // User Feedback
+    val notes: String?,
+    val rating: Int?,               // e.g., 1 to 5
+
+    // Technical/Sync Metadata
+    val isSynced: Boolean = false,
+    val bikeId: String? = null,     // If multiple bikes are supported
+    val batteryStart: Int?,         // Percentage at start, if relevant
+    val batteryEnd: Int?            // Percentage at end, if relevant
 )
-
 data class BikeProUpdate(
     val id: Int,
     //val alarmOn: Boolean
