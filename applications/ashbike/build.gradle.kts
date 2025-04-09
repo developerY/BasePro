@@ -68,6 +68,7 @@ dependencies {
     implementation(project(":feature:qrscanner"))
     implementation(project(":feature:nfc"))
     implementation(project(":feature:ml"))
+    implementation(project(":applications:ashbike:features:trips"))
 
     // androidx-lifecycle-viewmodel-compose
     implementation(libs.lifecycle.viewmodel.compose)

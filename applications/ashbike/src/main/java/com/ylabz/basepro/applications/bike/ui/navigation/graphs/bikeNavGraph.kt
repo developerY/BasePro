@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.ylabz.basepro.applications.bike.ui.components.settings.SettingsRoute
 import com.ylabz.basepro.core.ui.BikeScreen
 import androidx.navigation.navigation
+import com.ylabz.basepro.applications.bike.features.trips.ui.TripsUIRoute
 import com.ylabz.basepro.applications.bike.ui.BikeUiRoute
 import com.ylabz.basepro.core.ui.BIKE
 import com.ylabz.basepro.listings.ui.ListUIRoute
@@ -30,7 +31,7 @@ fun NavGraphBuilder.bikeNavGraph(
         }
         composable(BikeScreen.TripBikeScreen.route) {
             // track bike ride screen
-            ListUIRoute(
+            TripsUIRoute(
                 modifier = modifier,
                 navTo = { path -> navHostController.navigate(path) }
             )
