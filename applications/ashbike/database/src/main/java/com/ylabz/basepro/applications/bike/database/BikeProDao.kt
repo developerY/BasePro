@@ -18,7 +18,7 @@ interface BikeProDao {
     */
 
     @Query("SELECT * FROM bikepro_table")//" ORDER BY date ASC")
-    fun getAllBasePros(): Flow<List<BikeProEntity>> // convert to Flow in the implementation.
+    fun getAllBikePros(): Flow<List<BikeProEntity>> // convert to Flow in the implementation.
 
     // Inserting a new BasePro
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -1,9 +1,11 @@
-package com.ylabz.bikepro.applications.bike.database.repository
+package com.ylabz.basepro.applications.bike.database.repository
 
 import androidx.annotation.WorkerThread
 import com.ylabz.basepro.applications.bike.database.BikeProDao
 import com.ylabz.basepro.applications.bike.database.mapper.BikePro
 import com.ylabz.basepro.applications.bike.database.BikeProRepo
+import com.ylabz.basepro.applications.bike.database.mapper.toBikePro
+import com.ylabz.basepro.applications.bike.database.mapper.toBikeProEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -13,7 +15,7 @@ import javax.inject.Inject
  * It uses the methods in the module to resolve and inject dependencies.
  */
 class BikeProRepoImpl @Inject constructor (  // NOTE: constructor injection is not needed
-    private val BikeProDao: BikeProDao,
+    private val bikeProDao: BikeProDao,
 ) : BikeProRepo {
 
     // Room executes all queries on a separate thread.
@@ -27,7 +29,7 @@ class BikeProRepoImpl @Inject constructor (  // NOTE: constructor injection is n
      */
     @WorkerThread
     override fun allGetBikePros(): Flow<List<BikePro>> {
-        return BikeProDao.getAllBikePros()
+        return bikeProDao.getAllBikePros()
         /*return flow {
             val td = todoDao.getTask().map { it.toPhoto() }
             if(td.isNotEmpty())
@@ -44,27 +46,27 @@ class BikeProRepoImpl @Inject constructor (  // NOTE: constructor injection is n
     override suspend fun insert(bikepro: BikePro) {
         val bikeproEnt = bikepro.toBikeProEntity()
         // Log.d(, "This is in todoDao --  ${photoEnt}")
-        BikeProDao.insert(bikeproEnt)
+        bikeProDao.insert(bikeproEnt)
     }
 
     @WorkerThread
     override suspend fun delete(bikepro: BikePro) {
-        BikeProDao.delete(bikepro.toBikeProEntity())
+        bikeProDao.delete(bikepro.toBikeProEntity())
     }
 
     @WorkerThread
     override suspend fun deleteById(bikeproId: Int) {
-        BikeProDao.deleteById(bikeproId)
+        bikeProDao.deleteById(bikeproId)
     }
 
     @WorkerThread
     override suspend fun getBikeProById(bikeproId: Int): BikePro? {
-        return BikeProDao.findByPhotoTodoId(bikeproId)?.toBikePro()
+        return bikeProDao.findByPhotoTodoId(bikeproId)?.toBikePro()
     }
 
     @WorkerThread
     override suspend fun deleteAll() {
-        BikeProDao.deleteAll()
+        bikeProDao.deleteAll()
     }
 
 }

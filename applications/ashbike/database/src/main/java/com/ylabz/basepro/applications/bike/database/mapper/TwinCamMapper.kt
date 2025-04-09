@@ -5,7 +5,7 @@ import com.ylabz.basepro.applications.bike.database.BikeProEntity
 
 typealias BikePro = BikeProEntity
 
-fun BikeProEntity.toBasePro(): BikePro {
+fun BikeProEntity.toBikePro(): BikePro {
     return this
     /*return BasePro(
         title = title,
@@ -25,7 +25,7 @@ fun BikeProEntity.toBasePro(): BikePro {
 // Extension function
 typealias BaseProEntity = BikePro
 
-fun BikePro.toBaseProEntity(): BaseProEntity {
+fun BikePro.toBikeProEntity(): BaseProEntity {
     return this
     /*return BikeProEntity(
         title = title,
