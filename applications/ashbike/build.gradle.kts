@@ -62,13 +62,13 @@ dependencies {
     implementation(project(":feature:heatlh"))
     implementation(project(":feature:maps"))
     implementation(project(":feature:ble"))
-    implementation(project(":feature:settings"))
     implementation(project(":feature:alarm"))
     implementation(project(":feature:weather"))
     implementation(project(":feature:qrscanner"))
     implementation(project(":feature:nfc"))
     implementation(project(":feature:ml"))
     implementation(project(":applications:ashbike:features:trips"))
+    implementation(project(":applications:ashbike:features:settings"))
 
     // androidx-lifecycle-viewmodel-compose
     implementation(libs.lifecycle.viewmodel.compose)

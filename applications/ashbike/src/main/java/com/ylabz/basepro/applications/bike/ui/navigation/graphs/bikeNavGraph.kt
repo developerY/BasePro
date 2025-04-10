@@ -6,16 +6,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.ylabz.basepro.applications.bike.ui.components.settings.SettingsRoute
 import com.ylabz.basepro.core.ui.BikeScreen
 import androidx.navigation.navigation
 import com.ylabz.basepro.applications.bike.features.trips.ui.TripsUIRoute
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.DetailsTripRoute
 import com.ylabz.basepro.applications.bike.ui.BikeUiRoute
-import com.ylabz.basepro.core.ui.BIKE
-import com.ylabz.basepro.listings.ui.ListUIRoute
 
-import com.ylabz.basepro.settings.ui.SettingsUiRoute
+import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsUiRoute
 
 // Define BikeNavGraph as an extension function on NavGraphBuilder
 fun NavGraphBuilder.bikeNavGraph(

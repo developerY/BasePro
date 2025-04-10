@@ -11,7 +11,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.ylabz.basepro.applications.bike.ui.components.demo.settings.SettingsScreenEx
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.*
@@ -45,13 +44,13 @@ fun SettingsNavHost(
     ) {
         // 1) Main Settings Screen
         composable(SettingsRoute.Main.route) {
-            SettingsScreenEx(
+            /*SettingsScreenEx(
                 modifier = modifier,
                 nfcUiState = nfcUiState,
                 nfcEvent = nfcEvent,
                 navToSettings = navToSettings,
                 navTo = navTo
-            )
+            )*/
         }
 
         // 2) Advanced Bike Screen

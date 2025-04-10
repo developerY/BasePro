@@ -1,14 +1,48 @@
-package com.ylabz.basepro.applications.bike.ui.components.demo.settings
+package com.ylabz.basepro.applications.bike.features.settings.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.BikeScooter
+import androidx.compose.material.icons.filled.Bluetooth
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Nfc
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.runtime.*
+import androidx.compose.material3.Icon
+
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -21,7 +55,6 @@ import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.nfc.ui.components.NfcScanScreen
 import com.ylabz.basepro.feature.qrscanner.ui.QRCodeScannerScreen
 
-
 // ---------------------------------------------
 // MAIN SETTINGS SCREEN
 // ---------------------------------------------
@@ -29,8 +62,8 @@ import com.ylabz.basepro.feature.qrscanner.ui.QRCodeScannerScreen
 @Composable
 fun SettingsScreenEx(
     modifier: Modifier = Modifier,
-    nfcUiState : NfcUiState,
-    nfcEvent : (NfcRwEvent) -> Unit,
+    //nfcUiState : NfcUiState,
+    //nfcEvent : (NfcRwEvent) -> Unit,
     navToSettings: (String) -> Unit,
     navTo: (String) -> Unit
 ) {
@@ -107,13 +140,13 @@ fun SettingsScreenEx(
 
             // 6) NFC Expandable
             item {
-                NfcExpandableEx(
+                /*NfcExpandableEx(
                     nfcUiState = nfcUiState,
                     nfcEvent = nfcEvent,
                     expanded = nfcExpanded,
                     onExpandToggle = { nfcExpanded = !nfcExpanded },
                     navTo = navTo
-                )
+                )*/
             }
 
             // 7) Health Expandable
@@ -442,7 +475,7 @@ fun BikeConfigurationEx(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Button to advanced screen
-                    Button(onClick = {navTo("settings_bike_advanced")}) {
+                    Button(onClick = { navTo("settings_bike_advanced") }) {
                         Text("Advanced Bike Settings")
                     }
                 }
@@ -650,8 +683,8 @@ fun AboutExpandable(
 @Composable
 fun PreviewSettingsScreen() {
     SettingsScreenEx(
-        nfcUiState = NfcUiState.NfcNotSupported,
-        nfcEvent = {},
+        //nfcUiState = NfcUiState.NfcNotSupported,
+        //nfcEvent = {},
         navToSettings = {},
         navTo = {}
     )
