@@ -13,45 +13,47 @@ data class BaseProEntity(
     val id: Long = 0L,
 
     // Core Ride Information
-    val startTime: Long,  // Epoch time in milliseconds
+    val startTime: Long, // Epoch time in milliseconds
     val endTime: Long,
+    val totalDistance: Float, // in meters
+    val averageSpeed: Float, // km/h
+    val maxSpeed: Float, // km/h
 
-    // Distance and Speed Metrics
-    val totalDistance: Float,   // in meters
-    val averageSpeed: Float,    // km/h
-    val maxSpeed: Float,        // km/h
+    // Elevation and Fitness Data
+    val elevationGain: Float, // in meters
+    val elevationLoss: Float, // in meters
+    val caloriesBurned: Int, // if available from local sensors or Health Connect
 
-    // Elevation Data
-    val elevationGain: Float,   // in meters
-    val elevationLoss: Float,   // in meters
-
-    // Fitness-related Data
-    val caloriesBurned: Int,
-    val avgHeartRate: Int?,     // Optional if sensor available
-    val maxHeartRate: Int?,     // Optional if sensor available
+    // Optional Health Data (from Health Connect)
+    val avgHeartRate: Int? = null,  // Nullable: provided if Health Connect is enabled
+    val maxHeartRate: Int? = null,  // Nullable: provided if Health Connect is enabled
+    // Health Connect metadata
+    val healthConnectRecordId: String? = null,
+    val isHealthDataSynced: Boolean = false,
 
     // Location and Route Data
     val startLat: Double,
     val startLng: Double,
     val endLat: Double,
     val endLng: Double,
-    // Optionally store the route as a JSON string or manage in a separate table
+    // Route data can be stored as JSON string or via a relationship with a separate table.
     val routeJson: String? = null,
 
     // Environmental and Contextual Data
-    val weatherCondition: String?,  // e.g., "Sunny, 25°C"
-    val rideType: String?,          // e.g., "Commute", "Training"
+    val weatherCondition: String? = null,
+    val rideType: String? = null,
 
-    // User Feedback
-    val notes: String?,
-    val rating: Int?,               // e.g., 1 to 5
-
-    // Technical/Sync Metadata
+    // User Feedback and Sync Details
+    val notes: String? = null,
+    val rating: Int? = null,
     val isSynced: Boolean = false,
-    val bikeId: String? = null,     // If multiple bikes are supported
-    val batteryStart: Int?,         // Percentage at start, if relevant
-    val batteryEnd: Int?            // Percentage at end, if relevant
+
+    // Optional Bike Data
+    val bikeId: String? = null,
+    val batteryStart: Int? = null,
+    val batteryEnd: Int? = null
 )
+
 data class BikeProUpdate(
     val id: Int,
     //val alarmOn: Boolean
