@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ylabz.basepro.feature.listings.ui.ListViewModel
 import com.ylabz.basepro.listings.ui.components.ListCompose
 import com.ylabz.basepro.listings.ui.components.ErrorScreen
 import com.ylabz.basepro.listings.ui.components.LoadingScreen

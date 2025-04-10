@@ -1,9 +1,11 @@
-package com.ylabz.basepro.listings.ui
+package com.ylabz.basepro.feature.listings.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.database.BaseProEntity
 import com.ylabz.basepro.core.database.BaseProRepo
+import com.ylabz.basepro.listings.ui.ListEvent
+import com.ylabz.basepro.listings.ui.ListUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

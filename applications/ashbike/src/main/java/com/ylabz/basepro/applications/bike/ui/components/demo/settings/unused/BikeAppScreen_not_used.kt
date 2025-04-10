@@ -29,7 +29,7 @@ import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BikeAppScreen(
+fun BikeAppScreen_not_used(
     modifier: Modifier = Modifier,
     nfcUiState: NfcUiState,
     nfcEvent: (NfcRwEvent) -> Unit,
@@ -202,7 +202,7 @@ fun BikeAppScreenPreview() {
         motorPower = 12.0f
     )
 
-    BikeAppScreen(
+    BikeAppScreen_not_used(
         nfcUiState = NfcUiState.WaitingForTag,
         nfcEvent = {},
         bikeRideInfo = bikeRideInfo,

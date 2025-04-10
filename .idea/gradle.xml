@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/applications/ashbike" />
             <option value="$PROJECT_DIR$/applications/ashbike/database" />
             <option value="$PROJECT_DIR$/applications/ashbike/features" />
+            <option value="$PROJECT_DIR$/applications/ashbike/features/settings" />
             <option value="$PROJECT_DIR$/applications/ashbike/features/trips" />
             <option value="$PROJECT_DIR$/applications/home" />
             <option value="$PROJECT_DIR$/applications/medtime" />
