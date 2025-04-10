@@ -22,13 +22,13 @@ interface BikeProDao {
 
     // Inserting a new BasePro
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(todo: BikeProEntity)
+    suspend fun insert(ride: BikeProEntity)
 
 
 
     // Deleting a BasePro
     @Delete
-    suspend fun delete(todo: BikeProEntity)
+    suspend fun delete(ride: BikeProEntity)
 
     // Deleting all BasePros
     @Query("DELETE FROM bikepro_table")
@@ -42,13 +42,6 @@ interface BikeProDao {
     @Query("SELECT * FROM bikepro_table WHERE id = :id")
     suspend fun findById(id: Int): BikeProEntity?
 
-    // Finding a BasePro by its title
-    @Query("SELECT * FROM bikepro_table WHERE title LIKE :title")
-    suspend fun findByTitle(title: String): BikeProEntity?
-
-    // Finding a BasePro by its description
-    @Query("SELECT * FROM bikepro_table WHERE description LIKE :description")
-    suspend fun findByDescription(description: String): BikeProEntity?
 
     /* Finding a BasePro by its date
     @Query("SELECT * FROM bikepro_table WHERE date LIKE :date")

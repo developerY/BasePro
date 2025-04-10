@@ -6,9 +6,9 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.ylabz.basepro.applications.bike.database.converter.Converters
 
-@Entity(tableName = "basepro_table")
+@Entity(tableName = "bikepro_table")
 @TypeConverters(Converters::class)
-data class BaseProEntity(
+data class BikeProEntity( // Replace with your entity name "Ride"
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
 
