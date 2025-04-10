@@ -31,7 +31,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.database.BikeProEntity
 import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
 
 import androidx.compose.ui.graphics.Color
@@ -45,7 +47,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.net.toUri
-import com.ylabz.basepro.applications.bike.database.BikeProEntity
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -57,59 +58,67 @@ import java.util.Locale
  * @param onItemClicked callback invoked when the user taps the card.
  * @param modifier for styling or further customization.
  */
+
+
 @Composable
 fun BikeTripCard(
-    bikeTrip: BikeProEntity,
-    onItemClicked: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    item: BikeProEntity,
+    onEvent: (TripsEvent) -> Unit,
+    navTo: (String) -> Unit
 ) {
-    // Format the timestamp into a readable date.
     val dateFormatter = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
-    val dateString = dateFormatter.format(Date(bikeTrip.startTime))
+    val dateString = dateFormatter.format(Date(item.startTime))
 
     Card(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
-            .clickable { onItemClicked(bikeTrip.id) }, // Use your unique ID field
-        //elevation = 8.dp,
-        shape = MaterialTheme.shapes.medium
+            .clickable { navTo("details/${item.id}") },
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = getPastelColor(item.id.hashCode())
+        )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            // Title
-            Text(
-                text = bikeTrip.id.toString(),
-                //style = MaterialTheme.typography.bodyLarge,
-                //color = MaterialTheme.colorScheme
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-
-            // Date and Distance row
+            // Header row with title and delete
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = dateString,
-                    style = MaterialTheme.typography.bodySmall
+                    text = item.id.toString(),
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
-                Text(
-                    text = "${bikeTrip.totalDistance} km",
-                    style = MaterialTheme.typography.bodySmall
-                )
+                IconButton(onClick = { onEvent(TripsEvent.DeleteItem(item.id)) }) {
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
+                }
             }
+
             Spacer(modifier = Modifier.height(4.dp))
 
-            // Additional details row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+            Text(
+                text = "Date: $dateString",
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            Spacer(modifier = Modifier.height(2.dp))
+
+            Text(
+                text = "Distance: ${item.totalDistance} km",
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            Text(
+                text = "Avg Speed: ${item.averageSpeed} km/h",
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            if (item.caloriesBurned > 0) {
                 Text(
-                    text = "Avg: ${bikeTrip.averageSpeed} km/h",
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Text(
-                    text = "Calories: ${bikeTrip.caloriesBurned}",
+                    text = "Calories: ${item.caloriesBurned}",
                     style = MaterialTheme.typography.bodySmall
                 )
             }

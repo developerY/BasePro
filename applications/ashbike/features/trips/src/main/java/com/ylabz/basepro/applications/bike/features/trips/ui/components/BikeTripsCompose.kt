@@ -90,7 +90,10 @@ fun BikeTripsCompose(
         ) {
             items(data) { item ->
                 //BikeTripCard(bikeTrip = item, )
-                CamItemRow(item = item, onEvent = onEvent, navTo = navTo)
+                Column {
+                    BikeTripCard(item = item, onEvent = onEvent, navTo = navTo)
+                    CamItemRow(item = item, onEvent = onEvent, navTo = navTo)
+                }
             }
         }
 
