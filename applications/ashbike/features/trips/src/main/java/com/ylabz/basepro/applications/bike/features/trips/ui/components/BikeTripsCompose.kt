@@ -89,6 +89,7 @@ fun BikeTripsCompose(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(data) { item ->
+                //BikeTripCard(bikeTrip = item, )
                 CamItemRow(item = item, onEvent = onEvent, navTo = navTo)
             }
         }
@@ -121,48 +122,6 @@ fun BikeTripsCompose(
     }
 }
 
-@Composable
-fun CamItemRow(
-    item: BikeProEntity,
-    onEvent: (TripsEvent) -> Unit,
-    navTo: (String) -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                navTo("details/${item.id}")
-            },
-        shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = getPastelColor(item.id.hashCode())
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = item.id.toString(),
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1f)
-            )
-            // Display the image using Coil's AsyncImage
-
-            IconButton(
-                onClick = { onEvent(TripsEvent.DeleteItem(item.id)) },
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete Item"
-                )
-            }
-        }
-    }
-}
 
 @Composable
 fun CapturedImagePreview(imageUri: Uri) {
@@ -187,24 +146,6 @@ fun CapturedImagePreview(imageUri: Uri) {
         )
     }
 }
-
-
-
-// Helper function to get a pastel color based on the index
-@Composable
-fun getPastelColor(index: Int): Color {
-    val pastelColors = listOf(
-        Color(0xFFFFF0F5), // LavenderBlush
-        Color(0xFFF0FFF0), // Honeydew
-        Color(0xFFFFF5E6), // Seashell
-        Color(0xFFE0FFFF), // LightCyan
-        Color(0xFFFFE4E1)  // MistyRose
-    )
-    return pastelColors[index % pastelColors.size]
-}
-
-
-
 
 // These will be move to a common directory.
 @Composable
