@@ -58,3 +58,41 @@ data class BikeProUpdate(
     val id: Int,
     //val alarmOn: Boolean
 )
+
+/*
+data class Ride(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0L,
+    val startTime: Long,
+    val endTime: Long,
+    val totalDistance: Float,
+    val averageSpeed: Float,
+    val maxSpeed: Float,
+    val elevationGain: Float,
+    val elevationLoss: Float,
+    val caloriesBurned: Int,
+
+    // Health Connect Optional Fields
+    val avgHeartRate: Int? = null,
+    val maxHeartRate: Int? = null,
+    val healthConnectRecordId: String? = null,
+    val isHealthDataSynced: Boolean = false,
+
+    // Other ride metadata
+    val startLat: Double,
+    val startLng: Double,
+    val endLat: Double,
+    val endLng: Double,
+    val routeJson: String? = null,
+    val weatherCondition: String? = null,
+    val rideType: String? = null,
+    val notes: String? = null,
+    val rating: Int? = null,
+    val isSynced: Boolean = false,
+
+    // Bike related
+    val bikeId: String? = null,
+    val batteryStart: Int? = null,
+    val batteryEnd: Int? = null
+)
+ */
