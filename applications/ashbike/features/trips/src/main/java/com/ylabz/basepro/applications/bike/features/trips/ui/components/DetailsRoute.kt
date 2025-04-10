@@ -38,7 +38,7 @@ fun DetailsTripRoute(
 
     // Fetch the item details when the composable is first composed
     LaunchedEffect(itemId) {
-        if (item?.todoId != itemId) {
+        if (item?.id != itemId) {
             viewModel.selectItem(itemId) // Trigger the ViewModel to load the item
         }
     }
@@ -69,12 +69,12 @@ fun DetailsTripRoute(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = it.title,
+                        text = it.id.toString(),
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
                     Text(
-                        text = it.description,
+                        text = it.id.toString(),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )

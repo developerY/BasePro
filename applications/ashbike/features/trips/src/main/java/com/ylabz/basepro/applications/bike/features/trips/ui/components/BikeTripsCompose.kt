@@ -131,12 +131,12 @@ fun CamItemRow(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                navTo("details/${item.todoId}")
+                navTo("details/${item.id}")
             },
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = getPastelColor(item.todoId.hashCode())
+            containerColor = getPastelColor(item.id.hashCode())
         )
     ) {
         Row(
@@ -146,16 +146,14 @@ fun CamItemRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = item.title,
+                text = item.id.toString(),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f)
             )
             // Display the image using Coil's AsyncImage
-            if (item.imgPath?.isNotEmpty() == true) {
-                CapturedImagePreview(item.imgPath!!.toUri())
-            }
+
             IconButton(
-                onClick = { onEvent(TripsEvent.DeleteItem(item.todoId)) },
+                onClick = { onEvent(TripsEvent.DeleteItem(item.id)) },
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
@@ -230,20 +228,4 @@ fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
                 .padding(vertical = 8.dp)
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewCamCompose() {
-    val sampleData = listOf(
-        BikeProEntity(todoId = 1, title = "Sample Task 1", description = "Description for Task 1"),
-        BikeProEntity(todoId = 2, title = "Sample Task 2", description = "Description for Task 2"),
-        BikeProEntity(todoId = 3, title = "Sample Task 3", description = "Description for Task 3")
-    )
-
-    BikeTripsCompose(
-        data = sampleData,
-        onEvent = {},
-        navTo = {}
-    )
 }

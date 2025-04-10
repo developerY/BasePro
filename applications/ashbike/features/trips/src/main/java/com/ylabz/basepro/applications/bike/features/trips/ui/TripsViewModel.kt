@@ -42,7 +42,8 @@ class TripsViewModel @Inject constructor(
     fun selectItem(itemId: Int) {
         viewModelScope.launch {
             // Fetch the item details only if they are not already loaded
-            if (_selectedItem.value?.todoId != itemId) {
+            if (_selectedItem.value?.id != itemId) {
+
                 _selectedItem.value = repository.getBikeProById(itemId)
             }
         }
@@ -73,18 +74,53 @@ class TripsViewModel @Inject constructor(
         }
     }
 
-    private fun addItem(name: String) {
+    private fun addItem(name: String?) {
         viewModelScope.launch {
             try {
-                repository.insert(
-                    BikePro(title = name)
+                // Create a new BikePro entity.
+                // Adjust the default values for timestamps, speeds, distance, etc., as required.
+                val newBikePro = BikePro(
+                    // Assuming the id is auto-generated; omit it or rely on default value.
+                    // title = name,
+                    startTime = System.currentTimeMillis(),          // Current time as start
+                    endTime = System.currentTimeMillis() + 5 * 60 * 1000, // Example: ride lasts 5 minutes
+                    totalDistance = 0f,                                // Starting with zero distance
+                    averageSpeed = 0f,
+                    maxSpeed = 0f,
+                    elevationGain = 0f,
+                    elevationLoss = 0f,
+                    caloriesBurned = 0,
+                    // Optional Health Connect fields left as defaults:
+                    avgHeartRate = null,
+                    maxHeartRate = null,
+                    healthConnectRecordId = null,
+                    isHealthDataSynced = false,
+                    // Location and route data (placeholder values)
+                    startLat = 0.0,
+                    startLng = 0.0,
+                    endLat = 0.0,
+                    endLng = 0.0,
+                    routeJson = null,
+                    // Additional optional metadata
+                    weatherCondition = null,
+                    rideType = null,
+                    notes = null,
+                    rating = null,
+                    isSynced = false,
+                    bikeId = null,
+                    batteryStart = null,
+                    batteryEnd = null
                 )
-                onEvent(TripsEvent.LoadData)  // Refresh data after adding
+
+                repository.insert(newBikePro)
+                // Refresh data after adding the new item.
+                onEvent(TripsEvent.LoadData)
             } catch (e: Exception) {
                 handleError(e)
             }
         }
     }
+
 
     private fun deleteItem(itemId: Int) {
         viewModelScope.launch {
