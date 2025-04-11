@@ -4,8 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
+import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
 import com.ylabz.basepro.feature.nfc.ui.components.screens.ErrorScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.LoadingScreen
 
@@ -16,11 +18,12 @@ fun SettingsUiRoute(
     navTo: (String) -> Unit,
     //nfcUiState : NfcUiState,
     //nfcEvent : (NfcRwEvent) -> Unit,
-    viewModel: SettingsViewModel = hiltViewModel()
+    viewModel: SettingsViewModel = hiltViewModel(),
+    nfcViewModel: NfcViewModel = hiltViewModel(),
 
-) {
+    ) {
     val uiState = viewModel.uiState.collectAsState().value
-
+    val nfcUiState = nfcViewModel.uiState.collectAsState().value
     when (uiState) {
         is SettingsUiState.Loading -> {
             LoadingScreen()
@@ -33,9 +36,8 @@ fun SettingsUiRoute(
         is SettingsUiState.Success -> {
             SettingsScreenEx(
                 modifier = Modifier,
-                //nfcUiState = nfcUiState,
-                //nfcEvent = nfcEvent,
-                navToSettings = navTo,
+                nfcUiState = nfcUiState,
+                nfcEvent = { event -> nfcViewModel.onEvent(event) },
                 navTo = navTo
             )
         }

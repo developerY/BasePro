@@ -62,9 +62,8 @@ import com.ylabz.basepro.feature.qrscanner.ui.QRCodeScannerScreen
 @Composable
 fun SettingsScreenEx(
     modifier: Modifier = Modifier,
-    //nfcUiState : NfcUiState,
-    //nfcEvent : (NfcRwEvent) -> Unit,
-    navToSettings: (String) -> Unit,
+    nfcUiState : NfcUiState,
+    nfcEvent : (NfcRwEvent) -> Unit,
     navTo: (String) -> Unit
 ) {
     // Track each expandable’s state
@@ -140,13 +139,13 @@ fun SettingsScreenEx(
 
             // 6) NFC Expandable
             item {
-                /*NfcExpandableEx(
+                NfcExpandableEx(
                     nfcUiState = nfcUiState,
                     nfcEvent = nfcEvent,
                     expanded = nfcExpanded,
                     onExpandToggle = { nfcExpanded = !nfcExpanded },
                     navTo = navTo
-                )*/
+                )
             }
 
             // 7) Health Expandable
@@ -683,9 +682,8 @@ fun AboutExpandable(
 @Composable
 fun PreviewSettingsScreen() {
     SettingsScreenEx(
-        //nfcUiState = NfcUiState.NfcNotSupported,
-        //nfcEvent = {},
-        navToSettings = {},
+        nfcUiState = NfcUiState.NfcNotSupported,
+        nfcEvent = {},
         navTo = {}
     )
 }
