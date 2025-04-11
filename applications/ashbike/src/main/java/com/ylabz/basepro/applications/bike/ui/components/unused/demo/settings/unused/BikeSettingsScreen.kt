@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.ui.components.demo.settings.unused
+package com.ylabz.basepro.applications.bike.ui.components.unused.demo.settings.unused
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,10 +36,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.health.connect.client.records.ExerciseSessionRecord
-import com.ylabz.basepro.applications.bike.ui.components.demo.ExpandableSection
+import com.ylabz.basepro.applications.bike.ui.components.unused.demo.ExpandableSection
 import com.ylabz.basepro.feature.qrscanner.ui.QRCodeScannerScreen
-import com.ylabz.basepro.settings.ui.components.ErrorScreen
-import com.ylabz.basepro.settings.ui.components.LoadingScreen
+import com.ylabz.basepro.applications.bike.ui.components.unused.ErrorScreen
+import com.ylabz.basepro.applications.bike.ui.components.unused.LoadingScreen
 
 @Composable
 fun BikeSettingsScreenEx(

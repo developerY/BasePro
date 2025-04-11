@@ -89,7 +89,7 @@ fun SettingRow(
 
 @Preview(showBackground = true)
 @Composable
-fun BikeSettingsScreenPreview() {
+fun BikeSettingsOneScreenPreview() {
     val sampleSettings = mapOf(
         "Theme" to listOf("Light", "Dark", "System Default"),
         "Language" to listOf("English", "Spanish", "French"),

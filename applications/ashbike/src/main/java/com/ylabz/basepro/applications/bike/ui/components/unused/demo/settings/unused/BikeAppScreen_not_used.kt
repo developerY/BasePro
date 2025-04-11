@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.ui.components.demo.settings.unused
+package com.ylabz.basepro.applications.bike.ui.components.unused.demo.settings.unused
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
