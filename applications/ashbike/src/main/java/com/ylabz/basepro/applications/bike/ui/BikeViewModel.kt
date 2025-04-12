@@ -17,12 +17,26 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class BikeViewModel @Inject constructor(
-    private val unifiedLocationRepository: UnifiedLocationRepository,
-    private val compassRepository: CompassRepository
+    @Named("real") private val realLocationRepository: UnifiedLocationRepository,
+    @Named("demo") private val demoLocationRepository: UnifiedLocationRepository,
+    @Named("real") private val realCompassRepository: CompassRepository,  // Assuming similar setup for compass
+    @Named("demo") private val demoCompassRepository: CompassRepository
 ) : ViewModel() {
+
+    // Set this flag according to your needs (it could be from remote config, build config, etc.)
+    private val demoMode = false
+
+    // Choose the proper repository based on the demo flag
+    private val unifiedLocationRepository: UnifiedLocationRepository =
+        if (demoMode) demoLocationRepository else realLocationRepository
+
+    private val compassRepository: CompassRepository =
+        if (demoMode) demoCompassRepository else realCompassRepository
+
 
     private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.Loading)
     val uiState: StateFlow<BikeUiState> = _uiState
