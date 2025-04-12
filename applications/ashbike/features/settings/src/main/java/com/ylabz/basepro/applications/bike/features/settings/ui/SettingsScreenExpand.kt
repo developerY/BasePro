@@ -93,7 +93,7 @@ fun SettingsScreenEx(
                 ProfileBikeInfoCardEx(
                     userName = "John Doe",
                     bikeBattery = "80%",
-                    lastRide = "12.5 km",
+                    lastRide = "1.5 km",
                     onProfileClick = {}
                 )
             }

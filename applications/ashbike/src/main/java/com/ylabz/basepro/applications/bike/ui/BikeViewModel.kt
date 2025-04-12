@@ -21,20 +21,20 @@ import javax.inject.Named
 @HiltViewModel
 class BikeViewModel @Inject constructor(
     @Named("real") private val realLocationRepository: UnifiedLocationRepository,
-    @Named("demo") private val demoLocationRepository: UnifiedLocationRepository,
     @Named("real") private val realCompassRepository: CompassRepository,  // Assuming similar setup for compass
+    @Named("demo") private val demoLocationRepository: UnifiedLocationRepository,
     @Named("demo") private val demoCompassRepository: CompassRepository
 ) : ViewModel() {
 
     // Set this flag according to your needs (it could be from remote config, build config, etc.)
-    private val demoMode = true
+    private val realMode = true
 
     // Choose the proper repository based on the demo flag
     private val unifiedLocationRepository: UnifiedLocationRepository =
-        if (demoMode) demoLocationRepository else realLocationRepository
+        if (realMode) realLocationRepository else demoLocationRepository
 
     private val compassRepository: CompassRepository =
-        if (demoMode) demoCompassRepository else realCompassRepository
+        if (realMode) realCompassRepository else demoCompassRepository
 
 
     private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.Loading)
@@ -155,10 +155,10 @@ class BikeViewModel @Inject constructor(
                 ),
                 bikeData = BikeRideInfo(
                     isBikeConnected = false,
-                    location = com.google.android.gms.maps.model.LatLng(37.4219999, -122.0862462),
+                    location = LatLng(37.4219999, -122.0862462),
                     currentSpeed = 0.0,
                     currentTripDistance = 0.0,
-                    totalDistance = 100.0,
+                    totalDistance = 0.0,
                     rideDuration = "00:00",
                     settings = mapOf(
                         "Theme" to listOf("Light", "Dark", "System Default"),

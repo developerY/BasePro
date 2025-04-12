@@ -76,7 +76,7 @@ fun FancySettingsScreen(
                 ProfileBikeInfoCard(
                     userName = "John Doe",
                     bikeBattery = "80%",
-                    lastRide = "12.5 km",
+                    lastRide = "7.7 km",
                     onProfileClick = onProfileClick
                 )
             }

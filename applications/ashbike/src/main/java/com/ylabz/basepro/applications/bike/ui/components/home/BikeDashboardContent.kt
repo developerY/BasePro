@@ -74,7 +74,7 @@ fun BikeDashboardContent(
 
         // 2) Trip Stats Row: Distance, Duration, Avg Speed, Elevation
         StatsRow(
-            distance = 12.5,
+            distance = totalDistance,
             duration = tripDuration,
             avgSpeed = averageSpeed,
             elevation = elevation
@@ -213,7 +213,7 @@ val dummyBikeRideInfo = BikeRideInfo(
     isBikeConnected = false,
     location = LatLng(34.0522, -118.2437), // Dummy location
     currentSpeed = 28.0,
-    totalDistance = 12.5,
+    totalDistance = 2.5,
     currentTripDistance = 7.2,  // current progress (km)
     rideDuration = "00:45:30",
     averageSpeed = 25.0,
