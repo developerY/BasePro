@@ -9,23 +9,14 @@ import com.ylabz.basepro.core.data.repository.travel.CompassRepository
 import com.ylabz.basepro.core.data.repository.travel.UnifiedLocationRepository
 // import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
+import com.ylabz.basepro.core.model.bike.CombinedSensorData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-
-// Define a data class to hold the combined sensor data
-data class CombinedSensorData(
-    val location: Location,
-    val speedKmh: Float,
-    val remainingDistance: Float,
-    val heading: Float,
-    val elevation: Float
-)
-
 
 @HiltViewModel
 class BikeViewModel @Inject constructor(
@@ -39,35 +30,38 @@ class BikeViewModel @Inject constructor(
 
     // Store the ride start time.
     private var rideStartTime: Long = 0L
+    private val demo_mode = false
 
     var batteryLevel = 100  // Start at 100%
+    val totalDistance = 50.0  // Total planned distance in km
 
 
     init {
         // Trigger initial load of settings.
         onEvent(BikeEvent.LoadBike)
 
-        /*viewModelScope.launch {
+        viewModelScope.launch {
             combine(
                 unifiedLocationRepository.locationFlow,
                 unifiedLocationRepository.speedFlow,
                 unifiedLocationRepository.remainingDistanceFlow,
                 unifiedLocationRepository.elevationFlow,
                 compassRepository.headingFlow
-            ) { location, speedKmh, remainingDistance, elevation, heading  ->
+            ) { location, speedKmh, remainingDistance, elevation, heading ->
                 CombinedSensorData(location, speedKmh, remainingDistance, heading, elevation)
             }.collect { data ->
                 val currentState = _uiState.value
                 if (currentState is BikeUiState.Success) {
-                    // Calculate traveled distance as: totalDistance - remainingDistance
-                    val traveledDistance = currentState.totalDistance - data.remainingDistance.toDouble()
                     _uiState.value = currentState.copy(
-                        location = data.location,
-                        currentSpeed = data.speedKmh.toDouble(),
-                        remainingDistance = data.remainingDistance,
-                        currentDistance = traveledDistance,
-                        heading = data.heading,
-                        elevation = data.elevation.toDouble()
+                        bikeData = currentState.bikeData.copy(
+                            location = LatLng(data.location.latitude, data.location.longitude),
+                            currentSpeed = data.speedKmh.toDouble(),
+                            currentTripDistance = (totalDistance - data.remainingDistance).coerceAtLeast(
+                                0.0
+                            ).toDouble(),
+                            elevation = data.elevation.toDouble(),
+                            heading = data.heading
+                        )
                     )
                     Log.d(
                         "BikeViewModel",
@@ -75,105 +69,54 @@ class BikeViewModel @Inject constructor(
                     )
                 }
             }
-        }*/
-
-        /*viewModelScope.launch {
-            combine(
-                locationRepository.currentLocation,
-                speedRepository.speedFlow,
-                distanceRepository.remainingDistanceFlow,
-                compassRepository.headingFlow
-            ) { location, speedKmh, remainingDistance, heading ->
-                // Return all 4 in a single object
-                Quadruple(location, speedKmh, remainingDistance, heading)
-            }.collect { (location, speedKmh, remainingDistance, heading) ->
-                val currentState = _uiState.value
-                if (currentState is BikeUiState.Success) {
-                    val traveledDistance = currentState.totalDistance - remainingDistance.toDouble()
-                    _uiState.value = currentState.copy(
-                        location = location,
-                        currentSpeed = speedKmh.toDouble(),
-                        currentDistance = traveledDistance,
-                        heading = heading.toDouble()
-                    )
-                    Log.d(
-                        "BikeViewModel",
-                        "Combined update: location=$location, speed=$speedKmh, remaining=$remainingDistance, heading=$heading"
-                    )
-                }
-            }
-        }*/
-
-        /* Combine location, speed, and distance flows.
-        viewModelScope.launch {
-            combine(
-                locationRepository.currentLocation,
-                speedRepository.speedFlow,
-                distanceRepository.remainingDistanceFlow,
-                compassRepository.headingFlow,
-            ) { location, speedKmh, remainingDistance ->
-                Triple(location, speedKmh, remainingDistance)
-            }.collect { (location, speedKmh, remainingDistance, heading) ->
-                val currentState = _uiState.value
-                if (currentState is BikeUiState.Success) {
-                    // Assume totalDistance is set in the UI state.
-                    // Calculate traveled distance as: totalDistance - remainingDistance.
-                    val traveledDistance = currentState.totalDistance - remainingDistance.toDouble()
-                    _uiState.value = currentState.copy(
-                        location = location,
-                        currentSpeed = speedKmh.toDouble(),
-                        currentDistance = traveledDistance,
-                        heading = heading.toDouble()
-                    )
-                    Log.d(
-                        "BikeViewModel",
-                        "Combined update: location=$location, speed=$speedKmh, remaining=$remainingDistance"
-                    )
-                }
-            }
-        }*/
+        }
 
         // (Optional) If you want to use fake data instead, comment out the combine block above
         // and use the following fake update loop.
-        viewModelScope.launch {
-            var speed = 0.0
-            var traveledDistance = 0.0
-            var heading : Float = 0f
-            val totalDist = 50.0  // Total planned distance in km
+        if(demo_mode) {
+            viewModelScope.launch {
+                var speed = 0.0
+                var traveledDistance = 0.0
+                var heading: Float = 0f
+                val totalDist = 50.0  // Total planned distance in km
 
-            while (true) {
-                // Update speed: increase by 4 km/h, then reset at 60 km/h
-                speed = (speed + 4.0).coerceAtMost(60.0)
-                if (speed >= 60.0) speed = 0.0
+                while (true) {
+                    // Update speed: increase by 4 km/h, then reset at 60 km/h
+                    speed = (speed + 4.0).coerceAtMost(60.0)
+                    if (speed >= 60.0) speed = 0.0
 
-                // Update traveled distance: increase by 0.4 km, then reset at totalDist
-                traveledDistance = (traveledDistance + 0.4).coerceAtMost(totalDist)
-                if (traveledDistance >= totalDist) traveledDistance = 0.0
+                    // Update traveled distance: increase by 0.4 km, then reset at totalDist
+                    traveledDistance = (traveledDistance + 0.4).coerceAtMost(totalDist)
+                    if (traveledDistance >= totalDist) traveledDistance = 0.0
 
-                // Simulate heading changes: increase by 3° each iteration and wrap around at 360
-                heading = ((heading +  1) % 360.0).toFloat()
+                    // Simulate heading changes: increase by 3° each iteration and wrap around at 360
+                    heading = ((heading + 1) % 360.0).toFloat()
 
-                // Simulate battery drain: decrement batteryLevel, then reset to 100 if it goes below 0
-                batteryLevel -= 1
-                if (batteryLevel < 0) {
-                    batteryLevel = 100
-                }
+                    // Simulate battery drain: decrement batteryLevel, then reset to 100 if it goes below 0
+                    batteryLevel -= 1
+                    if (batteryLevel < 0) {
+                        batteryLevel = 100
+                    }
 
-                val currentState = _uiState.value
-                if (currentState is BikeUiState.Success) {
-                    // Update the nested bikeData immutably using copy
-                    _uiState.value = currentState.copy(
-                        bikeData = currentState.bikeData.copy(
-                            currentSpeed = speed,
-                            currentTripDistance = traveledDistance,
-                            totalDistance = totalDist,
-                            heading = heading,
-                            batteryLevel = batteryLevel
+                    val currentState = _uiState.value
+                    if (currentState is BikeUiState.Success) {
+                        // Update the nested bikeData immutably using copy
+                        _uiState.value = currentState.copy(
+                            bikeData = currentState.bikeData.copy(
+                                currentSpeed = speed,
+                                currentTripDistance = traveledDistance,
+                                totalDistance = totalDist,
+                                heading = heading,
+                                batteryLevel = batteryLevel
+                            )
                         )
-                    )
-                    Log.d("BikeViewModel", "Fake update: speed=$speed, traveledDistance=$traveledDistance, heading=$heading")
+                        Log.d(
+                            "BikeViewModel",
+                            "Fake update: speed=$speed, traveledDistance=$traveledDistance, heading=$heading"
+                        )
+                    }
+                    delay(500L) // update every 500ms
                 }
-                delay(500L) // update every 500ms
             }
         }
 

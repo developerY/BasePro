@@ -1,6 +1,17 @@
 package com.ylabz.basepro.core.model.bike
 
+import android.location.Location
 import com.google.android.gms.maps.model.LatLng
+
+
+// Define a data class to hold the combined sensor data
+data class CombinedSensorData(
+    val location: Location,
+    val speedKmh: Float,
+    val remainingDistance: Float,
+    val heading: Float,
+    val elevation: Float
+)
 
 data class BikeRideInfo(
 
