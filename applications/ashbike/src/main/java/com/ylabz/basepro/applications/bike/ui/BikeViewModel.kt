@@ -1,11 +1,10 @@
 package com.ylabz.basepro.applications.bike.ui
 
-import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
-import com.ylabz.basepro.core.data.repository.travel.CompassRepository
+import com.ylabz.basepro.core.data.repository.travel.compass.CompassRepository
 import com.ylabz.basepro.core.data.repository.travel.UnifiedLocationRepository
 // import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
@@ -28,7 +27,7 @@ class BikeViewModel @Inject constructor(
 ) : ViewModel() {
 
     // Set this flag according to your needs (it could be from remote config, build config, etc.)
-    private val demoMode = false
+    private val demoMode = true
 
     // Choose the proper repository based on the demo flag
     private val unifiedLocationRepository: UnifiedLocationRepository =

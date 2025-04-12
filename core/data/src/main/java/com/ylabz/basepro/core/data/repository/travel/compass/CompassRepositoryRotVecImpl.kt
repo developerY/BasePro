@@ -1,19 +1,17 @@
-package com.ylabz.basepro.core.data.repository.travel
+package com.ylabz.basepro.core.data.repository.travel.compass
 
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import androidx.annotation.RequiresPermission
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
-import kotlin.math.atan2
 
-class CompassRepositoryImpl @Inject constructor(
+class CompassRepositoryAccMagImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : CompassRepository {
 
