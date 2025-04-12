@@ -20,9 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BikeViewModel @Inject constructor(
-    //private val repository: BaseProRepo,           // Your existing repo
     private val unifiedLocationRepository: UnifiedLocationRepository,
-    private val compassRepository : CompassRepository
+    private val compassRepository: CompassRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.Loading)
@@ -30,16 +29,16 @@ class BikeViewModel @Inject constructor(
 
     // Store the ride start time.
     private var rideStartTime: Long = 0L
-    private val demo_mode = false
 
-    var batteryLevel = 100  // Start at 100%
-    val totalDistance = 50.0  // Total planned distance in km
-
+    // Starting battery level, total planned distance (km)
+    var batteryLevel = 100
+    val totalDistance = 50.0
 
     init {
         // Trigger initial load of settings.
         onEvent(BikeEvent.LoadBike)
 
+        // Subscribe to real sensor data updates using combine()
         viewModelScope.launch {
             combine(
                 unifiedLocationRepository.locationFlow,
@@ -56,11 +55,13 @@ class BikeViewModel @Inject constructor(
                         bikeData = currentState.bikeData.copy(
                             location = LatLng(data.location.latitude, data.location.longitude),
                             currentSpeed = data.speedKmh.toDouble(),
-                            currentTripDistance = (totalDistance - data.remainingDistance).coerceAtLeast(
-                                0.0
-                            ).toDouble(),
+                            // Calculate traveled distance: planned totalDistance minus remaining distance,
+                            // ensuring the value is not negative.
+                            currentTripDistance = (totalDistance - data.remainingDistance).coerceAtLeast(0.0).toDouble(),
                             elevation = data.elevation.toDouble(),
-                            heading = data.heading
+                            heading = data.heading,
+                            // Battery can be updated elsewhere (e.g., via connectivity events)
+                            batteryLevel = batteryLevel
                         )
                     )
                     Log.d(
@@ -71,71 +72,11 @@ class BikeViewModel @Inject constructor(
             }
         }
 
-        // (Optional) If you want to use fake data instead, comment out the combine block above
-        // and use the following fake update loop.
-        if(demo_mode) {
-            viewModelScope.launch {
-                var speed = 0.0
-                var traveledDistance = 0.0
-                var heading: Float = 0f
-                val totalDist = 50.0  // Total planned distance in km
-
-                while (true) {
-                    // Update speed: increase by 4 km/h, then reset at 60 km/h
-                    speed = (speed + 4.0).coerceAtMost(60.0)
-                    if (speed >= 60.0) speed = 0.0
-
-                    // Update traveled distance: increase by 0.4 km, then reset at totalDist
-                    traveledDistance = (traveledDistance + 0.4).coerceAtMost(totalDist)
-                    if (traveledDistance >= totalDist) traveledDistance = 0.0
-
-                    // Simulate heading changes: increase by 3° each iteration and wrap around at 360
-                    heading = ((heading + 1) % 360.0).toFloat()
-
-                    // Simulate battery drain: decrement batteryLevel, then reset to 100 if it goes below 0
-                    batteryLevel -= 1
-                    if (batteryLevel < 0) {
-                        batteryLevel = 100
-                    }
-
-                    val currentState = _uiState.value
-                    if (currentState is BikeUiState.Success) {
-                        // Update the nested bikeData immutably using copy
-                        _uiState.value = currentState.copy(
-                            bikeData = currentState.bikeData.copy(
-                                currentSpeed = speed,
-                                currentTripDistance = traveledDistance,
-                                totalDistance = totalDist,
-                                heading = heading,
-                                batteryLevel = batteryLevel
-                            )
-                        )
-                        Log.d(
-                            "BikeViewModel",
-                            "Fake update: speed=$speed, traveledDistance=$traveledDistance, heading=$heading"
-                        )
-                    }
-                    delay(500L) // update every 500ms
-                }
-            }
-        }
-
-        // Start ride duration updates.
+        // Start the ride duration updates.
         startRideDurationUpdates()
-
     }
 
-
-
-    // Helper to format milliseconds as HH:MM:SS
-    private fun formatDuration(millis: Long): String {
-        val seconds = millis / 1000 % 60
-        val minutes = millis / (1000 * 60) % 60
-        val hours = millis / (1000 * 60 * 60)
-        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
-    }
-
-    // Format milliseconds to a string like "1h 30m"
+    // Helper to format milliseconds as "1h 30m"
     private fun formatDurationToHM(millis: Long): String {
         val totalMinutes = millis / 1000 / 60
         val hours = totalMinutes / 60
@@ -156,7 +97,7 @@ class BikeViewModel @Inject constructor(
                 val currentState = _uiState.value
 
                 if (currentState is BikeUiState.Success) {
-                    // Update the nested bikeData immutably using copy
+                    // Update the nested bikeData with the rideDuration.
                     _uiState.value = currentState.copy(
                         bikeData = currentState.bikeData.copy(
                             rideDuration = formatted
@@ -168,6 +109,7 @@ class BikeViewModel @Inject constructor(
         }
     }
 
+    // Event handling.
     fun onEvent(event: BikeEvent) {
         when (event) {
             is BikeEvent.LoadBike -> loadSettings()
@@ -178,25 +120,16 @@ class BikeViewModel @Inject constructor(
     }
 
     private fun bikeConnect() {
-        // Implement your bike connection logic here
         viewModelScope.launch {
-
-
-                val currentState = _uiState.value
-
-                if (currentState is BikeUiState.Success) {
-
-                        // Update the nested bikeData immutably using copy
-                        _uiState.value = currentState.copy(
-                            bikeData = currentState.bikeData.copy(
-                                isBikeConnected = true,
-                            )
-                        )
-
-                }
-
+            val currentState = _uiState.value
+            if (currentState is BikeUiState.Success) {
+                _uiState.value = currentState.copy(
+                    bikeData = currentState.bikeData.copy(
+                        isBikeConnected = true
+                    )
+                )
+            }
         }
-
     }
 
     private fun loadSettings() {
@@ -209,19 +142,21 @@ class BikeViewModel @Inject constructor(
                 ),
                 bikeData = BikeRideInfo(
                     isBikeConnected = false,
-                    location = LatLng(37.4219999, -122.0862462),
-                    currentSpeed = 55.0,
-                    currentTripDistance = 5.0,
+                    location = com.google.android.gms.maps.model.LatLng(37.4219999, -122.0862462),
+                    currentSpeed = 0.0,
+                    currentTripDistance = 0.0,
                     totalDistance = 100.0,
-                    rideDuration = "00:15:00",
-                    settings = mapOf("Theme" to listOf("Light", "Dark", "System Default"),
+                    rideDuration = "00:00",
+                    settings = mapOf(
+                        "Theme" to listOf("Light", "Dark", "System Default"),
                         "Language" to listOf("English", "Spanish", "French"),
-                        "Notifications" to listOf("Enabled", "Disabled")),
-                    averageSpeed = 12.0,
-                    elevation = 12.0,
-                    heading = 12.0f,
-                    batteryLevel = 12,
-                    motorPower = 12.0f
+                        "Notifications" to listOf("Enabled", "Disabled")
+                    ),
+                    averageSpeed = 0.0,
+                    elevation = 0.0,
+                    heading = 0.0f,
+                    batteryLevel = batteryLevel,
+                    motorPower = null
                 )
             )
             Log.d("BikeViewModel", "Settings loaded.")
@@ -239,9 +174,6 @@ class BikeViewModel @Inject constructor(
     }
 
     private fun deleteAllEntries() {
-        /*viewModelScope.launch {
-            repository.deleteAll()
-            Log.d("BikeViewModel", "All entries deleted from repository.")
-        }*/
+        // Implement data deletion logic if needed.
     }
 }
