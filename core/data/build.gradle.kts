@@ -53,6 +53,16 @@ android {
     secrets {
         defaultPropertiesFileName = "secrets.defaults.properties"
     }
+
+    flavorDimensions += "mode"
+    productFlavors {
+        create("demo") {
+            dimension = "mode"
+        }
+        create("prod") {
+            dimension = "mode"
+        }
+    }
 }
 
 dependencies {

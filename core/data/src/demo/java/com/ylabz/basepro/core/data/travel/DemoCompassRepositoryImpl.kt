@@ -1,4 +1,4 @@
-package com.ylabz.basepro.core.data.repository.travel
+package java.com.ylabz.basepro.core.data.travel
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow

@@ -46,6 +46,21 @@ android {
     secrets {
         defaultPropertiesFileName = "secrets.defaults.properties"
     }
+
+    defaultConfig {
+        // Replace "prod" with "demo" if you want to use the demo variant.
+        missingDimensionStrategy( "mode", "prod")
+    }
+
+    flavorDimensions += "mode"
+    productFlavors {
+        create("demo") {
+            dimension = "mode"
+        }
+        create("prod") {
+            dimension = "mode"
+        }
+    }
 }
 
 dependencies {

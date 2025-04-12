@@ -55,6 +55,10 @@ android {
         defaultPropertiesFileName = "secrets.defaults.properties"
     }
 
+    defaultConfig {
+        missingDimensionStrategy ("mode", "prod")
+    }
+
 }
 
 dependencies {

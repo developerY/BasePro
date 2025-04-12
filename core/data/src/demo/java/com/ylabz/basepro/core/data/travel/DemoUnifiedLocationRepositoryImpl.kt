@@ -1,6 +1,7 @@
-package com.ylabz.basepro.core.data.repository.travel
+package com.ylabz.basepro.core.data.travel
 
 import android.location.Location
+import com.ylabz.basepro.core.data.repository.travel.UnifiedLocationRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
