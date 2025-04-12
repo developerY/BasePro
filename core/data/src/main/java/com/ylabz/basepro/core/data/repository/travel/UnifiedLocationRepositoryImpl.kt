@@ -23,34 +23,37 @@ class UnifiedLocationRepositoryImpl @Inject constructor(
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
 
+    // Total route distance in kilometers.
     private val totalRouteDistanceKm = 50f
 
-    // Scope used for sharing the location stream
+    // Use a dedicated coroutine scope for location updates.
     private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    // Corrected: use main looper instead of null to avoid crash
     @SuppressLint("MissingPermission")
     private val _rawLocationFlow: SharedFlow<Location> = callbackFlow {
+        // Build the location request with high accuracy and a 1-second update interval.
         val locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,
             1000L // 1-second interval
         ).build()
 
+        // Create a callback to emit each location update.
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 result.locations.forEach { location ->
-                    trySend(location).isSuccess // Use isSuccess to avoid crash if closed
+                    trySend(location).isSuccess
                 }
             }
         }
 
-        // ✅ FIX: Use main looper to avoid NullPointerException
+        // Request location updates on the main looper to ensure thread safety.
         fusedLocationClient.requestLocationUpdates(
             locationRequest,
             locationCallback,
             Looper.getMainLooper()
         )
 
+        // Remove location updates when the flow is closed.
         awaitClose {
             fusedLocationClient.removeLocationUpdates(locationCallback)
         }
@@ -60,23 +63,39 @@ class UnifiedLocationRepositoryImpl @Inject constructor(
         replay = 1
     )
 
+    // Expose the raw location flow.
     override val locationFlow: Flow<Location>
         get() = _rawLocationFlow
 
+    // Calculate speed by converting m/s to km/h.
     override val speedFlow: Flow<Float> = _rawLocationFlow.map { location ->
-        (location.speed * 3.6f).coerceAtLeast(0f) // Convert from m/s to km/h
+        (location.speed * 3.6f).coerceAtLeast(0f)
     }
 
+    // Expose elevation (altitude) from the location updates.
     override val elevationFlow: Flow<Float> = _rawLocationFlow.map { location ->
         location.altitude.toFloat()
     }
 
-    override val remainingDistanceFlow: Flow<Float> = _rawLocationFlow
-        .scan(Pair<Location?, Float>(null, 0f)) { (prev, total), curr ->
-            val additional = prev?.distanceTo(curr)?.div(1000f) ?: 0f
-            Pair(curr, total + additional)
+    // Internal flow that accumulates the distance traveled.
+    // It maintains a Pair of the previous location and the running total (in km).
+    private val distanceAccumulatorFlow: Flow<Pair<Location?, Float>> = _rawLocationFlow
+        .scan(initial = Pair<Location?, Float>(null, 0f)) { (prev, total), curr ->
+            // Calculate the additional distance in km.
+            val additionalDistance = prev?.distanceTo(curr)?.div(1000f) ?: 0f
+            // Emit the new state with the current location and updated total.
+            Pair(curr, total + additionalDistance)
         }
-        .map { (_, traveled) ->
+        // Optionally, filter out duplicate values.
+        .distinctUntilChanged()
+
+    // Expose the total distance traveled as a Flow (in kilometers).
+    override val traveledDistanceFlow: Flow<Float> = distanceAccumulatorFlow
+        .map { (_, traveled) -> traveled }
+
+    // Calculate the remaining distance based on the total route.
+    override val remainingDistanceFlow: Flow<Float> = traveledDistanceFlow
+        .map { traveled ->
             (totalRouteDistanceKm - traveled).coerceAtLeast(0f)
         }
 }

@@ -68,4 +68,15 @@ class DemoUnifiedLocationRepositoryImpl @Inject constructor() : UnifiedLocationR
             delay(500L)
         }
     }
+
+    override val traveledDistanceFlow: Flow<Float> = flow {
+        // Simulate a ride with totalDistance of 50 km.
+        var traveled = 0f
+        while (true) {
+            traveled += 0.4f
+            // Emit the remaining distance.
+            emit(traveled)
+            delay(500L)
+        }
+    }
 }

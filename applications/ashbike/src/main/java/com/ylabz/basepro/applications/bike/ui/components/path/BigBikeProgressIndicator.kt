@@ -23,15 +23,15 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun BigBikeProgressIndicator(
-    currentDistance: Double,
-    totalDistance: Double,
+    currentDistance: Float,
+    totalDistance: Float,
     modifier: Modifier = Modifier,
     trackHeight: Dp = 8.dp,
     iconSize: Dp = 48.dp,
     containerHeight: Dp = 70.dp // enough space for half the icon above & below the line
 ) {
     val fraction = if (totalDistance > 0) {
-        (currentDistance / totalDistance).coerceIn(0.0, 1.0).toFloat()
+        (currentDistance / totalDistance).coerceIn(0.0f, 1.0f)
     } else 0f
 
     BoxWithConstraints(
@@ -103,8 +103,8 @@ fun BigBikeProgressIndicator(
 @Composable
 fun BigBikeProgressIndicatorPreview() {
     BigBikeProgressIndicator(
-        currentDistance = 5000.0,
-        totalDistance = 10000.0,
+        currentDistance = 5000.0f,
+        totalDistance = 10000.0f,
         trackHeight = 8.dp
     )
 }

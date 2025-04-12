@@ -39,8 +39,8 @@ import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDial
 fun SpeedAndProgressCard(
     modifier: Modifier = Modifier.fillMaxSize(),
     currentSpeed: Double,
-    currentTripDistance: Double,
-    totalDistance: Double,
+    currentTripDistance: Float,
+    totalDistance: Float,
     windDegree: Float,
     windSpeed: Float,
     weatherConditionText: String,
@@ -144,8 +144,8 @@ fun SpeedAndProgressCard(
 fun SpeedAndProgressCardPreview() {
     SpeedAndProgressCard(
         currentSpeed = 25.5,
-        currentTripDistance = 10.0,
-        totalDistance = 50.0,
+        currentTripDistance = 10.0f,
+        totalDistance = 50.0f,
         windDegree = 120f,
         windSpeed = 5.0f,
         weatherConditionText = WeatherConditionUnif.RAINY.name,

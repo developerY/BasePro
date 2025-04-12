@@ -27,7 +27,7 @@ class BikeViewModel @Inject constructor(
 ) : ViewModel() {
 
     // Set this flag according to your needs (it could be from remote config, build config, etc.)
-    private val realMode = true
+    private val realMode = false
 
     // Choose the proper repository based on the demo flag
     private val unifiedLocationRepository: UnifiedLocationRepository =
@@ -45,7 +45,7 @@ class BikeViewModel @Inject constructor(
 
     // Starting battery level, total planned distance (km)
     var batteryLevel = 100
-    val totalDistance = 50.0
+    val totalDistance = 50.0f
 
     init {
         // Trigger initial load of settings.
@@ -70,7 +70,8 @@ class BikeViewModel @Inject constructor(
                             currentSpeed = data.speedKmh.toDouble(),
                             // Calculate traveled distance: planned totalDistance minus remaining distance,
                             // ensuring the value is not negative.
-                            currentTripDistance = (totalDistance - data.remainingDistance).coerceAtLeast(0.0).toDouble(),
+                            currentTripDistance = (totalDistance - data.remainingDistance).coerceAtLeast(0.0f),
+                            remainingDistance = data.remainingDistance,
                             elevation = data.elevation.toDouble(),
                             heading = data.heading,
                             // Battery can be updated elsewhere (e.g., via connectivity events)
@@ -157,8 +158,9 @@ class BikeViewModel @Inject constructor(
                     isBikeConnected = false,
                     location = LatLng(37.4219999, -122.0862462),
                     currentSpeed = 0.0,
-                    currentTripDistance = 0.0,
-                    totalDistance = 0.0,
+                    currentTripDistance = 0.0f,
+                    totalDistance = 0.0f,
+                    remainingDistance = 0.0f,
                     rideDuration = "00:00",
                     settings = mapOf(
                         "Theme" to listOf("Light", "Dark", "System Default"),

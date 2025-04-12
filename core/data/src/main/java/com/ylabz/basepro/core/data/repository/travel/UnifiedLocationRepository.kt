@@ -16,4 +16,8 @@ interface UnifiedLocationRepository {
     val remainingDistanceFlow: Flow<Float>
     /** Emits the heading (in degrees), derived from the raw Location. */
     // val headingFlow: Flow<Float>
+
+    val traveledDistanceFlow: Flow<Float>
+
+
 }

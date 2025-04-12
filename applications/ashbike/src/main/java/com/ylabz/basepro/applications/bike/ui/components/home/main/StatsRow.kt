@@ -23,7 +23,7 @@ import com.ylabz.basepro.applications.bike.ui.components.unused.StatCard
 
 @Composable
 fun StatsRow(
-    distance: Double,
+    distance: Float,
     duration: String,
     avgSpeed: Double,
     elevation: Double? = null, // optional metric
@@ -90,7 +90,7 @@ fun StatsRow(
 @Composable
 fun StatsRowPreview() {
     StatsRow(
-        distance = 10.5,
+        distance = 10.5f,
         duration = "00:30:00",
         avgSpeed = 21.0,
         elevation = 150.0

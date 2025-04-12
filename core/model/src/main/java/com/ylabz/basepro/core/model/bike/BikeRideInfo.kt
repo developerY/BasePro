@@ -9,22 +9,22 @@ data class CombinedSensorData(
     val location: Location,
     val speedKmh: Float,
     val remainingDistance: Float,
+    val elevation: Float,
     val heading: Float,
-    val elevation: Float
 )
 
 data class BikeRideInfo(
 
     val location: LatLng?,
     val currentSpeed: Double,
-    val currentTripDistance: Double,
-    val totalDistance: Double,
+    val currentTripDistance: Float,
+    val totalDistance: Float,
+    val remainingDistance: Float,
     val rideDuration: String,
     val settings: Map<String, List<String>>,
     val averageSpeed: Double,
-    val elevation : Double,
     val heading : Float,
-
+    val elevation : Double,
     // Connected bike state
     val isBikeConnected: Boolean,
     val batteryLevel: Int?,
