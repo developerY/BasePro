@@ -53,7 +53,10 @@ fun BikeDashboardExample(
             windDegree = 120f,
             windSpeed = 5.0f,
             weatherConditionText = "RAINY",
-            heading = bikeRideInfo.heading
+            heading = bikeRideInfo.heading,
+            isRiding = true,
+            onStartPauseClicked = { },
+            onStopClicked = { },
         )
 
         // 2) Bike connection or battery card

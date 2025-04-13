@@ -14,8 +14,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.SpeedometerWithCompassOverlay
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.WeatherBadge
 import com.ylabz.basepro.applications.bike.ui.components.path.BigBikeProgressIndicator
+import com.ylabz.basepro.applications.bike.ui.components.path.BikePathWithControls
+import com.ylabz.basepro.applications.bike.ui.components.path.TripControlsWithProgress
 import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionUnif
 import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDialWithSpeed
 
@@ -45,6 +53,9 @@ fun SpeedAndProgressCard(
     windSpeed: Float,
     weatherConditionText: String,
     heading: Float,
+    isRiding: Boolean,                               // <--- Added to track if ride is running or paused
+    onStartPauseClicked: () -> Unit,                 // <--- Callback for Start/Pause
+    onStopClicked: () -> Unit                        // <--- Callback for Stop
 ) {
     // Control the visibility of the wind dial & weather badge for a subtle fade/slide in
     var showOverlays by remember { mutableStateOf(false) }
@@ -56,7 +67,6 @@ fun SpeedAndProgressCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            // Enough height for large speedometer, progress bar, small wind dial
             .height(400.dp)
             .shadow(4.dp, shape = MaterialTheme.shapes.large),
         shape = MaterialTheme.shapes.large,
@@ -68,13 +78,13 @@ fun SpeedAndProgressCard(
                 .padding(16.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // TOP ROW: small wind dial (left) + weather badge (right) with animations
+            // TOP ROW: wind + weather
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top
             ) {
-                // 1) Wind dial, animated
+                // Wind dial
                 AnimatedVisibility(
                     visible = showOverlays,
                     enter = fadeIn(animationSpec = tween(600)) +
@@ -88,7 +98,7 @@ fun SpeedAndProgressCard(
                     }
                 }
 
-                // 2) Weather badge, animated
+                // Weather badge
                 AnimatedVisibility(
                     visible = showOverlays,
                     enter = fadeIn(animationSpec = tween(600)) +
@@ -108,8 +118,7 @@ fun SpeedAndProgressCard(
                 // We measure the parent width, pick a responsive size for the speedometer
                 BoxWithConstraints {
                     val availableWidth = maxWidth
-                    // Use a fraction of availableWidth or clamp it to some range
-                    val gaugeSize = availableWidth.coerceAtMost(450.dp) // up to 340dp
+                    val gaugeSize = availableWidth.coerceAtMost(450.dp)
                     SpeedometerWithCompassOverlay(
                         currentSpeed = currentSpeed.toFloat(),
                         maxSpeed = 60f,
@@ -118,26 +127,25 @@ fun SpeedAndProgressCard(
                     )
                 }
             }
-
-            // BOTTOM: Trip progress line
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                BigBikeProgressIndicator(
+                //TripControlsWithProgress
+                BikePathWithControls(
                     currentDistance = currentTripDistance,
                     totalDistance = totalDistance,
-                    iconSize = 48.dp,
-                    containerHeight = 60.dp,
-                    trackHeight = 8.dp
+                    isRiding = isRiding,
+                    onStartPauseClicked = onStartPauseClicked,
+                    onStopClicked = onStopClicked
                 )
             }
+
         }
     }
 }
-
 
 @Preview
 @Composable
@@ -150,7 +158,10 @@ fun SpeedAndProgressCardPreview() {
         windSpeed = 5.0f,
         weatherConditionText = WeatherConditionUnif.RAINY.name,
         heading = 45f,
-        modifier = Modifier
+        isRiding = false,  // Just for preview
+        onStartPauseClicked = {},
+        onStopClicked = {}
     )
 }
+
 

@@ -69,7 +69,10 @@ fun BikeDashboardContent(
             windDegree = 120f,
             windSpeed = 5.0f,
             weatherConditionText = WeatherConditionUnif.RAINY.name,
-            heading = heading
+            heading = heading,
+            isRiding = true,
+            onStartPauseClicked = { },//onBikeEvent(BikeEvent.Start) },
+            onStopClicked = { },//onBikeEvent(BikeEvent.Stop) },
         )
 
         // 2) Trip Stats Row: Distance, Duration, Avg Speed, Elevation
