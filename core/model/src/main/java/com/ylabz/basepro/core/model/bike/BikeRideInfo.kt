@@ -8,18 +8,19 @@ import com.google.android.gms.maps.model.LatLng
 data class CombinedSensorData(
     val location: Location,
     val speedKmh: Float,
-    val remainingDistance: Float,
+    val traveledDistance: Float,
+    val totalDistance: Float?,
+    val remainingDistance: Float?,
     val elevation: Float,
     val heading: Float,
 )
 
 data class BikeRideInfo(
-
     val location: LatLng?,
     val currentSpeed: Double,
     val currentTripDistance: Float,
-    val totalDistance: Float,
-    val remainingDistance: Float,
+    val totalTripDistance: Float?,
+    val remainingDistance: Float?,
     val rideDuration: String,
     val settings: Map<String, List<String>>,
     val averageSpeed: Double,

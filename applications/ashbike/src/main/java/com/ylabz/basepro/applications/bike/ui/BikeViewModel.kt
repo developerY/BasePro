@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.ui
 
+import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,6 +12,7 @@ import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.CombinedSensorData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -27,7 +29,7 @@ class BikeViewModel @Inject constructor(
 ) : ViewModel() {
 
     // Set this flag according to your needs (it could be from remote config, build config, etc.)
-    private val realMode = false
+    private val realMode = true
 
     // Choose the proper repository based on the demo flag
     private val unifiedLocationRepository: UnifiedLocationRepository =
@@ -45,7 +47,23 @@ class BikeViewModel @Inject constructor(
 
     // Starting battery level, total planned distance (km)
     var batteryLevel = 100
-    val totalDistance = 50.0f
+    // LiveData or StateFlow representing the total distance from the user
+    // MutableStateFlow to hold an optional total route distance (in kilometers).
+    // Null indicates that the rider did not set a total distance.
+    private val _totalRouteDistance = MutableStateFlow<Float?>(null)
+    val totalRouteDistance: StateFlow<Float?> = _totalRouteDistance
+
+    // Expose traveled distance directly from the repository.
+    val traveledDistanceFlow: Flow<Float> = unifiedLocationRepository.traveledDistanceFlow
+
+    // Calculate remaining distance only if a total route distance has been provided.
+    // If not provided (null), the remainingDistanceFlow will also emit null.
+    val remainingDistanceFlow: Flow<Float?> = combine(
+        traveledDistanceFlow,
+        totalRouteDistance
+    ) { traveled, total ->
+        total?.let { (it - traveled).coerceAtLeast(0f) }
+    }
 
     init {
         // Trigger initial load of settings.
@@ -56,11 +74,28 @@ class BikeViewModel @Inject constructor(
             combine(
                 unifiedLocationRepository.locationFlow,
                 unifiedLocationRepository.speedFlow,
-                unifiedLocationRepository.remainingDistanceFlow,
+                traveledDistanceFlow,
+                totalRouteDistance,
+                remainingDistanceFlow,
                 unifiedLocationRepository.elevationFlow,
                 compassRepository.headingFlow
-            ) { location, speedKmh, remainingDistance, elevation, heading ->
-                CombinedSensorData(location, speedKmh, remainingDistance, heading, elevation)
+            ) { values -> // Cast each element from the array
+                val location = values[0] as Location
+                val speedKmh = values[1] as Float
+                val traveledDistance = values[2] as Float
+                val totalDistance = values[3] as Float?  // Optional value
+                val remainingDistance = values[4] as Float?  // Optional value
+                val elevation = values[5] as Float
+                val heading = values[6] as Float
+                CombinedSensorData(
+                    location = location,
+                    speedKmh = speedKmh,
+                    traveledDistance = traveledDistance,
+                    totalDistance = totalDistance,
+                    remainingDistance = remainingDistance,
+                    elevation = elevation,
+                    heading = heading
+                )
             }.collect { data ->
                 val currentState = _uiState.value
                 if (currentState is BikeUiState.Success) {
@@ -70,7 +105,8 @@ class BikeViewModel @Inject constructor(
                             currentSpeed = data.speedKmh.toDouble(),
                             // Calculate traveled distance: planned totalDistance minus remaining distance,
                             // ensuring the value is not negative.
-                            currentTripDistance = (totalDistance - data.remainingDistance).coerceAtLeast(0.0f),
+                            currentTripDistance = data.traveledDistance.coerceAtLeast(0f),
+                            totalTripDistance = data.totalDistance,
                             remainingDistance = data.remainingDistance,
                             elevation = data.elevation.toDouble(),
                             heading = data.heading,
@@ -159,8 +195,8 @@ class BikeViewModel @Inject constructor(
                     location = LatLng(37.4219999, -122.0862462),
                     currentSpeed = 0.0,
                     currentTripDistance = 0.0f,
-                    totalDistance = 0.0f,
-                    remainingDistance = 0.0f,
+                    totalTripDistance = null,
+                    remainingDistance = null,
                     rideDuration = "00:00",
                     settings = mapOf(
                         "Theme" to listOf("Light", "Dark", "System Default"),

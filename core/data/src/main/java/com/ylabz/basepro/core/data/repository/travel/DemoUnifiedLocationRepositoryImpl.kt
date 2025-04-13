@@ -54,21 +54,6 @@ class DemoUnifiedLocationRepositoryImpl @Inject constructor() : UnifiedLocationR
         }
     }
 
-    override val remainingDistanceFlow: Flow<Float> = flow {
-        // Simulate a ride with totalDistance of 50 km.
-        val totalDistance = 50f
-        var traveled = 0f
-        while (true) {
-            traveled += 0.4f
-            if (traveled >= totalDistance) {
-                traveled = 0f
-            }
-            // Emit the remaining distance.
-            emit(totalDistance - traveled)
-            delay(500L)
-        }
-    }
-
     override val traveledDistanceFlow: Flow<Float> = flow {
         // Simulate a ride with totalDistance of 50 km.
         var traveled = 0f

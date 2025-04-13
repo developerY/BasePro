@@ -43,7 +43,7 @@ fun BikeDashboardContent(
     // Extract values from bikeRideInfo (if needed)
     val currentSpeed = bikeRideInfo.currentSpeed
     val currentTripDistance = bikeRideInfo.currentTripDistance
-    val totalDistance = bikeRideInfo.totalDistance
+    val totalDistance = bikeRideInfo.totalTripDistance
     val tripDuration = bikeRideInfo.rideDuration
     val averageSpeed = bikeRideInfo.averageSpeed
     val elevation = bikeRideInfo.elevation
@@ -189,7 +189,7 @@ fun BikeDashboardContentPreview() {
         isBikeConnected = false,
         location = LatLng(34.0522, -118.2437), // Dummy location
         currentSpeed = 28.0,
-        totalDistance = 12.5f,
+        totalTripDistance = 12.5f,
         currentTripDistance = 7.2f,  // current progress (km)
         remainingDistance = 10.5f,
         rideDuration = "00:45:30",
@@ -214,7 +214,7 @@ val dummyBikeRideInfo = BikeRideInfo(
     isBikeConnected = false,
     location = LatLng(34.0522, -118.2437), // Dummy location
     currentSpeed = 28.0,
-    totalDistance = 2.5f,
+    totalTripDistance = 2.5f,
     currentTripDistance = 7.2f,  // current progress (km)
     remainingDistance = 10.5f,
     rideDuration = "00:45:30",

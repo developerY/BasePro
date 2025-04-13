@@ -190,7 +190,7 @@ fun BikeAppScreenPreview() {
         location = LatLng(37.4219999, -122.0862462),
         currentSpeed = 55.0,
         currentTripDistance = 5.0f,
-        totalDistance = 100.0f,
+        totalTripDistance = 100.0f,
         remainingDistance = 50.0f,
         rideDuration = "00:15:00",
         settings = mapOf("Theme" to listOf("Light", "Dark", "System Default"),

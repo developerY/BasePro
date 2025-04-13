@@ -40,7 +40,7 @@ fun SpeedAndProgressCard(
     modifier: Modifier = Modifier.fillMaxSize(),
     currentSpeed: Double,
     currentTripDistance: Float,
-    totalDistance: Float,
+    totalDistance: Float?,
     windDegree: Float,
     windSpeed: Float,
     weatherConditionText: String,

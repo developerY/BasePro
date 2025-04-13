@@ -23,9 +23,6 @@ class UnifiedLocationRepositoryImpl @Inject constructor(
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
 
-    // Total route distance in kilometers.
-    private val totalRouteDistanceKm = 50f
-
     // Use a dedicated coroutine scope for location updates.
     private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
@@ -92,10 +89,4 @@ class UnifiedLocationRepositoryImpl @Inject constructor(
     // Expose the total distance traveled as a Flow (in kilometers).
     override val traveledDistanceFlow: Flow<Float> = distanceAccumulatorFlow
         .map { (_, traveled) -> traveled }
-
-    // Calculate the remaining distance based on the total route.
-    override val remainingDistanceFlow: Flow<Float> = traveledDistanceFlow
-        .map { traveled ->
-            (totalRouteDistanceKm - traveled).coerceAtLeast(0f)
-        }
 }
