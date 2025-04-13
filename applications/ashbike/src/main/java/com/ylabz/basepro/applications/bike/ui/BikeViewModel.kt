@@ -99,10 +99,18 @@ class BikeViewModel @Inject constructor(
             }.collect { data ->
                 val currentState = _uiState.value
                 if (currentState is BikeUiState.Success) {
+
+                    // Calculate elapsed time in hours from when the ride started.
+                    val elapsedMillis = System.currentTimeMillis() - rideStartTime
+                    val elapsedHours = elapsedMillis / 3600000.0
+                    // Compute average speed in km/h.
+                    val averageSpeed = if (elapsedHours > 0) data.traveledDistance / elapsedHours else 0.0
+
                     _uiState.value = currentState.copy(
                         bikeData = currentState.bikeData.copy(
                             location = LatLng(data.location.latitude, data.location.longitude),
                             currentSpeed = data.speedKmh.toDouble(),
+                            averageSpeed = averageSpeed,
                             // Calculate traveled distance: planned totalDistance minus remaining distance,
                             // ensuring the value is not negative.
                             currentTripDistance = data.traveledDistance.coerceAtLeast(0f),
