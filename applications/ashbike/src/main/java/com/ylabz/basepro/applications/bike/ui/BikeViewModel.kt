@@ -100,7 +100,6 @@ class BikeViewModel @Inject constructor(
                 val currentState = _uiState.value
                 if (currentState is BikeUiState.Success) {
 
-                    // Calculate elapsed time in hours from when the ride started.
                     val elapsedMillis = System.currentTimeMillis() - rideStartTime
                     val elapsedHours = elapsedMillis / 3600000.0
                     // Compute average speed in km/h.

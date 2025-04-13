@@ -44,7 +44,7 @@ fun StatsRow(
         StatItem(
             icon = Icons.Filled.Speed,
             label = "Avg Speed",
-            value = "${avgSpeed} km/h"
+            value = "%.1f km/h".format(avgSpeed)
         )
     )
     // If elevation is provided, add it

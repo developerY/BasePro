@@ -25,7 +25,9 @@ class DemoUnifiedLocationRepositoryImpl @Inject constructor() : UnifiedLocationR
             speed = 0f
         }
         while (true) {
-            // Update timestamp and emit a demo location.
+            // Simulate small movement by updating latitude and longitude.
+            demoLocation.latitude += 0.00001  // small change simulating movement
+            demoLocation.longitude += 0.00001
             demoLocation.time = System.currentTimeMillis()
             emit(demoLocation)
             delay(500L)
@@ -33,12 +35,12 @@ class DemoUnifiedLocationRepositoryImpl @Inject constructor() : UnifiedLocationR
     }.flowOn(Dispatchers.Default)
 
     override val speedFlow: Flow<Float> = flow {
-        var speed = 0f
+        var speed = 10f  // start at 10 km/h
         while (true) {
-            // Increase speed by 4 km/h until reaching 60 km/h, then reset to 0.
-            speed = (speed + 4f)
-            if (speed >= 60f) {
-                speed = 0f
+            // Increase speed gradually until reaching 25 km/h, then reset to 10 km/h.
+            speed += 0.5f
+            if (speed >= 25f) {
+                speed = 10f
             }
             emit(speed)
             delay(500L)
@@ -46,7 +48,7 @@ class DemoUnifiedLocationRepositoryImpl @Inject constructor() : UnifiedLocationR
     }
 
     override val elevationFlow: Flow<Float> = flow {
-        // For demo purposes, emit a constant elevation.
+        // For demo purposes, emit a constant elevation of 12 meters.
         val elevation = 12f
         while (true) {
             emit(elevation)
@@ -55,11 +57,12 @@ class DemoUnifiedLocationRepositoryImpl @Inject constructor() : UnifiedLocationR
     }
 
     override val traveledDistanceFlow: Flow<Float> = flow {
-        // Simulate a ride with totalDistance of 50 km.
+        // Simulate a ride: increase traveled distance at a realistic rate.
+        // With an increment of about 0.003 km every 500ms,
+        // in one second you'll cover roughly 0.006 km (6 meters) which is in line with ~21.6 km/h.
         var traveled = 0f
         while (true) {
-            traveled += 0.4f
-            // Emit the remaining distance.
+            traveled += 0.003f
             emit(traveled)
             delay(500L)
         }
