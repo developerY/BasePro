@@ -23,41 +23,39 @@ import javax.inject.Named
 @HiltViewModel
 class BikeViewModel @Inject constructor(
     @Named("real") private val realLocationRepository: UnifiedLocationRepository,
-    @Named("real") private val realCompassRepository: CompassRepository,  // Assuming similar setup for compass
+    @Named("real") private val realCompassRepository: CompassRepository, // Assuming similar setup for compass
     @Named("demo") private val demoLocationRepository: UnifiedLocationRepository,
     @Named("demo") private val demoCompassRepository: CompassRepository
 ) : ViewModel() {
 
-    // Set this flag according to your needs (it could be from remote config, build config, etc.)
+    // You can switch between real and demo mode.
     private val realMode = true
 
-    // Choose the proper repository based on the demo flag
+    // Choose the proper repository based on the demo flag.
     private val unifiedLocationRepository: UnifiedLocationRepository =
         if (realMode) realLocationRepository else demoLocationRepository
 
     private val compassRepository: CompassRepository =
         if (realMode) realCompassRepository else demoCompassRepository
 
-
+    // UI State as a StateFlow to let the UI observe changes.
     private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.Loading)
     val uiState: StateFlow<BikeUiState> = _uiState
 
-    // Store the ride start time.
+    // Ride start time, used to calculate ride duration and average speed.
     private var rideStartTime: Long = 0L
 
-    // Starting battery level, total planned distance (km)
+    // Example: Starting battery level and other ride metrics.
     var batteryLevel = 100
-    // LiveData or StateFlow representing the total distance from the user
-    // MutableStateFlow to hold an optional total route distance (in kilometers).
-    // Null indicates that the rider did not set a total distance.
+
+    // Total route distance provided by the user (optional).
     private val _totalRouteDistance = MutableStateFlow<Float?>(null)
     val totalRouteDistance: StateFlow<Float?> = _totalRouteDistance
 
-    // Expose traveled distance directly from the repository.
+    // Expose traveled distance from the repository.
     val traveledDistanceFlow: Flow<Float> = unifiedLocationRepository.traveledDistanceFlow
 
-    // Calculate remaining distance only if a total route distance has been provided.
-    // If not provided (null), the remainingDistanceFlow will also emit null.
+    // Calculate remaining distance only if total route distance is provided.
     val remainingDistanceFlow: Flow<Float?> = combine(
         traveledDistanceFlow,
         totalRouteDistance
@@ -65,75 +63,80 @@ class BikeViewModel @Inject constructor(
         total?.let { (it - traveled).coerceAtLeast(0f) }
     }
 
+    // Combined sensor data flow, which aggregates several flows.
+    // Because we are combining more than 5 flows we use the vararg version.
+    private val sensorDataFlow: Flow<CombinedSensorData> = combine(
+        unifiedLocationRepository.locationFlow,
+        unifiedLocationRepository.speedFlow,
+        traveledDistanceFlow,
+        totalRouteDistance,
+        remainingDistanceFlow,
+        unifiedLocationRepository.elevationFlow,
+        compassRepository.headingFlow
+    ) { values ->
+        // Because of the vararg overload, we need to cast each item.
+        val location = values[0] as Location
+        val speedKmh = values[1] as Float
+        val traveledDistance = values[2] as Float
+        val totalDistance = values[3] as Float?  // Optional
+        val remainingDistance = values[4] as Float?  // Optional
+        val elevation = values[5] as Float
+        val heading = values[6] as Float
+
+        CombinedSensorData(
+            location = location,
+            speedKmh = speedKmh,
+            traveledDistance = traveledDistance,
+            totalDistance = totalDistance,
+            remainingDistance = remainingDistance,
+            elevation = elevation,
+            heading = heading
+        )
+    }
+
     init {
-        // Trigger initial load of settings.
+        // Initialize settings.
         onEvent(BikeEvent.LoadBike)
 
-        // Subscribe to real sensor data updates using combine()
+        // Start ride duration updates and record ride start time.
+        startRideDurationUpdates()
+
+        // Process sensor data updates.
         viewModelScope.launch {
-            combine(
-                unifiedLocationRepository.locationFlow,
-                unifiedLocationRepository.speedFlow,
-                traveledDistanceFlow,
-                totalRouteDistance,
-                remainingDistanceFlow,
-                unifiedLocationRepository.elevationFlow,
-                compassRepository.headingFlow
-            ) { values -> // Cast each element from the array
-                val location = values[0] as Location
-                val speedKmh = values[1] as Float
-                val traveledDistance = values[2] as Float
-                val totalDistance = values[3] as Float?  // Optional value
-                val remainingDistance = values[4] as Float?  // Optional value
-                val elevation = values[5] as Float
-                val heading = values[6] as Float
-                CombinedSensorData(
-                    location = location,
-                    speedKmh = speedKmh,
-                    traveledDistance = traveledDistance,
-                    totalDistance = totalDistance,
-                    remainingDistance = remainingDistance,
-                    elevation = elevation,
-                    heading = heading
-                )
-            }.collect { data ->
+            sensorDataFlow.collect { data ->
+                // Calculate elapsed time in hours.
+                val elapsedMillis = System.currentTimeMillis() - rideStartTime
+                val elapsedHours = elapsedMillis / 3600000.0
+                // Compute average speed (km/h): traveled distance divided by time.
+                val averageSpeed = if (elapsedHours > 0) data.traveledDistance / elapsedHours else 0.0
+
+                // If the current UI state is already Success, update the bikeData.
                 val currentState = _uiState.value
                 if (currentState is BikeUiState.Success) {
-
-                    val elapsedMillis = System.currentTimeMillis() - rideStartTime
-                    val elapsedHours = elapsedMillis / 3600000.0
-                    // Compute average speed in km/h.
-                    val averageSpeed = if (elapsedHours > 0) data.traveledDistance / elapsedHours else 0.0
-
                     _uiState.value = currentState.copy(
                         bikeData = currentState.bikeData.copy(
                             location = LatLng(data.location.latitude, data.location.longitude),
                             currentSpeed = data.speedKmh.toDouble(),
                             averageSpeed = averageSpeed,
-                            // Calculate traveled distance: planned totalDistance minus remaining distance,
-                            // ensuring the value is not negative.
                             currentTripDistance = data.traveledDistance.coerceAtLeast(0f),
                             totalTripDistance = data.totalDistance,
                             remainingDistance = data.remainingDistance,
                             elevation = data.elevation.toDouble(),
                             heading = data.heading,
-                            // Battery can be updated elsewhere (e.g., via connectivity events)
                             batteryLevel = batteryLevel
                         )
                     )
                     Log.d(
                         "BikeViewModel",
-                        "Combined update: location=${data.location}, speed=${data.speedKmh}, remaining=${data.remainingDistance}, heading=${data.heading}, elevation=${data.elevation}"
+                        "Combined update: location=${data.location}, speed=${data.speedKmh}, " +
+                                "remaining=${data.remainingDistance}, heading=${data.heading}, elevation=${data.elevation}"
                     )
                 }
             }
         }
-
-        // Start the ride duration updates.
-        startRideDurationUpdates()
     }
 
-    // Helper to format milliseconds as "1h 30m"
+    // Formats milliseconds into a string "1h 30m".
     private fun formatDurationToHM(millis: Long): String {
         val totalMinutes = millis / 1000 / 60
         val hours = totalMinutes / 60
@@ -145,6 +148,8 @@ class BikeViewModel @Inject constructor(
         }
     }
 
+    // Start ride duration updates and record ride start time.
+    // We update the ride duration every second.
     private fun startRideDurationUpdates() {
         rideStartTime = System.currentTimeMillis() // Record ride start time.
         viewModelScope.launch {
@@ -161,12 +166,12 @@ class BikeViewModel @Inject constructor(
                         )
                     )
                 }
-                delay(1000L) // Update every second.
+                delay(1000L)
             }
         }
     }
 
-    // Event handling.
+    // Event handling, routing events to their corresponding actions.
     fun onEvent(event: BikeEvent) {
         when (event) {
             is BikeEvent.LoadBike -> loadSettings()

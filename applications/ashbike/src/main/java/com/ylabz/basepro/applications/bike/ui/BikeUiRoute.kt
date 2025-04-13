@@ -93,17 +93,18 @@ fun BikeUiRoute(
 
 
     // We assume that BikeUiState and HealthUiState must be Success to show the main screen.
-    when {
-        bikeUiState is BikeUiState.Loading -> {
+    when (bikeUiState) {
+        is BikeUiState.Loading -> {
             LoadingScreen()
         }
-        bikeUiState is BikeUiState.Error -> {
+
+        is BikeUiState.Error -> {
             ErrorScreen(errorMessage = (bikeUiState as BikeUiState.Error).message) {
                 bikeViewModel.onEvent(BikeEvent.LoadBike)
             }
         }
         // Require only bike to be Success. Health is optional/controlled via settings.
-        bikeUiState is BikeUiState.Success -> {
+        is BikeUiState.Success -> {
             val bikeState = bikeUiState as BikeUiState.Success
 
             // Health: if available, use the success data; otherwise, use a default and flag it as not enabled.
