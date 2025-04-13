@@ -29,7 +29,7 @@ class BikeViewModel @Inject constructor(
 ) : ViewModel() {
 
     // Set this flag according to your needs (it could be from remote config, build config, etc.)
-    private val realMode = false
+    private val realMode = true
 
     // Choose the proper repository based on the demo flag
     private val unifiedLocationRepository: UnifiedLocationRepository =
