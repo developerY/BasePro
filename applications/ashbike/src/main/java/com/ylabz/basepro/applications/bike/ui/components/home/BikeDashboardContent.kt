@@ -74,7 +74,7 @@ fun BikeDashboardContent(
 
         // 2) Trip Stats Row: Distance, Duration, Avg Speed, Elevation
         StatsRow(
-            distance = totalDistance,
+            distance = currentTripDistance,
             duration = tripDuration,
             avgSpeed = averageSpeed,
             elevation = elevation

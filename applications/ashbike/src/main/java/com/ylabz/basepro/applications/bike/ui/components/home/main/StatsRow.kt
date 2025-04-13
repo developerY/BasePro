@@ -23,7 +23,7 @@ import com.ylabz.basepro.applications.bike.ui.components.unused.StatCard
 
 @Composable
 fun StatsRow(
-    distance: Float?,
+    distance: Float,
     duration: String,
     avgSpeed: Double,
     elevation: Double? = null, // optional metric
@@ -34,7 +34,7 @@ fun StatsRow(
         StatItem(
             icon = Icons.Filled.Straight, //Straight,//DirectionsRun,
             label = "Distance",
-            value = "${distance} km"
+            value = "%.1f km".format(distance)
         ),
         StatItem(
             icon = Icons.Filled.Timer,
