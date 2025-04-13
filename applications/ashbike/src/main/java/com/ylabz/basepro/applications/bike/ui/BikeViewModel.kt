@@ -23,48 +23,39 @@ import javax.inject.Named
 @HiltViewModel
 class BikeViewModel @Inject constructor(
     @Named("real") private val realLocationRepository: UnifiedLocationRepository,
-    @Named("real") private val realCompassRepository: CompassRepository, // Assuming similar setup for compass
+    @Named("real") private val realCompassRepository: CompassRepository,
     @Named("demo") private val demoLocationRepository: UnifiedLocationRepository,
     @Named("demo") private val demoCompassRepository: CompassRepository
 ) : ViewModel() {
 
-    // You can switch between real and demo mode.
+    // Toggle between real and demo mode.
     private val realMode = true
 
-    // Choose the proper repository based on the demo flag.
-    private val unifiedLocationRepository: UnifiedLocationRepository =
-        if (realMode) realLocationRepository else demoLocationRepository
+    // Choose the proper repository based on the mode.
+    private val unifiedLocationRepository = if (realMode) realLocationRepository else demoLocationRepository
+    private val compassRepository = if (realMode) realCompassRepository else demoCompassRepository
 
-    private val compassRepository: CompassRepository =
-        if (realMode) realCompassRepository else demoCompassRepository
-
-    // UI State as a StateFlow to let the UI observe changes.
+    // UI State for the bike ride.
     private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.Loading)
     val uiState: StateFlow<BikeUiState> = _uiState
 
-    // Ride start time, used to calculate ride duration and average speed.
+    // Ride start time to compute ride duration and average speed.
     private var rideStartTime: Long = 0L
 
-    // Example: Starting battery level and other ride metrics.
-    var batteryLevel = 100
-
-    // Total route distance provided by the user (optional).
+    // User-provided total route distance (optional).
     private val _totalRouteDistance = MutableStateFlow<Float?>(null)
     val totalRouteDistance: StateFlow<Float?> = _totalRouteDistance
 
     // Expose traveled distance from the repository.
     val traveledDistanceFlow: Flow<Float> = unifiedLocationRepository.traveledDistanceFlow
 
-    // Calculate remaining distance only if total route distance is provided.
+    // Compute the remaining distance, if total route distance is provided.
     val remainingDistanceFlow: Flow<Float?> = combine(
         traveledDistanceFlow,
         totalRouteDistance
-    ) { traveled, total ->
-        total?.let { (it - traveled).coerceAtLeast(0f) }
-    }
+    ) { traveled, total -> total?.let { (it - traveled).coerceAtLeast(0f) } }
 
-    // Combined sensor data flow, which aggregates several flows.
-    // Because we are combining more than 5 flows we use the vararg version.
+    // Combined sensor data flow.
     private val sensorDataFlow: Flow<CombinedSensorData> = combine(
         unifiedLocationRepository.locationFlow,
         unifiedLocationRepository.speedFlow,
@@ -74,12 +65,12 @@ class BikeViewModel @Inject constructor(
         unifiedLocationRepository.elevationFlow,
         compassRepository.headingFlow
     ) { values ->
-        // Because of the vararg overload, we need to cast each item.
+        // The vararg combine returns an Array<Any?> so we cast each value.
         val location = values[0] as Location
         val speedKmh = values[1] as Float
         val traveledDistance = values[2] as Float
-        val totalDistance = values[3] as Float?  // Optional
-        val remainingDistance = values[4] as Float?  // Optional
+        val totalDistance = values[3] as Float?
+        val remainingDistance = values[4] as Float?
         val elevation = values[5] as Float
         val heading = values[6] as Float
 
@@ -123,7 +114,7 @@ class BikeViewModel @Inject constructor(
                             remainingDistance = data.remainingDistance,
                             elevation = data.elevation.toDouble(),
                             heading = data.heading,
-                            batteryLevel = batteryLevel
+                            batteryLevel = null
                         )
                     )
                     Log.d(
@@ -141,17 +132,13 @@ class BikeViewModel @Inject constructor(
         val totalMinutes = millis / 1000 / 60
         val hours = totalMinutes / 60
         val minutes = totalMinutes % 60
-        return if (hours > 0) {
-            "${hours}h ${minutes}m"
-        } else {
-            "${minutes}m"
-        }
+        return if (hours > 0) "$hours h $minutes m" else "$minutes m"
     }
 
     // Start ride duration updates and record ride start time.
     // We update the ride duration every second.
     private fun startRideDurationUpdates() {
-        rideStartTime = System.currentTimeMillis() // Record ride start time.
+        rideStartTime = System.currentTimeMillis()
         viewModelScope.launch {
             while (true) {
                 val elapsedMillis = System.currentTimeMillis() - rideStartTime
@@ -186,9 +173,7 @@ class BikeViewModel @Inject constructor(
             val currentState = _uiState.value
             if (currentState is BikeUiState.Success) {
                 _uiState.value = currentState.copy(
-                    bikeData = currentState.bikeData.copy(
-                        isBikeConnected = true
-                    )
+                    bikeData = currentState.bikeData.copy(isBikeConnected = true)
                 )
             }
         }
@@ -218,7 +203,7 @@ class BikeViewModel @Inject constructor(
                     averageSpeed = 0.0,
                     elevation = 0.0,
                     heading = 0.0f,
-                    batteryLevel = batteryLevel,
+                    batteryLevel = null,
                     motorPower = null
                 )
             )
@@ -229,14 +214,12 @@ class BikeViewModel @Inject constructor(
     private fun updateSetting(key: String, value: String) {
         viewModelScope.launch {
             val currentState = _uiState.value as? BikeUiState.Success ?: return@launch
-            val updatedSettings = currentState.settings.toMutableMap().apply {
-                this[key] = listOf(value)
-            }
+            val updatedSettings = currentState.settings.toMutableMap().apply { this[key] = listOf(value) }
             _uiState.value = currentState.copy(settings = updatedSettings)
         }
     }
 
     private fun deleteAllEntries() {
-        // Implement data deletion logic if needed.
+        // Add deletion logic here if needed.
     }
 }
