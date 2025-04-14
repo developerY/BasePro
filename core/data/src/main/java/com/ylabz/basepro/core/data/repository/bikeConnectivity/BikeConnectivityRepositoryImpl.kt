@@ -1,5 +1,6 @@
 package com.ylabz.basepro.core.data.repository.bikeConnectivity
 
+import android.util.Log
 import com.ylabz.basepro.core.model.bike.BikeMotorData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -20,6 +21,8 @@ class BikeConnectivityRepositoryImpl @Inject constructor(
     }
 
     override fun connectBike(bleAddress: String): Flow<BikeMotorData> = flow {
+        Log.d("BikeConnectivityRepository", "Connected to bike with BLE address: $bleAddress")
+
         // Attempt to connect to the bike using the BLE address.
         // The bleAdapter.connect() returns a Flow<BikeMotorData> with updates (e.g., battery level, motor power).
         // Here we just re-emit those updates downstream.

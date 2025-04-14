@@ -187,7 +187,8 @@ class BikeViewModel @Inject constructor(
                         _uiState.value = currentState.copy(
                             bikeData = currentState.bikeData.copy(
                                 batteryLevel = bikeBatteryLevel,
-                                motorPower = bikeMotorPower
+                                motorPower = bikeMotorPower,
+                                isBikeConnected = true
                             )
                         )
                     }
