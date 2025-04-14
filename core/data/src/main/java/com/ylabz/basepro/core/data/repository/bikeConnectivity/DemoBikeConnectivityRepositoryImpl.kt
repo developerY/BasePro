@@ -1,5 +1,6 @@
 package com.ylabz.basepro.core.data.repository.bikeConnectivity
 
+import com.ylabz.basepro.core.model.bike.BikeMotorData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -10,14 +11,23 @@ import javax.inject.Singleton
 class DemoBikeConnectivityRepositoryImpl @Inject constructor() : BikeConnectivityRepository {
 
     override suspend fun getBleAddressFromNfc(): String {
-        // Simulate a delay for NFC reading.
+        // Simulate a delay for reading NFC to retrieve the BLE address.
         delay(500L)
         return "DEMO_BLE_ADDRESS"
     }
 
-    override fun connectBike(bleAddress: String): Flow<BikeConnectionStatus> = flow {
-        // Simulate connection delay and then emit a connected status.
-        delay(500L)
-        emit(BikeConnectionStatus.Connected)
+    override fun connectBike(bleAddress: String): Flow<BikeMotorData> = flow {
+        // Simulate connection delay.
+        delay(1000L)
+        // Emit a demo BikeMotorData instance with fixed values.
+        emit(BikeMotorData(batteryLevel = 95, motorPower = 250.0f))
+
+        // Optionally, you could simulate battery drain or motor power fluctuations over time:
+        // while (true) {
+        //     delay(10000L) // Update every 10 seconds.
+        //     // For demonstration, we simply emit the same data.
+        //     emit(BikeMotorData(batteryLevel = 95, motorPower = 250))
+        // }
     }
 }
+

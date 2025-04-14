@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.core.data.repository.bikeConnectivity.BikeConnectivityRepository
 import com.ylabz.basepro.core.data.repository.travel.compass.CompassRepository
 import com.ylabz.basepro.core.data.repository.travel.UnifiedLocationRepository
 // import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
@@ -22,8 +23,13 @@ import javax.inject.Named
 
 @HiltViewModel
 class BikeViewModel @Inject constructor(
+    // Real implementations
+    @Named("real") private val realConnectivityRepository: BikeConnectivityRepository,
     @Named("real") private val realLocationRepository: UnifiedLocationRepository,
     @Named("real") private val realCompassRepository: CompassRepository,
+
+    // Demo implementations
+    @Named("demo") private val demoConnectivityRepository: BikeConnectivityRepository,
     @Named("demo") private val demoLocationRepository: UnifiedLocationRepository,
     @Named("demo") private val demoCompassRepository: CompassRepository
 ) : ViewModel() {
@@ -34,6 +40,8 @@ class BikeViewModel @Inject constructor(
     // Choose the proper repository based on the mode.
     private val unifiedLocationRepository = if (realMode) realLocationRepository else demoLocationRepository
     private val compassRepository = if (realMode) realCompassRepository else demoCompassRepository
+    private val connectivityRepository = if (realMode) realConnectivityRepository else demoConnectivityRepository
+
 
     // UI State for the bike ride.
     private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.Loading)
@@ -41,6 +49,11 @@ class BikeViewModel @Inject constructor(
 
     // Ride start time to compute ride duration and average speed.
     private var rideStartTime: Long = 0L
+
+    // Bike-specific connectivity data.
+    // Both are now initialized as null so that if there is no eBike, these remain null.
+    private var bikeBatteryLevel: Int? = null
+    private var bikeMotorPower: Float? = null
 
     // User-provided total route distance (optional).
     private val _totalRouteDistance = MutableStateFlow<Float?>(null)
@@ -158,26 +171,50 @@ class BikeViewModel @Inject constructor(
         }
     }
 
+
+    // ---------- BIKE CONNECTIVITY ----------
+    // Connect to the bike over BLE/NFC to retrieve battery and motor info.
+    fun connectBike() {
+        viewModelScope.launch {
+            try {
+                val bleAddress = connectivityRepository.getBleAddressFromNfc()
+                connectivityRepository.connectBike(bleAddress).collect { motorData ->
+                    bikeBatteryLevel = motorData.batteryLevel
+                    bikeMotorPower = motorData.motorPower
+
+                    val currentState = _uiState.value
+                    if (currentState is BikeUiState.Success) {
+                        _uiState.value = currentState.copy(
+                            bikeData = currentState.bikeData.copy(
+                                batteryLevel = bikeBatteryLevel,
+                                motorPower = bikeMotorPower
+                            )
+                        )
+                    }
+                    Log.d("BikeViewModel", "Bike connected: battery=${motorData.batteryLevel}, motorPower=${motorData.motorPower}")
+                }
+            } catch (e: Exception) {
+                Log.e("BikeViewModel", "Failed to connect bike: ${e.message}")
+            }
+        }
+    }
+
+
+
+
     // Event handling, routing events to their corresponding actions.
     fun onEvent(event: BikeEvent) {
         when (event) {
             is BikeEvent.LoadBike -> loadSettings()
             is BikeEvent.UpdateSetting -> updateSetting(event.settingKey, event.settingValue)
             is BikeEvent.DeleteAllEntries -> deleteAllEntries()
-            is BikeEvent.Connect -> bikeConnect()
-        }
-    }
-
-    private fun bikeConnect() {
-        viewModelScope.launch {
-            val currentState = _uiState.value
-            if (currentState is BikeUiState.Success) {
-                _uiState.value = currentState.copy(
-                    bikeData = currentState.bikeData.copy(isBikeConnected = true)
-                )
+            is BikeEvent.Connect -> {
+                connectBike()
+                Log.d("BikeViewModel", "Connect button clicked.")
             }
         }
     }
+
 
     private fun loadSettings() {
         viewModelScope.launch {

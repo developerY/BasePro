@@ -4,6 +4,17 @@ import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 
 
+
+/**
+ * Data class representing the bike's motor information.
+ * Both batteryLevel and motorPower are nullable because not every bike
+ * might have eBike capabilities.
+ */
+data class BikeMotorData(
+    val batteryLevel: Int?,  // Null if unavailable (e.g. non-eBike)
+    val motorPower: Float?     // Null if unavailable
+)
+
 // Define a data class to hold the combined sensor data
 data class CombinedSensorData(
     val location: Location,

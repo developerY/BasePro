@@ -1,9 +1,11 @@
 package com.ylabz.basepro.core.data.repository.bikeConnectivity
 
+import com.ylabz.basepro.core.model.bike.BikeMotorData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
+
 
 @Singleton
 class BikeConnectivityRepositoryImpl @Inject constructor(
@@ -12,18 +14,18 @@ class BikeConnectivityRepositoryImpl @Inject constructor(
 ) : BikeConnectivityRepository {
 
     override suspend fun getBleAddressFromNfc(): String {
-        // Read the BLE address using NFC.
-        //return nfcReader.readBleAddress()
-        return ""
+        // Use the NFC reader to retrieve the bike's BLE address.
+        // This function is suspendable because reading from NFC might involve waiting for a tag.
+        return "Not Set"// nfcReader.readBleAddress()
     }
 
-    override fun connectBike(bleAddress: String): Flow<BikeConnectionStatus> = flow {
-        try {
-            // Connect to the bike via BLE.
-            // bleAdapter.connect(bleAddress)
-            emit(BikeConnectionStatus.Connected)
-        } catch (e: Exception) {
-            emit(BikeConnectionStatus.Error(e.message ?: "Unknown error"))
-        }
+    override fun connectBike(bleAddress: String): Flow<BikeMotorData> = flow {
+        // Attempt to connect to the bike using the BLE address.
+        // The bleAdapter.connect() returns a Flow<BikeMotorData> with updates (e.g., battery level, motor power).
+        // Here we just re-emit those updates downstream.
+        /*bleAdapter.connect(bleAddress).collect { bikeMotorData ->
+            emit(bikeMotorData)
+        }*/
+        emit(BikeMotorData(batteryLevel = 95, motorPower = 250f))
     }
 }
