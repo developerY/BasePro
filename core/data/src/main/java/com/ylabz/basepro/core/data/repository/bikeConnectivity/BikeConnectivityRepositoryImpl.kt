@@ -2,6 +2,7 @@ package com.ylabz.basepro.core.data.repository.bikeConnectivity
 
 import android.util.Log
 import com.ylabz.basepro.core.model.bike.BikeMotorData
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -22,6 +23,7 @@ class BikeConnectivityRepositoryImpl @Inject constructor(
 
     override fun connectBike(bleAddress: String): Flow<BikeMotorData> = flow {
         Log.d("BikeConnectivityRepository", "Connected to bike with BLE address: $bleAddress")
+        delay(1000L)
 
         // Attempt to connect to the bike using the BLE address.
         // The bleAdapter.connect() returns a Flow<BikeMotorData> with updates (e.g., battery level, motor power).
@@ -29,6 +31,6 @@ class BikeConnectivityRepositoryImpl @Inject constructor(
         /*bleAdapter.connect(bleAddress).collect { bikeMotorData ->
             emit(bikeMotorData)
         }*/
-        emit(BikeMotorData(batteryLevel = 95, motorPower = 250f))
+        emit(BikeMotorData(batteryLevel = 95, motorPower = 250.0f))
     }
 }

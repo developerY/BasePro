@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
@@ -178,27 +180,35 @@ class BikeViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val bleAddress = connectivityRepository.getBleAddressFromNfc()
-                connectivityRepository.connectBike(bleAddress).collect { motorData ->
-                    bikeBatteryLevel = motorData.batteryLevel
-                    bikeMotorPower = motorData.motorPower
+                connectivityRepository.connectBike(bleAddress)
+                    // Only consider the emissions where batteryLevel (or motorPower) is not null.
+                    .filter { motorData -> motorData.batteryLevel != null }
+                    // Prevent duplicate emissions if the battery level stays the same.
+                    .distinctUntilChanged()
+                    .collect { motorData ->
+                        // Update connection data:
+                        bikeBatteryLevel = motorData.batteryLevel
+                        bikeMotorPower = motorData.motorPower
 
-                    val currentState = _uiState.value
-                    if (currentState is BikeUiState.Success) {
-                        _uiState.value = currentState.copy(
-                            bikeData = currentState.bikeData.copy(
-                                batteryLevel = bikeBatteryLevel,
-                                motorPower = bikeMotorPower,
-                                isBikeConnected = true
+                        // Update UI state to indicate the bike is connected.
+                        val currentState = _uiState.value
+                        if (currentState is BikeUiState.Success) {
+                            _uiState.value = currentState.copy(
+                                bikeData = currentState.bikeData.copy(
+                                    batteryLevel = bikeBatteryLevel,
+                                    motorPower = bikeMotorPower,
+                                    isBikeConnected = true
+                                )
                             )
-                        )
+                        }
+                        Log.d("BikeViewModel", "Bike connected: battery=${motorData.batteryLevel}, motorPower=${motorData.motorPower}")
                     }
-                    Log.d("BikeViewModel", "Bike connected: battery=${motorData.batteryLevel}, motorPower=${motorData.motorPower}")
-                }
             } catch (e: Exception) {
                 Log.e("BikeViewModel", "Failed to connect bike: ${e.message}")
             }
         }
     }
+
 
 
 
