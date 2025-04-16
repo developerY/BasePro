@@ -76,13 +76,11 @@ fun SpeedAndProgressCard(
 
     // Extract values from bikeRideInfo (if needed)
     val currentSpeed = bikeRideInfo.currentSpeed
-    val currentTripDistance = bikeRideInfo.currentTripDistance
-    val totalDistance = bikeRideInfo.totalTripDistance
-    val tripDuration = bikeRideInfo.rideDuration
-    val averageSpeed = bikeRideInfo.averageSpeed
-    val elevation = bikeRideInfo.elevation
     val heading: Float = bikeRideInfo.heading
-    //val isRiding = bikeRideInfo.isRiding
+
+    val weather = bikeRideInfo.bikeWeatherInfo
+
+
 
     Card(
         modifier = modifier
@@ -111,10 +109,9 @@ fun SpeedAndProgressCard(
                             slideInHorizontally(initialOffsetX = { -it / 2 }, animationSpec = tween(600))
                 ) {
                     Box(modifier = Modifier.size(60.dp)) {
-                        WindDirectionDialWithSpeed(
-                            degree = windDegree,
-                            speed = windSpeed
-                        )
+                        weather?.let {
+                            WindDirectionDialWithSpeed(degree = it.windDegree, speed = it.windSpeed)
+                        }
                     }
                 }
 
@@ -124,7 +121,9 @@ fun SpeedAndProgressCard(
                     enter = fadeIn(animationSpec = tween(600)) +
                             slideInHorizontally(initialOffsetX = { it / 2 }, animationSpec = tween(600))
                 ) {
-                    WeatherBadge(conditionText = weatherConditionText)
+                    weather?.let {
+                        WeatherBadge(conditionText = it.conditionText)
+                    }
                 }
             }
 
@@ -155,11 +154,8 @@ fun SpeedAndProgressCard(
             ) {
                 //TripControlsWithProgress
                 BikePathWithControls(
-                    currentDistance = currentTripDistance,
-                    totalDistance = totalDistance,
-                    isRiding = isRiding,
-                    onStartPauseClicked = onStartPauseClicked,
-                    onStopClicked = onStopClicked
+                    bikeRideInfo = bikeRideInfo,
+                    onBikeEvent = onBikeEvent,
                 )
             }
 
@@ -167,21 +163,5 @@ fun SpeedAndProgressCard(
     }
 }
 
-@Preview
-@Composable
-fun SpeedAndProgressCardPreview() {
-    SpeedAndProgressCard(
-        currentSpeed = 25.5,
-        currentTripDistance = 10.0f,
-        totalDistance = 50.0f,
-        windDegree = 120f,
-        windSpeed = 5.0f,
-        weatherConditionText = WeatherConditionUnif.RAINY.name,
-        heading = 45f,
-        isRiding = false,  // Just for preview
-        onStartPauseClicked = {},
-        onStopClicked = {}
-    )
-}
 
 

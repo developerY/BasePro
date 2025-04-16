@@ -19,20 +19,31 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.applications.bike.ui.components.unused.StatCard
+import com.ylabz.basepro.core.model.bike.BikeRideInfo
+import com.ylabz.basepro.core.model.bike.RideState
 
+
+data class StatItem(
+    val icon: ImageVector,
+    val label: String,
+    val value: String
+)
 
 @Composable
 fun StatsRow(
-    distance: Float,
-    duration: String,
-    avgSpeed: Double,
-    elevation: Double? = null, // optional metric
+    bikeRideInfo: BikeRideInfo,
     modifier: Modifier = Modifier
 ) {
-    // Build a list of stat items (icon, label, value)
+    val distance = bikeRideInfo.currentTripDistance
+    val duration = bikeRideInfo.rideDuration
+    val avgSpeed = bikeRideInfo.averageSpeed
+    // elevation is non-null in BikeRideInfo, but you can choose to hide if zero
+    val elevation: Double? = bikeRideInfo.elevation.takeIf { it > 0.0 }
+
+    // Build the list of stats
     val stats = mutableListOf(
         StatItem(
-            icon = Icons.Filled.Straight, //Straight,//DirectionsRun,
+            icon = Icons.Filled.Straight,
             label = "Distance",
             value = "%.1f km".format(distance)
         ),
@@ -46,19 +57,18 @@ fun StatsRow(
             label = "Avg Speed",
             value = "%.1f km/h".format(avgSpeed)
         )
-    )
-    // If elevation is provided, add it
-    if (elevation != null) {
-        stats.add(
-            StatItem(
-                icon = Icons.Filled.Terrain,
-                label = "Elevation",
-                value = "${elevation} m"
+    ).apply {
+        elevation?.let {
+            add(
+                StatItem(
+                    icon = Icons.Filled.Terrain,
+                    label = "Elevation",
+                    value = "${"%.0f".format(it)} m"
+                )
             )
-        )
+        }
     }
 
-    // Display the stats in a row, spaced evenly
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -67,37 +77,36 @@ fun StatsRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         stats.forEach { stat ->
-
-            // Create a horizontal gradient brush for the background
-            val gradientBrush = Brush.horizontalGradient(
-                colors = listOf(Color.Cyan, Color.Magenta)
-            )
-
-            //Column(modifier = Modifier.background(gradientBrush)) {
             StatCard(
                 icon = stat.icon,
                 label = stat.label,
                 value = stat.value,
                 modifier = Modifier.weight(1f, fill = false)
             )
-            //}
             Spacer(modifier = Modifier.width(8.dp))
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun StatsRowPreview() {
-    StatsRow(
-        distance = 10.5f,
-        duration = "00:30:00",
-        avgSpeed = 21.0,
-        elevation = 150.0
+    val demoInfo = BikeRideInfo(
+        location = null,
+        currentSpeed = 0.0,
+        averageSpeed = 21.0,
+        currentTripDistance = 10.5f,
+        totalTripDistance = null,
+        remainingDistance = null,
+        rideDuration = "00:30:00",
+        settings = emptyMap(),
+        heading = 0f,
+        elevation = 150.0,
+        isBikeConnected = false,
+        batteryLevel = null,
+        motorPower = null,
+        rideState = RideState.NotStarted
     )
+    StatsRow(bikeRideInfo = demoInfo)
 }
-data class StatItem(
-    val icon: ImageVector,
-    val label: String,
-    val value: String
-)
+

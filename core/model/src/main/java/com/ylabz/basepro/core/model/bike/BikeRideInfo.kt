@@ -2,6 +2,7 @@ package com.ylabz.basepro.core.model.bike
 
 import android.location.Location
 import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 
 enum class RideState {
     NotStarted,
@@ -47,8 +48,9 @@ data class BikeRideInfo(
     val batteryLevel: Int?,
     val motorPower: Float?,
 
-    // New field:
-    val rideState: RideState = RideState.NotStarted
+    // RideState
+    val rideState: RideState = RideState.NotStarted,
+    val bikeWeatherInfo: BikeWeatherInfo? = null
 )
 
 // Represents basic health information (e.g., from Google Health Connect).

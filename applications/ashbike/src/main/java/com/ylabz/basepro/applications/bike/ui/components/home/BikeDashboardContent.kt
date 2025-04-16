@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.ui.components.home
 
+import android.R.attr.duration
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -73,10 +74,11 @@ fun BikeDashboardContent(
 
         // 2) Trip Stats Row: Distance, Duration, Avg Speed, Elevation
         StatsRow(
-            distance = currentTripDistance,
+            bikeRideInfo = bikeRideInfo,
+            /*distance = currentTripDistance,
             duration = tripDuration,
             avgSpeed = averageSpeed,
-            elevation = elevation
+            elevation = elevation*/
         )
 
 
@@ -231,7 +233,7 @@ val dummyBikeRideInfo = BikeRideInfo(
 fun BikeDashboardScaffoldContentPreview() {
 
 
-     @androidx.compose.runtime.Composable {
+     @Composable {
         Scaffold(
             topBar = { TopAppBar(title = { Text("AshBike") }) },
             bottomBar = { /* Example bottom bar */ }

@@ -46,7 +46,7 @@ fun BikeDashboardExample(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // 1) Possibly a "SpeedAndProgressCard" or gauge at the top
-        SpeedAndProgressCard(
+        /*SpeedAndProgressCard(
             currentSpeed = bikeRideInfo.currentSpeed,
             currentTripDistance = bikeRideInfo.currentTripDistance,
             totalDistance = bikeRideInfo.totalTripDistance,
@@ -57,7 +57,7 @@ fun BikeDashboardExample(
             isRiding = true,
             onStartPauseClicked = {  },
             onStopClicked = { },
-        )
+        )*/
 
         // 2) Bike connection or battery card
         BikeBatteryLevels(

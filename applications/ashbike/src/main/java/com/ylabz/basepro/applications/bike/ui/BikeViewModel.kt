@@ -8,9 +8,11 @@ import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.core.data.repository.bikeConnectivity.BikeConnectivityRepository
 import com.ylabz.basepro.core.data.repository.travel.compass.CompassRepository
 import com.ylabz.basepro.core.data.repository.travel.UnifiedLocationRepository
+import com.ylabz.basepro.core.data.repository.weather.WeatherRepo
 // import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.CombinedSensorData
+import com.ylabz.basepro.core.model.bike.RideState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -29,8 +31,9 @@ class BikeViewModel @Inject constructor(
     @Named("real") private val realConnectivityRepository: BikeConnectivityRepository,
     @Named("real") private val realLocationRepository: UnifiedLocationRepository,
     @Named("real") private val realCompassRepository: CompassRepository,
-
+    @Named("real") private val realWeatherRepo: WeatherRepo,
     // Demo implementations
+    @Named("demo") private val demoWeatherRepo: WeatherRepo,
     @Named("demo") private val demoConnectivityRepository: BikeConnectivityRepository,
     @Named("demo") private val demoLocationRepository: UnifiedLocationRepository,
     @Named("demo") private val demoCompassRepository: CompassRepository
@@ -241,38 +244,76 @@ class BikeViewModel @Inject constructor(
                 Log.d("BikeViewModel", "Connect button clicked.")
             }
             BikeEvent.StartPauseRide -> {
-                if (!isRideActive) {
-                    // Start the ride.
-                    isRideActive = true
-                    // (Optional) Reset the ride start time when starting.
-                    rideStartTime = System.currentTimeMillis()
-                    Log.d("BikeViewModel", "Ride started.")
-                } else {
-                    // Pause the ride.
-                    isRideActive = false
-                    Log.d("BikeViewModel", "Ride paused.")
+                val current = _uiState.value as? BikeUiState.Success ?: return
+                when (current.bikeData.rideState) {
+                    RideState.NotStarted, RideState.Paused -> {
+                        isRideActive = true
+                        rideStartTime = System.currentTimeMillis()
+                        updateRideState(RideState.Riding)
+                        Log.d("BikeViewModel", "Ride started.")
+                    }
+                    RideState.Riding -> {
+                        isRideActive = false
+                        updateRideState(RideState.Paused)
+                        Log.d("BikeViewModel", "Ride paused.")
+                    }
+                    RideState.Ended -> {
+                        // If they press Start after ending, start a fresh ride:
+                        resetRideData()
+                        isRideActive = true
+                        rideStartTime = System.currentTimeMillis()
+                        updateRideState(RideState.Riding)
+                        Log.d("BikeViewModel", "Ride restarted after end.")
+                    }
                 }
-                // Optionally update your UI state to reflect ride state changes.
-                // You can add an "isRideActive" field in BikeRideInfo if needed.
             }
             BikeEvent.StopSaveRide -> {
+                // 1) Stop & mark ended
                 isRideActive = false
-                // Reset the ride start time, ride duration, and other ride metrics.
-                rideStartTime = 0L
-                Log.d("BikeViewModel", "Ride stopped.")
-                val currentState = _uiState.value as? BikeUiState.Success
-                currentState?.let {
-                    _uiState.value = it.copy(
-                        bikeData = it.bikeData.copy(
-                            rideDuration = "00:00",
-                            currentTripDistance = 0f,
-                            averageSpeed = 0.0
-                        )
-                    )
+                updateRideState(RideState.Ended)
+                Log.d("BikeViewModel", "Ride stopped & will be saved.")
+
+                // 2) Save snapshot
+                val rideToSave = (_uiState.value as? BikeUiState.Success)?.bikeData
+                rideToSave?.let {
+                    viewModelScope.launch {
+                        //rideHistoryRepo.saveRide(it)
+                        Log.d("BikeViewModel", "Ride saved to history.")
+                    }
                 }
+
+                // 3) Reset live UI data
+                resetRideData()
             }
         }
     }
+
+    // Toggles the rideState in the UI model
+    private fun updateRideState(state: RideState) {
+        val current = _uiState.value as? BikeUiState.Success ?: return
+        _uiState.value = current.copy(
+            bikeData = current.bikeData.copy(rideState = state)
+        )
+    }
+
+    // Resets only the live-tracking fields (distance, duration, speed, state)
+    private fun resetRideData() {
+        val current = _uiState.value as? BikeUiState.Success ?: return
+        _uiState.value = current.copy(
+            bikeData = current.bikeData.copy(
+                location            = null,
+                currentSpeed        = 0.0,
+                averageSpeed        = 0.0,
+                currentTripDistance = 0f,
+                totalTripDistance   = null,
+                remainingDistance   = null,
+                rideDuration        = "00:00",
+                rideState           = RideState.NotStarted
+            )
+        )
+    }
+
+
 
 
     private fun loadSettings() {

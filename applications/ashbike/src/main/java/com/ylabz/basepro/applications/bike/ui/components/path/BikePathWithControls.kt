@@ -36,100 +36,98 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.SpeedometerWithCompassOverlay
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.WeatherBadge
 import com.ylabz.basepro.applications.bike.ui.components.path.BigBikeProgressIndicator
+import com.ylabz.basepro.core.model.bike.BikeRideInfo
+import com.ylabz.basepro.core.model.bike.RideState
 import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionUnif
 import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDialWithSpeed
 
 
 @Composable
 fun BikePathWithControls(
-    currentDistance: Float,
-    totalDistance: Float?,
-    isRiding: Boolean,
-    onStartPauseClicked: () -> Unit,
-    onStopClicked: () -> Unit,
     modifier: Modifier = Modifier,
+    bikeRideInfo: BikeRideInfo,
+    onBikeEvent: (BikeEvent) -> Unit,
     iconSize: Dp = 48.dp,
     trackHeight: Dp = 8.dp,
     buttonSize: Dp = 60.dp
 ) {
+    val currentDistance = bikeRideInfo.currentTripDistance
+    val totalDistance = bikeRideInfo.totalTripDistance
+    // Riding whenever state == Riding
+    val isRiding = bikeRideInfo.rideState == RideState.Riding
+
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(buttonSize)  // match the size of the FAB
+            .height(buttonSize)
             .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // 1) LEFT BUTTON
-        Box(
-            modifier = Modifier
-                .size(buttonSize),
-            contentAlignment = Alignment.Center
+        // Start / Pause button
+        FloatingActionButton(
+            onClick = { onBikeEvent(BikeEvent.StartPauseRide) },
+            containerColor = Color.White,
+            contentColor = Color.Black,
+            modifier = Modifier.size(buttonSize)
         ) {
-            // You can also just put a FloatingActionButton here.
-            FloatingActionButton(
-                onClick = onStartPauseClicked,
-                containerColor = Color.White,
-                contentColor = Color.Black
-            ) {
-                val icon = if (isRiding) Icons.Default.Pause else Icons.Default.PlayArrow
-                val desc = if (isRiding) "Pause" else "Start"
-                Icon(imageVector = icon, contentDescription = desc)
-            }
+            val icon = if (isRiding) Icons.Default.Pause else Icons.Default.PlayArrow
+            val desc = if (isRiding) "Pause" else "Start"
+            Icon(imageVector = icon, contentDescription = desc)
         }
 
-        // 2) PROGRESS INDICATOR
-        // We'll make this composable measure how wide each button is,
-        // then draw a line starting from left-button center to right-button center.
+        // Progress indicator in middle
         Box(
             modifier = Modifier
-                .weight(1f)  // Take all the remaining horizontal space
+                .weight(1f)
                 .fillMaxHeight(),
             contentAlignment = Alignment.Center
         ) {
-            // The actual line is drawn inside BigBikeProgressIndicator
-            // We'll pass an offset so it knows the path starts at x=0 and ends at the full width
             BigBikeProgressIndicator(
                 currentDistance = currentDistance,
                 totalDistance = totalDistance,
                 iconSize = iconSize,
                 containerHeight = buttonSize,
-                trackHeight = trackHeight,
-                // Optional: You might add parameters that shift the starting or ending
-                // anchor so it visually looks like it’s “inside” the buttons.
+                trackHeight = trackHeight
             )
         }
 
-        // 3) RIGHT BUTTON
-        Box(
-            modifier = Modifier
-                .size(buttonSize),
-            contentAlignment = Alignment.Center
+        // Stop (Save) button
+        FloatingActionButton(
+            onClick = { onBikeEvent(BikeEvent.StopSaveRide) },
+            containerColor = Color.White,
+            contentColor = Color.Red,
+            modifier = Modifier.size(buttonSize)
         ) {
-            FloatingActionButton(
-                onClick = onStopClicked,
-                containerColor = Color.White,
-                contentColor = Color.Red
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Stop,
-                    contentDescription = "Stop"
-                )
-            }
+            Icon(imageVector = Icons.Default.Stop, contentDescription = "Stop")
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun BikePathWithControlsPreview() {
+    val demoInfo = BikeRideInfo(
+        location = null,
+        currentSpeed = 0.0,
+        averageSpeed = 0.0,
+        currentTripDistance = 5f,
+        totalTripDistance = 20f,
+        remainingDistance = 15f,
+        rideDuration = "00:10",
+        settings = emptyMap(),
+        heading = 0f,
+        elevation = 0.0,
+        isBikeConnected = false,
+        batteryLevel = null,
+        motorPower = null,
+        rideState = RideState.NotStarted
+    )
     BikePathWithControls(
-        currentDistance = 0f,
-        totalDistance = 2000f,
-        isRiding = false,
-        onStartPauseClicked = {},
-        onStopClicked = {}
+        bikeRideInfo = demoInfo,
+        onBikeEvent = {},
     )
 }
