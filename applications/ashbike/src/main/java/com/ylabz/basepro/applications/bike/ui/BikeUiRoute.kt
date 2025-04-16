@@ -128,7 +128,7 @@ fun BikeUiRoute(
             )
             BikeDashboardContent(
                 modifier = modifier,
-                bikeRideInfo = // (bikeUiState as BikeUiState.Success).bikeData,
+                bikeRideInfo = (bikeUiState as BikeUiState.Success).bikeData,
                 onBikeEvent = { bikeViewModel.onEvent(it) },
                 navTo = navTo
             )

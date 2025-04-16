@@ -72,8 +72,8 @@ fun BikeDashboardContent(
             weatherConditionText = WeatherConditionUnif.RAINY.name,
             heading = heading,
             isRiding = false, // NOTE: need to fix it
-            onStartPauseClicked = { onBikeEvent(BikeEvent.StartPause) },
-            onStopClicked = { onBikeEvent(BikeEvent.Stop) },
+            onStartPauseClicked = { onBikeEvent(BikeEvent.StartPauseRide) },
+            onStopClicked = { onBikeEvent(BikeEvent.StopRide) },
         )
 
         // 2) Trip Stats Row: Distance, Duration, Avg Speed, Elevation
