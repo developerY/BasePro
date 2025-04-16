@@ -128,7 +128,7 @@ fun BikePathWithControlsPreview() {
     BikePathWithControls(
         currentDistance = 0f,
         totalDistance = 2000f,
-        isRiding = true,
+        isRiding = false,
         onStartPauseClicked = {},
         onStopClicked = {}
     )

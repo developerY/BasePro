@@ -132,11 +132,11 @@ class BikeViewModel @Inject constructor(
                             batteryLevel = null
                         )
                     )
-                    Log.d(
+                    /*Log.d(
                         "BikeViewModel",
                         "Combined update: location=${data.location}, speed=${data.speedKmh}, " +
                                 "remaining=${data.remainingDistance}, heading=${data.heading}, elevation=${data.elevation}"
-                    )
+                    )*/
                 }
             }
         }
@@ -223,6 +223,8 @@ class BikeViewModel @Inject constructor(
                 connectBike()
                 Log.d("BikeViewModel", "Connect button clicked.")
             }
+            BikeEvent.StartPauseRide -> TODO()
+            BikeEvent.StopRide -> TODO()
         }
     }
 

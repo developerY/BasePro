@@ -55,7 +55,7 @@ fun BikeDashboardExample(
             weatherConditionText = "RAINY",
             heading = bikeRideInfo.heading,
             isRiding = true,
-            onStartPauseClicked = { },
+            onStartPauseClicked = {  },
             onStopClicked = { },
         )
 

@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.ui.components.home.main
 
+import android.R.attr.maxWidth
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn

@@ -50,6 +50,7 @@ fun BikeDashboardContent(
     val heading: Float = bikeRideInfo.heading
     val batteryLevel = bikeRideInfo.batteryLevel
     val motorPower = bikeRideInfo.motorPower
+    //val isRiding = bikeRideInfo.isRiding
     val heartRate = null // bikeRideInfo.heartRate  // May be null
     val calories = null // bikeRideInfo.calories    // May be null
 
@@ -70,9 +71,9 @@ fun BikeDashboardContent(
             windSpeed = 5.0f,
             weatherConditionText = WeatherConditionUnif.RAINY.name,
             heading = heading,
-            isRiding = true,
-            onStartPauseClicked = { },//onBikeEvent(BikeEvent.Start) },
-            onStopClicked = { },//onBikeEvent(BikeEvent.Stop) },
+            isRiding = false, // NOTE: need to fix it
+            onStartPauseClicked = { onBikeEvent(BikeEvent.StartPause) },
+            onStopClicked = { onBikeEvent(BikeEvent.Stop) },
         )
 
         // 2) Trip Stats Row: Distance, Duration, Avg Speed, Elevation
