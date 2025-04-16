@@ -150,6 +150,66 @@ fun CapturedImagePreview(imageUri: Uri) {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun BikeTripsComposePreview() {
+    val sampleData = listOf(
+        BikeProEntity(
+            startTime = System.currentTimeMillis() - 3600000,
+            endTime = System.currentTimeMillis(),
+            totalDistance = 15000f,
+            averageSpeed = 25f,
+            maxSpeed = 40f,
+            elevationGain = 200f,
+            elevationLoss = 180f,
+            caloriesBurned = 500,
+            startLat = 37.7749,
+            startLng = -122.4194,
+            endLat = 37.7739,
+            endLng = -122.4312
+        ),
+        BikeProEntity(
+            startTime = System.currentTimeMillis() - 7200000,
+            endTime = System.currentTimeMillis() - 3600000,
+            totalDistance = 20000f,
+            averageSpeed = 30f,
+            maxSpeed = 45f,
+            elevationGain = 300f,
+            elevationLoss = 250f,
+            caloriesBurned = 700,
+            startLat = 34.0522,
+            startLng = -118.2437,
+            endLat = 34.0622,
+            endLng = -118.2537
+        )
+    )
+    BikeTripsCompose(
+        data = sampleData,
+        onEvent = { },
+        navTo = { }
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CapturedImagePreviewPreview() {
+    CapturedImagePreview(imageUri = Uri.EMPTY) // Provide a valid Uri for a real preview
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoadingScreenPreview() {
+    LoadingScreen()
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ErrorScreenPreview() {
+    ErrorScreen(errorMessage = "Failed to load data") {
+        // Retry action for preview
+    }
+}
+
 // These will be move to a common directory.
 @Composable
 fun LoadingScreen() {

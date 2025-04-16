@@ -36,27 +36,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.SpeedometerWithCompassOverlay
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.WeatherBadge
 import com.ylabz.basepro.applications.bike.ui.components.path.BigBikeProgressIndicator
 import com.ylabz.basepro.applications.bike.ui.components.path.BikePathWithControls
 import com.ylabz.basepro.applications.bike.ui.components.path.TripControlsWithProgress
+import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionUnif
 import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDialWithSpeed
 
 @Composable
 fun SpeedAndProgressCard(
     modifier: Modifier = Modifier.fillMaxSize(),
-    currentSpeed: Double,
+    bikeRideInfo: BikeRideInfo,
+
+    /*currentSpeed: Double,
     currentTripDistance: Float,
     totalDistance: Float?,
     windDegree: Float,
     windSpeed: Float,
     weatherConditionText: String,
-    heading: Float,
-    isRiding: Boolean,                               // <--- Added to track if ride is running or paused
+    heading: Float,*/
+
+    onBikeEvent: (BikeEvent) -> Unit,
+    /*isRiding: Boolean,                               // <--- Added to track if ride is running or paused
     onStartPauseClicked: () -> Unit,                 // <--- Callback for Start/Pause
-    onStopClicked: () -> Unit                        // <--- Callback for Stop
+    onStopClicked: () -> Unit*/                    // <--- Callback for Stop
+
+    navTo: (String) -> Unit,
+
 ) {
     // Control the visibility of the wind dial & weather badge for a subtle fade/slide in
     var showOverlays by remember { mutableStateOf(false) }
@@ -64,6 +73,16 @@ fun SpeedAndProgressCard(
     LaunchedEffect(Unit) {
         showOverlays = true
     }
+
+    // Extract values from bikeRideInfo (if needed)
+    val currentSpeed = bikeRideInfo.currentSpeed
+    val currentTripDistance = bikeRideInfo.currentTripDistance
+    val totalDistance = bikeRideInfo.totalTripDistance
+    val tripDuration = bikeRideInfo.rideDuration
+    val averageSpeed = bikeRideInfo.averageSpeed
+    val elevation = bikeRideInfo.elevation
+    val heading: Float = bikeRideInfo.heading
+    //val isRiding = bikeRideInfo.isRiding
 
     Card(
         modifier = modifier

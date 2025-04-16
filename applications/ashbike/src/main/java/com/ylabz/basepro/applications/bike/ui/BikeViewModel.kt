@@ -255,7 +255,7 @@ class BikeViewModel @Inject constructor(
                 // Optionally update your UI state to reflect ride state changes.
                 // You can add an "isRideActive" field in BikeRideInfo if needed.
             }
-            BikeEvent.StopRide -> {
+            BikeEvent.StopSaveRide -> {
                 isRideActive = false
                 // Reset the ride start time, ride duration, and other ride metrics.
                 rideStartTime = 0L

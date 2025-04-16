@@ -125,3 +125,23 @@ fun BikeTripCard(
         }
     }
 }
+
+@Preview
+@Composable
+fun BikeTripCardPreview() {
+    val item = BikeProEntity(
+        id = 1,
+        startTime = System.currentTimeMillis(),
+        endTime = System.currentTimeMillis() + 3600000,
+        totalDistance = 15000f,
+        averageSpeed = 25.5f,
+        maxSpeed = 40.0f,
+        elevationGain = 200f,
+        elevationLoss = 150f,
+        caloriesBurned = 500,
+        startLat = 34.0522,
+        startLng = -118.2437,
+        endLat = 34.06,
+        endLng = -118.25)
+    BikeTripCard(item = item, onEvent = {}, navTo = {})
+}

@@ -40,17 +40,8 @@ fun BikeDashboardContent(
 ) {
     val isBikeConnected = bikeRideInfo.isBikeConnected
 
-    // Extract values from bikeRideInfo (if needed)
-    val currentSpeed = bikeRideInfo.currentSpeed
-    val currentTripDistance = bikeRideInfo.currentTripDistance
-    val totalDistance = bikeRideInfo.totalTripDistance
-    val tripDuration = bikeRideInfo.rideDuration
-    val averageSpeed = bikeRideInfo.averageSpeed
-    val elevation = bikeRideInfo.elevation
-    val heading: Float = bikeRideInfo.heading
     val batteryLevel = bikeRideInfo.batteryLevel
     val motorPower = bikeRideInfo.motorPower
-    //val isRiding = bikeRideInfo.isRiding
     val heartRate = null // bikeRideInfo.heartRate  // May be null
     val calories = null // bikeRideInfo.calories    // May be null
 
@@ -64,16 +55,20 @@ fun BikeDashboardContent(
     ) {
         // 1) Current Speed Card (assumed to be a custom composable)
         SpeedAndProgressCard(
-            currentSpeed = currentSpeed,
+            bikeRideInfo = bikeRideInfo,
+            onBikeEvent = onBikeEvent,
+            navTo = navTo,
+            /*currentSpeed = currentSpeed,
             currentTripDistance = currentTripDistance,
             totalDistance = totalDistance,
             windDegree = 120f,
             windSpeed = 5.0f,
             weatherConditionText = WeatherConditionUnif.RAINY.name,
-            heading = heading,
-            isRiding = false, // NOTE: need to fix it
+            heading = heading,*/
+
+            /*isRiding = false, // NOTE: need to fix it
             onStartPauseClicked = { onBikeEvent(BikeEvent.StartPauseRide) },
-            onStopClicked = { onBikeEvent(BikeEvent.StopRide) },
+            onStopClicked = { onBikeEvent(BikeEvent.StopRide) },*/
         )
 
         // 2) Trip Stats Row: Distance, Duration, Avg Speed, Elevation

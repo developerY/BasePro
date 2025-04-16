@@ -3,7 +3,12 @@ package com.ylabz.basepro.core.model.bike
 import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 
-
+enum class RideState {
+    NotStarted,
+    Riding,
+    Paused,
+    Ended
+}
 
 /**
  * Data class representing the bike's motor information.
@@ -40,7 +45,10 @@ data class BikeRideInfo(
     // Connected bike state
     val isBikeConnected: Boolean,
     val batteryLevel: Int?,
-    val motorPower: Float?
+    val motorPower: Float?,
+
+    // New field:
+    val rideState: RideState = RideState.NotStarted
 )
 
 // Represents basic health information (e.g., from Google Health Connect).
