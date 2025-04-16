@@ -152,7 +152,7 @@ class BikeViewModel @Inject constructor(
 
     // Start ride duration updates and record ride start time.
     // We update the ride duration every second.
-    private fun startRideDurationUpdates() {
+    private fun startRideDurationUpdatesOrig() {
         rideStartTime = System.currentTimeMillis()
         viewModelScope.launch {
             while (true) {
@@ -173,6 +173,25 @@ class BikeViewModel @Inject constructor(
         }
     }
 
+    private fun startRideDurationUpdates() {
+        // Initialize ride start time for duration calculation.
+        rideStartTime = System.currentTimeMillis()
+        viewModelScope.launch {
+            while (true) {
+                if (isRideActive) { // Only update duration if ride is active.
+                    val elapsedMillis = System.currentTimeMillis() - rideStartTime
+                    val formattedDuration = formatDurationToHM(elapsedMillis)
+                    val currentState = _uiState.value as? BikeUiState.Success
+                    currentState?.let {
+                        _uiState.value = it.copy(
+                            bikeData = it.bikeData.copy(rideDuration = formattedDuration)
+                        )
+                    }
+                }
+                delay(1000L)
+            }
+        }
+    }
 
     // ---------- BIKE CONNECTIVITY ----------
     // Connect to the bike over BLE/NFC to retrieve battery and motor info.
@@ -209,11 +228,9 @@ class BikeViewModel @Inject constructor(
         }
     }
 
+    // New private field to track if the ride is active (running) or paused.
+    private var isRideActive: Boolean = false
 
-
-
-
-    // Event handling, routing events to their corresponding actions.
     fun onEvent(event: BikeEvent) {
         when (event) {
             is BikeEvent.LoadBike -> loadSettings()
@@ -223,8 +240,37 @@ class BikeViewModel @Inject constructor(
                 connectBike()
                 Log.d("BikeViewModel", "Connect button clicked.")
             }
-            BikeEvent.StartPauseRide -> TODO()
-            BikeEvent.StopRide -> TODO()
+            BikeEvent.StartPauseRide -> {
+                if (!isRideActive) {
+                    // Start the ride.
+                    isRideActive = true
+                    // (Optional) Reset the ride start time when starting.
+                    rideStartTime = System.currentTimeMillis()
+                    Log.d("BikeViewModel", "Ride started.")
+                } else {
+                    // Pause the ride.
+                    isRideActive = false
+                    Log.d("BikeViewModel", "Ride paused.")
+                }
+                // Optionally update your UI state to reflect ride state changes.
+                // You can add an "isRideActive" field in BikeRideInfo if needed.
+            }
+            BikeEvent.StopRide -> {
+                isRideActive = false
+                // Reset the ride start time, ride duration, and other ride metrics.
+                rideStartTime = 0L
+                Log.d("BikeViewModel", "Ride stopped.")
+                val currentState = _uiState.value as? BikeUiState.Success
+                currentState?.let {
+                    _uiState.value = it.copy(
+                        bikeData = it.bikeData.copy(
+                            rideDuration = "00:00",
+                            currentTripDistance = 0f,
+                            averageSpeed = 0.0
+                        )
+                    )
+                }
+            }
         }
     }
 
