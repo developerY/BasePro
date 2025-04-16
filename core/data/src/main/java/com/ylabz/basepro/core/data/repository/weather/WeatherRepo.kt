@@ -4,5 +4,7 @@ import com.ylabz.basepro.core.model.weather.OpenWeatherResponse
 
 
 interface WeatherRepo {
-    suspend fun openCurrentWeather(location: String): OpenWeatherResponse?
+    suspend fun openCurrentWeatherByCity(location: String): OpenWeatherResponse?
+    suspend fun openCurrentWeatherByCoords(lat: Double, lon: Double): OpenWeatherResponse?
+
 }
