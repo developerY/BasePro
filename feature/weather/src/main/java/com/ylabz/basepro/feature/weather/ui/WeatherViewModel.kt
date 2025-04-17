@@ -3,6 +3,8 @@ package com.ylabz.basepro.feature.weather.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.Navigator
+import com.ylabz.basepro.core.data.repository.bikeConnectivity.BikeConnectivityRepository
 import com.ylabz.basepro.core.data.repository.travel.LocationRepository
 import com.ylabz.basepro.core.data.repository.weather.WeatherRepo
 import com.ylabz.basepro.core.database.BaseProRepo
@@ -12,11 +14,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
+    @Named("real") private val weatherRepo: WeatherRepo,
     private val repository: BaseProRepo,
-    private val weatherRepo: WeatherRepo,
     private val locationRepository: LocationRepository
 ) : ViewModel() {
 
@@ -37,7 +40,7 @@ class WeatherViewModel @Inject constructor(
             if (currentState is WeatherUiState.Success) {
                 val city = currentState.locationString  // e.g., "Santa Barbara, US"
                 try {
-                    val response = weatherRepo.openCurrentWeather(city)
+                    val response = weatherRepo.openCurrentWeatherByCity(city)
                     Log.d("Weather", "API call success: $response")
                     _uiState.value = currentState.copy(weatherOpen = response)
                 } catch (e: Exception) {

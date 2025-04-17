@@ -31,9 +31,9 @@ class BikeViewModel @Inject constructor(
     @Named("real") private val realConnectivityRepository: BikeConnectivityRepository,
     @Named("real") private val realLocationRepository: UnifiedLocationRepository,
     @Named("real") private val realCompassRepository: CompassRepository,
-    @Named("real") private val realWeatherRepo: WeatherRepo,
+    //@Named("real") private val realWeatherRepo: WeatherRepo,
     // Demo implementations
-    @Named("demo") private val demoWeatherRepo: WeatherRepo,
+    //@Named("demo") private val demoWeatherRepo: WeatherRepo,
     @Named("demo") private val demoConnectivityRepository: BikeConnectivityRepository,
     @Named("demo") private val demoLocationRepository: UnifiedLocationRepository,
     @Named("demo") private val demoCompassRepository: CompassRepository

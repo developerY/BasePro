@@ -7,7 +7,7 @@ class GetCurrentWeatherUseCase @Inject constructor(
     private val weatherRepo: WeatherRepo
 ) {
     suspend operator fun invoke(city: String): WeatherInfo {
-        val response = weatherRepo.openCurrentWeather(city)
+        val response = weatherRepo.openCurrentWeatherByCity(city)
         // Map the API response to our domain model.
         return WeatherInfo(
             temperature = response?.main?.temp,
