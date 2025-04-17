@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1"
+     creator="ChatGPT Demo"
+     xmlns="http://www.topografix.com/GPX/1/1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.topografix.com/GPX/1/1
+                         http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>Central Park Loop (Bike Speed)</name>
+    <time>2025-04-17T10:00:00Z</time>
+  </metadata>
+  <trk>
+    <name>Central Park Loop</name>
+    <trkseg>
+      <!-- Start SW corner -->
+      <trkpt lat="40.7681" lon="-73.9819"><time>2025-04-17T10:00:00Z</time></trkpt>
+      <!-- NW corner, ~2.2km in 10min → 13.2km/h -->
+      <trkpt lat="40.7850" lon="-73.9683"><time>2025-04-17T10:10:00Z</time></trkpt>
+      <!-- NE corner, ~2.1km in 10min → 12.6km/h -->
+      <trkpt lat="40.7968" lon="-73.9497"><time>2025-04-17T10:20:00Z</time></trkpt>
+      <!-- SE corner, ~2.2km in 10min → 13.2km/h -->
+      <trkpt lat="40.7681" lon="-73.9819"><time>2025-04-17T10:30:00Z</time></trkpt>
+      <!-- Finish back at start, ~2.2km in 10min → 13.2km/h -->
+      <trkpt lat="40.7681" lon="-73.9819"><time>2025-04-17T10:40:00Z</time></trkpt>
+    </trkseg>
+  </trk>
+</gpx>
+
+<!--
+Why this feels right for a bike:
+
+Total distance: ~9.7km
+
+Total time: 40minutes
+
+Avg speed: 9.7km ÷ 0.667h ≈14.6km/h
+
+Load that into the emulator (Extended Controls→ Location→ GPX) and you’ll see a realistic cycling pace.
+
+-->

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1"
+     creator="ChatGPT Demo"
+     xmlns="http://www.topografix.com/GPX/1/1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.topografix.com/GPX/1/1
+                         http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>ZigZag Central Park Tour</name>
+    <time>2025-04-17T10:00:00Z</time>
+  </metadata>
+  <trk>
+    <name>ZigZag Central Park</name>
+    <trkseg>
+      <trkpt lat="40.765" lon="-73.9735"><time>2025-04-17T10:00:00Z</time></trkpt>
+      <trkpt lat="40.766" lon="-73.97"><time>2025-04-17T10:01:00Z</time></trkpt>
+      <trkpt lat="40.7685" lon="-73.9675"><time>2025-04-17T10:02:00Z</time></trkpt>
+      <trkpt lat="40.7695" lon="-73.9705"><time>2025-04-17T10:03:00Z</time></trkpt>
+      <trkpt lat="40.771" lon="-73.968"><time>2025-04-17T10:04:00Z</time></trkpt>
+      <trkpt lat="40.772" lon="-73.965"><time>2025-04-17T10:05:00Z</time></trkpt>
+      <trkpt lat="40.774" lon="-73.966"><time>2025-04-17T10:06:00Z</time></trkpt>
+      <trkpt lat="40.776" lon="-73.964"><time>2025-04-17T10:07:00Z</time></trkpt>
+      <trkpt lat="40.7775" lon="-73.967"><time>2025-04-17T10:08:00Z</time></trkpt>
+      <trkpt lat="40.779" lon="-73.965"><time>2025-04-17T10:09:00Z</time></trkpt>
+      <trkpt lat="40.7805" lon="-73.9625"><time>2025-04-17T10:10:00Z</time></trkpt>
+      <trkpt lat="40.7815" lon="-73.9655"><time>2025-04-17T10:11:00Z</time></trkpt>
+      <trkpt lat="40.783" lon="-73.963"><time>2025-04-17T10:12:00Z</time></trkpt>
+      <trkpt lat="40.7845" lon="-73.9605"><time>2025-04-17T10:13:00Z</time></trkpt>
+      <trkpt lat="40.786" lon="-73.962"><time>2025-04-17T10:14:00Z</time></trkpt>
+      <trkpt lat="40.7875" lon="-73.959"><time>2025-04-17T10:15:00Z</time></trkpt>
+      <trkpt lat="40.789" lon="-73.961"><time>2025-04-17T10:16:00Z</time></trkpt>
+      <trkpt lat="40.7905" lon="-73.9585"><time>2025-04-17T10:17:00Z</time></trkpt>
+      <trkpt lat="40.792" lon="-73.96"><time>2025-04-17T10:18:00Z</time></trkpt>
+      <trkpt lat="40.7935" lon="-73.9575"><time>2025-04-17T10:19:00Z</time></trkpt>
+      <trkpt lat="40.795" lon="-73.959"><time>2025-04-17T10:20:00Z</time></trkpt>
+      <trkpt lat="40.7965" lon="-73.9565"><time>2025-04-17T10:21:00Z</time></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

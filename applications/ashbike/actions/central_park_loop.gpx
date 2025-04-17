@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1"
+     creator="ChatGPT Demo"
+     xmlns="http://www.topografix.com/GPX/1/1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.topografix.com/GPX/1/1
+                         http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>Central Park Loop</name>
+    <time>2025-04-17T10:00:00Z</time>
+  </metadata>
+  <trk>
+    <name>Central Park Loop</name>
+    <trkseg>
+      <trkpt lat="40.7681" lon="-73.9819"><time>2025-04-17T10:00:00Z</time></trkpt>
+      <trkpt lat="40.7850" lon="-73.9683"><time>2025-04-17T10:02:00Z</time></trkpt>
+      <trkpt lat="40.7968" lon="-73.9497"><time>2025-04-17T10:04:00Z</time></trkpt>
+      <trkpt lat="40.7960" lon="-73.9490"><time>2025-04-17T10:06:00Z</time></trkpt>
+      <trkpt lat="40.7960" lon="-73.9490"><time>2025-04-17T10:06:00Z</time></trkpt>
+      <trkpt lat="40.7850" lon="-73.9712"><time>2025-04-17T10:08:00Z</time></trkpt>
+      <trkpt lat="40.7681" lon="-73.9819"><time>2025-04-17T10:10:00Z</time></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

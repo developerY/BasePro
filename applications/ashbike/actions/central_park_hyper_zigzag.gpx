@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1"
+     creator="ChatGPT Demo"
+     xmlns="http://www.topografix.com/GPX/1/1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.topografix.com/GPX/1/1
+                         http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>Central Park Hyper ZigZag</name>
+    <time>2025-04-17T10:00:00Z</time>
+  </metadata>
+  <trk>
+    <name>Central Park Hyper ZigZag</name>
+    <trkseg>
+      <trkpt lat="40.765885" lon="-73.978210"><time>2025-04-17T10:00:00Z</time></trkpt>
+      <trkpt lat="40.778661" lon="-73.977554"><time>2025-04-17T10:00:23Z</time></trkpt>
+      <trkpt lat="40.796443" lon="-73.979779"><time>2025-04-17T10:01:07Z</time></trkpt>
+      <trkpt lat="40.783303" lon="-73.970370"><time>2025-04-17T10:01:34Z</time></trkpt>
+      <trkpt lat="40.794675" lon="-73.975891"><time>2025-04-17T10:01:50Z</time></trkpt>
+      <trkpt lat="40.776140" lon="-73.970319"><time>2025-04-17T10:02:21Z</time></trkpt>
+      <trkpt lat="40.772826" lon="-73.980947"><time>2025-04-17T10:02:58Z</time></trkpt>
+      <trkpt lat="40.779706" lon="-73.978196"><time>2025-04-17T10:03:56Z</time></trkpt>
+      <trkpt lat="40.785514" lon="-73.978764"><time>2025-04-17T10:04:28Z</time></trkpt>
+      <trkpt lat="40.775357" lon="-73.966654"><time>2025-04-17T10:05:10Z</time></trkpt>
+      <trkpt lat="40.796594" lon="-73.978032"><time>2025-04-17T10:06:05Z</time></trkpt>
+      <trkpt lat="40.769118" lon="-73.955718"><time>2025-04-17T10:06:46Z</time></trkpt>
+      <trkpt lat="40.764764" lon="-73.951843"><time>2025-04-17T10:07:01Z</time></trkpt>
+      <trkpt lat="40.784643" lon="-73.972510"><time>2025-04-17T10:07:22Z</time></trkpt>
+      <trkpt lat="40.794162" lon="-73.956399"><time>2025-04-17T10:08:16Z</time></trkpt>
+      <trkpt lat="40.776365" lon="-73.955352"><time>2025-04-17T10:08:35Z</time></trkpt>
+      <trkpt lat="40.771447" lon="-73.961515"><time>2025-04-17T10:09:22Z</time></trkpt>
+      <trkpt lat="40.782975" lon="-73.955101"><time>2025-04-17T10:09:59Z</time></trkpt>
+      <trkpt lat="40.775349" lon="-73.968256"><time>2025-04-17T10:10:59Z</time></trkpt>
+      <trkpt lat="40.791694" lon="-73.964592"><time>2025-04-17T10:11:19Z</time></trkpt>
+      <trkpt lat="40.788654" lon="-73.960573"><time>2025-04-17T10:11:39Z</time></trkpt>
+      <trkpt lat="40.788000" lon="-73.952517"><time>2025-04-17T10:12:21Z</time></trkpt>
+      <trkpt lat="40.781501" lon="-73.959609"><time>2025-04-17T10:12:36Z</time></trkpt>
+      <trkpt lat="40.777483" lon="-73.979981"><time>2025-04-17T10:13:25Z</time></trkpt>
+      <trkpt lat="40.791150" lon="-73.975193"><time>2025-04-17T10:14:04Z</time></trkpt>
+      <trkpt lat="40.793527" lon="-73.951763"><time>2025-04-17T10:14:23Z</time></trkpt>
+      <trkpt lat="40.787691" lon="-73.975556"><time>2025-04-17T10:15:12Z</time></trkpt>
+      <trkpt lat="40.776129" lon="-73.968482"><time>2025-04-17T10:16:11Z</time></trkpt>
+      <trkpt lat="40.766638" lon="-73.966383"><time>2025-04-17T10:17:06Z</time></trkpt>
+      <trkpt lat="40.784634" lon="-73.970245"><time>2025-04-17T10:17:46Z</time></trkpt>
+      <trkpt lat="40.770806" lon="-73.978179"><time>2025-04-17T10:18:02Z</time></trkpt>
+      <trkpt lat="40.786619" lon="-73.980589"><time>2025-04-17T10:18:37Z</time></trkpt>
+      <trkpt lat="40.776669" lon="-73.973668"><time>2025-04-17T10:19:08Z</time></trkpt>
+      <trkpt lat="40.783152" lon="-73.957843"><time>2025-04-17T10:19:53Z</time></trkpt>
+      <trkpt lat="40.796730" lon="-73.960558"><time>2025-04-17T10:20:10Z</time></trkpt>
+      <trkpt lat="40.799705" lon="-73.950150"><time>2025-04-17T10:21:00Z</time></trkpt>
+      <trkpt lat="40.786680" lon="-73.973532"><time>2025-04-17T10:21:36Z</time></trkpt>
+      <trkpt lat="40.781417" lon="-73.975317"><time>2025-04-17T10:22:17Z</time></trkpt>
+      <trkpt lat="40.799710" lon="-73.966776"><time>2025-04-17T10:22:54Z</time></trkpt>
+      <trkpt lat="40.791059" lon="-73.979588"><time>2025-04-17T10:23:10Z</time></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

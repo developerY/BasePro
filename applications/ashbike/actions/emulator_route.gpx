@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1"
+     creator="ChatGPT Demo"
+     xmlns="http://www.topografix.com/GPX/1/1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.topografix.com/GPX/1/1
+                         http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>Demo Bike Route</name>
+    <time>2025-04-17T10:00:00Z</time>
+  </metadata>
+  <trk>
+    <name>Demo Bike Route</name>
+    <trkseg>
+      <trkpt lat="37.4219983" lon="-122.084">
+        <time>2025-04-17T10:00:00Z</time>
+      </trkpt>
+      <trkpt lat="37.4225000" lon="-122.0835000">
+        <time>2025-04-17T10:01:00Z</time>
+      </trkpt>
+      <trkpt lat="37.4230000" lon="-122.0830000">
+        <time>2025-04-17T10:02:00Z</time>
+      </trkpt>
+      <trkpt lat="37.4235000" lon="-122.0825000">
+        <time>2025-04-17T10:03:00Z</time>
+      </trkpt>
+      <trkpt lat="37.4240000" lon="-122.0820000">
+        <time>2025-04-17T10:04:00Z</time>
+      </trkpt>
+      <trkpt lat="37.4245000" lon="-122.0815000">
+        <time>2025-04-17T10:05:00Z</time>
+      </trkpt>
+      <trkpt lat="37.4250000" lon="-122.0810000">
+        <time>2025-04-17T10:06:00Z</time>
+      </trkpt>
+      <trkpt lat="37.4255000" lon="-122.0805000">
+        <time>2025-04-17T10:07:00Z</time>
+      </trkpt>
+      <trkpt lat="37.4260000" lon="-122.0800000">
+        <time>2025-04-17T10:08:00Z</time>
+      </trkpt>
+      <trkpt lat="37.4265000" lon="-122.0795000">
+        <time>2025-04-17T10:09:00Z</time>
+      </trkpt>
+      <trkpt lat="37.4270000" lon="-122.0790000">
+        <time>2025-04-17T10:10:00Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
