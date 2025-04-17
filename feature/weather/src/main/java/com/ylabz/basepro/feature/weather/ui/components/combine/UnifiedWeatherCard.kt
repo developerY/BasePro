@@ -179,8 +179,8 @@ fun UnifiedWeatherCard(
                     .size(48.dp),
                 contentAlignment = Alignment.Center
             ) {
-                val degree = 180f
-                val speed = 10f
+                val degree = 180
+                val speed = 10.7
                 WindDirectionDialWithSpeed(degree = degree, speed = speed)
             }
         }

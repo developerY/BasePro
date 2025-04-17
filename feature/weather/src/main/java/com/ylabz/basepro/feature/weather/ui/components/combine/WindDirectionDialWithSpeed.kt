@@ -26,8 +26,8 @@ import kotlin.math.sin
  */
 @Composable
 fun WindDirectionDialWithSpeed(
-    degree: Float,
-    speed: Float,
+    degree: Int,
+    speed: Double,
     modifier: Modifier = Modifier
 ) {
     // 1) Create an infinite transition for the wiggle
@@ -127,7 +127,7 @@ fun WindDirectionDialWithSpeed(
 @Preview
 @Composable
 fun WindDirectionDialWithSpeedPreview() {
-    val degree = 180f
-    val speed = 10f
+    val degree = 180
+    val speed = 10.2
     WindDirectionDialWithSpeed(degree = degree, speed = speed)
 }

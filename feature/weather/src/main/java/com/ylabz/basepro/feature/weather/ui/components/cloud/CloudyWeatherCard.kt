@@ -36,7 +36,7 @@ fun CloudyWeatherCardWithMotionAndWind(
     temperature: Double,
     location: String,
     windDegree: Int,
-    windSpeed: Float,
+    windSpeed: Double,
     modifier: Modifier = Modifier
 ) {
     val cardHeight = 200.dp
@@ -147,7 +147,7 @@ fun CloudyWeatherCardWithMotionAndWind(
                 contentAlignment = Alignment.Center
             ) {
                 WindDirectionDialWithSpeed(
-                    degree = windDegree.toFloat(),
+                    degree = windDegree,
                     speed = windSpeed
                 )
             }
@@ -164,7 +164,7 @@ fun CloudyWeatherCardWithMotionAndWindPreview() {
             temperature = 18.0,
             location = "Seattle, WA",
             windDegree = 60,
-            windSpeed = 5f
+            windSpeed = 5.2
         )
     }
 }

@@ -55,7 +55,7 @@ fun UnifiedDynamicWeatherCard(
     val temperature = response.main.temp           // in °C
     val location = "${response.name}, ${response.sys.country}"
     val windDegree = response.wind.deg
-    val windSpeed = response.wind.speed.toFloat()
+    val windSpeed = response.wind.speed
 
     Card(
         modifier = modifier
@@ -88,7 +88,7 @@ fun UnifiedDynamicWeatherCard(
                 contentAlignment = Alignment.Center
             ) {
                 WindDirectionDialWithSpeed(
-                    degree = windDegree.toFloat(),
+                    degree = windDegree,
                     speed = windSpeed
                 )
             }
