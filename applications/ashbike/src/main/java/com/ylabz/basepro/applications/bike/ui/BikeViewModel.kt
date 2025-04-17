@@ -15,9 +15,6 @@ import com.ylabz.basepro.core.model.bike.CombinedSensorData
 import com.ylabz.basepro.core.model.bike.RideState
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,180 +24,174 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import usecase.WeatherInfo
 import javax.inject.Inject
 import javax.inject.Named
-import kotlinx.coroutines.withTimeout
-import kotlinx.coroutines.flow.sample
-
 
 @HiltViewModel
 class BikeViewModel @Inject constructor(
-    @Named("real")   private val realConnectivityRepo: BikeConnectivityRepository,
-    @Named("real")   private val realLocationRepo: UnifiedLocationRepository,
-    @Named("real")   private val realCompassRepo: CompassRepository,
-    @Named("real")   private val realWeatherRepo: WeatherRepo,
+    // Real implementations
+    @Named("real") private val realConnectivityRepository: BikeConnectivityRepository,
+    @Named("real") private val realLocationRepository: UnifiedLocationRepository,
+    @Named("real") private val realCompassRepository: CompassRepository,
+    @Named("real") private val realWeatherRepo: WeatherRepo,
+    // Demo implementations
+    //@Named("demo") private val demoWeatherRepo: WeatherRepo,
+    @Named("demo") private val demoConnectivityRepository: BikeConnectivityRepository,
+    @Named("demo") private val demoLocationRepository: UnifiedLocationRepository,
+    @Named("demo") private val demoCompassRepository: CompassRepository,
+    @Named("demo") private val demoWeatherRepo: WeatherRepo,
 
-    @Named("demo")   private val demoConnectivityRepo: BikeConnectivityRepository,
-    @Named("demo")   private val demoLocationRepo: UnifiedLocationRepository,
-    @Named("demo")   private val demoCompassRepo: CompassRepository,
-    @Named("demo")   private val demoWeatherRepo: WeatherRepo,
 ) : ViewModel() {
-    companion object {
-        private const val TAG = "BikeViewModel"
-    }
 
+    // Toggle between real and demo mode.
     private val realMode = true
 
-    // Choose repos
-    private val locationRepo      = if (realMode) realLocationRepo     else demoLocationRepo
-    private val compassRepo       = if (realMode) realCompassRepo      else demoCompassRepo
-    private val connectivityRepository  = if (realMode) realConnectivityRepo else demoConnectivityRepo
-    private val weatherRepo       = if (realMode) realWeatherRepo      else demoWeatherRepo
+    // Choose the proper repository based on the mode.
+    private val unifiedLocationRepository = if (realMode) realLocationRepository else demoLocationRepository
+    private val compassRepository = if (realMode) realCompassRepository else demoCompassRepository
+    private val connectivityRepository = if (realMode) realConnectivityRepository else demoConnectivityRepository
+    private val weatherRepo = if (realMode) realWeatherRepo else demoWeatherRepo
 
-    // UI state
+
+
+    // UI State for the bike ride.
     private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.Loading)
     val uiState: StateFlow<BikeUiState> = _uiState
 
-    // Timing, flags
-    private var rideStartTime = 0L
-    private var hasFetchedWeather = false
+    // Ride start time to compute ride duration and average speed.
+    private var rideStartTime: Long = 0L
 
-    // Connectivity
-    private var bikeBatteryLevel: Int?   = null
-    private var bikeMotorPower: Float?   = null
+    // Bike-specific connectivity data.
+    // Both are now initialized as null so that if there is no eBike, these remain null.
+    private var bikeBatteryLevel: Int? = null
+    private var bikeMotorPower: Float? = null
 
-    // Distance
+    // User-provided total route distance (optional).
     private val _totalRouteDistance = MutableStateFlow<Float?>(null)
     val totalRouteDistance: StateFlow<Float?> = _totalRouteDistance
 
-    val traveledDistanceFlow: Flow<Float> = locationRepo.traveledDistanceFlow
+    // Expose traveled distance from the repository.
+    val traveledDistanceFlow: Flow<Float> = unifiedLocationRepository.traveledDistanceFlow
+
+    // Compute the remaining distance, if total route distance is provided.
     val remainingDistanceFlow: Flow<Float?> = combine(
         traveledDistanceFlow,
         totalRouteDistance
     ) { traveled, total -> total?.let { (it - traveled).coerceAtLeast(0f) } }
 
-    // Combine sensors
-    private val sensorDataFlow = combine(
-        locationRepo.locationFlow,
-        locationRepo.speedFlow,
+    // Combined sensor data flow.
+    private val sensorDataFlow: Flow<CombinedSensorData> = combine(
+        unifiedLocationRepository.locationFlow,
+        unifiedLocationRepository.speedFlow,
         traveledDistanceFlow,
         totalRouteDistance,
         remainingDistanceFlow,
-        locationRepo.elevationFlow,
-        compassRepo.headingFlow
-    ) { arr ->
+        unifiedLocationRepository.elevationFlow,
+        compassRepository.headingFlow
+    ) { values ->
+        // The vararg combine returns an Array<Any?> so we cast each value.
+        val location = values[0] as Location
+        val speedKmh = values[1] as Float
+        val traveledDistance = values[2] as Float
+        val totalDistance = values[3] as Float?
+        val remainingDistance = values[4] as Float?
+        val elevation = values[5] as Float
+        val heading = values[6] as Float
+
         CombinedSensorData(
-            location          = arr[0] as Location,
-            speedKmh          = arr[1] as Float,
-            traveledDistance  = arr[2] as Float,
-            totalDistance     = arr[3] as Float?,
-            remainingDistance = arr[4] as Float?,
-            elevation         = arr[5] as Float,
-            heading           = arr[6] as Float
+            location = location,
+            speedKmh = speedKmh,
+            traveledDistance = traveledDistance,
+            totalDistance = totalDistance,
+            remainingDistance = remainingDistance,
+            elevation = elevation,
+            heading = heading
         )
     }
 
     init {
-        Log.d(TAG, "init: realMode=$realMode")
+        // Initialize settings.
         onEvent(BikeEvent.LoadBike)
+
+        // Start ride duration updates and record ride start time.
         startRideDurationUpdates()
-        startSensorCollection()
-    }
 
-    /** 1) Runs on Default dispatcher, throttles updates, then updates UI on Main. */
-    @OptIn(FlowPreview::class)
-    private fun startSensorCollection() {
-        viewModelScope.launch(Dispatchers.Default) {
-            Log.d(TAG, "startSensorCollection: subscribing to sensorDataFlow")
-            sensorDataFlow
-                .sample(200L)
-                .collect { data ->
-                    Log.d(TAG, "sensorDataFlow emitted: $data")
+        // Process sensor data updates.
+        viewModelScope.launch {
+            sensorDataFlow.collect { data ->
+                // Calculate elapsed time in hours.
+                val elapsedMillis = System.currentTimeMillis() - rideStartTime
+                val elapsedHours = elapsedMillis / 3600000.0
+                // Compute average speed (km/h): traveled distance divided by time.
+                val averageSpeed = if (elapsedHours > 0) data.traveledDistance / elapsedHours else 0.0
 
-                    // On first sensor data, trigger weather if not yet done:
-                    if (!hasFetchedWeather) {
-                        hasFetchedWeather = true
-                        Log.d(TAG, "First location received, fetching weather now")
-                        refreshWeather(data.location)
-                    }
-
-                    // Compute average speed
-                    val elapsedHrs = (System.currentTimeMillis() - rideStartTime) / 3_600_000.0
-                    val avgSpeed  = if (elapsedHrs > 0) data.traveledDistance / elapsedHrs else 0.0
-
-                    // Build new BikeRideInfo
-                    val newBikeData = (_uiState.value as? BikeUiState.Success)?.bikeData?.copy(
-                        location            = LatLng(data.location.latitude, data.location.longitude),
-                        currentSpeed        = data.speedKmh.toDouble(),
-                        averageSpeed        = avgSpeed,
-                        currentTripDistance = data.traveledDistance.coerceAtLeast(0f),
-                        totalTripDistance   = data.totalDistance,
-                        remainingDistance   = data.remainingDistance,
-                        elevation           = data.elevation.toDouble(),
-                        heading             = data.heading,
-                        batteryLevel        = bikeBatteryLevel,
-                        motorPower          = bikeMotorPower
+                // If the current UI state is already Success, update the bikeData.
+                val currentState = _uiState.value
+                if (currentState is BikeUiState.Success) {
+                    _uiState.value = currentState.copy(
+                        bikeData = currentState.bikeData.copy(
+                            location = LatLng(data.location.latitude, data.location.longitude),
+                            currentSpeed = data.speedKmh.toDouble(),
+                            averageSpeed = averageSpeed,
+                            currentTripDistance = data.traveledDistance.coerceAtLeast(0f),
+                            totalTripDistance = data.totalDistance,
+                            remainingDistance = data.remainingDistance,
+                            elevation = data.elevation.toDouble(),
+                            heading = data.heading,
+                            batteryLevel = null,
+                        )
                     )
-
-                    // Push to UI on Main
-                    withContext(Dispatchers.Main) {
-                        newBikeData?.let { bd ->
-                            _uiState.update { state ->
-                                if (state is BikeUiState.Success) state.copy(bikeData = bd)
-                                else state
-                            }
-                            Log.d(TAG, "UI state updated with sensor data")
-                        }
-                    }
+                    /*Log.d(
+                        "BikeViewModel",
+                        "Combined update: location=${data.location}, speed=${data.speedKmh}, " +
+                                "remaining=${data.remainingDistance}, heading=${data.heading}, elevation=${data.elevation}"
+                    )*/
                 }
+            }
+        }
+
+        // 4) Once we actually have a Success UI state, fire off the one‐time weather load
+        viewModelScope.launch {
+            // suspend until loadSettings() has emitted a Success
+            _uiState
+                .filterIsInstance<BikeUiState.Success>()
+                .first()
+
+            // now that UI is ready, fetch and merge the weather
+            refreshWeather()
         }
     }
 
-    /**
-     *  Fetch weather once given a location.
-     *  Includes logging around the API call and UI merge.
-     */
-    private fun refreshWeather(location: Location) {
+    /** Call this whenever you want to re‑fetch the weather (button or timer). */
+    fun refreshWeather() {
         viewModelScope.launch {
-            Log.d(TAG, "refreshWeather: starting for $location")
+            // get latest known location (you might cache it in a var when collecting sensors)
+            val loc = unifiedLocationRepository.locationFlow.first()
             val resp = runCatching {
-                weatherRepo.openCurrentWeatherByCoords(
-                    location.latitude,
-                    location.longitude
-                )
-            }.onSuccess {
-                Log.d(TAG, "Weather API success: $it")
-            }.onFailure {
-                Log.e(TAG, "Weather API failed", it)
+                weatherRepo.openCurrentWeatherByCoords(loc.latitude, loc.longitude)
             }.getOrNull()
 
-            val weatherInfo = resp?.let {
+            val weatherInfo = resp?.let {weather ->
+                Log.d("BikeViewModel", "Weather updated inside viewmodel: $weather")
                 BikeWeatherInfo(
-                    windDegree    = it.wind.deg,
-                    windSpeed     = (it.wind.speed * 3.6f),
-                    conditionText = "rain" // it.weatherOne.
-                ).also { wi ->
-                    Log.d(TAG, "Mapped BikeWeatherInfo: $wi")
-                }
+                    windDegree    = weather.wind.deg,
+                    windSpeed     = weather.wind.speed * 3.6f,
+                    conditionText = "rain" // weather.weatherOne.firstOrNull()?.main ?: "Unknown"
+                )
             }
 
+            // merge into the existing UI state
             (_uiState.value as? BikeUiState.Success)?.let { current ->
-                _uiState.update {
-                    current.copy(
-                        bikeData = current.bikeData.copy(bikeWeatherInfo = weatherInfo)
+                _uiState.value = current.copy(
+                    bikeData = current.bikeData.copy(
+                        bikeWeatherInfo = weatherInfo
                     )
-                }
-                Log.d(TAG, "UI state merged with weatherInfo=$weatherInfo")
+                )
             }
         }
     }
-
-    // … keep your connectBike(), onEvent(), startRideDurationUpdates(), loadSettings(), etc. …
-
 
     // Formats milliseconds into a string "1h 30m".
     private fun formatDurationToHM(millis: Long): String {
