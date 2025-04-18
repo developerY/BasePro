@@ -122,7 +122,7 @@ fun SpeedAndProgressCard(
                             slideInHorizontally(initialOffsetX = { it / 2 }, animationSpec = tween(600))
                 ) {
                     weather?.let {
-                        WeatherBadge(conditionText = it.conditionText)
+                        WeatherBadge(conditionText ="${it.temperature?.toInt() ?: "--"}°C ${it.conditionText}")
                     }
                 }
             }
