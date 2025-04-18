@@ -1,15 +1,22 @@
 package com.ylabz.basepro.applications.bike.ui.components.home.dials
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.filled.HelpOutline
+import androidx.compose.material.icons.filled.Umbrella
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Icon
+import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 
 
 /**
@@ -29,45 +37,80 @@ import androidx.compose.material3.Icon
  */
 @Composable
 fun WeatherBadge(
-    conditionText: String,
+    weatherInfo: BikeWeatherInfo,
     modifier: Modifier = Modifier
 ) {
-    // Simple example: map certain keywords to icons
-    val icon = remember(conditionText) {
+    // Map condition to a more expressive icon & tint
+    val (icon, tint) = remember(weatherInfo.conditionText) {
         when {
-            conditionText.contains("rain", ignoreCase = true) -> Icons.Default.Cloud
-            conditionText.contains("sun", ignoreCase = true) -> Icons.Default.WbSunny
-            else -> Icons.Default.Cloud // fallback
+            weatherInfo.conditionText.contains("rain", ignoreCase = true) ->
+                Icons.Default.Umbrella to MaterialTheme.colorScheme.primary
+            weatherInfo.conditionText.contains("sun", ignoreCase = true),
+            weatherInfo.conditionText.contains("clear", ignoreCase = true) ->
+                Icons.Default.WbSunny to MaterialTheme.colorScheme.secondary
+            weatherInfo.conditionText.contains("cloud", ignoreCase = true) ->
+                Icons.Default.Cloud to MaterialTheme.colorScheme.onSurfaceVariant
+            else ->
+                Icons.AutoMirrored.Filled.HelpOutline to MaterialTheme.colorScheme.onSurfaceVariant
         }
     }
 
-    Card(
+    ElevatedCard(
         modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.85f))
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            // Weather Icon
             Icon(
                 imageVector = icon,
-                contentDescription = conditionText,
-                tint = Color.Gray,
-                modifier = Modifier.size(20.dp)
+                contentDescription = weatherInfo.conditionText,
+                tint = tint,
+                modifier = Modifier.size(24.dp)
             )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = conditionText,
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
-            )
+
+            Column {
+                // Temperature – big and bold
+                Text(
+                    text = weatherInfo.temperature
+                        ?.let { "${it.toInt()}°" }
+                        ?: "--°",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                )
+                // Condition – smaller caption
+                Text(
+                    text = weatherInfo.conditionText,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                )
+            }
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun WeatherBadgePreview() {
-    val condition = "Sunny"
-    WeatherBadge(conditionText = condition)
+    MaterialTheme {
+        WeatherBadge(
+            weatherInfo = BikeWeatherInfo(
+                windDegree = 0,
+                windSpeed = 0.7,
+                conditionText = "Sunshine",
+                temperature = 22.5
+            ),
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }
