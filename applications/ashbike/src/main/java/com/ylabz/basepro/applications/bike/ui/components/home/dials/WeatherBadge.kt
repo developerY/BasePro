@@ -40,42 +40,57 @@ fun WeatherBadge(
     weatherInfo: BikeWeatherInfo,
     modifier: Modifier = Modifier
 ) {
-    // 1) read your colors in the composable scope
     val colors = MaterialTheme.colorScheme
 
-    // 2) now it's safe to refer to `colors` inside remember
-    val (icon, tint) = remember(weatherInfo.conditionText) {
+    // pick icon, tint, and a container color based on condition
+    val (icon, iconTint, background) = remember(weatherInfo.conditionText) {
         when {
-            weatherInfo.conditionText.contains("rain", ignoreCase = true) ->
-                Icons.Default.Umbrella to colors.primary
-
-            weatherInfo.conditionText.contains("sun", ignoreCase = true) ||
-                    weatherInfo.conditionText.contains("clear", ignoreCase = true) ->
-                Icons.Default.WbSunny to colors.secondary
-
-            weatherInfo.conditionText.contains("cloud", ignoreCase = true) ->
-                Icons.Default.Cloud to colors.onSurfaceVariant
-
+            weatherInfo.conditionText.contains("rain", true) ->
+                Triple(
+                    Icons.Default.Umbrella,
+                    colors.onPrimary,
+                    colors.primary.copy(alpha = 0.15f)
+                )
+            weatherInfo.conditionText.contains("clear", true)
+                    || weatherInfo.conditionText.contains("sun", true) ->
+                Triple(
+                    Icons.Default.WbSunny,
+                    colors.onSecondary,
+                    colors.secondary.copy(alpha = 0.15f)
+                )
+            weatherInfo.conditionText.contains("cloud", true) ->
+                Triple(
+                    Icons.Default.Cloud,
+                    colors.onSurfaceVariant,
+                    colors.surfaceVariant.copy(alpha = 0.15f)
+                )
             else ->
-                Icons.Default.HelpOutline to colors.onSurfaceVariant
+                Triple(
+                    Icons.Default.HelpOutline,
+                    colors.onSurfaceVariant,
+                    colors.surfaceVariant.copy(alpha = 0.10f)
+                )
         }
     }
 
     ElevatedCard(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = colors.surfaceVariant),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = background
+        ),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            Modifier
+                .padding(horizontal = 12.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Icon(
-                imageVector = icon,
+                icon,
                 contentDescription = weatherInfo.conditionText,
-                tint = tint,
+                tint = iconTint,
                 modifier = Modifier.size(24.dp)
             )
 
@@ -85,19 +100,20 @@ fun WeatherBadge(
                         ?.let { "${it.toInt()}°" }
                         ?: "--°",
                     style = MaterialTheme.typography.titleMedium.copy(
-                        color = colors.onSurfaceVariant
+                        color = iconTint
                     )
                 )
                 Text(
                     text = weatherInfo.conditionText,
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = colors.onSurfaceVariant
+                        color = iconTint
                     )
                 )
             }
         }
     }
 }
+
 
 
 @Preview(showBackground = true)
