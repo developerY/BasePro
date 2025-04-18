@@ -40,36 +40,38 @@ fun WeatherBadge(
     weatherInfo: BikeWeatherInfo,
     modifier: Modifier = Modifier
 ) {
-    // Map condition to a more expressive icon & tint
+    // 1) read your colors in the composable scope
+    val colors = MaterialTheme.colorScheme
+
+    // 2) now it's safe to refer to `colors` inside remember
     val (icon, tint) = remember(weatherInfo.conditionText) {
         when {
             weatherInfo.conditionText.contains("rain", ignoreCase = true) ->
-                Icons.Default.Umbrella to MaterialTheme.colorScheme.primary
-            weatherInfo.conditionText.contains("sun", ignoreCase = true),
-            weatherInfo.conditionText.contains("clear", ignoreCase = true) ->
-                Icons.Default.WbSunny to MaterialTheme.colorScheme.secondary
+                Icons.Default.Umbrella to colors.primary
+
+            weatherInfo.conditionText.contains("sun", ignoreCase = true) ||
+                    weatherInfo.conditionText.contains("clear", ignoreCase = true) ->
+                Icons.Default.WbSunny to colors.secondary
+
             weatherInfo.conditionText.contains("cloud", ignoreCase = true) ->
-                Icons.Default.Cloud to MaterialTheme.colorScheme.onSurfaceVariant
+                Icons.Default.Cloud to colors.onSurfaceVariant
+
             else ->
-                Icons.AutoMirrored.Filled.HelpOutline to MaterialTheme.colorScheme.onSurfaceVariant
+                Icons.Default.HelpOutline to colors.onSurfaceVariant
         }
     }
 
     ElevatedCard(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        ),
+        colors = CardDefaults.elevatedCardColors(containerColor = colors.surfaceVariant),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
     ) {
         Row(
-            modifier = Modifier
-                .padding(horizontal = 12.dp, vertical = 8.dp),
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Weather Icon
             Icon(
                 imageVector = icon,
                 contentDescription = weatherInfo.conditionText,
@@ -78,26 +80,25 @@ fun WeatherBadge(
             )
 
             Column {
-                // Temperature – big and bold
                 Text(
                     text = weatherInfo.temperature
                         ?.let { "${it.toInt()}°" }
                         ?: "--°",
                     style = MaterialTheme.typography.titleMedium.copy(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = colors.onSurfaceVariant
                     )
                 )
-                // Condition – smaller caption
                 Text(
                     text = weatherInfo.conditionText,
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = colors.onSurfaceVariant
                     )
                 )
             }
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
