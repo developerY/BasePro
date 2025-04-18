@@ -94,13 +94,45 @@ fun PreviewWeatherBadgeAll() {
     MaterialTheme {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             WeatherBadgeWithDetails(
-                weatherInfo = BikeWeatherInfo(290, 5.5, "Sunny", 22.0, 20.0, 45),
+                weatherInfo = BikeWeatherInfo(
+                    windDegree           = 45,                // wind from the NE
+                    windSpeed            = 15.0,              // km/h
+                    conditionText        = "Sunny",
+                    conditionDescription = "Clear sky",
+                    conditionIcon        = "01d",             // OWM “clear sky (day)” icon
+                    temperature          = 25.0,              // °C
+                    feelsLike            = 27.0,              // °C
+                    humidity             = 40                 // %
+                ),
                 modifier = Modifier.fillMaxWidth()
             )
             WeatherBadgeWithDetails(
-                weatherInfo = BikeWeatherInfo(120, 3.2, "Rain", 18.0, 17.0, 82),
+                weatherInfo = BikeWeatherInfo(
+                    windDegree           = 180,               // wind from the S
+                    windSpeed            = 8.5,               // km/h
+                    conditionText        = "Cloudy",
+                    conditionDescription = "Overcast clouds",
+                    conditionIcon        = "03d",             // OWM “scattered clouds” icon
+                    temperature          = 18.0,              // °C
+                    feelsLike            = 18.0,              // °C
+                    humidity             = 65                 // %
+                ),
                 modifier = Modifier.fillMaxWidth()
             )
+            WeatherBadgeWithDetails(
+                weatherInfo = BikeWeatherInfo(
+                    windDegree           = 220,               // wind from the SW
+                    windSpeed            = 14.0,              // km/h
+                    conditionText        = "Light Rain",
+                    conditionDescription = "Light rain showers",
+                    conditionIcon        = "10d",             // OWM “light rain” icon
+                    temperature          = 12.0,              // °C
+                    feelsLike            = 11.0,              // °C
+                    humidity             = 85                 // %
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
             WeatherBadgeWithDetails(
                 weatherInfo = null,
                 modifier = Modifier.fillMaxWidth()

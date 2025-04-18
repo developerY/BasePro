@@ -1,4 +1,5 @@
 package com.ylabz.basepro.applications.bike.ui.components.home.dials
+import android.R.attr.text
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
@@ -70,12 +71,18 @@ fun AnimatedWeatherBadge(
     val animatedTint by animateColorAsState(targetValue = rawTint, tween(600))
     val animatedBg   by animateColorAsState(targetValue = rawBg,  tween(600))
 
+    val containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
+    val contentColor   = animatedTint
+
     // 3) card on top of your blue dash, always light container so it pops
     ElevatedCard(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
             .background(animatedBg),
-        colors    = CardDefaults.elevatedCardColors(containerColor = animatedBg),
+        colors    = CardDefaults.elevatedCardColors(
+            containerColor = containerColor,
+            contentColor   = contentColor
+        ),
         elevation = CardDefaults.elevatedCardElevation(4.dp)
     ) {
         Row(
@@ -93,23 +100,50 @@ fun AnimatedWeatherBadge(
                     modifier      = Modifier.size(24.dp)
                 )
             }
-
-            // 5) text: temperature + condition
-            Column {
-                Text(
-                    text = weatherInfo.temperature
-                        ?.let { "${it.toInt()}°C" }
-                        ?: "--°C",
-                    style = MaterialTheme.typography.titleMedium.copy(color = animatedTint)
-                )
-                Text(
-                    text = weatherInfo.conditionText,
-                    style = MaterialTheme.typography.bodySmall.copy(color = animatedTint)
-                )
-            }
+            WeatherBadgeText(
+                weatherInfo = weatherInfo,
+                tint        = animatedTint
+            )
         }
     }
 }
+
+@Composable
+fun WeatherBadgeText(
+    weatherInfo: BikeWeatherInfo,
+    tint: Color,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.padding(start = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        // Row for the big temp + the one‐word condition
+        Row(verticalAlignment = Alignment.Top) {
+            Text(
+                text = weatherInfo.temperature
+                    ?.let { "${it.toInt()}°C" }
+                    ?: "--°C",
+                style = MaterialTheme.typography.headlineMedium.copy(color = tint)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = weatherInfo.conditionText,
+                style = MaterialTheme.typography.titleMedium.copy(color = tint)
+            )
+        }
+
+        // Optional longer description below
+        weatherInfo.conditionDescription?.takeIf { it.isNotBlank() }?.let { desc ->
+            Text(
+                text = desc,
+                style = MaterialTheme.typography.bodySmall.copy(color = tint)
+            )
+        }
+    }
+}
+
+
 
 
 @Preview
@@ -119,7 +153,11 @@ fun AnimatedWeatherBadgePreview() {
         windDegree = 180,
         windSpeed = 15.0,
         conditionText = "Clear",
+        conditionDescription = "Clear sky",
+        conditionIcon = "01d",
         temperature = 25.0,
-        feelsLike = 26.0, humidity = 60)
+        feelsLike = 26.0,
+        humidity = 60
+    )
     AnimatedWeatherBadge(weatherInfo)
 }

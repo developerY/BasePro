@@ -194,7 +194,9 @@ class BikeViewModel @Inject constructor(
                 BikeWeatherInfo(
                     windDegree = weather.wind.deg,
                     windSpeed = weather.wind.speed * 3.6f,
-                    conditionText = conditionMain + conditionDesc, // weather.weatherOne.firstOrNull()?.main ?: "Unknown"
+                    conditionText = conditionMain,
+                    conditionDescription = conditionDesc,
+                    conditionIcon = weather.weather.firstOrNull()?.icon, // weather.weatherOne.firstOrNull()?.main ?: "Unknown"
                     temperature = weather.main.temp,
                     feelsLike = weather.main.feels_like,
                     humidity = weather.main.humidity,

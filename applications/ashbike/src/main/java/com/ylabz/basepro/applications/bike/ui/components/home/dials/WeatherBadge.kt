@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Icon
+import com.google.maps.android.ktx.model.circleOptions
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 
 
@@ -117,15 +118,16 @@ fun WeatherBadge(
 fun PreviewWeatherBadges() {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.padding(16.dp)) {
         WeatherBadge(
-            weatherInfo = BikeWeatherInfo(0,0.7,"Sunny",22.0, 20.0, 45),
+            weatherInfo = BikeWeatherInfo(0,0.7,"Sunny", conditionDescription = "Sunny Sky", conditionIcon = "01d",
+                22.0, 20.0, 45),
             modifier = Modifier.fillMaxWidth()
         )
         WeatherBadge(
-            weatherInfo = BikeWeatherInfo(0,0.7,"Rain",18.0, 17.0, 82),
+            weatherInfo = BikeWeatherInfo(0,0.7,"Rain",  conditionDescription = "Sunny Sky", conditionIcon = "01d",18.0, 17.0, 82),
             modifier = Modifier.fillMaxWidth()
         )
         WeatherBadge(
-            weatherInfo = BikeWeatherInfo(0,0.7,"Clouds",10.0, 10.0, 10),
+            weatherInfo = BikeWeatherInfo(0,0.7,"Clouds", conditionDescription = "Sunny Sky", conditionIcon = "01d",10.0, 10.0, 10),
             modifier = Modifier.fillMaxWidth()
         )
     }
