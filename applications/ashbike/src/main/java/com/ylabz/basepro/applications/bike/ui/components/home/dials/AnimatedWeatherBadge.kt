@@ -80,30 +80,39 @@ fun AnimatedWeatherBadge(
         targetTint.let { if (isDark) it.copy(alpha = 0.8f) else it }
     )
 
+    // Pick a translucent white (or surface) so it reads clearly on a dark/blue background
+    val bg = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
+    val content = MaterialTheme.colorScheme.onSurface
+
     ElevatedCard(
         modifier = modifier,
         shape    = RoundedCornerShape(16.dp),
-        colors   = CardDefaults.elevatedCardColors(containerColor = background),
-        elevation= CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
+        colors   = CardDefaults.elevatedCardColors(
+            containerColor = bg,
+            contentColor   = content
+        ),
+        elevation= CardDefaults.elevatedCardElevation(4.dp)
     ) {
         Row(
-            Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            Modifier
+                .padding(horizontal = 12.dp, vertical = 8.dp),
             verticalAlignment   = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Crossfade(targetState = targetIcon) { icon ->
                 Icon(icon, contentDescription = weatherInfo.conditionText, tint = tint, modifier = Modifier.size(24.dp))
             }
+
             Column {
                 Text(
                     text = weatherInfo.temperature
-                        ?.let { stringResource(R.string.temperature_format, it.toInt()) }
+                        ?.let { "${it.toInt()}°C" }
                         ?: "--°C",
-                    style = MaterialTheme.typography.titleMedium.copy(color = tint)
+                    style = MaterialTheme.typography.titleMedium.copy(color = content)
                 )
                 Text(
                     text = weatherInfo.conditionText,
-                    style = MaterialTheme.typography.bodySmall.copy(color = tint)
+                    style = MaterialTheme.typography.bodySmall.copy(color = content)
                 )
             }
         }
