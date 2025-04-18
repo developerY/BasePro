@@ -116,7 +116,7 @@ fun WindDirectionDialWithSpeed(
 
         // Wind speed in the center
         Text(
-            text = "${speed} m/s",
+            text = "%.1f m/s".format(speed),
             style = MaterialTheme.typography.labelSmall,
             color = Color.Black
         )

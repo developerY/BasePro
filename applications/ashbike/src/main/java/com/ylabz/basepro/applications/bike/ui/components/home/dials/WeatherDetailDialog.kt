@@ -78,3 +78,15 @@ fun WeatherDetailDialog(
         }
     )
 }
+
+@Preview
+@Composable
+fun WeatherDetailDialogPreview() {
+    val weatherInfo = BikeWeatherInfo(
+        windDegree = 180,
+        windSpeed = 15.0,
+        conditionText = "Sunny",
+        conditionDescription = "Clear sky",
+        conditionIcon = "sunny", temperature = 25.0, feelsLike = 26.0, humidity = 50)
+    WeatherDetailDialog(weatherInfo = weatherInfo, onDismiss = {})
+}
