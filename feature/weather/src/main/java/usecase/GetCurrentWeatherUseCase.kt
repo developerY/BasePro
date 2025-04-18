@@ -11,7 +11,7 @@ class GetCurrentWeatherUseCase @Inject constructor(
         // Map the API response to our domain model.
         return WeatherInfo(
             temperature = response?.main?.temp,
-            condition = response?.weatherOne?.firstOrNull()?.main ?: "Clear",
+            condition = response?.weather?.firstOrNull()?.main ?: "Clear",
             location = "${response?.name}, ${response?.sys?.country}",
             windDegree = response?.wind?.deg,
             windSpeed = response?.wind?.speed?.toFloat()

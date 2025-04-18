@@ -1,7 +1,5 @@
 package com.ylabz.basepro.feature.weather.ui
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -11,12 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,7 +23,6 @@ import com.ylabz.basepro.core.model.weather.Sys
 import com.ylabz.basepro.core.model.weather.WeatherOne
 import com.ylabz.basepro.core.model.weather.OpenWeatherResponse
 import com.ylabz.basepro.core.model.weather.Wind
-import com.ylabz.basepro.feature.weather.ui.components.WeatherBackground
 import com.ylabz.basepro.feature.weather.ui.components.WeatherIcon
 import com.ylabz.basepro.feature.weather.ui.components.backgrounds.WeatherBackgroundAnimation
 import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionUnif
@@ -44,7 +36,7 @@ fun UnifiedDynamicWeatherCard(
     modifier: Modifier = Modifier
 ) {
     // Determine the primary condition.
-    val conditionText = response.weatherOne.firstOrNull()?.main ?: "Clear"
+    val conditionText = response.weather.firstOrNull()?.main ?: "Clear"
     val weatherCondition = when {
         response.rain != null -> WeatherConditionUnif.RAINY
         response.snow != null -> WeatherConditionUnif.SNOWY
@@ -130,7 +122,7 @@ fun UnifiedDynamicWeatherCard(
 fun UnifiedDynamicWeatherCardPreview() {
     val openWeatherResponse = OpenWeatherResponse(
         coord = Coord(lon = 139.0, lat = 35.0),
-        weatherOne = listOf(
+        weather = listOf(
             WeatherOne(
                 id = 800,
                 main = "Clear",
@@ -169,7 +161,7 @@ fun UnifiedDynamicWeatherCardPreview() {
 fun UnifiedDynamicWeatherCardRainyPreview() {
     val openWeatherResponse = OpenWeatherResponse(
         coord = Coord(lon = 139.0, lat = 35.0),
-        weatherOne = listOf(
+        weather = listOf(
             WeatherOne(
                 id = 500,
                 main = "Rain",

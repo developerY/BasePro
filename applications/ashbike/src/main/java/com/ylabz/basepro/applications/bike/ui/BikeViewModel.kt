@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import usecase.WeatherInfo
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -169,16 +168,33 @@ class BikeViewModel @Inject constructor(
         viewModelScope.launch {
             // get latest known location (you might cache it in a var when collecting sensors)
             val loc = unifiedLocationRepository.locationFlow.first()
+
+            Log.d("Weather ", "Location=$loc")
             val resp = runCatching {
                 weatherRepo.openCurrentWeatherByCoords(loc.latitude, loc.longitude)
             }.getOrNull()
 
+
+
+
             val weatherInfo = resp?.let {weather ->
+
+                // safe‑call the list, take the first element (if any):
+                val first = weather.weather.firstOrNull()
+
+                // high‑level condition, e.g. "Clear", "Rain", "Clouds", "Snow", etc.
+                val conditionMain = first?.main ?: "Unknown"
+
+                // more detailed text, e.g. "clear sky", "light rain", etc.
+                val conditionDesc = first?.description ?: "Unknown"
+
+                Log.d("Weather", "Main=$conditionMain, Desc=$conditionDesc")
+
                 Log.d("BikeViewModel", "Weather updated inside viewmodel: $weather")
                 BikeWeatherInfo(
                     windDegree    = weather.wind.deg,
                     windSpeed     = weather.wind.speed * 3.6f,
-                    conditionText = "rain" // weather.weatherOne.firstOrNull()?.main ?: "Unknown"
+                    conditionText = conditionMain + conditionDesc // weather.weatherOne.firstOrNull()?.main ?: "Unknown"
                 )
             }
 

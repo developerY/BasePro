@@ -44,7 +44,7 @@ fun BikeAppScreenWithWeather(
     // Create a dummy OpenWeatherResponse to simulate rainy weather.
     val openWeatherResponse = OpenWeatherResponse(
         coord = Coord(lon = 139.0, lat = 35.0),
-        weatherOne = listOf(
+        weather = listOf(
             WeatherOne(
                 id = 500,
                 main = "Rain",

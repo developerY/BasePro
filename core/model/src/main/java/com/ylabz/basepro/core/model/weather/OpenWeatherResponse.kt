@@ -2,7 +2,7 @@ package com.ylabz.basepro.core.model.weather
 
 data class OpenWeatherResponse(
     val coord: Coord,
-    val weatherOne: List<WeatherOne>,
+    val weather: List<WeatherOne>,
     val base: String,
     val main: Main,
     val visibility: Int,

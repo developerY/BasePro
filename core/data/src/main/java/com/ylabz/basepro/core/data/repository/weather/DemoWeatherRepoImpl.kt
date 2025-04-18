@@ -9,7 +9,6 @@ import com.ylabz.basepro.core.model.weather.Snow
 import com.ylabz.basepro.core.model.weather.Sys
 import com.ylabz.basepro.core.model.weather.WeatherOne
 import com.ylabz.basepro.core.model.weather.Wind
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,7 +28,7 @@ class DemoWeatherRepoImpl @Inject constructor() : WeatherRepo {
 
     private fun demoResponse(lat: Double, lon: Double, name: String) = OpenWeatherResponse(
         coord    = Coord(lon = lon, lat = lat),
-        weatherOne = listOf(
+        weather = listOf(
             WeatherOne(
                 id = 501,
                 main = "Rain",
