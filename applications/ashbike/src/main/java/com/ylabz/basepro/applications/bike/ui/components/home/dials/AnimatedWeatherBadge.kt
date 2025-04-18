@@ -92,52 +92,29 @@ fun AnimatedWeatherBadge(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             // 4) crossfade the icon, tint it with animatedTint
-            Crossfade(targetState = icon) { currentIcon ->
-                Icon(
-                    imageVector   = currentIcon,
-                    contentDescription = weatherInfo.conditionText,
-                    tint          = animatedTint,
-                    modifier      = Modifier.size(24.dp)
+            Column ( // make the Column fill its parent
+                verticalArrangement = Arrangement.Center,    // center children top↕bottom
+                horizontalAlignment = Alignment.CenterHorizontally // center children left↔right
+            ) {
+                Crossfade(targetState = icon) { currentIcon ->
+                    Icon(
+                        imageVector = currentIcon,
+                        contentDescription = weatherInfo.conditionText,
+                        tint = animatedTint,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+                Text(
+                    text = weatherInfo.conditionText,
+                    style = MaterialTheme.typography.titleMedium.copy(color = animatedTint)
                 )
-            }
-            WeatherBadgeText(
-                weatherInfo = weatherInfo,
-                tint        = animatedTint
-            )
-        }
-    }
-}
 
-@Composable
-fun WeatherBadgeText(
-    weatherInfo: BikeWeatherInfo,
-    tint: Color,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier.padding(start = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(2.dp)
-    ) {
-        // Row for the big temp + the one‐word condition
-        Row(verticalAlignment = Alignment.Top) {
+            }
             Text(
                 text = weatherInfo.temperature
                     ?.let { "${it.toInt()}°C" }
                     ?: "--°C",
-                style = MaterialTheme.typography.headlineMedium.copy(color = tint)
-            )
-            Spacer(modifier = Modifier.width(6.dp))
-            Text(
-                text = weatherInfo.conditionText,
-                style = MaterialTheme.typography.titleMedium.copy(color = tint)
-            )
-        }
-
-        // Optional longer description below
-        weatherInfo.conditionDescription?.takeIf { it.isNotBlank() }?.let { desc ->
-            Text(
-                text = desc,
-                style = MaterialTheme.typography.bodySmall.copy(color = tint)
+                style = MaterialTheme.typography.headlineMedium.copy(color = animatedTint)
             )
         }
     }
