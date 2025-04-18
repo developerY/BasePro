@@ -2,6 +2,7 @@ package com.ylabz.basepro.applications.bike.ui.components.home.dials
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,9 +17,11 @@ import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -32,77 +35,66 @@ fun AnimatedWeatherBadge(
     weatherInfo: BikeWeatherInfo,
     modifier: Modifier = Modifier
 ) {
-    // replaces: val isDark = MaterialTheme.colorScheme.isLight.not()
-    val isDark = isSystemInDarkTheme()
-
-    // pick icon, tint & background pastel per condition
-    val (targetIcon, targetTint, targetBg) = remember(weatherInfo.conditionText) {
-        when {
-            weatherInfo.conditionText.contains("rain", true) ->
-                Triple(
-                    Icons.Default.Umbrella,
-                    Color(0xFF01579B),
-                    Color(0xFF81D4FA).copy(alpha = 0.3f)
-                )
-            weatherInfo.conditionText.contains("clear", true)
-                    || weatherInfo.conditionText.contains("sun", true) ->
-                Triple(
-                    Icons.Default.WbSunny,
-                    Color(0xFFF57F17),
-                    Color(0xFFFFF59D).copy(alpha = 0.3f)
-                )
-            weatherInfo.conditionText.contains("cloud", true) ->
-                Triple(
-                    Icons.Default.Cloud,
-                    Color(0xFF455A64),
-                    Color(0xFFCFD8DC).copy(alpha = 0.3f)
-                )
-            else ->
-                Triple(
-                    Icons.AutoMirrored.Filled.HelpOutline,
+    // 1) Determine icon, tint & background pastel per your condition
+    val (targetIcon: ImageVector, targetTint: Color, targetBg: Color) =
+        remember(weatherInfo.conditionText) {
+            when {
+                weatherInfo.conditionText.contains("rain", true) ->
+                    Triple(
+                        Icons.Default.Umbrella,
+                        Color(0xFF01579B),
+                        Color(0xFF81D4FA).copy(alpha = 0.3f)
+                    )
+                weatherInfo.conditionText.contains("clear", true)
+                        || weatherInfo.conditionText.contains("sun", true) ->
+                    Triple(
+                        Icons.Default.WbSunny,
+                        Color(0xFFF57F17),
+                        Color(0xFFFFF59D).copy(alpha = 0.3f)
+                    )
+                weatherInfo.conditionText.contains("cloud", true) ->
+                    Triple(
+                        Icons.Default.Cloud,
+                        Color(0xFF455A64),
+                        Color(0xFFCFD8DC).copy(alpha = 0.3f)
+                    )
+                else ->
+                    Triple(
+                        Icons.AutoMirrored.Filled.HelpOutline,
                         Color.Black,
-                    Color.Black
-                )
+                        Color.Black
+                    )
+            }
         }
-        /*
-        Triple(
-                    Icons.AutoMirrored.Filled.HelpOutline,
-                    colors.onSurfaceVariant,
-                    colors.surfaceVariant.copy(alpha = 0.1f)
-                )
-         */
-    }
 
-    val background by animateColorAsState(
-        targetBg.let { if (isDark) it.copy(0.2f) else it }
-    )
-    val tint by animateColorAsState(
-        targetTint.let { if (isDark) it.copy(alpha = 0.8f) else it }
-    )
-
-    // Pick a translucent white (or surface) so it reads clearly on a dark/blue background
-    val bg = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
-    val content = MaterialTheme.colorScheme.onSurface
+    // 2) Force a light translucent container so it pops on the blue background
+    val container = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
+    val content   = MaterialTheme.colorScheme.onSurface
 
     ElevatedCard(
-        modifier = modifier,
-        shape    = RoundedCornerShape(16.dp),
-        colors   = CardDefaults.elevatedCardColors(
-            containerColor = bg,
-            contentColor   = content
-        ),
-        elevation= CardDefaults.elevatedCardElevation(4.dp)
+        modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(container),
+        colors    = CardDefaults.elevatedCardColors(containerColor = container),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
     ) {
         Row(
-            Modifier
+            modifier = Modifier
                 .padding(horizontal = 12.dp, vertical = 8.dp),
-            verticalAlignment   = Alignment.CenterVertically,
+            verticalAlignment    = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Crossfade(targetState = targetIcon) { icon ->
-                Icon(icon, contentDescription = weatherInfo.conditionText, tint = tint, modifier = Modifier.size(24.dp))
+            // 3) Crossfade between icons
+            Crossfade(targetState = targetIcon) { currentIcon ->
+                Icon(
+                    imageVector   = currentIcon,
+                    contentDescription = weatherInfo.conditionText,
+                    tint          = content,
+                    modifier      = Modifier.size(24.dp)
+                )
             }
 
+            // 4) Texts
             Column {
                 Text(
                     text = weatherInfo.temperature
@@ -118,6 +110,7 @@ fun AnimatedWeatherBadge(
         }
     }
 }
+
 
 @Preview
 @Composable
