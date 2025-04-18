@@ -35,76 +35,76 @@ fun AnimatedWeatherBadge(
     weatherInfo: BikeWeatherInfo,
     modifier: Modifier = Modifier
 ) {
-    // 1) Determine icon, tint & background pastel per your condition
-    val (targetIcon: ImageVector, targetTint: Color, targetBg: Color) =
-        remember(weatherInfo.conditionText) {
-            when {
-                weatherInfo.conditionText.contains("rain", true) ->
-                    Triple(
-                        Icons.Default.Umbrella,
-                        Color(0xFF01579B),
-                        Color(0xFF81D4FA).copy(alpha = 0.3f)
-                    )
-                weatherInfo.conditionText.contains("clear", true)
-                        || weatherInfo.conditionText.contains("sun", true) ->
-                    Triple(
-                        Icons.Default.WbSunny,
-                        Color(0xFFF57F17),
-                        Color(0xFFFFF59D).copy(alpha = 0.3f)
-                    )
-                weatherInfo.conditionText.contains("cloud", true) ->
-                    Triple(
-                        Icons.Default.Cloud,
-                        Color(0xFF455A64),
-                        Color(0xFFCFD8DC).copy(alpha = 0.3f)
-                    )
-                else ->
-                    Triple(
-                        Icons.AutoMirrored.Filled.HelpOutline,
-                        Color.Black,
-                        Color.Black
-                    )
-            }
+    // 1) pick icon, tint & pastel‑bg per conditionText
+    val (icon, rawTint, rawBg) = remember(weatherInfo.conditionText) {
+        when {
+            weatherInfo.conditionText.contains("rain", true) ->
+                Triple(
+                    Icons.Default.Umbrella,
+                    Color(0xFF01579B),                         // deep rainy blue
+                    Color(0xFF81D4FA).copy(alpha = 0.3f)       // light sky blue bg
+                )
+            weatherInfo.conditionText.contains("clear", true)
+                    || weatherInfo.conditionText.contains("sun", true) ->
+                Triple(
+                    Icons.Default.WbSunny,
+                    Color(0xFFF57F17),                         // sunny gold
+                    Color(0xFFFFF59D).copy(alpha = 0.3f)       // pale yellow bg
+                )
+            weatherInfo.conditionText.contains("cloud", true) ->
+                Triple(
+                    Icons.Default.Cloud,
+                    Color(0xFF455A64),                         // slate gray
+                    Color(0xFFCFD8DC).copy(alpha = 0.3f)       // pale gray bg
+                )
+            else ->
+                Triple(
+                    Icons.AutoMirrored.Filled.HelpOutline,
+                    Color.Black,
+                    Color.Black.copy(alpha = 0.1f)
+                )
         }
+    }
 
-    // 2) Force a light translucent container so it pops on the blue background
-    val container = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
-    val content   = MaterialTheme.colorScheme.onSurface
+    // 2) animate tint & bg so changes cross‑fade smoothly
+    val animatedTint by animateColorAsState(targetValue = rawTint, tween(600))
+    val animatedBg   by animateColorAsState(targetValue = rawBg,  tween(600))
 
+    // 3) card on top of your blue dash, always light container so it pops
     ElevatedCard(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .background(container),
-        colors    = CardDefaults.elevatedCardColors(containerColor = container),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
+            .background(animatedBg),
+        colors    = CardDefaults.elevatedCardColors(containerColor = animatedBg),
+        elevation = CardDefaults.elevatedCardElevation(4.dp)
     ) {
         Row(
-            modifier = Modifier
+            Modifier
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             verticalAlignment    = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // 3) Crossfade between icons
-            Crossfade(targetState = targetIcon) { currentIcon ->
+            // 4) crossfade the icon, tint it with animatedTint
+            Crossfade(targetState = icon) { currentIcon ->
                 Icon(
                     imageVector   = currentIcon,
                     contentDescription = weatherInfo.conditionText,
-                    tint          = content,
+                    tint          = animatedTint,
                     modifier      = Modifier.size(24.dp)
                 )
             }
 
-            // 4) Texts
+            // 5) text: temperature + condition
             Column {
                 Text(
                     text = weatherInfo.temperature
                         ?.let { "${it.toInt()}°C" }
                         ?: "--°C",
-                    style = MaterialTheme.typography.titleMedium.copy(color = content)
+                    style = MaterialTheme.typography.titleMedium.copy(color = animatedTint)
                 )
                 Text(
                     text = weatherInfo.conditionText,
-                    style = MaterialTheme.typography.bodySmall.copy(color = content)
+                    style = MaterialTheme.typography.bodySmall.copy(color = animatedTint)
                 )
             }
         }
