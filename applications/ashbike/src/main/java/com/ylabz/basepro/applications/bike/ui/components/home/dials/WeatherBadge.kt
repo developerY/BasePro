@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -42,33 +43,36 @@ fun WeatherBadge(
 ) {
     val colors = MaterialTheme.colorScheme
 
-    // pick icon, tint, and a container color based on condition
-    val (icon, iconTint, background) = remember(weatherInfo.conditionText) {
+    // Pick icon + explicit background pastel by condition:
+    val (icon, tint, background) = remember(weatherInfo.conditionText) {
         when {
             weatherInfo.conditionText.contains("rain", true) ->
                 Triple(
                     Icons.Default.Umbrella,
-                    colors.onPrimary,
-                    colors.primary.copy(alpha = 0.15f)
+                    Color(0xFF01579B),               // deep blue tint
+                    Color(0xFF81D4FA).copy(alpha = 0.3f) // light sky‑blue background
                 )
+
             weatherInfo.conditionText.contains("clear", true)
                     || weatherInfo.conditionText.contains("sun", true) ->
                 Triple(
                     Icons.Default.WbSunny,
-                    colors.onSecondary,
-                    colors.secondary.copy(alpha = 0.15f)
+                    Color(0xFFF57F17),               // dark gold tint
+                    Color(0xFFFFF59D).copy(alpha = 0.3f) // pale yellow background
                 )
+
             weatherInfo.conditionText.contains("cloud", true) ->
                 Triple(
                     Icons.Default.Cloud,
-                    colors.onSurfaceVariant,
-                    colors.surfaceVariant.copy(alpha = 0.15f)
+                    Color(0xFF455A64),               // slate‑blue tint
+                    Color(0xFFCFD8DC).copy(alpha = 0.3f) // light grey‑blue background
                 )
+
             else ->
                 Triple(
-                    Icons.Default.HelpOutline,
+                    Icons.AutoMirrored.Filled.HelpOutline,
                     colors.onSurfaceVariant,
-                    colors.surfaceVariant.copy(alpha = 0.10f)
+                    colors.surfaceVariant.copy(alpha = 0.1f)
                 )
         }
     }
@@ -82,52 +86,47 @@ fun WeatherBadge(
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
     ) {
         Row(
-            Modifier
-                .padding(horizontal = 12.dp, vertical = 8.dp),
+            Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Icon(
-                icon,
+                imageVector   = icon,
                 contentDescription = weatherInfo.conditionText,
-                tint = iconTint,
-                modifier = Modifier.size(24.dp)
+                tint          = tint,
+                modifier      = Modifier.size(24.dp)
             )
-
             Column {
                 Text(
-                    text = weatherInfo.temperature
+                    text  = weatherInfo.temperature
                         ?.let { "${it.toInt()}°" }
                         ?: "--°",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        color = iconTint
-                    )
+                    style = MaterialTheme.typography.titleMedium.copy(color = tint)
                 )
                 Text(
-                    text = weatherInfo.conditionText,
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        color = iconTint
-                    )
+                    text  = weatherInfo.conditionText,
+                    style = MaterialTheme.typography.bodySmall.copy(color = tint)
                 )
             }
         }
     }
 }
 
-
-
 @Preview(showBackground = true)
 @Composable
-fun WeatherBadgePreview() {
-    MaterialTheme {
+fun PreviewWeatherBadges() {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.padding(16.dp)) {
         WeatherBadge(
-            weatherInfo = BikeWeatherInfo(
-                windDegree = 0,
-                windSpeed = 0.7,
-                conditionText = "Sunshine",
-                temperature = 22.5
-            ),
-            modifier = Modifier.padding(16.dp)
+            weatherInfo = BikeWeatherInfo(0,0.7,"Sunny",22.0),
+            modifier = Modifier.fillMaxWidth()
+        )
+        WeatherBadge(
+            weatherInfo = BikeWeatherInfo(0,0.7,"Rain",18.0),
+            modifier = Modifier.fillMaxWidth()
+        )
+        WeatherBadge(
+            weatherInfo = BikeWeatherInfo(0,0.7,"Clouds",10.0),
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
