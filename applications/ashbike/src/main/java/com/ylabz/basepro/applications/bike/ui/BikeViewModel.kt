@@ -192,10 +192,13 @@ class BikeViewModel @Inject constructor(
 
                 Log.d("BikeViewModel", "Weather updated inside viewmodel: $weather")
                 BikeWeatherInfo(
-                    windDegree    = weather.wind.deg,
-                    windSpeed     = weather.wind.speed * 3.6f,
+                    windDegree = weather.wind.deg,
+                    windSpeed = weather.wind.speed * 3.6f,
                     conditionText = conditionMain + conditionDesc, // weather.weatherOne.firstOrNull()?.main ?: "Unknown"
-                    temperature   = weather.main.temp                 // ← pull the temperature (°C)
+                    temperature = weather.main.temp,
+                    feelsLike = weather.main.feels_like,
+                    humidity = weather.main.humidity,
+                    // ← pull the temperature (°C)
                 )
             }
 

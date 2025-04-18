@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.SpeedometerWithCompassOverlay
 import com.ylabz.basepro.applications.bike.ui.components.home.dials.WeatherBadge
+import com.ylabz.basepro.applications.bike.ui.components.home.dials.WeatherBadgeWithDetails
 import com.ylabz.basepro.applications.bike.ui.components.path.BigBikeProgressIndicator
 import com.ylabz.basepro.applications.bike.ui.components.path.BikePathWithControls
 import com.ylabz.basepro.applications.bike.ui.components.path.TripControlsWithProgress
@@ -122,7 +123,9 @@ fun SpeedAndProgressCard(
                             slideInHorizontally(initialOffsetX = { it / 2 }, animationSpec = tween(600))
                 ) {
                     weather?.let {
-                        WeatherBadge(conditionText ="${it.temperature?.toInt() ?: "--"}°C ${it.conditionText}")
+                        WeatherBadgeWithDetails(
+                            weatherInfo = it
+                        )
                     }
                 }
             }

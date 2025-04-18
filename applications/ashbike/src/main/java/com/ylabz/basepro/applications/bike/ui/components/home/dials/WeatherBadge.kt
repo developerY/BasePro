@@ -117,15 +117,15 @@ fun WeatherBadge(
 fun PreviewWeatherBadges() {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.padding(16.dp)) {
         WeatherBadge(
-            weatherInfo = BikeWeatherInfo(0,0.7,"Sunny",22.0),
+            weatherInfo = BikeWeatherInfo(0,0.7,"Sunny",22.0, 20.0, 45),
             modifier = Modifier.fillMaxWidth()
         )
         WeatherBadge(
-            weatherInfo = BikeWeatherInfo(0,0.7,"Rain",18.0),
+            weatherInfo = BikeWeatherInfo(0,0.7,"Rain",18.0, 17.0, 82),
             modifier = Modifier.fillMaxWidth()
         )
         WeatherBadge(
-            weatherInfo = BikeWeatherInfo(0,0.7,"Clouds",10.0),
+            weatherInfo = BikeWeatherInfo(0,0.7,"Clouds",10.0, 10.0, 10),
             modifier = Modifier.fillMaxWidth()
         )
     }

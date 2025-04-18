@@ -4,5 +4,7 @@ data class BikeWeatherInfo(
     val windDegree: Int,
     val windSpeed: Double,
     val conditionText: String,
-    val temperature : Double //  = it.main.temp                 // ← pull the temperature (°C)
+    val temperature: Double?,
+    val feelsLike: Double?,
+    val humidity: Int?
 )
