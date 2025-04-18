@@ -109,3 +109,15 @@ fun AnimatedWeatherBadge(
         }
     }
 }
+
+@Preview
+@Composable
+fun AnimatedWeatherBadgePreview() {
+    val weatherInfo = BikeWeatherInfo(
+        windDegree = 180,
+        windSpeed = 15.0,
+        conditionText = "Clear",
+        temperature = 25.0,
+        feelsLike = 26.0, humidity = 60)
+    AnimatedWeatherBadge(weatherInfo)
+}
