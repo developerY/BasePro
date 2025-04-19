@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 @Database(entities = [BikeProEntity::class], version = 1, exportSchema = false)
 abstract class BikeProDB : RoomDatabase() {
 
-    abstract val baseproDao: BikeProDao
+    abstract val bikeProDao: BikeProDao
 
     companion object {
         const val DATABASE_NAME = "bikepro_db"

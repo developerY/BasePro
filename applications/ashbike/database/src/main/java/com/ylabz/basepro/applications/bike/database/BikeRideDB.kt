@@ -18,7 +18,7 @@ abstract class BikeRideDatabase : RoomDatabase() {
     abstract val rideDao: RideDao
 
     companion object {
-        private const val DATABASE_NAME = "bikeride_db"
+        const val DATABASE_NAME = "bikeride_db"
 
         // volatile keeps INSTANCE visible across threads
         @Volatile private var INSTANCE: BikeRideDatabase? = null
