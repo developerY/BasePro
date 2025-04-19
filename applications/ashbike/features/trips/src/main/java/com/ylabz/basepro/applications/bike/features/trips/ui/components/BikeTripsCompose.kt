@@ -45,15 +45,19 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.net.toUri
-import com.ylabz.basepro.applications.bike.database.BikeProEntity
+import com.ylabz.basepro.applications.bike.database.BikeRideEntity
+import com.ylabz.basepro.applications.bike.database.mapper.BikePro
+import com.ylabz.basepro.applications.bike.database.mapper.BikeRide
+import java.time.LocalDateTime.now
 
 
 @Composable
 fun BikeTripsCompose(
     modifier: Modifier = Modifier,
-    data: List<BikeProEntity>,
-    onEvent: (TripsEvent) -> Unit,
-    navTo: (String) -> Unit
+    bikePro:    List<BikePro>,
+    bikeRides:  List<BikeRide>,
+    onEvent:    (TripsEvent) -> Unit,
+    navTo:      (String) -> Unit
 ) {
     var newItemName by remember { mutableStateOf("") }
 
@@ -62,53 +66,69 @@ fun BikeTripsCompose(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Header Row
+        // Header + Delete All
         Row(
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment   = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
+            modifier            = Modifier.fillMaxWidth()
         ) {
-            Text(
-                text = "List of Items",
-                style = MaterialTheme.typography.titleLarge
-            )
-            Spacer(modifier = Modifier.weight(1f))
+            Text("List of Items", style = MaterialTheme.typography.titleLarge)
             Button(
                 onClick = { onEvent(TripsEvent.DeleteAll) },
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                colors  = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
             ) {
                 Text("Delete All!")
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(Modifier.height(16.dp))
 
-        // Scrollable list of items inside LazyColumn
+        // Single LazyColumn, two sections
         LazyColumn(
-            modifier = Modifier.weight(1f),
+            modifier           = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(data) { item ->
-                //BikeTripCard(bikeTrip = item, )
-                Column {
-                    BikeTripCard(item = item, onEvent = onEvent, navTo = navTo)
-                    CamItemRow(item = item, onEvent = onEvent, navTo = navTo)
-                }
+            // --- Section 1: BikePro ---
+            item {
+                Text(
+                    text  = "BikePro Items",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+            items(bikePro) { pro ->
+                BikeTripCard(item = pro, onEvent = onEvent, navTo = navTo)
+            }
+
+            // --- Section Separator ---
+            item {
+                Spacer(Modifier.height(16.dp))
+            }
+
+            // --- Section 2: BikeRides ---
+            item {
+                Text(
+                    text  = "Bike Rides",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+            items(bikeRides) { ride ->
+                // replace with your Ride‑specific card
+                BikeRideCard(ride = ride, onEvent = onEvent, navTo = navTo)
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(Modifier.height(16.dp))
 
-        // Input for new item
+        // Inputs for adding new items + rides
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier           = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             TextField(
-                value = newItemName,
+                value       = newItemName,
                 onValueChange = { newItemName = it },
-                label = { Text("New Item") },
-                modifier = Modifier.weight(1f)
+                label       = { Text("New Item") },
+                modifier    = Modifier.weight(1f)
             )
             Button(
                 onClick = {
@@ -123,17 +143,16 @@ fun BikeTripsCompose(
             }
             Button(
                 onClick = {
-                    if (newItemName.isNotBlank()) {
-                        onEvent(TripsEvent.AddBikeRide)//(newItemName))  newItemName = ""
-                    }
+                    onEvent(TripsEvent.AddBikeRide)
                 },
                 modifier = Modifier.padding(start = 8.dp)
             ) {
-                Text("new ride")
+                Text("New Ride")
             }
         }
     }
 }
+
 
 
 @Composable
@@ -164,7 +183,7 @@ fun CapturedImagePreview(imageUri: Uri) {
 @Composable
 fun BikeTripsComposePreview() {
     val sampleData = listOf(
-        BikeProEntity(
+        BikePro(
             startTime = System.currentTimeMillis() - 3600000,
             endTime = System.currentTimeMillis(),
             totalDistance = 15000f,
@@ -178,7 +197,7 @@ fun BikeTripsComposePreview() {
             endLat = 37.7739,
             endLng = -122.4312
         ),
-        BikeProEntity(
+        BikePro(
             startTime = System.currentTimeMillis() - 7200000,
             endTime = System.currentTimeMillis() - 3600000,
             totalDistance = 20000f,
@@ -193,8 +212,89 @@ fun BikeTripsComposePreview() {
             endLng = -118.2537
         )
     )
+
+// ——— Sample BikeRide data ———
+    val sampleBikeRides = listOf(
+        BikeRideEntity(
+            // Core Information
+            startTime = System.currentTimeMillis() - 3_600_000L,  // 1 hr ago
+            endTime = System.currentTimeMillis(),
+            totalDistance = 10_000f,           // 10 km
+            averageSpeed = 2.8f,              // m/s (~10 km/h)
+            maxSpeed = 5.0f,              // m/s (~18 km/h)
+
+            // Elevation & Calories
+            elevationGain = 80f,
+            elevationLoss = 75f,
+            caloriesBurned = 400,
+
+            // Health Connect (optional)
+            avgHeartRate = 120,
+            maxHeartRate = 150,
+            healthConnectRecordId = null,
+            isHealthDataSynced = false,
+
+            // Context
+            weatherCondition = "Sunny, 20°C",
+            rideType = "Road",
+
+            // Feedback
+            notes = "Morning loop in the park",
+            rating = 4,
+            isSynced = false,
+
+            // Bike & Battery
+            bikeId = "RB‑01",
+            batteryStart = 100,
+            batteryEnd = 95,
+
+            // Quick coords
+            startLat = 37.7749,
+            startLng = -122.4194,
+            endLat = 37.7849,
+            endLng = -122.4094
+        ),
+        BikeRide(
+            startTime = System.currentTimeMillis() - 7_200_000L,  // 2 hrs ago
+            endTime = System.currentTimeMillis() - 3_600_000L,  // 1 hr ago
+            totalDistance = 8_000f,            // 8 km
+            averageSpeed = 2.2f,              // m/s (~8 km/h)
+            maxSpeed = 4.5f,              // m/s (~16 km/h)
+
+            elevationGain = 50f,
+            elevationLoss = 45f,
+            caloriesBurned = 350,
+
+            avgHeartRate = 115,
+            maxHeartRate = 140,
+            healthConnectRecordId = null,
+            isHealthDataSynced = false,
+
+            weatherCondition = "Cloudy, 18°C",
+            rideType = "Mountain",
+
+            notes = "Trail ride",
+            rating = 5,
+            isSynced = false,
+
+            bikeId = "MTB‑02",
+            batteryStart = 100,
+            batteryEnd = 90,
+
+            startLat = 34.0522,
+            startLng = -118.2437,
+            endLat = 34.0622,
+            endLng = -118.2537
+        )
+    )
+
+
+
+
+
     BikeTripsCompose(
-        data = sampleData,
+        bikePro = sampleData,
+        bikeRides = sampleBikeRides,
         onEvent = { },
         navTo = { }
     )

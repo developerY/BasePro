@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 import com.ylabz.basepro.applications.bike.database.mapper.BikePro
+import kotlinx.coroutines.flow.combine
 
 
 @HiltViewModel
@@ -69,9 +70,19 @@ class TripsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _uiState.value = TripsUIState.Loading
-                TestRepo.allGetBikePros().collect { data ->
-                    _uiState.value = TripsUIState.Success(bikePro = data)
+                combine(
+                    TestRepo.allGetBikePros(),            // Flow<List<BikePro>>
+                    bikeRideRepo.getAllRides()            // Flow<List<BikeRideEntity>>
+                ) { pros, rides ->
+                    TripsUIState.Success(
+                        bikePro  = pros,
+                        bikeRides = rides
+                    )
                 }
+                    .collect { state ->
+                        _uiState.value = state
+                    }
+
             } catch (e: Exception) {
                 handleError(e)
             }
