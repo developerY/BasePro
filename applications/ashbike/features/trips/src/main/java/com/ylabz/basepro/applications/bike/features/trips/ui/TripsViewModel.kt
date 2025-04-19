@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.database.BikeProEntity
 import com.ylabz.basepro.applications.bike.database.BikeProRepo
+import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +16,8 @@ import com.ylabz.basepro.applications.bike.database.mapper.BikePro
 
 @HiltViewModel
 class TripsViewModel @Inject constructor(
-    private val repository: BikeProRepo
+    private val TestRepo: BikeProRepo,
+    private val bikeRideRepo: BikeRideRepo
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<TripsUIState>(TripsUIState.Loading)
@@ -44,7 +46,7 @@ class TripsViewModel @Inject constructor(
             // Fetch the item details only if they are not already loaded
             if (_selectedItem.value?.id != itemId) {
 
-                _selectedItem.value = repository.getBikeProById(itemId)
+                _selectedItem.value = TestRepo.getBikeProById(itemId)
             }
         }
     }
@@ -52,7 +54,7 @@ class TripsViewModel @Inject constructor(
     private fun deleteAll() {
         viewModelScope.launch {
             try {
-                repository.deleteAll()
+                TestRepo.deleteAll()
                 // Optionally refresh data after deletion
                 onEvent(TripsEvent.LoadData)
             } catch (e: Exception) {
@@ -65,7 +67,7 @@ class TripsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _uiState.value = TripsUIState.Loading
-                repository.allGetBikePros().collect { data ->
+                TestRepo.allGetBikePros().collect { data ->
                     _uiState.value = TripsUIState.Success(data = data)
                 }
             } catch (e: Exception) {
@@ -112,7 +114,7 @@ class TripsViewModel @Inject constructor(
                     batteryEnd = null
                 )
 
-                repository.insert(newBikePro)
+                TestRepo.insert(newBikePro)
                 // Refresh data after adding the new item.
                 onEvent(TripsEvent.LoadData)
             } catch (e: Exception) {
@@ -125,7 +127,7 @@ class TripsViewModel @Inject constructor(
     private fun deleteItem(itemId: Int) {
         viewModelScope.launch {
             try {
-                repository.deleteById(itemId)
+                TestRepo.deleteById(itemId)
                 onEvent(TripsEvent.LoadData)  // Refresh data after deletion
             } catch (e: Exception) {
                 handleError(e)

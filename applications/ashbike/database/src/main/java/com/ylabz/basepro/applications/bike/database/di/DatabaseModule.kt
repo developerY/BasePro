@@ -37,6 +37,11 @@ object DatabaseModule {
     fun provideBikeProDao(@ProDatabase db: BikeProDB): BikeProDao =
         db.bikeProDao
 
+    @Provides
+    @Singleton
+    fun provideBikeRideDao(@RideDatabase db: BikeRideDatabase): BikeRideDao =
+        db.bikeRideDao
+
     @RideDatabase
     @Provides
     @Singleton
