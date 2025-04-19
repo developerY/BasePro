@@ -119,7 +119,17 @@ fun BikeTripsCompose(
                 },
                 modifier = Modifier.padding(start = 8.dp)
             ) {
-                Text("Add")
+                Text("+")
+            }
+            Button(
+                onClick = {
+                    if (newItemName.isNotBlank()) {
+                        onEvent(TripsEvent.AddBikeRide)//(newItemName))  newItemName = ""
+                    }
+                },
+                modifier = Modifier.padding(start = 8.dp)
+            ) {
+                Text("new ride")
             }
         }
     }

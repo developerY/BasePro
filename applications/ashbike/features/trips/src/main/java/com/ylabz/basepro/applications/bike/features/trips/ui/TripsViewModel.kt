@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.database.BikeProEntity
 import com.ylabz.basepro.applications.bike.database.BikeProRepo
+import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +39,7 @@ class TripsViewModel @Inject constructor(
             is TripsEvent.DeleteAll -> deleteAll()
             is TripsEvent.OnRetry -> onEvent(TripsEvent.LoadData)
             is TripsEvent.OnItemClicked -> selectItem(event.itemId)
+            is TripsEvent.AddBikeRide -> addBikeRide()
         }
     }
 
@@ -68,13 +70,67 @@ class TripsViewModel @Inject constructor(
             try {
                 _uiState.value = TripsUIState.Loading
                 TestRepo.allGetBikePros().collect { data ->
-                    _uiState.value = TripsUIState.Success(data = data)
+                    _uiState.value = TripsUIState.Success(bikePro = data)
                 }
             } catch (e: Exception) {
                 handleError(e)
             }
         }
     }
+
+    private fun addBikeRide() {
+        viewModelScope.launch {
+            try {
+                val now = System.currentTimeMillis()
+
+                val newRide = BikeRideEntity(
+                    // Core BikeRide Information
+                    startTime        = now,
+                    endTime          = now + 30 * 60_000L,  // 30‑minute ride
+                    totalDistance    = 10_000f,             // 10 km
+                    averageSpeed     = 5.6f,                // ≈20 km/h
+                    maxSpeed         = 8.3f,                // ≈30 km/h
+
+                    // Elevation and Fitness Data
+                    elevationGain    = 120f,                // meters climbed
+                    elevationLoss    = 115f,                // meters descended
+                    caloriesBurned   = 450,                 // kcal
+
+                    // Optional Health Connect
+                    avgHeartRate          = 125,            // bpm
+                    maxHeartRate          = 158,            // bpm
+                    healthConnectRecordId = null,
+                    isHealthDataSynced    = false,
+
+                    // Environmental & Context
+                    weatherCondition = "Sunny, 22°C",
+                    rideType         = "Road",
+
+                    // User Feedback
+                    notes   = "Evening loop around the park",
+                    rating  = 4,     // out of 5
+                    isSynced = false,
+
+                    // Bike & Battery
+                    bikeId       = "RoadBike‑123",
+                    batteryStart = 100,  // %
+                    batteryEnd   = 95,   // %
+
+                    // Start/End coords for quick queries
+                    startLat = 37.7749,
+                    startLng = -122.4194,
+                    endLat   = 37.7793,
+                    endLng   = -122.4188
+                )
+
+                bikeRideRepo.insert(newRide)
+                onEvent(TripsEvent.LoadData)
+            } catch (e: Exception) {
+                handleError(e)
+            }
+        }
+    }
+
 
     private fun addItem(name: String?) {
         viewModelScope.launch {

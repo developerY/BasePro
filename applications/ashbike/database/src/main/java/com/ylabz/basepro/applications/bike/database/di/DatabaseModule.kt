@@ -23,52 +23,51 @@ import kotlin.jvm.java
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
+    @Module
+    @InstallIn(SingletonComponent::class)
+    object DatabaseModule {
 
-    @ProDatabase
-    @Provides
-    @Singleton
-    fun provideBikeProDB(@ApplicationContext ctx: Context): BikeProDB =
-        Room.databaseBuilder(ctx, BikeProDB::class.java, BikeProDB.DATABASE_NAME)
-            .fallbackToDestructiveMigration() // dev‑only
-            .build()
+        @ProDatabase
+        @Provides @Singleton
+        fun provideBikeProDB(@ApplicationContext ctx: Context): BikeProDB =
+            Room
+                .databaseBuilder(ctx, BikeProDB::class.java, BikeProDB.DATABASE_NAME)
+                .fallbackToDestructiveMigration()
+                .build()
 
-    @Provides
-    @Singleton
-    fun provideBikeProDao(@ProDatabase db: BikeProDB): BikeProDao =
-        db.bikeProDao
+        @Provides @Singleton
+        fun provideBikeProDao(@ProDatabase db: BikeProDB): BikeProDao =
+            db.bikeProDao
 
-    @Provides
-    @Singleton
-    fun provideBikeRideDao(@RideDatabase db: BikeRideDatabase): BikeRideDao =
-        db.bikeRideDao
+        @RideDatabase
+        @Provides @Singleton
+        fun provideBikeRideDB(@ApplicationContext ctx: Context): BikeRideDatabase =
+            Room
+                .databaseBuilder(ctx, BikeRideDatabase::class.java, BikeRideDatabase.DATABASE_NAME)
+                .fallbackToDestructiveMigration()
+                .build()
 
-    @RideDatabase
-    @Provides
-    @Singleton
-    fun provideBikeRideDB(@ApplicationContext ctx: Context): BikeRideDatabase =
-        Room.databaseBuilder(ctx, BikeRideDatabase::class.java, BikeRideDatabase.DATABASE_NAME)
-            .fallbackToDestructiveMigration() // dev‑only
-            .build()
+        // ✅ Match the RideDatabase qualifier
+        @Provides @Singleton
+        fun provideBikeRideDao(@RideDatabase db: BikeRideDatabase): BikeRideDao =
+            db.bikeRideDao
 
-    @Provides
-    @Singleton
-    fun provideBikeProRepository(BikeProDao: BikeProDao): BikeProRepo {
-        return BikeProRepoImpl(BikeProDao)
+        @Provides @Singleton
+        fun provideBikeProRepository(bikeProDao: BikeProDao): BikeProRepo =
+            BikeProRepoImpl(bikeProDao)
+
+        @Provides @Singleton
+        fun provideBikeRideRepository(rideDao: BikeRideDao): BikeRideRepo =
+            BikeRideRepoImpl(rideDao)
     }
 
-
-    @Provides
-    @Singleton
-    fun provideBikeRideRepository(bikeRideDao: BikeRideDao): BikeRideRepo {
-        return BikeRideRepoImpl(bikeRideDao)
-    }
 }
 
 
-    @Qualifier
-    @Retention(AnnotationRetention.BINARY)
-    annotation class ProDatabase
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class ProDatabase
 
-    @Qualifier
-    @Retention(AnnotationRetention.BINARY)
-    annotation class RideDatabase
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class RideDatabase
