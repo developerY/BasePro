@@ -1,22 +1,15 @@
 package com.ylabz.basepro.applications.bike.database.di
 
 import android.content.Context
-import androidx.room.Database
 import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import com.ylabz.basepro.applications.bike.database.BikeDatabase
 import com.ylabz.basepro.applications.bike.database.BikeProDB
 import com.ylabz.basepro.applications.bike.database.BikeProDao
-import com.ylabz.basepro.applications.bike.database.BikeProEntity
-import com.ylabz.basepro.applications.bike.database.OtherDatabase
 import com.ylabz.basepro.applications.bike.database.repository.BikeProRepoImpl
 import com.ylabz.basepro.applications.bike.database.BikeProRepo
 import com.ylabz.basepro.applications.bike.database.BikeRideDatabase
-import com.ylabz.basepro.applications.bike.database.RideDao
-import com.ylabz.basepro.applications.bike.database.RideEntity
-import com.ylabz.basepro.applications.bike.database.RideLocationEntity
-import com.ylabz.basepro.applications.bike.database.converter.Converters
+import com.ylabz.basepro.applications.bike.database.BikeRideDao
+import com.ylabz.basepro.applications.bike.database.BikeRideRepo
+import com.ylabz.basepro.applications.bike.database.repository.BikeRideRepoImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -61,7 +54,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideBikeRideRepository(bikeRideDao: RideDao): BikeProRepo {
+    fun provideBikeRideRepository(bikeRideDao: BikeRideDao): BikeRideRepo {
         return BikeRideRepoImpl(bikeRideDao)
     }
 }

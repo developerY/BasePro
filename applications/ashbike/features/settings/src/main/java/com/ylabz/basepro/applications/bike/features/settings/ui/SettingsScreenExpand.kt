@@ -396,7 +396,7 @@ fun ProfileBikeInfoCardEx(
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                     )
                     Text(
-                        text = "Battery: $bikeBattery | Last Ride: $lastRide",
+                        text = "Battery: $bikeBattery | Last BikeRide: $lastRide",
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }

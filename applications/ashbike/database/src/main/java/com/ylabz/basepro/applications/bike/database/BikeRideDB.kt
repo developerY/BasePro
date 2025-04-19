@@ -9,13 +9,13 @@ import com.ylabz.basepro.applications.bike.database.converter.Converters
 import kotlin.jvm.java
 
 @Database(
-    entities = [ RideEntity::class, RideLocationEntity::class ],
+    entities = [ BikeRideEntity::class, RideLocationEntity::class ],
     version = 1,
     exportSchema = false
 )
 @TypeConverters(Converters::class)  // only if you have custom types
 abstract class BikeRideDatabase : RoomDatabase() {
-    abstract val rideDao: RideDao
+    abstract val bikeRideDao: BikeRideDao
 
     companion object {
         const val DATABASE_NAME = "bikeride_db"

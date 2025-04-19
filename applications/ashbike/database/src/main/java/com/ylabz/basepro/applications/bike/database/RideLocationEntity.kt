@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
     tableName = "ride_locations",
     foreignKeys = [
         ForeignKey(
-            entity = RideEntity::class,
+            entity = BikeRideEntity::class,
             parentColumns = ["rideId"],
             childColumns = ["rideOwnerId"],
             onDelete = CASCADE
@@ -20,7 +20,7 @@ import androidx.room.PrimaryKey
 )
 data class RideLocationEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
-    val rideOwnerId: String,       // FK → RideEntity.rideId
+    val rideOwnerId: String,       // FK → BikeRideEntity.rideId
     val timestamp: Long,           // epoch millis
     val latitude: Double,
     val longitude: Double,

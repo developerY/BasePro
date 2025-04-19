@@ -4,11 +4,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.UUID
 
-@Entity(tableName = "rides")
-data class RideEntity(
+@Entity(tableName = "bike_rides_table")
+data class BikeRideEntity(
     @PrimaryKey val rideId: String = UUID.randomUUID().toString(),
 
-    // Core Ride Information
+    // Core BikeRide Information
     val startTime: Long,
     val endTime: Long,
     val totalDistance: Float,

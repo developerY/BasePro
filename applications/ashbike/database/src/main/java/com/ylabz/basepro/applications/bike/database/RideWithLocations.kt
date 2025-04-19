@@ -4,7 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Relation
 
 data class RideWithLocations(
-    @Embedded val ride: RideEntity,
+    @Embedded val rideLoc: BikeRideEntity,
     @Relation(
         parentColumn = "rideId",
         entityColumn = "rideOwnerId"

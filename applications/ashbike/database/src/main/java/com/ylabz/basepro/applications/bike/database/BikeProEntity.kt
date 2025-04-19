@@ -8,10 +8,10 @@ import com.ylabz.basepro.applications.bike.database.converter.Converters
 
 @Entity(tableName = "bikepro_table")
 @TypeConverters(Converters::class)
-data class BikeProEntity( // Replace with your entity name "Ride"
+data class BikeProEntity( // Replace with your entity name "BikeRide"
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 
-    // Core Ride Information
+    // Core BikeRide Information
     val startTime: Long, // Epoch time in milliseconds
     val endTime: Long,
     val totalDistance: Float, // in meters
@@ -59,7 +59,7 @@ data class BikeProUpdate(
 )
 
 /*
-data class Ride(
+data class BikeRide(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
     val startTime: Long,

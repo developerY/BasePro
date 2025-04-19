@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.database.BikeProEntity
 import com.ylabz.basepro.applications.bike.database.BikeProRepo
-import com.ylabz.basepro.applications.bike.database.RideEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,8 +15,7 @@ import com.ylabz.basepro.applications.bike.database.mapper.BikePro
 
 @HiltViewModel
 class TripsViewModel @Inject constructor(
-    private val repository: BikeProRepo,
-    piravte val repository:
+    private val repository: BikeProRepo
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<TripsUIState>(TripsUIState.Loading)
@@ -70,45 +68,6 @@ class TripsViewModel @Inject constructor(
                 repository.allGetBikePros().collect { data ->
                     _uiState.value = TripsUIState.Success(data = data)
                 }
-            } catch (e: Exception) {
-                handleError(e)
-            }
-        }
-    }
-
-
-    /** Called by your “Add” button. */
-    fun addRide() {
-        viewModelScope.launch {
-            try {
-                val now = System.currentTimeMillis()
-
-                // 1) Build a new RideEntity. Omitting rideId uses the default UUID.
-                val newRide = RideEntity(
-                    startTimestamp = now,
-                    endTimestamp = now + 5 * 60_000L,   // e.g. +5 minutes
-                    distanceMeters = 0.0,                // start at zero
-                    avgSpeedMetersPerSec = 0.0,
-                    maxSpeedMetersPerSec = 0.0,
-                    calories = 0.0,                // or null
-                    elevationGainMeters = 0.0                 // or null
-                    // …any other nullable fields will use their defaults
-                )
-
-                // 2) (Optional) If you want to seed it with one sample location:
-                // val sampleLocation = RideLocationEntity(
-                //     rideOwnerId = newRide.rideId,
-                //     timestamp   = now,
-                //     latitude    = 0.0,
-                //     longitude   = 0.0
-                // )
-                // rideRepository.saveRide(newRide, listOf(sampleLocation))
-
-                // 3) Save it (no locations for now)
-                rideRepository.saveRide(newRide)
-
-                // 4) Trigger a reload of your UI list
-                onEvent(TripsEvent.LoadData)
             } catch (e: Exception) {
                 handleError(e)
             }

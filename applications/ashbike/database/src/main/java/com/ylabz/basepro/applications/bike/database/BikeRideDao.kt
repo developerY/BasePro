@@ -1,6 +1,7 @@
 package com.ylabz.basepro.applications.bike.database
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -8,21 +9,25 @@ import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface RideDao {
+interface BikeRideDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRide(ride: RideEntity)
+    suspend fun insertRide(ride: BikeRideEntity)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertLocations(locations: List<RideLocationEntity>)
 
     @Transaction
-    @Query("SELECT * FROM rides WHERE rideId = :id")
+    @Query("SELECT * FROM bike_rides_table WHERE rideId = :id")
     fun getRideWithLocations(id: String): Flow<RideWithLocations?>
 
     @Transaction
-    @Query("SELECT * FROM rides ORDER BY startTime DESC")
+    @Query("SELECT * FROM bike_rides_table ORDER BY startTime DESC")
     fun getAllRidesWithLocations(): Flow<List<RideWithLocations>>
 
-    @Query("DELETE FROM rides WHERE rideId = :id")
+    @Query("DELETE FROM bike_rides_table WHERE rideId = :id")
     suspend fun deleteRide(id: String)
+
+    /** Wipe entire rides table. */
+    @Query("DELETE FROM bike_rides_table")
+    suspend fun deleteAllBikeRides()
 }
