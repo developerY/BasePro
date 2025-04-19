@@ -13,6 +13,7 @@ import com.ylabz.basepro.applications.bike.features.trips.ui.components.DetailsT
 import com.ylabz.basepro.applications.bike.ui.BikeUiRoute
 
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsUiRoute
+import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailScreen
 
 // Define BikeNavGraph as an extension function on NavGraphBuilder
 fun NavGraphBuilder.bikeNavGraph(
@@ -34,7 +35,9 @@ fun NavGraphBuilder.bikeNavGraph(
             // track bike ride screen
             TripsUIRoute(
                 modifier = modifier,
-                navTo = { path -> navHostController.navigate(path) }
+                navTo = { rideId ->
+                    navHostController.navigate("ride/$rideId")
+                }
             )
         }
         composable(BikeScreen.SettingsBikeScreen.route) {
@@ -44,18 +47,21 @@ fun NavGraphBuilder.bikeNavGraph(
             )
         }
 
-        // master / detail views for tasks
+        // ---- Ride Detail Screen ----
         composable(
-            route = "details/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.IntType })
+            route = "ride/{rideId}",
+            arguments = listOf(navArgument("rideId") {
+                type = NavType.StringType
+            })
         ) { backStackEntry ->
-            val itemId = backStackEntry.arguments?.getInt("id")
-            itemId?.let {
-                DetailsTripRoute(
-                    navController = navHostController,
-                    itemId = it
-                )
-            }
+            val rideId = backStackEntry.arguments
+                ?.getString("rideId")
+                ?: return@composable
+
+            RideDetailScreen(
+                rideId = rideId,
+                onBack = { navHostController.popBackStack() }
+            )
         }
     }
 }

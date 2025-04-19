@@ -63,6 +63,9 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     // kapt(libs.hilt.compiler)
 
+    // maps
+    implementation(libs.google.maps.compose)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
