@@ -11,7 +11,7 @@ abstract class BikeProDB : RoomDatabase() {
     abstract val baseproDao: BikeProDao
 
     companion object {
-        const val DATABASE_NAME = "basepro_db"
+        const val DATABASE_NAME = "bikepro_db"
 
         @JvmStatic
         fun getDatabase(context: Context): BikeProDB {
