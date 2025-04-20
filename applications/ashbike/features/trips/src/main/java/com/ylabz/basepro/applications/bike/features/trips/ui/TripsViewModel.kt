@@ -13,12 +13,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 import com.ylabz.basepro.applications.bike.database.mapper.BikePro
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onStart
 
 
 @HiltViewModel
 class TripsViewModel @Inject constructor(
-    private val TestRepo: BikeProRepo,
     private val bikeRideRepo: BikeRideRepo
 ) : ViewModel() {
 
@@ -35,29 +36,28 @@ class TripsViewModel @Inject constructor(
     fun onEvent(event: TripsEvent) {
         when (event) {
             is TripsEvent.LoadData -> loadData()
-            is TripsEvent.AddItem -> addItem(event.name)
-            is TripsEvent.DeleteItem -> deleteItem(event.itemId)
+            //is TripsEvent.DeleteItem -> deleteItem(event.itemId)
             is TripsEvent.DeleteAll -> deleteAll()
             is TripsEvent.OnRetry -> onEvent(TripsEvent.LoadData)
-            is TripsEvent.OnItemClicked -> selectItem(event.itemId)
+            //is TripsEvent.OnItemClicked -> selectItem(event.itemId)
             is TripsEvent.AddBikeRide -> addBikeRide()
         }
     }
 
-    fun selectItem(itemId: Int) {
+    /*fun selectItem(itemId: Int) {
         viewModelScope.launch {
             // Fetch the item details only if they are not already loaded
             if (_selectedItem.value?.id != itemId) {
 
-                _selectedItem.value = TestRepo.getBikeProById(itemId)
+                _selectedItem.value = bikeRideRepo.get(itemId)
             }
         }
-    }
+    }*/
 
     private fun deleteAll() {
         viewModelScope.launch {
             try {
-                TestRepo.deleteAll()
+                bikeRideRepo.deleteAll()
                 // Optionally refresh data after deletion
                 onEvent(TripsEvent.LoadData)
             } catch (e: Exception) {
@@ -68,26 +68,19 @@ class TripsViewModel @Inject constructor(
 
     private fun loadData() {
         viewModelScope.launch {
+            _uiState.value = TripsUIState.Loading
             try {
-                _uiState.value = TripsUIState.Loading
-                combine(
-                    TestRepo.allGetBikePros(),            // Flow<List<BikePro>>
-                    bikeRideRepo.getAllRides()            // Flow<List<BikeRideEntity>>
-                ) { pros, rides ->
-                    TripsUIState.Success(
-                        bikePro  = pros,
+                bikeRideRepo.getAllRides().collect { rides ->
+                    _uiState.value = TripsUIState.Success(
                         bikeRides = rides
                     )
                 }
-                    .collect { state ->
-                        _uiState.value = state
-                    }
-
             } catch (e: Exception) {
                 handleError(e)
             }
         }
     }
+
 
     private fun addBikeRide() {
         viewModelScope.launch {
@@ -136,66 +129,6 @@ class TripsViewModel @Inject constructor(
 
                 bikeRideRepo.insert(newRide)
                 onEvent(TripsEvent.LoadData)
-            } catch (e: Exception) {
-                handleError(e)
-            }
-        }
-    }
-
-
-    private fun addItem(name: String?) {
-        viewModelScope.launch {
-            try {
-                // Create a new BikePro entity.
-                // Adjust the default values for timestamps, speeds, distance, etc., as required.
-                val newBikePro = BikePro(
-                    // Assuming the id is auto-generated; omit it or rely on default value.
-                    // title = name,
-                    startTime = System.currentTimeMillis(),          // Current time as start
-                    endTime = System.currentTimeMillis() + 5 * 60 * 1000, // Example: ride lasts 5 minutes
-                    totalDistance = 0f,                                // Starting with zero distance
-                    averageSpeed = 0f,
-                    maxSpeed = 0f,
-                    elevationGain = 0f,
-                    elevationLoss = 0f,
-                    caloriesBurned = 0,
-                    // Optional Health Connect fields left as defaults:
-                    avgHeartRate = null,
-                    maxHeartRate = null,
-                    healthConnectRecordId = null,
-                    isHealthDataSynced = false,
-                    // Location and route data (placeholder values)
-                    startLat = 0.0,
-                    startLng = 0.0,
-                    endLat = 0.0,
-                    endLng = 0.0,
-                    routeJson = null,
-                    // Additional optional metadata
-                    weatherCondition = null,
-                    rideType = null,
-                    notes = null,
-                    rating = null,
-                    isSynced = false,
-                    bikeId = null,
-                    batteryStart = null,
-                    batteryEnd = null
-                )
-
-                TestRepo.insert(newBikePro)
-                // Refresh data after adding the new item.
-                onEvent(TripsEvent.LoadData)
-            } catch (e: Exception) {
-                handleError(e)
-            }
-        }
-    }
-
-
-    private fun deleteItem(itemId: Int) {
-        viewModelScope.launch {
-            try {
-                TestRepo.deleteById(itemId)
-                onEvent(TripsEvent.LoadData)  // Refresh data after deletion
             } catch (e: Exception) {
                 handleError(e)
             }

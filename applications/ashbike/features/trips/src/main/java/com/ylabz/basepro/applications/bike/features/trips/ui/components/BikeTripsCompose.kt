@@ -54,7 +54,6 @@ import java.time.LocalDateTime.now
 @Composable
 fun BikeTripsCompose(
     modifier: Modifier = Modifier,
-    bikePro:    List<BikePro>,
     bikeRides:  List<BikeRide>,
     onEvent:    (TripsEvent) -> Unit,
     navTo:      (String) -> Unit
@@ -88,17 +87,7 @@ fun BikeTripsCompose(
             modifier           = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // --- Section 1: BikePro ---
-            item {
-                Text(
-                    text  = "BikePro Items",
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-            items(bikePro) { pro ->
-                BikeTripCard(item = pro, onEvent = onEvent, navTo = navTo)
-            }
-
+            // --- Section 1: BikePro --- REMOVED
             // --- Section Separator ---
             item {
                 Spacer(Modifier.height(16.dp))
@@ -130,17 +119,6 @@ fun BikeTripsCompose(
                 label       = { Text("New Item") },
                 modifier    = Modifier.weight(1f)
             )
-            Button(
-                onClick = {
-                    if (newItemName.isNotBlank()) {
-                        onEvent(TripsEvent.AddItem(newItemName))
-                        newItemName = ""
-                    }
-                },
-                modifier = Modifier.padding(start = 8.dp)
-            ) {
-                Text("+")
-            }
             Button(
                 onClick = {
                     onEvent(TripsEvent.AddBikeRide)
@@ -182,38 +160,7 @@ fun CapturedImagePreview(imageUri: Uri) {
 @Preview(showBackground = true)
 @Composable
 fun BikeTripsComposePreview() {
-    val sampleData = listOf(
-        BikePro(
-            startTime = System.currentTimeMillis() - 3600000,
-            endTime = System.currentTimeMillis(),
-            totalDistance = 15000f,
-            averageSpeed = 25f,
-            maxSpeed = 40f,
-            elevationGain = 200f,
-            elevationLoss = 180f,
-            caloriesBurned = 500,
-            startLat = 37.7749,
-            startLng = -122.4194,
-            endLat = 37.7739,
-            endLng = -122.4312
-        ),
-        BikePro(
-            startTime = System.currentTimeMillis() - 7200000,
-            endTime = System.currentTimeMillis() - 3600000,
-            totalDistance = 20000f,
-            averageSpeed = 30f,
-            maxSpeed = 45f,
-            elevationGain = 300f,
-            elevationLoss = 250f,
-            caloriesBurned = 700,
-            startLat = 34.0522,
-            startLng = -118.2437,
-            endLat = 34.0622,
-            endLng = -118.2537
-        )
-    )
-
-// ——— Sample BikeRide data ———
+    // ——— Sample BikeRide data ———
     val sampleBikeRides = listOf(
         BikeRideEntity(
             // Core Information
@@ -287,13 +234,7 @@ fun BikeTripsComposePreview() {
             endLng = -118.2537
         )
     )
-
-
-
-
-
     BikeTripsCompose(
-        bikePro = sampleData,
         bikeRides = sampleBikeRides,
         onEvent = { },
         navTo = { }

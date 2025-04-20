@@ -29,7 +29,6 @@ fun TripsUIRoute(
             Column(modifier = modifier) {
                 BikeTripsCompose(
                     modifier = modifier,
-                    bikePro = uiState.bikePro,
                     bikeRides = uiState.bikeRides,
                     onEvent = { event -> viewModel.onEvent(event) },
                     navTo = navTo
