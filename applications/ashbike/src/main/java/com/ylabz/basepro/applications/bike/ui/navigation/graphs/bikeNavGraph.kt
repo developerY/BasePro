@@ -18,50 +18,44 @@ import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDeta
 // Define BikeNavGraph as an extension function on NavGraphBuilder
 fun NavGraphBuilder.bikeNavGraph(
     modifier: Modifier = Modifier,
-    navHostController: NavHostController,
-    startDestination: String = BikeScreen.HomeBikeScreen.route
+    navHostController: NavHostController
 ) {
-    navigation(
-        startDestination = startDestination,
-        route = "bike_nav_graph"
-    ) {
-        composable(BikeScreen.HomeBikeScreen.route) {
-            BikeUiRoute(
-                modifier = modifier,
-                navTo = { path -> navHostController.navigate(path) }
-            )
-        }
-        composable(BikeScreen.TripBikeScreen.route) {
-            // track bike ride screen
-            TripsUIRoute(
-                modifier = modifier,
-                navTo = { rideId ->
-                    navHostController.navigate("ride/$rideId")
-                }
-            )
-        }
-        composable(BikeScreen.SettingsBikeScreen.route) {
-            SettingsUiRoute(
-                modifier = modifier,
-                navTo = { path -> navHostController.navigate(path) }
-            )
-        }
+    // 1) Home Tab
+    composable(BikeScreen.HomeBikeScreen.route) {
+        BikeUiRoute(
+            modifier = modifier,
+            navTo    = { path -> navHostController.navigate(path) }
+        )
+    }
 
-        // ---- Ride Detail Screen ----
-        composable(
-            route = "ride/{rideId}",
-            arguments = listOf(navArgument("rideId") {
-                type = NavType.StringType
-            })
-        ) { backStackEntry ->
-            val rideId = backStackEntry.arguments
-                ?.getString("rideId")
-                ?: return@composable
+    // 2) Trips Tab
+    composable(BikeScreen.TripBikeScreen.route) {
+        TripsUIRoute(
+            modifier = modifier,
+            navTo    = { rideId ->
+                // now this will match the "ride/{rideId}" below
+                navHostController.navigate(BikeScreen.RideDetailScreen.createRoute(rideId))
+            }
+        )
+    }
 
-            RideDetailScreen(
-                rideId = rideId,
-                onBack = { navHostController.popBackStack() }
-            )
-        }
+    // 3) Settings Tab
+    composable(BikeScreen.SettingsBikeScreen.route) {
+        SettingsUiRoute(
+            modifier = modifier,
+            navTo    = { path -> navHostController.navigate(path) }
+        )
+    }
+
+    // 4) Ride Detail (flat, not nested)
+    composable(
+        route      = BikeScreen.RideDetailScreen.route,        // "ride/{rideId}"
+        arguments  = listOf(navArgument("rideId") { type = NavType.StringType })
+    ) { backStackEntry ->
+        val rideId = backStackEntry.arguments!!.getString("rideId")!!
+        RideDetailScreen(
+            rideId = rideId,
+            onBack = { navHostController.popBackStack() }
+        )
     }
 }

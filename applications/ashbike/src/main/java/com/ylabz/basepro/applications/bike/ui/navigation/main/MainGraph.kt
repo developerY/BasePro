@@ -16,21 +16,15 @@ import com.ylabz.basepro.core.ui.MAIN
 import com.ylabz.basepro.core.ui.Screen
 import kotlinx.coroutines.CoroutineScope
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun MainNavGraph(
-    modifier: Modifier,
-    navController: NavHostController,
+    modifier:      Modifier,
+    navController: NavHostController
 ) {
     NavHost(
-        navController = navController,
-        route = BIKE, // This identifies this NavHost as "BIKE"
-        startDestination = "bike_nav_graph"
+        navController    = navController,
+        startDestination = BikeScreen.HomeBikeScreen.route
     ) {
-        bikeNavGraph(
-            modifier = modifier,
-            navHostController = navController,
-        )
-
+        bikeNavGraph(modifier, navController)
     }
 }

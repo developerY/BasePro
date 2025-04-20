@@ -16,6 +16,8 @@ import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.ylabz.basepro.core.ui.BikeScreen
+
 
 
 @Composable
@@ -32,7 +34,10 @@ fun BikeRideCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { navTo(ride.rideId) },
+            .clickable {
+                // use the sealed‑class helper to build the correct route
+                navTo(BikeScreen.RideDetailScreen.createRoute(ride.rideId))
+            },
         shape = RoundedCornerShape(8.dp),
         // elevation = 4.dp
     ) {
