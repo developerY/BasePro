@@ -34,6 +34,9 @@ fun BikeRideCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
+
+
+
             .clickable {
                 // use the sealed‑class helper to build the correct route
                 navTo(BikeScreen.RideDetailScreen.createRoute(ride.rideId))

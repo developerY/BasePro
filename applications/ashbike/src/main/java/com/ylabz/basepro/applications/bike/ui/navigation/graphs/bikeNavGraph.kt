@@ -32,13 +32,12 @@ fun NavGraphBuilder.bikeNavGraph(
     composable(BikeScreen.TripBikeScreen.route) {
         TripsUIRoute(
             modifier = modifier,
-            navTo    = { rideId ->
-                // now this will match the "ride/{rideId}" below
-                navHostController.navigate(BikeScreen.RideDetailScreen.createRoute(rideId))
+            navTo = { path ->
+                // now navTo takes a route string, not an ID
+                navHostController.navigate(path)
             }
         )
     }
-
     // 3) Settings Tab
     composable(BikeScreen.SettingsBikeScreen.route) {
         SettingsUiRoute(
