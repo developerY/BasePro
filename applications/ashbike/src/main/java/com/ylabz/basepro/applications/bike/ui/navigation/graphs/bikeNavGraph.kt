@@ -6,9 +6,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiRoute
 import com.ylabz.basepro.core.ui.BikeScreen
 import com.ylabz.basepro.applications.bike.features.trips.ui.TripsUIRoute
-import com.ylabz.basepro.applications.bike.ui.BikeUiRoute
 
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsUiRoute
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailScreen
@@ -22,7 +22,7 @@ fun NavGraphBuilder.bikeNavGraph(
     composable(BikeScreen.HomeBikeScreen.route) {
         BikeUiRoute(
             modifier = modifier,
-            navTo    = { path -> navHostController.navigate(path) }
+            navTo = { path -> navHostController.navigate(path) }
         )
     }
 
@@ -51,6 +51,7 @@ fun NavGraphBuilder.bikeNavGraph(
     ) { backStackEntry ->
         val rideId = backStackEntry.arguments!!.getString("rideId")!!
         RideDetailScreen(
+            modifier = modifier,
             rideId = rideId,
             onBack = { navHostController.popBackStack() }
         )

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Straight
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,20 +38,21 @@ import com.ylabz.basepro.applications.bike.features.trips.ui.TripsViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RideDetailScreen(
+    modifier: Modifier = Modifier,     // <— add this
     rideId: String,
-    onBack: () -> Unit,
+    onBack:  () -> Unit,
     viewModel: TripsViewModel = hiltViewModel()
 ) {
-    // Reuse your existing TripsUIState
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
+        modifier = modifier,            // <— apply it here
         topBar = {
             TopAppBar(
                 title = { Text("Ride Details") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.Straight, contentDescription = "Back") // Icons.AutoMirrored.Filled.ArrowBack
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
