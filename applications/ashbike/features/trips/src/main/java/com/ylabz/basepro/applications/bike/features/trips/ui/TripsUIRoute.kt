@@ -12,28 +12,27 @@ import com.ylabz.basepro.applications.bike.features.trips.ui.components.LoadingS
 @Composable
 fun TripsUIRoute(
     modifier: Modifier = Modifier,
-    navTo: (String) -> Unit,
-    viewModel: TripsViewModel = hiltViewModel()
+    uiState: TripsUIState,
+    onEvent: (TripsEvent) -> Unit,
+    navTo: (String) -> Unit
 ) {
-   val uiState = viewModel.uiState.collectAsState().value
     when (uiState) {
-        is TripsUIState.Loading -> {
+        TripsUIState.Loading -> {
             LoadingScreen()
         }
         is TripsUIState.Error -> {
-            ErrorScreen(errorMessage = uiState.message) {
-                viewModel.onEvent(TripsEvent.OnRetry)
-            }
+            ErrorScreen(
+                errorMessage = uiState.message,
+                onRetry = { onEvent(TripsEvent.OnRetry) }
+            )
         }
         is TripsUIState.Success -> {
-            Column(modifier = modifier) {
-                BikeTripsCompose(
-                    modifier = modifier,
-                    bikeRides = uiState.bikeRides,
-                    onEvent = { event -> viewModel.onEvent(event) },
-                    navTo = navTo
-                )
-            }
+            BikeTripsCompose(
+                modifier   = modifier,
+                bikeRides  = uiState.bikeRides,
+                onEvent    = onEvent,
+                navTo      = navTo
+            )
         }
     }
 }

@@ -1,6 +1,14 @@
 package com.ylabz.basepro.applications.bike.ui.navigation.graphs
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -11,7 +19,10 @@ import com.ylabz.basepro.core.ui.BikeScreen
 import com.ylabz.basepro.applications.bike.features.trips.ui.TripsUIRoute
 
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsUiRoute
+import com.ylabz.basepro.applications.bike.features.trips.ui.TripsUIState
+import com.ylabz.basepro.applications.bike.features.trips.ui.TripsViewModel
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailScreen
+import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailViewModel
 
 // Define BikeNavGraph as an extension function on NavGraphBuilder
 fun NavGraphBuilder.bikeNavGraph(
@@ -28,11 +39,17 @@ fun NavGraphBuilder.bikeNavGraph(
 
     // 2) Trips Tab
     composable(BikeScreen.TripBikeScreen.route) {
+        val vm: TripsViewModel = hiltViewModel()
+        val uiState by vm.uiState.collectAsState()
+
         TripsUIRoute(
             modifier = modifier,
-            navTo = { path ->
-                // now navTo takes a route string, not an ID
-                navHostController.navigate(path)
+            uiState  = uiState,
+            onEvent  = { event -> vm.onEvent(event) },
+            navTo    = { rideId ->
+                navHostController.navigate(
+                    BikeScreen.RideDetailScreen.createRoute(rideId)
+                )
             }
         )
     }
@@ -46,14 +63,18 @@ fun NavGraphBuilder.bikeNavGraph(
 
     // 4) Ride Detail (flat, not nested)
     composable(
-        route      = BikeScreen.RideDetailScreen.route,        // "ride/{rideId}"
-        arguments  = listOf(navArgument("rideId") { type = NavType.StringType })
+        route      = BikeScreen.RideDetailScreen.route,   // "ride/{rideId}"
+        arguments  = listOf(navArgument("rideId") {
+            type = NavType.StringType
+        })
     ) { backStackEntry ->
-        val rideId = backStackEntry.arguments!!.getString("rideId")!!
+        // Hilt will provide a RideDetailViewModel whose SavedStateHandle["rideId"] is set
+        val detailVm: RideDetailViewModel = hiltViewModel(backStackEntry)
+        val ride by detailVm.ride.collectAsState()
+
         RideDetailScreen(
             modifier = modifier,
-            rideId = rideId,
-            onBack = { navHostController.popBackStack() }
+            ride     = ride
         )
     }
 }

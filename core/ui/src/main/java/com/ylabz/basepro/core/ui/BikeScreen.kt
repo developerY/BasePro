@@ -11,7 +11,7 @@ sealed class BikeScreen(val route: String) {
 
     // Detail screen lives at the top level now
     object RideDetailScreen : BikeScreen("ride/{rideId}") {
-        /** Build the actual route with a concrete rideId. */
+        // Helper to build a concrete path
         fun createRoute(rideId: String) = "ride/$rideId"
     }
 }

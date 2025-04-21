@@ -28,7 +28,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.ylabz.basepro.applications.bike.ui.navigation.graphs.bikeNavGraph
 import com.ylabz.basepro.core.ui.BikeScreen
 
 
@@ -39,10 +41,13 @@ fun MainScreen(navController: NavHostController) {
         topBar = { TopBarForCurrentRoute(navController)}, //TopAppBar(title = { Text("AshBike") }) }, //  MinTopAppBar()
         bottomBar = { HomeBottomBar(navController = navController) },
     ) { innerPadding ->
-        MainNavGraph(
-            modifier = Modifier.padding(innerPadding),
-            navController = navController
-        )
+        NavHost(
+            navController    = navController,
+            startDestination = BikeScreen.HomeBikeScreen.route,
+            modifier         = Modifier.padding(innerPadding)
+        ) {
+            bikeNavGraph(modifier = Modifier, navHostController = navController)
+        }
         /*RootNavGraph(
             modifier = Modifier.padding(innerPadding),
             navHostController = navController
