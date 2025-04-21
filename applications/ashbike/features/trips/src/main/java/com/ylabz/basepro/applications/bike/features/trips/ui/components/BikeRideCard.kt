@@ -41,7 +41,8 @@ fun BikeRideCard(
             .fillMaxWidth()
             .clickable {
                 // use the sealed‑class helper to build the correct route
-                navTo(BikeScreen.RideDetailScreen.createRoute(ride.rideId))
+                // navTo(BikeScreen.RideDetailScreen.createRoute(ride.rideId))
+                navTo(ride.rideId)
             },
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
