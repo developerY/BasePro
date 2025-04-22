@@ -6,7 +6,28 @@ import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
+// 1) Ride‐point entity
 @Entity(
+    tableName = "ride_locations",
+    foreignKeys = [
+        ForeignKey(
+            entity        = BikeRideEntity::class,
+            parentColumns = ["rideId"],
+            childColumns  = ["rideId"],
+            onDelete      = ForeignKey.CASCADE
+        )
+    ],
+    indices = [ Index("rideId") ]
+)
+data class RideLocationEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val rideId: String,      // ← FK → BikeRideEntity.rideId
+    val timestamp: Long,     // epoch millis
+    val lat: Double,
+    val lng: Double,
+    val elevation: Float? = null
+)
+/*@Entity(
     tableName = "ride_locations",
     foreignKeys = [
         ForeignKey(
@@ -27,4 +48,4 @@ data class RideLocationEntity(
     val altitudeMeters: Double? = null,
     val speedMetersPerSec: Double? = null,
     val headingDegrees: Float? = null
-)
+)*/

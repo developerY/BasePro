@@ -7,7 +7,7 @@ data class RideWithLocations(
     @Embedded val rideLoc: BikeRideEntity,
     @Relation(
         parentColumn = "rideId",
-        entityColumn = "rideOwnerId"
+        entityColumn = "rideId"//"rideOwnerId"
     )
     val locations: List<RideLocationEntity>
 )

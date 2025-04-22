@@ -12,6 +12,11 @@ interface BikeRideRepo {
     /** Insert a bikeRide summary; locations handled separately if needed. */
     suspend fun insert(bikeRide: BikeRide)
 
+    suspend fun insertRideWithLocations(
+        ride: BikeRideEntity,
+        locations: List<RideLocationEntity>
+    )
+
     /** Delete a bikeRide by domain object. */
     suspend fun delete(bikeRide: BikeRide)
 

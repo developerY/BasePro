@@ -5,6 +5,8 @@ package com.ylabz.basepro.applications.bike.database.repository
 import androidx.annotation.WorkerThread
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import com.ylabz.basepro.applications.bike.database.BikeRideDao
+import com.ylabz.basepro.applications.bike.database.BikeRideEntity
+import com.ylabz.basepro.applications.bike.database.RideLocationEntity
 import com.ylabz.basepro.applications.bike.database.mapper.BikeRide
 import com.ylabz.basepro.applications.bike.database.mapper.toEntity
 import com.ylabz.basepro.applications.bike.database.mapper.toBikeRide
@@ -54,5 +56,14 @@ class BikeRideRepoImpl @Inject constructor(
         // you’ll need to add this to BikeRideDao:
         // @Query("DELETE FROM rides") suspend fun deleteAllRides()
         bikeRideDao.deleteAllBikeRides()
+    }
+
+    @WorkerThread
+    override suspend fun insertRideWithLocations(
+        ride: BikeRideEntity,
+        locations: List<RideLocationEntity>
+    ) {
+        bikeRideDao.insertRide(ride)
+        bikeRideDao.insertLocations(locations)
     }
 }
