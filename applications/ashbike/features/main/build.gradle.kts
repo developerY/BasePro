@@ -39,7 +39,7 @@ dependencies {
     implementation(project(":applications:ashbike:features:settings"))
     implementation(project(":applications:ashbike:features:trips"))
 
-    implementation(project(":core:database"))
+    implementation(project(":applications:ashbike:database"))
     implementation(project(":core:model"))
 
     implementation(project(":feature:heatlh"))

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.Navigator
 import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,11 +16,12 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
+import javax.inject.Named
 
 
 @HiltViewModel
 class TripsViewModel @Inject constructor(
-    private val bikeRideRepo: BikeRideRepo
+    @Named("real") private val bikeRideRepo: BikeRideRepo
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<TripsUIState>(TripsUIState.Loading)

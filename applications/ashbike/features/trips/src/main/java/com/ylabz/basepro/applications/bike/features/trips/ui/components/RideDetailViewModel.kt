@@ -14,12 +14,14 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
+import javax.inject.Named
+
 // features/trips/src/main/java/com/ylabz/basepro/applications/bike/features/trips/RideDetailViewModel.kt
 
 @HiltViewModel
 class RideDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val repo: BikeRideRepo
+    @Named("real") private val repo: BikeRideRepo
 ) : ViewModel() {
 
     private val rideId: String = requireNotNull(savedStateHandle["rideId"])

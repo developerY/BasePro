@@ -5,10 +5,13 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import com.ylabz.basepro.core.data.repository.bikeConnectivity.BikeConnectivityRepository
 import com.ylabz.basepro.core.data.repository.travel.compass.CompassRepository
 import com.ylabz.basepro.core.data.repository.travel.UnifiedLocationRepository
 import com.ylabz.basepro.core.data.repository.weather.WeatherRepo
+
+
 // import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.CombinedSensorData
@@ -35,14 +38,17 @@ class BikeViewModel @Inject constructor(
     @Named("real") private val realLocationRepository: UnifiedLocationRepository,
     @Named("real") private val realCompassRepository: CompassRepository,
     @Named("real") private val realWeatherRepo: WeatherRepo,
+    @Named("real") private val bikeRideRepo: BikeRideRepo,
+
     // Demo implementations
     //@Named("demo") private val demoWeatherRepo: WeatherRepo,
     @Named("demo") private val demoConnectivityRepository: BikeConnectivityRepository,
     @Named("demo") private val demoLocationRepository: UnifiedLocationRepository,
     @Named("demo") private val demoCompassRepository: CompassRepository,
     @Named("demo") private val demoWeatherRepo: WeatherRepo,
+    @Named("demo") private val demoBikeRideRepo: BikeRideRepo,
 
-) : ViewModel() {
+    ) : ViewModel() {
 
     // Toggle between real and demo mode.
     private val realMode = true

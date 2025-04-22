@@ -14,6 +14,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import javax.inject.Named
+import javax.inject.Singleton
+
 
 class BikeRideRepoImpl @Inject constructor(
     private val bikeRideDao: BikeRideDao
