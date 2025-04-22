@@ -1,6 +1,4 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui
-
-import com.ylabz.basepro.applications.bike.database.mapper.BikePro
 import com.ylabz.basepro.applications.bike.database.mapper.BikeRide
 
 sealed interface TripsUIState {

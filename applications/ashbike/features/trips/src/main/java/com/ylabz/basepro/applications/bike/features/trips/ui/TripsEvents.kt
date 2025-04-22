@@ -7,4 +7,5 @@ sealed class TripsEvent {
     object DeleteAll : TripsEvent()
     object OnRetry : TripsEvent()
     //data class OnItemClicked(val itemId: Int) : TripsEvent()
+    object StopSaveRide : TripsEvent()
 }

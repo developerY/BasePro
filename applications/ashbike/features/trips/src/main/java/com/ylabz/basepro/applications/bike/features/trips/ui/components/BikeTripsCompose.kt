@@ -46,7 +46,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.net.toUri
 import com.ylabz.basepro.applications.bike.database.BikeRideEntity
-import com.ylabz.basepro.applications.bike.database.mapper.BikePro
 import com.ylabz.basepro.applications.bike.database.mapper.BikeRide
 import java.time.LocalDateTime.now
 

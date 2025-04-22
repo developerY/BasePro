@@ -3,17 +3,12 @@ package com.ylabz.basepro.applications.bike.features.trips.ui.components
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.applications.bike.database.BikeProEntity
-import com.ylabz.basepro.applications.bike.database.BikeProRepo
-import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-import com.ylabz.basepro.applications.bike.database.mapper.BikePro
 import com.ylabz.basepro.applications.bike.database.mapper.BikeRide
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch

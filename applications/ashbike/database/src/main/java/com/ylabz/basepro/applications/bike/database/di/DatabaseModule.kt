@@ -2,10 +2,6 @@ package com.ylabz.basepro.applications.bike.database.di
 
 import android.content.Context
 import androidx.room.Room
-import com.ylabz.basepro.applications.bike.database.BikeProDB
-import com.ylabz.basepro.applications.bike.database.BikeProDao
-import com.ylabz.basepro.applications.bike.database.repository.BikeProRepoImpl
-import com.ylabz.basepro.applications.bike.database.BikeProRepo
 import com.ylabz.basepro.applications.bike.database.BikeRideDatabase
 import com.ylabz.basepro.applications.bike.database.BikeRideDao
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
@@ -27,18 +23,6 @@ object DatabaseModule {
     @InstallIn(SingletonComponent::class)
     object DatabaseModule {
 
-        @ProDatabase
-        @Provides @Singleton
-        fun provideBikeProDB(@ApplicationContext ctx: Context): BikeProDB =
-            Room
-                .databaseBuilder(ctx, BikeProDB::class.java, BikeProDB.DATABASE_NAME)
-                .fallbackToDestructiveMigration()
-                .build()
-
-        @Provides @Singleton
-        fun provideBikeProDao(@ProDatabase db: BikeProDB): BikeProDao =
-            db.bikeProDao
-
         @RideDatabase
         @Provides @Singleton
         fun provideBikeRideDB(@ApplicationContext ctx: Context): BikeRideDatabase =
@@ -53,20 +37,11 @@ object DatabaseModule {
             db.bikeRideDao
 
         @Provides @Singleton
-        fun provideBikeProRepository(bikeProDao: BikeProDao): BikeProRepo =
-            BikeProRepoImpl(bikeProDao)
-
-        @Provides @Singleton
         fun provideBikeRideRepository(rideDao: BikeRideDao): BikeRideRepo =
             BikeRideRepoImpl(rideDao)
     }
 
 }
-
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class ProDatabase
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)

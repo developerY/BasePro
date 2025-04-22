@@ -1,9 +1,10 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.applications.bike.database.BikeProEntity
-import com.ylabz.basepro.applications.bike.database.BikeProRepo
 import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,8 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-import com.ylabz.basepro.applications.bike.database.mapper.BikePro
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
@@ -26,8 +25,13 @@ class TripsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<TripsUIState>(TripsUIState.Loading)
     val uiState: StateFlow<TripsUIState> = _uiState
 
-    private val _selectedItem = MutableStateFlow<BikeProEntity?>(null)
-    val selectedItem: StateFlow<BikeProEntity?> = _selectedItem
+    // session start/end times
+    private var startTime = 0L
+    private var endTime = 0L
+
+    // track whether we’re currently riding
+    var isTracking by mutableStateOf(false)
+        private set
 
     init {
         onEvent(TripsEvent.LoadData)
@@ -41,8 +45,59 @@ class TripsViewModel @Inject constructor(
             is TripsEvent.OnRetry -> onEvent(TripsEvent.LoadData)
             //is TripsEvent.OnItemClicked -> selectItem(event.itemId)
             is TripsEvent.AddBikeRide -> addBikeRide()
+            is TripsEvent.StopSaveRide -> {
+                // stop and persist
+                endTime = System.currentTimeMillis()
+                isTracking = false
+                //saveRide()
+            }
         }
     }
+
+    /** Call this once when Stop is pressed
+    private fun saveRide() {
+        viewModelScope.launch {
+            try {
+                // 1) compute summary stats
+                val totalDistance = /* sum lengths between pathPoints… */
+                val averageSpeed  = /* totalDistance / ((endTime-startTime)/1000h) */
+                val maxSpeed      = /* track your max during ride */
+                val elevationGain = /* your accumulated elevation… */
+                val calories      = /* your algorithm… */
+                // 2) serialize the path to JSON
+                val routeJson = Gson().toJson(pathPoints.map {
+                    mapOf("lat" to it.latitude, "lng" to it.longitude)
+                })
+
+                // 3) build the entity (UUID auto‐generated in ctor)
+                val ride = BikeRideEntity(
+                    startTime     = startTime,
+                    endTime       = endTime,
+                    totalDistance = totalDistance.toFloat(),
+                    averageSpeed  = averageSpeed.toFloat(),
+                    maxSpeed      = maxSpeed.toFloat(),
+                    elevationGain = elevationGain.toFloat(),
+                    elevationLoss = 0f,
+                    caloriesBurned= calories,
+                    startLat      = pathPoints.first().latitude,
+                    startLng      = pathPoints.first().longitude,
+                    endLat        = pathPoints.last().latitude,
+                    endLng        = pathPoints.last().longitude,
+                    routeJson     = routeJson
+                    // … fill the rest of your optional fields …
+                )
+
+                // 4) hand it off to your Repo
+                bikeRideRepo.insert(ride)
+
+                // 5) finally reload your list
+                onEvent(TripsEvent.LoadData)
+            } catch (e: Exception) {
+                handleError(e)
+            }
+        }
+    }
+    */
 
     /*fun selectItem(itemId: Int) {
         viewModelScope.launch {
