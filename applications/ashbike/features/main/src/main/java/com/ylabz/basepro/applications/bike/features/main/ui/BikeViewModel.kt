@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import com.ylabz.basepro.applications.bike.database.RideLocationEntity
+import com.ylabz.basepro.applications.bike.features.main.usecase.RideStatsUseCase
 import com.ylabz.basepro.core.data.repository.bikeConnectivity.BikeConnectivityRepository
 import com.ylabz.basepro.core.data.repository.travel.compass.CompassRepository
 import com.ylabz.basepro.core.data.repository.travel.UnifiedLocationRepository
@@ -51,6 +52,7 @@ class BikeViewModel @Inject constructor(
     @Named("demo") private val demoCompassRepository: CompassRepository,
     @Named("demo") private val demoWeatherRepo: WeatherRepo,
     @Named("demo") private val demoBikeRideRepo: BikeRideRepo,
+    private val rideStats: RideStatsUseCase
 ) : ViewModel() {
 
     // Toggle
