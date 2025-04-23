@@ -16,12 +16,16 @@ import com.ylabz.basepro.core.data.repository.weather.WeatherRepo
 // import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.CombinedSensorData
+import com.ylabz.basepro.core.model.bike.CombinedSensorDataOld
 import com.ylabz.basepro.core.model.bike.RideState
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -31,10 +35,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.shareIn
 
 
 @HiltViewModel
@@ -59,11 +63,13 @@ class BikeViewModel @Inject constructor(
     private val realMode = true
 
     // Pick implementations
-    private val connectivityRepository = if (realMode) realConnectivityRepository else demoConnectivityRepository
-    private val unifiedLocationRepository = if (realMode) realLocationRepository else demoLocationRepository
-    private val compassRepository = if (realMode) realCompassRepository else demoCompassRepository
-    private val weatherRepo = if (realMode) realWeatherRepo else demoWeatherRepo
-    private val bikeRideRepo = if (realMode) realBikeRideRepo else demoBikeRideRepo
+    // toggle
+    private val connectivityRepo = if (realMode) realConnectivityRepository else demoConnectivityRepository
+    private val locationRepo     = if (realMode) realLocationRepository     else demoLocationRepository
+    private val compassRepo      = if (realMode) realCompassRepository      else demoCompassRepository
+    private val weatherRepo      = if (realMode) realWeatherRepo            else demoWeatherRepo
+    private val bikeRideRepo     = if (realMode) realBikeRideRepo           else demoBikeRideRepo
+
 
     // State
     private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.Loading)
@@ -75,7 +81,7 @@ class BikeViewModel @Inject constructor(
     private val pathPoints = mutableListOf<Location>()
 
     // Derived flows
-    val traveledDistanceFlow: Flow<Float> = unifiedLocationRepository.traveledDistanceFlow
+    val traveledDistanceFlow: Flow<Float> = locationRepo.traveledDistanceFlow
     private val _totalRouteDistance = MutableStateFlow<Float?>(null)
     val totalRouteDistance: StateFlow<Float?> = _totalRouteDistance
     val remainingDistanceFlow: Flow<Float?> = combine(
@@ -83,25 +89,64 @@ class BikeViewModel @Inject constructor(
         totalRouteDistance
     ) { traveled, total -> total?.let { (it - traveled).coerceAtLeast(0f) } }
 
-    private val sensorDataFlow: Flow<CombinedSensorData> = combine(
-        unifiedLocationRepository.locationFlow,
-        unifiedLocationRepository.speedFlow,
-        traveledDistanceFlow,
-        totalRouteDistance,
-        remainingDistanceFlow,
-        unifiedLocationRepository.elevationFlow,
-        compassRepository.headingFlow
-    ) { arr ->
+
+    // reset trigger for stats
+    private val resetTrigger = MutableSharedFlow<Unit>(replay = 1)
+
+
+
+    // stats flows
+    val distanceFlow      = rideStats.distanceKmFlow(resetTrigger, locationRepo.locationFlow)
+    val maxSpeedFlow      = rideStats.maxSpeedFlow(resetTrigger, locationRepo.speedFlow)
+    val avgSpeedFlow      = rideStats.averageSpeedFlow(resetTrigger, locationRepo.speedFlow)
+    val elevationGainFlow = rideStats.elevationGainFlow(resetTrigger, locationRepo.locationFlow)
+    val elevationLossFlow = rideStats.elevationLossFlow(resetTrigger, locationRepo.locationFlow)
+    val caloriesFlow      = rideStats.caloriesFlow(resetTrigger, distanceFlow)
+
+
+    // combined sensor data
+    private val sensorDataFlow = combine(
+        locationRepo.locationFlow,    // 0
+        locationRepo.speedFlow,       // 1
+        distanceFlow,                 // 2
+        avgSpeedFlow,                 // 3
+        maxSpeedFlow,                 // 4
+        elevationGainFlow,            // 5
+        elevationLossFlow,            // 6
+        caloriesFlow,                 // 7
+        compassRepo.headingFlow       // 8
+    ) { values: Array<Any?> ->
+        @Suppress("UNCHECKED_CAST")
+        val loc: Location    = values[0] as Location
+        val speed: Float     = values[1] as Float
+        val dist: Float      = values[2] as Float
+        val avg: Double      = values[3] as Double
+        val max: Float       = values[4] as Float
+        val gain: Float      = values[5] as Float
+        val loss: Float      = values[6] as Float
+        val cal: Int         = values[7] as Int
+        val heading: Float   = values[8] as Float
+
         CombinedSensorData(
-            location = arr[0] as Location,
-            speedKmh = arr[1] as Float,
-            traveledDistance = arr[2] as Float,
-            totalDistance = arr[3] as Float?,
-            remainingDistance = arr[4] as Float?,
-            elevation = arr[5] as Float,
-            heading = arr[6] as Float
+            location          = loc,
+            speedKmh          = speed,
+            traveledDistance  = dist,
+            averageSpeed      = avg,
+            maxSpeed          = max,
+            elevationGain     = gain,
+            elevationLoss     = loss,
+            caloriesBurned    = cal,
+            heading           = heading
         )
     }
+        .onEach { data ->
+            if ((_uiState.value as? BikeUiState.Success)?.bikeData?.rideState == RideState.Riding) {
+                pathPoints += data.location
+            }
+        }
+        .shareIn(viewModelScope, SharingStarted.Lazily, replay = 0)
+
+
 
     init {
         // Load initial settings
@@ -109,7 +154,7 @@ class BikeViewModel @Inject constructor(
 
         // A) raw GPS collector
         viewModelScope.launch {
-            unifiedLocationRepository.locationFlow
+            locationRepo.locationFlow
                 .filter { isRideActive }                    // from kotlinx.coroutines.flow
                 .onEach { loc ->                            // from kotlinx.coroutines.flow
                     Log.d("BikeViewModel", "raw loc: $loc")
@@ -133,22 +178,18 @@ class BikeViewModel @Inject constructor(
         // B) sensor data collector
         viewModelScope.launch {
             sensorDataFlow.collect { data ->
-                //Log.d("BikeViewModel", "sensor data: $data")
-                val current = _uiState.value as? BikeUiState.Success ?: return@collect
-
-                // update UI
-                val elapsedHrs = (System.currentTimeMillis() - rideStartTime) / 3_600_000.0
-                val avgSpeed = if (elapsedHrs > 0) data.traveledDistance / elapsedHrs else 0.0
-                _uiState.value = current.copy(
-                    bikeData = current.bikeData.copy(
-                        location = LatLng(data.location.latitude, data.location.longitude),
-                        currentSpeed = data.speedKmh.toDouble(),
-                        averageSpeed = avgSpeed,
-                        currentTripDistance = data.traveledDistance,
-                        totalTripDistance = data.totalDistance,
-                        remainingDistance = data.remainingDistance,
-                        elevation = data.elevation.toDouble(),
-                        heading = data.heading
+                val curState = _uiState.value as? BikeUiState.Success ?: return@collect
+                _uiState.value = curState.copy(
+                    bikeData = curState.bikeData.copy(
+                        location             = LatLng(data.location.latitude, data.location.longitude),
+                        currentSpeed         = data.speedKmh.toDouble(),
+                        averageSpeed         = data.averageSpeed,
+                        maxSpeed             = data.maxSpeed.toDouble(),
+                        currentTripDistance  = data.traveledDistance,
+                        elevationGain        = data.elevationGain.toDouble(),
+                        elevationLoss        = data.elevationLoss.toDouble(),
+                        caloriesBurned       = data.caloriesBurned,
+                        heading              = data.heading
                     )
                 )
             }
@@ -249,7 +290,7 @@ class BikeViewModel @Inject constructor(
     /** Fetch weather once after initial load */
     fun refreshWeather() {
         viewModelScope.launch {
-            val loc = unifiedLocationRepository.locationFlow.first()
+            val loc = locationRepo.locationFlow.first()
             Log.d("BikeViewModel", "refreshWeather at $loc")
             val resp = runCatching {
                 weatherRepo.openCurrentWeatherByCoords(loc.latitude, loc.longitude)
@@ -340,8 +381,8 @@ class BikeViewModel @Inject constructor(
     private fun connectBike() {
         viewModelScope.launch {
             try {
-                val address = connectivityRepository.getBleAddressFromNfc()
-                connectivityRepository.connectBike(address)
+                val address = connectivityRepo.getBleAddressFromNfc()
+                connectivityRepo.connectBike(address)
                     .filter { it.batteryLevel != null }
                     .distinctUntilChanged()
                     .collect { data ->
@@ -370,27 +411,43 @@ class BikeViewModel @Inject constructor(
                     "Notifications" to listOf("Enabled", "Disabled")
                 ),
                 bikeData = BikeRideInfo(
-                    isBikeConnected = false,
-                    location = LatLng(37.4219999, -122.0862462),
-                    currentSpeed = 0.0,
+                    // Core location & speeds
+                    location            = LatLng(37.4219999, -122.0862462),
+                    currentSpeed        = 0.0,
+                    averageSpeed        = 0.0,
+                    maxSpeed            = 0.0,
+
+                    // Distances (km)
                     currentTripDistance = 0.0f,
-                    totalTripDistance = null,
-                    remainingDistance = null,
-                    rideDuration = "00:00",
-                    settings = mapOf(
+                    totalTripDistance   = null,
+                    remainingDistance   = null,
+
+                    // Elevation (m)
+                    elevationGain       = 0.0,
+                    elevationLoss       = 0.0,
+
+                    // Calories
+                    caloriesBurned      = 0,
+
+                    // UI state
+                    rideDuration        = "00:00",
+                    settings            = mapOf(
                         "Theme" to listOf("Light", "Dark", "System Default"),
                         "Language" to listOf("English", "Spanish", "French"),
                         "Notifications" to listOf("Enabled", "Disabled")
                     ),
-                    averageSpeed = 0.0,
-                    elevation = 0.0,
-                    heading = 0.0f,
-                    batteryLevel = null,
-                    motorPower = null,
-                    bikeWeatherInfo    = null   // ← default
+                    heading             = 0f,
+                    elevation           = 0.0,
+
+                    // Bike connectivity
+                    isBikeConnected     = false,
+                    batteryLevel        = null,
+                    motorPower          = null,
+
+                    // rideState & weatherInfo use their defaults
                 )
             )
-            Log.d("BikeViewModel", "Settings loaded")
         }
     }
+
 }

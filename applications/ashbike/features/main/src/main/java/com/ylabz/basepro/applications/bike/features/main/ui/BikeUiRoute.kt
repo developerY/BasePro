@@ -143,21 +143,40 @@ fun BikeUiRoute(
 @Composable
 fun BikeUiRoutePreview() {
     val bikeRideInfo = BikeRideInfo(
-        isBikeConnected = true,
-        location = LatLng(37.4219999, -122.0862462),
-        currentSpeed = 55.0,
-        currentTripDistance = 5.0f,
-        totalTripDistance = 100.0f,
-        remainingDistance = 50.0f,
-        rideDuration = "00:15:00",
-        settings = mapOf("Theme" to listOf("Light", "Dark", "System Default"),
+        // Core location & speeds
+        location            = LatLng(37.4219999, -122.0862462),
+        currentSpeed        = 0.0,
+        averageSpeed        = 0.0,
+        maxSpeed            = 0.0,
+
+        // Distances (km)
+        currentTripDistance = 0.0f,
+        totalTripDistance   = null,
+        remainingDistance   = null,
+
+        // Elevation (m)
+        elevationGain       = 0.0,
+        elevationLoss       = 0.0,
+
+        // Calories
+        caloriesBurned      = 0,
+
+        // UI state
+        rideDuration        = "00:00",
+        settings            = mapOf(
+            "Theme" to listOf("Light", "Dark", "System Default"),
             "Language" to listOf("English", "Spanish", "French"),
-            "Notifications" to listOf("Enabled", "Disabled")),
-        averageSpeed = 12.0,
-        elevation = 12.0,
-        heading = 12.0f,
-        batteryLevel = 12,
-        motorPower = 12.0f
+            "Notifications" to listOf("Enabled", "Disabled")
+        ),
+        heading             = 0f,
+        elevation           = 0.0,
+
+        // Bike connectivity
+        isBikeConnected     = false,
+        batteryLevel        = null,
+        motorPower          = null,
+
+        // rideState & weatherInfo use their defaults
     )
 
     val mockNavTo: (String) -> Unit = {}

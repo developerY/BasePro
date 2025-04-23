@@ -22,7 +22,7 @@ data class BikeMotorData(
 )
 
 // Define a data class to hold the combined sensor data
-data class CombinedSensorData(
+data class CombinedSensorDataOld(
     val location: Location,
     val speedKmh: Float,
     val traveledDistance: Float,
@@ -32,26 +32,41 @@ data class CombinedSensorData(
     val heading: Float,
 )
 
+data class CombinedSensorData(
+    val location: Location,
+    val speedKmh: Float,
+    val traveledDistance: Float,
+    val averageSpeed: Double,
+    val maxSpeed: Float,
+    val elevationGain: Float,
+    val elevationLoss: Float,
+    val caloriesBurned: Int,
+    val heading: Float
+)
+
+
 data class BikeRideInfo(
     val location: LatLng?,
     val currentSpeed: Double,
     val averageSpeed: Double,
+    val maxSpeed: Double,
     val currentTripDistance: Float,
     val totalTripDistance: Float?,
     val remainingDistance: Float?,
+    val elevationGain: Double,
+    val elevationLoss: Double,
+    val caloriesBurned: Int,
     val rideDuration: String,
     val settings: Map<String, List<String>>,
-    val heading : Float,
-    val elevation : Double,
-    // Connected bike state
+    val heading: Float,
+    val elevation: Double,
     val isBikeConnected: Boolean,
     val batteryLevel: Int?,
     val motorPower: Float?,
-
-    // RideState
     val rideState: RideState = RideState.NotStarted,
     val bikeWeatherInfo: BikeWeatherInfo? = null
 )
+
 
 // Represents basic health information (e.g., from Google Health Connect).
 data class HealthStats(

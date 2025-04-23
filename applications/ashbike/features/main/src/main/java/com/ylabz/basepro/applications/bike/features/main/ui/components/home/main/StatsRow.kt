@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Straight
 import androidx.compose.material.icons.filled.Terrain
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.features.main.ui.components.unused.StatCard
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
@@ -86,20 +87,40 @@ fun StatsRow(
 @Composable
 fun StatsRowPreview() {
     val demoInfo = BikeRideInfo(
-        location = null,
-        currentSpeed = 0.0,
-        averageSpeed = 21.0,
-        currentTripDistance = 10.5f,
-        totalTripDistance = null,
-        remainingDistance = null,
-        rideDuration = "00:30:00",
-        settings = emptyMap(),
-        heading = 0f,
-        elevation = 150.0,
-        isBikeConnected = false,
-        batteryLevel = null,
-        motorPower = null,
-        rideState = RideState.NotStarted
+        // Core location & speeds
+        location            = LatLng(37.4219999, -122.0862462),
+        currentSpeed        = 0.0,
+        averageSpeed        = 0.0,
+        maxSpeed            = 0.0,
+
+        // Distances (km)
+        currentTripDistance = 0.0f,
+        totalTripDistance   = null,
+        remainingDistance   = null,
+
+        // Elevation (m)
+        elevationGain       = 0.0,
+        elevationLoss       = 0.0,
+
+        // Calories
+        caloriesBurned      = 0,
+
+        // UI state
+        rideDuration        = "00:00",
+        settings            = mapOf(
+            "Theme" to listOf("Light", "Dark", "System Default"),
+            "Language" to listOf("English", "Spanish", "French"),
+            "Notifications" to listOf("Enabled", "Disabled")
+        ),
+        heading             = 0f,
+        elevation           = 0.0,
+
+        // Bike connectivity
+        isBikeConnected     = false,
+        batteryLevel        = null,
+        motorPower          = null,
+
+        // rideState & weatherInfo use their defaults
     )
     StatsRow(bikeRideInfo = demoInfo)
 }

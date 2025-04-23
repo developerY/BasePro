@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.unused.path.BigBikeProgressIndicator
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
@@ -90,20 +91,40 @@ fun BikePathWithControls(
 @Composable
 fun BikePathWithControlsPreview() {
     val demoInfo = BikeRideInfo(
-        location = null,
-        currentSpeed = 0.0,
-        averageSpeed = 0.0,
-        currentTripDistance = 5f,
-        totalTripDistance = 20f,
-        remainingDistance = 15f,
-        rideDuration = "00:10",
-        settings = emptyMap(),
-        heading = 0f,
-        elevation = 0.0,
-        isBikeConnected = false,
-        batteryLevel = null,
-        motorPower = null,
-        rideState = RideState.NotStarted
+        // Core location & speeds
+        location            = LatLng(37.4219999, -122.0862462),
+        currentSpeed        = 0.0,
+        averageSpeed        = 0.0,
+        maxSpeed            = 0.0,
+
+        // Distances (km)
+        currentTripDistance = 0.0f,
+        totalTripDistance   = null,
+        remainingDistance   = null,
+
+        // Elevation (m)
+        elevationGain       = 0.0,
+        elevationLoss       = 0.0,
+
+        // Calories
+        caloriesBurned      = 0,
+
+        // UI state
+        rideDuration        = "00:00",
+        settings            = mapOf(
+            "Theme" to listOf("Light", "Dark", "System Default"),
+            "Language" to listOf("English", "Spanish", "French"),
+            "Notifications" to listOf("Enabled", "Disabled")
+        ),
+        heading             = 0f,
+        elevation           = 0.0,
+
+        // Bike connectivity
+        isBikeConnected     = false,
+        batteryLevel        = null,
+        motorPower          = null,
+
+        // rideState & weatherInfo use their defaults
     )
     BikePathWithControls(
         bikeRideInfo = demoInfo,

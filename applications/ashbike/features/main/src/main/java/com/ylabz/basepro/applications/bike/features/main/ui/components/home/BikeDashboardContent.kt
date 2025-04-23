@@ -181,19 +181,40 @@ fun BikeDashboardContent(
 fun BikeDashboardContentPreview() {
 
     val dummyBikeRideInfo = BikeRideInfo(
-        isBikeConnected = false,
-        location = LatLng(34.0522, -118.2437), // Dummy location
-        currentSpeed = 28.0,
-        totalTripDistance = 12.5f,
-        currentTripDistance = 7.2f,  // current progress (km)
-        remainingDistance = 10.5f,
-        rideDuration = "00:45:30",
-        averageSpeed = 15.2,
-        elevation = 150.0,
-        settings = emptyMap(), // You may set appropriate values
-        heading = 45f,
-        batteryLevel = 80,
-        motorPower = 1500f,
+        // Core location & speeds
+        location            = LatLng(37.4219999, -122.0862462),
+        currentSpeed        = 0.0,
+        averageSpeed        = 0.0,
+        maxSpeed            = 0.0,
+
+        // Distances (km)
+        currentTripDistance = 0.0f,
+        totalTripDistance   = null,
+        remainingDistance   = null,
+
+        // Elevation (m)
+        elevationGain       = 0.0,
+        elevationLoss       = 0.0,
+
+        // Calories
+        caloriesBurned      = 0,
+
+        // UI state
+        rideDuration        = "00:00",
+        settings            = mapOf(
+            "Theme" to listOf("Light", "Dark", "System Default"),
+            "Language" to listOf("English", "Spanish", "French"),
+            "Notifications" to listOf("Enabled", "Disabled")
+        ),
+        heading             = 0f,
+        elevation           = 0.0,
+
+        // Bike connectivity
+        isBikeConnected     = false,
+        batteryLevel        = null,
+        motorPower          = null,
+
+        // rideState & weatherInfo use their defaults
     )
 
     MaterialTheme {
@@ -206,19 +227,40 @@ fun BikeDashboardContentPreview() {
 }
 
 val dummyBikeRideInfo = BikeRideInfo(
-    isBikeConnected = false,
-    location = LatLng(34.0522, -118.2437), // Dummy location
-    currentSpeed = 28.0,
-    totalTripDistance = 2.5f,
-    currentTripDistance = 7.2f,  // current progress (km)
-    remainingDistance = 10.5f,
-    rideDuration = "00:45:30",
-    averageSpeed = 25.0,
-    elevation = 150.0,
-    settings = emptyMap(), // You may set appropriate values
-    heading = 45f,
-    batteryLevel = 80,
-    motorPower = 1500f,
+    // Core location & speeds
+    location            = LatLng(37.4219999, -122.0862462),
+    currentSpeed        = 0.0,
+    averageSpeed        = 0.0,
+    maxSpeed            = 0.0,
+
+    // Distances (km)
+    currentTripDistance = 0.0f,
+    totalTripDistance   = null,
+    remainingDistance   = null,
+
+    // Elevation (m)
+    elevationGain       = 0.0,
+    elevationLoss       = 0.0,
+
+    // Calories
+    caloriesBurned      = 0,
+
+    // UI state
+    rideDuration        = "00:00",
+    settings            = mapOf(
+        "Theme" to listOf("Light", "Dark", "System Default"),
+        "Language" to listOf("English", "Spanish", "French"),
+        "Notifications" to listOf("Enabled", "Disabled")
+    ),
+    heading             = 0f,
+    elevation           = 0.0,
+
+    // Bike connectivity
+    isBikeConnected     = false,
+    batteryLevel        = null,
+    motorPower          = null,
+
+    // rideState & weatherInfo use their defaults
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
