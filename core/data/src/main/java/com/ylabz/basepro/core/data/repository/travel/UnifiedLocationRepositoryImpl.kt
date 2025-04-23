@@ -5,88 +5,107 @@ import android.content.Context
 import android.location.Location
 import android.os.Looper
 import com.google.android.gms.location.*
-import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.shareIn
 
 @Singleton
 class UnifiedLocationRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : UnifiedLocationRepository {
 
-    private val fusedLocationClient: FusedLocationProviderClient =
+    private val fusedLocationClient =
         LocationServices.getFusedLocationProviderClient(context)
 
-    // Use a dedicated coroutine scope for location updates.
+    // scope for sharing hot streams
     private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     @SuppressLint("MissingPermission")
-    private val _rawLocationFlow: SharedFlow<Location> = callbackFlow {
-        // Build the location request with high accuracy and a 1-second update interval.
-        val locationRequest = LocationRequest.Builder(
+    private val _rawLocationFlow: SharedFlow<Location> = callbackFlow<Location> {
+        val request = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,
-            1000L // 1-second interval
+            1_000L
         ).build()
 
-        // Create a callback to emit each location update.
-        val locationCallback = object : LocationCallback() {
+        val callback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
-                result.locations.forEach { location ->
-                    trySend(location).isSuccess
+                result.locations.forEach { loc ->
+                    trySend(loc).isSuccess
                 }
             }
         }
 
-        // Request location updates on the main looper to ensure thread safety.
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
+        // start updates
+        try {
+            fusedLocationClient.requestLocationUpdates(
+                request,
+                callback,
+                Looper.getMainLooper()
+            )
+        } catch (e: SecurityException) {
+            close(e) // if permissions are missing, close the flow with error
+        }
+
+        // cleanup
+        awaitClose {
+            fusedLocationClient.removeLocationUpdates(callback)
+        }
+    }
+        .shareIn(
+            scope   = repositoryScope,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000),
+            replay  = 1
         )
 
-        // Remove location updates when the flow is closed.
-        awaitClose {
-            fusedLocationClient.removeLocationUpdates(locationCallback)
-        }
-    }.shareIn(
-        scope = repositoryScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        replay = 1
-    )
-
-    // Expose the raw location flow.
     override val locationFlow: Flow<Location>
         get() = _rawLocationFlow
 
-    // Calculate speed by converting m/s to km/h.
-    override val speedFlow: Flow<Float> = _rawLocationFlow.map { location ->
-        (location.speed * 3.6f).coerceAtLeast(0f)
-    }
+    override val speedFlow: Flow<Float> =
+        _rawLocationFlow
+            .map { (it.speed * 3.6f).coerceAtLeast(0f) }
+            .distinctUntilChanged()
+            .shareIn(
+                scope   = repositoryScope,
+                started = SharingStarted.Lazily,
+                replay  = 1
+            )
 
-    // Expose elevation (altitude) from the location updates.
-    override val elevationFlow: Flow<Float> = _rawLocationFlow.map { location ->
-        location.altitude.toFloat()
-    }
+    override val elevationFlow: Flow<Float> =
+        _rawLocationFlow
+            .map { it.altitude.toFloat() }
+            .distinctUntilChanged()
+            .shareIn(
+                scope   = repositoryScope,
+                started = SharingStarted.Lazily,
+                replay  = 1
+            )
 
-    // Internal flow that accumulates the distance traveled.
-    // It maintains a Pair of the previous location and the running total (in km).
-    private val distanceAccumulatorFlow: Flow<Pair<Location?, Float>> = _rawLocationFlow
-        .scan(initial = Pair<Location?, Float>(null, 0f)) { (prev, total), curr ->
-            // Calculate the additional distance in km.
-            val additionalDistance = prev?.distanceTo(curr)?.div(1000f) ?: 0f
-            // Emit the new state with the current location and updated total.
-            Pair(curr, total + additionalDistance)
-        }
-        // Optionally, filter out duplicate values.
-        .distinctUntilChanged()
-
-    // Expose the total distance traveled as a Flow (in kilometers).
-    override val traveledDistanceFlow: Flow<Float> = distanceAccumulatorFlow
-        .map { (_, traveled) -> traveled }
+    override val traveledDistanceFlow: Flow<Float> =
+        _rawLocationFlow
+            .scan(
+                initial = Pair<Location?, Float>(null, 0f)
+            ) { (prev, totalKm), curr ->
+                val deltaKm = prev?.distanceTo(curr)?.div(1000f) ?: 0f
+                curr to (totalKm + deltaKm)
+            }
+            .map      { (_, totalKm) -> totalKm }
+            .distinctUntilChanged()
+            .shareIn(
+                scope   = repositoryScope,
+                started = SharingStarted.Lazily,
+                replay  = 1
+            )
 }
+

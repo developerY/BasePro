@@ -131,7 +131,7 @@ class BikeViewModel @Inject constructor(
         // B) sensor data collector
         viewModelScope.launch {
             sensorDataFlow.collect { data ->
-                Log.d("BikeViewModel", "sensor data: $data")
+                //Log.d("BikeViewModel", "sensor data: $data")
                 val current = _uiState.value as? BikeUiState.Success ?: return@collect
 
                 // update UI
