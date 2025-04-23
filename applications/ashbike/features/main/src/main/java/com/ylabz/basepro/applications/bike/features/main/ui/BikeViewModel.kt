@@ -5,13 +5,13 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
+import com.ylabz.basepro.applications.bike.database.RideLocationEntity
 import com.ylabz.basepro.core.data.repository.bikeConnectivity.BikeConnectivityRepository
 import com.ylabz.basepro.core.data.repository.travel.compass.CompassRepository
 import com.ylabz.basepro.core.data.repository.travel.UnifiedLocationRepository
 import com.ylabz.basepro.core.data.repository.weather.WeatherRepo
-
-
 // import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.CombinedSensorData
@@ -30,6 +30,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
+import kotlinx.coroutines.flow.launchIn
+
 
 @HiltViewModel
 class BikeViewModel @Inject constructor(
@@ -38,7 +40,7 @@ class BikeViewModel @Inject constructor(
     @Named("real") private val realLocationRepository: UnifiedLocationRepository,
     @Named("real") private val realCompassRepository: CompassRepository,
     @Named("real") private val realWeatherRepo: WeatherRepo,
-    @Named("real") private val bikeRideRepo: BikeRideRepo,
+    @Named("real") private val realBikeRideRepo: BikeRideRepo,
 
     // Demo implementations
     //@Named("demo") private val demoWeatherRepo: WeatherRepo,
@@ -58,8 +60,11 @@ class BikeViewModel @Inject constructor(
     private val compassRepository = if (realMode) realCompassRepository else demoCompassRepository
     private val connectivityRepository = if (realMode) realConnectivityRepository else demoConnectivityRepository
     private val weatherRepo = if (realMode) realWeatherRepo else demoWeatherRepo
+    private val bikeRideRepo = if (realMode) realBikeRideRepo else demoBikeRideRepo
 
-
+    // keep the points as we ride
+    private val pathPoints = mutableListOf<Location>()
+    private var rideEndTime   = 0L
 
     // UI State for the bike ride.
     private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.Loading)
@@ -155,6 +160,17 @@ class BikeViewModel @Inject constructor(
                     )*/
                 }
             }
+
+            // Subscribe to raw GPS updates and record them if the ride is active
+            viewModelScope.launch {
+                unifiedLocationRepository.locationFlow
+                    .filter { isRideActive }
+                    .collect { loc ->
+                        pathPoints += loc
+                    }
+            }
+
+
         }
 
         // 4) Once we actually have a Success UI state, fire off the one‐time weather load
@@ -319,12 +335,15 @@ class BikeViewModel @Inject constructor(
                 connectBike()
                 Log.d("BikeViewModel", "Connect button clicked.")
             }
-            BikeEvent.StartPauseRide -> {
+            is BikeEvent.StartPauseRide -> {
                 val current = _uiState.value as? BikeUiState.Success ?: return
                 when (current.bikeData.rideState) {
                     RideState.NotStarted, RideState.Paused -> {
                         isRideActive = true
                         rideStartTime = System.currentTimeMillis()
+                        updateRideState(RideState.Riding)
+                        // reset for a fresh ride
+                        pathPoints.clear()
                         updateRideState(RideState.Riding)
                         Log.d("BikeViewModel", "Ride started.")
                     }
@@ -345,8 +364,42 @@ class BikeViewModel @Inject constructor(
             }
             BikeEvent.StopSaveRide -> {
                 // 1) Stop & mark ended
-                isRideActive = false
-                updateRideState(RideState.Ended)
+                viewModelScope.launch {
+                    try {
+                        // a) build the summary entity
+                        val ride = BikeRideEntity(
+                            startTime = rideStartTime,
+                            endTime = rideEndTime,
+                            totalDistance = (pathPoints.last()
+                                .distanceTo(pathPoints.first())).toFloat(),
+                            averageSpeed = 0f, // or compute from your flows
+                            maxSpeed = 0f,
+                            elevationGain = 0f,
+                            elevationLoss = 0f,
+                            caloriesBurned = 0,
+                            startLat = pathPoints.first().latitude,
+                            startLng = pathPoints.first().longitude,
+                            endLat = pathPoints.last().latitude,
+                            endLng = pathPoints.last().longitude
+                        )
+
+                        // b) map each Location → RideLocationEntity
+                        val locations = pathPoints.map { loc ->
+                            RideLocationEntity(
+                                rideId = ride.rideId,
+                                timestamp = loc.time,
+                                lat = loc.latitude,
+                                lng = loc.longitude,
+                                elevation = loc.altitude.toFloat()
+                            )
+                        }
+
+                        // c) call your repo
+                        bikeRideRepo.insertRideWithLocations(ride, locations)
+                    } catch (e: Exception) {
+                        // handle errors (maybe set an error UI state)
+                    }
+                }
                 Log.d("BikeViewModel", "Ride stopped & will be saved.")
 
                 // 2) Save snapshot
