@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
+import com.ylabz.basepro.applications.bike.database.RideWithLocations
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Named
 
 // features/trips/src/main/java/com/ylabz/basepro/applications/bike/features/trips/RideDetailViewModel.kt
@@ -24,13 +26,18 @@ class RideDetailViewModel @Inject constructor(
     @Named("real") private val repo: BikeRideRepo
 ) : ViewModel() {
 
-    private val rideId: String = requireNotNull(savedStateHandle["rideId"])
-    private val _ride = MutableStateFlow<BikeRide?>(null)
-    val ride: StateFlow<BikeRide?> = _ride
-
-    init {
-        viewModelScope.launch {
-            _ride.value = repo.getRideById(rideId)
+    private val rideId: String =
+        checkNotNull(savedStateHandle.get<String>("rideId")) {
+            "rideId required in SavedStateHandle"
         }
-    }
+
+    /** Expose the ride + all its location points. */
+    val rideWithLocations: StateFlow<RideWithLocations?> =
+        repo
+            .getRideWithLocations(rideId)      // Flow<RideWithLocations?>
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.Lazily,
+                initialValue = null
+            )
 }

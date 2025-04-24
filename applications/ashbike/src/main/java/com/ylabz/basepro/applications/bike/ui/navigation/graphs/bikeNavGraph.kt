@@ -63,18 +63,15 @@ fun NavGraphBuilder.bikeNavGraph(
 
     // 4) Ride Detail (flat, not nested)
     composable(
-        route      = BikeScreen.RideDetailScreen.route,   // "ride/{rideId}"
-        arguments  = listOf(navArgument("rideId") {
-            type = NavType.StringType
-        })
+        route     = BikeScreen.RideDetailScreen.route,
+        arguments = listOf(navArgument("rideId") { type = NavType.StringType })
     ) { backStackEntry ->
-        // Hilt will provide a RideDetailViewModel whose SavedStateHandle["rideId"] is set
-        val detailVm: RideDetailViewModel = hiltViewModel(backStackEntry)
-        val ride by detailVm.ride.collectAsState()
+        val vm: RideDetailViewModel = hiltViewModel(backStackEntry)
+        val rideWithLocs by vm.rideWithLocations.collectAsState()
 
         RideDetailScreen(
-            modifier = modifier,
-            ride     = ride
+            modifier     = Modifier.fillMaxSize(),
+            rideWithLocs = rideWithLocs
         )
     }
 }
