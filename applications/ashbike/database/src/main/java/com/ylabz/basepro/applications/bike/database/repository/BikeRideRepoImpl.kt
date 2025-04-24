@@ -14,13 +14,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
 
 
 class BikeRideRepoImpl @Inject constructor(
     private val bikeRideDao: BikeRideDao
 ) : BikeRideRepo {
+
+    override fun getAllRidesWithLocations() = bikeRideDao.getAllRidesWithLocations()
+    override fun getRideWithLocations(id: String) = bikeRideDao.getRideWithLocations(id)
 
     /** Convert the Room Flow<List<RideEntity>> into Flow<List<Ride>> */
     @WorkerThread
@@ -28,7 +29,7 @@ class BikeRideRepoImpl @Inject constructor(
         bikeRideDao
             .getAllRidesWithLocations()     // this returns Flow<List<RideWithLocations>>
             .map { list ->
-                list.map { it.rideLoc.toBikeRide() } // drop locations for now
+                list.map { it.bikeRideEnt.toBikeRide() } // drop locations for now
             }
 
     @WorkerThread
@@ -51,7 +52,7 @@ class BikeRideRepoImpl @Inject constructor(
         bikeRideDao
             .getRideWithLocations(rideId)
             .firstOrNull()
-            ?.rideLoc
+            ?.bikeRideEnt
             ?.toBikeRide()
 
     @WorkerThread

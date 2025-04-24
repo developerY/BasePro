@@ -3,6 +3,7 @@ package com.ylabz.basepro.applications.bike.database.repository
 import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import com.ylabz.basepro.applications.bike.database.RideLocationEntity
+import com.ylabz.basepro.applications.bike.database.RideWithLocations
 import com.ylabz.basepro.applications.bike.database.mapper.BikeRide
 import com.ylabz.basepro.applications.bike.database.mapper.toDomain
 import com.ylabz.basepro.applications.bike.database.mapper.toEntity
@@ -26,6 +27,14 @@ class DemoBikeRideRepo @Inject constructor() : BikeRideRepo {
 
     override fun getAllRides(): Flow<List<BikeRide>> =
         _rides.map { list -> list.map { it.toDomain() } }
+
+    override fun getAllRidesWithLocations(): Flow<List<RideWithLocations>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getRideWithLocations(rideId: String): Flow<RideWithLocations?> {
+        TODO("Not yet implemented")
+    }
 
     override suspend fun insert(ride: BikeRide) {
         val entity = ride.toEntity()

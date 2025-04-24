@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui
 
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -38,6 +39,7 @@ class TripsViewModel @Inject constructor(
     init {
         onEvent(TripsEvent.LoadData)
     }
+
 
     fun onEvent(event: TripsEvent) {
         when (event) {
@@ -127,13 +129,13 @@ class TripsViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = TripsUIState.Loading
             try {
-                bikeRideRepo.getAllRides().collect { rides ->
-                    _uiState.value = TripsUIState.Success(
-                        bikeRides = rides
-                    )
-                }
+                bikeRideRepo
+                    .getAllRidesWithLocations()                        // Flow<List<RideWithLocations>>
+                    .collect { ridesWithLocs ->
+                        _uiState.value = TripsUIState.Success(ridesWithLocs)
+                    }
             } catch (e: Exception) {
-                handleError(e)
+                _uiState.value = TripsUIState.Error(e.localizedMessage ?: "Unknown error")
             }
         }
     }

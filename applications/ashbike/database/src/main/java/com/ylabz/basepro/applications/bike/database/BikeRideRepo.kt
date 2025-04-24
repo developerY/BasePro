@@ -9,6 +9,12 @@ interface BikeRideRepo {
     /** Stream all rides (no locations). */
     fun getAllRides(): Flow<List<BikeRide>>
 
+    /** Now returns rides *plus* their child‐rows */
+    fun getAllRidesWithLocations(): Flow<List<RideWithLocations>>
+
+    /** Ditto, single ride + its locations */
+    fun getRideWithLocations(rideId: String): Flow<RideWithLocations?>
+
     /** Insert a bikeRide summary; locations handled separately if needed. */
     suspend fun insert(bikeRide: BikeRide)
 

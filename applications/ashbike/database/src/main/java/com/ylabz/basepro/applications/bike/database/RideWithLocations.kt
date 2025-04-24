@@ -4,10 +4,11 @@ import androidx.room.Embedded
 import androidx.room.Relation
 
 data class RideWithLocations(
-    @Embedded val rideLoc: BikeRideEntity,
+    @Embedded val bikeRideEnt: BikeRideEntity,
     @Relation(
         parentColumn = "rideId",
-        entityColumn = "rideId"//"rideOwnerId"
+        entityColumn = "rideId",//"rideOwnerId"
+        entity        = RideLocationEntity::class
     )
     val locations: List<RideLocationEntity>
 )
