@@ -70,7 +70,7 @@ fun NavGraphBuilder.bikeNavGraph(
         val rideWithLocs by vm.rideWithLocations.collectAsState()
 
         RideDetailScreen(
-            modifier     = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             rideWithLocs = rideWithLocs
         )
     }
