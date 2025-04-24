@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
+import java.time.Instant
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -96,4 +97,28 @@ fun BikeRideCard(
             }
         }
     }
+}
+
+
+@Preview
+@Composable
+fun BikeRideCardPreview() {
+    val ride = BikeRideEntity(
+        startTime = Instant.now().toEpochMilli(),
+        endTime = Instant.now().plusSeconds(3600).toEpochMilli(),
+        totalDistance = 10000f,
+        averageSpeed = 20f,
+        maxSpeed = 30f,
+        elevationGain = 100f,
+        elevationLoss = 50f,
+        caloriesBurned = 500,
+        weatherCondition = "Sunny",
+        rideType = "Road",
+        notes = "Great ride!",
+        startLat = 40.7128,
+        startLng = -74.0060,
+        endLat = 40.7580,
+        endLng = -73.9855
+    )
+    BikeRideCard(ride = ride, onEvent = {}, navTo = {})
 }

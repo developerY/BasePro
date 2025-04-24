@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,13 +27,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.SpeedometerWithCompassOverlay
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.WeatherBadgeWithDetails
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
+import com.ylabz.basepro.core.model.bike.RideState
+import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDialWithSpeed
+import com.ylabz.basepro.feature.weather.ui.components.main.WeatherCondition
 
 
 @Composable
@@ -153,6 +159,82 @@ fun SpeedAndProgressCard(
         }
     }
 }
+
+@Preview
+@Composable
+fun SpeedAndProgressCardPreview() {
+    val bikeRideInfo = BikeRideInfo(
+        location = null,
+        currentSpeed = 25.0,
+        averageSpeed = 20.0,
+        maxSpeed = 40.0,
+        currentTripDistance = 1000.0f,
+        totalTripDistance = 5000.0f,
+        remainingDistance = 4000.0f,
+        elevationGain = 100.0,
+        elevationLoss = 50.0,
+        caloriesBurned = 300,
+        rideDuration = "00:30:00",
+        settings = mapOf("speed_unit" to listOf("kmh"), "distance_unit" to listOf("km")),
+        heading = 90.0f,
+        elevation = 150.0,
+        isBikeConnected = true,
+        batteryLevel = 80,
+        motorPower = 50.0f,
+        rideState = RideState.Riding,
+        bikeWeatherInfo = BikeWeatherInfo(
+            windDegree = 12,
+            windSpeed = 12.3,
+            conditionText = "Sunny",
+            conditionDescription = "Clear skies",
+            conditionIcon = "",
+            temperature = 25.0,
+            humidity = 12,
+            feelsLike = 23.0
+        )
+    )
+
+    /*
+        weatherCondition = "",
+        weatherConditionText = "Sunny",
+        windSpeed = 10.0,
+        windDegree = 180.0,
+        temperature = 25.0,
+        feelsLike = 23.0,
+
+        public final val windDegree: Int,
+        public final val windSpeed: Double,
+        public final val conditionText: String,
+        public final val conditionDescription: String?,
+        public final val conditionIcon: String?,
+        public final val temperature: Double?,
+        public final val feelsLike: Double?,
+        public final val humidity: Int?
+ */
+
+
+    SpeedAndProgressCard(
+        bikeRideInfo = bikeRideInfo,
+        onBikeEvent = {
+
+        },
+        navTo = {
+            //navigation
+        }
+
+    )
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
