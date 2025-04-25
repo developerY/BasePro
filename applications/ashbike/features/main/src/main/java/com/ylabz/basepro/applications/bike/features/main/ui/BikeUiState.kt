@@ -5,7 +5,7 @@ import com.ylabz.basepro.core.model.bike.BikeRideInfo
 sealed class BikeUiState {
     object Loading : BikeUiState()
     data class Success(
-        val settings: Map<String, List<String>>,
+        //val settings: Map<String, List<String>>,
         val bikeData: BikeRideInfo,
     ) : BikeUiState()
 

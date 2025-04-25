@@ -9,6 +9,9 @@ import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import com.ylabz.basepro.applications.bike.database.RideLocationEntity
 import com.ylabz.basepro.applications.bike.features.main.usecase.RideStatsUseCase
+import com.ylabz.basepro.applications.bike.features.main.usecase.RideTracker
+import com.ylabz.basepro.applications.bike.features.main.usecase.toBikeRideEntity
+import com.ylabz.basepro.applications.bike.features.main.usecase.toRideLocationEntity
 import com.ylabz.basepro.core.data.repository.bikeConnectivity.BikeConnectivityRepository
 import com.ylabz.basepro.core.data.repository.travel.compass.CompassRepository
 import com.ylabz.basepro.core.data.repository.travel.UnifiedLocationRepository
@@ -38,7 +41,9 @@ import javax.inject.Named
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 
 
 @HiltViewModel
@@ -56,7 +61,8 @@ class BikeViewModel @Inject constructor(
     @Named("demo") private val demoCompassRepository: CompassRepository,
     @Named("demo") private val demoWeatherRepo: WeatherRepo,
     @Named("demo") private val demoBikeRideRepo: BikeRideRepo,
-    private val rideStats: RideStatsUseCase
+    private val rideStats: RideStatsUseCase,
+    private val tracker: RideTracker
 ) : ViewModel() {
 
     // Toggle
@@ -225,94 +231,14 @@ class BikeViewModel @Inject constructor(
         when (event) {
             is BikeEvent.LoadBike -> loadSettings()
 
-            is BikeEvent.StartPauseRide -> {
-                val current = (_uiState.value as? BikeUiState.Success) ?: return
-                when (current.bikeData.rideState) {
-                    RideState.NotStarted, RideState.Paused -> {
-                        // 1) clear old path
-                        pathPoints.clear()
-                        // 2) reset the stats flows
-                        rideStartTime = System.currentTimeMillis()
-                        isRideActive  = true
-                        viewModelScope.launch { resetTrigger.emit(Unit) }
-                        updateRideState(RideState.Riding)
-                    }
-                    RideState.Riding -> {
-                        isRideActive = false
-                        updateRideState(RideState.Paused)
-                    }
-                    RideState.Ended -> {
-                        resetRideData()
-                        pathPoints.clear()
-                        rideStartTime = System.currentTimeMillis()
-                        isRideActive = true
-                        updateRideState(RideState.Riding)
-                        Log.d("BikeViewModel", "Ride restarted")
-                    }
-                }
-            }
-
-            BikeEvent.StopSaveRide -> {
-                isRideActive = false
-                rideEndTime  = System.currentTimeMillis()
-                updateRideState(RideState.Ended)
-
+            BikeEvent.StartPauseRide -> tracker.start()
+            BikeEvent.StopSaveRide   -> {
                 viewModelScope.launch {
-                    if (pathPoints.size < 2) return@launch
-
-                    // 1) total distance (meters)
-                    val totalDistanceMeters = pathPoints
-                        .zipWithNext { a, b -> a.distanceTo(b) }
-                        .sum()
-
-                    // 2) elapsed time (hours)
-                    val elapsedHours = (rideEndTime - rideStartTime).toDouble() / 3_600_000.0
-
-                    // 3) average & max speed (km/h)
-                    val avgSpeedKmh = if (elapsedHours > 0)
-                        (totalDistanceMeters/1000f) / elapsedHours
-                    else 0.0
-                    val maxSpeedKmh = (speedHistory.maxOrNull() ?: 0f).toDouble()
-
-                    // 4) elevation gain & loss (meters)
-                    var gain = 0f
-                    var loss = 0f
-                    pathPoints.zipWithNext { a, b ->
-                        val d = (b.altitude - a.altitude).toFloat()
-                        if (d > 0) gain += d else loss += -d
-                    }
-
-                    // 5) calories (kcal)
-                    val calories = ((totalDistanceMeters/1000f) * 50).toInt()
-
-                    // build the ride
-                    val ride = BikeRideEntity(
-                        startTime      = rideStartTime,
-                        endTime        = rideEndTime,
-                        totalDistance  = totalDistanceMeters,
-                        averageSpeed   = avgSpeedKmh.toFloat(),
-                        maxSpeed       = maxSpeedKmh.toFloat(),
-                        elevationGain  = gain,
-                        elevationLoss  = loss,
-                        caloriesBurned = calories,
-                        startLat       = pathPoints.first().latitude,
-                        startLng       = pathPoints.first().longitude,
-                        endLat         = pathPoints.last().latitude,
-                        endLng         = pathPoints.last().longitude
-                    )
-
-                    // save the locations
-                    val locs = pathPoints.map { loc ->
-                        RideLocationEntity(
-                            rideId    = ride.rideId,
-                            timestamp = loc.time,
-                            lat       = loc.latitude,
-                            lng       = loc.longitude,
-                            elevation = loc.altitude.toFloat()
-                        )
-                    }
-
-                    bikeRideRepo.insertRideWithLocations(ride, locs)
+                    val finalSession = tracker.stopAndGetSession()
+                    // persist the summary:
+                    val rideEntity = finalSession.toBikeRideEntity()
+                    val locEntities = finalSession.path.map { it.toRideLocationEntity(rideEntity.rideId) }
+                    bikeRideRepo.insertRideWithLocations(rideEntity, locEntities)
                 }
             }
 
@@ -441,21 +367,15 @@ class BikeViewModel @Inject constructor(
 
     private fun loadSettings() {
         viewModelScope.launch {
+            // seed the UI with your default / initial BikeRideInfo
             _uiState.value = BikeUiState.Success(
-                settings = mapOf(
-                    "Theme" to listOf("Light", "Dark", "System Default"),
-                    "Language" to listOf("English", "Spanish", "French"),
-                    "Notifications" to listOf("Enabled", "Disabled")
-                ),
                 bikeData = BikeRideInfo(
-                    // Core location & speeds
+                    // initial coordinates, zeros everywhere, plus your settings map…
                     location            = LatLng(37.4219999, -122.0862462),
                     currentSpeed        = 0.0,
                     averageSpeed        = 0.0,
                     maxSpeed            = 0.0,
-
-                    // Distances (km)
-                    currentTripDistance = 0.0f,
+                    currentTripDistance = 0f,
                     totalTripDistance   = null,
                     remainingDistance   = null,
 
@@ -475,16 +395,14 @@ class BikeViewModel @Inject constructor(
                     ),
                     heading             = 0f,
                     elevation           = 0.0,
-
-                    // Bike connectivity
                     isBikeConnected     = false,
                     batteryLevel        = null,
-                    motorPower          = null,
-
-                    // rideState & weatherInfo use their defaults
+                    motorPower          = null
+                    // rideState & bikeWeatherInfo use their defaults
                 )
             )
         }
     }
+
 
 }
