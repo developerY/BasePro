@@ -103,6 +103,8 @@ class BikeViewModel @Inject constructor(
     private val elevationLossFlow = rideStats.elevationLossFlow(resetTrigger, locationRepo.locationFlow)
     private val caloriesFlow      = rideStats.caloriesFlow(resetTrigger, distanceFlow)
 
+    // keep a running list of speeds too
+    private val speedHistory = mutableListOf<Float>()
 
     // combined sensor data
     private val sensorDataFlow = combine(
@@ -162,6 +164,18 @@ class BikeViewModel @Inject constructor(
                 }
                 .catch { e -> Log.e("BikeViewModel", "locationFlow error", e) }
                 .collect()                                  // from kotlinx.coroutines.flow
+        }
+
+        // when collecting CombinedSensorData:
+        viewModelScope.launch {
+            sensorDataFlow
+                .onEach { data ->
+                    if (isRideActive) {
+                        pathPoints += data.location
+                        speedHistory += data.speedKmh
+                    }
+                }
+                .collect()
         }
 
         /*
@@ -239,52 +253,66 @@ class BikeViewModel @Inject constructor(
             }
 
             BikeEvent.StopSaveRide -> {
-                // stop the ride
                 isRideActive = false
                 rideEndTime  = System.currentTimeMillis()
                 updateRideState(RideState.Ended)
 
                 viewModelScope.launch {
-                    try {
-                        // 3) pull the *final* stats out of the flows
-                        val totalKm        = distanceFlow.first()
-                        val averageSpeed   = avgSpeedFlow.first()
-                        val maxSpeed       = maxSpeedFlow.first()
-                        val elevationGain  = elevationGainFlow.first()
-                        val elevationLoss  = elevationLossFlow.first()
-                        val caloriesBurned = caloriesFlow.first()
+                    if (pathPoints.size < 2) return@launch
 
-                        // 4) build your entity with the real numbers
-                        val ride = BikeRideEntity(
-                            startTime      = rideStartTime,
-                            endTime        = rideEndTime,
-                            totalDistance  = totalKm * 1000f,     // km → meters
-                            averageSpeed   = averageSpeed.toFloat(),
-                            maxSpeed       = maxSpeed,
-                            elevationGain  = elevationGain,
-                            elevationLoss  = elevationLoss,
-                            caloriesBurned = caloriesBurned,
-                            startLat       = pathPoints.first().latitude,
-                            startLng       = pathPoints.first().longitude,
-                            endLat         = pathPoints.last().latitude,
-                            endLng         = pathPoints.last().longitude
-                        )
+                    // 1) total distance (meters)
+                    val totalDistanceMeters = pathPoints
+                        .zipWithNext { a, b -> a.distanceTo(b) }
+                        .sum()
 
-                        // 5) persist the points too
-                        val locs = pathPoints.map { loc ->
-                            RideLocationEntity(
-                                rideId    = ride.rideId,
-                                timestamp = loc.time,
-                                lat       = loc.latitude,
-                                lng       = loc.longitude,
-                                elevation = loc.altitude.toFloat()
-                            )
-                        }
-                        Log.d("BikeViewModel", "Saving ride + ${locs.size} points")
-                        bikeRideRepo.insertRideWithLocations(ride, locs)
-                    } catch (t: Throwable) {
-                        Log.e("BikeViewModel", "Failed to save ride", t)
+                    // 2) elapsed time (hours)
+                    val elapsedHours = (rideEndTime - rideStartTime).toDouble() / 3_600_000.0
+
+                    // 3) average & max speed (km/h)
+                    val avgSpeedKmh = if (elapsedHours > 0)
+                        (totalDistanceMeters/1000f) / elapsedHours
+                    else 0.0
+                    val maxSpeedKmh = (speedHistory.maxOrNull() ?: 0f).toDouble()
+
+                    // 4) elevation gain & loss (meters)
+                    var gain = 0f
+                    var loss = 0f
+                    pathPoints.zipWithNext { a, b ->
+                        val d = (b.altitude - a.altitude).toFloat()
+                        if (d > 0) gain += d else loss += -d
                     }
+
+                    // 5) calories (kcal)
+                    val calories = ((totalDistanceMeters/1000f) * 50).toInt()
+
+                    // build the ride
+                    val ride = BikeRideEntity(
+                        startTime      = rideStartTime,
+                        endTime        = rideEndTime,
+                        totalDistance  = totalDistanceMeters,
+                        averageSpeed   = avgSpeedKmh.toFloat(),
+                        maxSpeed       = maxSpeedKmh.toFloat(),
+                        elevationGain  = gain,
+                        elevationLoss  = loss,
+                        caloriesBurned = calories,
+                        startLat       = pathPoints.first().latitude,
+                        startLng       = pathPoints.first().longitude,
+                        endLat         = pathPoints.last().latitude,
+                        endLng         = pathPoints.last().longitude
+                    )
+
+                    // save the locations
+                    val locs = pathPoints.map { loc ->
+                        RideLocationEntity(
+                            rideId    = ride.rideId,
+                            timestamp = loc.time,
+                            lat       = loc.latitude,
+                            lng       = loc.longitude,
+                            elevation = loc.altitude.toFloat()
+                        )
+                    }
+
+                    bikeRideRepo.insertRideWithLocations(ride, locs)
                 }
             }
 
