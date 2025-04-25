@@ -96,12 +96,12 @@ class BikeViewModel @Inject constructor(
 
 
     // stats flows
-    val distanceFlow      = rideStats.distanceKmFlow(resetTrigger, locationRepo.locationFlow)
-    val maxSpeedFlow      = rideStats.maxSpeedFlow(resetTrigger, locationRepo.speedFlow)
-    val avgSpeedFlow      = rideStats.averageSpeedFlow(resetTrigger, locationRepo.speedFlow)
-    val elevationGainFlow = rideStats.elevationGainFlow(resetTrigger, locationRepo.locationFlow)
-    val elevationLossFlow = rideStats.elevationLossFlow(resetTrigger, locationRepo.locationFlow)
-    val caloriesFlow      = rideStats.caloriesFlow(resetTrigger, distanceFlow)
+    private val distanceFlow      = rideStats.distanceKmFlow(resetTrigger, locationRepo.locationFlow)
+    private val maxSpeedFlow      = rideStats.maxSpeedFlow(resetTrigger, locationRepo.speedFlow)
+    private val avgSpeedFlow      = rideStats.averageSpeedFlow(resetTrigger, locationRepo.speedFlow)
+    private val elevationGainFlow = rideStats.elevationGainFlow(resetTrigger, locationRepo.locationFlow)
+    private val elevationLossFlow = rideStats.elevationLossFlow(resetTrigger, locationRepo.locationFlow)
+    private val caloriesFlow      = rideStats.caloriesFlow(resetTrigger, distanceFlow)
 
 
     // combined sensor data
@@ -215,16 +215,17 @@ class BikeViewModel @Inject constructor(
                 val current = (_uiState.value as? BikeUiState.Success) ?: return
                 when (current.bikeData.rideState) {
                     RideState.NotStarted, RideState.Paused -> {
+                        // 1) clear old path
                         pathPoints.clear()
+                        // 2) reset the stats flows
                         rideStartTime = System.currentTimeMillis()
-                        isRideActive = true
+                        isRideActive  = true
+                        viewModelScope.launch { resetTrigger.emit(Unit) }
                         updateRideState(RideState.Riding)
-                        Log.d("BikeViewModel", "Ride started")
                     }
                     RideState.Riding -> {
                         isRideActive = false
                         updateRideState(RideState.Paused)
-                        Log.d("BikeViewModel", "Ride paused")
                     }
                     RideState.Ended -> {
                         resetRideData()
@@ -238,43 +239,51 @@ class BikeViewModel @Inject constructor(
             }
 
             BikeEvent.StopSaveRide -> {
+                // stop the ride
                 isRideActive = false
-                rideEndTime = System.currentTimeMillis()
+                rideEndTime  = System.currentTimeMillis()
                 updateRideState(RideState.Ended)
-                Log.d("BikeViewModel", "Stop pressed at $rideEndTime")
 
                 viewModelScope.launch {
                     try {
-                        // Build ride
+                        // 3) pull the *final* stats out of the flows
+                        val totalKm        = distanceFlow.first()
+                        val averageSpeed   = avgSpeedFlow.first()
+                        val maxSpeed       = maxSpeedFlow.first()
+                        val elevationGain  = elevationGainFlow.first()
+                        val elevationLoss  = elevationLossFlow.first()
+                        val caloriesBurned = caloriesFlow.first()
+
+                        // 4) build your entity with the real numbers
                         val ride = BikeRideEntity(
-                            startTime = rideStartTime,
-                            endTime = rideEndTime,
-                            totalDistance = pathPoints
-                                .last().distanceTo(pathPoints.first()).toFloat(),
-                            averageSpeed = 0f,
-                            maxSpeed = 0f,
-                            elevationGain = 0f,
-                            elevationLoss = 0f,
-                            caloriesBurned = 0,
-                            startLat = pathPoints.first().latitude,
-                            startLng = pathPoints.first().longitude,
-                            endLat = pathPoints.last().latitude,
-                            endLng = pathPoints.last().longitude
+                            startTime      = rideStartTime,
+                            endTime        = rideEndTime,
+                            totalDistance  = totalKm * 1000f,     // km → meters
+                            averageSpeed   = averageSpeed.toFloat(),
+                            maxSpeed       = maxSpeed,
+                            elevationGain  = elevationGain,
+                            elevationLoss  = elevationLoss,
+                            caloriesBurned = caloriesBurned,
+                            startLat       = pathPoints.first().latitude,
+                            startLng       = pathPoints.first().longitude,
+                            endLat         = pathPoints.last().latitude,
+                            endLng         = pathPoints.last().longitude
                         )
-                        // Map locations
-                        val locs = pathPoints.map {
+
+                        // 5) persist the points too
+                        val locs = pathPoints.map { loc ->
                             RideLocationEntity(
-                                rideId = ride.rideId,
-                                timestamp = it.time,
-                                lat = it.latitude,
-                                lng = it.longitude,
-                                elevation = it.altitude.toFloat()
+                                rideId    = ride.rideId,
+                                timestamp = loc.time,
+                                lat       = loc.latitude,
+                                lng       = loc.longitude,
+                                elevation = loc.altitude.toFloat()
                             )
                         }
                         Log.d("BikeViewModel", "Saving ride + ${locs.size} points")
                         bikeRideRepo.insertRideWithLocations(ride, locs)
-                    } catch (e: Exception) {
-                        Log.e("BikeViewModel", "Save failed", e)
+                    } catch (t: Throwable) {
+                        Log.e("BikeViewModel", "Failed to save ride", t)
                     }
                 }
             }
