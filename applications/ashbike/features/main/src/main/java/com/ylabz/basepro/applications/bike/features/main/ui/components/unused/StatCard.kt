@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun StatCard(
     icon: ImageVector,
+    tint: Color = Color.Gray,
     label: String,
     value: String,
     modifier: Modifier = Modifier
@@ -56,7 +57,7 @@ fun StatCard(
             Icon(
                 imageVector = icon,
                 contentDescription = label,
-                tint = Color.Gray,
+                tint = tint,
                 modifier = Modifier.size(20.dp)
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -80,6 +81,7 @@ fun StatCard(
 fun StatCardPreview() {
     // Dummy data for preview
     val dummyIcon = Icons.Filled.Info // Replace with actual icon if available
+    val dummyIconTint = Color.Green // Adjust as needed
     val dummyLabel = "Dummy Label"
     val dummyValue = "123"
 
@@ -89,6 +91,44 @@ fun StatCardPreview() {
     )
 
     Column(modifier = Modifier.background(gradientBrush)) {
-        StatCard(icon = dummyIcon, label = dummyLabel, value = dummyValue)
+        StatCard(icon = dummyIcon, tint = dummyIconTint,label = dummyLabel, value = dummyValue)
+    }
+}
+
+@Preview
+@Composable
+fun StatCardPreviewGray() {
+    // Dummy data for preview
+    val dummyIcon = Icons.Filled.Info // Replace with actual icon if available
+    val dummyIconTint = Color.Green // Adjust as needed
+    val dummyLabel = "Dummy Label"
+    val dummyValue = "123"
+
+    // Create a horizontal gradient brush for the background
+    val gradientBrush = Brush.horizontalGradient(
+        colors = listOf(Color.Cyan, Color.Magenta)
+    )
+
+    Column(modifier = Modifier.background(gradientBrush)) {
+        StatCard(icon = dummyIcon,label = dummyLabel, value = dummyValue)
+    }
+}
+
+@Preview
+@Composable
+fun StatCardPreviewRed() {
+    // Dummy data for preview
+    val dummyIcon = Icons.Filled.Info // Replace with actual icon if available
+    val dummyIconTint = Color.Green // Adjust as needed
+    val dummyLabel = "Dummy Label"
+    val dummyValue = "123"
+
+    // Create a horizontal gradient brush for the background
+    val gradientBrush = Brush.horizontalGradient(
+        colors = listOf(Color.Cyan, Color.Magenta)
+    )
+
+    Column(modifier = Modifier.background(gradientBrush)) {
+        StatCard(icon = dummyIcon, tint = Color.Red, label = dummyLabel, value = dummyValue)
     }
 }

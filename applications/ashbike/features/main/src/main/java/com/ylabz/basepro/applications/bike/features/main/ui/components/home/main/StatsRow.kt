@@ -10,6 +10,9 @@ import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Straight
 import androidx.compose.material.icons.filled.Terrain
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.gms.maps.model.LatLng
@@ -20,6 +23,7 @@ import com.ylabz.basepro.core.model.bike.RideState
 
 data class StatItem(
     val icon: ImageVector,
+    val tint: Color = Color.Gray,
     val label: String,
     val value: String
 )
@@ -34,21 +38,25 @@ fun StatsRow(
     val avgSpeed = bikeRideInfo.averageSpeed
     // elevation is non-null in BikeRideInfo, but you can choose to hide if zero
     val elevation: Double? = bikeRideInfo.elevation.takeIf { it > 0.0 }
+    val rideState = bikeRideInfo.rideState
 
     // Build the list of stats
     val stats = mutableListOf(
         StatItem(
             icon = Icons.Filled.Straight,
+            tint = if(rideState == RideState.Riding) Color(0xFF4FA252) else Gray,
             label = "Distance",
             value = "%.1f km".format(distance)
         ),
         StatItem(
             icon = Icons.Filled.Timer,
+            tint = if(rideState == RideState.Riding) Color(0xFF4FA252) else Gray,
             label = "Duration",
             value = duration
         ),
         StatItem(
             icon = Icons.Filled.Speed,
+            tint = if(rideState == RideState.Riding) Color(0xFF4FA252) else Gray,
             label = "Avg Speed",
             value = "%.1f km/h".format(avgSpeed)
         )
@@ -74,6 +82,7 @@ fun StatsRow(
         stats.forEach { stat ->
             StatCard(
                 icon = stat.icon,
+                tint = stat.tint,
                 label = stat.label,
                 value = stat.value,
                 modifier = Modifier.weight(1f, fill = false)
