@@ -81,6 +81,9 @@ class BikeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.Loading)
     val uiState: StateFlow<BikeUiState> = _uiState
 
+    // ---- 2) UI‐only ride state ----
+    private val rideStateFlow = MutableStateFlow(RideState.NotStarted)
+
     private var isRideActive = false
     private var rideStartTime = 0L
     private var rideEndTime = 0L
@@ -160,6 +163,13 @@ class BikeViewModel @Inject constructor(
         // Load initial settings
         onEvent(BikeEvent.LoadBike)
 
+        // Keep the tracker’s sessionFlow active so it gathers path points
+        viewModelScope.launch {
+            tracker.sessionFlow
+                .catch { /* log/trap errors here if you want */ }
+                .collect { /* no-op; we just need it running */ }
+        }
+
         // A) raw GPS collector
         viewModelScope.launch {
             locationRepo.locationFlow
@@ -231,15 +241,22 @@ class BikeViewModel @Inject constructor(
         when (event) {
             is BikeEvent.LoadBike -> loadSettings()
 
-            BikeEvent.StartPauseRide -> tracker.start()
-            BikeEvent.StopSaveRide   -> {
+            BikeEvent.StartPauseRide -> {
+                tracker.start()
+                updateRideState(RideState.Riding)
+            }
+
+            BikeEvent.StopSaveRide -> {
+                // 1) flip UI
+                updateRideState(RideState.Ended)
+                // 2) then snapshot & persist
                 viewModelScope.launch {
-                    val finalSession = tracker.stopAndGetSession()
-                    // persist the summary:
-                    val rideEntity = finalSession.toBikeRideEntity()
-                    val locEntities = finalSession.path.map { it.toRideLocationEntity(rideEntity.rideId) }
-                    bikeRideRepo.insertRideWithLocations(rideEntity, locEntities)
+                    val session = tracker.stopAndGetSession()
+                    val rideEntity = session.toBikeRideEntity()
+                    val locations  = session.path.map { it.toRideLocationEntity(rideEntity.rideId) }
+                    bikeRideRepo.insertRideWithLocations(rideEntity, locations)
                 }
+
             }
 
             is BikeEvent.Connect -> {
@@ -281,7 +298,9 @@ class BikeViewModel @Inject constructor(
         }
     }
 
+    /** Helper to merge the new state into your UI model */
     private fun updateRideState(state: RideState) {
+        rideStateFlow.value = state
         val cur = _uiState.value as? BikeUiState.Success ?: return
         _uiState.value = cur.copy(
             bikeData = cur.bikeData.copy(rideState = state)
