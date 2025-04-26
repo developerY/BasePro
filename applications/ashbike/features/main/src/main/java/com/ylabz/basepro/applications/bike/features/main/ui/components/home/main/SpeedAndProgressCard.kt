@@ -18,6 +18,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,6 +32,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.SpeedometerWithCompassOverlay
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.WeatherBadgeWithDetails
@@ -39,6 +41,7 @@ import com.ylabz.basepro.core.model.bike.RideState
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDialWithSpeed
 import com.ylabz.basepro.feature.weather.ui.components.main.WeatherCondition
+import java.time.format.TextStyle
 
 
 @Composable
@@ -133,7 +136,8 @@ fun SpeedAndProgressCard(
             ) {
                 // We measure the parent width, pick a responsive size for the speedometer
                 BoxWithConstraints {
-                    val availableWidth = maxWidth
+                    val boxWithConstraintsScope = this
+                    val availableWidth = boxWithConstraintsScope.maxWidth
                     val gaugeSize = availableWidth.coerceAtMost(450.dp)
                     SpeedometerWithCompassOverlay(
                         currentSpeed = currentSpeed.toFloat(),

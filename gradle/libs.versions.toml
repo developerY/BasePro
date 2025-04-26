@@ -40,7 +40,7 @@ apollo = "3.8.5"
 playServicesWearable = "18.0.0"
 composeMaterial = "1.2.1"
 composeMaterial3 = "1.0.0-alpha30"
-composeFoundation = "1.2.1"
+
 wearToolingPreview = "1.0.0"
 coreSplashscreen = "1.0.1"
 tiles = "1.4.0"
@@ -91,7 +91,7 @@ androidx-wear-compose-material-icons = { group = "androidx.wear.compose", name =
 androidx-wear-compose-material3 = { module = "androidx.wear.compose:compose-material3", version.ref = "composeMaterial3" }
 androidx-wear-compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "composeMaterial" }
 
-androidx-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "composeFoundation" }
+#androidx-wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "composeFoundation" }
 androidx-wear-tooling-preview = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wearToolingPreview" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-tiles = { group = "androidx.wear.tiles", name = "tiles", version.ref = "tiles" }

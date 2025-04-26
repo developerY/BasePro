@@ -44,19 +44,19 @@ fun StatsRow(
     val stats = mutableListOf(
         StatItem(
             icon = Icons.Filled.Straight,
-            tint = if(rideState == RideState.Riding) Color(0xFF4FA252) else Gray,
+            tint = if(rideState == RideState.Riding) Color(0xFF428644) else Gray,
             label = "Distance",
             value = "%.1f km".format(distance)
         ),
         StatItem(
             icon = Icons.Filled.Timer,
-            tint = if(rideState == RideState.Riding) Color(0xFF4FA252) else Gray,
+            tint = if(rideState == RideState.Riding) Color(0xFF59B75C) else Gray,
             label = "Duration",
             value = duration
         ),
         StatItem(
             icon = Icons.Filled.Speed,
-            tint = if(rideState == RideState.Riding) Color(0xFF4FA252) else Gray,
+            tint = if(rideState == RideState.Riding) Color(0xFF448A46) else Gray,
             label = "Avg Speed",
             value = "%.1f km/h".format(avgSpeed)
         )
