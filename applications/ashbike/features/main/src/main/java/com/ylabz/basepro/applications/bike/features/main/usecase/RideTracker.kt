@@ -1,11 +1,13 @@
 package com.ylabz.basepro.applications.bike.features.main.usecase
 
 import android.location.Location
+import com.ylabz.basepro.core.data.repository.travel.UnifiedLocationRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 
@@ -18,9 +20,12 @@ import javax.inject.Singleton
 @Singleton
 class RideTracker @Inject constructor(
     // Inject your raw sensor repos:
-    private val locationFlow: Flow<Location>,
-    private val speedFlow:    Flow<Float>
+    @Named("real") private val realLocationRepository: UnifiedLocationRepository,
 ) {
+
+    private val locationFlow: Flow<Location>      =  realLocationRepository.locationFlow
+    private val speedFlow: Flow<Float>      = realLocationRepository.speedFlow
+
     companion object {
         // Simple calorie constant; pull into config if you like
         private const val CALORIES_PER_KM = 50
@@ -100,6 +105,7 @@ class RideTracker @Inject constructor(
                     val cals = ((acc.totalDistanceM / 1000f) * CALORIES_PER_KM).toInt()
 
                     RideSession(
+                        startTimeMs      = sessionStart,
                         path             = acc.path,
                         totalDistanceM   = acc.totalDistanceM,
                         averageSpeedKmh  = avgSpd,
@@ -116,6 +122,7 @@ class RideTracker @Inject constructor(
             scope        = CoroutineScope(Dispatchers.Default),
             started      = SharingStarted.WhileSubscribed(5_000),
             initialValue = RideSession(
+                startTimeMs     = 0L,
                 path            = emptyList(),
                 totalDistanceM  = 0f,
                 averageSpeedKmh = 0.0,

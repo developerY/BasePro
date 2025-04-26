@@ -7,6 +7,7 @@ import android.location.Location
  */
 
 data class RideSession(
+    val startTimeMs: Long,           // Wall-clock time when session started
     val path: List<Location>,        // All raw GPS fixes so far
     val totalDistanceM: Float,       // Meters traveled
     val averageSpeedKmh: Double,     // km/h
