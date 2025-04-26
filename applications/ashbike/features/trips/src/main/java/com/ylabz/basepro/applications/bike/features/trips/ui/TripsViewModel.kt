@@ -47,8 +47,8 @@ class TripsViewModel @Inject constructor(
             //is TripsEvent.DeleteItem -> deleteItem(event.itemId)
             is TripsEvent.DeleteAll -> deleteAll()
             is TripsEvent.OnRetry -> onEvent(TripsEvent.LoadData)
-            //is TripsEvent.OnItemClicked -> selectItem(event.itemId)
-            is TripsEvent.AddBikeRide -> addBikeRide()
+            // is TripsEvent.OnItemClicked -> selectItem(event.itemId)
+            // is TripsEvent.AddBikeRide -> addBikeRide()
             is TripsEvent.StopSaveRide -> {
                 // stop and persist
                 endTime = System.currentTimeMillis()
