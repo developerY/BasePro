@@ -13,6 +13,7 @@ import com.ylabz.basepro.applications.bike.features.main.usecase.RideTracker
 import com.ylabz.basepro.applications.bike.features.main.usecase.toBikeRideEntity
 import com.ylabz.basepro.applications.bike.features.main.usecase.toRideLocationEntity
 import com.ylabz.basepro.core.data.repository.bikeConnectivity.BikeConnectivityRepository
+import com.ylabz.basepro.core.data.repository.timer.TimerRepository
 import com.ylabz.basepro.core.data.repository.travel.compass.CompassRepository
 import com.ylabz.basepro.core.data.repository.travel.UnifiedLocationRepository
 import com.ylabz.basepro.core.data.repository.weather.WeatherRepo
@@ -44,6 +45,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlin.concurrent.timer
 
 
 @HiltViewModel
@@ -61,6 +63,8 @@ class BikeViewModel @Inject constructor(
     @Named("demo") private val demoCompassRepository: CompassRepository,
     @Named("demo") private val demoWeatherRepo: WeatherRepo,
     @Named("demo") private val demoBikeRideRepo: BikeRideRepo,
+
+    private val timerRepo: TimerRepository,
     private val rideStats: RideStatsUseCase,
     private val tracker: RideTracker
 ) : ViewModel() {
@@ -84,10 +88,8 @@ class BikeViewModel @Inject constructor(
     // ---- 2) UI‐only ride state ----
     private val rideStateFlow = MutableStateFlow(RideState.NotStarted)
 
-    private var isRideActive = false
-    private var rideStartTime = 0L
-    private var rideEndTime = 0L
-    private val pathPoints = mutableListOf<Location>()
+    //private var isRideActive = false
+    //private val pathPoints = mutableListOf<Location>()
 
     // reset trigger for stats
     private val resetTrigger = MutableSharedFlow<Unit>(replay = 1)
@@ -140,11 +142,6 @@ class BikeViewModel @Inject constructor(
             heading           = heading
         )
     }
-        .onEach { data ->
-            if ((_uiState.value as? BikeUiState.Success)?.bikeData?.rideState == RideState.Riding) {
-                pathPoints += data.location
-            }
-        }
         .shareIn(viewModelScope, SharingStarted.Lazily, replay = 0)
 
 
@@ -158,30 +155,6 @@ class BikeViewModel @Inject constructor(
             { /* log/trap errors here if you want */ }
             tracker.sessionFlow
                 .collect { /* no-op; we just need it running */ }
-        }
-
-        // A) raw GPS collector
-        viewModelScope.launch {
-            locationRepo.locationFlow
-                .filter { isRideActive }                    // from kotlinx.coroutines.flow
-                .onEach { loc ->                            // from kotlinx.coroutines.flow
-                    Log.d("BikeViewModel", "raw loc: $loc")
-                    pathPoints += loc
-                }
-                .catch { e -> Log.e("BikeViewModel", "locationFlow error", e) }
-                .collect()                                  // from kotlinx.coroutines.flow
-        }
-
-        // when collecting CombinedSensorData:
-        viewModelScope.launch {
-            sensorDataFlow
-                .onEach { data ->
-                    if (isRideActive) {
-                        pathPoints += data.location
-                        speedHistory += data.speedKmh
-                    }
-                }
-                .collect()
         }
 
         // B) sensor data collector
@@ -221,6 +194,7 @@ class BikeViewModel @Inject constructor(
             is BikeEvent.LoadBike -> loadSettings()
 
             BikeEvent.StartPauseRide -> {
+                timerRepo.start()
                 tracker.start()
                 updateRideState(RideState.Riding)
             }
@@ -228,6 +202,7 @@ class BikeViewModel @Inject constructor(
             BikeEvent.StopSaveRide -> {
                 // 1) flip UI
                 updateRideState(RideState.Ended)
+                timerRepo.stop()
                 // 2) then snapshot & persist
                 viewModelScope.launch {
                     val session = tracker.stopAndGetSession()
@@ -287,21 +262,19 @@ class BikeViewModel @Inject constructor(
     }
 
 
+    // Observe elapsed time and push to your UI state
     private fun startRideDurationUpdates() {
         viewModelScope.launch {
-            while (true) {
-                if (isRideActive) {
-                    val elapsed = System.currentTimeMillis() - rideStartTime
-                    val mins = elapsed / 1000 / 60
-                    val hrs = mins / 60
-                    val rem = mins % 60
-                    val text = if (hrs > 0) "$hrs h $rem m" else "$rem m"
-                    val cur = _uiState.value as? BikeUiState.Success ?: return@launch
+            timerRepo.elapsedTime.collect { elapsedMs ->
+                val mins = (elapsedMs / 1000 / 60).toInt()
+                val hrs = mins / 60
+                val rem = mins % 60
+                val text = if (hrs > 0) "$hrs h $rem m" else "$rem m"
+                (_uiState.value as? BikeUiState.Success)?.let { cur ->
                     _uiState.value = cur.copy(
                         bikeData = cur.bikeData.copy(rideDuration = text)
                     )
                 }
-                delay(1_000L)
             }
         }
     }

@@ -56,7 +56,8 @@ class DemoUnifiedLocationRepositoryImpl @Inject constructor() : UnifiedLocationR
         }
     }
 
-    override val traveledDistanceFlow: Flow<Float> = flow {
+    // currently not used ...
+    val traveledDistanceFlow: Flow<Float> = flow {
         // Simulate a ride: increase traveled distance at a realistic rate.
         // With an increment of about 0.003 km every 500ms,
         // in one second you'll cover roughly 0.006 km (6 meters) which is in line with ~21.6 km/h.
