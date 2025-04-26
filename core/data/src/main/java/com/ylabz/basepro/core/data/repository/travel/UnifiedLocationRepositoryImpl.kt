@@ -91,21 +91,5 @@ class UnifiedLocationRepositoryImpl @Inject constructor(
                 started = SharingStarted.Lazily,
                 replay  = 1
             )
-
-    override val traveledDistanceFlow: Flow<Float> =
-        _rawLocationFlow
-            .scan(
-                initial = Pair<Location?, Float>(null, 0f)
-            ) { (prev, totalKm), curr ->
-                val deltaKm = prev?.distanceTo(curr)?.div(1000f) ?: 0f
-                curr to (totalKm + deltaKm)
-            }
-            .map      { (_, totalKm) -> totalKm }
-            .distinctUntilChanged()
-            .shareIn(
-                scope   = repositoryScope,
-                started = SharingStarted.Lazily,
-                replay  = 1
-            )
 }
 

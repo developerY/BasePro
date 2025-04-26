@@ -89,16 +89,6 @@ class BikeViewModel @Inject constructor(
     private var rideEndTime = 0L
     private val pathPoints = mutableListOf<Location>()
 
-    // Derived flows
-    val traveledDistanceFlow: Flow<Float> = locationRepo.traveledDistanceFlow
-    private val _totalRouteDistance = MutableStateFlow<Float?>(null)
-    val totalRouteDistance: StateFlow<Float?> = _totalRouteDistance
-    val remainingDistanceFlow: Flow<Float?> = combine(
-        traveledDistanceFlow,
-        totalRouteDistance
-    ) { traveled, total -> total?.let { (it - traveled).coerceAtLeast(0f) } }
-
-
     // reset trigger for stats
     private val resetTrigger = MutableSharedFlow<Unit>(replay = 1)
 
@@ -165,8 +155,8 @@ class BikeViewModel @Inject constructor(
 
         // Keep the tracker’s sessionFlow active so it gathers path points
         viewModelScope.launch {
+            { /* log/trap errors here if you want */ }
             tracker.sessionFlow
-                .catch { /* log/trap errors here if you want */ }
                 .collect { /* no-op; we just need it running */ }
         }
 
@@ -193,17 +183,6 @@ class BikeViewModel @Inject constructor(
                 }
                 .collect()
         }
-
-        /*
-        viewModelScope.launch {
-            unifiedLocationRepository.locationFlow
-                .filter { isRideActive }
-                .collect { loc ->
-                    Log.d("BikeViewModel", "raw loc: $loc")
-                    pathPoints += loc
-                }
-        }
-        */
 
         // B) sensor data collector
         viewModelScope.launch {
@@ -304,39 +283,6 @@ class BikeViewModel @Inject constructor(
         val cur = _uiState.value as? BikeUiState.Success ?: return
         _uiState.value = cur.copy(
             bikeData = cur.bikeData.copy(rideState = state)
-        )
-    }
-
-    private fun resetRideData() {
-        val currentState = _uiState.value as? BikeUiState.Success ?: return
-
-        _uiState.value = currentState.copy(
-            bikeData = currentState.bikeData.copy(
-                // Live‐tracking fields
-                rideState           = RideState.NotStarted,
-                location            = null,
-                currentSpeed        = 0.0,
-                averageSpeed        = 0.0,
-                currentTripDistance = 0f,
-                totalTripDistance   = null,
-                remainingDistance   = null,
-                rideDuration        = "00:00",
-
-                // Leave settings alone
-                // currentState.bikeData.settings
-
-                // Sensor fields
-                heading        = 0f,
-                elevation      = 0.0,
-
-                // Bike connection
-                isBikeConnected = false,
-                batteryLevel    = null,
-                motorPower      = null,
-
-                // Weather
-                bikeWeatherInfo = null
-            )
         )
     }
 
