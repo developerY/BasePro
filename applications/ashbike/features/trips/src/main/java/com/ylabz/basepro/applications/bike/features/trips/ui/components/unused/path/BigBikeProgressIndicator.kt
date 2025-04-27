@@ -27,6 +27,7 @@ fun BigBikeProgressIndicator(
     modifier: Modifier = Modifier,
     trackHeight: Dp = 8.dp,
     iconSize: Dp = 48.dp,
+    iconTint: Color = Color.Gray,
     containerHeight: Dp = 70.dp // enough space for half the icon above & below the line
 ) {
 
@@ -41,10 +42,11 @@ fun BigBikeProgressIndicator(
             .fillMaxWidth()
             .height(containerHeight)
     ) {
+        val boxWithConstraints  = this
         // Convert DP to pixels for precise offsets
         val density = LocalDensity.current
-        val containerWidthPx = with(density) { maxWidth.toPx() }
-        val containerHeightPx = with(density) { maxHeight.toPx() }
+        val containerWidthPx = with(density) { boxWithConstraints.maxWidth.toPx() }
+        val containerHeightPx = with(density) { boxWithConstraints.maxHeight.toPx() }
         val trackHeightPx = with(density) { trackHeight.toPx() }
         val iconSizePx = with(density) { iconSize.toPx() }
 
@@ -87,7 +89,7 @@ fun BigBikeProgressIndicator(
         Icon(
             imageVector = Icons.AutoMirrored.Filled.DirectionsBike,
             contentDescription = "Trip Progress",
-            tint = Color(0xFF4CAF50),
+            tint = iconTint,
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .offset {
