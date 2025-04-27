@@ -45,6 +45,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlin.concurrent.timer
 
 
@@ -200,30 +201,30 @@ class BikeViewModel @Inject constructor(
             }
 
             BikeEvent.StopSaveRide -> {
-                // 1) flip UI
                 updateRideState(RideState.Ended)
                 timerRepo.stop()
-                // 2) then snapshot & persist
                 viewModelScope.launch {
-                    val session = tracker.stopAndGetSession()
+                    val session    = tracker.stopAndGetSession()
                     val rideEntity = session.toBikeRideEntity()
                     val locations  = session.path.map { it.toRideLocationEntity(rideEntity.rideId) }
                     bikeRideRepo.insertRideWithLocations(rideEntity, locations)
                 }
-
             }
 
-            is BikeEvent.Connect -> {
-                connectBike()
-            }
+            is BikeEvent.Connect -> connectBike()
 
             is BikeEvent.SetTotalDistance -> {
-                // only update if we’re currently in Success
-                val current = _uiState.value
-                if (current is BikeUiState.Success) {
-                    val updatedInfo = current.bikeData
-                        .copy(totalTripDistance = event.totalDistance)
-                    _uiState.value = BikeUiState.Success(bikeData = updatedInfo)
+                _uiState.update { current ->
+                    if (current is BikeUiState.Success) {
+                        // produce a new Success with updated totalTripDistance
+                        current.copy(
+                            bikeData = current.bikeData.copy(
+                                totalTripDistance = event.totalDistance
+                            )
+                        )
+                    } else {
+                        current
+                    }
                 }
             }
 

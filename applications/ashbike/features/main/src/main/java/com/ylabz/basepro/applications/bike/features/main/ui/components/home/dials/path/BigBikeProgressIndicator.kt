@@ -1,6 +1,8 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path
 
+import android.R.attr.iconTint
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +26,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.*
 import kotlin.math.roundToInt
 import androidx.compose.ui.tooling.preview.Preview
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 
 @Composable
 fun BigBikeProgressIndicator(
@@ -34,6 +37,7 @@ fun BigBikeProgressIndicator(
     iconSize: Dp = 48.dp,
     iconTint: Color = Color.Gray,
     containerHeight: Dp = 70.dp,
+    onBikeClick: () -> Unit
 ) {
     val fraction: Float = totalDistance
         ?.takeIf { it > 0f }
@@ -92,7 +96,7 @@ fun BigBikeProgressIndicator(
                     )
                 }
                 .size(iconSize)
-                //.clickable { onBikeClick() }  // ← default, non-deprecated ripple
+                .clickable { onBikeClick() }  // ← default, non-deprecated ripple
         )
     }
 }
@@ -108,7 +112,7 @@ fun BigBikeProgressIndicatorPreview() {
             currentDistance = current,
             totalDistance   = total,
             iconTint        = Color.DarkGray,
-            //onBikeClick     = { total = 10000f }
+            onBikeClick     = { total = 10000f }
         )
         Spacer(Modifier.height(16.dp))
         current = 5000f
@@ -117,7 +121,7 @@ fun BigBikeProgressIndicatorPreview() {
             currentDistance = current,
             totalDistance   = total,
             iconTint        = Color.Green,
-            //onBikeClick     = { /* edit */ }
+            onBikeClick     = { /* edit */ }
         )
     }
 }

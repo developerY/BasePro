@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.SpeedometerWithCompassOverlay
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.weather.WeatherBadgeWithDetails
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path.unused.BikePathWithControls
+import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path.BikePathWithControls
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
