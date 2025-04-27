@@ -1,7 +1,9 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -18,14 +20,35 @@ import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 
 // 5) The fully featured, animated badge
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WeatherBadgeWithDetails(
     weatherInfo: BikeWeatherInfo?,
     modifier: Modifier = Modifier
 ) {
     var showDialog by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
+    var lastClickTime by remember { mutableStateOf(0L) }
 
-    Box(modifier = modifier) {
+    val DOUBLE_CLICK_THRESHOLD = 300L // milliseconds
+
+    Box(
+        modifier = modifier
+            .combinedClickable(
+                onClick = {
+                    val currentTime = System.currentTimeMillis()
+                    if (currentTime - lastClickTime < DOUBLE_CLICK_THRESHOLD) {
+                        // Double click detected
+                        showDialog = true
+                        expanded = false
+                    } else {
+                        // Single click detected (expand/collapse)
+                        expanded = !expanded
+                    }
+                    lastClickTime = currentTime
+                }
+            )
+    ) {
         if (weatherInfo == null) {
             SimpleShimmer(
                 Modifier
@@ -33,19 +56,17 @@ fun WeatherBadgeWithDetails(
                     .clip(RoundedCornerShape(16.dp))
             )
         } else {
-            // make the whole badge clickable & accessible
-            AnimatedWeatherBadge(
-                weatherInfo = weatherInfo,
-                modifier = Modifier
-                    .clickable { showDialog = true }
-                    /*.semantics {
-                        contentDescription = buildString {
-                            append(stringResource(R.string.weather_content_desc,
-                                weatherInfo.conditionText,
-                                weatherInfo.temperature?.toInt() ?: 0))
-                        }
-                    }*/
-            )
+            if (expanded) {
+                ExpandedWeatherBadge(weatherInfo)
+            } else {
+                AnimatedWeatherBadge(
+                    weatherInfo = weatherInfo,
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                )
+            }
+
             if (showDialog) {
                 WeatherDetailDialog(weatherInfo) { showDialog = false }
             }
