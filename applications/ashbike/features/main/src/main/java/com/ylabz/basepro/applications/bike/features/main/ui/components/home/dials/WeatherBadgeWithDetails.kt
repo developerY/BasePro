@@ -30,7 +30,7 @@ fun WeatherBadgeWithDetails(
     var expanded by remember { mutableStateOf(false) }
     var lastClickTime by remember { mutableStateOf(0L) }
 
-    val DOUBLE_CLICK_THRESHOLD = 300L // milliseconds
+    val DOUBLE_CLICK_THRESHOLD = 300L // ms for double click
 
     Box(
         modifier = modifier
@@ -38,11 +38,11 @@ fun WeatherBadgeWithDetails(
                 onClick = {
                     val currentTime = System.currentTimeMillis()
                     if (currentTime - lastClickTime < DOUBLE_CLICK_THRESHOLD) {
-                        // Double click detected
+                        // Double click
                         showDialog = true
                         expanded = false
                     } else {
-                        // Single click detected (expand/collapse)
+                        // Single click
                         expanded = !expanded
                     }
                     lastClickTime = currentTime
@@ -52,27 +52,19 @@ fun WeatherBadgeWithDetails(
         if (weatherInfo == null) {
             SimpleShimmer(
                 Modifier
-                    .size(100.dp)
+                    .size(50.dp)
                     .clip(RoundedCornerShape(16.dp))
             )
         } else {
-            if (expanded) {
-                ExpandedWeatherBadge(weatherInfo)
-            } else {
-                AnimatedWeatherBadge(
-                    weatherInfo = weatherInfo,
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                )
-            }
+            WeatherBadgeContent(weatherInfo, expanded)
+        }
 
-            if (showDialog) {
-                WeatherDetailDialog(weatherInfo) { showDialog = false }
-            }
+        if (weatherInfo != null && showDialog) {
+            WeatherDetailDialog(weatherInfo) { showDialog = false }
         }
     }
 }
+
 
 // 3) Shimmer placeholder for loading
 @Composable
