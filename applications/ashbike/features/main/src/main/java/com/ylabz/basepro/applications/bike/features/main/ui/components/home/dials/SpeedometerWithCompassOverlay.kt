@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
-import com.ylabz.basepro.applications.bike.features.trips.ui.components.unused.path.DigitalCompassCard
+import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path.unused.DigitalCompassCard
 
 @Composable
 fun SpeedometerWithCompassOverlay(

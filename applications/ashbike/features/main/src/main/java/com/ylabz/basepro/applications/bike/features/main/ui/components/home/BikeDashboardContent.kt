@@ -21,7 +21,7 @@ import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dial
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.SpeedAndProgressCard
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatItem
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatsRow
-import com.ylabz.basepro.applications.bike.features.main.ui.components.unused.BikeBatteryLevels
+import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.bike.BikeBatteryLevels
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 
 // Combine with BikeDashboardExample --

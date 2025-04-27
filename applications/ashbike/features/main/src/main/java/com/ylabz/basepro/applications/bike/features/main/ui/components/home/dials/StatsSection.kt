@@ -8,8 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Speed
+import androidx.compose.material.icons.filled.Straight
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatItem
-import com.ylabz.basepro.applications.bike.features.main.ui.components.unused.StatCard
+import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatCard
 
 @Composable
 fun StatsSection(
@@ -34,4 +38,22 @@ fun StatsSection(
             )
         }
     }
+}
+
+@Preview
+@Composable
+fun StatsSectionPreview() {
+    val stats = listOf(
+        StatItem(
+            icon = Icons.Filled.Straight,
+            label = "Distance",
+            value = "10.0 km"
+        ),
+        StatItem(
+            icon = Icons.Filled.Speed,
+            label = "Avg Speed",
+            value = "25.0 km/h"
+        )
+    )
+    StatsSection(stats = stats)
 }

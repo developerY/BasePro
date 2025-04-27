@@ -9,5 +9,8 @@ sealed class BikeEvent {
 
     object StartPauseRide  : BikeEvent()
     object StopSaveRide        : BikeEvent()   // now both Stop & Save
+
+    // ← NEW: Hold the distance the user entered
+    data class SetTotalDistance(val totalDistance: Float) : BikeEvent()
 }
 

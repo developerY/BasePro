@@ -12,11 +12,9 @@ import androidx.compose.material.icons.filled.Straight
 import androidx.compose.material.icons.filled.Terrain
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Gray
-import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.gms.maps.model.LatLng
-import com.ylabz.basepro.applications.bike.features.main.ui.components.unused.StatCard
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
 

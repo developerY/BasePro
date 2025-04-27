@@ -217,6 +217,16 @@ class BikeViewModel @Inject constructor(
                 connectBike()
             }
 
+            is BikeEvent.SetTotalDistance -> {
+                // only update if we’re currently in Success
+                val current = _uiState.value
+                if (current is BikeUiState.Success) {
+                    val updatedInfo = current.bikeData
+                        .copy(totalTripDistance = event.totalDistance)
+                    _uiState.value = BikeUiState.Success(bikeData = updatedInfo)
+                }
+            }
+
             else -> { /* other settings, delete, etc. */ }
         }
     }

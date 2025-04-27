@@ -6,8 +6,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ylabz.basepro.applications.bike.features.main.ui.components.unused.ErrorScreen
-import com.ylabz.basepro.applications.bike.features.main.ui.components.unused.LoadingScreen
+import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.unused.ErrorScreen
+import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.unused.LoadingScreen
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
