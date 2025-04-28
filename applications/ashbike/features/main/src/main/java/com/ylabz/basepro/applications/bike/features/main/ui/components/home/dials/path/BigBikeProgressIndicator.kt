@@ -1,6 +1,9 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path
 
 import android.R.attr.iconTint
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,24 +40,31 @@ import com.ylabz.basepro.core.model.bike.RideState
 
 @Composable
 fun BigBikeProgressIndicator(
-    modifier: Modifier = Modifier,
     currentDistance: Float,
     totalDistance: Float?,
+    modifier: Modifier = Modifier,
     trackHeight: Dp = 8.dp,
     iconSize: Dp = 48.dp,
     iconTint: Color = Color.Gray,
     containerHeight: Dp = 70.dp,
     onBikeClick: () -> Unit
 ) {
-    // fraction only valid once we have a totalDistance
-    val fraction = totalDistance
+    // 1) Compute raw fraction if we have a totalDistance
+    val rawFraction: Float? = totalDistance
         ?.takeIf { it > 0f }
         ?.let { (currentDistance / it).coerceIn(0f, 1f) }
-    // before user sets distance, we center the bike
-        ?: 0.5f
 
-    if (totalDistance == null) {
-        // ——— BEFORE DISTANCE IS SET: only centered bike ———
+    // 2) Decide target fraction: center (0.5) before set, else rawFraction
+    val targetFraction = rawFraction ?: 0.5f
+
+    // 3) Animate any change in fraction
+    val fraction by animateFloatAsState(
+        targetValue = targetFraction,
+        animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing)
+    )
+
+    // 4) Before user sets a distance, just show a centered tappable bike — no track
+    if (rawFraction == null) {
         Box(
             modifier = modifier
                 .fillMaxWidth()
@@ -73,7 +83,7 @@ fun BigBikeProgressIndicator(
         return
     }
 
-    // ——— AFTER DISTANCE IS SET: draw track, markers, progress, plus bike ———
+    // 5) Once totalDistance is non-null, draw track, markers, progress, and bike
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
@@ -81,39 +91,39 @@ fun BigBikeProgressIndicator(
     ) {
         val bc = this
         val dens            = LocalDensity.current
-        val wPx             = with(dens) { bc.maxWidth.toPx() }
-        val hPx             = with(dens) { bc.maxHeight.toPx() }
-        val trackHpx        = with(dens) { trackHeight.toPx() }
-        val iconPx          = with(dens) { iconSize.toPx() }
+        val widthPx         = with(dens) { bc.maxWidth.toPx() }
+        val heightPx        = with(dens) { bc.maxHeight.toPx() }
+        val trackHeightPx   = with(dens) { trackHeight.toPx() }
+        val iconSizePx      = with(dens) { iconSize.toPx() }
 
-        val lineY           = hPx / 2
-        val padX            = iconPx / 2
-        val leftX           = padX
-        val rightX          = wPx - padX
-        val trackW          = rightX - leftX
+        val lineY           = heightPx / 2f
+        val paddingX        = iconSizePx / 2f
+        val leftX           = paddingX
+        val rightX          = widthPx - paddingX
+        val trackWidthPx    = rightX - leftX
 
-        val bikeCenterX     = leftX + trackW * fraction
-        val bikeTopY        = lineY - iconPx / 2
+        val bikeCenterX     = leftX + trackWidthPx * fraction
+        val bikeTopY        = lineY - iconSizePx / 2f
 
-        // 1) Track and progress
+        // Draw the background track + progress
         Canvas(Modifier.matchParentSize()) {
-            // gray full-length line
+            // full gray track
             drawLine(
                 color       = Color.LightGray,
                 start       = Offset(leftX, lineY),
                 end         = Offset(rightX, lineY),
-                strokeWidth = trackHpx
+                strokeWidth = trackHeightPx
             )
-            // colored progress line
+            // colored progress bar
             drawLine(
                 color       = Color(0xFF90CAF9),
                 start       = Offset(leftX, lineY),
-                end         = Offset(leftX + trackW * fraction, lineY),
-                strokeWidth = trackHpx
+                end         = Offset(leftX + trackWidthPx * fraction, lineY),
+                strokeWidth = trackHeightPx
             )
         }
 
-        // 2) Distance markers
+        // Distance markers: 0 / mid / full
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -123,11 +133,11 @@ fun BigBikeProgressIndicator(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("0 km",  style = MaterialTheme.typography.bodySmall)
-            Text("${(totalDistance/2).toInt()} km", style = MaterialTheme.typography.bodySmall)
+            Text("${(totalDistance / 2).toInt()} km", style = MaterialTheme.typography.bodySmall)
             Text("${totalDistance.toInt()} km",    style = MaterialTheme.typography.bodySmall)
         }
 
-        // 3) Bike icon, positioned along the track
+        // The bike icon, positioned along (and clickable)
         Icon(
             imageVector        = Icons.AutoMirrored.Filled.DirectionsBike,
             contentDescription = "Trip Progress",
@@ -136,7 +146,7 @@ fun BigBikeProgressIndicator(
                 .align(Alignment.TopStart)
                 .offset {
                     IntOffset(
-                        x = (bikeCenterX - iconPx/2).roundToInt(),
+                        x = (bikeCenterX - iconSizePx / 2f).roundToInt(),
                         y = bikeTopY.roundToInt()
                     )
                 }
@@ -145,6 +155,8 @@ fun BigBikeProgressIndicator(
         )
     }
 }
+
+
 
 
 @Preview(showBackground = true)
