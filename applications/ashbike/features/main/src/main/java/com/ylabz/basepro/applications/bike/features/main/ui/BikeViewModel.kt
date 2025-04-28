@@ -148,6 +148,31 @@ class BikeViewModel @Inject constructor(
 
 
     init {
+
+        _uiState.value = BikeUiState.Success(
+            bikeData = BikeRideInfo(
+                location            = null,
+                currentSpeed        = 0.0,
+                averageSpeed        = 0.0,
+                maxSpeed            = 0.0,
+                currentTripDistance = 0f,
+                totalTripDistance   = null,
+                remainingDistance   = null,
+                elevationGain       = 0.0,
+                elevationLoss       = 0.0,
+                caloriesBurned      = 0,
+                rideDuration        = "00:00",
+                settings            = emptyMap(),
+                heading             = 0f,
+                elevation           = 0.0,
+                isBikeConnected     = false,
+                batteryLevel        = null,
+                motorPower          = null,
+                rideState           = RideState.NotStarted,
+                bikeWeatherInfo     = null
+            )
+        )
+
         // Load initial settings
         onEvent(BikeEvent.LoadBike)
 
@@ -263,13 +288,16 @@ class BikeViewModel @Inject constructor(
         }
     }
 
+    // --- Helpers ------------------------------------------------------------
     /** Helper to merge the new state into your UI model */
-    private fun updateRideState(state: RideState) {
-        rideStateFlow.value = state
-        val cur = _uiState.value as? BikeUiState.Success ?: return
-        _uiState.value = cur.copy(
-            bikeData = cur.bikeData.copy(rideState = state)
-        )
+    private fun updateRideState(newState: RideState) {
+        _uiState.update { state ->
+            if (state is BikeUiState.Success) {
+                state.copy(
+                    bikeData = state.bikeData.copy(rideState = newState)
+                )
+            } else state
+        }
     }
 
 
