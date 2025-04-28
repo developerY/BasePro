@@ -78,10 +78,11 @@ fun BikePathWithControls(
             BigBikeProgressIndicator(
                 currentDistance = currentDistance,
                 totalDistance   = totalDistance,
+                rideState = bikeRideInfo.rideState,
+                trackHeight     = trackHeight,
                 iconSize        = iconSize,
                 iconTint        = if (isRiding) Color(0xFF4CAF50) else Color.LightGray,
                 containerHeight = buttonSize,
-                trackHeight     = trackHeight,
                 onBikeClick     = { showDistanceDialog = true }
             )
         }
