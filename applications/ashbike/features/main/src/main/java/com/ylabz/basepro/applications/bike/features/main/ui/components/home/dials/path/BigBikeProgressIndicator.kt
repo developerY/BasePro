@@ -4,6 +4,7 @@ import android.R.attr.iconTint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,26 +40,40 @@ fun BigBikeProgressIndicator(
     modifier: Modifier = Modifier,
     currentDistance: Float,
     totalDistance: Float?,
-    rideState: RideState,
     trackHeight: Dp = 8.dp,
     iconSize: Dp = 48.dp,
     iconTint: Color = Color.Gray,
-    containerHeight: Dp = 70.dp,    // room for half the icon
+    containerHeight: Dp = 70.dp,
     onBikeClick: () -> Unit
 ) {
-    // 1) Compute fraction:
-    //  - if we have a real totalDistance → 0..1 = current/total
-    //  - else if ride hasn't started yet → .5 (center it)
-    //  - else → 0 (start pos)
-    val rawFraction = totalDistance
+    // fraction only valid once we have a totalDistance
+    val fraction = totalDistance
         ?.takeIf { it > 0f }
         ?.let { (currentDistance / it).coerceIn(0f, 1f) }
-    val fraction = when {
-        rawFraction != null -> rawFraction
-        rideState == RideState.NotStarted -> 0.5f
-        else -> 0f
+    // before user sets distance, we center the bike
+        ?: 0.5f
+
+    if (totalDistance == null) {
+        // ——— BEFORE DISTANCE IS SET: only centered bike ———
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(containerHeight),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector        = Icons.AutoMirrored.Filled.DirectionsBike,
+                contentDescription = "Set total distance",
+                tint               = iconTint,
+                modifier           = Modifier
+                    .size(iconSize)
+                    .clickable { onBikeClick() }
+            )
+        }
+        return
     }
 
+    // ——— AFTER DISTANCE IS SET: draw track, markers, progress, plus bike ———
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
@@ -80,42 +95,39 @@ fun BigBikeProgressIndicator(
         val bikeCenterX     = leftX + trackW * fraction
         val bikeTopY        = lineY - iconPx / 2
 
-        // 2) Always draw the base track:
+        // 1) Track and progress
         Canvas(Modifier.matchParentSize()) {
+            // gray full-length line
             drawLine(
                 color       = Color.LightGray,
                 start       = Offset(leftX, lineY),
                 end         = Offset(rightX, lineY),
                 strokeWidth = trackHpx
             )
-            // And only draw the progress portion if we have a true totalDistance
-            if (rawFraction != null) {
-                drawLine(
-                    color       = Color(0xFF90CAF9),
-                    start       = Offset(leftX, lineY),
-                    end         = Offset(leftX + trackW * rawFraction, lineY),
-                    strokeWidth = trackHpx
-                )
-            }
+            // colored progress line
+            drawLine(
+                color       = Color(0xFF90CAF9),
+                start       = Offset(leftX, lineY),
+                end         = Offset(leftX + trackW * fraction, lineY),
+                strokeWidth = trackHpx
+            )
         }
 
-        // 3) Only show “0 / mid / full” markers when we know totalDistance
-        if (rawFraction != null) {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .padding(horizontal = iconSize / 2)
-                    .offset(y = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text("0 km", style = MaterialTheme.typography.bodySmall)
-                Text("${(totalDistance!! / 2).toInt()} km", style = MaterialTheme.typography.bodySmall)
-                Text("${totalDistance.toInt()} km", style = MaterialTheme.typography.bodySmall)
-            }
+        // 2) Distance markers
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(horizontal = iconSize / 2)
+                .offset(y = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("0 km",  style = MaterialTheme.typography.bodySmall)
+            Text("${(totalDistance/2).toInt()} km", style = MaterialTheme.typography.bodySmall)
+            Text("${totalDistance.toInt()} km",    style = MaterialTheme.typography.bodySmall)
         }
 
-        // 4) Finally, the bike icon itself, tappable
+        // 3) Bike icon, positioned along the track
         Icon(
             imageVector        = Icons.AutoMirrored.Filled.DirectionsBike,
             contentDescription = "Trip Progress",
@@ -124,7 +136,7 @@ fun BigBikeProgressIndicator(
                 .align(Alignment.TopStart)
                 .offset {
                     IntOffset(
-                        x = (bikeCenterX - iconPx / 2).roundToInt(),
+                        x = (bikeCenterX - iconPx/2).roundToInt(),
                         y = bikeTopY.roundToInt()
                     )
                 }
@@ -133,6 +145,7 @@ fun BigBikeProgressIndicator(
         )
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -148,7 +161,6 @@ fun BigBikeProgressIndicatorPreview() {
             currentDistance = 0f,
             totalDistance   = null,
             iconTint        = Color.DarkGray,
-            rideState       = RideState.NotStarted,
             onBikeClick     = { /* opens dialog */ }
         )
         Spacer(Modifier.height(24.dp))
@@ -157,7 +169,6 @@ fun BigBikeProgressIndicatorPreview() {
         BigBikeProgressIndicator(
             currentDistance = 2_500f,
             totalDistance   = 10_000f,
-            rideState       = RideState.NotStarted,
             iconTint        = Color(0xFF4CAF50),
             onBikeClick     = { /* edit distance */ }
         )
@@ -175,7 +186,6 @@ fun BigBikeProgressIndicatorPreviewOld() {
             currentDistance = current,
             totalDistance   = total,
             iconTint        = Color.DarkGray,
-            rideState       = RideState.NotStarted,
             onBikeClick     = { total = 10000f }
         )
         Spacer(Modifier.height(16.dp))
@@ -184,7 +194,6 @@ fun BigBikeProgressIndicatorPreviewOld() {
         BigBikeProgressIndicator(
             currentDistance = current,
             totalDistance   = total,
-            rideState       = RideState.Riding,
             iconTint        = Color.Green,
             onBikeClick     = { /* edit */ }
         )
