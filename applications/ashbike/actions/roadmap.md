@@ -210,8 +210,6 @@ Show zero distance when stopped
 Allow Start → distance begins at 0 again
 
 Stop resets everything to the centered gray bike
-
-Let me know if you need any more tweaks!
 ---
 How it behaves
 Tap “▶️” (NotStarted → Riding): calls tracker.start(), emits a reset, and begins location polling.

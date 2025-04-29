@@ -173,9 +173,6 @@ class BikeViewModel @Inject constructor(
             )
         )
 
-        // Load initial settings
-        onEvent(BikeEvent.LoadBike)
-
         // Keep the tracker’s sessionFlow active so it gathers path points
         viewModelScope.launch {
             { /* log/trap errors here if you want */ }
@@ -217,6 +214,9 @@ class BikeViewModel @Inject constructor(
         // C) duration updater
         startRideDurationUpdates()
 
+        // 3) Load settings / weather…
+        onEvent(BikeEvent.LoadBike)
+
         // D) one-time weather refresh after UI ready
         viewModelScope.launch {
             _uiState.filterIsInstance<BikeUiState.Success>()
@@ -241,25 +241,31 @@ class BikeViewModel @Inject constructor(
             }
 
             BikeEvent.StopSaveRide -> {
-                updateRideState(RideState.Ended)
+                // 1) Flip to NotStarted
+                updateRideState(RideState.NotStarted)
+
+                // 2) Stop timer
                 timerRepo.stop()
-                // 2) clear out the manual distance so the UI goes back to a centered bike
-                // clear out any planned or accrued distance
-                _uiState.update { current ->
-                    if (current is BikeUiState.Success) {
-                        current.copy(
-                            bikeData = current.bikeData.copy(
+
+                // 3) Clear out distance & plan so UI returns to centered bike
+                _uiState.update { state ->
+                    if (state is BikeUiState.Success) {
+                        state.copy(
+                            bikeData = state.bikeData.copy(
                                 currentTripDistance = 0f,
-                                totalTripDistance = null
+                                totalTripDistance   = null
                             )
                         )
-                    } else current
+                    } else state
                 }
 
+                // 4) Persist the session
                 viewModelScope.launch {
                     val session    = tracker.stopAndGetSession()
                     val rideEntity = session.toBikeRideEntity()
-                    val locations  = session.path.map { it.toRideLocationEntity(rideEntity.rideId) }
+                    val locations  = session.path.map {
+                        it.toRideLocationEntity(rideEntity.rideId)
+                    }
                     bikeRideRepo.insertRideWithLocations(rideEntity, locations)
                 }
             }
@@ -267,17 +273,14 @@ class BikeViewModel @Inject constructor(
             is BikeEvent.Connect -> connectBike()
 
             is BikeEvent.SetTotalDistance -> {
-                _uiState.update { current ->
-                    if (current is BikeUiState.Success) {
-                        // produce a new Success with updated totalTripDistance
-                        current.copy(
-                            bikeData = current.bikeData.copy(
+                _uiState.update { state ->
+                    if (state is BikeUiState.Success) {
+                        state.copy(
+                            bikeData = state.bikeData.copy(
                                 totalTripDistance = event.totalDistance
                             )
                         )
-                    } else {
-                        current
-                    }
+                    } else state
                 }
             }
 
