@@ -186,22 +186,33 @@ class BikeViewModel @Inject constructor(
         // B) sensor data collector
         viewModelScope.launch {
             sensorDataFlow.collect { data ->
-                val curState = _uiState.value as? BikeUiState.Success ?: return@collect
-                _uiState.value = curState.copy(
-                    bikeData = curState.bikeData.copy(
-                        location             = LatLng(data.location.latitude, data.location.longitude),
-                        currentSpeed         = data.speedKmh.toDouble(),
-                        averageSpeed         = data.averageSpeed,
-                        maxSpeed             = data.maxSpeed.toDouble(),
-                        currentTripDistance  = data.traveledDistance,
-                        elevationGain        = data.elevationGain.toDouble(),
-                        elevationLoss        = data.elevationLoss.toDouble(),
-                        caloriesBurned       = data.caloriesBurned,
-                        heading              = data.heading
-                    )
-                )
+                _uiState.update { state ->
+                    if (state is BikeUiState.Success) {
+                        val bike = state.bikeData
+                        // only accumulate distance when we're in Riding state
+                        val displayedDist = if (bike.rideState == RideState.Riding)
+                            data.traveledDistance
+                        else
+                            0f
+
+                        state.copy(
+                            bikeData = bike.copy(
+                                location            = LatLng(data.location.latitude, data.location.longitude),
+                                currentSpeed        = data.speedKmh.toDouble(),  // always live
+                                averageSpeed        = data.averageSpeed,
+                                maxSpeed            = data.maxSpeed.toDouble(),
+                                currentTripDistance = displayedDist,
+                                elevationGain       = data.elevationGain.toDouble(),
+                                elevationLoss       = data.elevationLoss.toDouble(),
+                                caloriesBurned      = data.caloriesBurned,
+                                heading             = data.heading
+                            )
+                        )
+                    } else state
+                }
             }
         }
+
 
         // C) duration updater
         startRideDurationUpdates()
@@ -222,6 +233,10 @@ class BikeViewModel @Inject constructor(
             BikeEvent.StartPauseRide -> {
                 timerRepo.start()
                 tracker.start()
+                // reset all the stats (distance, elevation, etc.)
+                viewModelScope.launch {
+                    resetTrigger.emit(Unit)
+                }
                 updateRideState(RideState.Riding)
             }
 
@@ -229,10 +244,12 @@ class BikeViewModel @Inject constructor(
                 updateRideState(RideState.Ended)
                 timerRepo.stop()
                 // 2) clear out the manual distance so the UI goes back to a centered bike
+                // clear out any planned or accrued distance
                 _uiState.update { current ->
                     if (current is BikeUiState.Success) {
                         current.copy(
                             bikeData = current.bikeData.copy(
+                                currentTripDistance = 0f,
                                 totalTripDistance = null
                             )
                         )
