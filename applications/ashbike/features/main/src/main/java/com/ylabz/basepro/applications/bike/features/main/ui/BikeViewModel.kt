@@ -228,6 +228,17 @@ class BikeViewModel @Inject constructor(
             BikeEvent.StopSaveRide -> {
                 updateRideState(RideState.Ended)
                 timerRepo.stop()
+                // 2) clear out the manual distance so the UI goes back to a centered bike
+                _uiState.update { current ->
+                    if (current is BikeUiState.Success) {
+                        current.copy(
+                            bikeData = current.bikeData.copy(
+                                totalTripDistance = null
+                            )
+                        )
+                    } else current
+                }
+
                 viewModelScope.launch {
                     val session    = tracker.stopAndGetSession()
                     val rideEntity = session.toBikeRideEntity()

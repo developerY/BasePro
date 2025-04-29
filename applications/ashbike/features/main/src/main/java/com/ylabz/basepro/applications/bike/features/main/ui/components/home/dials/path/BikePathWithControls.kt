@@ -45,11 +45,11 @@ fun BikePathWithControls(
     buttonSize: Dp = 60.dp
 ) {
     // UI-only override for total distance
-    var manualTotal by remember { mutableStateOf(bikeRideInfo.totalTripDistance) }
+    //var manualTotal by remember { mutableStateOf(bikeRideInfo.totalTripDistance) }
     var showDistanceDialog by remember { mutableStateOf(false) }
 
     val currentDistance = bikeRideInfo.currentTripDistance
-    val totalDistance   = manualTotal
+    var totalDistance   = bikeRideInfo.totalTripDistance
     val isRiding        = bikeRideInfo.rideState == RideState.Riding
 
     Row(
@@ -100,7 +100,7 @@ fun BikePathWithControls(
     // ——— Distance entry dialog ———
     if (showDistanceDialog) {
         // local text state for the TextField
-        var text by remember { mutableStateOf(manualTotal?.toString() ?: "") }
+        var text by remember { mutableStateOf(totalDistance?.toString() ?: "") }
 
         AlertDialog(
             onDismissRequest = { showDistanceDialog = false },
@@ -118,7 +118,7 @@ fun BikePathWithControls(
             confirmButton    = {
                 TextButton(onClick = {
                     text.toFloatOrNull()?.let { entered ->
-                        manualTotal = entered
+                        totalDistance = entered
                         onBikeEvent(BikeEvent.SetTotalDistance(entered))
                     }
                     showDistanceDialog = false
