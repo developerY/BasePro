@@ -10,8 +10,6 @@ import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 
-
-
 /**
  * RideTracker: single responsibility for gathering and summarizing everything
  * about a ride.  You call `start()`, it resets, then you read from [sessionFlow].
@@ -37,6 +35,7 @@ class RideTracker @Inject constructor(
 
     // Emit once on every start() to reset the scan operator
     private val resetSignal = MutableSharedFlow<Unit>(replay = 1)
+    private val pausedSignal = MutableStateFlow(false)
 
     // Record the wall‐clock time when start() is called
     private var startTimeMs: Long = 0L
@@ -63,61 +62,57 @@ class RideTracker @Inject constructor(
      */
     val sessionFlow: StateFlow<RideSession> = resetSignal
         .flatMapLatest {
-            // capture the startTime for this ride
             val sessionStart = startTimeMs
 
-            // combine raw location+speed into one flow of pairs
-            combine(locationFlow, speedFlow) { loc, spd ->
-                loc to spd
+            // Combine paused flag, location, and speed
+            combine(pausedSignal, locationFlow, speedFlow) { paused, loc, spd ->
+                Triple(paused, loc, spd)
             }
-                // scan over each fix to update our Acc
-                .scan(Acc(startTimeMs = sessionStart)) { acc, (loc, spd) ->
-                    // 1) Distance since last fix
-                    val d = acc.lastLocation?.distanceTo(loc) ?: 0f
-                    // 2) Updated total distance
-                    val totalDist = acc.totalDistanceM + d
-                    // 3) Updated max speed
-                    val maxSpd = maxOf(acc.maxSpeedKmh, spd)
-                    // 4) Elevation delta
-                    val elevDelta = ((loc.altitude - (acc.lastLocation?.altitude ?: loc.altitude))
-                        .toFloat())
+                .scan(Acc(sessionStart, null, emptyList(), 0f, 0f, 0f, 0f)) { acc, (paused, loc, spd) ->
+                    // always update lastLocation
+                    val lastLoc = acc.lastLocation
+
+                    // 1) Distance: only if not paused
+                    val deltaM = if (!paused) (lastLoc?.distanceTo(loc) ?: 0f) else 0f
+                    val totalDist = acc.totalDistanceM + deltaM
+
+                    // 2) Max speed: only if not paused
+                    val maxSpd = if (!paused) maxOf(acc.maxSpeedKmh, spd) else acc.maxSpeedKmh
+
+                    // 3) Elevation gain/loss: only if not paused, but update last altitude
+                    val elevDelta = if (!paused) ((loc.altitude - (lastLoc?.altitude ?: loc.altitude)).toFloat()) else 0f
                     val gain = acc.elevationGainM + maxOf(0f, elevDelta)
                     val loss = acc.elevationLossM + maxOf(0f, -elevDelta)
 
                     Acc(
                         startTimeMs    = acc.startTimeMs,
                         lastLocation   = loc,
-                        path           = acc.path + loc,
+                        path           = if (!paused) acc.path + loc else acc.path,
                         totalDistanceM = totalDist,
                         maxSpeedKmh    = maxSpd,
                         elevationGainM = gain,
                         elevationLossM = loss
                     )
                 }
-                // on each Acc, map to a public RideSession
                 .map { acc ->
-                    // how long has it been?
-                    val duration = System.currentTimeMillis() - acc.startTimeMs
-                    // average speed: (km/h) = (totalDist_m/1000) / (hrs)
-                    val hours = duration / 3_600_000.0
+                    val durationMs = System.currentTimeMillis() - acc.startTimeMs
+                    val hours = durationMs / 3_600_000.0
                     val avgSpd = if (hours > 0) (acc.totalDistanceM / 1000f) / hours else 0.0
-                    // simple calories: km * CALORIES_PER_KM
-                    val cals = ((acc.totalDistanceM / 1000f) * CALORIES_PER_KM).toInt()
+                    val calories = ((acc.totalDistanceM / 1000f) * CALORIES_PER_KM).toInt()
 
                     RideSession(
-                        startTimeMs      = sessionStart,
-                        path             = acc.path,
-                        totalDistanceM   = acc.totalDistanceM,
-                        averageSpeedKmh  = avgSpd,
-                        maxSpeedKmh      = acc.maxSpeedKmh,
-                        elevationGainM   = acc.elevationGainM,
-                        elevationLossM   = acc.elevationLossM,
-                        calories         = cals,
-                        durationMs       = duration
+                        startTimeMs     = acc.startTimeMs,
+                        path            = acc.path,
+                        totalDistanceM  = acc.totalDistanceM,
+                        averageSpeedKmh = avgSpd,
+                        maxSpeedKmh     = acc.maxSpeedKmh,
+                        elevationGainM  = acc.elevationGainM,
+                        elevationLossM  = acc.elevationLossM,
+                        calories        = calories,
+                        durationMs      = durationMs
                     )
                 }
         }
-        // keep the latest session in memory; replay 1 so new collectors get it immediately
         .stateIn(
             scope        = CoroutineScope(Dispatchers.Default),
             started      = SharingStarted.WhileSubscribed(5_000),
@@ -141,10 +136,20 @@ class RideTracker @Inject constructor(
     /** Call from your ViewModel when the user taps “Start.” */
     fun start() {
         startTimeMs = System.currentTimeMillis()
-        // trigger a reset inside the flatMapLatest
+        pausedSignal.value = false
         CoroutineScope(Dispatchers.Default).launch {
             resetSignal.emit(Unit)
         }
+    }
+
+    /** Call from your ViewModel to pause mid‐ride. */
+    fun pauseRide() {
+        pausedSignal.value = true
+    }
+
+    /** Call from your ViewModel to resume after a pause. */
+    fun resumeRide() {
+        pausedSignal.value = false
     }
 
     /**
@@ -152,6 +157,9 @@ class RideTracker @Inject constructor(
      * Returns the final RideSession snapshot, which you can persist.
      */
     fun stopAndGetSession(): RideSession {
+        // Ensure we are no longer paused
+        pausedSignal.value = false
         return sessionFlow.value
     }
+
 }

@@ -231,13 +231,40 @@ class BikeViewModel @Inject constructor(
             is BikeEvent.LoadBike -> loadSettings()
 
             BikeEvent.StartPauseRide -> {
-                timerRepo.start()
-                tracker.start()
-                // reset all the stats (distance, elevation, etc.)
-                viewModelScope.launch {
-                    resetTrigger.emit(Unit)
+                // peek at current rideState
+                val currentState = (_uiState.value as? BikeUiState.Success)
+                    ?.bikeData
+                    ?.rideState
+
+                when (currentState) {
+                    // Not started or already ended → START
+                    RideState.NotStarted, RideState.Ended -> {
+                        // reset all stats
+                        viewModelScope.launch { resetTrigger.emit(Unit) }
+
+                        // begin timer & tracking
+                        timerRepo.start()
+                        tracker.start()
+
+                        updateRideState(RideState.Riding)
+                    }
+
+                    // Currently riding → PAUSE
+                    RideState.Riding -> {
+                        tracker.pauseRide()
+                        timerRepo.stop()    // or a dedicated pause() if you have one
+                        updateRideState(RideState.Paused)
+                    }
+
+                    // Currently paused → RESUME
+                    RideState.Paused -> {
+                        tracker.resumeRide()
+                        timerRepo.start()
+                        updateRideState(RideState.Riding)
+                    }
+
+                    else -> { /* shouldn't happen */ }
                 }
-                updateRideState(RideState.Riding)
             }
 
             BikeEvent.StopSaveRide -> {
@@ -247,7 +274,11 @@ class BikeViewModel @Inject constructor(
                 // 2) Stop timer
                 timerRepo.stop()
 
+                tracker.stopAndGetSession()  // snapshot in persistence code…
+
+
                 // 3) Clear out distance & plan so UI returns to centered bike
+                // clear UI distances
                 _uiState.update { state ->
                     if (state is BikeUiState.Success) {
                         state.copy(
@@ -324,9 +355,7 @@ class BikeViewModel @Inject constructor(
     private fun updateRideState(newState: RideState) {
         _uiState.update { state ->
             if (state is BikeUiState.Success) {
-                state.copy(
-                    bikeData = state.bikeData.copy(rideState = newState)
-                )
+                state.copy(bikeData = state.bikeData.copy(rideState = newState))
             } else state
         }
     }

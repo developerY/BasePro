@@ -48,9 +48,26 @@ fun BikePathWithControls(
     //var manualTotal by remember { mutableStateOf(bikeRideInfo.totalTripDistance) }
     var showDistanceDialog by remember { mutableStateOf(false) }
 
+    val rideState = bikeRideInfo.rideState
+
+    // Determine the FAB icon & description based on rideState
+    val fabIcon = when (rideState) {
+        RideState.Riding  -> Icons.Default.Pause
+        RideState.Paused,
+        RideState.NotStarted,
+        RideState.Ended   -> Icons.Default.PlayArrow
+    }
+    val fabDesc = when (rideState) {
+        RideState.Riding  -> "Pause"
+        RideState.Paused,
+        RideState.NotStarted,
+        RideState.Ended   -> "Start"
+    }
+
+
     val currentDistance = bikeRideInfo.currentTripDistance
     var totalDistance   = bikeRideInfo.totalTripDistance
-    val isRiding        = bikeRideInfo.rideState == RideState.Riding
+
 
     Row(
         modifier = modifier
@@ -60,16 +77,19 @@ fun BikePathWithControls(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Start / Pause
-        FloatingActionButton(
+        // Start / Pause / Resume button
+        StartPauseButton(
+            rideState = rideState,
+            onToggle  = { onBikeEvent(BikeEvent.StartPauseRide) }
+        )
+        /*FloatingActionButton(
             onClick       = { onBikeEvent(BikeEvent.StartPauseRide) },
             containerColor= Color.White,
             contentColor  = Color.Black,
             modifier      = Modifier.size(buttonSize)
         ) {
-            val icon = if (isRiding) Icons.Default.Pause else Icons.Default.PlayArrow
-            Icon(imageVector = icon, contentDescription = if (isRiding) "Pause" else "Start")
-        }
-
+            Icon(imageVector = fabIcon, contentDescription = fabDesc)
+        }*/
         // Bike progress (centered when totalDistance == null)
         Box(
             modifier         = Modifier.weight(1f).fillMaxHeight(),
@@ -80,7 +100,7 @@ fun BikePathWithControls(
                 totalDistance   = totalDistance,
                 trackHeight     = trackHeight,
                 iconSize        = iconSize,
-                iconTint        = if (isRiding) Color(0xFF4CAF50) else Color.LightGray,
+                iconTint        = if (rideState == RideState.Riding) Color(0xFF4CAF50) else Color.LightGray,
                 containerHeight = buttonSize,
                 onBikeClick     = { showDistanceDialog = true }
             )
