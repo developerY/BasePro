@@ -17,6 +17,7 @@ import com.ylabz.basepro.core.data.repository.timer.TimerRepository
 import com.ylabz.basepro.core.data.repository.travel.compass.CompassRepository
 import com.ylabz.basepro.core.data.repository.travel.UnifiedLocationRepository
 import com.ylabz.basepro.core.data.repository.weather.WeatherRepo
+import com.ylabz.basepro.core.data.service.health.HealthSessionManager
 // import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.CombinedSensorData
@@ -67,7 +68,8 @@ class BikeViewModel @Inject constructor(
 
     private val timerRepo: TimerRepository,
     private val rideStats: RideStatsUseCase,
-    private val tracker: RideTracker
+    private val tracker: RideTracker,
+    private val healthSessionManager: HealthSessionManager
 ) : ViewModel() {
 
     // Toggle
