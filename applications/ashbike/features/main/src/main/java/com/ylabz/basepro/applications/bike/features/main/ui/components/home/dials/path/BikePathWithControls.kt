@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PedalBike
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.AlertDialog
@@ -52,14 +53,14 @@ fun BikePathWithControls(
 
     // Determine the FAB icon & description based on rideState
     val fabIcon = when (rideState) {
-        RideState.Riding  -> Icons.Default.Pause
-        RideState.Paused,
+        RideState.Riding  -> Icons.Default.PedalBike
+        //RideState.Paused,
         RideState.NotStarted,
         RideState.Ended   -> Icons.Default.PlayArrow
     }
     val fabDesc = when (rideState) {
         RideState.Riding  -> "Pause"
-        RideState.Paused,
+        //RideState.Paused,
         RideState.NotStarted,
         RideState.Ended   -> "Start"
     }
@@ -78,18 +79,18 @@ fun BikePathWithControls(
     ) {
         // Start / Pause
         // Start / Pause / Resume button
-        StartPauseButton(
+        /*StartPauseButton(
             rideState = rideState,
             onToggle  = { onBikeEvent(BikeEvent.StartPauseRide) }
-        )
-        /*FloatingActionButton(
+        )*/
+        FloatingActionButton(
             onClick       = { onBikeEvent(BikeEvent.StartPauseRide) },
-            containerColor= Color.White,
+            containerColor=  if (rideState == RideState.Riding) Color.Gray else Color.White,
             contentColor  = Color.Black,
             modifier      = Modifier.size(buttonSize)
         ) {
             Icon(imageVector = fabIcon, contentDescription = fabDesc)
-        }*/
+        }
         // Bike progress (centered when totalDistance == null)
         Box(
             modifier         = Modifier.weight(1f).fillMaxHeight(),
@@ -109,7 +110,7 @@ fun BikePathWithControls(
         // Stop & Save
         FloatingActionButton(
             onClick       = { onBikeEvent(BikeEvent.StopSaveRide) },
-            containerColor= Color.White,
+            containerColor= if (rideState == RideState.Riding) Color.White else Color.LightGray,
             contentColor  = Color.Red,
             modifier      = Modifier.size(buttonSize)
         ) {

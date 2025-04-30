@@ -30,7 +30,7 @@ fun StartPauseButton(
     onToggle: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isPaused = rideState == RideState.Paused
+    val isPaused = true // rideState == RideState.Paused
 
     // Infinite transition for flashing when paused
     val infiniteTransition = rememberInfiniteTransition()
@@ -52,8 +52,8 @@ fun StartPauseButton(
             .alpha(alpha)   // apply the flashing alpha only when paused
     ) {
         Icon(
-            imageVector        = if (rideState == RideState.Paused || rideState == RideState.Riding) Icons.Default.Pause else Icons.Default.PlayArrow,
-            contentDescription = if (rideState == RideState.Paused) "Resume ride" else "Pause ride"
+            imageVector        = if (isPaused) Icons.Default.Pause else Icons.Default.PlayArrow,
+            contentDescription = if (isPaused) "Resume ride" else "Pause ride"
         )
     }
 }
@@ -64,7 +64,7 @@ fun StartPauseButton(
 @Composable
 fun StartPauseButtonPreviewNotStarted() {
     StartPauseButton(
-        rideState = RideState.Riding,
+        rideState = RideState.NotStarted,
 
         onToggle = { /* Do nothing for preview */ }
     )
@@ -74,7 +74,7 @@ fun StartPauseButtonPreviewNotStarted() {
 @Composable
 fun StartPauseButtonPreviewRiding() {
     StartPauseButton(
-        rideState = RideState.Paused,
+        rideState = RideState.Ended,
         onToggle = { /* Do nothing for preview */ }
     )
 }

@@ -7,7 +7,7 @@ import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 enum class RideState {
     NotStarted,
     Riding,
-    Paused,
+    //Paused,
     Ended
 }
 

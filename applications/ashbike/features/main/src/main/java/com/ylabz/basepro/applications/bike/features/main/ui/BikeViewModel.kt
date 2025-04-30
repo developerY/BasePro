@@ -251,18 +251,17 @@ class BikeViewModel @Inject constructor(
 
                     // Currently riding → PAUSE
                     RideState.Riding -> {
-                        tracker.pauseRide()
-                        timerRepo.stop()    // or a dedicated pause() if you have one
-                        updateRideState(RideState.Paused)
+                        //tracker.pauseRide()
+                        //timerRepo.stop()    // or a dedicated pause() if you have one
+                        //updateRideState(RideState.Paused)
                     }
 
-                    // Currently paused → RESUME
+                    /* Currently paused → RESUME
                     RideState.Paused -> {
                         tracker.resumeRide()
                         timerRepo.start()
                         updateRideState(RideState.Riding)
-                    }
-
+                    }*/
                     else -> { /* shouldn't happen */ }
                 }
             }
