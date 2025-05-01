@@ -46,6 +46,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.text.isNotBlank
+import android.text.format.DateUtils
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -133,14 +136,32 @@ fun RideDetailScreen(
             }
 
             // 4) Elevation & calories
+            // 4) Elevation & ride time & calories
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                StatCard("Gain",  "${ride.elevationGain.toInt()} m")
-                StatCard("Loss",  "${ride.elevationLoss.toInt()} m")
-                StatCard("Calories", "${ride.caloriesBurned} kcal")
+                // Combined elevation card
+                StatCard(
+                    label = "Elevation",
+                    value = "${ride.elevationGain.toInt()}↑/${ride.elevationLoss.toInt()}↓ m"
+                )
+
+                // Duration card (HH:mm:ss or mm:ss)
+                val durationSeconds = ((ride.endTime - ride.startTime) / 1000).coerceAtLeast(0L)
+                val durationText = DateUtils.formatElapsedTime(durationSeconds)
+                StatCard(
+                    label = "Duration",
+                    value = durationText
+                )
+
+                // Calories as before
+                StatCard(
+                    label = "Calories",
+                    value = "${ride.caloriesBurned} kcal"
+                )
             }
+
 
             // 5) Notes & weather
             val notes = ride.notes
@@ -240,7 +261,7 @@ fun RideDetailScreenPreview() {
         )
     }
 
-    GoogleMap(
+    /*GoogleMap(
         modifier             = Modifier.fillMaxSize(),
         cameraPositionState  = cameraState,
         uiSettings           = MapUiSettings(zoomControlsEnabled = true),
@@ -248,5 +269,60 @@ fun RideDetailScreenPreview() {
     ) {
         Polyline(points = path, width = 5f)
         Marker(state = MarkerState(path.first()), title = "Start")
-        Marker(state = MarkerState(path.last()),  title = "End")    }
+        Marker(state = MarkerState(path.last()),  title = "End")    }*/
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RideStatsRowPreview() {
+    // sample ride lasting 1h 23m 45s, gain 200m, loss 150m, 500 kcal
+    val sample = BikeRideEntity(
+        startTime = 0L,
+        endTime   = 1_000L * (60 * 60 + 23 * 60 + 45),
+        elevationGain = 200f,
+        elevationLoss = 150f,
+        caloriesBurned = 500,
+        startLat = 0.0,
+        startLng = 0.0,
+        endLat = 0.0,
+        endLng = 0.0,
+        totalDistance = 0f,
+        averageSpeed = 0f,
+        maxSpeed = 0f,
+        avgHeartRate = 0,
+        maxHeartRate = 0,
+        weatherCondition = null,
+        rideType = null,
+        notes = null,
+        rating = null,
+        bikeId = null,
+        batteryStart = null,
+        batteryEnd = null
+
+
+    )
+
+    // compute duration text
+    val durationSeconds = ((sample.endTime - sample.startTime) / 1000).coerceAtLeast(0L)
+    val durationText = DateUtils.formatElapsedTime(durationSeconds)
+
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        StatCard(
+            label = "Elevation",
+            value = "${sample.elevationGain.toInt()}↑/${sample.elevationLoss.toInt()}↓ m"
+        )
+        StatCard(
+            label = "Duration",
+            value = durationText
+        )
+        StatCard(
+            label = "Calories",
+            value = "${sample.caloriesBurned} kcal"
+        )
+    }
 }
