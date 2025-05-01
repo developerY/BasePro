@@ -13,6 +13,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.gms.maps.model.LatLng
@@ -23,6 +26,7 @@ import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatsRow
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.bike.BikeBatteryLevels
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
+import com.ylabz.basepro.core.model.bike.RideState
 
 // Combine with BikeDashboardExample --
 
@@ -38,7 +42,7 @@ fun BikeDashboardContent(
     val batteryLevel = bikeRideInfo.batteryLevel
     val motorPower = bikeRideInfo.motorPower
     val heartRate = null // bikeRideInfo.heartRate  // May be null
-    val calories = null // bikeRideInfo.calories    // May be null
+    val calories = bikeRideInfo.caloriesBurned    // May be null
 
     Column(
         modifier = modifier
@@ -85,6 +89,7 @@ fun BikeDashboardContent(
             ),
             StatItem(
                 icon = Icons.Filled.LocalFireDepartment, // Using a standard flame icon
+                tint = if (bikeRideInfo.rideState == RideState.Riding)  Color(0xFF811038) else Gray,
                 label = "Calories",
                 value = if (calories != null) "$calories" else "--"
             )

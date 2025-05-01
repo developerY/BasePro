@@ -32,6 +32,7 @@ fun StatsSection(
         stats.forEach { stat ->
             StatCard(
                 icon = stat.icon,
+                tint = stat.tint,
                 label = stat.label,
                 value = stat.value,
                 modifier = Modifier.weight(1f, fill = false)

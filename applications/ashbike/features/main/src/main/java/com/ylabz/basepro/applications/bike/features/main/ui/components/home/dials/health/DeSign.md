@@ -20,24 +20,24 @@ Integrate Google Health Connect into our Modern Android Development (MAD) bike a
 ```
 ┌───────────────────┐      ┌────────────────────┐
 │   Bike UI Route   │      │ Health UI Route    │
-│ (Composable)      │      │ (Permission prompt) │
+│ (Composable)      │      │ (Permission prompt)│
 └────────┬──────────┘      └───────┬────────────┘
-         │                           │
-         │ injects                  │ injects
-         ▼                           ▼
+         │                         │
+         │ injects                 │ injects
+         ▼                         ▼
 ┌───────────────────┐      ┌────────────────────┐
 │  BikeViewModel    │      │  HealthViewModel   │
 │  (ride logic)     │      │ (permissions +     │
 └────────┬──────────┘      │  write methods)    │
          │                 └─────────┬──────────┘
-         │ calls                        │ calls
-         ▼                              ▼
+         │ calls                     │ calls
+         ▼                           ▼
 ┌────────────────────────────────────────────────────────┐
 │                SaveRideUseCase                         │
-│  • snapshot RideTracker                               │
-│  • persist to RoomDB                                  │
-│  • ensure Health permissions                          │
-│  • write session + summary + series to Health Connect │
+│  • snapshot RideTracker                                │
+│  • persist to RoomDB                                   │
+│  • ensure Health permissions                           │
+│  • write session + summary + series to Health Connect  │
 └────────────────────────────────────────────────────────┘
 ```  
 
