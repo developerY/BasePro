@@ -44,7 +44,7 @@ class TripsViewModel @Inject constructor(
     fun onEvent(event: TripsEvent) {
         when (event) {
             is TripsEvent.LoadData -> loadData()
-            //is TripsEvent.DeleteItem -> deleteItem(event.itemId)
+            is TripsEvent.DeleteItem -> deleteItem(event.itemId)
             is TripsEvent.DeleteAll -> deleteAll()
             is TripsEvent.OnRetry -> onEvent(TripsEvent.LoadData)
             // is TripsEvent.OnItemClicked -> selectItem(event.itemId)
@@ -102,6 +102,17 @@ class TripsViewModel @Inject constructor(
         }
     }
     */
+
+    fun deleteItem(itemId: String) {
+        viewModelScope.launch {
+            try {
+                bikeRideRepo.deleteById(itemId)
+                onEvent(TripsEvent.LoadData)
+            } catch (e: Exception) {
+                handleError(e)
+            }
+        }
+    }
 
     /*fun selectItem(itemId: Int) {
         viewModelScope.launch {

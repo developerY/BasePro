@@ -3,8 +3,12 @@ package com.ylabz.basepro.applications.bike.features.trips.ui.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,10 +59,27 @@ fun BikeRideCard(
             val startText = dateFormatter.format(Date(ride.startTime))
             val endText   = SimpleDateFormat("HH:mm", Locale.getDefault())
                 .format(Date(ride.endTime))
-            Text(
-                text = "$startText – $endText",
-                style = MaterialTheme.typography.titleMedium
-            )
+            // Header: start – end + delete icon
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "$startText – $endText",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                IconButton(onClick = {
+                    onEvent(TripsEvent.DeleteItem(ride.rideId))
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = "Delete ride"
+                    )
+                }
+            }
+
 
             Spacer(Modifier.height(8.dp))
 

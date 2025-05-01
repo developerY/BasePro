@@ -27,7 +27,7 @@ class RideStatsUseCase @Inject constructor() {
 
     companion object {
         // example conversion: 50 kcal per km
-        private const val CALORIES_PER_KM = 50
+        private const val CALORIES_PER_KM = 23 // 50
     }
 
     /** Total distance in km, resettable. */
