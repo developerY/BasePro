@@ -67,13 +67,12 @@ fun NavGraphBuilder.bikeNavGraph(
         arguments = listOf(navArgument("rideId") { type = NavType.StringType })
     ) { backStackEntry ->
         val vm: RideDetailViewModel = hiltViewModel(backStackEntry)
-        val vmT: TripsViewModel = hiltViewModel(backStackEntry)
         val rideWithLocs by vm.rideWithLocations.collectAsState()
 
         RideDetailScreen(
             modifier = Modifier.fillMaxSize(),
             rideWithLocs = rideWithLocs,
-            onEvent = { event -> vmT.onEvent(event) },
+            onEvent = { event -> vm.onEvent(event) },
         )
     }
 }

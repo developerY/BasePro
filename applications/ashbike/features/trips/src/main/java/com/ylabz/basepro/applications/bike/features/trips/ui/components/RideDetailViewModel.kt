@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.ylabz.basepro.applications.bike.database.mapper.BikeRide
+import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -35,6 +36,16 @@ class RideDetailViewModel @Inject constructor(
         repo.getRideWithLocations(rideId)
             .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
+    fun onEvent(event: TripsEvent) {
+        when (event) {
+            is TripsEvent.UpdateRideNotes -> updateNotes(event.notes)
+            TripsEvent.DeleteAll -> TODO()
+            is TripsEvent.DeleteItem -> TODO()
+            TripsEvent.LoadData -> TODO()
+            TripsEvent.OnRetry -> TODO()
+            TripsEvent.StopSaveRide -> TODO()
+        }
+    }
     /** Called by the UI when the notes text changes */
     fun updateNotes(newNotes: String) {
         viewModelScope.launch {
