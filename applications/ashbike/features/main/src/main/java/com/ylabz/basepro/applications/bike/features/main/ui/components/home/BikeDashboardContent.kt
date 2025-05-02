@@ -1,5 +1,11 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -7,10 +13,16 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsBike
 import androidx.compose.material.icons.filled.BatteryChargingFull
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -89,49 +101,79 @@ fun BikeDashboardContent(
             ),
             StatItem(
                 icon = Icons.Filled.LocalFireDepartment, // Using a standard flame icon
-                tint = if (bikeRideInfo.rideState == RideState.Riding)  Color(0xFF811038) else Gray,
+                tint = if (bikeRideInfo.rideState == RideState.Riding) Color(0xFF811038) else Gray,
                 label = "Calories",
                 value = if (calories != null) "$calories" else "--"
             )
         )
         StatsSection(stats = healthStats)
 
+        // track expanded state across recompositions & config changes
+        var expanded by rememberSaveable { mutableStateOf(false) }
         // 4) Grouped E-bike Stats & Connect Bike Button in a Card
         Card(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp),
             shape = RoundedCornerShape(8.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // E-bike Stats Section: Battery and Motor Power
-                val eBikeStats = listOf(
-                    StatItem(
-                        icon = Icons.Filled.BatteryChargingFull,
-                        label = "Battery",
-                        value = if (isBikeConnected && batteryLevel != null) "$batteryLevel%" else "--%"
-                    ),
-                    StatItem(
-                        icon = Icons.AutoMirrored.Filled.DirectionsBike,
-                        label = "Motor",
-                        value = if (isBikeConnected && motorPower != null) "$motorPower W" else "-- W"
+            Column {
+                // Header row with title + toggle icon
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { expanded = !expanded }
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "E-bike Stats",
+                        style = MaterialTheme.typography.titleMedium
                     )
-                )
-                StatsSection(stats = eBikeStats)
+                    Icon(
+                        imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+                        contentDescription = if (expanded) "Collapse" else "Expand"
+                    )
+                }
 
-                // Connect Bike Button / Status
-                BikeBatteryLevels(
-                    isConnected = isBikeConnected,
-                    batteryLevel = batteryLevel,
-                    onConnectClick = { onBikeEvent(BikeEvent.Connect) }
-                )
+                // Animated expand/collapse of the inner content
+                AnimatedVisibility(
+                    visible = expanded,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        // E-bike Stats Section: Battery and Motor Power
+                        val eBikeStats = listOf(
+                            StatItem(
+                                icon = Icons.Filled.BatteryChargingFull,
+                                label = "Battery",
+                                value = if (isBikeConnected && batteryLevel != null) "$batteryLevel%" else "--%"
+                            ),
+                            StatItem(
+                                icon = Icons.AutoMirrored.Filled.DirectionsBike,
+                                label = "Motor",
+                                value = if (isBikeConnected && motorPower != null) "$motorPower W" else "-- W"
+                            )
+                        )
+                        StatsSection(stats = eBikeStats)
+
+                        // Connect Bike Button / Status
+                        BikeBatteryLevels(
+                            isConnected = isBikeConnected,
+                            batteryLevel = batteryLevel,
+                            onConnectClick = { onBikeEvent(BikeEvent.Connect) }
+                        )
+                    }
+                }
             }
         }
     }

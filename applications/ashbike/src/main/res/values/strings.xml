@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">bike</string>
+    <string name="app_name">AshBike</string>
 
     <!-- Title for the weather detail dialog -->
     <string name="weather_details_title">Weather Details</string>
