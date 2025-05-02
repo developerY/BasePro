@@ -26,18 +26,20 @@ class RideDetailViewModel @Inject constructor(
     @Named("real") private val repo: BikeRideRepo
 ) : ViewModel() {
 
-    private val rideId: String =
-        checkNotNull(savedStateHandle.get<String>("rideId")) {
-            "rideId required in SavedStateHandle"
-        }
+    private val rideId: String = checkNotNull(
+        savedStateHandle.get<String>("rideId")
+    ) { "rideId required in SavedStateHandle" }
 
-    /** Expose the ride + all its location points. */
+    /** Live DB-backed flow of this ride + its locations */
     val rideWithLocations: StateFlow<RideWithLocations?> =
-        repo
-            .getRideWithLocations(rideId)      // Flow<RideWithLocations?>
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.Lazily,
-                initialValue = null
-            )
+        repo.getRideWithLocations(rideId)
+            .stateIn(viewModelScope, SharingStarted.Lazily, null)
+
+    /** Called by the UI when the notes text changes */
+    fun updateNotes(newNotes: String) {
+        viewModelScope.launch {
+            repo.updateRideNotes(rideId, newNotes)
+            // no need to re-load—Flow will emit the updated row automatically
+        }
+    }
 }

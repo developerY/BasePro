@@ -47,156 +47,154 @@ import java.util.Date
 import java.util.Locale
 import kotlin.text.isNotBlank
 import android.text.format.DateUtils
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.text.input.TextFieldValue
+import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
 
+import androidx.compose.runtime.saveable.rememberSaveable
 
+data class LocationDto(val lat: Double, val lng: Double)
+
+// --- add this to your TripsEvent sealed class: ---
+// data class UpdateNotes(val rideId: String, val notes: String): TripsEvent()
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RideDetailScreen(
     rideWithLocs: RideWithLocations?,
+    onEvent: (TripsEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier) {
+    var isDirty by remember { mutableStateOf(false) }
+
+    Box(modifier) {
         if (rideWithLocs == null) {
-            // still loading
-            Box(
-                Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
             return
         }
 
-        // once we have data…
         val ride = rideWithLocs.bikeRideEnt
-        val path = remember(rideWithLocs.locations) {
-            rideWithLocs.locations.map { LatLng(it.lat, it.lng) }
+
+        // editable notes state
+        var notesState by remember {
+            mutableStateOf(TextFieldValue(ride.notes.orEmpty()))
         }
-        val bounds = remember(path) {
-            path.takeIf { it.size > 1 }?.let {
-                LatLngBounds.builder().apply { it.forEach(::include) }.build()
-            }
-        }
-        val cameraState = rememberCameraPositionState {
-            position = path.firstOrNull()
-                ?.let { CameraPosition.fromLatLngZoom(it, 15f) }
-                ?: CameraPosition.fromLatLngZoom(
-                    LatLng(ride.startLat, ride.startLng), 12f
-                )
-        }
+
+        // detect when in @Preview so we skip the map block
+        val isPreview = LocalInspectionMode.current
 
         Column(
             Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // 1) Stats row
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                StatCard("Distance", "%.1f km".format(ride.totalDistance/1000f))
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                StatCard("Distance", "%.1f km".format(ride.totalDistance / 1000f))
                 StatCard("Avg Speed", "%.1f km/h".format(ride.averageSpeed))
                 StatCard("Max Speed", "%.1f km/h".format(ride.maxSpeed))
             }
 
             // 2) Time range
             Text(
-                "From ${SimpleDateFormat("MMM dd, HH:mm", Locale.getDefault()).format(ride.startTime)}\n" +
-                        "To   ${SimpleDateFormat("HH:mm", Locale.getDefault()).format(ride.endTime)}",
+                "From ${java.text.SimpleDateFormat("MMM dd, HH:mm", Locale.getDefault()).format(ride.startTime)}\n" +
+                        "To   ${java.text.SimpleDateFormat("HH:mm", Locale.getDefault()).format(ride.endTime)}",
                 style = MaterialTheme.typography.bodyMedium
             )
 
-            // 3) Map preview
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(280.dp)
-            ) {
-                GoogleMap(
-                    modifier            = Modifier.matchParentSize(),
-                    cameraPositionState = cameraState,
-                    uiSettings          = MapUiSettings(zoomControlsEnabled = false)
-                ) {
-                    if (path.isNotEmpty()) {
-                        Polyline(points = path, color = MaterialTheme.colorScheme.primary, width = 6f)
-                        Marker(state = MarkerState(path.first()), title = "Start")
-                        Marker(state = MarkerState(path.last()),  title = "End")
-                    }
+            // 3) Map preview (skipped in @Preview)
+            if (!isPreview) {
+                val path = remember(rideWithLocs.locations) {
+                    rideWithLocs.locations.map { LatLng(it.lat, it.lng) }
+                }
+                val cameraState = rememberCameraPositionState {
+                    position = path.firstOrNull()
+                        ?.let { CameraPosition.fromLatLngZoom(it, 15f) }
+                        ?: CameraPosition.fromLatLngZoom(
+                            LatLng(ride.startLat, ride.startLng), 12f
+                        )
                 }
 
-                LaunchedEffect(bounds) {
-                    bounds?.let {
-                        cameraState.move(CameraUpdateFactory.newLatLngBounds(it, 50))
+                Box(Modifier.fillMaxWidth().height(240.dp)) {
+                    GoogleMap(
+                        modifier = Modifier.matchParentSize(),
+                        cameraPositionState = cameraState,
+                        uiSettings = MapUiSettings(zoomControlsEnabled = false)
+                    ) {
+                        if (path.size >= 2) {
+                            Polyline(points = path, color = MaterialTheme.colorScheme.primary, width = 6f)
+                            Marker(state = MarkerState(path.first()), title = "Start")
+                            Marker(state = MarkerState(path.last()),  title = "End")
+                        }
                     }
                 }
             }
 
-            // 4) Elevation & calories
-            // 4) Elevation & ride time & calories
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                // Combined elevation card
+            // 4) Elevation / Duration / Calories
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                 StatCard(
-                    label = "Elevation",
-                    value = "${ride.elevationGain.toInt()}↑/${ride.elevationLoss.toInt()}↓ m"
+                    "Elevation",
+                    "${ride.elevationGain.toInt()}↑/${ride.elevationLoss.toInt()}↓ m"
                 )
 
-                // Duration card (HH:mm:ss or mm:ss)
-                val durationSeconds = ((ride.endTime - ride.startTime) / 1000).coerceAtLeast(0L)
-                val durationText = DateUtils.formatElapsedTime(durationSeconds)
-                StatCard(
-                    label = "Duration",
-                    value = durationText
-                )
+                val durationSecs = ((ride.endTime - ride.startTime) / 1000).coerceAtLeast(0L)
+                val hours = durationSecs / 3600
+                val mins = (durationSecs % 3600) / 60
+                val durationText = if (hours > 0) "%d:%02d".format(hours, mins)
+                else DateUtils.formatElapsedTime(durationSecs)
 
-                // Calories as before
-                StatCard(
-                    label = "Calories",
-                    value = "${ride.caloriesBurned} kcal"
-                )
+                StatCard("Duration", durationText)
+                StatCard("Calories", "${ride.caloriesBurned} kcal")
             }
 
-
-            // 5) Notes & weather
-            val notes = ride.notes
+            // 5) Editable Notes
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 Column(Modifier.padding(12.dp)) {
                     Text("Notes", style = MaterialTheme.typography.titleSmall)
                     Spacer(Modifier.height(4.dp))
-
-                    if (!notes.isNullOrBlank()) {
-                        Text(
-                            text = notes,
-                            style = MaterialTheme.typography.bodyMedium
+                    TextField(
+                        value = notesState,
+                        onValueChange = {
+                            notesState = it
+                            isDirty = it.text != ride.notes.orEmpty()
+                        },
+                        trailingIcon = {
+                            if (isDirty) {
+                                IconButton(onClick = {
+                                    onEvent(TripsEvent.UpdateRideNotes(ride.rideId, notesState.text))
+                                    isDirty = false
+                                }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Save,
+                                        contentDescription = "Save notes"
+                                    )
+                                }
+                            }
+                        },
+                        placeholder = { Text("No Ride Notes") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            // containerColor = MaterialTheme.colorScheme.surfaceVariant
                         )
-                    } else {
-                        Text(
-                            text = "No Ride Notes",
-                            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray)
-                        )
-                    }
+                    )
                 }
             }
 
-            ride.weatherCondition?.let { weather ->
-                Text(
-                    "Weather: $weather",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
+            // 6) Weather (if any)
+            ride.weatherCondition?.let {
+                Text("Weather: $it", style = MaterialTheme.typography.bodyMedium)
             }
-
         }
     }
 }
@@ -204,13 +202,11 @@ fun RideDetailScreen(
 @Composable
 private fun StatCard(label: String, value: String) {
     Card(
-        modifier = Modifier.size(width = 100.dp, height = 80.dp),
+        Modifier.size(100.dp, 80.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
     ) {
         Column(
-            Modifier
-                .fillMaxSize()
-                .padding(8.dp),
+            Modifier.fillMaxSize().padding(8.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -219,6 +215,32 @@ private fun StatCard(label: String, value: String) {
         }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun RideDetailScreen_Preview() {
+    val sampleRide = BikeRideEntity(
+        rideId = "R1",
+        startTime = 0L,
+        endTime = 5_400_000L,      // 1h30m
+        totalDistance = 20000f,
+        averageSpeed = 22f,
+        maxSpeed = 35f,
+        elevationGain = 150f,
+        elevationLoss = 120f,
+        caloriesBurned = 600,
+        notes = "Lovely afternoon ride",
+        startLat = 37.77,
+        startLng = -122.42,
+        endLat = 37.78,
+        endLng = -122.41
+    )
+    RideDetailScreen(
+        rideWithLocs = RideWithLocations(sampleRide, emptyList()),
+        onEvent = {}
+    )
+}
+
 
 @Preview
 @Composable

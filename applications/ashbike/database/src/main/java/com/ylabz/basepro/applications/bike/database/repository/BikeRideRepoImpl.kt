@@ -70,4 +70,10 @@ class BikeRideRepoImpl @Inject constructor(
         bikeRideDao.insertRide(ride)
         bikeRideDao.insertLocations(locations)
     }
+
+    /** New: update just the notes text */
+    @WorkerThread
+    override suspend fun updateRideNotes(rideId: String, notes: String) {
+        bikeRideDao.updateNotes(rideId, notes)
+    }
 }

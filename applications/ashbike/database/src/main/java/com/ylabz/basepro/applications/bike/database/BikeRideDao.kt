@@ -24,6 +24,10 @@ interface BikeRideDao {
     @Query("SELECT * FROM bike_rides_table ORDER BY startTime DESC")
     fun getAllRidesWithLocations(): Flow<List<RideWithLocations>>
 
+    /** just change the notes column */
+    @Query("UPDATE bike_rides_table SET notes = :notes WHERE rideId = :rideId")
+    suspend fun updateNotes(rideId: String, notes: String)
+
     @Query("DELETE FROM bike_rides_table WHERE rideId = :id")
     suspend fun deleteRide(id: String)
 

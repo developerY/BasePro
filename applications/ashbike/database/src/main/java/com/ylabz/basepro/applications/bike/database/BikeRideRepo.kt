@@ -32,6 +32,9 @@ interface BikeRideRepo {
     /** Load a single ride (ignores locations in this example). */
     suspend fun getRideById(rideId: String): BikeRide?
 
+    /** Update a ride's notes. */
+    suspend fun updateRideNotes(rideId: String, notes: String)
+
     /** Wipe entire rides table. */
     suspend fun deleteAll()
 }

@@ -65,6 +65,18 @@ class DemoBikeRideRepo @Inject constructor() : BikeRideRepo {
         }
     }
 
+    override suspend fun updateRideNotes(rideId: String, notes: String) {
+        mutex.withLock {
+            _rides.value = _rides.value.map {
+                if (it.rideId == rideId) {
+                    it.copy(notes = notes)
+                } else {
+                    it
+                }
+            }
+        }
+    }
+
     override suspend fun getRideById(rideId: String): BikeRide? =
         _rides.value.firstOrNull { it.rideId == rideId }?.toDomain()
 

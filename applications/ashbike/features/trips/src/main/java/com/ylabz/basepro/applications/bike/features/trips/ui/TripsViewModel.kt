@@ -44,6 +44,7 @@ class TripsViewModel @Inject constructor(
     fun onEvent(event: TripsEvent) {
         when (event) {
             is TripsEvent.LoadData -> loadData()
+            is TripsEvent.UpdateRideNotes -> updateRideNotes(event.itemId, event.notes)
             is TripsEvent.DeleteItem -> deleteItem(event.itemId)
             is TripsEvent.DeleteAll -> deleteAll()
             is TripsEvent.OnRetry -> onEvent(TripsEvent.LoadData)
@@ -58,6 +59,16 @@ class TripsViewModel @Inject constructor(
         }
     }
 
+    fun updateRideNotes(rideId: String, notes: String) {
+        viewModelScope.launch {
+            try {
+                bikeRideRepo.updateRideNotes(rideId, notes)
+                onEvent(TripsEvent.LoadData)
+            } catch (e: Exception) {
+                handleError(e)
+            }
+        }
+    }
     /** Call this once when Stop is pressed
     private fun saveRide() {
         viewModelScope.launch {
