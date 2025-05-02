@@ -42,6 +42,10 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    implementation(libs.androidx.datastore.preferences)
+    // optional:
+    implementation(libs.androidx.datastore.core)
+    
     // Hilt Dependency Injection
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)

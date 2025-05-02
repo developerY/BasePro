@@ -50,6 +50,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.features.settings.ui.components.ProfileInfoCardEx
 import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.nfc.ui.components.NfcScanScreen
@@ -77,28 +78,38 @@ fun SettingsScreenEx(
     var qrExpanded by remember { mutableStateOf(false) }
     var bleExpanded by remember { mutableStateOf(false) }
 
+    // NEW: editing toggle + profile form state
+    var isEditingProfile by remember { mutableStateOf(false) }
+    // NEW: profile form state
+    var name by remember { mutableStateOf("John Doe") }
+    var heightCm by remember { mutableStateOf("170") }
+    var weightKg by remember { mutableStateOf("70") }
+
 
     Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("Settings") })
-        }
+        topBar = { TopAppBar(title = { Text("Settings") }) }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            // 1) Profile / Bike info card at the top
+            // 1) Editable Profile / Personal Info panel
             item {
-                ProfileBikeInfoCardEx(
-                    userName = "John Doe",
-                    bikeBattery = "80%",
-                    lastRide = "1.5 km",
-                    onProfileClick = {}
+                ProfileInfoCardEx(
+                    userName       = name,
+                    heightCm       = heightCm,
+                    weightKg       = weightKg,
+                    isEditing      = isEditingProfile,
+                    onEditToggle   = { isEditingProfile = !isEditingProfile },
+                    onNameChange   = { name = it },
+                    onHeightChange = { heightCm = it },
+                    onWeightChange = { weightKg = it }
                 )
             }
 
             // 2) Section title
+            // 2) “Settings” header, then all your existing items…
             item {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(

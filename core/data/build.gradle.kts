@@ -64,7 +64,9 @@ dependencies {
     implementation(libs.material)
 
     // Datastore
-    implementation(libs.androidx.datastore)
+    implementation(libs.androidx.datastore.preferences)
+    // optional:
+    implementation(libs.androidx.datastore.core)
     implementation(libs.kotlinx.serialization.json)
 
     // Hilt Dependency Injection
