@@ -132,9 +132,9 @@ fun BigBikeProgressIndicator(
                 .offset(y = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("0 km",  style = MaterialTheme.typography.bodySmall)
-            Text("${(totalDistance / 2).toInt()} km", style = MaterialTheme.typography.bodySmall)
-            Text("${totalDistance.toInt()} km",    style = MaterialTheme.typography.bodySmall)
+            Text("0.0 km",  style = MaterialTheme.typography.bodySmall)
+            Text("${"%.1f".format(totalDistance / 2)} km", style = MaterialTheme.typography.bodySmall)
+            Text("${"%.1f".format(totalDistance)} km",    style = MaterialTheme.typography.bodySmall)
         }
 
         // The bike icon, positioned along (and clickable)
