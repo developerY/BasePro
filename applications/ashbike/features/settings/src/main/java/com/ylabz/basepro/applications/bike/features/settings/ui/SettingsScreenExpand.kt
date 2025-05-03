@@ -80,21 +80,27 @@ private val PastelLilac    = Color(0xFFEDE7F6)
 @Composable
 fun SectionHeader(
     title: String,
-    bgColor: Color
+    bgColor: Color,
+    contentColor: Color = Color.Black  // ensure text is always dark
 ) {
     Surface(
-        tonalElevation = 4.dp,                // gives a soft Material-3 shadow
-        shape = RoundedCornerShape(8.dp),     // rounded corners
-        color = bgColor,                      // your pastel background
+        tonalElevation = 4.dp,
+        shape = RoundedCornerShape(8.dp),
+        color = bgColor,
+        contentColor = contentColor,
+
+        // shadowElevation draws the actual drop-shadow
+        shadowElevation = 4.dp,
+
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp, horizontal = 0.dp) // small spacing above/below
+            .padding(vertical = 6.dp)
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+            style = MaterialTheme.typography.titleLarge,  // bump up size
             modifier = Modifier
-                .padding(vertical = 8.dp, horizontal = 12.dp)
+                .padding(vertical = 10.dp, horizontal = 12.dp)
         )
     }
 }
