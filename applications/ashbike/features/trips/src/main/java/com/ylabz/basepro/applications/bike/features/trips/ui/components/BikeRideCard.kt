@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,7 +27,8 @@ import java.util.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.applications.bike.database.RideWithLocations
 import com.ylabz.basepro.core.ui.*
-
+import java.time.ZoneId
+import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
@@ -42,6 +44,20 @@ fun BikeRideCard(
         SimpleDateFormat("MMM dd, HH:mm", Locale.getDefault())
     }
 
+    // 1) Compute Kotlin Duration from millis difference
+    val duration = (ride.endTime - ride.startTime).milliseconds
+
+    // 2) Extract minutes (and seconds, if you like)
+    val minutes = duration.inWholeMinutes
+    val seconds = duration.inWholeSeconds % 60
+
+    // 3) Format your start/end times
+    val start = Instant.ofEpochMilli(ride.startTime)
+        .atZone(ZoneId.systemDefault())
+    val end = Instant.ofEpochMilli(ride.endTime)
+        .atZone(ZoneId.systemDefault())
+
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -51,69 +67,85 @@ fun BikeRideCard(
                 navTo(ride.rideId)
             },
         shape = RoundedCornerShape(8.dp),
-        colors   = CardDefaults.cardColors(containerColor = backgroundColor),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            // Header: start – end
-            val startText = dateFormatter.format(Date(ride.startTime))
-            val endText   = SimpleDateFormat("HH:mm", Locale.getDefault())
-                .format(Date(ride.endTime))
-            // Header: start – end + delete icon
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "$startText – $endText",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                IconButton(onClick = {
-                    onEvent(TripsEvent.DeleteItem(ride.rideId))
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Delete,
-                        contentDescription = "Delete ride"
+        Box {
+            // Accent stripe…
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .background(Color(0xFFD2D9DE))
+            )
+            Column(modifier = Modifier.padding(16.dp)) {
+                // Header: start – end
+                val startText = dateFormatter.format(Date(ride.startTime))
+                val endText = SimpleDateFormat("HH:mm", Locale.getDefault())
+                    .format(Date(ride.endTime))
+
+
+                // Header: start – end + delete icon
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "$startText – $endText",
+                        style = MaterialTheme.typography.titleMedium
                     )
+                    Spacer(Modifier.weight(1f))
+                    Text(
+                        text = "(${minutes} min${if (seconds > 0) " ${seconds}s" else ""})",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    IconButton(onClick = {
+                        onEvent(TripsEvent.DeleteItem(ride.rideId))
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Delete,
+                            contentDescription = "Delete ride"
+                        )
+                    }
                 }
-            }
 
 
-            Spacer(Modifier.height(8.dp))
-
-            // Key metrics
-            Text(
-                text = "Distance: ${"%.1f".format(ride.totalDistance / 1000)} km",
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Text(
-                text = "Avg: ${"%.1f".format(ride.averageSpeed)} km/h",
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Text(
-                text = "Max: ${"%.1f".format(ride.maxSpeed)} km/h",
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            // Optional context row
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                ride.rideType?.let {
-                    Text(it, style = MaterialTheme.typography.bodySmall)
-                }
-                Spacer(Modifier.width(8.dp))
-                ride.weatherCondition?.let {
-                    Text(it, style = MaterialTheme.typography.bodySmall)
-                }
-            }
-
-            // Optional notes
-            ride.notes?.takeIf { it.isNotBlank() }?.let {
                 Spacer(Modifier.height(8.dp))
-                Text(it, style = MaterialTheme.typography.bodySmall)
+
+                // Key metrics
+                Text(
+                    text = "Distance: ${"%.1f".format(ride.totalDistance / 1000)} km",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = "Avg: ${"%.1f".format(ride.averageSpeed)} km/h",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = "Max: ${"%.1f".format(ride.maxSpeed)} km/h",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                Spacer(Modifier.height(8.dp))
+
+                // Optional context row
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    ride.rideType?.let {
+                        Text(it, style = MaterialTheme.typography.bodySmall)
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    ride.weatherCondition?.let {
+                        Text(it, style = MaterialTheme.typography.bodySmall)
+                    }
+                }
+
+                // Optional notes
+                ride.notes?.takeIf { it.isNotBlank() }?.let {
+                    Spacer(Modifier.height(8.dp))
+                    Text(it, style = MaterialTheme.typography.bodySmall)
+                }
             }
         }
     }
