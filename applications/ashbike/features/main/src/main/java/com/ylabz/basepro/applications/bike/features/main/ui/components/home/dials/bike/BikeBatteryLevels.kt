@@ -40,7 +40,7 @@ fun BikeBatteryLevels(
                     onConnectClick()
                 }
             },
-        colors = CardDefaults.cardColors(containerColor = backgroundColor)
+        //colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -60,6 +60,7 @@ fun BikeBatteryLevels(
                     // Show a centered, Material button to connect
                     Button(
                         onClick = onConnectClick,
+                        enabled = false,
                         modifier = Modifier.fillMaxWidth(),  // full width
                         shape = RoundedCornerShape(8.dp)     // optional rounding
                     ) {

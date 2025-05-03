@@ -156,14 +156,7 @@ fun SettingsScreenEx(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
-            // Title + Profile
-            item {
-                Text(
-                    text = "Settings",
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
-            }
+            // Profile
             item {
                 ProfileInfoCardEx(
                     profile = uiState.profile,
@@ -228,6 +221,24 @@ fun SettingsScreenEx(
                 )
             }
             item {
+                HealthExpandableEx(
+                    expanded = expandables["health"] == true,
+                    onExpandToggle = {
+                        expandables["health"] = !(expandables["health"] ?: false)
+                    }
+                )
+            }
+            // add your visual break here
+            item {
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                )
+            }
+            item {
                 NfcExpandableEx(
                     nfcUiState = nfcUiState,
                     nfcEvent   = nfcEvent,
@@ -236,14 +247,6 @@ fun SettingsScreenEx(
                         expandables["nfc"] = !(expandables["nfc"] ?: false)
                     },
                     navTo = navTo
-                )
-            }
-            item {
-                HealthExpandableEx(
-                    expanded = expandables["health"] == true,
-                    onExpandToggle = {
-                        expandables["health"] = !(expandables["health"] ?: false)
-                    }
                 )
             }
             item {

@@ -11,8 +11,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.BatteryUnknown
 import androidx.compose.material.icons.automirrored.filled.DirectionsBike
+import androidx.compose.material.icons.automirrored.filled.Dvr
 import androidx.compose.material.icons.filled.BatteryChargingFull
+import androidx.compose.material.icons.filled.BatteryUnknown
+import androidx.compose.material.icons.filled.ElectricBike
+import androidx.compose.material.icons.filled.ElectricalServices
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Favorite
@@ -154,12 +159,12 @@ fun BikeDashboardContent(
                         // E-bike Stats Section: Battery and Motor Power
                         val eBikeStats = listOf(
                             StatItem(
-                                icon = Icons.Filled.BatteryChargingFull,
+                                icon = Icons.AutoMirrored.Filled.BatteryUnknown,
                                 label = "Battery",
                                 value = if (isBikeConnected && batteryLevel != null) "$batteryLevel%" else "--%"
                             ),
                             StatItem(
-                                icon = Icons.AutoMirrored.Filled.DirectionsBike,
+                                icon = Icons.Filled.ElectricBike,
                                 label = "Motor",
                                 value = if (isBikeConnected && motorPower != null) "$motorPower W" else "-- W"
                             )
@@ -281,7 +286,7 @@ val dummyBikeRideInfo = BikeRideInfo(
     maxSpeed            = 0.0,
 
     // Distances (km)
-    currentTripDistance = 0.0f,
+    currentTripDistance = 1.0f,
     totalTripDistance   = null,
     remainingDistance   = null,
 
@@ -303,11 +308,33 @@ val dummyBikeRideInfo = BikeRideInfo(
     elevation           = 0.0,
 
     // Bike connectivity
-    isBikeConnected     = false,
+    isBikeConnected     = true,
     batteryLevel        = null,
     motorPower          = null,
 
     // rideState & weatherInfo use their defaults
+)
+
+val sampleBikeRideInfo = BikeRideInfo(
+    location = null,
+    currentSpeed = 15.5,
+    averageSpeed = 18.2,
+    maxSpeed = 30.1,
+    currentTripDistance = 10.5f,
+    totalTripDistance = 150.2f,
+    remainingDistance = 5.0f,
+    elevationGain = 50.0,
+    elevationLoss = 20.0,
+    caloriesBurned = 450,
+    rideDuration = "01:35",
+    settings = mapOf("Assistance" to listOf("Level 3"), "Lights" to listOf("Auto")),
+    heading = 45.0f,
+    elevation = 150.0,
+    isBikeConnected = true,
+    batteryLevel = 80,
+    motorPower = 300.0f,
+    rideState = com.ylabz.basepro.core.model.bike.RideState.Riding,
+    bikeWeatherInfo = null
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -323,7 +350,7 @@ fun BikeDashboardScaffoldContentPreview() {
         ) { innerPadding ->
             BikeDashboardContent(
                 modifier = Modifier.padding(innerPadding),
-                bikeRideInfo = dummyBikeRideInfo,
+                bikeRideInfo = sampleBikeRideInfo,
                 onBikeEvent = { /*TODO*/ },
                 navTo = { /*TODO*/ }
             )

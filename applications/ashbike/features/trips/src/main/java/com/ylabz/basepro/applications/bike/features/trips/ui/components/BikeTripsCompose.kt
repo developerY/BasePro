@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui.components
 
+import android.R.attr.action
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -48,6 +49,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -82,26 +84,41 @@ fun randomPastelColor(): Color {
 // —————————————————————————————————————————————————————————
 @Composable
 fun SectionHeader(
+    onEvent: (TripsEvent) -> Unit,
     title: String,
     bgColor: Color
 ) {
     Surface(
-        tonalElevation  = 4.dp,
+        tonalElevation = 4.dp,
         shadowElevation = 4.dp,
-        shape           = RoundedCornerShape(8.dp),
-        color           = bgColor,
-        modifier        = Modifier
+        shape = RoundedCornerShape(8.dp),
+        color = bgColor,
+        modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp)
     ) {
-        Text(
-            text  = title,
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-            modifier = Modifier
-                .padding(vertical = 8.dp, horizontal = 12.dp)
-        )
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                modifier = Modifier.padding(8.dp)
+            )
+
+            Spacer(Modifier.weight(1f))
+
+            IconButton(onClick = { onEvent(TripsEvent.DeleteAll) }) {
+                Icon(
+                    imageVector = Icons.Default.DeleteSweep,
+                    contentDescription = "Delete all"
+                )
+            }
+        }
     }
 }
+
 
 // —————————————————————————————————————————————————————————
 //  BIKE TRIPS SCREEN
@@ -127,7 +144,7 @@ fun BikeTripsCompose(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
-                SectionHeader(title = "Bike Rides", bgColor = PastelBlue)
+                SectionHeader(onEvent = onEvent, title = "Bike Rides", bgColor = PastelBlue)
             }
 
             if (bikeRides.isEmpty()) {
