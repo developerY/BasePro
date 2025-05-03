@@ -7,62 +7,56 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import androidx.lifecycle.viewModelScope
+import com.ylabz.basepro.applications.bike.database.repository.AppSettingsRepository
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
+// 3c) The ViewModel
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    //private val repository: BaseProRepo  // Inject the repository
+    private val repo: AppSettingsRepository
 ) : ViewModel() {
 
-    //private val _uiState = MutableStateFlow<SettingsUiState>(SettingsUiState.Loading)
-    private val _uiState = MutableStateFlow<SettingsUiState>(SettingsUiState.Success(settings = emptyMap()))
-    val uiState: StateFlow<SettingsUiState> = _uiState
+    // 1) Static option-lists you already had
+    private val staticOptions = mapOf(
+        "Theme" to listOf("Light", "Dark", "System Default"),
+        "Language" to listOf("English", "Spanish", "French"),
+        "Notifications" to listOf("Enabled", "Disabled")
+    )
 
-    init {
-        onEvent(SettingsEvent.LoadSettings)
+    // 2) Combine the three “selected value” flows into your UiState
+    val uiState: StateFlow<SettingsUiState> = combine(
+        repo.themeFlow,
+        repo.languageFlow,
+        repo.notificationsFlow
+    ) { theme, lang, notif ->
+        SettingsUiState.Success(
+            options    = staticOptions,
+            selections = mapOf(
+                "Theme" to theme,
+                "Language" to lang,
+                "Notifications" to notif
+            )
+        )
     }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, SettingsUiState.Loading)
 
+    // 3) Handle updates
     fun onEvent(event: SettingsEvent) {
         when (event) {
             is SettingsEvent.LoadSettings -> {
-                loadSettings()
+                // no-op: the flows above are “hot” and already emitting
             }
             is SettingsEvent.UpdateSetting -> {
-                updateSetting(event.settingKey, event.settingValue)
-            }
-            is SettingsEvent.DeleteAllEntries -> {
-                deleteAllEntries()
+                viewModelScope.launch {
+                    when (event.settingKey) {
+                        "Theme"         -> repo.setTheme(event.settingValue)
+                        "Language"      -> repo.setLanguage(event.settingValue)
+                        "Notifications" -> repo.setNotifications(event.settingValue)
+                    }
+                }
             }
         }
-    }
-
-    private fun loadSettings() {
-        viewModelScope.launch {
-            // Simulate loading settings data
-            _uiState.value = SettingsUiState.Success( settings = mapOf(
-                "Theme" to listOf("Light", "Dark", "System Default"),
-                "Language" to listOf("English", "Spanish", "French"),
-                "Notifications" to listOf("Enabled", "Disabled")
-                )
-            )
-        }
-    }
-
-    private fun updateSetting(key: String, value: String) {
-        viewModelScope.launch {
-            // Handle setting updates
-            val currentSettings = (_uiState.value as? SettingsUiState.Success)?.settings ?: emptyMap()
-            val updatedSettings = currentSettings.toMutableMap().apply {
-                // this[key] = value
-            }
-            _uiState.value = SettingsUiState.Success(settings = updatedSettings)
-        }
-    }
-
-    private fun deleteAllEntries() {
-        /*viewModelScope.launch {
-            repository.deleteAll()  // Assuming this method exists in your repository
-            // Optionally, update UI state or reload settings
-            // loadSettings()  // Reload settings or update UI after deletion
-        }*/
     }
 }

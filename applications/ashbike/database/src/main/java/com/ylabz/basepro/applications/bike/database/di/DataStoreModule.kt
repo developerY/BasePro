@@ -1,9 +1,15 @@
 package com.ylabz.basepro.applications.bike.database.di
 
+import com.ylabz.basepro.applications.bike.database.repository.DataStoreUserProfileRepository
+import com.ylabz.basepro.applications.bike.database.repository.UserProfileRepository
+import dagger.Binds
+
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.ylabz.basepro.applications.bike.database.repository.AppSettingsRepository
+import com.ylabz.basepro.applications.bike.database.repository.DataStoreAppSettingsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,11 +17,9 @@ import dagger.hilt.components.SingletonComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Singleton
 
-// 1) Top‐level extension to create the DataStore<Preferences>
-private const val USER_PREFS_NAME = "user_prefs"
-val Context.userDataStore: DataStore<Preferences> by preferencesDataStore(
-    name = USER_PREFS_NAME
-)
+// TOP-LEVEL: the actual file-backed DataStore<Preferences>
+private const val APP_PREFS_NAME = "app_settings"
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = APP_PREFS_NAME)
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -24,7 +28,23 @@ object DataStoreModule {
     // 2) Provide the DataStore<Preferences> as an injectable dependency
     @Provides
     @Singleton
-    fun provideUserDataStore(
-        @ApplicationContext context: Context
-    ): DataStore<Preferences> = context.userDataStore
+    fun provideDataStore(@ApplicationContext ctx: Context): DataStore<Preferences> =
+        ctx.dataStore
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RepositoryModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindAppSettingsRepository(
+        impl: DataStoreAppSettingsRepository
+    ): AppSettingsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserProfileRepository(
+        impl: DataStoreUserProfileRepository
+    ): UserProfileRepository
 }
