@@ -63,18 +63,36 @@ import com.ylabz.basepro.feature.qrscanner.ui.QRCodeScannerScreen
 // ---------------------------------------------
 // MAIN SETTINGS SCREEN
 // ---------------------------------------------
+
+
+// —————————————————————————————————————————————————————————
+//  PASTEL COLORS
+// —————————————————————————————————————————————————————————
+private val PastelLavender = Color(0xFFF3E5F5)
+private val PastelBlue     = Color(0xFFDCEEFB)
+private val PastelLilac    = Color(0xFFEDE7F6)
+
+// —————————————————————————————————————————————————————————
+//  SectionHeader WITH CUSTOM BG
+// —————————————————————————————————————————————————————————
 @Composable
-fun SectionHeader(title: String) {
+fun SectionHeader(
+    title: String,
+    bgColor: Color
+) {
     Text(
         text = title,
         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(bgColor)
             .padding(vertical = 8.dp, horizontal = 12.dp)
     )
 }
 
+// —————————————————————————————————————————————————————————
+//  SETTINGS SCREEN
+// —————————————————————————————————————————————————————————
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SettingsScreenEx(
@@ -85,25 +103,25 @@ fun SettingsScreenEx(
     onEvent: (SettingsEvent) -> Unit,
     navTo: (String) -> Unit
 ) {
-    // Consolidate all “expanded” flags in a map:
+    // Consolidate all “expanded” flags
     val expandables = remember {
         mutableStateMapOf(
-            "bike" to false,
-            "app" to false,
-            "about" to false,
-            "nfc" to false,
+            "bike"   to false,
+            "app"    to false,
+            "about"  to false,
+            "nfc"    to false,
             "health" to false,
-            "qr" to false,
-            "ble" to false
+            "qr"     to false,
+            "ble"    to false
         )
     }
-
     var isEditing by remember { mutableStateOf(false) }
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            // very light lavender
+            .background(PastelLavender)
     ) {
         LazyColumn(
             modifier = Modifier
@@ -130,10 +148,13 @@ fun SettingsScreenEx(
             }
 
             // ——————————————————————————————————————————
-            // 2) APP SETTINGS SECTION
+            // 2) APP SETTINGS SECTION (PASTEL BLUE)
             // ——————————————————————————————————————————
             stickyHeader {
-                SectionHeader(title = "App Settings")
+                SectionHeader(
+                    title   = "App Settings",
+                    bgColor = PastelBlue
+                )
             }
             item {
                 BikeConfigurationEx(
@@ -162,16 +183,19 @@ fun SettingsScreenEx(
             }
 
             // ——————————————————————————————————————————
-            // 3) CONNECTIVITY SECTION
+            // 3) CONNECTIVITY SECTION (PASTEL LILAC)
             // ——————————————————————————————————————————
             stickyHeader {
-                SectionHeader(title = "Connectivity")
+                SectionHeader(
+                    title   = "Connectivity",
+                    bgColor = Color(0xFFB3A7CB)
+                )
             }
             item {
                 NfcExpandableEx(
                     nfcUiState = nfcUiState,
-                    nfcEvent = nfcEvent,
-                    expanded = expandables["nfc"] == true,
+                    nfcEvent   = nfcEvent,
+                    expanded   = expandables["nfc"] == true,
                     onExpandToggle = {
                         expandables["nfc"] = !(expandables["nfc"] ?: false)
                     },
@@ -205,6 +229,7 @@ fun SettingsScreenEx(
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
