@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.settings.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import com.ylabz.basepro.applications.bike.database.ProfileData
 import androidx.compose.foundation.clickable
@@ -41,6 +42,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -61,124 +63,143 @@ import com.ylabz.basepro.feature.qrscanner.ui.QRCodeScannerScreen
 // ---------------------------------------------
 // MAIN SETTINGS SCREEN
 // ---------------------------------------------
-@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SectionHeader(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .padding(vertical = 8.dp, horizontal = 12.dp)
+    )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SettingsScreenEx(
     modifier: Modifier = Modifier,
-    nfcUiState : NfcUiState,
-    nfcEvent : (NfcRwEvent) -> Unit,
+    nfcUiState: NfcUiState,
+    nfcEvent: (NfcRwEvent) -> Unit,
     uiState: SettingsUiState.Success,
     onEvent: (SettingsEvent) -> Unit,
     navTo: (String) -> Unit
 ) {
-    // Track each expandable’s state
-    var bikeConfigExpanded by remember { mutableStateOf(false) }
-    var appPreferencesExpanded by remember { mutableStateOf(false) }
-    var aboutExpanded by remember { mutableStateOf(false) }
+    // Consolidate all “expanded” flags in a map:
+    val expandables = remember {
+        mutableStateMapOf(
+            "bike" to false,
+            "app" to false,
+            "about" to false,
+            "nfc" to false,
+            "health" to false,
+            "qr" to false,
+            "ble" to false
+        )
+    }
 
-    // NEW: State for NFC, Health, and QR expandables
-    var nfcExpanded by remember { mutableStateOf(false) }
-    var healthExpanded by remember { mutableStateOf(false) }
-    var qrExpanded by remember { mutableStateOf(false) }
-    var bleExpanded by remember { mutableStateOf(false) }
-
-    // NEW: editing toggle + profile form state
-    // Local UI state for editing mode + form fields
     var isEditing by remember { mutableStateOf(false) }
-    var name by remember { mutableStateOf(uiState.profile.name) }
-    var heightCm by remember { mutableStateOf(uiState.profile.heightCm) }
-    var weightKg by remember { mutableStateOf(uiState.profile.weightKg) }
-
 
     Box(
-       modifier = modifier,
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
         LazyColumn(
             modifier = Modifier
-                //.padding(innerPadding)
                 .fillMaxSize()
+                .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
-            // 1) Editable Profile / Personal Info panel
+            // ——————————————————————————————————————————
+            // 1) SCREEN TITLE + PROFILE CARD
+            // ——————————————————————————————————————————
             item {
-                ProfileInfoCardEx(
-                    profile     = uiState.profile,
-                    isEditing   = isEditing,
-                    onToggleEdit = { isEditing = !isEditing },
-                    onEvent     = onEvent
-                )
-            }
-
-            // 2) Section title
-            // 2) “Settings” header, then all your existing items…
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "Settings",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+            }
+            item {
+                ProfileInfoCardEx(
+                    profile = uiState.profile,
+                    isEditing = isEditing,
+                    onToggleEdit = { isEditing = !isEditing },
+                    onEvent = onEvent
                 )
             }
 
-            // 3) Bike Configuration Expandable
+            // ——————————————————————————————————————————
+            // 2) APP SETTINGS SECTION
+            // ——————————————————————————————————————————
+            stickyHeader {
+                SectionHeader(title = "App Settings")
+            }
             item {
                 BikeConfigurationEx(
-                    expanded = bikeConfigExpanded,
-                    onExpandToggle = { bikeConfigExpanded = !bikeConfigExpanded },
+                    expanded = expandables["bike"] == true,
+                    onExpandToggle = {
+                        expandables["bike"] = !(expandables["bike"] ?: false)
+                    },
                     navTo = navTo
                 )
             }
-
-            // 4) App Preferences Expandable
             item {
                 AppPreferencesExpandable(
-                    expanded = appPreferencesExpanded,
-                    onExpandToggle = { appPreferencesExpanded = !appPreferencesExpanded }
+                    expanded = expandables["app"] == true,
+                    onExpandToggle = {
+                        expandables["app"] = !(expandables["app"] ?: false)
+                    }
                 )
             }
-
-            // 5) About Expandable
             item {
                 AboutExpandable(
-                    expanded = aboutExpanded,
-                    onExpandToggle = { aboutExpanded = !aboutExpanded }
+                    expanded = expandables["about"] == true,
+                    onExpandToggle = {
+                        expandables["about"] = !(expandables["about"] ?: false)
+                    }
                 )
             }
 
-            // -----------------------------
-            // NEW Expandable Sections Below
-            // -----------------------------
-
-            // 6) NFC Expandable
+            // ——————————————————————————————————————————
+            // 3) CONNECTIVITY SECTION
+            // ——————————————————————————————————————————
+            stickyHeader {
+                SectionHeader(title = "Connectivity")
+            }
             item {
                 NfcExpandableEx(
                     nfcUiState = nfcUiState,
                     nfcEvent = nfcEvent,
-                    expanded = nfcExpanded,
-                    onExpandToggle = { nfcExpanded = !nfcExpanded },
+                    expanded = expandables["nfc"] == true,
+                    onExpandToggle = {
+                        expandables["nfc"] = !(expandables["nfc"] ?: false)
+                    },
                     navTo = navTo
                 )
             }
-
-            // 7) Health Expandable
             item {
                 HealthExpandableEx(
-                    expanded = healthExpanded,
-                    onExpandToggle = { healthExpanded = !healthExpanded }
+                    expanded = expandables["health"] == true,
+                    onExpandToggle = {
+                        expandables["health"] = !(expandables["health"] ?: false)
+                    }
                 )
             }
-
-            // 8) QR Scanner Expandable
             item {
                 QrExpandableEx(
-                    expanded = qrExpanded,
-                    onExpandToggle = { qrExpanded = !qrExpanded }
+                    expanded = expandables["qr"] == true,
+                    onExpandToggle = {
+                        expandables["qr"] = !(expandables["qr"] ?: false)
+                    }
                 )
             }
-
             item {
                 BLEExpandableCard(
-                    expanded = bleExpanded,
-                    onExpandToggle = { bleExpanded = !bleExpanded }
+                    expanded = expandables["ble"] == true,
+                    onExpandToggle = {
+                        expandables["ble"] = !(expandables["ble"] ?: false)
+                    }
                 )
             }
         }
