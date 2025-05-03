@@ -1,13 +1,18 @@
 package com.ylabz.basepro.applications.bike.features.settings.ui
 
+import com.ylabz.basepro.applications.bike.database.ProfileData
+
 // 3a) Extend your UiState to carry both the *options* and the *current selection*
+/**
+ * Combine app-wide options with current selections AND rider profile
+ */
 sealed interface SettingsUiState {
     object Loading : SettingsUiState
     data class Success(
         val options: Map<String, List<String>>,
-        val selections: Map<String, String>
+        val selections: Map<String, String>,
+        val profile: ProfileData
     ) : SettingsUiState
-
     data class Error(val message: String) : SettingsUiState
 }
 
