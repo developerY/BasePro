@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import com.ylabz.basepro.applications.bike.database.ProfileData
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BikeScooter
 import androidx.compose.material.icons.filled.Bluetooth
+import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -27,6 +29,7 @@ import androidx.compose.material.icons.filled.Nfc
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.UnfoldLess
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -34,6 +37,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -41,6 +45,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -62,11 +67,6 @@ import com.ylabz.basepro.feature.nfc.ui.NfcUiState.Stopped
 import com.ylabz.basepro.feature.nfc.ui.components.NfcScanScreen
 import com.ylabz.basepro.feature.qrscanner.ui.QRCodeScannerScreen
 
-// ---------------------------------------------
-// MAIN SETTINGS SCREEN
-// ---------------------------------------------
-
-
 // —————————————————————————————————————————————————————————
 //  PASTEL COLORS
 // —————————————————————————————————————————————————————————
@@ -75,39 +75,52 @@ private val PastelBlue     = Color(0xFFDCEEFB)
 private val PastelLilac    = Color(0xFFEDE7F6)
 
 // —————————————————————————————————————————————————————————
-//  SectionHeader WITH CUSTOM BG
+//  SectionHeader WITH “Collapse All” ACTION
 // —————————————————————————————————————————————————————————
 @Composable
 fun SectionHeader(
     title: String,
     bgColor: Color,
-    contentColor: Color = Color.Black  // ensure text is always dark
+    onCollapseAll: (() -> Unit)? = null
 ) {
     Surface(
-        tonalElevation = 4.dp,
-        shape = RoundedCornerShape(8.dp),
-        color = bgColor,
-        contentColor = contentColor,
-
-        // shadowElevation draws the actual drop-shadow
+        tonalElevation  = 4.dp,
         shadowElevation = 4.dp,
-
-        modifier = Modifier
+        shape           = RoundedCornerShape(8.dp),
+        color           = bgColor,
+        modifier        = Modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp)
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,  // bump up size
-            modifier = Modifier
-                .padding(vertical = 10.dp, horizontal = 12.dp)
-        )
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment     = Alignment.CenterVertically
+        ) {
+            Text(
+                text  = title,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+            )
+
+            // Replace "Collapse all" text with a single icon button:
+            onCollapseAll?.let { collapse ->
+                IconButton(onClick = collapse) {
+                    Icon(
+                        imageVector   = Icons.Filled.UnfoldLess,
+                        tint           = MaterialTheme.colorScheme.inversePrimary,
+                        contentDescription = "Collapse all sections"
+                    )
+                }
+            }
+        }
     }
 }
 
 
 // —————————————————————————————————————————————————————————
-//  SETTINGS SCREEN
+//  SETTINGS SCREEN WITH “Collapse all” BUTTONS
 // —————————————————————————————————————————————————————————
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -119,7 +132,7 @@ fun SettingsScreenEx(
     onEvent: (SettingsEvent) -> Unit,
     navTo: (String) -> Unit
 ) {
-    // Consolidate all “expanded” flags
+    // All expandable states
     val expandables = remember {
         mutableStateMapOf(
             "bike"   to false,
@@ -136,7 +149,6 @@ fun SettingsScreenEx(
     Box(
         modifier = modifier
             .fillMaxSize()
-            // very light lavender
             .background(PastelLavender)
     ) {
         LazyColumn(
@@ -144,9 +156,7 @@ fun SettingsScreenEx(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
-            // ——————————————————————————————————————————
-            // 1) SCREEN TITLE + PROFILE CARD
-            // ——————————————————————————————————————————
+            // Title + Profile
             item {
                 Text(
                     text = "Settings",
@@ -163,13 +173,18 @@ fun SettingsScreenEx(
                 )
             }
 
-            // ——————————————————————————————————————————
-            // 2) APP SETTINGS SECTION (PASTEL BLUE)
-            // ——————————————————————————————————————————
+            // ——————————————————————————————
+            // App Settings Section
+            // ——————————————————————————————
             stickyHeader {
                 SectionHeader(
-                    title   = "App Settings",
-                    bgColor = PastelBlue
+                    title = "App Settings",
+                    bgColor = PastelBlue,
+                    onCollapseAll = {
+                        listOf("bike", "app", "about").forEach { key ->
+                            expandables[key] = false
+                        }
+                    }
                 )
             }
             item {
@@ -198,13 +213,18 @@ fun SettingsScreenEx(
                 )
             }
 
-            // ——————————————————————————————————————————
-            // 3) CONNECTIVITY SECTION (PASTEL LILAC)
-            // ——————————————————————————————————————————
+            // ——————————————————————————————
+            // Connectivity Section
+            // ——————————————————————————————
             stickyHeader {
                 SectionHeader(
-                    title   = "Connectivity",
-                    bgColor = Color(0xFFD4CCE3)
+                    title = "Connectivity",
+                    bgColor = PastelLilac,
+                    onCollapseAll = {
+                        listOf("nfc", "health", "qr", "ble").forEach { key ->
+                            expandables[key] = false
+                        }
+                    }
                 )
             }
             item {
