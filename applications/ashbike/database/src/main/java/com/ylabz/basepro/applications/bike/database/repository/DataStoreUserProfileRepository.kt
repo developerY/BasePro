@@ -14,6 +14,12 @@ import com.ylabz.basepro.applications.bike.database.ProfileData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+private object UserPrefsDefaults {
+    const val NAME_DEFAULT   = "Ash Monster"
+    const val HEIGHT_DEFAULT = "171"  // cm
+    const val WEIGHT_DEFAULT = "72"   // kg
+}
+
 // Keys for your preferences
 private object UserPrefsKeys {
     val NAME   = stringPreferencesKey("user_name")
@@ -29,13 +35,22 @@ class DataStoreUserProfileRepository @Inject constructor(
 ) : UserProfileRepository {
 
     override val nameFlow: Flow<String> = dataStore.data
-        .map { prefs -> prefs[UserPrefsKeys.NAME] ?: "" }
+        .map { prefs ->
+            prefs[UserPrefsKeys.NAME].takeUnless { it.isNullOrBlank() }
+                ?: UserPrefsDefaults.NAME_DEFAULT
+        }
 
     override val heightFlow: Flow<String> = dataStore.data
-        .map { prefs -> prefs[UserPrefsKeys.HEIGHT] ?: "" }
+        .map { prefs ->
+            prefs[UserPrefsKeys.HEIGHT].takeUnless { it.isNullOrBlank() }
+                ?: UserPrefsDefaults.HEIGHT_DEFAULT
+        }
 
     override val weightFlow: Flow<String> = dataStore.data
-        .map { prefs -> prefs[UserPrefsKeys.WEIGHT] ?: "" }
+        .map { prefs ->
+            prefs[UserPrefsKeys.WEIGHT].takeUnless { it.isNullOrBlank() }
+                ?: UserPrefsDefaults.WEIGHT_DEFAULT
+        }
 
     override suspend fun setName(newName: String) {
         dataStore.edit { prefs -> prefs[UserPrefsKeys.NAME] = newName }
