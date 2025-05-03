@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BikeScooter
 import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -52,6 +53,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,7 +74,8 @@ import com.ylabz.basepro.feature.qrscanner.ui.QRCodeScannerScreen
 // —————————————————————————————————————————————————————————
 private val PastelLavender = Color(0xFFF3E5F5)
 private val PastelBlue     = Color(0xFFDCEEFB)
-private val PastelLilac    = Color(0xFFEDE7F6)
+private val PastelLilac    = Color(0xFFEFECF6)
+private val PastelGreen    = Color(0xFFDBF1DB)   // for Bike Settings
 
 // —————————————————————————————————————————————————————————
 //  SectionHeader WITH “Collapse All” ACTION
@@ -80,8 +83,9 @@ private val PastelLilac    = Color(0xFFEDE7F6)
 @Composable
 fun SectionHeader(
     title: String,
-    bgColor: Color,
-    onCollapseAll: (() -> Unit)? = null
+    expanded: Boolean,
+    onToggle: () -> Unit,
+    bgColor: Color
 ) {
     Surface(
         tonalElevation  = 4.dp,
@@ -90,6 +94,7 @@ fun SectionHeader(
         color           = bgColor,
         modifier        = Modifier
             .fillMaxWidth()
+            .clickable(onClick = onToggle)
             .padding(vertical = 6.dp)
     ) {
         Row(
@@ -103,17 +108,11 @@ fun SectionHeader(
                 text  = title,
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
             )
-
-            // Replace "Collapse all" text with a single icon button:
-            onCollapseAll?.let { collapse ->
-                IconButton(onClick = collapse) {
-                    Icon(
-                        imageVector   = Icons.Filled.UnfoldLess,
-                        tint           = MaterialTheme.colorScheme.inversePrimary,
-                        contentDescription = "Collapse all sections"
-                    )
-                }
-            }
+            Icon(
+                imageVector        = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                contentDescription = if (expanded) "Collapse" else "Expand",
+                tint               = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
@@ -132,6 +131,14 @@ fun SettingsScreenEx(
     onEvent: (SettingsEvent) -> Unit,
     navTo: (String) -> Unit
 ) {
+
+    // per-section open/closed
+    var appExpanded by rememberSaveable { mutableStateOf(false) }
+    var connExpanded by rememberSaveable { mutableStateOf(false) }
+    var bikeSettingsExpanded by rememberSaveable { mutableStateOf(false) }
+
+
+
     // All expandable states
     val expandables = remember {
         mutableStateMapOf(
@@ -169,102 +176,131 @@ fun SettingsScreenEx(
             // ——————————————————————————————
             // App Settings Section
             // ——————————————————————————————
+
+            // — App Settings Section —
             stickyHeader {
                 SectionHeader(
                     title = "App Settings",
+                    expanded = appExpanded,
                     bgColor = PastelBlue,
-                    onCollapseAll = {
-                        listOf("bike", "app", "about").forEach { key ->
-                            expandables[key] = false
+                    onToggle = {
+                        if (appExpanded) {
+                            // collapsing: also collapse children
+                            listOf("bike", "app", "about").forEach { expandables[it] = false }
                         }
+                        appExpanded = !appExpanded
                     }
                 )
             }
-            item {
-                BikeConfigurationEx(
-                    expanded = expandables["bike"] == true,
-                    onExpandToggle = {
-                        expandables["bike"] = !(expandables["bike"] ?: false)
-                    },
-                    navTo = navTo
-                )
+            if (appExpanded) {
+                item {
+                    AppPreferencesExpandable(
+                        expanded = expandables["app"] == true,
+                        onExpandToggle = {
+                            expandables["app"] = !(expandables["app"] ?: false)
+                        }
+                    )
+                }
+                item {
+                    AboutExpandable(
+                        expanded = expandables["about"] == true,
+                        onExpandToggle = {
+                            expandables["about"] = !(expandables["about"] ?: false)
+                        }
+                    )
+                }
             }
-            item {
-                AppPreferencesExpandable(
-                    expanded = expandables["app"] == true,
-                    onExpandToggle = {
-                        expandables["app"] = !(expandables["app"] ?: false)
-                    }
-                )
-            }
-            item {
-                AboutExpandable(
-                    expanded = expandables["about"] == true,
-                    onExpandToggle = {
-                        expandables["about"] = !(expandables["about"] ?: false)
-                    }
-                )
-            }
-
             // ——————————————————————————————
             // Connectivity Section
             // ——————————————————————————————
             stickyHeader {
                 SectionHeader(
                     title = "Connectivity",
+                    expanded = connExpanded,
                     bgColor = PastelLilac,
-                    onCollapseAll = {
-                        listOf("nfc", "health", "qr", "ble").forEach { key ->
-                            expandables[key] = false
+                    onToggle = {
+                        if (connExpanded) {
+                            listOf("health", "nfc", "qr", "ble").forEach { expandables[it] = false }
                         }
+                        connExpanded = !connExpanded
                     }
                 )
             }
-            item {
-                HealthExpandableEx(
-                    expanded = expandables["health"] == true,
-                    onExpandToggle = {
-                        expandables["health"] = !(expandables["health"] ?: false)
+            if (connExpanded) {
+                item {
+                    HealthExpandableEx(
+                        expanded = expandables["health"] == true,
+                        onExpandToggle = {
+                            expandables["health"] = !(expandables["health"] ?: false)
+                        }
+                    )
+                }
+                // add your visual break here
+                item {
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp),
+                        thickness = 1.dp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                    )
+                }
+                item {
+                    NfcExpandableEx(
+                        nfcUiState = nfcUiState,
+                        nfcEvent = nfcEvent,
+                        expanded = expandables["nfc"] == true,
+                        onExpandToggle = {
+                            expandables["nfc"] = !(expandables["nfc"] ?: false)
+                        },
+                        navTo = navTo
+                    )
+                }
+                item {
+                    QrExpandableEx(
+                        expanded = expandables["qr"] == true,
+                        onExpandToggle = {
+                            expandables["qr"] = !(expandables["qr"] ?: false)
+                        }
+                    )
+                }
+                item {
+                    BLEExpandableCard(
+                        expanded = expandables["ble"] == true,
+                        onExpandToggle = {
+                            expandables["ble"] = !(expandables["ble"] ?: false)
+                        }
+                    )
+                }
+            }
+
+
+            // — Bike Settings Section ————————————————————————————————
+            stickyHeader {
+                SectionHeader(
+                    title    = "Bike Settings",
+                    expanded = bikeSettingsExpanded,
+                    bgColor  = PastelGreen,
+                    onToggle = {
+                        if (bikeSettingsExpanded) {
+                            expandables["bike"] = false
+                        }
+                        bikeSettingsExpanded = !bikeSettingsExpanded
                     }
                 )
             }
-            // add your visual break here
-            item {
-                HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 12.dp),
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
-                )
+            if (bikeSettingsExpanded) {
+                item {
+                    BikeConfigurationEx(
+                        expanded       = expandables["bike"] == true,
+                        onExpandToggle = { expandables["bike"] = !expandables["bike"]!! },
+                        navTo          = navTo
+                    )
+                }
             }
-            item {
-                NfcExpandableEx(
-                    nfcUiState = nfcUiState,
-                    nfcEvent   = nfcEvent,
-                    expanded   = expandables["nfc"] == true,
-                    onExpandToggle = {
-                        expandables["nfc"] = !(expandables["nfc"] ?: false)
-                    },
-                    navTo = navTo
-                )
-            }
-            item {
-                QrExpandableEx(
-                    expanded = expandables["qr"] == true,
-                    onExpandToggle = {
-                        expandables["qr"] = !(expandables["qr"] ?: false)
-                    }
-                )
-            }
-            item {
-                BLEExpandableCard(
-                    expanded = expandables["ble"] == true,
-                    onExpandToggle = {
-                        expandables["ble"] = !(expandables["ble"] ?: false)
-                    }
-                )
-            }
+
+
+
         }
     }
 }
