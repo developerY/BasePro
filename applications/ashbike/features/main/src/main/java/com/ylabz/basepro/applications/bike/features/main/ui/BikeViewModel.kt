@@ -8,8 +8,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import com.ylabz.basepro.applications.bike.database.RideLocationEntity
+import com.ylabz.basepro.applications.bike.database.repository.UserProfileRepository
 import com.ylabz.basepro.applications.bike.features.main.usecase.RideStatsUseCase
 import com.ylabz.basepro.applications.bike.features.main.usecase.RideTracker
+import com.ylabz.basepro.applications.bike.features.main.usecase.UserStats
 import com.ylabz.basepro.applications.bike.features.main.usecase.toBikeRideEntity
 import com.ylabz.basepro.applications.bike.features.main.usecase.toRideLocationEntity
 import com.ylabz.basepro.core.data.repository.bikeConnectivity.BikeConnectivityRepository
@@ -69,7 +71,9 @@ class BikeViewModel @Inject constructor(
     private val timerRepo: TimerRepository,
     private val rideStats: RideStatsUseCase,
     private val tracker: RideTracker,
-    private val healthSessionManager: HealthSessionManager
+    private val healthSessionManager: HealthSessionManager,
+
+    private val userStatsRepo: UserProfileRepository,
 ) : ViewModel() {
 
     // Toggle
@@ -100,12 +104,31 @@ class BikeViewModel @Inject constructor(
 
 
     // stats flows
+    private val speedFlow         = locationRepo.speedFlow
     private val distanceFlow      = rideStats.distanceKmFlow(resetTrigger, locationRepo.locationFlow)
     private val maxSpeedFlow      = rideStats.maxSpeedFlow(resetTrigger, locationRepo.speedFlow)
     private val avgSpeedFlow      = rideStats.averageSpeedFlow(resetTrigger, locationRepo.speedFlow)
     private val elevationGainFlow = rideStats.elevationGainFlow(resetTrigger, locationRepo.locationFlow)
     private val elevationLossFlow = rideStats.elevationLossFlow(resetTrigger, locationRepo.locationFlow)
-    private val caloriesFlow      = rideStats.caloriesFlow(resetTrigger, distanceFlow)
+    // caloriesFlow using dynamic MET model
+
+    // user stats from DataStore
+    private val userStatsFlow: Flow<UserStats> = combine(
+        userStatsRepo.nameFlow,           // Flow<String>
+        userStatsRepo.heightFlow,         // Flow<String>
+        userStatsRepo.weightFlow          // Flow<String>
+    ) { name, heightStr, weightStr ->
+        UserStats(
+            heightCm = heightStr.toFloatOrNull() ?: 0f,
+            weightKg = weightStr.toFloatOrNull() ?: 0f
+        )
+    }
+    val caloriesFlow: Flow<Int> = rideStats.caloriesFlow(
+        resetTrigger,
+        distanceFlow,
+        speedFlow,
+        userStatsFlow
+    )
 
     // keep a running list of speeds too
     private val speedHistory = mutableListOf<Float>()

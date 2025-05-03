@@ -3,6 +3,7 @@ package com.ylabz.basepro.applications.bike.features.main.usecase
 import android.location.Location
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.scan
@@ -21,18 +22,34 @@ import javax.inject.Singleton
  *
  * Each flow “resets” whenever `resetSignal` emits Unit.
  */
+
+/**
+ * Holds the user’s anthropometric inputs.
+ */
+data class UserStats(
+    val heightCm: Float, // if you later want to adjust for height
+    val weightKg: Float
+)
+
+
+/**
+ * Encapsulates all of the per-ride statistics logic:
+ *  – total distance (km)
+ *  – max speed (km/h)
+ *  – average speed (km/h)
+ *  – elevation gain & loss (m)
+ *  – **dynamic** calories burned
+ *
+ * Each flow “resets” whenever `resetSignal` emits Unit.
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 @Singleton
-class RideStatsUseCase @Inject constructor() {
-
-    companion object {
-        // example conversion: 50 kcal per km
-        private const val CALORIES_PER_KM = 23 // 50
-    }
-
+class RideStatsUseCase @Inject constructor(
+    private val calculateCaloriesUseCase: CalculateCaloriesUseCase
+) {
     /** Total distance in km, resettable. */
     fun distanceKmFlow(
-        resetSignal: Flow<Unit>,
+        resetSignal:  Flow<Unit>,
         locationFlow: Flow<Location>
     ): Flow<Float> =
         resetSignal
@@ -53,7 +70,7 @@ class RideStatsUseCase @Inject constructor() {
     /** Maximum instantaneous speed (km/h), resettable. */
     fun maxSpeedFlow(
         resetSignal: Flow<Unit>,
-        speedFlow: Flow<Float>
+        speedFlow:   Flow<Float>
     ): Flow<Float> =
         resetSignal
             .onStart { emit(Unit) }
@@ -65,10 +82,10 @@ class RideStatsUseCase @Inject constructor() {
             }
             .distinctUntilChanged()
 
-    /** Average speed (km/h) as the running mean, resettable. */
+    /** Average speed (km/h) as running mean, resettable. */
     fun averageSpeedFlow(
         resetSignal: Flow<Unit>,
-        speedFlow: Flow<Float>
+        speedFlow:   Flow<Float>
     ): Flow<Double> =
         resetSignal
             .onStart { emit(Unit) }
@@ -86,7 +103,7 @@ class RideStatsUseCase @Inject constructor() {
 
     /** Elevation gain in meters, resettable. */
     fun elevationGainFlow(
-        resetSignal: Flow<Unit>,
+        resetSignal:  Flow<Unit>,
         locationFlow: Flow<Location>
     ): Flow<Float> =
         resetSignal
@@ -109,7 +126,7 @@ class RideStatsUseCase @Inject constructor() {
 
     /** Elevation loss in meters, resettable. */
     fun elevationLossFlow(
-        resetSignal: Flow<Unit>,
+        resetSignal:  Flow<Unit>,
         locationFlow: Flow<Location>
     ): Flow<Float> =
         resetSignal
@@ -130,16 +147,30 @@ class RideStatsUseCase @Inject constructor() {
             }
             .distinctUntilChanged()
 
-    /** Simple calories estimation (kcal), resettable. */
+    /**
+     * **Dynamic** calories flow, resettable.
+     *
+     * @param resetSignal      Flow<Unit> that signals “start over”.
+     * @param distanceKmFlow   resettable distance (km).
+     * @param speedKmhFlow     resettable speed (km/h).
+     * @param userStatsFlow    hot flow of current UserStats from DataStore.
+     * @return Flow<Int>       total calories burned, as Int kcal.
+     */
     fun caloriesFlow(
-        resetSignal: Flow<Unit>,
-        distanceFlow: Flow<Float>
+        resetSignal:      Flow<Unit>,
+        distanceKmFlow:   Flow<Float>,
+        speedKmhFlow:     Flow<Float>,
+        userStatsFlow:    Flow<UserStats>
     ): Flow<Int> =
         resetSignal
             .onStart { emit(Unit) }
-            .flatMapLatest<Unit, Int> {
-                distanceFlow
-                    .map<Float, Int> { (it * CALORIES_PER_KM).toInt() }
+            .flatMapLatest {
+                // combine the three streams into Float kcal, then convert to Int
+                calculateCaloriesUseCase(
+                    distanceKmFlow,
+                    speedKmhFlow,
+                    userStatsFlow
+                ).map { it.toInt() }
             }
             .distinctUntilChanged()
 }
