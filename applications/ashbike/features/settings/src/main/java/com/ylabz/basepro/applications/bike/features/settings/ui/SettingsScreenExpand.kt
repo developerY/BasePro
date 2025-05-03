@@ -1,6 +1,7 @@
 package com.ylabz.basepro.applications.bike.features.settings.ui
 
 import androidx.compose.foundation.background
+import com.ylabz.basepro.applications.bike.database.ProfileData
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.ProfileInfoCardEx
 import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
+import com.ylabz.basepro.feature.nfc.ui.NfcUiState.Stopped
 import com.ylabz.basepro.feature.nfc.ui.components.NfcScanScreen
 import com.ylabz.basepro.feature.qrscanner.ui.QRCodeScannerScreen
 
@@ -99,12 +101,10 @@ fun SettingsScreenEx(
             // 1) Editable Profile / Personal Info panel
             item {
                 ProfileInfoCardEx(
-                    name = name,
-                    heightCm = heightCm,
-                    weightKg = weightKg,
-                    isEditing = isEditing,
+                    profile     = uiState.profile,
+                    isEditing   = isEditing,
                     onToggleEdit = { isEditing = !isEditing },
-                    onEvent = onEvent
+                    onEvent     = onEvent
                 )
             }
 
@@ -185,6 +185,26 @@ fun SettingsScreenEx(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun SettingsScreenExPreview() {
+    val dummyProfile = ProfileData(name = "John Doe", heightCm = "180", weightKg = "80")
+    val dummyUiState = SettingsUiState.Success(
+        options = mapOf(
+            "Theme" to listOf("Light", "Dark", "System Default"),
+            "Language" to listOf("English", "Spanish", "French"),
+            "Notifications" to listOf("Enabled", "Disabled")
+        ),
+        selections = mapOf(
+            "Theme" to "System Default",
+            "Language" to "English",
+            "Notifications" to "Enabled"
+        ),
+        profile = dummyProfile
+    )
+    SettingsScreenEx(nfcUiState = Stopped, nfcEvent = {}, uiState = dummyUiState, onEvent = {}, navTo = {})
+}
+
 // ---------------------------------------------
 // NFC Expandable
 // ---------------------------------------------
@@ -242,6 +262,13 @@ fun NfcExpandableEx(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NfcExpandableExPreview() {
+    // Assuming Stopped is a valid initial state for NfcUiState
+    NfcExpandableEx(nfcUiState = Stopped, nfcEvent = {}, expanded = true, onExpandToggle = {}, navTo = {})
 }
 
 // ---------------------------------------------
@@ -308,6 +335,12 @@ fun HealthExpandableEx(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun HealthExpandableExPreview() {
+    HealthExpandableEx(expanded = true, onExpandToggle = {})
+}
+
 // ---------------------------------------------
 // QR Scanner Expandable
 // ---------------------------------------------
@@ -366,6 +399,12 @@ fun QrExpandableEx(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun QrExpandableExPreview() {
+    QrExpandableEx(expanded = true, onExpandToggle = {})
+}
+
 // ---------------------------------------------
 // PROFILE / BIKE INFO CARD
 // ---------------------------------------------
@@ -414,6 +453,12 @@ fun ProfileBikeInfoCardEx(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProfileBikeInfoCardExPreview() {
+    ProfileBikeInfoCardEx(userName = "John Doe", bikeBattery = "85%", lastRide = "Yesterday", onProfileClick = {})
 }
 
 // ---------------------------------------------
@@ -492,6 +537,12 @@ fun BikeConfigurationEx(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BikeConfigurationExPreview() {
+    BikeConfigurationEx(expanded = true, onExpandToggle = {}, navTo = {})
 }
 
 // ---------------------------------------------
@@ -579,6 +630,12 @@ fun AppPreferencesExpandable(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun AppPreferencesExpandablePreview() {
+    AppPreferencesExpandable(expanded = true, onExpandToggle = {})
+}
+
 @Composable
 fun BLEExpandableCard(
     expanded: Boolean,
@@ -628,6 +685,12 @@ fun BLEExpandableCard(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BLEExpandableCardPreview() {
+    BLEExpandableCard(expanded = true, onExpandToggle = {})
 }
 
 
@@ -686,5 +749,11 @@ fun AboutExpandable(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AboutExpandablePreview() {
+    AboutExpandable(expanded = true, onExpandToggle = {})
 }
 

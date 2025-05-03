@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,49 +38,21 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.database.ProfileData
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsEvent
-
-@Preview(showBackground = true)
-@Composable
-fun ProfileInfoCardExPreviewViewMode() {
- ProfileInfoCardEx(
- name = "John Doe",
- heightCm = "180",
- weightKg = "75",
- isEditing = false,
- onToggleEdit = {},
- onEvent = {}
- )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ProfileInfoCardExPreviewEditMode() {
- ProfileInfoCardEx(
- name = "John Doe",
- heightCm = "180",
- weightKg = "75",
- isEditing = true,
- onToggleEdit = {},
- onEvent = {}
- )
-}
 @Composable
 fun ProfileInfoCardEx(
-    name: String,
-    heightCm: String,
-    weightKg: String,
+    profile: ProfileData,
     isEditing: Boolean,
     onToggleEdit: () -> Unit,
     onEvent: (SettingsEvent) -> Unit
 ) {
     Card(
-        modifier = Modifier
+        Modifier
             .padding(16.dp)
             .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Box(
-            modifier = Modifier
+            Modifier
                 .fillMaxWidth()
                 .background(
                     Brush.verticalGradient(listOf(Color(0xFFE3F2FD), Color(0xFFBBDEFB)))
@@ -87,28 +60,34 @@ fun ProfileInfoCardEx(
                 .padding(16.dp)
         ) {
             if (!isEditing) {
-                // View mode
+                // — VIEW MODE: always show latest profile from uiState
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Icon(Icons.Default.Person, contentDescription = "Profile", Modifier.size(48.dp))
+                    Icon(Icons.Default.Person, contentDescription = null, Modifier.size(48.dp))
                     Spacer(Modifier.width(16.dp))
                     Column {
-                        Text(name, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
-                        Text("Height: $heightCm cm | Weight: $weightKg kg", style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            profile.name,
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                        )
+                        Text(
+                            "Height: ${profile.heightCm} cm | Weight: ${profile.weightKg} kg",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     }
                     Spacer(Modifier.weight(1f))
                     IconButton(onClick = onToggleEdit) {
                         Icon(Icons.Default.Edit, contentDescription = "Edit Profile")
                     }
                 }
+
             } else {
-                // Edit mode
-                // Local form state inside this branch
-                var localName by remember { mutableStateOf(name) }
-                var localHeight by remember { mutableStateOf(heightCm) }
-                var localWeight by remember { mutableStateOf(weightKg) }
+                // — EDIT MODE: local, saveable state initialized once
+                var localName by rememberSaveable { mutableStateOf(profile.name) }
+                var localHeight by rememberSaveable { mutableStateOf(profile.heightCm) }
+                var localWeight by rememberSaveable { mutableStateOf(profile.weightKg) }
 
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     OutlinedTextField(
@@ -145,7 +124,7 @@ fun ProfileInfoCardEx(
                         horizontalArrangement = Arrangement.End
                     ) {
                         Button(onClick = {
-                            // Fire one SaveProfile event
+                            // Single event to save all three fields at once
                             onEvent(
                                 SettingsEvent.SaveProfile(
                                     ProfileData(
@@ -164,4 +143,26 @@ fun ProfileInfoCardEx(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun ProfileInfoCardExPreviewViewMode() {
+    val profile = ProfileData(
+        name = "John Doe",
+        heightCm = "180",
+        weightKg = "75"
+    )
+    ProfileInfoCardEx(profile = profile, isEditing = false, onToggleEdit = {}, onEvent = {})
+}
+
+@Preview
+@Composable
+fun ProfileInfoCardExPreviewEditMode() {
+    val profile = ProfileData(
+        name = "John Doe",
+        heightCm = "180",
+        weightKg = "75"
+    )
+    ProfileInfoCardEx(profile = profile, isEditing = true, onToggleEdit = {}, onEvent = {})
 }
