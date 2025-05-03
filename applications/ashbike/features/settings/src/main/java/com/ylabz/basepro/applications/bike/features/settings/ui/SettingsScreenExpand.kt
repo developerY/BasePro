@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BikeScooter
 import androidx.compose.material.icons.filled.Bluetooth
@@ -37,6 +38,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -80,15 +82,23 @@ fun SectionHeader(
     title: String,
     bgColor: Color
 ) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+    Surface(
+        tonalElevation = 4.dp,                // gives a soft Material-3 shadow
+        shape = RoundedCornerShape(8.dp),     // rounded corners
+        color = bgColor,                      // your pastel background
         modifier = Modifier
             .fillMaxWidth()
-            .background(bgColor)
-            .padding(vertical = 8.dp, horizontal = 12.dp)
-    )
+            .padding(vertical = 6.dp, horizontal = 0.dp) // small spacing above/below
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+            modifier = Modifier
+                .padding(vertical = 8.dp, horizontal = 12.dp)
+        )
+    }
 }
+
 
 // —————————————————————————————————————————————————————————
 //  SETTINGS SCREEN
@@ -188,7 +198,7 @@ fun SettingsScreenEx(
             stickyHeader {
                 SectionHeader(
                     title   = "Connectivity",
-                    bgColor = Color(0xFFB3A7CB)
+                    bgColor = Color(0xFFD4CCE3)
                 )
             }
             item {
