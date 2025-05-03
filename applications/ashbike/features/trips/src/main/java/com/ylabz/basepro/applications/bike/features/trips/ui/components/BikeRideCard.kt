@@ -31,6 +31,8 @@ import com.ylabz.basepro.core.ui.*
 
 @Composable
 fun BikeRideCard(
+    modifier: Modifier = Modifier,
+    backgroundColor: Color,
     ride: BikeRideEntity,
     onEvent: (TripsEvent) -> Unit,
     navTo: (String) -> Unit
@@ -41,7 +43,7 @@ fun BikeRideCard(
     }
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable {
                 // use the sealed‑class helper to build the correct route
@@ -49,10 +51,8 @@ fun BikeRideCard(
                 navTo(ride.rideId)
             },
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0x45FFEB3B)//getPastelColor(item.id.hashCode())
-        )
-        // elevation = 4.dp
+        colors   = CardDefaults.cardColors(containerColor = backgroundColor),
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             // Header: start – end
@@ -140,5 +140,9 @@ fun BikeRideCardPreview() {
         endLat = 40.7580,
         endLng = -73.9855
     )
-    BikeRideCard(ride = ride, onEvent = {}, navTo = {})
+    BikeRideCard(ride = ride,
+        onEvent = {},
+        navTo = {},
+        backgroundColor = Color(0xFFE3F2FD)
+    )
 }
