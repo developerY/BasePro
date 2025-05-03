@@ -90,12 +90,12 @@ fun SettingsScreenEx(
     var weightKg by remember { mutableStateOf(uiState.profile.weightKg) }
 
 
-    Scaffold(
-        topBar = { TopAppBar(title = { Text("Settings") }) }
-    ) { innerPadding ->
+    Box(
+       modifier = modifier,
+    ) {
         LazyColumn(
             modifier = Modifier
-                .padding(innerPadding)
+                //.padding(innerPadding)
                 .fillMaxSize()
         ) {
             // 1) Editable Profile / Personal Info panel
