@@ -23,6 +23,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Modifier
@@ -31,17 +35,42 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.database.ProfileData
+import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsEvent
 
+@Preview(showBackground = true)
+@Composable
+fun ProfileInfoCardExPreviewViewMode() {
+ ProfileInfoCardEx(
+ name = "John Doe",
+ heightCm = "180",
+ weightKg = "75",
+ isEditing = false,
+ onToggleEdit = {},
+ onEvent = {}
+ )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProfileInfoCardExPreviewEditMode() {
+ ProfileInfoCardEx(
+ name = "John Doe",
+ heightCm = "180",
+ weightKg = "75",
+ isEditing = true,
+ onToggleEdit = {},
+ onEvent = {}
+ )
+}
 @Composable
 fun ProfileInfoCardEx(
-    userName: String,
+    name: String,
     heightCm: String,
     weightKg: String,
     isEditing: Boolean,
-    onEditToggle: () -> Unit,
-    onNameChange: (String) -> Unit,
-    onHeightChange: (String) -> Unit,
-    onWeightChange: (String) -> Unit
+    onToggleEdit: () -> Unit,
+    onEvent: (SettingsEvent) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -59,65 +88,75 @@ fun ProfileInfoCardEx(
         ) {
             if (!isEditing) {
                 // View mode
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Profile",
-                        modifier = Modifier.size(48.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(Icons.Default.Person, contentDescription = "Profile", Modifier.size(48.dp))
                     Spacer(Modifier.width(16.dp))
                     Column {
-                        Text(
-                            text = userName,
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                        )
-                        Text(
-                            text = "Height: $heightCm cm | Weight: $weightKg kg",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                        Text(name, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                        Text("Height: $heightCm cm | Weight: $weightKg kg", style = MaterialTheme.typography.bodyMedium)
                     }
                     Spacer(Modifier.weight(1f))
-                    IconButton(onClick = onEditToggle) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit profile"
-                        )
+                    IconButton(onClick = onToggleEdit) {
+                        Icon(Icons.Default.Edit, contentDescription = "Edit Profile")
                     }
                 }
             } else {
                 // Edit mode
+                // Local form state inside this branch
+                var localName by remember { mutableStateOf(name) }
+                var localHeight by remember { mutableStateOf(heightCm) }
+                var localWeight by remember { mutableStateOf(weightKg) }
+
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     OutlinedTextField(
-                        value = userName,
-                        onValueChange = onNameChange,
+                        value = localName,
+                        onValueChange = { localName = it },
                         label = { Text("Name") },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
+
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         OutlinedTextField(
-                            value = heightCm,
-                            onValueChange = onHeightChange,
+                            value = localHeight,
+                            onValueChange = { localHeight = it },
                             label = { Text("Height (cm)") },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             modifier = Modifier.weight(1f)
                         )
                         OutlinedTextField(
-                            value = weightKg,
-                            onValueChange = onWeightChange,
+                            value = localWeight,
+                            onValueChange = { localWeight = it },
                             label = { Text("Weight (kg)") },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             modifier = Modifier.weight(1f)
                         )
                     }
+
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        Button(onClick = onEditToggle) {
+                        Button(onClick = {
+                            // Fire one SaveProfile event
+                            onEvent(
+                                SettingsEvent.SaveProfile(
+                                    ProfileData(
+                                        name = localName,
+                                        heightCm = localHeight,
+                                        weightKg = localWeight
+                                    )
+                                )
+                            )
+                            onToggleEdit()
+                        }) {
                             Text("Save")
                         }
                     }
@@ -125,34 +164,4 @@ fun ProfileInfoCardEx(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun ProfileInfoCardExPreviewViewMode() {
-    ProfileInfoCardEx(
-        userName = "John Doe",
-        heightCm = "180",
-        weightKg = "75",
-        isEditing = false,
-        onEditToggle = {},
-        onNameChange = {},
-        onHeightChange = {},
-        onWeightChange = {}
-    )
-}
-
-@Preview
-@Composable
-fun ProfileInfoCardExPreviewEditMode() {
-    ProfileInfoCardEx(
-        userName = "John Doe",
-        heightCm = "180",
-        weightKg = "75",
-        isEditing = true,
-        onEditToggle = {},
-        onNameChange = {},
-        onHeightChange = {},
-        onWeightChange = {}
-    )
 }

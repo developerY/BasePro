@@ -38,6 +38,8 @@ fun SettingsUiRoute(
                 modifier = Modifier,
                 nfcUiState = nfcUiState,
                 nfcEvent = { event -> nfcViewModel.onEvent(event) },
+                uiState = uiState,
+                onEvent = { event -> viewModel.onEvent(event) },
                 navTo = navTo
             )
         }

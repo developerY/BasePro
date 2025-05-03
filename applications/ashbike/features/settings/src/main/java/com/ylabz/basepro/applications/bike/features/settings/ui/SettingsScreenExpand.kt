@@ -65,6 +65,8 @@ fun SettingsScreenEx(
     modifier: Modifier = Modifier,
     nfcUiState : NfcUiState,
     nfcEvent : (NfcRwEvent) -> Unit,
+    uiState: SettingsUiState.Success,
+    onEvent: (SettingsEvent) -> Unit,
     navTo: (String) -> Unit
 ) {
     // Track each expandable’s state
@@ -79,11 +81,11 @@ fun SettingsScreenEx(
     var bleExpanded by remember { mutableStateOf(false) }
 
     // NEW: editing toggle + profile form state
-    var isEditingProfile by remember { mutableStateOf(false) }
-    // NEW: profile form state
-    var name by remember { mutableStateOf("John Doe") }
-    var heightCm by remember { mutableStateOf("170") }
-    var weightKg by remember { mutableStateOf("70") }
+    // Local UI state for editing mode + form fields
+    var isEditing by remember { mutableStateOf(false) }
+    var name by remember { mutableStateOf(uiState.profile.name) }
+    var heightCm by remember { mutableStateOf(uiState.profile.heightCm) }
+    var weightKg by remember { mutableStateOf(uiState.profile.weightKg) }
 
 
     Scaffold(
@@ -97,14 +99,12 @@ fun SettingsScreenEx(
             // 1) Editable Profile / Personal Info panel
             item {
                 ProfileInfoCardEx(
-                    userName       = name,
-                    heightCm       = heightCm,
-                    weightKg       = weightKg,
-                    isEditing      = isEditingProfile,
-                    onEditToggle   = { isEditingProfile = !isEditingProfile },
-                    onNameChange   = { name = it },
-                    onHeightChange = { heightCm = it },
-                    onWeightChange = { weightKg = it }
+                    name = name,
+                    heightCm = heightCm,
+                    weightKg = weightKg,
+                    isEditing = isEditing,
+                    onToggleEdit = { isEditing = !isEditing },
+                    onEvent = onEvent
                 )
             }
 
@@ -688,13 +688,3 @@ fun AboutExpandable(
     }
 }
 
-// Preview SettingsScreen
-@Preview
-@Composable
-fun PreviewSettingsScreen() {
-    SettingsScreenEx(
-        nfcUiState = NfcUiState.NfcNotSupported,
-        nfcEvent = {},
-        navTo = {}
-    )
-}

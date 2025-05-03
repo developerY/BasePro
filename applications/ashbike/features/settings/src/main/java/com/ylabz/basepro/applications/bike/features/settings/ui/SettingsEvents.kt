@@ -11,4 +11,3 @@ sealed class SettingsEvent {
     data class UpdateSetting(val key: String, val value: String) : SettingsEvent()
     data class SaveProfile(val profile: ProfileData) : SettingsEvent()
 }
-
