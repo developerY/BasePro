@@ -76,13 +76,9 @@ class SettingsViewModel @Inject constructor(
                     }
                 }
             }
-            is SettingsEvent.UpdateProfile -> {
+            is SettingsEvent.SaveProfile -> {
                 viewModelScope.launch {
-                    when (event.field) {
-                        ProfileField.NAME   -> profileRepo.setName(event.value)
-                        ProfileField.HEIGHT -> profileRepo.setHeight(event.value)
-                        ProfileField.WEIGHT -> profileRepo.setWeight(event.value)
-                    }
+                    profileRepo.saveProfile(event.profile)
                 }
             }
         }

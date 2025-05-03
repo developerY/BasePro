@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.ylabz.basepro.applications.bike.database.ProfileData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -46,5 +47,13 @@ class DataStoreUserProfileRepository @Inject constructor(
 
     override suspend fun setWeight(kg: String) {
         dataStore.edit { prefs -> prefs[UserPrefsKeys.WEIGHT] = kg }
+    }
+
+    override suspend fun saveProfile(profile: ProfileData) {
+        dataStore.edit { prefs ->
+            prefs[UserPrefsKeys.NAME]   = profile.name
+            prefs[UserPrefsKeys.HEIGHT] = profile.heightCm
+            prefs[UserPrefsKeys.WEIGHT] = profile.weightKg
+        }
     }
 }

@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.ylabz.basepro.applications.bike.database.ProfileData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -18,4 +19,7 @@ interface UserProfileRepository {
     suspend fun setName(newName: String)
     suspend fun setHeight(cm: String)
     suspend fun setWeight(kg: String)
+
+    suspend fun saveProfile(profile: ProfileData)
+
 }
