@@ -1,16 +1,23 @@
 package com.ylabz.basepro.applications.bike.features.main.usecase
 
 import android.location.Location
+import com.ylabz.basepro.applications.bike.features.main.ui.components.home.demo.calculateCalories
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.combine  // make sure you import this overload! // the multi-arity extension
+
 
 /**
  * Encapsulates all of the per‑ride statistics logic:
@@ -23,14 +30,6 @@ import javax.inject.Singleton
  * Each flow “resets” whenever `resetSignal` emits Unit.
  */
 
-/**
- * Holds the user’s anthropometric inputs.
- */
-data class UserStats(
-    val heightCm: Float, // if you later want to adjust for height
-    val weightKg: Float
-)
-
 
 /**
  * Encapsulates all of the per-ride statistics logic:
@@ -42,11 +41,41 @@ data class UserStats(
  *
  * Each flow “resets” whenever `resetSignal` emits Unit.
  */
+
+
+/**
+ * Holds the user’s anthropometric inputs.
+ */
+data class UserStats(
+    val heightCm: Float,
+    val weightKg: Float
+)
+
 @OptIn(ExperimentalCoroutinesApi::class)
 @Singleton
 class RideStatsUseCase @Inject constructor(
     private val calculateCaloriesUseCase: CalculateCaloriesUseCase
 ) {
+    companion object {
+        // fallback constant if needed
+        private const val CALORIES_PER_KM = 23
+    }
+
+    /**
+     * Raw path of GPS points, resettable on [resetSignal].
+     */
+    fun pathFlow(
+        resetSignal:  Flow<Unit>,
+        locationFlow: Flow<Location>
+    ): Flow<List<Location>> =
+        resetSignal
+            .onStart { emit(Unit) }
+            .flatMapLatest {
+                locationFlow
+                    .scan(emptyList<Location>()) { acc, loc -> acc + loc }
+            }
+            .distinctUntilChanged()
+
     /** Total distance in km, resettable. */
     fun distanceKmFlow(
         resetSignal:  Flow<Unit>,
@@ -148,30 +177,74 @@ class RideStatsUseCase @Inject constructor(
             .distinctUntilChanged()
 
     /**
-     * **Dynamic** calories flow, resettable.
-     *
-     * @param resetSignal      Flow<Unit> that signals “start over”.
-     * @param distanceKmFlow   resettable distance (km).
-     * @param speedKmhFlow     resettable speed (km/h).
-     * @param userStatsFlow    hot flow of current UserStats from DataStore.
-     * @return Flow<Int>       total calories burned, as Int kcal.
+     * Resettable flow of RideSession carrying _all_ stats — path, distance, speed,
+     * elevation, calories, heading, and elapsed time.
      */
-    fun caloriesFlow(
+    fun sessionFlow(
         resetSignal:      Flow<Unit>,
-        distanceKmFlow:   Flow<Float>,
-        speedKmhFlow:     Flow<Float>,
-        userStatsFlow:    Flow<UserStats>
-    ): Flow<Int> =
-        resetSignal
+        locationFlow:     Flow<Location>,
+        speedFlow:        Flow<Float>,
+        headingFlow:      Flow<Float>,
+        userStatsFlow:    Flow<UserStats>,
+        clockMs:          () -> Long = { System.currentTimeMillis() }
+    ): StateFlow<RideSession> {
+        val upstream: Flow<RideSession> = resetSignal
             .onStart { emit(Unit) }
             .flatMapLatest {
-                // combine the three streams into Float kcal, then convert to Int
-                calculateCaloriesUseCase(
-                    distanceKmFlow,
-                    speedKmhFlow,
-                    userStatsFlow
-                ).map { it.toInt() }
+                // snapshot start time
+                val startMs = clockMs()
+
+                // build each component flow
+                val pFlow = pathFlow(resetSignal, locationFlow)
+                val dFlow = distanceKmFlow(resetSignal, locationFlow)
+                val mFlow = maxSpeedFlow(resetSignal, speedFlow)
+                val aFlow = averageSpeedFlow(resetSignal, speedFlow)
+                val gFlow = elevationGainFlow(resetSignal, locationFlow)
+                val lFlow = elevationLossFlow(resetSignal, locationFlow)
+                val cFlow = calculateCaloriesUseCase(dFlow, speedFlow, userStatsFlow)
+                    .map { it.toInt() }
+
+                // first combine path + dist + max + avg + gain
+                data class Five(val path: List<Location>, val dist: Float, val max: Float, val avg: Double, val gain: Float)
+                val five: Flow<Five> = combine(pFlow, dFlow, mFlow, aFlow, gFlow) { path, dist, max, avg, gain ->
+                    Five(path, dist, max, avg, gain)
+                }
+
+                // then combine those five with loss, calories, and heading into RideSession
+                combine(five, lFlow, cFlow, headingFlow) { fiveStats, loss, calories, heading ->
+                    val elapsed = clockMs() - startMs
+                    RideSession(
+                        startTimeMs     = startMs,
+                        path            = fiveStats.path,
+                        elapsedMs       = elapsed,
+                        totalDistanceKm = fiveStats.dist,
+                        averageSpeedKmh = fiveStats.avg,
+                        maxSpeedKmh     = fiveStats.max,
+                        elevationGainM  = fiveStats.gain,
+                        elevationLossM  = loss,
+                        caloriesBurned  = calories,
+                        heading         = heading
+                    )
+                }
             }
-            .distinctUntilChanged()
+
+        return upstream
+            .stateIn(
+                scope        = CoroutineScope(Dispatchers.Default),
+                started      = SharingStarted.WhileSubscribed(5_000),
+                initialValue = RideSession(
+                    startTimeMs     = 0L,
+                    path            = emptyList(),
+                    elapsedMs       = 0L,
+                    totalDistanceKm = 0f,
+                    averageSpeedKmh = 0.0,
+                    maxSpeedKmh     = 0f,
+                    elevationGainM  = 0f,
+                    elevationLossM  = 0f,
+                    caloriesBurned  = 0,
+                    heading         = 0f
+                )
+            )
+    }
 }
 

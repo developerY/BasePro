@@ -16,13 +16,12 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.shareIn
 
 @Singleton
-class UnifiedLocationRepositoryImpl @Inject constructor(
+class UnifiedLocationHighPowerRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : UnifiedLocationRepository {
 

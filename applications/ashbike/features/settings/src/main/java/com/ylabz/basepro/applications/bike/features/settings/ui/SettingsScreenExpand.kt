@@ -633,6 +633,7 @@ fun BikeConfigurationEx(
                         Spacer(modifier = Modifier.weight(1f))
                         Switch(
                             checked = motorAssistance,
+                            enabled = false,
                             onCheckedChange = { motorAssistance = it }
                         )
                     }
@@ -643,6 +644,7 @@ fun BikeConfigurationEx(
                     var gearingLevel by remember { mutableStateOf(5f) }
                     Text("Gearing Level: ${gearingLevel.toInt()}")
                     Slider(
+                        enabled = false,
                         value = gearingLevel,
                         onValueChange = { gearingLevel = it },
                         valueRange = 1f..10f
@@ -651,7 +653,10 @@ fun BikeConfigurationEx(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Button to advanced screen
-                    Button(onClick = { navTo("settings_bike_advanced") }) {
+                    Button(
+                        enabled = false,
+                        onClick = { navTo("settings_bike_advanced") }
+                    ) {
                         Text("Advanced Bike Settings")
                     }
                 }
@@ -715,6 +720,7 @@ fun AppPreferencesExpandable(
                         Text("Dark Mode")
                         Spacer(modifier = Modifier.weight(1f))
                         Switch(
+                            enabled = false,
                             checked = darkModeEnabled,
                             onCheckedChange = { darkModeEnabled = it }
                         )
@@ -723,11 +729,12 @@ fun AppPreferencesExpandable(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Example: Notifications toggle
-                    var notificationsEnabled by remember { mutableStateOf(true) }
+                    var notificationsEnabled by remember { mutableStateOf(false) }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("Notifications")
                         Spacer(modifier = Modifier.weight(1f))
                         Switch(
+                            enabled = false,
                             checked = notificationsEnabled,
                             onCheckedChange = { notificationsEnabled = it }
                         )
@@ -741,6 +748,7 @@ fun AppPreferencesExpandable(
                         Text("Use Metric Units")
                         Spacer(modifier = Modifier.weight(1f))
                         Switch(
+                            enabled = false,
                             checked = useMetric,
                             onCheckedChange = { useMetric = it }
                         )
@@ -858,12 +866,12 @@ fun AboutExpandable(
             if (expanded) {
                 HorizontalDivider()
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("App Version: 1.0.3")
-                    Text("Build Number: 42")
+                    Text("App Version: Alpha 0.9.7")
+                    Text("Build Number: 43")
                     Spacer(modifier = Modifier.height(8.dp))
                     Text("For licenses, support, or more info, visit:")
                     Text(
-                        text = "https://www.example.com",
+                        text = "https://www.ashbike.com",
                         color = MaterialTheme.colorScheme.primary
                     )
                 }

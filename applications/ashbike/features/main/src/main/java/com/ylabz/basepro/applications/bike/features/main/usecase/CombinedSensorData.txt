@@ -1,0 +1,44 @@
+package com.ylabz.basepro.applications.bike.features.main.usecase
+
+import android.location.Location
+import androidx.lifecycle.viewModelScope
+import com.ylabz.basepro.core.model.bike.CombinedSensorData
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.shareIn
+
+private val sensorDataFlow = combine(
+    locationRepo.locationFlow,    // 0
+    locationRepo.speedFlow,       // 1
+    distanceFlow,                 // 2
+    avgSpeedFlow,                 // 3
+    maxSpeedFlow,                 // 4
+    elevationGainFlow,            // 5
+    elevationLossFlow,            // 6
+    caloriesFlow,                 // 7
+    compassRepo.headingFlow       // 8
+) { values: Array<Any?> ->
+    @Suppress("UNCHECKED_CAST")
+    val loc: Location    = values[0] as Location
+    val speed: Float     = values[1] as Float
+    val dist: Float      = values[2] as Float
+    val avg: Double      = values[3] as Double
+    val max: Float       = values[4] as Float
+    val gain: Float      = values[5] as Float
+    val loss: Float      = values[6] as Float
+    val cal: Int         = values[7] as Int
+    val heading: Float   = values[8] as Float
+
+    CombinedSensorData(
+        location          = loc,
+        speedKmh          = speed,
+        traveledDistance  = dist,
+        averageSpeed      = avg,
+        maxSpeed          = max,
+        elevationGain     = gain,
+        elevationLoss     = loss,
+        caloriesBurned    = cal,
+        heading           = heading
+    )
+}
+    .shareIn(viewModelScope, SharingStarted.Lazily, replay = 0)

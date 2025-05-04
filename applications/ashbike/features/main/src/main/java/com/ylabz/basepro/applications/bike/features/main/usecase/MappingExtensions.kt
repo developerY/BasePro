@@ -10,24 +10,23 @@ import android.location.Location
  */
 fun RideSession.toBikeRideEntity(): BikeRideEntity =
     BikeRideEntity(
-        // Room will auto-generate rideId for you, or you can pass one here
-        startTime      = startTimeMs,
-        endTime        = startTimeMs + durationMs,
-        totalDistance  = totalDistanceM,
-        averageSpeed   = averageSpeedKmh.toFloat(),
-        maxSpeed       = maxSpeedKmh,
-        elevationGain  = elevationGainM,
-        elevationLoss  = elevationLossM,
-        caloriesBurned = calories,
-        // use first/last GPS fix for quick queries:
-        startLat       = path.first().latitude,
-        startLng       = path.first().longitude,
-        endLat         = path.last().latitude,
-        endLng         = path.last().longitude
+        startTime       = startTimeMs,
+        endTime         = startTimeMs + elapsedMs,
+        totalDistance   = totalDistanceKm,
+        averageSpeed    = averageSpeedKmh.toFloat(),
+        maxSpeed        = maxSpeedKmh,
+        elevationGain   = elevationGainM,
+        elevationLoss   = elevationLossM,
+        caloriesBurned  = caloriesBurned,
+        // use first/last GPS fix for quick queries (or 0.0 if empty)
+        startLat        = path.firstOrNull()?.latitude  ?: 0.0,
+        startLng        = path.firstOrNull()?.longitude ?: 0.0,
+        endLat          = path.lastOrNull()?.latitude   ?: 0.0,
+        endLng          = path.lastOrNull()?.longitude  ?: 0.0
     )
 
 /**
- * Convert a raw Location to its child-table entity.
+ * Convert a raw Location to its child‐table entity.
  */
 fun Location.toRideLocationEntity(rideId: String): RideLocationEntity =
     RideLocationEntity(

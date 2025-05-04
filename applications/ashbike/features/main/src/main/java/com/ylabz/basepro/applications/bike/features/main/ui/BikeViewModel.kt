@@ -9,11 +9,13 @@ import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import com.ylabz.basepro.applications.bike.database.RideLocationEntity
 import com.ylabz.basepro.applications.bike.database.repository.UserProfileRepository
+import com.ylabz.basepro.applications.bike.features.main.usecase.RideSession
 import com.ylabz.basepro.applications.bike.features.main.usecase.RideStatsUseCase
 import com.ylabz.basepro.applications.bike.features.main.usecase.RideTracker
 import com.ylabz.basepro.applications.bike.features.main.usecase.UserStats
 import com.ylabz.basepro.applications.bike.features.main.usecase.toBikeRideEntity
 import com.ylabz.basepro.applications.bike.features.main.usecase.toRideLocationEntity
+import com.ylabz.basepro.core.data.di.LowPower
 import com.ylabz.basepro.core.data.repository.bikeConnectivity.BikeConnectivityRepository
 import com.ylabz.basepro.core.data.repository.timer.TimerRepository
 import com.ylabz.basepro.core.data.repository.travel.compass.CompassRepository
@@ -49,6 +51,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import javax.inject.Qualifier
 import kotlin.concurrent.timer
 
 
@@ -56,21 +59,20 @@ import kotlin.concurrent.timer
 class BikeViewModel @Inject constructor(
     // Real
     @Named("real") private val realConnectivityRepository: BikeConnectivityRepository,
-    @Named("real") private val realLocationRepository: UnifiedLocationRepository,
     @Named("real") private val realCompassRepository: CompassRepository,
     @Named("real") private val realWeatherRepo: WeatherRepo,
     @Named("real") private val realBikeRideRepo: BikeRideRepo,
 
     // Demo
     @Named("demo") private val demoConnectivityRepository: BikeConnectivityRepository,
-    @Named("demo") private val demoLocationRepository: UnifiedLocationRepository,
     @Named("demo") private val demoCompassRepository: CompassRepository,
     @Named("demo") private val demoWeatherRepo: WeatherRepo,
     @Named("demo") private val demoBikeRideRepo: BikeRideRepo,
 
+    @LowPower private val locationRepo: UnifiedLocationRepository,
     private val timerRepo: TimerRepository,
     private val rideStats: RideStatsUseCase,
-    private val tracker: RideTracker,
+    private val tracker:   RideTracker,
     private val healthSessionManager: HealthSessionManager,
 
     private val userStatsRepo: UserProfileRepository,
@@ -82,7 +84,6 @@ class BikeViewModel @Inject constructor(
     // Pick implementations
     // toggle
     private val connectivityRepo = if (realMode) realConnectivityRepository else demoConnectivityRepository
-    private val locationRepo     = if (realMode) realLocationRepository     else demoLocationRepository
     private val compassRepo      = if (realMode) realCompassRepository      else demoCompassRepository
     private val weatherRepo      = if (realMode) realWeatherRepo            else demoWeatherRepo
     private val bikeRideRepo     = if (realMode) realBikeRideRepo           else demoBikeRideRepo
@@ -101,71 +102,39 @@ class BikeViewModel @Inject constructor(
     // reset trigger for stats
     private val resetTrigger = MutableSharedFlow<Unit>(replay = 1)
 
-
-
-    // stats flows
-    private val speedFlow         = locationRepo.speedFlow
-    private val distanceFlow      = rideStats.distanceKmFlow(resetTrigger, locationRepo.locationFlow)
-    private val maxSpeedFlow      = rideStats.maxSpeedFlow(resetTrigger, locationRepo.speedFlow)
-    private val avgSpeedFlow      = rideStats.averageSpeedFlow(resetTrigger, locationRepo.speedFlow)
-    private val elevationGainFlow = rideStats.elevationGainFlow(resetTrigger, locationRepo.locationFlow)
-    private val elevationLossFlow = rideStats.elevationLossFlow(resetTrigger, locationRepo.locationFlow)
-    // caloriesFlow using dynamic MET model
-
-    // user stats from DataStore
-    private val userStatsFlow: Flow<UserStats> = combine(
-        userStatsRepo.nameFlow,           // Flow<String>
-        userStatsRepo.heightFlow,         // Flow<String>
-        userStatsRepo.weightFlow          // Flow<String>
-    ) { name, heightStr, weightStr ->
-        UserStats(
-            heightCm = heightStr.toFloatOrNull() ?: 0f,
-            weightKg = weightStr.toFloatOrNull() ?: 0f
-        )
-    }
-    val caloriesFlow: Flow<Int> = rideStats.caloriesFlow(
-        resetTrigger,
-        distanceFlow,
-        speedFlow,
-        userStatsFlow
+    // Build a hot StateFlow<RideSession> that resets on start/stop
+    private val sessionFlow: StateFlow<RideSession> = rideStats.sessionFlow(
+        resetSignal     = resetTrigger,
+        locationFlow    = locationRepo.locationFlow,
+        speedFlow       = locationRepo.speedFlow,
+        headingFlow     = compassRepo.headingFlow,
+        userStatsFlow   = combine(
+            userStatsRepo.heightFlow,
+            userStatsRepo.weightFlow
+        ) { h, w ->
+            UserStats(
+                heightCm = h.toFloatOrNull() ?: 0f,
+                weightKg = w.toFloatOrNull() ?: 0f
+            )
+        }
     )
 
-    // keep a running list of speeds too
-    private val speedHistory = mutableListOf<Float>()
-
-    // combined sensor data
-    private val sensorDataFlow = combine(
-        locationRepo.locationFlow,    // 0
-        locationRepo.speedFlow,       // 1
-        distanceFlow,                 // 2
-        avgSpeedFlow,                 // 3
-        maxSpeedFlow,                 // 4
-        elevationGainFlow,            // 5
-        elevationLossFlow,            // 6
-        caloriesFlow,                 // 7
-        compassRepo.headingFlow       // 8
-    ) { values: Array<Any?> ->
-        @Suppress("UNCHECKED_CAST")
-        val loc: Location    = values[0] as Location
-        val speed: Float     = values[1] as Float
-        val dist: Float      = values[2] as Float
-        val avg: Double      = values[3] as Double
-        val max: Float       = values[4] as Float
-        val gain: Float      = values[5] as Float
-        val loss: Float      = values[6] as Float
-        val cal: Int         = values[7] as Int
-        val heading: Float   = values[8] as Float
-
+    // Combine session + raw location & instantaneous speed into your CombinedSensorData
+    private val sensorDataFlow: SharedFlow<CombinedSensorData> = combine(
+        sessionFlow,
+        locationRepo.locationFlow,
+        locationRepo.speedFlow
+    ) { session, loc, speed ->
         CombinedSensorData(
             location          = loc,
             speedKmh          = speed,
-            traveledDistance  = dist,
-            averageSpeed      = avg,
-            maxSpeed          = max,
-            elevationGain     = gain,
-            elevationLoss     = loss,
-            caloriesBurned    = cal,
-            heading           = heading
+            traveledDistance  = session.totalDistanceKm,
+            averageSpeed      = session.averageSpeedKmh,
+            maxSpeed          = session.maxSpeedKmh,
+            elevationGain     = session.elevationGainM,
+            elevationLoss     = session.elevationLossM,
+            caloriesBurned    = session.caloriesBurned,
+            heading           = session.heading
         )
     }
         .shareIn(viewModelScope, SharingStarted.Lazily, replay = 0)
@@ -173,7 +142,6 @@ class BikeViewModel @Inject constructor(
 
 
     init {
-
         _uiState.value = BikeUiState.Success(
             bikeData = BikeRideInfo(
                 location            = null,
@@ -201,8 +169,8 @@ class BikeViewModel @Inject constructor(
         // Keep the tracker’s sessionFlow active so it gathers path points
         viewModelScope.launch {
             { /* log/trap errors here if you want */ }
-            tracker.sessionFlow
-                .collect { /* no-op; we just need it running */ }
+            tracker.sessionFlow.collect()
+                //.collect { /* no-op; we just need it running */ }
         }
 
         // B) sensor data collector
@@ -234,8 +202,6 @@ class BikeViewModel @Inject constructor(
                 }
             }
         }
-
-
         // C) duration updater
         startRideDurationUpdates()
 
@@ -318,7 +284,7 @@ class BikeViewModel @Inject constructor(
                 viewModelScope.launch {
                     val session    = tracker.stopAndGetSession()
                     val rideEntity = session.toBikeRideEntity()
-                    val locations  = session.path.map {
+                    val locations: List<RideLocationEntity>  = session.path.map {
                         it.toRideLocationEntity(rideEntity.rideId)
                     }
                     bikeRideRepo.insertRideWithLocations(rideEntity, locations)

@@ -11,6 +11,10 @@ import javax.inject.Inject
  *  - user weight (kg)
  * Uses a simple MET × weight × duration model.
  */
+
+/**
+ * Simple MET-based calories calculator.
+ */
 class CalculateCaloriesUseCase @Inject constructor() {
     operator fun invoke(
         distanceKmFlow: Flow<Float>,
@@ -30,5 +34,31 @@ class CalculateCaloriesUseCase @Inject constructor() {
             else           -> 12f
         }
         met * userStats.weightKg * durationH
+    }
+}
+
+
+/**
+ * Simple MET-based calories calculator.
+ */
+class CalculateCaloriesUseCaseNew @Inject constructor() {
+    operator fun invoke(
+        distanceKmFlow: Flow<Float>,
+        speedKmhFlow:   Flow<Float>,
+        userStatsFlow:  Flow<UserStats>
+    ): Flow<Float> = combine(
+        distanceKmFlow,
+        speedKmhFlow,
+        userStatsFlow
+    ) { distKm, speedKmh, stats ->
+        val durationH = if (speedKmh > 0f) distKm / speedKmh else 0f
+        val met = when {
+            speedKmh < 16f -> 4f
+            speedKmh < 19f -> 6f
+            speedKmh < 22f -> 8f
+            speedKmh < 25f -> 10f
+            else           -> 12f
+        }
+        met * stats.weightKg * durationH
     }
 }

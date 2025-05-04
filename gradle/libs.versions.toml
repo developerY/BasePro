@@ -5,7 +5,7 @@ coreKtx = "1.13.1"             # Core KTX, Kotlin extensions for Android core li
 junit = "4.13.2"               # JUnit, a framework for writing and running tests in Java
 junitVersion = "1.2.1"         # AndroidX JUnit extension, provides compatibility with JUnit
 espressoCore = "3.6.1"         # Espresso, a library for Android UI testing
-lifecycleRuntimeKtx = "2.8.4"  # AndroidX Lifecycle runtime KTX, provides Kotlin extensions for lifecycle management
+# lifecycleRuntimeKtx = "2.8.4"  # AndroidX Lifecycle runtime KTX, provides Kotlin extensions for lifecycle management
 activityCompose = "1.9.1"      # Activity Compose, allows using Jetpack Compose in Activities
 composeBom = "2025.01.00"      # Compose BOM (Bill of Materials), ensures consistent Compose library versions
 
@@ -63,7 +63,9 @@ androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx"
 junit = { module = "junit:junit", version.ref = "junit" }  # JUnit testing library
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }  # AndroidX JUnit extension
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }  # Espresso UI testing
-androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }  # Lifecycle runtime KTX
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }  # Lifecycle runtime KTX
+androidx-lifecycle-process  = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycle" }
+
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }  # Activity support for Compose
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }  # Compose BOM for consistent versions
 androidx-ui = { module = "androidx.compose.ui:ui" }  # Compose UI library
