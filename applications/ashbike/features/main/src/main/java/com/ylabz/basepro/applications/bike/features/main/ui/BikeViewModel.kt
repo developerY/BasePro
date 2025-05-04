@@ -15,6 +15,7 @@ import com.ylabz.basepro.applications.bike.features.main.usecase.RideTracker
 import com.ylabz.basepro.applications.bike.features.main.usecase.UserStats
 import com.ylabz.basepro.applications.bike.features.main.usecase.toBikeRideEntity
 import com.ylabz.basepro.applications.bike.features.main.usecase.toRideLocationEntity
+import com.ylabz.basepro.core.data.di.HighPower
 import com.ylabz.basepro.core.data.di.LowPower
 import com.ylabz.basepro.core.data.repository.bikeConnectivity.BikeConnectivityRepository
 import com.ylabz.basepro.core.data.repository.timer.TimerRepository
@@ -69,7 +70,7 @@ class BikeViewModel @Inject constructor(
     @Named("demo") private val demoWeatherRepo: WeatherRepo,
     @Named("demo") private val demoBikeRideRepo: BikeRideRepo,
 
-    @LowPower private val locationRepo: UnifiedLocationRepository,
+    @HighPower private val locationRepo: UnifiedLocationRepository,
     private val timerRepo: TimerRepository,
     private val rideStats: RideStatsUseCase,
     private val tracker:   RideTracker,
@@ -222,75 +223,25 @@ class BikeViewModel @Inject constructor(
             is BikeEvent.LoadBike -> loadSettings()
 
             BikeEvent.StartPauseRide -> {
-                // peek at current rideState
-                val currentState = (_uiState.value as? BikeUiState.Success)
-                    ?.bikeData
-                    ?.rideState
-
-                when (currentState) {
-                    // Not started or already ended → START
-                    RideState.NotStarted, RideState.Ended -> {
-                        // reset all stats
-                        viewModelScope.launch { resetTrigger.emit(Unit) }
-
-                        // begin timer & tracking
-                        timerRepo.start()
-                        tracker.start()
-
-                        updateRideState(RideState.Riding)
-                    }
-
-                    // Currently riding → PAUSE
-                    RideState.Riding -> {
-                        //tracker.pauseRide()
-                        //timerRepo.stop()    // or a dedicated pause() if you have one
-                        //updateRideState(RideState.Paused)
-                    }
-
-                    /* Currently paused → RESUME
-                    RideState.Paused -> {
-                        tracker.resumeRide()
-                        timerRepo.start()
-                        updateRideState(RideState.Riding)
-                    }*/
-                    else -> { /* shouldn't happen */ }
-                }
+                // 1) Reset & start ride
+                tracker.start()
+                timerRepo.start()
+                updateRideState(RideState.Riding)
             }
 
             BikeEvent.StopSaveRide -> {
-                // 1) Flip to NotStarted
-                updateRideState(RideState.NotStarted)
-
-                // 2) Stop timer
+                // 1) Stop timer
                 timerRepo.stop()
-
-                tracker.stopAndGetSession()  // snapshot in persistence code…
-
-
-                // 3) Clear out distance & plan so UI returns to centered bike
-                // clear UI distances
-                _uiState.update { state ->
-                    if (state is BikeUiState.Success) {
-                        state.copy(
-                            bikeData = state.bikeData.copy(
-                                currentTripDistance = 0f,
-                                totalTripDistance   = null
-                            )
-                        )
-                    } else state
-                }
-
-                // 4) Persist the session
+                // 2) Snapshot & persist
+                val session    = tracker.stopAndGetSession()
+                val rideEntity = session.toBikeRideEntity()
+                val locations  = session.path.map { it.toRideLocationEntity(rideEntity.rideId) }
                 viewModelScope.launch {
-                    val session    = tracker.stopAndGetSession()
-                    val rideEntity = session.toBikeRideEntity()
-                    val locations: List<RideLocationEntity>  = session.path.map {
-                        it.toRideLocationEntity(rideEntity.rideId)
-                    }
                     bikeRideRepo.insertRideWithLocations(rideEntity, locations)
                 }
+                // 3) Reset UI state
+                updateRideState(RideState.NotStarted)
             }
-
             is BikeEvent.Connect -> connectBike()
 
             is BikeEvent.SetTotalDistance -> {

@@ -38,6 +38,7 @@ class RideTracker @Inject constructor(
     }
 
     // 3) Delegate to RideStatsUseCase.sessionFlow() for a single, resettable StateFlow<RideSession>
+    /** One single, resettable session of EVERYTHING (distance, elevation, calories, path, heading) */
     val sessionFlow: StateFlow<RideSession> = statsUseCase.sessionFlow(
         resetSignal    = resetSignal,
         locationFlow   = lowPowerRepo.locationFlow,
@@ -80,9 +81,10 @@ class RideTracker @Inject constructor(
     }
 
     init {
+        // 1) Kick everything off immediately with an initial reset
+        CoroutineScope(Dispatchers.Default).launch { resetSignal.emit(Unit) }
+        // 2) And keep it hot
         // Kick the sessionFlow so it’s hot from the get-go
-        CoroutineScope(Dispatchers.Default).launch {
-            sessionFlow.collect()
-        }
+        CoroutineScope(Dispatchers.Default).launch { sessionFlow.collect() }
     }
 }

@@ -9,6 +9,8 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.*
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -24,59 +26,53 @@ class UnifiedLocationLowPowerRepositoryImpl @Inject constructor(
     private val fusedLocationClient =
         LocationServices.getFusedLocationProviderClient(context)
 
-    // Tie our sharing scope to the app process lifecycle so updates stop
-    // when the app goes to background and resume when it returns.
-    private val repositoryScope: CoroutineScope =
-        ProcessLifecycleOwner.get().lifecycleScope
+    // A dedicated scope that lives for the app process, but doesn't auto-restart on lifecycle changes
+    private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     @SuppressLint("MissingPermission")
     private val _rawLocationFlow: SharedFlow<Location> = callbackFlow {
         val request = LocationRequest.Builder(
             Priority.PRIORITY_BALANCED_POWER_ACCURACY,
-            5_000L
+            5_000L                       // update every 5s
         )
-            // deliver batches up to 15s at a time to let the radio sleep
+            // let the radio sleep up to 15s
             .setMaxUpdateDelayMillis(15_000L)
             .build()
 
         val callback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
-                // only send the most recent point
                 result.lastLocation?.let { trySend(it).isSuccess }
             }
         }
 
-        try {
-            fusedLocationClient.requestLocationUpdates(
-                request, callback, Looper.getMainLooper()
-            )
-        } catch (e: SecurityException) {
-            close(e)
-        }
+        // start requesting
+        fusedLocationClient.requestLocationUpdates(
+            request, callback, Looper.getMainLooper()
+        )
 
+        // when nobody’s collecting, stop immediately
         awaitClose {
             fusedLocationClient.removeLocationUpdates(callback)
         }
     }
-        // drop anything with poor accuracy or too‐old timestamp
         .filter { it.hasAccuracy() && it.accuracy <= 50f }
         .filter { abs(System.currentTimeMillis() - it.time) < 10_000L }
         .shareIn(
             scope   = repositoryScope,
-            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000),
+            // STOP as soon as the last collector disappears
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 0),
             replay  = 1
         )
 
-    override val locationFlow: Flow<Location>
-        get() = _rawLocationFlow
+    override val locationFlow: Flow<Location> = _rawLocationFlow
 
     override val speedFlow: SharedFlow<Float> =
         _rawLocationFlow
-            .map { (it.speed * 3.6f).coerceAtLeast(0f) } // m/s → km/h
+            .map { (it.speed * 3.6f).coerceAtLeast(0f) }
             .distinctUntilChanged()
             .shareIn(
                 scope   = repositoryScope,
-                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000),
+                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 0),
                 replay  = 1
             )
 
@@ -86,7 +82,7 @@ class UnifiedLocationLowPowerRepositoryImpl @Inject constructor(
             .distinctUntilChanged()
             .shareIn(
                 scope   = repositoryScope,
-                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000),
+                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 0),
                 replay  = 1
             )
 }
