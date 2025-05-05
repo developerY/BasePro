@@ -18,7 +18,7 @@ import javax.inject.Singleton
 class RideTracker @Inject constructor(
     @LowPower private val lowPowerRepo: UnifiedLocationRepository, // provides locationFlow & speedFlow
     //private val compassRepo: CompassRepository,                    // provides headingFlow
-    @Named("real") private val compassRepo: CompassRepository,
+    private val compassRepo: CompassRepository,
     private val statsUseCase: RideStatsUseCase,                    // our new unified stats use-case
     private val userProfileRepo: UserProfileRepository             // to build UserStats
 ) {

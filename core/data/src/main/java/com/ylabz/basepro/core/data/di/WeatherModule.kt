@@ -20,7 +20,6 @@ abstract class WeatherRepositoryModule {
 
     @Binds
     @Singleton
-    @Named("real")
     abstract fun bindsRealWeatherRepo(
         impl: WeatherRepoImpl
     ): WeatherRepo

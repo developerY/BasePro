@@ -16,7 +16,6 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    @Named("real")
     fun provideRealBikeConnectivityRepository(
         //nfcReader: NfcReader,
         //bleAdapter: BleAdapter

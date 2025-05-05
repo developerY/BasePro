@@ -22,7 +22,7 @@ import javax.inject.Named
 
 @HiltViewModel
 class TripsViewModel @Inject constructor(
-    @Named("real") private val bikeRideRepo: BikeRideRepo
+    private val bikeRideRepo: BikeRideRepo
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<TripsUIState>(TripsUIState.Loading)

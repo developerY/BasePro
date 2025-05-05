@@ -41,7 +41,6 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    @Named("real")
     fun provideRealBikeRideRepository(
         rideDao: BikeRideDao
     ): BikeRideRepo = BikeRideRepoImpl(rideDao)

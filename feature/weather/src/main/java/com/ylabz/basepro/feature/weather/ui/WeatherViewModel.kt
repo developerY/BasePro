@@ -18,7 +18,7 @@ import javax.inject.Named
 
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
-    @Named("real") private val weatherRepo: WeatherRepo,
+    private val weatherRepo: WeatherRepo,
     private val repository: BaseProRepo,
     private val locationRepository: LocationRepository
 ) : ViewModel() {

@@ -24,7 +24,7 @@ import javax.inject.Named
 @HiltViewModel
 class RideDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    @Named("real") private val repo: BikeRideRepo
+    private val repo: BikeRideRepo
 ) : ViewModel() {
 
     private val rideId: String = checkNotNull(

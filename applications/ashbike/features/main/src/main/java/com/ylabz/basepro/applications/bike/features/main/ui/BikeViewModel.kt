@@ -59,29 +59,12 @@ import kotlin.concurrent.timer
 
 @HiltViewModel
 class BikeViewModel @Inject constructor(
-    // Real
-    @Named("real") private val realConnectivityRepository: BikeConnectivityRepository,
-    @Named("real") private val realCompassRepository: CompassRepository,
-    @Named("real") private val realWeatherRepo: WeatherRepo,
-    @Named("real") private val realBikeRideRepo: BikeRideRepo,
-
-    @Named("demo") private val demoWeatherRepo: WeatherRepo,
-    @Named("demo") private val demoBikeRideRepo: BikeRideRepo,
-
     @HighPower private val locationRepo: UnifiedLocationRepository,
     private val timerRepo: TimerRepository,
     private val tracker:   RideTracker,
+    private val weatherRepo: WeatherRepo,
+    private val bikeRideRepo: BikeRideRepo
 ) : ViewModel() {
-
-    // Toggle
-    private val realMode = true
-
-    // Pick implementations
-    // toggle
-
-    private val weatherRepo      = if (realMode) realWeatherRepo            else demoWeatherRepo
-    private val bikeRideRepo     = if (realMode) realBikeRideRepo           else demoBikeRideRepo
-
     // 1) Ride state
     private val _rideState = MutableStateFlow(RideState.NotStarted)
     val rideState: StateFlow<RideState> = _rideState.asStateFlow()

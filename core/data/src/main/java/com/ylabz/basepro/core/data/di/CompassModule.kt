@@ -18,7 +18,6 @@ abstract class CompassRepositoryModule {
 
     @Binds
     @Singleton
-    @Named("real")
     abstract fun bindRealCompassRepository(
         //impl: CompassRepositoryRotVecImpl
         impl: CompassRepositoryAccMagImpl
