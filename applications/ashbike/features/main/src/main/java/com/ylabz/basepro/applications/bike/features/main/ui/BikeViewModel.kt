@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -64,19 +65,12 @@ class BikeViewModel @Inject constructor(
     @Named("real") private val realWeatherRepo: WeatherRepo,
     @Named("real") private val realBikeRideRepo: BikeRideRepo,
 
-    // Demo
-    @Named("demo") private val demoConnectivityRepository: BikeConnectivityRepository,
-    @Named("demo") private val demoCompassRepository: CompassRepository,
     @Named("demo") private val demoWeatherRepo: WeatherRepo,
     @Named("demo") private val demoBikeRideRepo: BikeRideRepo,
 
     @HighPower private val locationRepo: UnifiedLocationRepository,
     private val timerRepo: TimerRepository,
-    private val rideStats: RideStatsUseCase,
     private val tracker:   RideTracker,
-    private val healthSessionManager: HealthSessionManager,
-
-    private val userStatsRepo: UserProfileRepository,
 ) : ViewModel() {
 
     // Toggle
@@ -84,303 +78,122 @@ class BikeViewModel @Inject constructor(
 
     // Pick implementations
     // toggle
-    private val connectivityRepo = if (realMode) realConnectivityRepository else demoConnectivityRepository
-    private val compassRepo      = if (realMode) realCompassRepository      else demoCompassRepository
+
     private val weatherRepo      = if (realMode) realWeatherRepo            else demoWeatherRepo
     private val bikeRideRepo     = if (realMode) realBikeRideRepo           else demoBikeRideRepo
 
+    // 1) Ride state
+    private val _rideState = MutableStateFlow(RideState.NotStarted)
+    val rideState: StateFlow<RideState> = _rideState.asStateFlow()
 
-    // State
-    private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.Loading)
-    val uiState: StateFlow<BikeUiState> = _uiState
-
-    // ---- 2) UI‐only ride state ----
-    private val rideStateFlow = MutableStateFlow(RideState.NotStarted)
-
-    //private var isRideActive = false
-    //private val pathPoints = mutableListOf<Location>()
-
-    // reset trigger for stats
-    private val resetTrigger = MutableSharedFlow<Unit>(replay = 1)
-
-    // Build a hot StateFlow<RideSession> that resets on start/stop
-    private val sessionFlow: StateFlow<RideSession> = rideStats.sessionFlow(
-        resetSignal     = resetTrigger,
-        locationFlow    = locationRepo.locationFlow,
-        speedFlow       = locationRepo.speedFlow,
-        headingFlow     = compassRepo.headingFlow,
-        userStatsFlow   = combine(
-            userStatsRepo.heightFlow,
-            userStatsRepo.weightFlow
-        ) { h, w ->
-            UserStats(
-                heightCm = h.toFloatOrNull() ?: 0f,
-                weightKg = w.toFloatOrNull() ?: 0f
-            )
-        }
-    )
-
-    // Combine session + raw location & instantaneous speed into your CombinedSensorData
-    private val sensorDataFlow: SharedFlow<CombinedSensorData> = combine(
-        sessionFlow,
-        locationRepo.locationFlow,
-        locationRepo.speedFlow
-    ) { session, loc, speed ->
-        CombinedSensorData(
-            location          = loc,
-            speedKmh          = speed,
-            traveledDistance  = session.totalDistanceKm,
-            averageSpeed      = session.averageSpeedKmh,
-            maxSpeed          = session.maxSpeedKmh,
-            elevationGain     = session.elevationGainM,
-            elevationLoss     = session.elevationLossM,
-            caloriesBurned    = session.caloriesBurned,
-            heading           = session.heading
-        )
-    }
-        .shareIn(viewModelScope, SharingStarted.Lazily, replay = 0)
-
-
+    // 2) Hold a single-weather snapshot
+    private val _weatherInfo = MutableStateFlow<BikeWeatherInfo?>(null)
 
     init {
-        _uiState.value = BikeUiState.Success(
-            bikeData = BikeRideInfo(
-                location            = null,
-                currentSpeed        = 0.0,
-                averageSpeed        = 0.0,
-                maxSpeed            = 0.0,
-                currentTripDistance = 0f,
-                totalTripDistance   = null,
-                remainingDistance   = null,
-                elevationGain       = 0.0,
-                elevationLoss       = 0.0,
-                caloriesBurned      = 0,
-                rideDuration        = "00:00",
-                settings            = emptyMap(),
-                heading             = 0f,
-                elevation           = 0.0,
-                isBikeConnected     = false,
-                batteryLevel        = null,
-                motorPower          = null,
-                rideState           = RideState.NotStarted,
-                bikeWeatherInfo     = null
-            )
-        )
-
-        // Keep the tracker’s sessionFlow active so it gathers path points
-        viewModelScope.launch {
-            { /* log/trap errors here if you want */ }
-            tracker.sessionFlow.collect()
-                //.collect { /* no-op; we just need it running */ }
-        }
-
-        // B) sensor data collector
-        viewModelScope.launch {
-            sensorDataFlow.collect { data ->
-                _uiState.update { state ->
-                    if (state is BikeUiState.Success) {
-                        val bike = state.bikeData
-                        // only accumulate distance when we're in Riding state
-                        val displayedDist = if (bike.rideState == RideState.Riding)
-                            data.traveledDistance
-                        else
-                            0f
-
-                        state.copy(
-                            bikeData = bike.copy(
-                                location            = LatLng(data.location.latitude, data.location.longitude),
-                                currentSpeed        = data.speedKmh.toDouble(),  // always live
-                                averageSpeed        = data.averageSpeed,
-                                maxSpeed            = data.maxSpeed.toDouble(),
-                                currentTripDistance = displayedDist,
-                                elevationGain       = data.elevationGain.toDouble(),
-                                elevationLoss       = data.elevationLoss.toDouble(),
-                                caloriesBurned      = data.caloriesBurned,
-                                heading             = data.heading
-                            )
-                        )
-                    } else state
-                }
-            }
-        }
-        // C) duration updater
-        startRideDurationUpdates()
-
-        // 3) Load settings / weather…
-        onEvent(BikeEvent.LoadBike)
-
-        // D) one-time weather refresh after UI ready
-        viewModelScope.launch {
-            _uiState.filterIsInstance<BikeUiState.Success>()
-                .first()
-            refreshWeather()
-        }
-    }
-
-    /** Handle UI events */
-    fun onEvent(event: BikeEvent) {
-        when (event) {
-            is BikeEvent.LoadBike -> loadSettings()
-
-            BikeEvent.StartPauseRide -> {
-                // 1) Reset & start ride
-                tracker.start()
-                timerRepo.start()
-                updateRideState(RideState.Riding)
-            }
-
-            BikeEvent.StopSaveRide -> {
-                // 1) Stop timer
-                timerRepo.stop()
-                // 2) Snapshot & persist
-                val session    = tracker.stopAndGetSession()
-                val rideEntity = session.toBikeRideEntity()
-                val locations  = session.path.map { it.toRideLocationEntity(rideEntity.rideId) }
-                viewModelScope.launch {
-                    bikeRideRepo.insertRideWithLocations(rideEntity, locations)
-                }
-                // 3) Reset UI state
-                updateRideState(RideState.NotStarted)
-            }
-            is BikeEvent.Connect -> connectBike()
-
-            is BikeEvent.SetTotalDistance -> {
-                _uiState.update { state ->
-                    if (state is BikeUiState.Success) {
-                        state.copy(
-                            bikeData = state.bikeData.copy(
-                                totalTripDistance = event.totalDistance
-                            )
-                        )
-                    } else state
-                }
-            }
-
-            else -> { /* other settings, delete, etc. */ }
-        }
-    }
-
-    /** Fetch weather once after initial load */
-    fun refreshWeather() {
+        // Fetch weather as soon as we get our first GPS fix
         viewModelScope.launch {
             val loc = locationRepo.locationFlow.first()
-            Log.d("BikeViewModel", "refreshWeather at $loc")
             val resp = runCatching {
                 weatherRepo.openCurrentWeatherByCoords(loc.latitude, loc.longitude)
             }.getOrNull()
-
             val info = resp?.weather?.firstOrNull()?.let { w ->
                 BikeWeatherInfo(
-                    windDegree = resp.wind.deg,
-                    windSpeed = resp.wind.speed * 3.6f,
-                    conditionText = w.main,
-                    conditionDescription = w.description,
-                    conditionIcon = w.icon,
-                    temperature = resp.main.temp,
-                    feelsLike = resp.main.feels_like,
-                    humidity = resp.main.humidity
+                    windDegree            = resp.wind.deg,
+                    windSpeed             = resp.wind.speed * 3.6f,
+                    conditionText         = w.main,
+                    conditionDescription  = w.description,
+                    conditionIcon         = w.icon,
+                    temperature           = resp.main.temp,
+                    feelsLike             = resp.main.feels_like,
+                    humidity              = resp.main.humidity
                 )
             }
-
-            (_uiState.value as? BikeUiState.Success)?.let { cur ->
-                _uiState.value = cur.copy(
-                    bikeData = cur.bikeData.copy(bikeWeatherInfo = info)
-                )
-                Log.d("BikeViewModel", "Weather merged: $info")
-            }
+            _weatherInfo.value = info
         }
     }
 
-    // --- Helpers ------------------------------------------------------------
-    /** Helper to merge the new state into your UI model */
-    private fun updateRideState(newState: RideState) {
-        _uiState.update { state ->
-            if (state is BikeUiState.Success) {
-                state.copy(bikeData = state.bikeData.copy(rideState = newState))
-            } else state
-        }
+    // 3) Expose a single UI StateFlow
+    val uiState: StateFlow<BikeUiState> = combine(
+        locationRepo.speedFlow,       // live speed in km/h
+        tracker.sessionFlow,          // ride stats (distance, cal, heading, path…)
+        timerRepo.elapsedTime,        // elapsedMs
+        _weatherInfo,                 // one-off weather
+        rideState                     // NotStarted / Riding
+    ) { speedKmh, session, elapsedMs, weather, rideState ->
+
+        // Show distance only when riding
+        val dist = if (rideState == RideState.Riding) session.totalDistanceKm else 0f
+
+        BikeUiState.Success(
+            bikeData = BikeRideInfo(
+                location            = session.path.lastOrNull()
+                    ?.let { LatLng(it.latitude, it.longitude) },
+                currentSpeed        = speedKmh.toDouble(),
+                averageSpeed        = session.averageSpeedKmh,
+                maxSpeed            = session.maxSpeedKmh.toDouble(),
+                currentTripDistance = dist,
+                totalTripDistance   = null,
+                remainingDistance   = null,
+                elevationGain       = session.elevationGainM.toDouble(),
+                elevationLoss       = session.elevationLossM.toDouble(),
+                caloriesBurned      = session.caloriesBurned,
+                rideDuration        = formatDuration(elapsedMs),
+                settings            = emptyMap(),               // whatever your settings are
+                heading             = session.heading,
+                elevation           = session.path.lastOrNull()
+                    ?.altitude
+                    ?.toDouble() ?: 0.0,
+                isBikeConnected     = false,                   // fill in from your connectBike logic
+                batteryLevel        = null,
+                motorPower          = null,
+                rideState           = rideState,
+                bikeWeatherInfo     = weather
+            )
+        )
     }
+        .stateIn(
+            scope       = viewModelScope,
+            started     = SharingStarted.Eagerly,
+            initialValue= BikeUiState.Loading
+        )
 
-
-    // Observe elapsed time and push to your UI state
-    private fun startRideDurationUpdates() {
-        viewModelScope.launch {
-            timerRepo.elapsedTime.collect { elapsedMs ->
-                val mins = (elapsedMs / 1000 / 60).toInt()
-                val hrs = mins / 60
-                val rem = mins % 60
-                val text = if (hrs > 0) "$hrs h $rem m" else "$rem m"
-                (_uiState.value as? BikeUiState.Success)?.let { cur ->
-                    _uiState.value = cur.copy(
-                        bikeData = cur.bikeData.copy(rideDuration = text)
-                    )
+    /** Handle UI button presses */
+    fun onEvent(event: BikeEvent) {
+        when (event) {
+            BikeEvent.StartPauseRide -> {
+                // Only start if we’re not already riding
+                if (_rideState.value != RideState.Riding) {
+                    tracker.start()       // reset & begin stats
+                    timerRepo.start()     // begin timer
+                    _rideState.value = RideState.Riding
                 }
             }
-        }
-    }
-
-    private fun connectBike() {
-        viewModelScope.launch {
-            try {
-                val address = connectivityRepo.getBleAddressFromNfc()
-                connectivityRepo.connectBike(address)
-                    .filter { it.batteryLevel != null }
-                    .distinctUntilChanged()
-                    .collect { data ->
-                        val cur = _uiState.value as? BikeUiState.Success ?: return@collect
-                        _uiState.value = cur.copy(
-                            bikeData = cur.bikeData.copy(
-                                batteryLevel = data.batteryLevel,
-                                motorPower = data.motorPower,
-                                isBikeConnected = true
-                            )
-                        )
-                        Log.d("BikeViewModel", "Bike connected: $data")
+            BikeEvent.StopSaveRide -> {
+                if (_rideState.value == RideState.Riding) {
+                    timerRepo.stop()
+                    val session    = tracker.stopAndGetSession()
+                    val entity     = session.toBikeRideEntity()
+                    val locations  = session.path.map {
+                        it.toRideLocationEntity(entity.rideId)
                     }
-            } catch (e: Exception) {
-                Log.e("BikeViewModel", "connectBike failed", e)
+                    viewModelScope.launch {
+                        bikeRideRepo.insertRideWithLocations(entity, locations)
+                    }
+                    _rideState.value = RideState.NotStarted
+                }
+            }
+            else -> {
+                // handle other events like Pause/Resume if needed
             }
         }
     }
 
-    private fun loadSettings() {
-        viewModelScope.launch {
-            // seed the UI with your default / initial BikeRideInfo
-            _uiState.value = BikeUiState.Success(
-                bikeData = BikeRideInfo(
-                    // initial coordinates, zeros everywhere, plus your settings map…
-                    location            = LatLng(37.4219999, -122.0862462),
-                    currentSpeed        = 0.0,
-                    averageSpeed        = 0.0,
-                    maxSpeed            = 0.0,
-                    currentTripDistance = 0f,
-                    totalTripDistance   = null,
-                    remainingDistance   = null,
-
-                    // Elevation (m)
-                    elevationGain       = 0.0,
-                    elevationLoss       = 0.0,
-
-                    // Calories
-                    caloriesBurned      = 0,
-
-                    // UI state
-                    rideDuration        = "00:00",
-                    settings            = mapOf(
-                        "Theme" to listOf("Light", "Dark", "System Default"),
-                        "Language" to listOf("English", "Spanish", "French"),
-                        "Notifications" to listOf("Enabled", "Disabled")
-                    ),
-                    heading             = 0f,
-                    elevation           = 0.0,
-                    isBikeConnected     = false,
-                    batteryLevel        = null,
-                    motorPower          = null
-                    // rideState & bikeWeatherInfo use their defaults
-                )
-            )
-        }
+    /** Turn ms into “H h M m” or “M m” */
+    private fun formatDuration(durationMs: Long): String {
+        val mins = (durationMs / 1000 / 60).toInt()
+        val hrs  = mins / 60
+        val rem  = mins % 60
+        return if (hrs > 0) "$hrs h $rem m" else "$rem m"
     }
-
 
 }

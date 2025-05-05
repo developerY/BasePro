@@ -26,53 +26,56 @@ class UnifiedLocationLowPowerRepositoryImpl @Inject constructor(
     private val fusedLocationClient =
         LocationServices.getFusedLocationProviderClient(context)
 
-    // A dedicated scope that lives for the app process, but doesn't auto-restart on lifecycle changes
+    // A dedicated background scope—instead of ProcessLifecycleOwner—
+    // so we fully control when the flow lives and dies.
     private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     @SuppressLint("MissingPermission")
-    private val _rawLocationFlow: SharedFlow<Location> = callbackFlow {
+    private val _rawLocationFlow: SharedFlow<Location> = callbackFlow<Location> {
         val request = LocationRequest.Builder(
             Priority.PRIORITY_BALANCED_POWER_ACCURACY,
-            5_000L                       // update every 5s
+            /* desired interval = */ 5_000L
         )
-            // let the radio sleep up to 15s
+            // batch up to 15 s so the radio can sleep
             .setMaxUpdateDelayMillis(15_000L)
             .build()
 
         val callback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
+                // push only the most recent fix
                 result.lastLocation?.let { trySend(it).isSuccess }
             }
         }
 
-        // start requesting
+        // start listening
         fusedLocationClient.requestLocationUpdates(
             request, callback, Looper.getMainLooper()
         )
 
-        // when nobody’s collecting, stop immediately
+        // cleanup when no one is subscribed for > stopTimeoutMillis
         awaitClose {
             fusedLocationClient.removeLocationUpdates(callback)
         }
     }
-        .filter { it.hasAccuracy() && it.accuracy <= 50f }
-        .filter { abs(System.currentTimeMillis() - it.time) < 10_000L }
+        // no aggressive filtering—leave that to your UI if you need it
         .shareIn(
             scope   = repositoryScope,
-            // STOP as soon as the last collector disappears
-            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 0),
+            // keep GPS alive for 5 s after the last unsubscribe
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000),
             replay  = 1
         )
 
-    override val locationFlow: Flow<Location> = _rawLocationFlow
+    override val locationFlow: Flow<Location>
+        get() = _rawLocationFlow
 
     override val speedFlow: SharedFlow<Float> =
         _rawLocationFlow
-            .map { (it.speed * 3.6f).coerceAtLeast(0f) }
+            .map { (it.speed * 3.6f).coerceAtLeast(0f) } // m/s → km/h
             .distinctUntilChanged()
             .shareIn(
                 scope   = repositoryScope,
-                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 0),
+                // lazy start: begin only when someone collects, then stay alive
+                started = SharingStarted.Lazily,
                 replay  = 1
             )
 
@@ -82,7 +85,7 @@ class UnifiedLocationLowPowerRepositoryImpl @Inject constructor(
             .distinctUntilChanged()
             .shareIn(
                 scope   = repositoryScope,
-                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 0),
+                started = SharingStarted.Lazily,
                 replay  = 1
             )
 }
