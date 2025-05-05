@@ -60,73 +60,89 @@ import kotlin.concurrent.timer
 @HiltViewModel
 class BikeViewModel @Inject constructor(
     @HighPower private val locationRepo: UnifiedLocationRepository,
+    private val tracker: RideTracker,
     private val timerRepo: TimerRepository,
-    private val tracker:   RideTracker,
     private val weatherRepo: WeatherRepo,
     private val bikeRideRepo: BikeRideRepo
 ) : ViewModel() {
-    // 1) Ride state
-    private val _rideState = MutableStateFlow(RideState.NotStarted)
-    val rideState: StateFlow<RideState> = _rideState.asStateFlow()
 
-    // 2) Hold a single-weather snapshot
+    private data class RideSnapshot(
+        val fix:     Location,
+        val speed:   Float,
+        val session: RideSession,
+        val elapsed: Long
+    )
+
+    private val snapshotFlow: Flow<RideSnapshot> = combine(
+        locationRepo.locationFlow,
+        locationRepo.speedFlow,
+        tracker.sessionFlow,
+        timerRepo.elapsedTime
+    ) { fix, speed, session, elapsed ->
+        RideSnapshot(fix, speed, session, elapsed)
+    }
+
+    // Ride vs NotStarted
+    private val _rideState = MutableStateFlow(RideState.NotStarted)
+
+    // One-shot weather
     private val _weatherInfo = MutableStateFlow<BikeWeatherInfo?>(null)
 
     init {
-        // Fetch weather as soon as we get our first GPS fix
+        // Fetch weather once we get the first GPS fix
         viewModelScope.launch {
             val loc = locationRepo.locationFlow.first()
             val resp = runCatching {
                 weatherRepo.openCurrentWeatherByCoords(loc.latitude, loc.longitude)
             }.getOrNull()
-            val info = resp?.weather?.firstOrNull()?.let { w ->
-                BikeWeatherInfo(
-                    windDegree            = resp.wind.deg,
-                    windSpeed             = resp.wind.speed * 3.6f,
-                    conditionText         = w.main,
-                    conditionDescription  = w.description,
-                    conditionIcon         = w.icon,
-                    temperature           = resp.main.temp,
-                    feelsLike             = resp.main.feels_like,
-                    humidity              = resp.main.humidity
-                )
-            }
+
+            val info = resp
+                ?.weather
+                ?.firstOrNull()
+                ?.let { w ->
+                    BikeWeatherInfo(
+                        windDegree           = resp.wind.deg,
+                        windSpeed            = resp.wind.speed * 3.6f,
+                        conditionText        = w.main,
+                        conditionDescription = w.description,
+                        conditionIcon        = w.icon,
+                        temperature          = resp.main.temp,
+                        feelsLike            = resp.main.feels_like,
+                        humidity             = resp.main.humidity
+                    )
+                }
+
             _weatherInfo.value = info
         }
     }
 
-    // 3) Expose a single UI StateFlow
+    // Combined UI state
     val uiState: StateFlow<BikeUiState> = combine(
-        locationRepo.speedFlow,       // live speed in km/h
-        tracker.sessionFlow,          // ride stats (distance, cal, heading, path…)
-        timerRepo.elapsedTime,        // elapsedMs
-        _weatherInfo,                 // one-off weather
-        rideState                     // NotStarted / Riding
-    ) { speedKmh, session, elapsedMs, weather, rideState ->
+        snapshotFlow,
+        _weatherInfo,
+        _rideState
+    ) { snapshot, weather, rideState ->
 
-        // Show distance only when riding
-        val dist = if (rideState == RideState.Riding) session.totalDistanceKm else 0f
+        val (fix, speedKmh, session, elapsedMs) = snapshot
+        val distKm = if (rideState == RideState.Riding) session.totalDistanceKm else 0f
 
         BikeUiState.Success(
             bikeData = BikeRideInfo(
-                location            = session.path.lastOrNull()
-                    ?.let { LatLng(it.latitude, it.longitude) },
+                location            = LatLng(fix.latitude, fix.longitude),
                 currentSpeed        = speedKmh.toDouble(),
                 averageSpeed        = session.averageSpeedKmh,
                 maxSpeed            = session.maxSpeedKmh.toDouble(),
-                currentTripDistance = dist,
+                currentTripDistance = distKm,
                 totalTripDistance   = null,
                 remainingDistance   = null,
                 elevationGain       = session.elevationGainM.toDouble(),
                 elevationLoss       = session.elevationLossM.toDouble(),
                 caloriesBurned      = session.caloriesBurned,
                 rideDuration        = formatDuration(elapsedMs),
-                settings            = emptyMap(),               // whatever your settings are
+                settings            = emptyMap(),    // your settings here
                 heading             = session.heading,
-                elevation           = session.path.lastOrNull()
-                    ?.altitude
-                    ?.toDouble() ?: 0.0,
-                isBikeConnected     = false,                   // fill in from your connectBike logic
+                elevation           = fix.altitude.toDouble(),
+                isBikeConnected     = false,         // wire in BLE later
                 batteryLevel        = null,
                 motorPower          = null,
                 rideState           = rideState,
@@ -134,31 +150,30 @@ class BikeViewModel @Inject constructor(
             )
         )
     }
-        .stateIn(
-            scope       = viewModelScope,
-            started     = SharingStarted.Eagerly,
-            initialValue= BikeUiState.Loading
-        )
+    // RIGHT HERE we still have Flow<BikeUiState.Success>
+    .map { it as BikeUiState } // ↑ now its Flow<BikeUiState>
+    .catch { e ->
+        emit(BikeUiState.Error(e.localizedMessage ?: "Unknown error"))
+    }
+    .stateIn(viewModelScope, SharingStarted.Eagerly, BikeUiState.Loading)
+
 
     /** Handle UI button presses */
     fun onEvent(event: BikeEvent) {
         when (event) {
             BikeEvent.StartPauseRide -> {
-                // Only start if we’re not already riding
                 if (_rideState.value != RideState.Riding) {
-                    tracker.start()       // reset & begin stats
-                    timerRepo.start()     // begin timer
+                    tracker.start()
+                    timerRepo.start()
                     _rideState.value = RideState.Riding
                 }
             }
             BikeEvent.StopSaveRide -> {
                 if (_rideState.value == RideState.Riding) {
                     timerRepo.stop()
-                    val session    = tracker.stopAndGetSession()
-                    val entity     = session.toBikeRideEntity()
-                    val locations  = session.path.map {
-                        it.toRideLocationEntity(entity.rideId)
-                    }
+                    val session   = tracker.stopAndGetSession()
+                    val entity    = session.toBikeRideEntity()
+                    val locations = session.path.map { it.toRideLocationEntity(entity.rideId) }
                     viewModelScope.launch {
                         bikeRideRepo.insertRideWithLocations(entity, locations)
                     }
@@ -166,17 +181,16 @@ class BikeViewModel @Inject constructor(
                 }
             }
             else -> {
-                // handle other events like Pause/Resume if needed
+                // e.g. PauseRide / ResumeRide if you add them
             }
         }
     }
 
-    /** Turn ms into “H h M m” or “M m” */
-    private fun formatDuration(durationMs: Long): String {
-        val mins = (durationMs / 1000 / 60).toInt()
-        val hrs  = mins / 60
-        val rem  = mins % 60
-        return if (hrs > 0) "$hrs h $rem m" else "$rem m"
+    /** Convert ms → "H h M m" or "M m" */
+    private fun formatDuration(ms: Long): String {
+        val totalMin = (ms / 1000 / 60).toInt()
+        val h = totalMin / 60
+        val m = totalMin % 60
+        return if (h > 0) "$h h $m m" else "$m m"
     }
-
 }
