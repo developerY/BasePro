@@ -121,7 +121,7 @@ fun RideDetailScreen(
                 shape     = RoundedCornerShape(12.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
-                MapPathScreen(locations = path)
+                MapPathScreen(locations = path, placeName = "San Francisco")
                 /*GoogleMap(
                     modifier             = Modifier.fillMaxSize(),//.matchParentSize(),
                     cameraPositionState  = cameraState,
