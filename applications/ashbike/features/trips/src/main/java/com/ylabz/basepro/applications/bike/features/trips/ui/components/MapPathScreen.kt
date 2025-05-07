@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui.components
 
+import android.R.attr.end
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.Canvas
@@ -64,6 +65,8 @@ fun MapPathScreen(
             val wPx = with(LocalDensity.current) { bc.maxWidth.toPx() }
             val hPx = with(LocalDensity.current) { bc.maxHeight.toPx() }
             val insetPx = with(LocalDensity.current) { inset.toPx() }
+            val density = LocalDensity.current
+
 
             // 1) background + grid
             Canvas(modifier = Modifier.fillMaxSize()) {
@@ -71,14 +74,36 @@ fun MapPathScreen(
                 drawRect(brush = backgroundGradient)
 
                 // subtle grid
-                val stepX = size.width / 10f
-                val stepY = size.height / 10f
-                for (i in 1 until 10) {
-                    // vertical lines
-                    drawLine(gridColor, Offset(stepX * i, 0f), Offset(stepX * i, size.height))
-                    // horizontal lines
-                    drawLine(gridColor, Offset(0f, stepY * i), Offset(size.width, stepY * i))
+                // replace your “subtle grid” section with this:
+
+                // subtle grid with minor/major lines
+                val cols = 10
+                val rows = 10
+                val stepX = size.width  / cols
+                val stepY = size.height / rows
+
+                for (i in 1 until cols) {
+                    val x = stepX * i
+                    // every 5th line is “major”
+                    val alpha = if (i % 5 == 0) 0.25f else 0.15f
+                    drawLine(
+                        color = Color.White,//.copy(alpha = alpha),
+                        start = Offset(x, 0f),
+                        end   = Offset(x, size.height),
+                        strokeWidth = if (i % 5 == 0) 1.5f else 0.8f
+                    )
                 }
+                for (j in 1 until rows) {
+                    val y = stepY * j
+                    val alpha = if (j % 5 == 0) 0.25f else 0.15f
+                    drawLine(
+                        color = Color.White,//.copy(alpha = alpha),
+                        start = Offset(0f, y),
+                        end   = Offset(size.width, y),
+                        strokeWidth = if (j % 5 == 0) 1.5f else 0.8f
+                    )
+                }
+
             }
 
             // 2) city/place label
@@ -107,17 +132,42 @@ fun MapPathScreen(
                 // reuse your projection + path logic here
                 val lats = locations.map { it.latitude }
                 val lngs = locations.map { it.longitude }
-                val minLat = lats.minOrNull()!!; val maxLat = lats.maxOrNull()!!
-                val minLng = lngs.minOrNull()!!; val maxLng = lngs.maxOrNull()!!
+                val minLat = lats.minOrNull()!!;
+                val maxLat = lats.maxOrNull()!!
+                val minLng = lngs.minOrNull()!!;
+                val maxLng = lngs.maxOrNull()!!
                 val latR = (maxLat - minLat).takeIf { it != 0.0 } ?: 1.0
                 val lngR = (maxLng - minLng).takeIf { it != 0.0 } ?: 1.0
+                val latRng = (maxLat - minLat).takeIf { it != 0.0 } ?: 1.0
+                val lngRng = (maxLng - minLng).takeIf { it != 0.0 } ?: 1.0
+
+
                 fun project(lat: Double, lng: Double) = Offset(
-                    x = insetPx + ((lng - minLng) / lngR * (wPx - 2*insetPx)).toFloat(),
-                    y = insetPx + ((maxLat - lat) / latR * (hPx - 2*insetPx)).toFloat()
+                    x = insetPx + ((lng - minLng) / lngR * (wPx - 2 * insetPx)).toFloat(),
+                    y = insetPx + ((maxLat - lat) / latR * (hPx - 2 * insetPx)).toFloat()
                 )
 
                 val startOff = project(locations.first().latitude, locations.first().longitude)
-                val endOff   = project(locations.last().latitude,  locations.last().longitude)
+                val endOff = project(locations.last().latitude, locations.last().longitude)
+
+                // 4) compute a “nice” scale-bar
+                // … then in your Composable:
+                val midLat = (minLat + maxLat) / 2
+                // real-world width of the box in metres:
+                val boxWidthM = haversineMeters(midLat, minLng, midLat, maxLng)
+                val mPerPx   = boxWidthM / (wPx - 2 * insetPx)
+                // meters per degree longitude ≈ cos(lat) * 111.32 km
+                val mPerDeg = cos(Math.toRadians(midLat)) * 111_320.0
+                val totalLngM = lngRng * mPerDeg
+                val targetPx = (wPx - 2 * insetPx) * 0.25f               // want ~25% width
+                val targetM = targetPx * mPerPx
+                val niceM = niceDistance(targetM)
+                val scalePx = (niceM / mPerPx).toFloat()
+                val scaleDp = with(density) { scalePx.toDp() }
+                val scaleLabel = if (niceM >= 1000)
+                    "%.1f km".format(niceM / 1000.0)
+                else
+                    "${niceM.toInt()} m"
 
                 // 4) draw the path
                 Canvas(modifier = Modifier.fillMaxSize()) {
@@ -129,9 +179,9 @@ fun MapPathScreen(
                         }
                     }
                     drawPath(
-                        path   = path,
-                        color  = pathColor,
-                        style  = Stroke(strokeWidth, cap = StrokeCap.Round, join = StrokeJoin.Round)
+                        path = path,
+                        color = pathColor,
+                        style = Stroke(strokeWidth, cap = StrokeCap.Round, join = StrokeJoin.Round)
                     )
                 }
 
@@ -162,9 +212,63 @@ fun MapPathScreen(
                             )
                         }
                 )
+
+
+                // 3) **Scale-bar legend**
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        Modifier
+                            .height(2.dp)
+                            .width(scaleDp)      // computed earlier
+                            .background(Color.Black)
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        text = scaleLabel,     // e.g. “20 m” or “0.5 km”
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Black
+                    )
+                }
             }
+
+
         }
     }
+}
+
+private fun haversineMeters(
+    lat1: Double, lng1: Double,
+    lat2: Double, lng2: Double
+): Double {
+    val R = 6_371_000.0 // Earth radius in metres
+    val dLat = Math.toRadians(lat2 - lat1)
+    val dLng = Math.toRadians(lng2 - lng1)
+    val a = sin(dLat/2).pow(2) +
+            cos(Math.toRadians(lat1)) *
+            cos(Math.toRadians(lat2)) *
+            sin(dLng/2).pow(2)
+    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    return R * c
+}
+
+
+/** round to 1,2,5 × 10ᵉⁿⁿ */
+private fun niceDistance(m: Double): Double {
+    val exp   = floor(log10(m.coerceAtLeast(1.0)))
+    val base  = 10.0.pow(exp)
+    val d     = m / base
+    val nice  = when {
+        d < 1.5 -> 1.0
+        d < 3.0 -> 2.0
+        d < 7.0 -> 5.0
+        else    -> 10.0
+    }
+    return nice * base
 }
 
 @Preview
