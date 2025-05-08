@@ -1,38 +1,17 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.North
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.clipPath
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -42,117 +21,165 @@ import java.util.UUID
 import kotlin.collections.all
 import kotlin.math.*
 
+// reuse your haversineMeters(...) from before
+
 @Composable
 fun ElevationProfile(
     locations: List<RideLocationEntity>,
     modifier: Modifier = Modifier
         .fillMaxWidth()
-        .height(80.dp),
+        .height(100.dp),          // a little taller for labels
     lineColor: Color = MaterialTheme.colorScheme.primary,
-    strokeWidth: Float = 2f,
-    labelColor: Color = MaterialTheme.colorScheme.onSurface,
-    topColor: Color = Color(0xFF2196F3),    // blue
-    bottomColor: Color = Color(0xFFA52A2A)  // brown
+    gridColor: Color = Color.White.copy(alpha = 0.3f),
+    markerColor: Color = MaterialTheme.colorScheme.secondary,
+    topColor: Color = Color(0xFF2196F3),
+    bottomColor: Color = Color(0xFFA52A2A)
 ) {
     if (locations.size < 2 || locations.all { it.elevation == null }) return
 
-    // Build (distance, elevation) pairs…
+    // build (cumDist, elev) pairs
     val points = remember(locations) {
         val list = mutableListOf<Pair<Float, Float>>()
-        var cumDist = 0f
-        list += Pair(0f, locations[0].elevation ?: 0f)
+        var cum = 0f
+        list += 0f to (locations[0].elevation ?: 0f)
         for (i in 1 until locations.size) {
             val prev = locations[i - 1]
             val curr = locations[i]
-            val segment = haversineMeters(
-                prev.lat, prev.lng,
-                curr.lat, curr.lng
-            ).toFloat()
-            cumDist += segment
-            list += Pair(cumDist, curr.elevation ?: 0f)
+            cum += haversineMeters(prev.lat, prev.lng, curr.lat, curr.lng).toFloat()
+            list += cum to (curr.elevation ?: 0f)
         }
         list
     }
 
     val totalDist = points.last().first
-    val minElev   = points.minOf { it.second }
-    val maxElev   = points.maxOf { it.second }
-    val elevRange = (maxElev - minElev).takeIf { it > 0f } ?: 1f
+    val minElev    = points.minOf { it.second }
+    val maxElev    = points.maxOf { it.second }
+    val elevRange  = (maxElev - minElev).takeIf { it>0 } ?: 1f
 
     Box(modifier = modifier) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val w = size.width
             val h = size.height
 
-            // 1) Compute your elevation‐vs‐distance Offsets:
-            val pts: List<Offset> = points.map { (dist, elev) ->
-                val x = (dist / totalDist) * w
-                val y = ((maxElev - elev) / elevRange) * h
-                Offset(x, y)
+            // 1) sky & earth
+            // draw full blue
+            drawRect(color = topColor, size = size)
+            // build path for under‐curve
+            val pts = points.map { (dist,elev) ->
+                val x = (dist/totalDist)*w
+                val y = ((maxElev-elev)/elevRange)*h
+                Offset(x,y)
             }
-
-            // 2) Draw the blue “sky” everywhere:
-            drawRect(color = Color(0xFF2196F3), size = size)
-
-            // 3) Build a Path that traces your line, then closes down to the bottom:
-            val underPath = Path().apply {
-                // start at first point
+            val under = Path().apply {
                 moveTo(pts.first().x, pts.first().y)
-                // trace the curve
                 pts.drop(1).forEach { lineTo(it.x, it.y) }
-                // straight line down to bottom‐right
                 lineTo(pts.last().x, h)
-                // along bottom to bottom‐left
                 lineTo(pts.first().x, h)
                 close()
             }
-
-            // 4) Clip to that “under” region, and fill it with brown:
-            clipPath(underPath) {
-                drawRect(color = Color(0xFFA52A2A), size = size)
+            // clip & fill brown
+            clipPath(under) {
+                drawRect(color = bottomColor, size = size)
             }
 
-            // 5) Finally draw your elevation line on top:
-            val linePath = Path().apply {
+            // 2) grid lines
+            // horizontal
+            repeat(5) { i ->
+                val y = h * i/4f
+                drawLine(
+                    color = gridColor,
+                    start = Offset(0f, y),
+                    end   = Offset(w, y),
+                    strokeWidth = 1f
+                )
+            }
+            // vertical ticks (not full lines)
+            repeat(5) { i ->
+                val x = w * i/4f
+                drawLine(gridColor, Offset(x, h), Offset(x, h-6.dp.toPx()), strokeWidth = 2f)
+            }
+
+            // 3) elevation curve
+            val curve = Path().apply {
                 moveTo(pts.first().x, pts.first().y)
                 pts.drop(1).forEach { lineTo(it.x, it.y) }
             }
-            drawPath(
-                path = linePath,
-                color = Color.Black,//MaterialTheme.colorScheme.onSurface,
-                style = Stroke(width = 2f)
-            )
+            drawPath(curve, color = lineColor, style = Stroke(width = 3f, cap = StrokeCap.Round))
+
+            // 4) max‐elev marker
+            val maxIdx = points.indexOfFirst { it.second == maxElev }
+            val maxOff = pts[maxIdx]
+            drawCircle(markerColor, radius = 4.dp.toPx(), center = maxOff)
         }
 
-
-        // 3) max elevation label
+        /* 5) max elevation label
         Text(
             text = "${maxElev.toInt()} m",
             style = MaterialTheme.typography.bodySmall,
-            color = labelColor,
+            color = markerColor,
             modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(end = 8.dp, top = 4.dp)
+                .offset {
+                    IntOffset(
+                        pts[maxIdx].x.roundToInt() + 4.dp.roundToPx(),
+                        pts[maxIdx].y.roundToInt() - 20.dp.roundToPx()
+                    )
+                }
+        )*/
+
+        // 6) axis labels
+        Text(
+            text = "0 m",
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.Black,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(4.dp)
+        )
+        Text(
+            text = "%.1f km".format(totalDist/1000f),
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.Black,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(4.dp)
         )
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun ElevationProfileEnhancedPreview() {
+    val sample = listOf(
+        RideLocationEntity(0, "r", 0L, 0.0, 0.0, 10f),
+        RideLocationEntity(1, "r", 1L, 0.0, 0.0, 50f),
+        RideLocationEntity(2, "r", 2L, 0.0, 0.0, 30f),
+        RideLocationEntity(3, "r", 3L, 0.0, 0.0, 100f),
+        RideLocationEntity(4, "r", 4L, 0.0, 0.0, 20f)
+    )
+    ElevationProfile(
+        locations = sample,
+        modifier = Modifier
+            .size(width = 320.dp, height = 100.dp)
+    )
+}
+
 
 @Preview
 @Composable
 fun ElevationProfilePreview() {
  val locations = listOf(
- RideLocationEntity(
- id = 0, rideId = "0", timestamp = 0, lat = 0.0, lng = 0.0,
- elevation = 100f
- ),
- RideLocationEntity(
- id = 1, rideId = "1", timestamp = 1, lat = 1.0, lng = 1.0,
- elevation = 150f
- ),
- RideLocationEntity(
- id = 2, rideId = "2", timestamp = 2, lat = 2.0, lng = 2.0,
- elevation = 120f
- )
+     RideLocationEntity(
+         id = 0, rideId = "0", timestamp = 0, lat = 0.0, lng = 0.0,
+         elevation = 100f
+     ),
+     RideLocationEntity(
+         id = 1, rideId = "1", timestamp = 1, lat = 1.0, lng = 1.0,
+         elevation = 150f
+     ),
+     RideLocationEntity(
+         id = 2, rideId = "2", timestamp = 2, lat = 2.0, lng = 2.0,
+         elevation = 120f
+     )
  )
 
  ElevationProfile(locations = locations)
