@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.features.trips.ui.components
+package com.ylabz.basepro.applications.bike.features.trips.ui.components.unused
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -15,12 +15,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
 
@@ -107,4 +105,23 @@ fun RidePathCard(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun RidePathCardPreview() {
+    val path = listOf(
+        LatLng(34.0522, -118.2437),
+        LatLng(34.0522, -118.2438),
+        LatLng(34.0522, -118.2439),
+        LatLng(34.0522, -118.2440),
+        LatLng(34.0522, -118.2441),
+        LatLng(34.0522, -118.2442),
+        LatLng(34.0522, -118.2443),
+        LatLng(34.0522, -118.2444),
+        LatLng(34.0522, -118.2445),
+        LatLng(34.0522, -118.2446),
+        LatLng(34.0522, -118.2447)
+    )
+    RidePathCard(path = path)
 }
