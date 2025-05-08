@@ -1,9 +1,7 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui.components
 
 
-
-
-
+import android.R.attr.path
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,8 +11,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -22,33 +22,40 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.*
+import com.google.maps.android.compose.rememberCameraPositionState
 import com.ylabz.basepro.applications.bike.database.BikeRideEntity
-import com.ylabz.basepro.applications.bike.database.RideWithLocations
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.ui.platform.LocalInspectionMode
-import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
-
 import com.ylabz.basepro.applications.bike.database.RideLocationEntity
+import com.ylabz.basepro.applications.bike.database.RideWithLocations
+import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
+import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.Duration
 
 data class LocationDto(val lat: Double, val lng: Double)
 
 // --- add this to your TripsEvent sealed class: ---
 // data class UpdateNotes(val rideId: String, val notes: String): TripsEvent()
+
+data class LatLngWithElev(
+    val latLng: LatLng,
+    val elevation: Float
+)
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,15 +73,15 @@ fun RideDetailScreen(
 
     val ride = rideWithLocs.bikeRideEnt
     var notesState by remember { mutableStateOf(ride.notes.orEmpty()) }
-    var isDirty    by remember { mutableStateOf(false) }
-    val dateTimeFmt= remember { DateTimeFormatter.ofPattern("MMM dd, HH:mm") }
-    val timeFmt    = remember { DateTimeFormatter.ofPattern("HH:mm") }
+    var isDirty by remember { mutableStateOf(false) }
+    val dateTimeFmt = remember { DateTimeFormatter.ofPattern("MMM dd, HH:mm") }
+    val timeFmt = remember { DateTimeFormatter.ofPattern("HH:mm") }
     val startZoned = Instant.ofEpochMilli(ride.startTime)
         .atZone(ZoneId.systemDefault())
-    val endZoned   = Instant.ofEpochMilli(ride.endTime)
+    val endZoned = Instant.ofEpochMilli(ride.endTime)
         .atZone(ZoneId.systemDefault())
-    val duration   = Duration.ofMillis(ride.endTime - ride.startTime)
-    val minutes    = duration.toMinutes()
+    val duration = Duration.ofMillis(ride.endTime - ride.startTime)
+    val minutes = duration.toMinutes()
 
     Column(
         modifier = modifier
@@ -100,18 +107,23 @@ fun RideDetailScreen(
             style = MaterialTheme.typography.bodyMedium
         )
 
+        val path = remember(rideWithLocs.locations) {
+            rideWithLocs.locations.map { LatLng(it.lat, it.lng) }
+        }
+
+        // new: pair each LatLng with its elevation (default 0f if null)
+        val elevPoints = remember(rideWithLocs.locations) {
+            rideWithLocs.locations.map {
+                LatLngWithElev(
+                    latLng   = LatLng(it.lat, it.lng),
+                    elevation = it.elevation ?: 0f
+                )
+            }
+        }
+
         // 3) Map in a rounded, elevated card
         if (!LocalInspectionMode.current) {
-            val path = remember(rideWithLocs.locations) {
-                rideWithLocs.locations.map { LatLng(it.lat, it.lng) }
-            }
-            val cameraState = rememberCameraPositionState {
-                position = path.firstOrNull()
-                    ?.let { CameraPosition.fromLatLngZoom(it, 15f) }
-                    ?: CameraPosition.fromLatLngZoom(
-                        LatLng(ride.startLat, ride.startLng), 12f
-                    )
-            }
+
 
             //RidePathCard(path = path)
             Card(
@@ -135,6 +147,8 @@ fun RideDetailScreen(
                 }*/
             }
         }
+
+        ElevationProfileSection(elevPoints)
 
         // 4) Bottom metrics row (Elevation / Duration / Calories)
         Row(
@@ -270,10 +284,10 @@ private fun StatCard(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier  = modifier
+        modifier = modifier
             .height(80.dp),
-        colors    = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
-        shape     = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+        shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
