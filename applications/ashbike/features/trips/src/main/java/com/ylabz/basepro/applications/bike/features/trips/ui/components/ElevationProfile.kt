@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -43,20 +44,19 @@ import kotlin.math.*
 
 @Composable
 fun ElevationProfile(
-    locations: List<RideLocationEntity>,  // must have elevation: Float?
+    locations: List<RideLocationEntity>,
     modifier: Modifier = Modifier
         .fillMaxWidth()
         .height(80.dp),
-    lineColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.primary,
+    lineColor: Color = MaterialTheme.colorScheme.primary,
     strokeWidth: Float = 2f,
-    labelColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface
+    labelColor: Color = MaterialTheme.colorScheme.onSurface,
+    topColor: Color = Color(0xFF2196F3),    // blue
+    bottomColor: Color = Color(0xFFA52A2A)  // brown
 ) {
-    if (locations.size < 2 || locations.all { it.elevation == null }) {
-        // nothing to draw
-        return
-    }
+    if (locations.size < 2 || locations.all { it.elevation == null }) return
 
-    // 2) Build pairs of (cumulativeDistance, elevation)
+    // Build (distance, elevation) pairs…
     val points = remember(locations) {
         val list = mutableListOf<Pair<Float, Float>>()
         var cumDist = 0f
@@ -74,35 +74,58 @@ fun ElevationProfile(
         list
     }
 
-    // 3) Extract mins / maxes
     val totalDist = points.last().first
-    val minElev = points.minOf { it.second }
-    val maxElev = points.maxOf { it.second }
-    val elevRange = (maxElev - minElev).takeIf { it > 0 } ?: 1f
+    val minElev   = points.minOf { it.second }
+    val maxElev   = points.maxOf { it.second }
+    val elevRange = (maxElev - minElev).takeIf { it > 0f } ?: 1f
 
     Box(modifier = modifier) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val w = size.width
             val h = size.height
 
-            // build path
-            val path = Path().apply {
-                points.forEachIndexed { idx, (dist, elev) ->
-                    val x = (dist / totalDist) * w
-                    val y = ((maxElev - elev) / elevRange) * h
-                    if (idx == 0) moveTo(x, y) else lineTo(x, y)
-                }
+            // 1) Compute your elevation‐vs‐distance Offsets:
+            val pts: List<Offset> = points.map { (dist, elev) ->
+                val x = (dist / totalDist) * w
+                val y = ((maxElev - elev) / elevRange) * h
+                Offset(x, y)
             }
 
-            // draw line
+            // 2) Draw the blue “sky” everywhere:
+            drawRect(color = Color(0xFF2196F3), size = size)
+
+            // 3) Build a Path that traces your line, then closes down to the bottom:
+            val underPath = Path().apply {
+                // start at first point
+                moveTo(pts.first().x, pts.first().y)
+                // trace the curve
+                pts.drop(1).forEach { lineTo(it.x, it.y) }
+                // straight line down to bottom‐right
+                lineTo(pts.last().x, h)
+                // along bottom to bottom‐left
+                lineTo(pts.first().x, h)
+                close()
+            }
+
+            // 4) Clip to that “under” region, and fill it with brown:
+            clipPath(underPath) {
+                drawRect(color = Color(0xFFA52A2A), size = size)
+            }
+
+            // 5) Finally draw your elevation line on top:
+            val linePath = Path().apply {
+                moveTo(pts.first().x, pts.first().y)
+                pts.drop(1).forEach { lineTo(it.x, it.y) }
+            }
             drawPath(
-                path = path,
-                color = lineColor,
-                style = Stroke(width = strokeWidth)
+                path = linePath,
+                color = Color.Black,//MaterialTheme.colorScheme.onSurface,
+                style = Stroke(width = 2f)
             )
         }
 
-        // 4) max elevation label
+
+        // 3) max elevation label
         Text(
             text = "${maxElev.toInt()} m",
             style = MaterialTheme.typography.bodySmall,
