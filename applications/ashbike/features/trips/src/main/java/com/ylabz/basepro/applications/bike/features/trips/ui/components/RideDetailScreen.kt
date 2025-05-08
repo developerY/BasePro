@@ -25,12 +25,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,6 +43,7 @@ import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.RideLocationEntity
 import com.ylabz.basepro.applications.bike.database.RideWithLocations
 import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
+import com.ylabz.basepro.applications.bike.features.trips.ui.components.maps.lookupPlaceName
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
@@ -70,7 +73,7 @@ fun RideDetailScreen(
         }
         return
     }
-
+    val ctx   = LocalContext.current
     val ride = rideWithLocs.bikeRideEnt
     var notesState by remember { mutableStateOf(ride.notes.orEmpty()) }
     var isDirty by remember { mutableStateOf(false) }
@@ -82,6 +85,8 @@ fun RideDetailScreen(
         .atZone(ZoneId.systemDefault())
     val duration = Duration.ofMillis(ride.endTime - ride.startTime)
     val minutes = duration.toMinutes()
+
+    var placeName by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = modifier
@@ -111,6 +116,13 @@ fun RideDetailScreen(
             rideWithLocs.locations.map { LatLng(it.lat, it.lng) }
         }
 
+        LaunchedEffect(path.firstOrNull()) {
+            path.firstOrNull()?.let {
+                placeName = lookupPlaceName(ctx, it.latitude, it.longitude)
+            }
+        }
+
+
         // new: pair each LatLng with its elevation (default 0f if null)
         val elevPoints = remember(rideWithLocs.locations) {
             rideWithLocs.locations.map {
@@ -122,31 +134,31 @@ fun RideDetailScreen(
         }
 
         // 3) Map in a rounded, elevated card
-        if (!LocalInspectionMode.current) {
+        //if (!LocalInspectionMode.current) {
 
 
-            //RidePathCard(path = path)
-            Card(
-                modifier  = Modifier
-                    .fillMaxWidth()
-                    .height(240.dp),
-                shape     = RoundedCornerShape(12.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        //RidePathCard(path = path)
+        Card(
+            modifier  = Modifier
+                .fillMaxWidth()
+                .height(240.dp),
+            shape     = RoundedCornerShape(12.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        ) {
+            MapPathScreen(locations = path, placeName = placeName?: "")
+            /*GoogleMap(
+                modifier             = Modifier.fillMaxSize(),//.matchParentSize(),
+                cameraPositionState  = cameraState,
+                uiSettings           = MapUiSettings(zoomControlsEnabled = false)
             ) {
-                MapPathScreen(locations = path, placeName = "San Francisco")
-                /*GoogleMap(
-                    modifier             = Modifier.fillMaxSize(),//.matchParentSize(),
-                    cameraPositionState  = cameraState,
-                    uiSettings           = MapUiSettings(zoomControlsEnabled = false)
-                ) {
-                    if (path.size >= 2) {
-                        Polyline(points = path, color = MaterialTheme.colorScheme.primary, width = 6f)
-                        Marker(state = MarkerState(path.first()), title = "Start")
-                        Marker(state = MarkerState(path.last()),  title = "End")
-                    }
-                }*/
-            }
+                if (path.size >= 2) {
+                    Polyline(points = path, color = MaterialTheme.colorScheme.primary, width = 6f)
+                    Marker(state = MarkerState(path.first()), title = "Start")
+                    Marker(state = MarkerState(path.last()),  title = "End")
+                }
+            }*/
         }
+        //}
 
         ElevationProfileSection(elevPoints)
 
