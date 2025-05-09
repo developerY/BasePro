@@ -36,8 +36,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.health.connect.client.records.ExerciseSessionRecord
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.unused.ErrorScreen
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.unused.LoadingScreen
+import com.ylabz.basepro.applications.bike.features.main.ui.components.ErrorScreen
+import com.ylabz.basepro.applications.bike.features.main.ui.components.LoadingScreen
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.unused.demo.ExpandableSection
 
 @Composable
@@ -123,7 +123,7 @@ fun BikeSettingsScreenEx(
 
                     Button(
                         onClick = {
-                            onBikeEvent(BikeEvent.UpdateSetting(key, selectedOption))
+                            //onBikeEvent(BikeEvent.UpdateSetting(key, selectedOption))
                         },
                         modifier = Modifier.align(Alignment.End)
                     ) {
@@ -134,7 +134,9 @@ fun BikeSettingsScreenEx(
 
             // 2) "Delete All Entries" button
             Button(
-                onClick = { onBikeEvent(BikeEvent.DeleteAllEntries) },
+                onClick = {
+                    //onBikeEvent(BikeEvent.DeleteAllEntries)
+                          },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error,

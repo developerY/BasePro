@@ -30,19 +30,6 @@ import kotlinx.coroutines.flow.combine  // make sure you import this overload! /
  * Each flow “resets” whenever `resetSignal` emits Unit.
  */
 
-
-/**
- * Encapsulates all of the per-ride statistics logic:
- *  – total distance (km)
- *  – max speed (km/h)
- *  – average speed (km/h)
- *  – elevation gain & loss (m)
- *  – **dynamic** calories burned
- *
- * Each flow “resets” whenever `resetSignal` emits Unit.
- */
-
-
 /**
  * Holds the user’s anthropometric inputs.
  */
@@ -77,6 +64,9 @@ class RideStatsUseCase @Inject constructor(
             .distinctUntilChanged()
 
     /** Total distance in km, resettable. */
+    /**
+     * Total distance in kilometers, resettable on [resetSignal].
+     */
     fun distanceKmFlow(
         resetSignal:  Flow<Unit>,
         locationFlow: Flow<Location>

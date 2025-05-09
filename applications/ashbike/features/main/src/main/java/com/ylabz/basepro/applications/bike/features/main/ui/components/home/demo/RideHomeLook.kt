@@ -167,7 +167,7 @@ fun BikeDashboardLook(
                         BikeBatteryLevels(
                             isConnected     = isBikeConnected,
                             batteryLevel    = bikeRideInfo.batteryLevel,
-                            onConnectClick  = { onBikeEvent(BikeEvent.Connect) }
+                            onConnectClick  = { /*onBikeEvent(BikeEvent.Connect)*/ }
                         )
                     }
                 }

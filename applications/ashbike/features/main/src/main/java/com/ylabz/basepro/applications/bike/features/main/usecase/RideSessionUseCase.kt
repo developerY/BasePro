@@ -2,7 +2,6 @@ package com.ylabz.basepro.applications.bike.features.main.usecase
 
 import com.ylabz.basepro.applications.bike.database.repository.UserProfileRepository
 import com.ylabz.basepro.core.data.repository.travel.compass.CompassRepository
-import android.location.Location
 import com.ylabz.basepro.core.data.di.LowPower
 import com.ylabz.basepro.core.data.repository.travel.UnifiedLocationRepository
 import dagger.hilt.android.scopes.ActivityRetainedScoped
@@ -11,14 +10,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+
+
+/**
+ * The flow
+ *
+ *  location/speed/heading/userStats
+ *         ↓
+ *    RideStatsUseCase  (pure math)
+ *         ↓
+ *    RideSessionUseCase (reset/pause lifecycle)
+ *         ↓
+ *      ViewModel → UI
+ *
+ */
+
 
 @ActivityRetainedScoped
-class RideTracker @Inject constructor(
+class RideSessionUseCase @Inject constructor(
     @LowPower private val lowPowerRepo: UnifiedLocationRepository, // provides locationFlow & speedFlow
-    //private val compassRepo: CompassRepository,                    // provides headingFlow
-    private val compassRepo: CompassRepository,
+    private val compassRepo: CompassRepository,                    // provides headingFlow
     private val statsUseCase: RideStatsUseCase,                    // our new unified stats use-case
     private val userProfileRepo: UserProfileRepository             // to build UserStats
 ) {
@@ -40,10 +51,6 @@ class RideTracker @Inject constructor(
     // 3) Delegate to RideStatsUseCase.sessionFlow() for a single, resettable StateFlow<RideSession>
     /** One single, resettable session of EVERYTHING (distance, elevation, calories, path, heading) */
     val sessionFlow: StateFlow<RideSession> = statsUseCase.sessionFlow(
-        /*distanceKmFlow =  statsUseCase.distanceKmFlow(
-            resetSignal  = resetSignal,
-            locationFlow = lowPowerRepo.locationFlow
-        ),*/
         //pausedSignal   = pausedSignal,
         resetSignal    = resetSignal,
         locationFlow   = lowPowerRepo.locationFlow,
@@ -51,6 +58,11 @@ class RideTracker @Inject constructor(
         headingFlow    = compassRepo.headingFlow,
         userStatsFlow  = userStatsFlow
     )
+
+    /** Convenience flow for just the distance. */
+    val distanceFlow: Flow<Float> = sessionFlow
+        .map { it.totalDistanceKm }
+        .distinctUntilChanged()
 
     // -----------------------------------
     // PUBLIC API

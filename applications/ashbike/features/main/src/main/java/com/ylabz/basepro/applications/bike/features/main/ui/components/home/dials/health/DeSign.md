@@ -55,7 +55,7 @@ Integrate Google Health Connect into our Modern Android Development (MAD) bike a
   └ features
       └ bike
           ├ BikeViewModel.kt
-          ├ RideTracker.kt
+          ├ RideSessionUseCase.kt
           └ BikeDashboardContent.kt
       └ health
           └ HealthViewModel.kt

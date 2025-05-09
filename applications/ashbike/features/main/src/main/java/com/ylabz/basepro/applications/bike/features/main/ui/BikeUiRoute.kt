@@ -1,6 +1,10 @@
 package com.ylabz.basepro.applications.bike.features.main.ui
 
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -9,12 +13,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.HealthConnectClient
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.applications.bike.features.main.ui.components.ErrorScreen
+import com.ylabz.basepro.applications.bike.features.main.ui.components.IdleScreen
+import com.ylabz.basepro.applications.bike.features.main.ui.components.LoadingScreen
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.BikeDashboardContent
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.unused.ErrorScreen
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.unused.LoadingScreen
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.ConnectionStatus
 import com.ylabz.basepro.core.model.bike.NfcData
@@ -26,111 +32,68 @@ import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
 import java.util.UUID
 
+
+/**
+ * Top-level route: wires ViewModels, collects their UI state,
+ * and hands only UI state & events to child Composables.
+ */
 @Composable
 fun BikeUiRoute(
     modifier: Modifier = Modifier,
-    navTo: (String) -> Unit,
-    bikeViewModel: BikeViewModel = hiltViewModel(),
-    healthViewModel: HealthViewModel = hiltViewModel(),
-    nfcViewModel: NfcViewModel = hiltViewModel()
+    navTo: (String) -> Unit
 ) {
+    // obtain view models
+    val bikeViewModel   = hiltViewModel<BikeViewModel>()
+    val healthViewModel = hiltViewModel<HealthViewModel>()
+    val nfcViewModel    = hiltViewModel<NfcViewModel>()
 
-    // 1) Pull in each VM’s state
+    // collect states
+    val bikeUiState   by bikeViewModel.uiState.collectAsState()
     val healthUiState by healthViewModel.uiState.collectAsState()
-    val nfcUiState by nfcViewModel.uiState.collectAsState()
-    // Collect the UI states from both.
-    val bikeUiState by bikeViewModel.uiState.collectAsState()
+    val nfcUiState    by nfcViewModel.uiState.collectAsState()
 
-    // 2) Prepare our health‐connect panel parameters
-    val hcAvailable =
-        healthViewModel.healthSessionManager.availability.value == HealthConnectClient.SDK_AVAILABLE
-    val healthViewModel = healthViewModel
-    healthViewModel.permissionsGranted.value
-
-    // Bundle everything into one state object.
-    HealthScreenState(
-        isHealthConnectAvailable = hcAvailable,
-        permissionsGranted = healthViewModel.permissionsGranted.value,
-        permissions = healthViewModel.permissions,
-        backgroundReadPermissions = healthViewModel.backgroundReadPermissions,
-        backgroundReadAvailable = healthViewModel.backgroundReadAvailable.value,
-        backgroundReadGranted = healthViewModel.backgroundReadGranted.value
-    )
-
-    // 3) One single launcher for *all* health permissions
-    rememberLauncherForActivityResult(
+    // Health Connect permission launcher
+    val isHcAvailable = healthViewModel.healthSessionManager.availability.value ==
+            HealthConnectClient.SDK_AVAILABLE
+    val permissionsLauncher = rememberLauncherForActivityResult(
         contract = healthViewModel.permissionsLauncher
-    ) {
-        // once user returns from the system dialog, re‐check & reload
-        healthViewModel.onEvent(HealthEvent.RequestPermissions)
-    }
-    //val healthUiState by remember { mutableStateOf(viewModel.uiState) }
-    val errorId = rememberSaveable { mutableStateOf(UUID.randomUUID()) }
-    val onPermissionsResult = { healthViewModel.initialLoad() }
+    ) { healthViewModel.onEvent(HealthEvent.RequestPermissions) }
 
-    // 4) If we’ve never tried to load, kick off the first load
+    // kick off initial health permissions request if needed
     LaunchedEffect(healthUiState) {
-        // If the initial data load has not taken place, attempt to load the data.
         if (healthUiState is HealthUiState.Uninitialized) {
-            onPermissionsResult()
-        }
-
-        // The [ExerciseSessionViewModel.UiState] provides details of whether the last action was a
-        // success or resulted in an error. Where an error occurred, for example in reading and
-        // writing to Health Connect, the user is notified, and where the error is one that can be
-        // recovered from, an attempt to do so is made.
-        if (healthUiState is HealthUiState.Error && errorId.value != (healthUiState as HealthUiState.Error).uuid) {
-            //onError(healthUiState.exception)
-            //errorId.value = healthUiState.uuid
+            healthViewModel.onEvent(HealthEvent.RequestPermissions)
         }
     }
-    // Obtain both viewmodels from Hilt.
-    // Sample settings (or use bikeUiState.settings if already loaded)
-    // We assume that BikeUiState and HealthUiState must be Success to show the main screen.
+
+    // choose screen based on bikeUiState
     when (bikeUiState) {
-        is BikeUiState.Loading -> LoadingScreen()
+        BikeUiState.Loading -> LoadingScreen()
 
-        is BikeUiState.Error -> {
-            ErrorScreen(errorMessage = (bikeUiState as BikeUiState.Error).message) {
-                bikeViewModel.onEvent(BikeEvent.LoadBike)
-            }
-        }
-        // Require only bike to be Success. Health is optional/controlled via settings.
+        is BikeUiState.Error -> ErrorScreen(
+            errorMessage = (bikeUiState as BikeUiState.Error).message,
+            onRetry = { bikeViewModel.onEvent(BikeEvent.StartRide) }
+        )
+
+        BikeUiState.Idle -> IdleScreen(
+            onStart = { bikeViewModel.onEvent(BikeEvent.StartRide) }
+        )
+
         is BikeUiState.Success -> {
-            (bikeUiState as BikeUiState.Success).bikeData
-
-            // Health: if available, use the success data; otherwise, use a default and flag it as not enabled.
-            when (healthUiState) {
-                is HealthUiState.Success -> (healthUiState as HealthUiState.Success).healthData
-                else -> null //HealthStats(heartRate = 0, calories = 0.0)
-            }
-            // Flag whether Health integration is enabled/available.
-            healthUiState is HealthUiState.Success
-
-            // NFC: if a tag has been scanned, use its data; otherwise, pass null.
-            when (nfcUiState) {
-                is NfcUiState.TagScanned -> NfcData((nfcUiState as NfcUiState.TagScanned).tagInfo)
-                else -> null
-            }
-
-            // Assume the bike state includes a bikeID and battery when connected.
-            ConnectionStatus(
-                isConnected = false, //bikeState.bikeID != null,
-                batteryLevel = 50, //bikeState.battery
-            )
+            // show dashboard
             BikeDashboardContent(
-                modifier = modifier,
+                modifier = modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
                 bikeRideInfo = (bikeUiState as BikeUiState.Success).bikeData,
                 onBikeEvent = { bikeViewModel.onEvent(it) },
                 navTo = navTo
             )
         }
-
-        else -> {
-            LoadingScreen()//modifier)
-        }
     }
 }
+
 
 @Preview
 @Composable

@@ -84,7 +84,7 @@ fun BikePathWithControls(
             onToggle  = { onBikeEvent(BikeEvent.StartPauseRide) }
         )*/
         FloatingActionButton(
-            onClick       = { onBikeEvent(BikeEvent.StartPauseRide) },
+            onClick       = { onBikeEvent(BikeEvent.StartRide) },
             containerColor=  if (rideState == RideState.Riding) Color.Gray else Color.White,
             contentColor  = Color.Black,
             modifier      = Modifier.size(buttonSize)
@@ -109,7 +109,7 @@ fun BikePathWithControls(
 
         // Stop & Save
         FloatingActionButton(
-            onClick       = { onBikeEvent(BikeEvent.StopSaveRide) },
+            onClick       = { onBikeEvent(BikeEvent.StopRide) },
             containerColor= if (rideState == RideState.Riding) Color.White else Color.LightGray,
             contentColor  = Color.Red,
             modifier      = Modifier.size(buttonSize)
