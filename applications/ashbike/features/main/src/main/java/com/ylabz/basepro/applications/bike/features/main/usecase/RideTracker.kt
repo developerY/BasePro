@@ -40,6 +40,11 @@ class RideTracker @Inject constructor(
     // 3) Delegate to RideStatsUseCase.sessionFlow() for a single, resettable StateFlow<RideSession>
     /** One single, resettable session of EVERYTHING (distance, elevation, calories, path, heading) */
     val sessionFlow: StateFlow<RideSession> = statsUseCase.sessionFlow(
+        /*distanceKmFlow =  statsUseCase.distanceKmFlow(
+            resetSignal  = resetSignal,
+            locationFlow = lowPowerRepo.locationFlow
+        ),*/
+        //pausedSignal   = pausedSignal,
         resetSignal    = resetSignal,
         locationFlow   = lowPowerRepo.locationFlow,
         speedFlow      = lowPowerRepo.speedFlow,
