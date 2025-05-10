@@ -68,23 +68,21 @@ fun BikeUiRoute(
 
     // choose screen based on bikeUiState
     when (bikeUiState) {
-        BikeUiState.Loading -> LoadingScreen()
+        //BikeUiState.Loading -> LoadingScreen()
 
         is BikeUiState.Error -> ErrorScreen(
             errorMessage = (bikeUiState as BikeUiState.Error).message,
             onRetry = { bikeViewModel.onEvent(BikeEvent.StartRide) }
         )
 
-        BikeUiState.Idle -> IdleScreen(
-            onStart = { bikeViewModel.onEvent(BikeEvent.StartRide) }
-        )
-
-        is BikeUiState.Success -> {
+        //BikeUiState.Idle -> IdleScreen(onStart = { bikeViewModel.onEvent(BikeEvent.StartRide) })
+        else -> {
+        //is BikeUiState.Success, Idle, Loading  -> {
             // show dashboard
             BikeDashboardContent(
                 modifier = modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
+                    //.verticalScroll(rememberScrollState())
                     .padding(16.dp),
                 bikeRideInfo = (bikeUiState as BikeUiState.Success).bikeData,
                 onBikeEvent = { bikeViewModel.onEvent(it) },

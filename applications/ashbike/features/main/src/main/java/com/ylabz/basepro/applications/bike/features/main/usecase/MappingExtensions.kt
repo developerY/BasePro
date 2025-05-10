@@ -17,7 +17,8 @@ fun RideSession.toBikeRideEntity(): BikeRideEntity =
     BikeRideEntity(
         startTime       = startTimeMs,
         endTime         = startTimeMs + elapsedMs,
-        totalDistance   = totalDistanceKm,
+        // ✔ multiply your km value by 1 000 to get meters
+        totalDistance = (totalDistanceKm * 1_000f),
         averageSpeed    = averageSpeedKmh.toFloat(),
         maxSpeed        = maxSpeedKmh,
         elevationGain   = elevationGainM,
@@ -30,30 +31,39 @@ fun RideSession.toBikeRideEntity(): BikeRideEntity =
         endLng          = path.lastOrNull()?.longitude  ?: 0.0
     )
 
+// MappingExtensions.kt
+
 fun RideSession.toBikeRideInfo(
     weather: BikeWeatherInfo?,
     totalDistance: Float?
-): BikeRideInfo = BikeRideInfo(
-    location            = LatLng(path.last().latitude, path.last().longitude),
-    currentSpeed        = maxSpeedKmh.toDouble(),
-    averageSpeed        = averageSpeedKmh,
-    maxSpeed            = maxSpeedKmh.toDouble(),
-    currentTripDistance = totalDistance ?: totalDistanceKm,
-    totalTripDistance   = totalDistance,
-    remainingDistance   = null,
-    elevationGain       = elevationGainM.toDouble(),
-    elevationLoss       = elevationLossM.toDouble(),
-    caloriesBurned      = caloriesBurned,
-    rideDuration        = formatDuration(elapsedMs),
-    settings            = emptyMap(),
-    heading             = heading,
-    elevation           = path.last().altitude.toDouble(),
-    isBikeConnected     = false,
-    batteryLevel        = null,
-    motorPower          = null,
-    rideState           = if (totalDistance != null) RideState.Ended else RideState.Riding,
-    bikeWeatherInfo     = weather
-)
+): BikeRideInfo {
+    // pick the “current” location if we have one
+    val lastLoc = path.lastOrNull()
+    val latLng  = lastLoc?.let { LatLng(it.latitude, it.longitude) }
+
+    return BikeRideInfo(
+        location            = latLng,
+        currentSpeed        = if (path.isNotEmpty()) maxSpeedKmh.toDouble() else 0.0,
+        averageSpeed        = averageSpeedKmh,
+        maxSpeed            = maxSpeedKmh.toDouble(),
+        currentTripDistance = totalDistance ?: totalDistanceKm,
+        totalTripDistance   = totalDistance,
+        remainingDistance   = null,
+        elevationGain       = elevationGainM.toDouble(),
+        elevationLoss       = elevationLossM.toDouble(),
+        caloriesBurned      = caloriesBurned,
+        rideDuration        = formatDuration(elapsedMs),
+        settings            = emptyMap(),
+        heading             = lastLoc?.bearingTo(lastLoc) ?: heading, // or just heading
+        elevation           = lastLoc?.altitude ?: 0.0,
+        isBikeConnected     = false,
+        batteryLevel        = null,
+        motorPower          = null,
+        rideState           = if (totalDistance != null) RideState.Ended else RideState.Riding,
+        bikeWeatherInfo     = weather
+    )
+}
+
 
 
 private fun formatDuration(ms: Long): String {

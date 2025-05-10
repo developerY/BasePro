@@ -6,6 +6,7 @@ import androidx.core.util.TimeUtils.formatDuration
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.math.MathUtils.dist
 import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import com.ylabz.basepro.applications.bike.database.RideLocationEntity
@@ -52,6 +53,8 @@ import javax.inject.Named
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
@@ -70,40 +73,100 @@ class BikeViewModel @Inject constructor(
 
     private val _rideState   = MutableStateFlow(RideState.NotStarted)
     private val _weatherInfo = MutableStateFlow<BikeWeatherInfo?>(null)
-    private val _uiState     = MutableStateFlow<BikeUiState>(BikeUiState.Loading)
-    val uiState: StateFlow<BikeUiState> = _uiState.asStateFlow()
 
-    // Expose live distance from the tracker
-    private val distanceFlow: Flow<Float> = tracker.distanceFlow
+
+    // 1a) the raw, auto-distance (from your tracker)
+    private val autoDistance = tracker.distanceFlow
+
+    // 1b) the user’s typed override
+    private val _manualDistance = MutableStateFlow<Float?>(null)
+    // If user has entered a value, use that; otherwise fall back to autoDistance
+    private val totalDistanceFlow: Flow<Float> =
+        _manualDistance
+            .flatMapLatest { manually ->
+                if (manually != null) flowOf(manually)
+                else autoDistance
+            }
+            .distinctUntilChanged()
+
+    // seed with a zeroed-out "empty" ride
+    private val initialRideInfo = RideSession(
+        startTimeMs     = 0L,
+        path            = emptyList(),
+        elapsedMs       = 0L,
+        totalDistanceKm = 0f,
+        averageSpeedKmh = 0.0,
+        maxSpeedKmh     = 0f,
+        elevationGainM  = 0f,
+        elevationLossM  = 0f,
+        caloriesBurned  = 0,
+        heading         = 0f
+    ).toBikeRideInfo(
+        weather       = null,
+        totalDistance = null
+    )
+
+
+    private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.Success(initialRideInfo))
+    val uiState: StateFlow<BikeUiState> = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
+
+            // first wait for the initial fix & fetch weather
+            val loc = locationRepo.locationFlow.first()
+            _weatherInfo.value = weatherUseCase.getWeather(loc.latitude, loc.longitude)
+
+            // then start your infinite combine/collect loop
             combine(
-                tracker.sessionFlow,
-                distanceFlow,
+                tracker.sessionFlow,        // avg, elevation, calories, heading
+                totalDistanceFlow,
+                locationRepo.speedFlow,     // raw instantaneous speed (m/s or km/h)
                 _weatherInfo,
                 _rideState
-            ) { session, curDistance, weather, rideState ->
-                when (rideState) {
-                    RideState.NotStarted -> BikeUiState.Loading
-                    RideState.Riding,
-                    RideState.Ended     -> {
-                        // Base info from session, override current distance
-                        session.toBikeRideInfo(
-                            weather       = weather,
-                            totalDistance = null
-                        ).copy(
-                            currentTripDistance = curDistance
-                        ).let { info ->
-                            BikeUiState.Success(info)
-                        }
-                    }
-                }
+            ) { session,totalDist, rawSpeed, weather, rideState ->
+
+                // Build the base info from your session
+                val base = session
+                    .toBikeRideInfo(weather = weather, totalDistance = null)
+                    .copy(
+                        // Always feed in the live speed, regardless of state:
+                        currentSpeed        = rawSpeed.toDouble(),
+                        heading             = session.heading,
+                        rideState           = rideState,
+                        // Lift in the live distance only once riding
+                        currentTripDistance = if (rideState == RideState.NotStarted) 0f else totalDist
+                    )
+
+                // Reset only trip‐related metrics pre‐start:
+                if (rideState == RideState.NotStarted) {
+                    base.copy(
+                        averageSpeed   = 0.0,
+                        maxSpeed       = 0.0,
+                        elevationGain  = 0.0,
+                        elevationLoss  = 0.0,
+                        caloriesBurned = 0,
+                        rideDuration   = "0 m"
+                    )
+                } else base
             }
-                .catch { e -> emit(BikeUiState.Error(e.localizedMessage ?: "Unknown error")) }
-                .collect { state -> _uiState.value = state }
+            // ► map BikeRideInfo → BikeUiState
+            .map<BikeRideInfo, BikeUiState> { info ->
+                BikeUiState.Success(info)
+            }
+            // ► now catch can emit BikeUiState.Error
+            .catch { e ->
+                emit(BikeUiState.Error(e.localizedMessage ?: "Unknown error"))
+            }
+            // ► collect BikeUiState
+            .collect { uiState ->
+                _uiState.value = uiState
+            }
         }
     }
+
+
+
 
     fun onEvent(event: BikeEvent) {
         when (event) {
@@ -126,13 +189,6 @@ class BikeViewModel @Inject constructor(
     private fun startRide() {
         if (_rideState.value == RideState.NotStarted) {
             viewModelScope.launch(Dispatchers.IO) {
-                // one-shot weather at ride start
-                val loc: Location = locationRepo.locationFlow.first()
-                _weatherInfo.value = weatherUseCase.getWeather(
-                    lat = loc.latitude,
-                    lng = loc.longitude
-                )
-
                 tracker.start()
                 _rideState.value = RideState.Riding
             }

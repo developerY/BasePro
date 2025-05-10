@@ -19,6 +19,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,8 +68,7 @@ fun BikePathWithControls(
 
 
     val currentDistance = bikeRideInfo.currentTripDistance
-    var totalDistance   = bikeRideInfo.totalTripDistance
-
+    val totalDistance   = bikeRideInfo.totalTripDistance
 
     Row(
         modifier = modifier
@@ -121,7 +121,10 @@ fun BikePathWithControls(
     // ——— Distance entry dialog ———
     if (showDistanceDialog) {
         // local text state for the TextField
-        var text by remember { mutableStateOf(totalDistance?.toString() ?: "") }
+        var text by remember { mutableStateOf("") }
+        LaunchedEffect(bikeRideInfo.totalTripDistance) {
+            text = bikeRideInfo.totalTripDistance?.toString() ?: ""
+        }
 
         AlertDialog(
             onDismissRequest = { showDistanceDialog = false },
@@ -139,7 +142,6 @@ fun BikePathWithControls(
             confirmButton    = {
                 TextButton(onClick = {
                     text.toFloatOrNull()?.let { entered ->
-                        totalDistance = entered
                         onBikeEvent(BikeEvent.SetTotalDistance(entered))
                     }
                     showDistanceDialog = false
