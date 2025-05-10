@@ -81,7 +81,7 @@ class BikeViewModel @Inject constructor(
     private val _uiPathDistance  = MutableStateFlow<Float?>(null)
 
     // 4) Single source‐of‐truth UI state
-    private val _uiState         = MutableStateFlow<BikeUiState>(BikeUiState.Loading)
+    private val _uiState         = MutableStateFlow<BikeUiState>(BikeUiState.WaitingForGps)
     val uiState: StateFlow<BikeUiState> = _uiState
 
     init {

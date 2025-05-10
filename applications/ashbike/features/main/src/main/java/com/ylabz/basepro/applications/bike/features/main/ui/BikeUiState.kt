@@ -3,6 +3,8 @@ package com.ylabz.basepro.applications.bike.features.main.ui
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 
 sealed class BikeUiState {
+    /** we haven't yet gotten our first fix */
+    object WaitingForGps : BikeUiState()
     object Loading : BikeUiState()
     object Idle    : BikeUiState()
     data class Success(val bikeData: BikeRideInfo) : BikeUiState()

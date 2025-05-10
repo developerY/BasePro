@@ -60,6 +60,9 @@ dependencies {
     implementation(project(":core:data"))
     debugImplementation(libs.androidx.ui.tooling)
 
+    // Permissions
+    implementation(libs.google.accompanist.permissions)
+
     // Icons
     implementation(libs.androidx.material.icons.extended)
 
