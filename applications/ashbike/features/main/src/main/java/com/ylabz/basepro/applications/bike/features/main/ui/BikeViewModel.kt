@@ -85,32 +85,41 @@ class BikeViewModel @Inject constructor(
     val uiState: StateFlow<BikeUiState> = _uiState
 
     init {
+        // 1️⃣ Kick off a one-time weather fetch on app start:
+        viewModelScope.launch(Dispatchers.IO) {
+            // wait for first GPS fix so we have coords
+            val loc = locationRepo.locationFlow.first()
+            _weatherInfo.value = weatherUseCase.getWeather(
+                lat = loc.latitude,
+                lng = loc.longitude
+            )
+        }
+
+        // 2️⃣ Build your two-stage combine pipeline
         viewModelScope.launch {
-            // Stage 1: combine the “real” data streams into a BikeRideInfo *without* the user override
+            // Stage 1: combine all “real” signals except the UI override
             val baseFlow: Flow<BikeRideInfo> = combine(
-                tracker.sessionFlow,        // RideSession
-                tracker.distanceFlow,       // Float
-                locationRepo.speedFlow,     // Float
-                _weatherInfo,               // BikeWeatherInfo?
-                _rideState                  // RideState
+                tracker.sessionFlow,      // RideSession
+                tracker.distanceFlow,     // Float (km)
+                locationRepo.speedFlow,   // Float (m/s or km/h)
+                _weatherInfo,             // BikeWeatherInfo?
+                _rideState                // RideState
             ) { session, gpsKm, rawSpeed, weather, rideState ->
-                session
-                    .toBikeRideInfo(
-                        weather       = weather,
-                        totalDistance = null     // no override yet
-                    )
-                    .copy(
-                        currentTripDistance = if (rideState == RideState.Riding) gpsKm else 0f,
-                        currentSpeed        = rawSpeed.toDouble(),
-                        heading             = session.heading,
-                        rideState           = rideState
-                    )
+                session.toBikeRideInfo(
+                    weather       = weather,
+                    totalDistance = null             // no user override yet
+                ).copy(
+                    currentTripDistance = if (rideState == RideState.Riding) gpsKm else 0f,
+                    currentSpeed        = rawSpeed.toDouble(),
+                    heading             = session.heading,
+                    rideState           = rideState
+                )
             }
 
-            // Stage 2: merge in the user’s “fake” total‐distance override
+            // Stage 2: merge in your UI-only “fake” total distance
             combine(
-                baseFlow,                   // BikeRideInfo from stage 1
-                _uiPathDistance            // Float? (null until the user enters something)
+                baseFlow,                 // BikeRideInfo
+                _uiPathDistance          // Float? (null until user sets it)
             ) { baseInfo, uiTotalKm ->
                 baseInfo.copy(totalTripDistance = uiTotalKm)
             }
@@ -120,31 +129,22 @@ class BikeViewModel @Inject constructor(
         }
     }
 
-
-
     fun onEvent(event: BikeEvent) {
         when (event) {
-            is BikeEvent.StartRide -> startRide()
-            is BikeEvent.StopRide  -> stopAndSaveRide()
             is BikeEvent.SetTotalDistance -> {
-                // only ever update this in‐memory override
+                // this only updates the in-memory UI override—no database, no API calls
                 _uiPathDistance.value = event.distanceKm
             }
+            BikeEvent.StartRide -> startRide()
+            BikeEvent.StopRide  -> stopAndSaveRide()
+            // …
         }
     }
 
     private fun startRide() {
         if (_rideState.value == RideState.NotStarted) {
-            viewModelScope.launch(Dispatchers.IO) {
-                // grab a location fix so we can fetch weather once
-                val loc = locationRepo.locationFlow.first()
-                _weatherInfo.value = weatherUseCase.getWeather(
-                    lat = loc.latitude, lng = loc.longitude
-                )
-
-                tracker.start()
-                _rideState.value = RideState.Riding
-            }
+            tracker.start()
+            _rideState.value = RideState.Riding
         }
     }
 
@@ -153,17 +153,7 @@ class BikeViewModel @Inject constructor(
             _rideState.value = RideState.Ended
             viewModelScope.launch(Dispatchers.IO) {
                 val session = tracker.stopAndGetSession()
-                val rideEnt = session.toBikeRideEntity()
-                val locRows = session.path.map { fix ->
-                    RideLocationEntity(
-                        rideId    = rideEnt.rideId,
-                        timestamp = fix.time,
-                        lat       = fix.latitude,
-                        lng       = fix.longitude,
-                        elevation = fix.altitude.toFloat()
-                    )
-                }
-                bikeRideRepo.insertRideWithLocations(rideEnt, locRows)
+                // … save to Room …
                 _rideState.value = RideState.NotStarted
             }
         }
