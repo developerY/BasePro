@@ -12,19 +12,31 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.take
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
 // 1) A new WeatherUseCase to fetch & hold current weather once
+@Singleton
 class WeatherUseCase @Inject constructor(
-private val weatherRepo: WeatherRepo
+    private val weatherRepo: WeatherRepo
 ) {
+    // keep one cached result per app run
+    private var lastWeather: BikeWeatherInfo? = null
+
     /** One‐shot fetch of BikeWeatherInfo or null on error */
     suspend fun getWeather(lat: Double, lng: Double): BikeWeatherInfo? {
-        return runCatching {
+        // if we’ve already fetched once, just return it
+        lastWeather?.let { return it }
+
+        // otherwise fetch and cache
+        val fetched = runCatching {
             weatherRepo
                 .openCurrentWeatherByCoords(lat, lng)
                 ?.toBikeWeatherInfo()
         }.getOrNull()
+
+        lastWeather = fetched
+        return fetched
     }
 }
 

@@ -65,123 +65,70 @@ import kotlin.concurrent.timer
 
 @HiltViewModel
 class BikeViewModel @Inject constructor(
-    @HighPower private val locationRepo: UnifiedLocationRepository,
+    @HighPower    private val locationRepo: UnifiedLocationRepository,
     private val tracker: RideSessionUseCase,
     private val weatherUseCase: WeatherUseCase,
     private val bikeRideRepo: BikeRideRepo
 ) : ViewModel() {
 
-    private val _rideState   = MutableStateFlow(RideState.NotStarted)
-    private val _weatherInfo = MutableStateFlow<BikeWeatherInfo?>(null)
+    // 1) What ride‐state are we in? (NotStarted / Riding / Ended)
+    private val _rideState       = MutableStateFlow(RideState.NotStarted)
 
+    // 2) One‐shot weather at ride start (null until we fetch it)
+    private val _weatherInfo     = MutableStateFlow<BikeWeatherInfo?>(null)
 
-    // 1a) the raw, auto-distance (from your tracker)
-    private val autoDistance = tracker.distanceFlow
+    // 3) In‐memory UI override for “total distance” (never saved)
+    private val _uiPathDistance  = MutableStateFlow<Float?>(null)
 
-    // 1b) the user’s typed override
-    private val _manualDistance = MutableStateFlow<Float?>(null)
-    // If user has entered a value, use that; otherwise fall back to autoDistance
-    private val totalDistanceFlow: Flow<Float> =
-        _manualDistance
-            .flatMapLatest { manually ->
-                if (manually != null) flowOf(manually)
-                else autoDistance
-            }
-            .distinctUntilChanged()
-
-    // seed with a zeroed-out "empty" ride
-    private val initialRideInfo = RideSession(
-        startTimeMs     = 0L,
-        path            = emptyList(),
-        elapsedMs       = 0L,
-        totalDistanceKm = 0f,
-        averageSpeedKmh = 0.0,
-        maxSpeedKmh     = 0f,
-        elevationGainM  = 0f,
-        elevationLossM  = 0f,
-        caloriesBurned  = 0,
-        heading         = 0f
-    ).toBikeRideInfo(
-        weather       = null,
-        totalDistance = null
-    )
-
-
-    private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.Success(initialRideInfo))
-    val uiState: StateFlow<BikeUiState> = _uiState.asStateFlow()
+    // 4) Single source‐of‐truth UI state
+    private val _uiState         = MutableStateFlow<BikeUiState>(BikeUiState.Loading)
+    val uiState: StateFlow<BikeUiState> = _uiState
 
     init {
         viewModelScope.launch {
-
-            // first wait for the initial fix & fetch weather
-            val loc = locationRepo.locationFlow.first()
-            _weatherInfo.value = weatherUseCase.getWeather(loc.latitude, loc.longitude)
-
-            // then start your infinite combine/collect loop
-            combine(
-                tracker.sessionFlow,        // avg, elevation, calories, heading
-                totalDistanceFlow,
-                locationRepo.speedFlow,     // raw instantaneous speed (m/s or km/h)
-                _weatherInfo,
-                _rideState
-            ) { session,totalDist, rawSpeed, weather, rideState ->
-
-                // Build the base info from your session
-                val base = session
-                    .toBikeRideInfo(weather = weather, totalDistance = null)
+            // Stage 1: combine the “real” data streams into a BikeRideInfo *without* the user override
+            val baseFlow: Flow<BikeRideInfo> = combine(
+                tracker.sessionFlow,        // RideSession
+                tracker.distanceFlow,       // Float
+                locationRepo.speedFlow,     // Float
+                _weatherInfo,               // BikeWeatherInfo?
+                _rideState                  // RideState
+            ) { session, gpsKm, rawSpeed, weather, rideState ->
+                session
+                    .toBikeRideInfo(
+                        weather       = weather,
+                        totalDistance = null     // no override yet
+                    )
                     .copy(
-                        // Always feed in the live speed, regardless of state:
+                        currentTripDistance = if (rideState == RideState.Riding) gpsKm else 0f,
                         currentSpeed        = rawSpeed.toDouble(),
                         heading             = session.heading,
-                        rideState           = rideState,
-                        // Lift in the live distance only once riding
-                        currentTripDistance = if (rideState == RideState.NotStarted) 0f else totalDist
+                        rideState           = rideState
                     )
+            }
 
-                // Reset only trip‐related metrics pre‐start:
-                if (rideState == RideState.NotStarted) {
-                    base.copy(
-                        averageSpeed   = 0.0,
-                        maxSpeed       = 0.0,
-                        elevationGain  = 0.0,
-                        elevationLoss  = 0.0,
-                        caloriesBurned = 0,
-                        rideDuration   = "0 m"
-                    )
-                } else base
+            // Stage 2: merge in the user’s “fake” total‐distance override
+            combine(
+                baseFlow,                   // BikeRideInfo from stage 1
+                _uiPathDistance            // Float? (null until the user enters something)
+            ) { baseInfo, uiTotalKm ->
+                baseInfo.copy(totalTripDistance = uiTotalKm)
             }
-            // ► map BikeRideInfo → BikeUiState
-            .map<BikeRideInfo, BikeUiState> { info ->
-                BikeUiState.Success(info)
-            }
-            // ► now catch can emit BikeUiState.Error
-            .catch { e ->
-                emit(BikeUiState.Error(e.localizedMessage ?: "Unknown error"))
-            }
-            // ► collect BikeUiState
-            .collect { uiState ->
-                _uiState.value = uiState
-            }
+                .map<BikeRideInfo, BikeUiState> { BikeUiState.Success(it) }
+                .catch { e -> emit(BikeUiState.Error(e.message ?: "Unknown error")) }
+                .collect { _uiState.value = it }
         }
     }
 
 
 
-
     fun onEvent(event: BikeEvent) {
         when (event) {
-            is BikeEvent.StartRide        -> startRide()
-            is BikeEvent.StopRide         -> stopAndSaveRide()
+            is BikeEvent.StartRide -> startRide()
+            is BikeEvent.StopRide  -> stopAndSaveRide()
             is BikeEvent.SetTotalDistance -> {
-                _uiState.update { state ->
-                    if (state is BikeUiState.Success) {
-                        state.copy(
-                            bikeData = state.bikeData.copy(
-                                totalTripDistance = event.distanceKm
-                            )
-                        )
-                    } else state
-                }
+                // only ever update this in‐memory override
+                _uiPathDistance.value = event.distanceKm
             }
         }
     }
@@ -189,6 +136,12 @@ class BikeViewModel @Inject constructor(
     private fun startRide() {
         if (_rideState.value == RideState.NotStarted) {
             viewModelScope.launch(Dispatchers.IO) {
+                // grab a location fix so we can fetch weather once
+                val loc = locationRepo.locationFlow.first()
+                _weatherInfo.value = weatherUseCase.getWeather(
+                    lat = loc.latitude, lng = loc.longitude
+                )
+
                 tracker.start()
                 _rideState.value = RideState.Riding
             }
@@ -200,17 +153,17 @@ class BikeViewModel @Inject constructor(
             _rideState.value = RideState.Ended
             viewModelScope.launch(Dispatchers.IO) {
                 val session = tracker.stopAndGetSession()
-                val entity  = session.toBikeRideEntity()
-                val locs    = session.path.map { loc ->
+                val rideEnt = session.toBikeRideEntity()
+                val locRows = session.path.map { fix ->
                     RideLocationEntity(
-                        rideId    = entity.rideId,
-                        timestamp = loc.time,
-                        lat       = loc.latitude,
-                        lng       = loc.longitude,
-                        elevation = loc.altitude.toFloat()
+                        rideId    = rideEnt.rideId,
+                        timestamp = fix.time,
+                        lat       = fix.latitude,
+                        lng       = fix.longitude,
+                        elevation = fix.altitude.toFloat()
                     )
                 }
-                bikeRideRepo.insertRideWithLocations(entity, locs)
+                bikeRideRepo.insertRideWithLocations(rideEnt, locRows)
                 _rideState.value = RideState.NotStarted
             }
         }
