@@ -59,6 +59,14 @@ data class LatLngWithElev(
     val elevation: Float
 )
 
+data class GpsFix(
+    val lat: Double,
+    val lng: Double,
+    val elevation: Float,
+    val timeMs: Long,
+    val speedMps: Float
+)
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -125,12 +133,22 @@ fun RideDetailScreen(
 
         // new: pair each LatLng with its elevation (default 0f if null)
         val elevPoints = remember(rideWithLocs.locations) {
-            rideWithLocs.locations.map {
+            rideWithLocs.locations.map { locEnt ->
                 LatLngWithElev(
-                    latLng   = LatLng(it.lat, it.lng),
-                    elevation = it.elevation ?: 0f
+                    latLng      = LatLng(locEnt.lat, locEnt.lng),
+                    elevation   = locEnt.elevation ?: 0f,
                 )
             }
+        }
+
+        val fixes: List<GpsFix> = rideWithLocs.locations.map { ent ->
+            GpsFix(
+                lat       = ent.lat,
+                lng       = ent.lng,
+                elevation = ent.elevation ?: 0f,
+                speedMps  = 0f,
+                timeMs    = ent.timestamp
+            )
         }
 
         // 3) Map in a rounded, elevated card
@@ -145,7 +163,12 @@ fun RideDetailScreen(
             shape     = RoundedCornerShape(12.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
-            MapPathScreen(locations = path, placeName = placeName?: "")
+            MapPathScreen(
+                fixes = fixes,
+                placeName = placeName?: ""
+            )
+
+        //locations = path, placeName = placeName?: "")
             /*GoogleMap(
                 modifier             = Modifier.fillMaxSize(),//.matchParentSize(),
                 cameraPositionState  = cameraState,
