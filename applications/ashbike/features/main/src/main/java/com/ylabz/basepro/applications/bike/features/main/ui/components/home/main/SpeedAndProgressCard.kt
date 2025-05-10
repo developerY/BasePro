@@ -81,7 +81,14 @@ fun SpeedAndProgressCard(
             .height(400.dp)
             .shadow(4.dp, shape = MaterialTheme.shapes.large),
         shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1976D2))
+        colors = CardDefaults.cardColors(containerColor =
+            if (bikeRideInfo.rideState == RideState.Riding)
+                Color(0xFF1976D2)
+            else
+                Color.Gray
+
+
+        )
     ) {
         Column(
             modifier = Modifier
