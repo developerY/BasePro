@@ -472,6 +472,24 @@ class HealthSessionManager(private val context: Context) {
         return healthConnectClient.readRecords(request).records
     }
 
+    /**
+     * Reads the most recent HeartRateRecord sample, if any.
+     */
+    suspend fun readLatestHeartRateSample(): HeartRateRecord.Sample? {
+        // 1) Read the latest record (we only need the most recent record)
+        val request = ReadRecordsRequest(
+            recordType       = HeartRateRecord::class,
+            timeRangeFilter  = TimeRangeFilter.before(Instant.now()),
+            ascendingOrder   = false,     // get newest first
+            pageSize         = 1          // only need one record
+        )
+        val response = healthConnectClient.readRecords(request)
+        val record = response.records.firstOrNull() ?: return null
+
+        // 2) Extract the last Sample from that record’s series
+        return record.samples.maxByOrNull { it.time }
+    }
+
     private fun buildHeartRateSeries(
         sessionStartTime: ZonedDateTime,
         sessionEndTime: ZonedDateTime
