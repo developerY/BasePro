@@ -1,9 +1,48 @@
 AshBike is the best bike computer money can’t buy—because it’s free (and ad-free) forever. 
-Built for daily commuters, it strips away everything you don’t need—no maps, no clutter—just the 
+Built for daily commuters, it strips away everything you don’t need— maps, no clutter—just the 
 live metrics you care about. Your ride data seamlessly flows into Google Health Connect when you’re done, 
 and if you ever delete the app (or an individual ride), it leaves absolutely no trace behind. 
 By harnessing every on-device sensor and feature, AshBike turns your phone into the ultimate, 
 high-precision cycling companion.
+
+
+---
+
+**AshBike**
+*The ultimate free, ad-free bike computer—trusted by commuters everywhere.*
+
+**Why you’ll love it:**
+
+* **Live Speedometer & Compass**
+  Instantaneous speed in km/h (or m/s), plus a dynamic compass overlay so you always know your heading.
+* **One-Shot Weather Fetch**
+  Automatic weather conditions (temperature, humidity, wind speed & direction) recorded at ride start—no constant API calls, 1 000 calls/day stays in the bank.
+* **Health Connect Integration**
+  Sync your ride straight into Google Health Connect as a “Biking” activity, including heart-rate if you wear a monitor.
+* **Real-Time Ride Metrics**
+  Track distance, duration, average & max speeds, elevation gain/loss, and calories burned—all updating live in your dashboard.
+* **Custom Progress Indicator**
+  Set an arbitrary “total trip” goal and watch the bike icon glide along a progress bar—perfect for planning your route home.
+* **Smart Trip Map**
+  No Google Maps required—every ride’s path is drawn on a subtle grid with:
+
+    * **Scale bar** in meters or kilometers
+    * **North arrow + “N” label** for orientation
+    * **Start/stop markers**
+    * **Color-coded segments** showing your speed (slow → fast gradient)
+* **Clean, Offline-First Design**
+  No hidden trackers or data “droppings”—uninstall anytime and your phone is back to factory clean.
+* **Sync & Delete Safeguard**
+  One-tap sync button on each saved trip; protected “trash” icon warns you if you try to delete before syncing.
+* **Extendable Platform**
+  NFC pairing, e-bike battery & motor stats, haptic interval alerts, shareable summaries, homescreen widget… and more features planned.
+* **Free Forever, No Ads**
+  We believe the best bike computer is the one you never have to pay for.
+
+**Get AshBike today** and turn your Android phone into the best bike computer money can’t buy—because it’s free. 🚴‍♂️⏱️🌤️📈
+
+
+
 
 Absolutely—I think it nails the vision. It’s clear, punchy, and highlights everything that sets AshBike apart:
 

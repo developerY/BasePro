@@ -51,7 +51,7 @@ fun MapPathScreen(
     backgroundGradient: Brush = Brush.verticalGradient(
         colors = listOf(Color(0xFFC6E2CC), Color(0xFFA8D5BA))
     ),
-    gridColor: Color = Color.White.copy(alpha = 0.15f),
+    gridColor: Color = Color.White,//.copy(alpha = 0.15f),
     slowColor: Color = Color(0xFFFFEB3B),//Color.Gray,                  // your slow‐speed color
     fastColor: Color = Color(0xFFBB190C),//MaterialTheme.colorScheme.primary, // your fast‐speed color
     strokeWidth: Float = 6f,
