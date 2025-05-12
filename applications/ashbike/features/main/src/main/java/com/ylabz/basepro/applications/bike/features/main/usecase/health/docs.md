@@ -91,8 +91,7 @@ UI  --(LaunchedEffect RequestPermissions)-->  HealthViewModel.onEvent(RequestPer
       ```kotlin
       BikeDashboardContent(
         bikeRideInfo = bikeUiState.bikeData,
-        heartRate     = healthUiState.healthData.lastOrNull()?.avgHeartRate,
-        …
+        heartRate     = healthUiState.healthData.lastOrNull()?.avgHeartRate
       )
       ```
 
@@ -133,4 +132,111 @@ flowchart LR
 
 ---
 
-By separating concerns—HealthSessionManager for raw API, HealthViewModel for permission & data orchestration, and Compose screens for rendering—the app remains modular, testable, and maintainable. You can extend this same pattern to steps, sleep, weight, or any other Health Connect data type.
+By separating concerns—HealthSessionManager for raw API, HealthViewModel for permission & data orchestration, 
+and Compose screens for rendering—the app remains modular, testable, and maintainable. 
+You can extend this same pattern to steps, sleep, weight, or any other Health Connect data type.
+---
+**Health Connect Integration Overview**
+
+This document explains how the app integrates with Google Health Connect to read and write exercise 
+and biometric data—while remaining fully functional when Health Connect is unavailable or the user declines permissions.
+
+---
+
+## 1. Detecting Availability
+
+**HealthSessionManager** holds a `MutableStateFlow<Int> availability` which is initialized by calling:
+
+```kotlin
+_availability = MutableStateFlow(SDK_UNAVAILABLE)
+init { checkAvailability() }
+fun checkAvailability() {
+  _availability.value = HealthConnectClient.getSdkStatus(context)
+}
+```
+
+* When `availability != SDK_AVAILABLE`, Health Connect isn’t installed or supported.
+
+---
+
+## 2. Guarding ViewModel Logic
+
+In **HealthViewModel**:
+
+1. **On init**: `checkHealthConnectAvailability()` sets UI state to `NotAvailable` if unavailable.
+2. **On events**: permission checks and reads only proceed when `availability == SDK_AVAILABLE`.
+3. Errors or missing permissions emit `HealthUiState.PermissionsRequired` or `HealthUiState.Error`.
+
+```kotlin
+if (healthSessionManager.availability.value != SDK_AVAILABLE) {
+  _uiState.value = HealthUiState.NotAvailable
+  return
+}
+```
+
+---
+
+## 3. Permissions Flow
+
+* Define read/write sets for ExerciseSession, Steps, Distance, HeartRate, Calories, etc.
+* Use `PermissionController.createRequestPermissionResultContract()` in ViewModel to launch permission UI.
+* `hasAllPermissions()` gate read/write calls.
+
+```kotlin
+if (!healthSessionManager.hasAllPermissions(requiredSet)) {
+  _uiState.value = HealthUiState.PermissionsRequired("Permissions needed")
+  return
+}
+```
+
+---
+
+## 4. Composable UI Integration
+
+In **BikeUiRoute** (and downstream dashboard):
+
+1. Collect both `healthSessionManager.availability` and `HealthUiState` flows.
+2. Render heart‐rate card only when:
+
+    * `availability == SDK_AVAILABLE`
+    * `healthUiState is HealthUiState.Success`
+
+```kotlin
+val hcAvail by healthVM.healthSessionManager.availability.collectAsState()
+val hcState by healthVM.uiState.collectAsState()
+
+// inside dashboard:
+if (hcAvail == SDK_AVAILABLE && hcState is HealthUiState.Success) {
+  HeartRateCard(bpm = (hcState as Success).healthData.avgHeartRate)
+} else {
+  HeartRateCard(bpm = null) // placeholder
+}
+```
+
+This ensures the rest of the app (GPS speed, distance, notes, rides list) continues unaffected when Health Connect is missing or denied.
+
+---
+
+## 5. Summary: Seamless Fallback
+
+* **Core bike‐computer** features never depend on Health Connect.
+* **Health Connect** is treated as an *optional* add‐on:
+
+    * Availability detection.
+    * Permission gating.
+    * Conditional UI rendering.
+* Users without Health Connect still enjoy a complete, free, ad‐free bike computer.
+
+---
+
+*End of Health Connect Integration Overview*
+
+### types
+https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/package-summar
+
+
+Read Data
+https://medium.com/@yusufyildiz0441/integrating-healthconnect-to-access-exercise-data-in-mobile-apps-2ee91f500fac
+
+Write Data
+

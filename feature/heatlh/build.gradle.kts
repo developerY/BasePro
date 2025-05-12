@@ -60,7 +60,7 @@ dependencies {
     // kapt(libs.hilt.compiler)
 
     // Health Connect
-    implementation(libs.healthConnect)
+    implementation(libs.androidx.health.connect.client)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

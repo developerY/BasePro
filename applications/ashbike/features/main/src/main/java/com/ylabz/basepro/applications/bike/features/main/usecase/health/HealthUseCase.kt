@@ -44,10 +44,6 @@ class HealthUseCase @Inject constructor(
         healthManager.writeExerciseSession(
             start    = start,
             end      = end,
-            type     = ExerciseSessionRecord.EXERCISE_TYPE_BIKING,
-            title    = "Commute Bike Ride",
-            distance = distanceMeters,
-            heartSamples = heartRateSamples
         )
     }
 

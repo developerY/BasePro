@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.ylabz.basepro.applications.bike.features.main"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 31
@@ -73,7 +73,7 @@ dependencies {
     // kapt(libs.hilt.compiler)
 
     // Health Connect
-    implementation(libs.healthConnect)
+    implementation(libs.androidx.health.connect.client)
 
     // maps
     implementation(libs.google.maps.compose)

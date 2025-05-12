@@ -45,7 +45,7 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
 
-    implementation(libs.healthConnect)
+    implementation(libs.androidx.health.connect.client)
 
     //maps
     implementation(libs.google.maps.compose)

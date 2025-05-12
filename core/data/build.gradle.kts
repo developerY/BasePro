@@ -83,7 +83,7 @@ dependencies {
     implementation(libs.apollo.graphql.cache)
 
     // Health Connect
-    implementation(libs.healthConnect)
+    implementation(libs.androidx.health.connect.client)
 
     // maps
     implementation(libs.google.maps.compose)

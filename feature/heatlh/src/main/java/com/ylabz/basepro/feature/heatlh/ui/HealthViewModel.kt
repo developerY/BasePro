@@ -9,7 +9,6 @@ import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.HealthConnectFeatures
-import androidx.health.connect.client.feature.ExperimentalFeatureAvailabilityApi
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.permission.HealthPermission.Companion.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND
 import androidx.health.connect.client.records.DistanceRecord
@@ -172,7 +171,6 @@ class HealthViewModel @Inject constructor(
         return weightInputs
     }
 
-    @OptIn(ExperimentalFeatureAvailabilityApi::class)
     private suspend fun tryWithPermissionsCheck(block: suspend () -> Unit) {
         permissionsGranted.value = healthSessionManager.hasAllPermissions(permissions)
         backgroundReadAvailable.value = healthSessionManager.isFeatureAvailable(

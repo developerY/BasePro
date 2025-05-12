@@ -69,7 +69,7 @@ dependencies {
     // kapt(libs.hilt.compiler)
 
     // Health Connect
-    implementation(libs.healthConnect)
+    implementation(libs.androidx.health.connect.client)
 
     implementation(libs.play.services.wearable)
     implementation(libs.androidx.ui)

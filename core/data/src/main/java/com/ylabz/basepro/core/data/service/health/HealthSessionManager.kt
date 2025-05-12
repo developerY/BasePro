@@ -3,6 +3,8 @@ package com.ylabz.basepro.core.data.service.health
 /**
  * Manager for accessing and aggregating health data from Health Connect.
  */
+import android.R.attr.end
+import android.R.attr.startOffset
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -14,8 +16,8 @@ import androidx.health.connect.client.HealthConnectClient.Companion.SDK_UNAVAILA
 import androidx.health.connect.client.HealthConnectFeatures
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.changes.Change
-import androidx.health.connect.client.feature.ExperimentalFeatureAvailabilityApi
 import androidx.health.connect.client.records.DistanceRecord
+import androidx.health.connect.client.records.ExerciseRouteResult
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.Record
@@ -24,6 +26,8 @@ import androidx.health.connect.client.records.SpeedRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.TotalCaloriesBurnedRecord
 import androidx.health.connect.client.records.WeightRecord
+import androidx.health.connect.client.records.metadata.Device
+import androidx.health.connect.client.records.metadata.Metadata
 import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.request.ChangesTokenRequest
 import androidx.health.connect.client.request.ReadRecordsRequest
@@ -44,6 +48,7 @@ import kotlinx.coroutines.flow.flow
 import java.io.IOException
 import java.io.InvalidObjectException
 import java.time.Instant
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import kotlin.random.Random
@@ -148,36 +153,38 @@ class HealthSessionManager(private val context: Context) {
     ): InsertRecordsResponse {
         return healthConnectClient.insertRecords(
             listOf(
-                ExerciseSessionRecord(
-                    startTime = start.toInstant(),
-                    startZoneOffset = start.offset,
-                    endTime = end.toInstant(),
-                    endZoneOffset = end.offset,
-                    exerciseType = ExerciseSessionRecord.EXERCISE_TYPE_RUNNING,
-                    title = "My Run #${Random.nextInt(0, 60)}"
-                ),
-                StepsRecord(
-                    startTime = start.toInstant(),
-                    startZoneOffset = start.offset,
-                    endTime = end.toInstant(),
-                    endZoneOffset = end.offset,
-                    count = (1000 + 1000 * Random.nextInt(3)).toLong()
-                ),
-                DistanceRecord(
-                    startTime = start.toInstant(),
-                    startZoneOffset = start.offset,
-                    endTime = end.toInstant(),
-                    endZoneOffset = end.offset,
-                    distance = Length.meters((1000 + 100 * Random.nextInt(20)).toDouble())
-                ),
-                TotalCaloriesBurnedRecord(
-                    startTime = start.toInstant(),
-                    startZoneOffset = start.offset,
-                    endTime = end.toInstant(),
-                    endZoneOffset = end.offset,
-                    energy = Energy.calories(140 + (Random.nextInt(20)) * 0.01)
-                )
-            ) + buildHeartRateSeries(start, end)
+                   StepsRecord(
+                       startTime = start.toInstant(),
+                       startZoneOffset = start.offset,
+                       endTime = end.toInstant(),
+                       endZoneOffset = end.offset,
+                       count = (1000 + 1000 * Random.nextInt(3)).toLong(),
+                       metadata = Metadata.autoRecorded(
+                           device = Device(type = Device.TYPE_WATCH)
+                       )
+
+                   ),
+                   DistanceRecord(
+                       startTime = start.toInstant(),
+                       startZoneOffset = start.offset,
+                       endTime = end.toInstant(),
+                       endZoneOffset = end.offset,
+                       distance = Length.meters((1000 + 100 * Random.nextInt(20)).toDouble()),
+                       metadata = Metadata.autoRecorded(
+                           device = Device(type = Device.TYPE_WATCH)
+                       )
+                   ),
+                   TotalCaloriesBurnedRecord(
+                       startTime = start.toInstant(),
+                       startZoneOffset = start.offset,
+                       endTime = end.toInstant(),
+                       endZoneOffset = end.offset,
+                       energy = Energy.calories(140 + (Random.nextInt(20)) * 0.01),
+                       metadata = Metadata.autoRecorded(
+                           device = Device(type = Device.TYPE_WATCH)
+                       )
+                   )
+               ) + buildHeartRateSeries(start, end)
         )
     }
 
@@ -290,7 +297,10 @@ class HealthSessionManager(private val context: Context) {
                 startZoneOffset = bedtime.offset,
                 endTime = wakeUp.toInstant(),
                 endZoneOffset = wakeUp.offset,
-                stages = generateSleepStages(bedtime, wakeUp)
+                stages = generateSleepStages(bedtime, wakeUp),
+                metadata = Metadata.autoRecorded(
+                        device = Device(type = Device.TYPE_WATCH)
+                )
             )
             records.add(sleepSession)
         }
@@ -507,10 +517,13 @@ class HealthSessionManager(private val context: Context) {
             startZoneOffset = sessionStartTime.offset,
             endTime = sessionEndTime.toInstant(),
             endZoneOffset = sessionEndTime.offset,
-            samples = samples)
+            samples = samples,
+            metadata = Metadata.autoRecorded(
+                device = Device(type = Device.TYPE_WATCH)
+            )
+        )
     }
 
-    @OptIn(ExperimentalFeatureAvailabilityApi::class)
     fun isFeatureAvailable(feature: Int): Boolean{
         return healthConnectClient
             .features
