@@ -1,11 +1,14 @@
 package com.ylabz.basepro.feature.heatlh.ui
 
+import android.app.Application
+import android.content.Context
 import android.os.RemoteException
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.HealthConnectFeatures
@@ -20,7 +23,9 @@ import androidx.health.connect.client.records.WeightRecord
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.data.service.health.HealthSessionManager
+import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,7 +43,8 @@ import kotlin.random.Random
 
 @HiltViewModel
 class HealthViewModel @Inject constructor(
-    val healthSessionManager: HealthSessionManager
+    @ApplicationContext private val appCtx: Context,
+    val healthSessionManager: HealthSessionManager,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HealthUiState>(HealthUiState.Uninitialized)
@@ -124,7 +130,7 @@ class HealthViewModel @Inject constructor(
 
     fun initialLoad() {
         Log.d("HealthViewModel", "initialLoad() called") // Debug statement
-        //Log.d("HC onEvent", "SDK status = ${HealthConnectClient.getSdkStatus(context)}")
+        Log.d("HC onEvent", "SDK status = ${HealthConnectClient.getSdkStatus(appCtx)}")
 
         viewModelScope.launch {
             Log.d("HealthViewModel", "viewModelScope.launch called") // Debug statement
@@ -156,9 +162,12 @@ class HealthViewModel @Inject constructor(
         val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
         val now = Instant.now()
         val endofWeek = startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
+        val lastWeek = startOfDay.toInstant().minus(7, ChronoUnit.DAYS)
+        healthSessionManager.writeExerciseSessionMark()
         val sessionInputs = healthSessionManager.readExerciseSessions(startOfDay.toInstant(), now)
-        print("weightInputs: $sessionInputs")
-        Log.d("TAG","${healthSessionManager.readWeightInputs(startOfDay.toInstant(), now)}")
+        Log.d("TAG","Did we get anything")
+        Log.d("TAG","${healthSessionManager.readExerciseSessions(lastWeek, now).size}")
+        Log.d("TAG","${healthSessionManager.readExerciseSessions(startOfDay.toInstant(), now).size}")
         return sessionInputs
     }
 
@@ -206,6 +215,7 @@ class HealthViewModel @Inject constructor(
     }
 
     fun insertExerciseSession() {
+        Log.d("HealthViewModel", "insertExerciseSession() called") // Debug statement
         viewModelScope.launch {
             tryWithPermissionsCheck {
                 val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)

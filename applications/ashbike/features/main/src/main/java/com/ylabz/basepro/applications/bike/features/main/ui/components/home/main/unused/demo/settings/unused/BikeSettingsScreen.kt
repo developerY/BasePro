@@ -27,7 +27,7 @@ import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.core.model.health.HealthScreenState
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
-import com.ylabz.basepro.feature.heatlh.ui.components.HealthStartScreen
+import com.ylabz.basepro.feature.heatlh.ui.components.HealthStartScreenFull
 import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.nfc.ui.components.NfcScanScreen
@@ -182,7 +182,7 @@ fun BikeSettingsScreenEx(
                     }
 
                     is HealthUiState.Success -> {
-                        HealthStartScreen(
+                        HealthStartScreenFull(
                             modifier = modifier,
                             healthPermState = bundledState,
                             sessionsList = healthUiState.healthData,

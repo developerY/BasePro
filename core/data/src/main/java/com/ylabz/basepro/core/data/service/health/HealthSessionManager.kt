@@ -5,11 +5,13 @@ package com.ylabz.basepro.core.data.service.health
  */
 import android.R.attr.end
 import android.R.attr.startOffset
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources.NotFoundException
 import android.os.Build
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.HealthConnectClient.Companion.SDK_UNAVAILABLE
@@ -47,6 +49,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import java.io.IOException
 import java.io.InvalidObjectException
+import java.time.Duration
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -54,6 +57,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.random.Random
 import kotlin.reflect.KClass
 
+//finished/src/main/java/com/example/healthconnect/codelab/data/HealthConnectManager.kt
 // The minimum android level that can use Health Connect
 const val MIN_SUPPORTED_SDK = Build.VERSION_CODES.O_MR1
 
@@ -151,6 +155,7 @@ class HealthSessionManager(private val context: Context) {
         start: ZonedDateTime,
         end: ZonedDateTime
     ): InsertRecordsResponse {
+        Log.d("HealthSessionManager", "Writing exercise session")
         return healthConnectClient.insertRecords(
             listOf(
                    StepsRecord(
@@ -187,6 +192,114 @@ class HealthSessionManager(private val context: Context) {
                ) + buildHeartRateSeries(start, end)
         )
     }
+
+
+
+
+    /**
+     * TODO: Writes an [ExerciseSessionRecord] to Health Connect.
+     */
+    @SuppressLint("RestrictedApi")
+    suspend fun writeExerciseSessionMark(){//start: ZonedDateTime, end: ZonedDateTime) {
+        val start = ZonedDateTime.now()
+        val sessionStartTime = Instant.now()
+        val sessionDuration = Duration.ofMinutes(20)
+        val sessionEndTime = sessionStartTime.plus(sessionDuration)
+        val end = start.plus(sessionDuration)
+        healthConnectClient.insertRecords(
+            listOf(
+                ExerciseSessionRecord(
+                    metadata = Metadata.manualEntry(),
+                    startTime = start.toInstant(),
+                    startZoneOffset = start.offset,
+                    endTime = end.toInstant(),
+                    endZoneOffset = end.offset,
+                    exerciseType = ExerciseSessionRecord.EXERCISE_TYPE_RUNNING,
+                    title = "My Run #${Random.nextInt(0, 60)}"
+                ),
+                StepsRecord(
+                    metadata = Metadata.manualEntry(),
+                    startTime = start.toInstant(),
+                    startZoneOffset = start.offset,
+                    endTime = end.toInstant(),
+                    endZoneOffset = end.offset,
+                    count = (1000 + 1000 * Random.nextInt(3)).toLong()
+                ),
+                TotalCaloriesBurnedRecord(
+                    metadata = Metadata.manualEntry(),
+                    startTime = start.toInstant(),
+                    startZoneOffset = start.offset,
+                    endTime = end.toInstant(),
+                    endZoneOffset = end.offset,
+                    energy = Energy.calories((140 + Random.nextInt(20)) * 0.01)
+                )
+            ) + buildHeartRateSeries(start, end)
+        )
+    }
+
+    /**
+     * Writes a “bike ride” as an ExerciseSessionRecord + underlying metrics.
+     */
+    @SuppressLint("RestrictedApi")
+    suspend fun insertBikeExerciseSession(
+        start: ZonedDateTime,
+        end: ZonedDateTime,
+        title: String = "Bike Ride",
+        notes: String? = null
+    ): InsertRecordsResponse {
+
+        // 1) Build the ExerciseSessionRecord itself
+        val session = ExerciseSessionRecord(
+            startTime        = start.toInstant(),
+            startZoneOffset  = start.offset,
+            endTime          = end.toInstant(),
+            endZoneOffset    = end.offset,
+            exerciseType     = ExerciseSessionRecord.EXERCISE_TYPE_BIKING,
+            title            = title,
+            notes            = notes,
+            // metadata tags it as auto-recorded by this app
+            metadata         = Metadata.autoRecorded(
+                device = Device(type = Device.TYPE_PHONE)
+            )
+        )
+
+        // 2) Underlying raw and aggregate records
+        val steps = StepsRecord(
+            startTime       = start.toInstant(),
+            startZoneOffset = start.offset,
+            endTime         = end.toInstant(),
+            endZoneOffset   = end.offset,
+            count           = /* your total step count, e.g. tracker.steps() */ 1L,
+            metadata        = Metadata.autoRecorded(device = Device(type = Device.TYPE_PHONE))
+        )
+
+        val distance = DistanceRecord(
+            startTime       = start.toInstant(),
+            startZoneOffset = start.offset,
+            endTime         = end.toInstant(),
+            endZoneOffset   = end.offset,
+            distance        = Length.meters(/* your total meters */ 0.0),
+            metadata        = Metadata.autoRecorded(device = Device(type = Device.TYPE_PHONE))
+        )
+
+        val calories = TotalCaloriesBurnedRecord(
+            startTime       = start.toInstant(),
+            startZoneOffset = start.offset,
+            endTime         = end.toInstant(),
+            endZoneOffset   = end.offset,
+            energy          = Energy.calories(/* your calories */ 0.0),
+            metadata        = Metadata.autoRecorded(device = Device(type = Device.TYPE_PHONE))
+        )
+
+        // 3) Heart-rate series—use your existing builder
+        val heartRate = buildHeartRateSeries(start, end)
+
+        // 4) Insert them all in one batch
+        return healthConnectClient.insertRecords(
+            listOf(session, steps, distance, calories, heartRate)
+        )
+    }
+
 
     /**
      * Deletes an [ExerciseSessionRecord] and underlying data.

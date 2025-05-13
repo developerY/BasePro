@@ -2,10 +2,7 @@ package com.ylabz.basepro.feature.heatlh.ui
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -14,11 +11,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.HealthConnectClient
-import androidx.health.connect.client.records.WeightRecord
-import androidx.navigation.NavController
 import com.ylabz.basepro.core.model.health.HealthScreenState
 import com.ylabz.basepro.feature.heatlh.ui.components.ErrorScreen
-import com.ylabz.basepro.feature.heatlh.ui.components.HealthStartScreen
+import com.ylabz.basepro.feature.heatlh.ui.components.HealthStartScreenFull
 import com.ylabz.basepro.feature.heatlh.ui.components.LoadingScreen
 import java.util.UUID
 
@@ -90,7 +85,7 @@ fun HealthRoute(
             //is HealthUiState.Success -> HealthDataScreen((healthUiState as HealthUiState.Success).healthData)
 
             is HealthUiState.Success -> {
-                HealthStartScreen(
+                HealthStartScreenFull(
                     modifier = modifier,
                     healthPermState = bundledState,
                     sessionsList = (healthUiState as HealthUiState.Success).healthData,
