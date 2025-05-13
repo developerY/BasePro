@@ -1,5 +1,6 @@
 package com.ylabz.basepro.feature.heatlh.ui
 
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -9,10 +10,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.HealthConnectClient
 import com.ylabz.basepro.core.model.health.HealthScreenState
 import com.ylabz.basepro.feature.heatlh.ui.components.ErrorScreen
+import com.ylabz.basepro.feature.heatlh.ui.components.HealthHeader
 import com.ylabz.basepro.feature.heatlh.ui.components.HealthStartScreenFull
 import com.ylabz.basepro.feature.heatlh.ui.components.LoadingScreen
 import java.util.UUID
@@ -75,6 +78,7 @@ fun HealthRoute(
 
     ) {
         // Display the current UI state in a Text field for debugging purposes
+        val activity = LocalContext.current as? ComponentActivity
 
         when (healthUiState) {
             is HealthUiState.PermissionsRequired -> HealthFeatureWithPermissions {
@@ -84,8 +88,9 @@ fun HealthRoute(
 
             //is HealthUiState.Success -> HealthDataScreen((healthUiState as HealthUiState.Success).healthData)
 
-            is HealthUiState.Success -> {
-                HealthStartScreenFull(
+
+            /*
+            HealthStartScreenFull(
                     modifier = modifier,
                     healthPermState = bundledState,
                     sessionsList = (healthUiState as HealthUiState.Success).healthData,
@@ -94,6 +99,17 @@ fun HealthRoute(
                     },
                     onEvent = { event -> viewModel.onEvent(event) },
                     navTo = navTo,
+                )
+             */
+
+            is HealthUiState.Success -> {
+                HealthHeader(
+                    healthPermState = bundledState,
+                    onPermissionsLaunch = { values ->
+                        permissionsLauncher.launch(values)
+                    },
+                    backgroundReadPermissions = viewModel.backgroundReadPermissions,
+                    activity = activity
                 )
             }
 
