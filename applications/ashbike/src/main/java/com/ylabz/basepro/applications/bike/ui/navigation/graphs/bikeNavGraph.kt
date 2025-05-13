@@ -1,5 +1,8 @@
 package com.ylabz.basepro.applications.bike.ui.navigation.graphs
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -8,6 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -25,6 +29,7 @@ import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDeta
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailViewModel
 
 // Define BikeNavGraph as an extension function on NavGraphBuilder
+@RequiresPermission(allOf = [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION])
 fun NavGraphBuilder.bikeNavGraph(
     modifier: Modifier = Modifier,
     navHostController: NavHostController

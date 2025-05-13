@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -146,10 +147,41 @@ fun BikeRideCard(
                     Spacer(Modifier.height(8.dp))
                     Text(it, style = MaterialTheme.typography.bodySmall)
                 }
+
+                Spacer(Modifier.height(8.dp))
+
+                // ─── Bottom Action Row ────────────────────────────────────
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    // Sync button: only enabled if not already synced
+                    IconButton(
+                        onClick = { /*onEvent(TripsEvent.Sync(ride.rideId))*/ },
+                        enabled = !ride.isSynced
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Sync,
+                            contentDescription = if (ride.isSynced) "Already synced" else "Sync to Health",
+                            tint = if (ride.isSynced)
+                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                            else
+                                MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+                    /* Delete button (again, for convenience)
+                IconButton(onClick = { onEvent(TripsEvent.DeleteItem(ride.rideId)) }) {
+                    Icon(
+                        imageVector     = Icons.Default.Delete,
+                        contentDescription = "Delete ride"
+                    )
+                }*/
+                }
             }
         }
     }
-}
+    }
 
 
 @Preview

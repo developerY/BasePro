@@ -10,12 +10,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -34,7 +36,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.HealthAndSafety
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -57,6 +65,9 @@ import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.RideLocationEntity
 import com.ylabz.basepro.applications.bike.database.RideWithLocations
 import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
+import com.ylabz.basepro.applications.bike.features.trips.ui.TripsUIState
+import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
+import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 import kotlin.random.Random
 
 
@@ -86,7 +97,10 @@ fun randomPastelColor(): Color {
 fun SectionHeader(
     onEvent: (TripsEvent) -> Unit,
     title: String,
-    bgColor: Color
+    bgColor: Color,
+    count: Int? = null,
+    healthConnected: Boolean,            // ← new
+    onHealthToggle: () -> Unit           // ← new
 ) {
     Surface(
         tonalElevation = 4.dp,
@@ -101,11 +115,41 @@ fun SectionHeader(
             Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Show “(N) Bike Rides” if count != null
+            val label = if (count != null) "($count) $title" else title
             Text(
-                text = title,
+                text = label,
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                 modifier = Modifier.padding(8.dp)
             )
+
+            // —————————————————————
+            //  Health indicator in header
+            // —————————————————————
+            IconButton(onClick = onHealthToggle) {
+                if (healthConnected) {
+                    Icon(
+                        imageVector = Icons.Default.HealthAndSafety,
+                        contentDescription = "Health Connected",
+                        tint = Color(0xFF009688)
+                    )
+                } else {
+                    Box (
+                        modifier = Modifier.size(24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Error,
+                            contentDescription = "Health Error",
+                            tint = Color(0xFFA22116)
+                        )
+                        Icon(
+                            imageVector = Icons.Default.Block,
+                            contentDescription = "Connect Health"
+                        )
+                    }
+                }
+            }
 
             Spacer(Modifier.weight(1f))
 
@@ -129,8 +173,15 @@ fun BikeTripsCompose(
     modifier: Modifier = Modifier,
     bikeRides: List<RideWithLocations>,
     onEvent: (TripsEvent) -> Unit,
+    healthEvent: (HealthEvent) -> Unit,
+    healthUiState: HealthUiState,
     navTo: (String) -> Unit
 ) {
+
+
+    // derive a simple “connected?” flag
+    val connected = healthUiState is HealthUiState.Success
+
     Box(
         modifier = modifier.fillMaxSize(),
         //containerColor = PastelLavender,
@@ -144,7 +195,8 @@ fun BikeTripsCompose(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
-                SectionHeader(onEvent = onEvent, title = "Bike Rides", bgColor = PastelBlue)
+                SectionHeader(onEvent = onEvent, title = "Bike Rides", bgColor = PastelBlue
+                , healthConnected = connected, onHealthToggle = { healthEvent(HealthEvent.RequestPermissions) })
             }
 
             if (bikeRides.isEmpty()) {
@@ -215,7 +267,13 @@ fun BikeTripsComposePreview() {
             )
         )
     )
-    BikeTripsCompose(bikeRides = bikeRides, onEvent = {}, navTo = {})
+    BikeTripsCompose(
+        bikeRides = bikeRides,
+        onEvent = {},
+        healthEvent = {},
+        healthUiState = HealthUiState.Loading,
+        navTo = {}
+    )
 }
 
 // —————————————————————————————————————————————————————————

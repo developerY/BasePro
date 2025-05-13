@@ -38,6 +38,7 @@ android {
 
 dependencies {
     implementation(project(":applications:ashbike:database"))
+    implementation(project(":feature:heatlh"))
     implementation(project(":core:ui"))
 
     implementation(libs.androidx.core.ktx)
