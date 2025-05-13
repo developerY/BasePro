@@ -38,6 +38,7 @@ android {
 dependencies {
     implementation(project(":feature:qrscanner"))
     implementation(project(":feature:nfc"))
+    implementation(project(":feature:heatlh"))
     implementation(project(":applications:ashbike:database"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

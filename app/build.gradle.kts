@@ -11,7 +11,7 @@ plugins {
 
 android {
     namespace = "com.ylabz.basepro"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         // This gets overridden by flavors

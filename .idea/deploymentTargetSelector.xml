@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-03-25T02:39:40.843191Z">
+        <DropdownSelection timestamp="2025-05-12T23:57:17.174830Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ash/.android/avd/Pixel_7a.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ash/.android/avd/Medium_Phone.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -35,7 +35,7 @@
       </SelectionState>
       <SelectionState runConfigName="applications.bike">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-04-20T20:32:44.724854Z">
+        <DropdownSelection timestamp="2025-05-12T23:58:35.416754Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ash/.android/avd/Medium_Phone.avd" />

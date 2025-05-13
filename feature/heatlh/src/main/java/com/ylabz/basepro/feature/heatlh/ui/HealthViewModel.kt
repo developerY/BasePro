@@ -124,6 +124,8 @@ class HealthViewModel @Inject constructor(
 
     fun initialLoad() {
         Log.d("HealthViewModel", "initialLoad() called") // Debug statement
+        //Log.d("HC onEvent", "SDK status = ${HealthConnectClient.getSdkStatus(context)}")
+
         viewModelScope.launch {
             Log.d("HealthViewModel", "viewModelScope.launch called") // Debug statement
             try {

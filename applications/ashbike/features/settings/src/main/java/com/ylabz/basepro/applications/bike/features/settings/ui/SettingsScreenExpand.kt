@@ -63,6 +63,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.ProfileInfoCardEx
+import com.ylabz.basepro.applications.bike.features.settings.ui.components.health.HealthExpandableEx
+import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
+import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState.Stopped
@@ -232,7 +235,8 @@ fun SettingsScreenEx(
                         expanded = expandables["health"] == true,
                         onExpandToggle = {
                             expandables["health"] = !(expandables["health"] ?: false)
-                        }
+                        },
+                        navTo = navTo
                     )
                 }
                 // add your visual break here
@@ -323,7 +327,11 @@ fun SettingsScreenExPreview() {
         ),
         profile = dummyProfile
     )
-    SettingsScreenEx(nfcUiState = Stopped, nfcEvent = {}, uiState = dummyUiState, onEvent = {}, navTo = {})
+    SettingsScreenEx(
+        nfcUiState = Stopped, nfcEvent = {},
+        // healthUiState = HealthUiState.Uninitialized, healthEvent = {},
+        uiState = dummyUiState, onEvent = {}, navTo = {}
+    )
 }
 
 // ---------------------------------------------
@@ -392,74 +400,11 @@ fun NfcExpandableExPreview() {
     NfcExpandableEx(nfcUiState = Stopped, nfcEvent = {}, expanded = true, onExpandToggle = {}, navTo = {})
 }
 
-// ---------------------------------------------
-// Health Expandable
-// ---------------------------------------------
-@Composable
-fun HealthExpandableEx(
-    expanded: Boolean,
-    onExpandToggle: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 4.dp)
-            .fillMaxWidth()
-    ) {
-        Column {
-            // Header row
-            Row(
-                modifier = Modifier
-                    .clickable { onExpandToggle() }
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = "Health",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = "Health Connect",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Icon(
-                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp
-                    else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null
-                )
-            }
-
-            // Expanded content
-            if (expanded) {
-                Divider()
-                Column(modifier = Modifier.padding(16.dp)) {
-                    // TODO: Insert your real Health UI or pass in your healthUiState, onHealthEvent, etc.
-                    // Example:
-                    Text(text = "Health Connect Status: (Placeholder)")
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // For example, show your HealthStartScreen here:
-                    // HealthStartScreen(
-                    //     healthPermState = ...,
-                    //     sessionsList = ...,
-                    //     onPermissionsLaunch = ...,
-                    //     onEvent = ...,
-                    //     navTo = ...
-                    // )
-                    Text(text = "HealthStartScreen() goes here.")
-                }
-            }
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
 fun HealthExpandableExPreview() {
-    HealthExpandableEx(expanded = true, onExpandToggle = {})
+    HealthExpandableEx(expanded = true, onExpandToggle = {}, navTo = {})
 }
 
 // ---------------------------------------------

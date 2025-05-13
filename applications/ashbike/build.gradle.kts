@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.ylabz.basepro.applications.bike"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.ylabz.basepro.applications.bike"
