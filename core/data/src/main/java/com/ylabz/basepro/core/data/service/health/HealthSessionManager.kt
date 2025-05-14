@@ -3,8 +3,6 @@ package com.ylabz.basepro.core.data.service.health
 /**
  * Manager for accessing and aggregating health data from Health Connect.
  */
-import android.R.attr.end
-import android.R.attr.startOffset
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -151,7 +149,7 @@ class HealthSessionManager(private val context: Context) {
      * Writes an [ExerciseSessionRecord] to Health Connect, and additionally writes underlying data for
      * the session too, such as [StepsRecord], [DistanceRecord] etc.
      */
-    suspend fun writeExerciseSession(
+    suspend fun writeExerciseSessionNotUse(
         start: ZonedDateTime,
         end: ZonedDateTime
     ): InsertRecordsResponse {

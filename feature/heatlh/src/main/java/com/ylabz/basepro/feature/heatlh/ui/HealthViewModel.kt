@@ -228,7 +228,7 @@ class HealthViewModel @Inject constructor(
                 )
                 val endOfSession = startOfSession.plusMinutes(30)
 
-                healthSessionManager.writeExerciseSession(startOfSession, endOfSession)
+                healthSessionManager.writeExerciseSessionMark() //startOfSession, endOfSession)
             }
         }
     }
