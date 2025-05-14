@@ -56,6 +56,9 @@ dependencies {
     implementation(libs.androidx.material3)
     debugImplementation(libs.androidx.ui.tooling)
 
+    // Health Connect
+    implementation(libs.androidx.health.connect.client)
+
     // Icons
     implementation(libs.androidx.material.icons.extended)
 

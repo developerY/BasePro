@@ -1,5 +1,6 @@
 package com.ylabz.basepro.feature.heatlh.ui
 
+import android.R.id.message
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.*
@@ -89,8 +90,8 @@ fun HealthRoute(
             //is HealthUiState.Success -> HealthDataScreen((healthUiState as HealthUiState.Success).healthData)
 
 
-            /*
-            HealthStartScreenFull(
+            is HealthUiState.Success -> {
+                HealthStartScreenFull(
                     modifier = modifier,
                     healthPermState = bundledState,
                     sessionsList = (healthUiState as HealthUiState.Success).healthData,
@@ -100,9 +101,10 @@ fun HealthRoute(
                     onEvent = { event -> viewModel.onEvent(event) },
                     navTo = navTo,
                 )
-             */
+            }
 
-            is HealthUiState.Success -> {
+
+            /*is HealthUiState.Success -> {
                 HealthHeader(
                     healthPermState = bundledState,
                     onPermissionsLaunch = { values ->
@@ -111,7 +113,7 @@ fun HealthRoute(
                     backgroundReadPermissions = viewModel.backgroundReadPermissions,
                     activity = activity
                 )
-            }
+            }*/
 
             is HealthUiState.Error -> ErrorScreen(
                 message = "Error: ${(healthUiState as HealthUiState.Error).message}",

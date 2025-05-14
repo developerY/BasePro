@@ -38,6 +38,7 @@ fun HealthStartScreenFull(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
+        Text("Google Health Connect")
         // Header: Availability and Settings
         HealthHeader(
             healthPermState = healthPermState,
