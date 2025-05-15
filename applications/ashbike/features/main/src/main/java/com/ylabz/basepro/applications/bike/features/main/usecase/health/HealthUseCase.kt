@@ -41,10 +41,8 @@ class HealthUseCase @Inject constructor(
         distanceMeters: Double,
         heartRateSamples: List<HeartRateRecord.Sample>
     ) {
-        healthManager.writeExerciseSession(
-            start    = start,
-            end      = end,
-        )
+        healthManager.writeExerciseSessionMark()
+           // start    = start, end      = end,)
     }
 
     class HealthUseCase @Inject constructor(

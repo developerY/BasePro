@@ -91,16 +91,19 @@ fun HealthRoute(
 
 
             is HealthUiState.Success -> {
-                HealthStartScreenFull(
-                    modifier = modifier,
-                    healthPermState = bundledState,
-                    sessionsList = (healthUiState as HealthUiState.Success).healthData,
-                    onPermissionsLaunch = { values ->
-                        permissionsLauncher.launch(values)
-                    },
-                    onEvent = { event -> viewModel.onEvent(event) },
-                    navTo = navTo,
-                )
+                Column() {
+                    Text(" com.ylabz.basepro.feature.heatlh.ui - HealthRoute")
+                    HealthStartScreenFull(
+                        modifier = modifier,
+                        healthPermState = bundledState,
+                        sessionsList = (healthUiState as HealthUiState.Success).healthData,
+                        onPermissionsLaunch = { values ->
+                            permissionsLauncher.launch(values)
+                        },
+                        onEvent = { event -> viewModel.onEvent(event) },
+                        navTo = navTo,
+                    )
+                }
             }
 
 

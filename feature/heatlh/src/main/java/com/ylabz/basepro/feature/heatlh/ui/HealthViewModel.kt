@@ -93,11 +93,15 @@ class HealthViewModel @Inject constructor(
     }
 
     fun onEvent(event: HealthEvent) {
+        Log.d("HealthViewModel", "onEvent() called with event: $event") // Debug statement
         when (event) {
             is HealthEvent.LoadHealthData -> loadHealthData()
             is HealthEvent.DeleteAll -> delData()
             is HealthEvent.Retry -> checkPermissionsAndLoadData()
-            is HealthEvent.Insert -> insertExerciseSession()
+            is HealthEvent.Insert -> {
+                Log.d("HealthViewModel", "insertExerciseSession() called") // Debug statement
+                insertExerciseSession()
+            }
             is HealthEvent.RequestPermissions -> checkPermissionsAndLoadData()
         }
     }
@@ -163,7 +167,6 @@ class HealthViewModel @Inject constructor(
         val now = Instant.now()
         val endofWeek = startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
         val lastWeek = startOfDay.toInstant().minus(7, ChronoUnit.DAYS)
-        healthSessionManager.writeExerciseSessionMark()
         val sessionInputs = healthSessionManager.readExerciseSessions(startOfDay.toInstant(), now)
         Log.d("TAG","Did we get anything")
         Log.d("TAG","${healthSessionManager.readExerciseSessions(lastWeek, now).size}")

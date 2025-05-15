@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,18 +39,18 @@ fun HealthStartScreenFull(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        Text("Google Health Connect")
+        Text("Google Health Connect - com.ylabz.basepro.feature.heatlh.ui.components")
         // Header: Availability and Settings
-        HealthHeader(
+        /*HealthHeader(
             healthPermState = healthPermState,
             onPermissionsLaunch = onPermissionsLaunch,
             backgroundReadPermissions = healthPermState.backgroundReadPermissions,
             activity = activity
-        )
+        )*/
 
         // Action Buttons: Add and Delete
         HealthActions(
-            onInsertClick = { onEvent(HealthEvent.Insert) },
+            onInsertClick = {onEvent(HealthEvent.Insert) },
             onDeleteAllClick = { onEvent(HealthEvent.DeleteAll) },
         )
 
@@ -62,6 +63,7 @@ fun HealthStartScreenFull(
             style = MaterialTheme.typography.bodyMedium
         )
 
+
         // Session List
         SessionList(
             modifier = Modifier
@@ -70,6 +72,7 @@ fun HealthStartScreenFull(
             sessionsList = sessionsList,
             navTo = navTo
         )
+        Text("Session List")
     }
 }
 

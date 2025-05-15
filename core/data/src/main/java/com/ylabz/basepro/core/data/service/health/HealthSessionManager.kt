@@ -17,6 +17,7 @@ import androidx.health.connect.client.HealthConnectFeatures
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.changes.Change
 import androidx.health.connect.client.records.DistanceRecord
+import androidx.health.connect.client.records.ExerciseRoute
 import androidx.health.connect.client.records.ExerciseRouteResult
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.HeartRateRecord
@@ -204,6 +205,11 @@ class HealthSessionManager(private val context: Context) {
         val sessionDuration = Duration.ofMinutes(20)
         val sessionEndTime = sessionStartTime.plus(sessionDuration)
         val end = start.plus(sessionDuration)
+
+        Log.d("HealthSessionManager", "Writing exercise session START")
+
+
+
         healthConnectClient.insertRecords(
             listOf(
                 ExerciseSessionRecord(
@@ -233,6 +239,8 @@ class HealthSessionManager(private val context: Context) {
                 )
             ) + buildHeartRateSeries(start, end)
         )
+
+        Log.d("HealthSessionManager", "Writing exercise session END")
     }
 
     /**
@@ -356,6 +364,9 @@ class HealthSessionManager(private val context: Context) {
             dataOriginFilter = dataOriginFilter)
         val aggregateData = healthConnectClient.aggregate(aggregateRequest)
 
+
+        Log.d("HealthSessionManager", "aggregateData: $aggregateData")
+        Log.d("HealthSessionManager", "exerciseSession: ${exerciseSession.record.title}")
         return ExerciseSessionData(
             uid = uid,
             totalActiveTime = aggregateData[ExerciseSessionRecord.EXERCISE_DURATION_TOTAL],
@@ -376,10 +387,34 @@ class HealthSessionManager(private val context: Context) {
         healthConnectClient.deleteRecords(SleepSessionRecord::class, TimeRangeFilter.before(now))
     }
 
+    suspend fun deleteAllSessionData() {
+        val now = Instant.now()
+
+        val sessionRange = TimeRangeFilter.before(now)
+
+        val typesToDelete = listOf(
+            ExerciseSessionRecord::class,
+            StepsRecord::class,
+            DistanceRecord::class,
+            TotalCaloriesBurnedRecord::class,
+            HeartRateRecord::class,
+            //SpeedRecord::class,
+            //ExerciseRoute::class, // ✅ don’t forget routes if used
+        )
+
+        typesToDelete.forEach { recordType ->
+            
+            Log.d("HealthSessionManager", "count")
+            
+
+            healthConnectClient.deleteRecords(recordType, sessionRange)
+        }
+    }
+
     /**
      * Deletes all existing sleep data.
      */
-    suspend fun deleteAllSessionData() {
+    suspend fun deleteExerciseSessionData() {
         val now = Instant.now()
         healthConnectClient.deleteRecords(ExerciseSessionRecord::class, TimeRangeFilter.before(now))
     }

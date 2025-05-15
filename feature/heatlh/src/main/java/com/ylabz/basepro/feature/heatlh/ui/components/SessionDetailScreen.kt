@@ -90,6 +90,8 @@ private fun SessionDetailContent(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text("ID ${data.uid}", style = MaterialTheme.typography.titleLarge)
+
         Text("Duration: ${formatDuration(data.totalActiveTime)}", style = MaterialTheme.typography.bodyLarge)
         data.totalDistance?.let {
             Text("Distance: ${"%.2f".format(it.inFeet)} km", style = MaterialTheme.typography.bodyLarge)
