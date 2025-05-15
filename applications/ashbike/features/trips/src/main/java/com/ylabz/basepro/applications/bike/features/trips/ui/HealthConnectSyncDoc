@@ -1,0 +1,139 @@
+**Bike Rides Sync UI Design Document**
+
+**Date:** 2025‑05‑15
+
+---
+
+## 1. Overview
+
+The `Trips` screen in our Bike app displays a list of recorded rides and allows the user to synchronize them with Google Health Connect (GHC).
+Currently each ride card shows a small sync icon, but it can be confusing which cards are pending sync, which succeeded, and whether GHC is
+available at all.
+
+This document proposes a revamped design and interaction model to clearly communicate three distinct sync states, improve overall UX, and
+streamline sync/delete workflows.
+
+## 2. Goals & Requirements
+
+* **Clarify sync state** at a glance:
+
+  1. GHC unavailable (user has not enabled or installed)
+  2. GHC enabled but no session data written
+  3. Session data synced successfully
+* **Reduce visual clutter** by consolidating actions and using gestures where appropriate.
+* **Provide global sync/delete controls** for power users.
+* **Maintain accessibility** and follow Material 3 best practices.
+
+## 3. Sync States & Visual Metaphors
+
+| State ID            | Description                                     | Icon           | Color Token                     | Container Color                        |
+| ------------------- | ----------------------------------------------- | -------------- | ------------------------------- | -------------------------------------- |
+| HEALTH\_UNAVAILABLE | GHC not enabled or installed                    | `SyncDisabled` | `error`                         | `errorContainer`                       |
+| NO\_RECORDS\_ADDED  | GHC enabled, but user hasn’t uploaded this ride | `SyncProblem`  | `warning`                       | `warningContainer`                     |
+| ALL\_SYNCED         | GHC enabled and this ride is synced             | `Sync`         | `onSurfaceVariant` or `success` | `surfaceVariant` or `successContainer` |
+
+## 4. High‑Level Screen Structure
+
+```
++---------------------------------------------------------+
+| AppBar: "Bike Rides" [Global Status Chip] [Delete All] |
++---------------------------------------------------------+
+| [Date Group 1 ▼]                                        |
+|   • 13:01–13:31 • 30m ↻ (sync icon) 🗑 (delete)           |
+|   • 09:15–09:45 • 30m ↻ 🗑                               |
+|                                                         |
+| [Date Group 2 ▼]                                        |
+|   ...                                                   |
++---------------------------------------------------------+
+| FAB: Sync All                                          |
++---------------------------------------------------------+
+```
+
+* **AppBar**: shows title, a global sync‐state chip (red/yellow/green), and a “Delete All” button.
+* **Sticky Date Headers**: collapsible groups for each day.
+* **Cards**: left stripe colored to match state; main area neutral or lightly tinted; swipe gestures.
+* **FAB**: quick access to sync all unsynced rides.
+
+## 5. Component Details
+
+### 5.1. Status Chip (AppBar)
+
+```kotlin
+@Composable
+fun GlobalSyncChip(state: SyncState) {
+  val (icon, background, content) = when(state) {
+    HEALTH_UNAVAILABLE -> Triple(Icons.Default.SyncDisabled, MaterialTheme.colorScheme.errorContainer, MaterialTheme.colorScheme.error)
+    NO_RECORDS_ADDED   -> Triple(Icons.Default.SyncProblem,  MaterialTheme.colorScheme.warningContainer, MaterialTheme.colorScheme.warning)
+    ALL_SYNCED         -> Triple(Icons.Default.Sync,         MaterialTheme.colorScheme.successContainer, MaterialTheme.colorScheme.onSuccessContainer)
+  }
+  Chip(
+    icon = { Icon(icon, null) },
+    colors = ChipDefaults.chipColors(containerColor = background, contentColor = content),
+    label = { Text(state.name.replace('_',' ')) }
+  )
+}
+```
+
+### 5.2. Ride Card
+
+```kotlin
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RideCard(
+  session: RideSession,
+  syncState: SyncState,
+  onDelete: () -> Unit,
+  onSync: () -> Unit
+) {
+  val stripeColor = when(syncState) {
+    HEALTH_UNAVAILABLE -> MaterialTheme.colorScheme.error
+    NO_RECORDS_ADDED   -> MaterialTheme.colorScheme.warning
+    ALL_SYNCED         -> MaterialTheme.colorScheme.onSurfaceVariant
+  }
+
+  Card(
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    modifier = Modifier
+      .fillMaxWidth()
+      .heightIn(min = 96.dp)
+      .swipeToDelete(onDelete)
+      .swipeToSync(onSync)
+  ) {
+    Row(Modifier.fillMaxSize()) {
+      Box(Modifier.width(4.dp).fillMaxHeight().background(stripeColor))
+      Spacer(Modifier.width(12.dp))
+      Column(Modifier.weight(1f).padding(vertical = 12.dp)) {
+        Text(session.timeRange, style = MaterialTheme.typography.titleMedium)
+        Text("Distance: ${session.distance} km")
+      }
+      IconButton(onClick = onSync) { SyncStatusIcon(syncState) }
+      IconButton(onClick = onDelete) { Icon(Icons.Default.Delete, contentDescription = "Delete") }
+    }
+  }
+}
+```
+
+### 5.3. Swipe Gestures
+
+* **Left-to-right swipe**: triggers **Sync**. Show a brief snack or progress spinner.
+* **Right-to-left swipe**: triggers **Delete**, with confirmation on long‑swipe or undo snackbar.
+
+## 6. Accessibility & Theming
+
+* All icons include `contentDescription`.
+* Color contrast ≥ 4.5:1.
+* Touch targets ≥ 48 dp.
+* Dark‐mode variants use the same tokens (`errorContainer`, etc.).
+
+## 7. Next Steps & Implementation Plan
+
+1. **Spike**: implement the `GlobalSyncChip` and `RideCard` composables.
+2. **Hook up**: compute `SyncState` in ViewModel via `StateFlow`.
+3. **Date grouping**: add sticky headers using `LazyColumn`’s `stickyHeader`.
+4. **Gestures**: integrate `Modifier.swipeable` or a standard swipe-to-dismiss library.
+5. **Global actions**: add FAB and AppBar actions.
+6. **QA & Accessibility**: verify color contrast, TalkBack labels, swipe gestures.
+
+---
+
+**End of Design Document**

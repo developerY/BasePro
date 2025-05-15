@@ -60,6 +60,9 @@ import kotlin.reflect.KClass
 // The minimum android level that can use Health Connect
 const val MIN_SUPPORTED_SDK = Build.VERSION_CODES.O_MR1
 
+private const val TAG = "HealthSessionManager"
+
+
 /** Demonstrates reading and writing from Health Connect. */
 class HealthSessionManager(private val context: Context) {
     private val healthConnectClient by lazy { HealthConnectClient.getOrCreate(context) }
@@ -387,11 +390,53 @@ class HealthSessionManager(private val context: Context) {
         healthConnectClient.deleteRecords(SleepSessionRecord::class, TimeRangeFilter.before(now))
     }
 
-    suspend fun deleteAllSessionData() {
-        val now = Instant.now()
 
+    suspend fun <T : Record> deleteRecordsOfType(
+        type: KClass<T>,
+        sessionRange: TimeRangeFilter
+    ) {
+        // build a properly‐typed ReadRecordsRequest<T>
+        val request = ReadRecordsRequest(type, sessionRange)
+        // now `records` comes back as List<T> (e.g. List<StepsRecord>)
+        val existing: List<T> = healthConnectClient.readRecords(request).records
+
+        Log.d(TAG, "Found ${existing.size} ${type.simpleName} to delete")
+
+        if (existing.isNotEmpty()) {
+            val recordIds     = existing.map { it.metadata.id }
+            val clientIds     = existing.mapNotNull { it.metadata.clientRecordId }
+
+            Log.d(TAG, "Deleting ${type.simpleName}: recordIds=$recordIds, clientIds=$clientIds")
+            healthConnectClient.deleteRecords(
+                recordType          = type,
+                recordIdsList       = recordIds,
+                clientRecordIdsList = clientIds
+            )
+            Log.d(TAG, "✅ Deleted all ${type.simpleName}")
+        }
+    }
+
+
+    suspend fun deleteAllSessionData() {
+        val now          = Instant.now()
         val sessionRange = TimeRangeFilter.before(now)
 
+        deleteRecordsOfType(ExerciseSessionRecord::class, sessionRange)
+        deleteRecordsOfType(StepsRecord::class,          sessionRange)
+        deleteRecordsOfType(DistanceRecord::class,       sessionRange)
+        deleteRecordsOfType(TotalCaloriesBurnedRecord::class, sessionRange)
+        deleteRecordsOfType(HeartRateRecord::class,      sessionRange)
+    }
+
+
+    /**
+     * Deletes ALL existing session data.
+     */
+    suspend fun deleteAllSessionDataType() {
+        val now = Instant.now()
+        val sessionRange = TimeRangeFilter.before(now)
+
+        // The record types you want to purge:
         val typesToDelete = listOf(
             ExerciseSessionRecord::class,
             StepsRecord::class,
@@ -399,17 +444,57 @@ class HealthSessionManager(private val context: Context) {
             TotalCaloriesBurnedRecord::class,
             HeartRateRecord::class,
             //SpeedRecord::class,
-            //ExerciseRoute::class, // ✅ don’t forget routes if used
+            //ExerciseRoute::class,
         )
 
         typesToDelete.forEach { recordType ->
-            
-            Log.d("HealthSessionManager", "count")
-            
+            try {
+                // 1️⃣ Read existing records in the time range
+                Log.d(TAG, "⏳ Reading ${recordType.simpleName} before $now…")
+                val readRequest = ReadRecordsRequest(
+                    recordType = recordType,
+                    timeRangeFilter = sessionRange,
+                    ascendingOrder = false
+                )
+                val existing = healthConnectClient
+                    .readRecords(ReadRecordsRequest(recordType, sessionRange))
+                    .records
 
-            healthConnectClient.deleteRecords(recordType, sessionRange)
+                Log.d(TAG, "🔎 Found ${existing.size} ${recordType.simpleName} records to delete")
+
+                if (existing.isNotEmpty()) {
+                    // 2️⃣ Collect both system IDs and client IDs
+                    // force‐cast each item into the public class
+                    val recordIds = existing.map { record ->
+                        val typed = recordType.java.cast(record)   // -> T
+                        (recordType.java.cast(record) as Record).metadata.id
+                    }
+
+                    val clientIds = existing.mapNotNull { record ->
+                        val typed = recordType.java.cast(record)   // -> T
+                        (recordType.java.cast(record) as Record).metadata.clientRecordId
+                    }
+
+
+                    // 3️⃣ Delete by IDs
+                    Log.d(TAG, "🗑 Deleting ${recordType.simpleName} (records=${recordIds.size}, clientIds=${clientIds.size})…")
+                    healthConnectClient.deleteRecords(
+                        recordType           = recordType,
+                        recordIdsList        = recordIds,
+                        clientRecordIdsList  = clientIds
+                    )
+                    Log.d(TAG, "✅ Deleted ${recordType.simpleName} records successfully")
+                } else {
+                    Log.d(TAG, "⚪ No ${recordType.simpleName} records to delete")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "❌ Error deleting ${recordType.simpleName}", e)
+            }
         }
+
+        Log.d(TAG, "🏁 deleteAllSessionData() completed")
     }
+
 
     /**
      * Deletes all existing sleep data.
