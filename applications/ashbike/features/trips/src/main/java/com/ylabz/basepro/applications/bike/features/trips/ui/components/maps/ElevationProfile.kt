@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.features.trips.ui.components
+package com.ylabz.basepro.applications.bike.features.trips.ui.components.maps
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
@@ -12,14 +12,10 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
-import com.ylabz.basepro.applications.bike.database.RideLocationEntity
-import java.util.UUID
-import kotlin.collections.all
-import kotlin.math.*
+import com.ylabz.basepro.applications.bike.features.trips.ui.components.LatLngWithElev
+import com.ylabz.basepro.applications.bike.features.trips.ui.components.haversineMeters
 
 // reuse your haversineMeters(...) from before
 
@@ -133,11 +129,11 @@ fun ElevationProfile(
 @Composable
 fun ElevationProfilePreview() {
     val sample = listOf(
-        LatLngWithElev(LatLng(0.0, 0.0),  10f),
-        LatLngWithElev(LatLng(0.0, 0.0),  50f),
-        LatLngWithElev(LatLng(0.0, 0.0),  30f),
+        LatLngWithElev(LatLng(0.0, 0.0), 10f),
+        LatLngWithElev(LatLng(0.0, 0.0), 50f),
+        LatLngWithElev(LatLng(0.0, 0.0), 30f),
         LatLngWithElev(LatLng(0.0, 0.0), 100f),
-        LatLngWithElev(LatLng(0.0, 0.0),  20f),
+        LatLngWithElev(LatLng(0.0, 0.0), 20f),
     )
     ElevationProfile(points = sample, modifier = Modifier.size(320.dp, 100.dp))
 }

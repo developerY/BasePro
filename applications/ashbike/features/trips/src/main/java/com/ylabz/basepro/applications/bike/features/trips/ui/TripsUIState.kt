@@ -10,4 +10,3 @@ sealed interface TripsUIState {
         val bikeRides: List<RideWithLocations> = emptyList()
     ) : TripsUIState
 }
-
