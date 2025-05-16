@@ -1,5 +1,7 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui
 
+import com.ylabz.basepro.applications.bike.database.mapper.BikeRide
+
 sealed class TripsEvent {
     object LoadData : TripsEvent()
     // object AddBikeRide : TripsEvent()
@@ -9,4 +11,5 @@ sealed class TripsEvent {
     object OnRetry : TripsEvent()
     //data class OnItemClicked(val itemId: Int) : TripsEvent()
     object StopSaveRide : TripsEvent()
+    data class SyncHeathConnect(val ride : BikeRide) : TripsEvent()
 }

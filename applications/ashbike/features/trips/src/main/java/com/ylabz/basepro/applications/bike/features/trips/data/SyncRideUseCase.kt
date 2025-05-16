@@ -22,7 +22,6 @@ import javax.inject.Singleton
 // 1) A pure sync use-case in your domain layer:
 @Singleton
 class SyncRideUseCase @Inject constructor(
-    // private val bikeRideRepo: BikeRideRepo  // if you need repo here
 ) {
     @SuppressLint("RestrictedApi")
     operator fun invoke(ride: BikeRideEntity): List<Record> {

@@ -44,6 +44,7 @@ class RideDetailViewModel @Inject constructor(
             TripsEvent.LoadData -> TODO()
             TripsEvent.OnRetry -> TODO()
             TripsEvent.StopSaveRide -> TODO()
+            is TripsEvent.SyncHeathConnect -> TODO()
         }
     }
     /** Called by the UI when the notes text changes */

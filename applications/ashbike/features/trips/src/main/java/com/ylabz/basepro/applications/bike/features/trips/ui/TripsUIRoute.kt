@@ -15,32 +15,34 @@ import com.ylabz.basepro.feature.heatlh.ui.HealthViewModel
 @Composable
 fun TripsUIRoute(
     modifier: Modifier = Modifier,
-    uiState: TripsUIState,
-    onEvent: (TripsEvent) -> Unit,
-    navTo: (String) -> Unit
+    navTo: (String) -> Unit,
+    // Ask Hilt for both viewmodels
+    tripsViewModel: TripsViewModel = hiltViewModel(),
+    healthViewModel: HealthViewModel = hiltViewModel(),
 ) {
-    val healthViewModel = hiltViewModel<HealthViewModel>()
+    // 1. Observe your trips state
+    val uiState by tripsViewModel.uiState.collectAsState()
+
+    // 2. Observe your Health Connect state
     val healthUiState by healthViewModel.uiState.collectAsState()
 
+    // 3. Render based on your trips state
     when (uiState) {
-        TripsUIState.Loading -> {
-            LoadingScreen()
-        }
-        is TripsUIState.Error -> {
-            ErrorScreen(
-                errorMessage = uiState.message,
-                onRetry = { onEvent(TripsEvent.OnRetry) }
-            )
-        }
+        TripsUIState.Loading -> LoadingScreen()
+        is TripsUIState.Error -> ErrorScreen(
+            errorMessage = (uiState as TripsUIState.Error).message,
+            onRetry      = { tripsViewModel.onEvent(TripsEvent.OnRetry) }
+        )
         is TripsUIState.Success -> {
             BikeTripsCompose(
-                modifier   = modifier,
-                bikeRides  = uiState.bikeRides,
-                onEvent    = onEvent,
-                healthEvent = { event : HealthEvent -> healthViewModel.onEvent(event) },
+                modifier      = modifier,
+                bikeRides     = (uiState as TripsUIState.Success).bikeRides,
+                onEvent       = { tripsViewModel.onEvent(it) },
+                healthEvent   = { healthViewModel.onEvent(it) },
                 healthUiState = healthUiState,
-                navTo      = navTo
+                navTo         = navTo
             )
         }
     }
 }
+

@@ -44,13 +44,9 @@ fun NavGraphBuilder.bikeNavGraph(
 
     // 2) Trips Tab
     composable(BikeScreen.TripBikeScreen.route) {
-        val vm: TripsViewModel = hiltViewModel()
-        val uiState by vm.uiState.collectAsState()
 
         TripsUIRoute(
             modifier = modifier,
-            uiState  = uiState,
-            onEvent  = { event -> vm.onEvent(event) },
             navTo    = { rideId ->
                 navHostController.navigate(
                     BikeScreen.RideDetailScreen.createRoute(rideId)

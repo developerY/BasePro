@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.Navigator
 import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
+import com.ylabz.basepro.applications.bike.features.trips.data.SyncRideUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,8 +23,9 @@ import javax.inject.Named
 
 @HiltViewModel
 class TripsViewModel @Inject constructor(
-    private val bikeRideRepo: BikeRideRepo
-) : ViewModel() {
+    private val bikeRideRepo: BikeRideRepo,
+    private val syncRideUseCase: SyncRideUseCase
+    ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<TripsUIState>(TripsUIState.Loading)
     val uiState: StateFlow<TripsUIState> = _uiState
@@ -54,8 +56,8 @@ class TripsViewModel @Inject constructor(
                 // stop and persist
                 endTime = System.currentTimeMillis()
                 isTracking = false
-                //saveRide()
             }
+            is TripsEvent.SyncHeathConnect -> syncRideUseCase(event.ride)
         }
     }
 
