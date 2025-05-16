@@ -39,7 +39,6 @@ fun HealthStartScreenFull(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        Text("Google Health Connect - com.ylabz.basepro.feature.heatlh.ui.components")
         // Header: Availability and Settings
         /*HealthHeader(
             healthPermState = healthPermState,

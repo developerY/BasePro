@@ -8,6 +8,6 @@ sealed interface HealthEvent {
     object DeleteAll          : HealthEvent
     object Retry              : HealthEvent
     /** Insert (sync) exactly this session into Health Connect */
-    data class Insert(val session: ExerciseSessionRecord) : HealthEvent
+    object Insert: HealthEvent
 }
 

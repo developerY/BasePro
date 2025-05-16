@@ -98,40 +98,11 @@ class HealthViewModel @Inject constructor(
             is HealthEvent.LoadHealthData -> loadHealthData()
             is HealthEvent.DeleteAll -> delData()
             is HealthEvent.Retry -> checkPermissionsAndLoadData()
-            /*is HealthEvent.Insert -> {
+            is HealthEvent.Insert -> {
                 Log.d("HealthViewModel", "insertExerciseSession() called") // Debug statement
                 insertExerciseSession()
-            }*/
-
-            is HealthEvent.Insert -> viewModelScope.launch {
-                tryWithPermissionsCheck {
-                    // 3) insert them in one shot
-                    healthSessionManager.insertRecords(records)
-
-                    // 4) reload health data so UI updates
-                    loadHealthData()
-                }
             }
-
-
             is HealthEvent.RequestPermissions -> checkPermissionsAndLoadData()
-        }
-    }
-
-    private fun insertSingleSession(session: ExerciseSessionRecord) {
-        viewModelScope.launch {
-            tryWithPermissionsCheck {
-                // 1. Insert exactly this one session record
-                val response = healthSessionManager.insertBikeExerciseSession(
-
-                )
-
-                // 2. Optionally log which record IDs were created
-                Log.d("HealthViewModel", "Inserted session IDs: ${response.recordIdsList}")
-
-                // 3. Refresh the UI state so the card re-renders as synced
-                loadHealthData()
-            }
         }
     }
 
