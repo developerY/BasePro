@@ -246,6 +246,30 @@ class HealthSessionManager(private val context: Context) {
         Log.d("HealthSessionManager", "Writing exercise session END")
     }
 
+    @SuppressLint("RestrictedApi")
+    suspend fun insertBikeSessionRecord(
+        start: ZonedDateTime,
+        end: ZonedDateTime,
+        title: String = "Bike Ride",
+        notes: String? = null
+    ): InsertRecordsResponse {
+        // 1) Build the ExerciseSessionRecord for BIKING
+        val session = ExerciseSessionRecord(
+            metadata       = Metadata.manualEntry(),
+            startTime      = start.toInstant(),
+            startZoneOffset = start.offset,
+            endTime        = end.toInstant(),
+            endZoneOffset   = end.offset,
+            exerciseType   = ExerciseSessionRecord.EXERCISE_TYPE_BIKING,
+            title          = title,
+            notes          = notes
+        )
+
+        // 2) Insert it into Health Connect
+        return healthConnectClient.insertRecords(listOf(session))
+    }
+
+
     /**
      * Writes a “bike ride” as an ExerciseSessionRecord + underlying metrics.
      */

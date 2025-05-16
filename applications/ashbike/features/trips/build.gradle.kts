@@ -69,6 +69,9 @@ dependencies {
     // maps
     implementation(libs.google.maps.compose)
 
+    // Health Connect
+    implementation(libs.androidx.health.connect.client)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
