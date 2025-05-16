@@ -10,6 +10,7 @@ import androidx.navigation.Navigator
 import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import com.ylabz.basepro.applications.bike.features.trips.data.SyncRideUseCase
+import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -57,7 +58,6 @@ class TripsViewModel @Inject constructor(
                 endTime = System.currentTimeMillis()
                 isTracking = false
             }
-            is TripsEvent.SyncHeathConnect -> syncRideUseCase(event.ride)
         }
     }
 

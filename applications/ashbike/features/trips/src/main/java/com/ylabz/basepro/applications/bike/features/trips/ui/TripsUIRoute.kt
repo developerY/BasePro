@@ -37,7 +37,7 @@ fun TripsUIRoute(
             BikeTripsCompose(
                 modifier      = modifier,
                 bikeRides     = (uiState as TripsUIState.Success).bikeRides,
-                onEvent       = { tripsViewModel.onEvent(it) },
+                bikeEvent       = { tripsViewModel.onEvent(it) },
                 healthEvent   = { healthViewModel.onEvent(it) },
                 healthUiState = healthUiState,
                 navTo         = navTo

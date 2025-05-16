@@ -28,6 +28,7 @@ import java.util.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.applications.bike.database.RideWithLocations
 import com.ylabz.basepro.core.ui.*
+import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import java.time.ZoneId
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -37,7 +38,8 @@ fun BikeRideCard(
     modifier: Modifier = Modifier,
     backgroundColor: Color,
     ride: BikeRideEntity,
-    onEvent: (TripsEvent) -> Unit,
+    bikeEvent: (TripsEvent) -> Unit,
+    healthEvent: (HealthEvent) -> Unit,
     navTo: (String) -> Unit
 ) {
     // Date formatter for start/end times
@@ -103,7 +105,7 @@ fun BikeRideCard(
                         style = MaterialTheme.typography.bodyMedium
                     )
                     IconButton(onClick = {
-                        onEvent(TripsEvent.DeleteItem(ride.rideId))
+                        bikeEvent(TripsEvent.DeleteItem(ride.rideId))
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
@@ -205,7 +207,8 @@ fun BikeRideCardPreview() {
         endLng = -73.9855
     )
     BikeRideCard(ride = ride,
-        onEvent = {},
+        bikeEvent = {},
+        healthEvent = {},
         navTo = {},
         backgroundColor = Color(0xFFE3F2FD)
     )

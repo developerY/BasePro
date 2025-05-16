@@ -11,5 +11,5 @@ sealed class TripsEvent {
     object OnRetry : TripsEvent()
     //data class OnItemClicked(val itemId: Int) : TripsEvent()
     object StopSaveRide : TripsEvent()
-    data class SyncHeathConnect(val ride : BikeRide) : TripsEvent()
+    //data class SyncHeathConnect(val ride : BikeRide) : TripsEvent()
 }

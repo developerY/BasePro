@@ -69,7 +69,7 @@ fun randomPastelColor(): Color {
 fun BikeTripsCompose(
     modifier: Modifier = Modifier,
     bikeRides: List<RideWithLocations>,
-    onEvent: (TripsEvent) -> Unit,
+    bikeEvent: (TripsEvent) -> Unit,
     healthEvent: (HealthEvent) -> Unit,
     healthUiState: HealthUiState,
     navTo: (String) -> Unit
@@ -92,7 +92,7 @@ fun BikeTripsCompose(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
-                TripSectionHeader(onEvent = onEvent, title = "Bike Rides", bgColor = PastelBlue
+                TripSectionHeader(onEvent = bikeEvent, title = "Bike Rides", bgColor = PastelBlue
                 , healthConnected = connected, onHealthToggle = { healthEvent(HealthEvent.RequestPermissions) })
             }
 
@@ -114,7 +114,8 @@ fun BikeTripsCompose(
                             .fillMaxWidth(),
                         backgroundColor = bgColor,        // pass it in, or wrap your Card in a Surface
                         ride = rideWithLoc.bikeRideEnt,
-                        onEvent = onEvent,
+                        bikeEvent = bikeEvent,
+                        healthEvent = healthEvent,
                         navTo = navTo,
                     )
                 }
@@ -166,7 +167,7 @@ fun BikeTripsComposePreview() {
     )
     BikeTripsCompose(
         bikeRides = bikeRides,
-        onEvent = {},
+        bikeEvent = {},
         healthEvent = {},
         healthUiState = HealthUiState.Loading,
         navTo = {}
