@@ -49,7 +49,7 @@ fun HealthStartScreenFull(
 
         // Action Buttons: Add and Delete
         HealthActions(
-            onInsertClick = {onEvent(HealthEvent.Insert) },
+            onInsertClick = {onEvent(HealthEvent.TestInsert) },
             onDeleteAllClick = { onEvent(HealthEvent.DeleteAll) },
         )
 

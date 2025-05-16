@@ -3,6 +3,7 @@ package com.ylabz.basepro.core.data.service.health
 /**
  * Manager for accessing and aggregating health data from Health Connect.
  */
+import android.R.attr.end
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -148,6 +149,11 @@ class HealthSessionManager(private val context: Context) {
         val response = healthConnectClient.readRecords(request)
         return response.records
     }
+
+    suspend fun insertRecords(records: List<Record>) : InsertRecordsResponse {
+            return healthConnectClient.insertRecords(records)
+    }
+
 
     /**
      * Writes an [ExerciseSessionRecord] to Health Connect, and additionally writes underlying data for

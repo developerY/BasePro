@@ -98,10 +98,19 @@ class HealthViewModel @Inject constructor(
             is HealthEvent.LoadHealthData -> loadHealthData()
             is HealthEvent.DeleteAll -> delData()
             is HealthEvent.Retry -> checkPermissionsAndLoadData()
-            is HealthEvent.Insert -> {
+            is HealthEvent.TestInsert -> {
                 Log.d("HealthViewModel", "insertExerciseSession() called") // Debug statement
                 insertExerciseSession()
             }
+            is HealthEvent.Insert -> viewModelScope.launch {
+                tryWithPermissionsCheck {
+                    // 1️⃣ Insert the pre-built Record list
+                    healthSessionManager.insertRecords(event.records)
+                    // 2️⃣ Refresh so UI shows the new data
+                    loadHealthData()
+                }
+            }
+
             is HealthEvent.RequestPermissions -> checkPermissionsAndLoadData()
         }
     }

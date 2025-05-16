@@ -1,6 +1,6 @@
 package com.ylabz.basepro.feature.heatlh.ui
 
-import androidx.health.connect.client.records.ExerciseSessionRecord
+import androidx.health.connect.client.records.Record
 
 sealed interface HealthEvent {
     object RequestPermissions : HealthEvent
@@ -8,6 +8,9 @@ sealed interface HealthEvent {
     object DeleteAll          : HealthEvent
     object Retry              : HealthEvent
     /** Insert (sync) exactly this session into Health Connect */
-    object Insert: HealthEvent
+    object TestInsert: HealthEvent
+    /** Insert a prepared list of Health Connect Record objects */
+    data class Insert(val records: List<Record>) : HealthEvent
 }
+
 
