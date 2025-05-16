@@ -1,5 +1,7 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui.components
 
+import android.R.attr.onClick
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -31,6 +33,7 @@ import com.ylabz.basepro.core.ui.*
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import java.time.ZoneId
 import kotlin.time.Duration.Companion.milliseconds
+import androidx.health.connect.client.records.Record
 
 
 @Composable
@@ -40,6 +43,7 @@ fun BikeRideCard(
     ride: BikeRideEntity,
     bikeEvent: (TripsEvent) -> Unit,
     healthEvent: (HealthEvent) -> Unit,
+    bikeToHealthConnectRecords: (BikeRideEntity) -> List<Record>,
     navTo: (String) -> Unit
 ) {
     // Date formatter for start/end times
@@ -159,11 +163,17 @@ fun BikeRideCard(
                 ) {
                     // Sync button: only enabled if not already synced
                     IconButton(
-                        onClick = { /*onEvent(TripsEvent.Sync(ride.rideId))*/ },
+                        onClick = {
+                            // 1) Build the Health Connect records from your domain ride
+                            val rideInfo: List<Record> = bikeToHealthConnectRecords(ride)
+                            Log.d("BikeRideCard", "rideInfo: $rideInfo")
+                            // 2) Tell the HealthViewModel to insert them
+                            healthEvent(HealthEvent.Insert(rideInfo))
+                        },
                         enabled = !ride.isSynced
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Sync,
+                            imageVector     = Icons.Default.Sync,
                             contentDescription = if (ride.isSynced) "Already synced" else "Sync to Health",
                             tint = if (ride.isSynced)
                                 MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
@@ -183,33 +193,6 @@ fun BikeRideCard(
             }
         }
     }
-    }
-
-
-@Preview
-@Composable
-fun BikeRideCardPreview() {
-    val ride = BikeRideEntity(
-        startTime = Instant.now().toEpochMilli(),
-        endTime = Instant.now().plusSeconds(3600).toEpochMilli(),
-        totalDistance = 10000f,
-        averageSpeed = 20f,
-        maxSpeed = 30f,
-        elevationGain = 100f,
-        elevationLoss = 50f,
-        caloriesBurned = 500,
-        weatherCondition = "Sunny",
-        rideType = "Road",
-        notes = "Great ride!",
-        startLat = 40.7128,
-        startLng = -74.0060,
-        endLat = 40.7580,
-        endLng = -73.9855
-    )
-    BikeRideCard(ride = ride,
-        bikeEvent = {},
-        healthEvent = {},
-        navTo = {},
-        backgroundColor = Color(0xFFE3F2FD)
-    )
 }
+
+

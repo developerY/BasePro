@@ -39,6 +39,7 @@ import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 import kotlin.random.Random
+import androidx.health.connect.client.records.Record
 
 
 // —————————————————————————————————————————————————————————
@@ -71,6 +72,7 @@ fun BikeTripsCompose(
     bikeRides: List<RideWithLocations>,
     bikeEvent: (TripsEvent) -> Unit,
     healthEvent: (HealthEvent) -> Unit,
+    bikeToHealthConnectRecords: (BikeRideEntity) -> List<Record>,
     healthUiState: HealthUiState,
     navTo: (String) -> Unit
 ) {
@@ -116,6 +118,7 @@ fun BikeTripsCompose(
                         ride = rideWithLoc.bikeRideEnt,
                         bikeEvent = bikeEvent,
                         healthEvent = healthEvent,
+                        bikeToHealthConnectRecords = bikeToHealthConnectRecords,
                         navTo = navTo,
                     )
                 }
@@ -170,6 +173,7 @@ fun BikeTripsComposePreview() {
         bikeEvent = {},
         healthEvent = {},
         healthUiState = HealthUiState.Loading,
+        bikeToHealthConnectRecords = { listOf() },
         navTo = {}
     )
 }
@@ -200,34 +204,3 @@ fun CapturedImagePreview(imageUri: Uri) {
         )
     }
 }
-
-@Composable
-fun LoadingScreen() {
-    Text(text = "Loading...", modifier = Modifier.fillMaxSize())
-}
-
-@Composable
-fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)
-    ) {
-        Text(
-            text = "Error: $errorMessage",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-        Text(
-            text = "Retry",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier
-                .clickable { onRetry() }
-                .padding(vertical = 8.dp)
-        )
-    }
-}
-
-@Preview
-@Composable fun CapturedImagePreviewPreview() { CapturedImagePreview(imageUri = Uri.EMPTY) }
-@Preview @Composable fun LoadingScreenPreview()   { LoadingScreen() }
-@Preview @Composable fun ErrorScreenPreview()     { ErrorScreen("Preview Error") {} }

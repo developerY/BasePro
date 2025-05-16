@@ -12,4 +12,7 @@ sealed class TripsEvent {
     //data class OnItemClicked(val itemId: Int) : TripsEvent()
     object StopSaveRide : TripsEvent()
     //data class SyncHeathConnect(val ride : BikeRide) : TripsEvent()
+
+    data class BuildBikeRec(val ride: BikeRide) : TripsEvent()
+
 }

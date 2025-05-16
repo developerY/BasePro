@@ -39,6 +39,7 @@ fun TripsUIRoute(
                 bikeRides     = (uiState as TripsUIState.Success).bikeRides,
                 bikeEvent       = { tripsViewModel.onEvent(it) },
                 healthEvent   = { healthViewModel.onEvent(it) },
+                bikeToHealthConnectRecords = { tripsViewModel.buildHealthConnectRecordsForRide(it) },
                 healthUiState = healthUiState,
                 navTo         = navTo
             )

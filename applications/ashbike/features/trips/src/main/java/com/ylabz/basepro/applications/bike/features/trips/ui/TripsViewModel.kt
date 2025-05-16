@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.Navigator
 import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
+import com.ylabz.basepro.applications.bike.database.mapper.BikeRide
 import com.ylabz.basepro.applications.bike.features.trips.data.SyncRideUseCase
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import javax.inject.Named
+import androidx.health.connect.client.records.Record
 
 
 @HiltViewModel
@@ -58,6 +60,9 @@ class TripsViewModel @Inject constructor(
                 endTime = System.currentTimeMillis()
                 isTracking = false
             }
+
+            is TripsEvent.BuildBikeRec ->  { buildHealthConnectRecordsForRide(event.ride) }
+
         }
     }
 
@@ -70,6 +75,13 @@ class TripsViewModel @Inject constructor(
                 handleError(e)
             }
         }
+    }
+
+    /**
+     * Build the full list of Health Connect Records for a given ride.
+     */
+    fun buildHealthConnectRecordsForRide(ride: BikeRide): List<Record> {
+        return syncRideUseCase(ride)
     }
     /** Call this once when Stop is pressed
     private fun saveRide() {
