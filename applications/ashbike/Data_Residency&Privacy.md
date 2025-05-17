@@ -2,70 +2,70 @@
 
 ## 1. Executive Summary
 
-Our app is designed to put users in control of their data by offloading all health and exercise information to Android’s Google Health Connect (GHC). 
-This approach delivers two core benefits:
+Our app serves as a local staging and offline cache via Room, but uses Google Health Connect (GHC) as the authoritative, 
+long‑term store for all health and exercise data. Key benefits:
 
-* **Zero local residue**: Uninstalling our app leaves no data behind on the device.
-* **Open‑source transparency**: With our source code fully public, users and auditors can verify exactly how data is handled.
-
-Together, these factors make our app both user-friendly and exceptionally privacy‑safe.
-
----
-
-## 2. Data Storage in Google Health Connect
-
-* **Centralized, system-managed store**: GHC acts as a shared, system‑level vault for health data.
-* **Persistence beyond our app’s lifetime**: Upon insertion, sessions, metrics, and records live in GHC even if our app is removed.
-* **Interoperability**: Other apps or services (with user permission) can access, visualize, or delete the data, ensuring flexibility and future-proofing.
-
-### How it works:
-
-1. **Insert**: Our app writes `ExerciseSessionRecord`, `DistanceRecord`, `StepsRecord`, etc., to GHC.
-2. **No local database**: We do not maintain a redundant on‑device database, eliminating sync and consistency overhead.
-3. **Uninstall**: Removing the app does not delete GHC records—they remain until the user or another app explicitly removes them.
+* **Temporary local cache**: Activities are written to a Room database for fast display and offline use.
+* **Zero residual footprint**: Deleting an activity or uninstalling the app wipes all local data—no files or databases remain.
+* **Centralized persistence**: GHC holds the master copy, accessible to other apps and surviving our app’s removal.
 
 ---
 
-## 3. Uninstall Behavior: No Droppings Left Behind
+## 2. Local Room Cache + Sync to GHC
 
-* **Local storage use = zero**: We do not write any user data to local files or embedded databases.
-* **Ephemeral caches only**: Any UI caching is in-memory and cleared on app close.
-* **Uninstall clean‑up**: Since no local data exists, uninstalling our APK leaves neither files nor settings on the device.
+* **Room for UX**: We maintain a RoomDB to store rides and metrics locally. This provides:
 
-> *"Uninstall our app, and it’s as if it was never there—no hidden databases, no orphaned files, no accumulating logs."*
+    * Instant UI updates
+    * Offline read/write operations
+* **Sync flow**: When the user taps “sync,” we map Room entities to Health Connect `Record`s and call `insertRecords(...)`.
+* **Cache lifecycle**:
 
----
-
-## 4. Privacy & Security Advantages
-
-* **User control**: Users decide which apps have GHC permissions. Revoking permissions instantly locks out any further access.
-* **Granular permissions**: Write vs. read, foreground vs. background. Only explicitly granted scopes are used by our app.
-* **Data residency**: Health data remains in a centralized, OS‑managed service rather than scattered across multiple vendor silos.
+    * **On delete**: removing an activity in-app deletes both the Room entry and the corresponding GHC records.
+    * **On uninstall**: the Room database is entirely removed, leaving no files behind.
 
 ---
 
-## 5. Open Source Transparency
+## 3. Uninstall & Deletion Behavior
 
-* **Public repository**: Our entire codebase is available on GitHub under an MIT license.
-* **Auditability**: Security researchers and privacy advocates can inspect how we handle metadata, error cases, and permission flows.
-* **Community contributions**: Anyone can propose improvements, spot potential security issues, and submit pull requests.
+* **Activity deletion**: invokes both:
+
+    1. `bikeRideRepo.deleteById(rideId)` (removes from Room).
+    2. `healthSessionManager.deleteExerciseSession(serverId)` (removes from GHC).
+* **App uninstall**: Android automatically clears your app’s Room database and cache directories.
+* **No orphaned data**: After deletion of an activity or app removal, there are no leftover files or settings on the user’s device.
+
+---
+
+## 4. Health Connect Persistence
+
+* **System‑managed vault**: GHC stores your sessions, steps, distance, calories, heart rate, etc., independently of any single app.
+* **Survives uninstall**: GHC data remains until explicitly deleted—either by user action in the Health Connect UI or by another app with write permission.
+* **Shared access**: Other apps (with user‑granted permissions) can read or delete GHC data, ensuring portability and interoperability.
+
+---
+
+## 5. Privacy & Security Advantages
+
+* **Full user control**: Users decide which apps can read or write in GHC; revoking permissions cuts off access immediately.
+* **Minimal local footprint**: We only use Room for temporary caching; all permanent storage lives in GHC.
+* **Open source transparency**: Our codebase (MIT‑licensed) is publicly auditable, so you can inspect exactly how local caching, sync, and delete operations occur.
 
 ---
 
 ## 6. User Experience Benefits
 
-* **Quick setup**: Users grant GHC permissions once; no need to configure in-app storage.
-* **Seamless uninstall**: Release storage pressure and free up space without manual cleanup steps.
-* **Data continuity**: Even after switching to another app, session history persists in GHC.
+* **Responsive UI**: Room enables instant reads and writes even offline.
+* **Simple cleanup**: Deleting an activity or uninstalling our app performs a full wipe of local data—no manual steps required.
+* **Data continuity**: Historic sessions live in GHC, visible to any other compatible app after sync.
 
 ---
 
 ## 7. Conclusion
 
-By leveraging Google Health Connect as the authoritative data store and publishing our code as open source, our app provides:
+By combining a **temporary Room cache** with **Google Health Connect** as the durable backend, our app delivers:
 
-* **Privacy by design**: No local data residue; full user control via GHC.
-* **Transparency & trust**: Open code, community‑driven quality.
-* **Interoperability & longevity**: Health data stays with the user, accessible to any future apps.
+* **User‑friendly performance**: Fast, offline‑capable UI with local Room storage.
+* **Privacy by design**: No lingering data on delete/uninstall; GHC offers centralized control.
+* **Open‑source trust**: Transparent implementation and community vetting.
 
-This architecture ensures a safe, user‑friendly experience that respects privacy and embraces open collaboration.
+Your data stays yours—cached briefly in our app, then securely managed by GHC, with no residue once you’re done.
