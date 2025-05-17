@@ -170,7 +170,7 @@ class HealthSessionManager(private val context: Context) {
             append("insertRecords: inserted ${res.recordIdsList.size} record(s):")
             append(details)
         })
-
+        showAllRecs()
         return res
     }
 
