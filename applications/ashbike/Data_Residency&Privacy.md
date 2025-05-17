@@ -2,8 +2,8 @@
 
 ## 1. Executive Summary
 
-Our app serves as a local staging and offline cache via Room, but uses Google Health Connect (GHC) as the authoritative, 
-long‑term store for all health and exercise data. Key benefits:
+Our app serves as a local staging and offline cache via Room, but uses Google Health Connect (GHC) 
+as the authoritative, long‑term store for all health and exercise data. Key benefits:
 
 * **Temporary local cache**: Activities are written to a Room database for fast display and offline use.
 * **Zero residual footprint**: Deleting an activity or uninstalling the app wipes all local data—no files or databases remain.
@@ -17,22 +17,19 @@ long‑term store for all health and exercise data. Key benefits:
 
     * Instant UI updates
     * Offline read/write operations
-* **Sync flow**: When the user taps “sync,” we map Room entities to Health Connect `Record`s and call `insertRecords(...)`.
+* **Sync flow**: When the user taps “sync,” we map Room entities to Health Connect `Record`s and call `insertRecords(...)` to push them into GHC.
 * **Cache lifecycle**:
 
-    * **On delete**: removing an activity in-app deletes both the Room entry and the corresponding GHC records.
-    * **On uninstall**: the Room database is entirely removed, leaving no files behind.
+    * **On delete**: removing an activity in-app deletes only the Room entry; the Health Connect record remains in the shared, central store.
+    * **On uninstall**: the Room database is entirely removed, leaving no files or databases behind.
 
 ---
 
 ## 3. Uninstall & Deletion Behavior
 
-* **Activity deletion**: invokes both:
-
-    1. `bikeRideRepo.deleteById(rideId)` (removes from Room).
-    2. `healthSessionManager.deleteExerciseSession(serverId)` (removes from GHC).
-* **App uninstall**: Android automatically clears your app’s Room database and cache directories.
-* **No orphaned data**: After deletion of an activity or app removal, there are no leftover files or settings on the user’s device.
+* **Activity deletion**: removes the ride from Room using `bikeRideRepo.deleteById(rideId)`; the corresponding record in Health Connect persists as part of the central repository shared by all apps.
+* **App uninstall**: Android automatically clears your app’s Room database and cache directories; no local data remains.
+* **Central repository**: Even after deleting local entries or uninstalling apps, all synced sessions still reside in Health Connect until a user or another app with write permissions explicitly deletes them.
 
 ---
 
@@ -69,3 +66,4 @@ By combining a **temporary Room cache** with **Google Health Connect** as the du
 * **Open‑source trust**: Transparent implementation and community vetting.
 
 Your data stays yours—cached briefly in our app, then securely managed by GHC, with no residue once you’re done.
+
