@@ -26,17 +26,23 @@ fun TripsUIRoute(
     // 2. Observe your Health Connect state
     val healthUiState by healthViewModel.uiState.collectAsState()
 
+    // 2. Observe the set of already-synced IDs from HealthViewModel
+    val syncedIds by healthViewModel.syncedIds.collectAsState()
+
     // 3. Render based on your trips state
     when (uiState) {
         TripsUIState.Loading -> LoadingScreen()
+
         is TripsUIState.Error -> ErrorScreen(
             errorMessage = (uiState as TripsUIState.Error).message,
             onRetry      = { tripsViewModel.onEvent(TripsEvent.OnRetry) }
         )
+
         is TripsUIState.Success -> {
             BikeTripsCompose(
                 modifier      = modifier,
                 bikeRides     = (uiState as TripsUIState.Success).bikeRides,
+                syncedIds     = syncedIds,
                 bikeEvent       = { tripsViewModel.onEvent(it) },
                 healthEvent   = { healthViewModel.onEvent(it) },
                 bikeToHealthConnectRecords = { tripsViewModel.buildHealthConnectRecordsForRide(it) },
@@ -46,4 +52,5 @@ fun TripsUIRoute(
         }
     }
 }
+
 

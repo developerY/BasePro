@@ -41,11 +41,15 @@ fun BikeRideCard(
     modifier: Modifier = Modifier,
     backgroundColor: Color,
     ride: BikeRideEntity,
+    syncedIds: Set<String>,
     bikeEvent: (TripsEvent) -> Unit,
     healthEvent: (HealthEvent) -> Unit,
     bikeToHealthConnectRecords: (BikeRideEntity) -> List<Record>,
     navTo: (String) -> Unit
 ) {
+
+    val isSynced = ride.rideId in syncedIds
+
     // Date formatter for start/end times
     val dateFormatter = remember {
         SimpleDateFormat("MMM dd, HH:mm", Locale.getDefault())
@@ -170,12 +174,12 @@ fun BikeRideCard(
                             // 2) Tell the HealthViewModel to insert them
                             healthEvent(HealthEvent.Insert(rideInfo))
                         },
-                        enabled = !ride.isSynced
+                        enabled = isSynced
                     ) {
                         Icon(
                             imageVector     = Icons.Default.Sync,
-                            contentDescription = if (ride.isSynced) "Already synced" else "Sync to Health",
-                            tint = if (ride.isSynced)
+                            contentDescription = if (isSynced) "Already synced" else "Sync to Health",
+                            tint = if (isSynced)
                                 MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
                             else
                                 MaterialTheme.colorScheme.primary

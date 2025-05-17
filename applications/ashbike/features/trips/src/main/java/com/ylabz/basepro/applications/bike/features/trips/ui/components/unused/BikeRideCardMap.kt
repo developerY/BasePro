@@ -147,7 +147,6 @@ fun BikeRideCardMapPreview() {
         rideType = "Road",
         notes = "Nice ride!",
         rating = 4,
-        isSynced = true,
         bikeId = "bike-id-1",
         batteryStart = 100,
         batteryEnd = 85,

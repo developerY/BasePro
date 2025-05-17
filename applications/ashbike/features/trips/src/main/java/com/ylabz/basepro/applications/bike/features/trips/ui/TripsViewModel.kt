@@ -208,7 +208,6 @@ class TripsViewModel @Inject constructor(
                     // User Feedback
                     notes   = "Evening loop around the park",
                     rating  = 4,     // out of 5
-                    isSynced = false,
 
                     // Bike & Battery
                     bikeId       = "RoadBike‑123",

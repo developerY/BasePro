@@ -40,6 +40,7 @@ import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 import kotlin.random.Random
 import androidx.health.connect.client.records.Record
+import kotlin.String
 
 
 // —————————————————————————————————————————————————————————
@@ -70,6 +71,7 @@ fun randomPastelColor(): Color {
 fun BikeTripsCompose(
     modifier: Modifier = Modifier,
     bikeRides: List<RideWithLocations>,
+    syncedIds: Set<String>,
     bikeEvent: (TripsEvent) -> Unit,
     healthEvent: (HealthEvent) -> Unit,
     bikeToHealthConnectRecords: (BikeRideEntity) -> List<Record>,
@@ -116,6 +118,7 @@ fun BikeTripsCompose(
                             .fillMaxWidth(),
                         backgroundColor = bgColor,        // pass it in, or wrap your Card in a Surface
                         ride = rideWithLoc.bikeRideEnt,
+                        syncedIds = emptySet<String>(),
                         bikeEvent = bikeEvent,
                         healthEvent = healthEvent,
                         bikeToHealthConnectRecords = bikeToHealthConnectRecords,
@@ -171,6 +174,7 @@ fun BikeTripsComposePreview() {
     BikeTripsCompose(
         bikeRides = bikeRides,
         bikeEvent = {},
+        syncedIds = emptySet(),
         healthEvent = {},
         healthUiState = HealthUiState.Loading,
         bikeToHealthConnectRecords = { listOf() },

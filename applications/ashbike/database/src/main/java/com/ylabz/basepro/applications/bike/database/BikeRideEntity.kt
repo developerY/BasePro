@@ -33,7 +33,7 @@ data class BikeRideEntity(
     // User Feedback
     val notes: String? = null,
     val rating: Int? = null,
-    val isSynced: Boolean = false,
+    //val isSynced: Boolean = false,
 
     // Bike & Battery
     val bikeId: String? = null,
