@@ -67,6 +67,8 @@ private const val TAG = "HealthSessionManager"
 /** Demonstrates reading and writing from Health Connect. */
 class HealthSessionManager(private val context: Context) {
     private val healthConnectClient by lazy { HealthConnectClient.getOrCreate(context) }
+    // private val healthConnectClient by lazy { HealthConnectClient.getOrCreate(context) }
+
 
     val healthConnectCompatibleApps by lazy {
         val intent = Intent("androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE")
@@ -170,6 +172,59 @@ class HealthSessionManager(private val context: Context) {
         })
 
         return res
+    }
+
+    /**
+     * Logs every record currently stored in Health Connect for the common record types.
+     */
+    @SuppressLint("RestrictedApi")
+    suspend fun showAllRecs() {
+        val now = Instant.now()
+
+        // 1) Exercise sessions
+        val sessionRequest = ReadRecordsRequest(
+            recordType      = ExerciseSessionRecord::class,
+            timeRangeFilter = TimeRangeFilter.before(now)
+        )
+        val sessionResponse = healthConnectClient.readRecords(sessionRequest)
+        Log.d("HealthSessionManager", "ExerciseSessionRecord: ${sessionResponse.records.size} record(s)")
+        sessionResponse.records.forEach { Log.d("HealthSessionManager", it.toString()) }
+
+        // 2) Steps
+        val stepsRequest = ReadRecordsRequest(
+            recordType      = StepsRecord::class,
+            timeRangeFilter = TimeRangeFilter.before(now)
+        )
+        val stepsResponse = healthConnectClient.readRecords(stepsRequest)
+        Log.d("HealthSessionManager", "StepsRecord: ${stepsResponse.records.size} record(s)")
+        stepsResponse.records.forEach { Log.d("HealthSessionManager", it.toString()) }
+
+        // 3) Distance
+        val distanceRequest = ReadRecordsRequest(
+            recordType      = DistanceRecord::class,
+            timeRangeFilter = TimeRangeFilter.before(now)
+        )
+        val distanceResponse = healthConnectClient.readRecords(distanceRequest)
+        Log.d("HealthSessionManager", "DistanceRecord: ${distanceResponse.records.size} record(s)")
+        distanceResponse.records.forEach { Log.d("HealthSessionManager", it.toString()) }
+
+        // 4) Calories
+        val caloriesRequest = ReadRecordsRequest(
+            recordType      = TotalCaloriesBurnedRecord::class,
+            timeRangeFilter = TimeRangeFilter.before(now)
+        )
+        val caloriesResponse = healthConnectClient.readRecords(caloriesRequest)
+        Log.d("HealthSessionManager", "TotalCaloriesBurnedRecord: ${caloriesResponse.records.size} record(s)")
+        caloriesResponse.records.forEach { Log.d("HealthSessionManager", it.toString()) }
+
+        // 5) Heart rate
+        val hrRequest = ReadRecordsRequest(
+            recordType      = HeartRateRecord::class,
+            timeRangeFilter = TimeRangeFilter.before(now)
+        )
+        val hrResponse = healthConnectClient.readRecords(hrRequest)
+        Log.d("HealthSessionManager", "HeartRateRecord: ${hrResponse.records.size} record(s)")
+        hrResponse.records.forEach { Log.d("HealthSessionManager", it.toString()) }
     }
 
 
