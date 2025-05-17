@@ -166,23 +166,26 @@ fun BikeRideCard(
                     horizontalArrangement = Arrangement.End
                 ) {
                     // Sync button: only enabled if not already synced
+                    Text("Is Synced = $isSynced")
                     IconButton(
                         onClick = {
+                            Log.d("BikeRideCard", "rideInfo: clicked and we are stuck")
+
                             // 1) Build the Health Connect records from your domain ride
                             val rideInfo: List<Record> = bikeToHealthConnectRecords(ride)
                             Log.d("BikeRideCard", "rideInfo: $rideInfo")
                             // 2) Tell the HealthViewModel to insert them
                             healthEvent(HealthEvent.Insert(rideInfo))
                         },
-                        enabled = isSynced
+                        //enabled = isSynced
                     ) {
                         Icon(
                             imageVector     = Icons.Default.Sync,
                             contentDescription = if (isSynced) "Already synced" else "Sync to Health",
                             tint = if (isSynced)
-                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                                Color(0xFF009688)//MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
                             else
-                                MaterialTheme.colorScheme.primary
+                                Color(0xFFE91E63)//MaterialTheme.colorScheme.primary
                         )
                     }
 
@@ -200,3 +203,34 @@ fun BikeRideCard(
 }
 
 
+@Preview
+@Composable
+fun BikeRideCardPreview() {
+    val ride = BikeRideEntity(
+        startTime = Instant.now().toEpochMilli(),
+        endTime = Instant.now().plusSeconds(3600).toEpochMilli(),
+        totalDistance = 10000f,
+        averageSpeed = 20f,
+        maxSpeed = 30f,
+        elevationGain = 100f,
+        elevationLoss = 50f,
+        caloriesBurned = 500,
+        weatherCondition = "Sunny",
+        rideType = "Road",
+        notes = "Great ride!",
+        startLat = 40.7128,
+        startLng = -74.0060,
+        endLat = 40.7580,
+        endLng = -73.9855
+    )
+
+    BikeRideCard(
+        ride = ride,
+        backgroundColor = Color.White,
+        syncedIds = setOf(),
+        bikeEvent = {},
+        healthEvent = {},
+        bikeToHealthConnectRecords = { emptyList() },
+        navTo = {}
+    )
+}

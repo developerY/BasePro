@@ -150,9 +150,29 @@ class HealthSessionManager(private val context: Context) {
         return response.records
     }
 
-    suspend fun insertRecords(records: List<Record>) : InsertRecordsResponse {
-            return healthConnectClient.insertRecords(records)
+    suspend fun insertRecords(records: List<Record>): InsertRecordsResponse {
+        val res = healthConnectClient.insertRecords(records)
+
+        // Build a detailed mapping of record type -> (clientId? -> serverId)
+        val details = records
+            .mapIndexed { index, record ->
+                val typeName = record::class.simpleName
+                // If you populated a clientRecordId in metadata, you can grab it:
+                val clientId = record.metadata.clientRecordId
+                val serverId = res.recordIdsList.getOrNull(index)
+                "$typeName(clientId=$clientId)->serverId=$serverId"
+            }
+            .joinToString(separator = "\n    ", prefix = "\n    ")
+
+        Log.d("HealthSessionManager", buildString {
+            append("insertRecords: inserted ${res.recordIdsList.size} record(s):")
+            append(details)
+        })
+
+        return res
     }
+
+
 
 
     /**
