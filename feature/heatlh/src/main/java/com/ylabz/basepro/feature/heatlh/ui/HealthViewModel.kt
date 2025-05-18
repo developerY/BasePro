@@ -83,7 +83,7 @@ class HealthViewModel @Inject constructor(
         .map { state ->
             (state as? HealthUiState.Success)
                 ?.healthData
-                ?.map { it.metadata.id }
+                ?.mapNotNull { it.metadata.clientRecordId }  // ← use clientRecordId
                 ?.toSet()
                 .orEmpty()
         }
