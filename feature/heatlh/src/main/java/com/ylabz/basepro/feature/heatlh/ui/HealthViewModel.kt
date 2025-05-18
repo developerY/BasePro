@@ -116,17 +116,10 @@ class HealthViewModel @Inject constructor(
             is HealthEvent.DeleteAll -> delData()
             is HealthEvent.Retry -> checkPermissionsAndLoadData()
             is HealthEvent.TestInsert -> {
-                Log.d("HealthViewModel", "insertExerciseSession() called") // Debug statement
-                insertExerciseSession()
+                Log.d("HealthViewModel", "insertTestExerciseSession() called") // Debug statement
+                insertTestExerciseSession()
             }
-            is HealthEvent.Insert -> viewModelScope.launch {
-                tryWithPermissionsCheck {
-                    // 1️⃣ Insert the pre-built Record list
-                    healthSessionManager.insertRecords(event.records)
-                    // 2️⃣ Refresh so UI shows the new data
-                    loadHealthData()
-                }
-            }
+            is HealthEvent.Insert -> insertExerciseSession(event)
 
             is HealthEvent.RequestPermissions -> checkPermissionsAndLoadData()
 
@@ -134,6 +127,35 @@ class HealthViewModel @Inject constructor(
         }
     }
 
+
+    private fun insertExerciseSession(event: HealthEvent.Insert) {
+        viewModelScope.launch {
+            tryWithPermissionsCheck {
+                // Log it
+                Log.d("DebugSync", "  -> inserting ${event.records.size} records")
+
+
+
+
+                // 1️⃣ Insert the pre-built Record list
+                // healthSessionManager.insertRecords(event.records)
+                val res = healthSessionManager.insertRecords(event.records)
+                Log.d("DebugSync", "  <- insertRecords response IDs=${res.recordIdsList}")
+                // then reload
+                // 2️⃣ Refresh so UI shows the new data
+
+                // Now read back the sessions you just wrote
+                val sessions = healthSessionManager.readExerciseSessions(Instant.EPOCH, Instant.now())
+                sessions
+                    .filter { it.metadata.id in res.recordIdsList }
+                    .forEach {
+                        Log.d("HealthViewModel", "SessionMetadata post-insert: id=${it.metadata.id}, origin=${it.metadata.dataOrigin}")
+                    }
+
+                loadHealthData()
+            }
+        }
+    }
 
     private fun readAllDAta() {
         viewModelScope.launch {
@@ -187,6 +209,10 @@ class HealthViewModel @Inject constructor(
     private fun loadHealthData() {
         _uiState.value = HealthUiState.Loading
         viewModelScope.launch {
+
+            Log.d("DebugSync", "  -> loading sessions")
+            val sessions = readSessionInputs()
+            Log.d("DebugSync", "  <- loaded ${sessions.size} sessions: ${sessions.map { it.metadata.id }}")
             try {
                 //val weightInputs = readWeightInputs()
                 // You can include more data reading functions here
@@ -252,7 +278,7 @@ class HealthViewModel @Inject constructor(
         backgroundReadGranted.value = backgroundReadPermissions.all { it in grantedPermissions }
     }
 
-    fun insertExerciseSession() {
+    fun insertTestExerciseSession() {
         Log.d("HealthViewModel", "insertExerciseSession() called") // Debug statement
         viewModelScope.launch {
             tryWithPermissionsCheck {
@@ -266,7 +292,7 @@ class HealthViewModel @Inject constructor(
                 )
                 val endOfSession = startOfSession.plusMinutes(30)
 
-                healthSessionManager.writeExerciseSessionMark() //startOfSession, endOfSession)
+                healthSessionManager.writeExerciseSessionTest() //startOfSession, endOfSession)
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.trips.data
 
+import android.R.attr.end
 import android.annotation.SuppressLint
 import android.health.connect.datatypes.ExerciseSegmentType
 import androidx.health.connect.client.records.DistanceRecord
@@ -29,9 +30,18 @@ class SyncRideUseCase @Inject constructor(
         val end    = Instant.ofEpochMilli(ride.endTime)
         val offset = ZoneOffset.systemDefault().rules.getOffset(start)
 
+        // 1) Pick a recording method. If it’s an “active” session, use activelyRecorded:
+        val rideMetaData = Metadata.activelyRecorded(
+            device             = Device(type = Device.TYPE_PHONE),
+            clientRecordId     = ride.rideId,    // your domain UUID
+            /* clientRecordVersion defaults to 0, no need to supply */
+            // clientRecordVersion= 0               // bump this on each update
+        )
+
         // 1) Session with a single segment
+        //Metadata.autoRecorded(device = Device(type = Device.TYPE_PHONE))
         val session = ExerciseSessionRecord(
-            metadata        = Metadata.autoRecorded(device = Device(type = Device.TYPE_PHONE)),
+            metadata        = rideMetaData,
             startTime       = start,
             startZoneOffset = offset,
             endTime         = end,
@@ -53,7 +63,7 @@ class SyncRideUseCase @Inject constructor(
 
         // 2) Distance
         val distanceRecord = DistanceRecord(
-            metadata        = Metadata.manualEntry(),
+            metadata        = rideMetaData,
             startTime       = start,
             startZoneOffset = offset,
             endTime         = end,
@@ -63,7 +73,7 @@ class SyncRideUseCase @Inject constructor(
 
         // 3) Calories
         val caloriesRecord = TotalCaloriesBurnedRecord(
-            metadata        = Metadata.manualEntry(),
+            metadata        = rideMetaData,
             startTime       = start,
             startZoneOffset = offset,
             endTime         = end,
@@ -80,7 +90,7 @@ class SyncRideUseCase @Inject constructor(
                 }
             )
             HeartRateRecord(
-                metadata        = Metadata.manualEntry(),
+                metadata        = rideMetaData,
                 startTime       = start,
                 startZoneOffset = offset,
                 endTime         = end,
@@ -97,4 +107,79 @@ class SyncRideUseCase @Inject constructor(
             heartRateRecord?.let { add(it) }
         }
     }
+}
+/**
+ * ─── SyncRideUseCase ────────────────────────────────────────────────────────────────────
+ *
+ */
+class SyncRideUseCaseFast @Inject constructor() {
+
+    /*@SuppressLint("RestrictedApi")
+    operator fun invoke(ride: BikeRideEntity): List<Record> {
+        val start = Instant.ofEpochMilli(ride.startTime)
+        val end = Instant.ofEpochMilli(ride.endTime)
+        val offset = ZoneOffset.systemDefault().rules.getOffset(start)
+
+        val meta = Metadata.activelyRecorded(
+            device = Device(type = Device.TYPE_PHONE),
+            clientRecordId = ride.rideId
+        )
+
+        val startTime = Instant.ofEpochMilli(ride.startTime)
+        val endTime = Instant.ofEpochMilli(ride.endTime)
+       //val offset = ZoneOffset.systemDefault().rules.getOffset(startTime)
+
+        val session = android.health.connect.datatypes.ExerciseSessionRecord(
+            metadata = meta,
+            startTime = start,
+            startZoneOffset = offset,
+            endTime = end,
+            endZoneOffset = offset,
+            exerciseType = ExerciseSessionRecord.EXERCISE_TYPE_BIKING,
+            title = ride.notes ?: "Bike Session",
+            notes = ride.notes,
+            segments = listOf(
+                ExerciseSegment(startTime, end, ExerciseSegmentType.EXERCISE_SEGMENT_TYPE_BIKING)
+            )
+        )
+
+        val distance = DistanceRecord(
+            meta,
+            start,
+            offset,
+            end,
+            offset,
+            Length.meters(ride.totalDistance.toDouble())
+        )
+        val calories = TotalCaloriesBurnedRecord(
+            meta,
+            start,
+            offset,
+            end,
+            offset,
+            Energy.calories(ride.caloriesBurned.toDouble())
+        )
+        val hrRecord = ride.avgHeartRate?.let { avg ->
+            HeartRateRecord(
+                metadata = meta,
+                startTime = start,
+                startZoneOffset = offset,
+                endTime = end,
+                endZoneOffset = offset,
+                samples = listOf(HeartRateRecord.Sample(start, avg.toLong())) +
+                        ride.maxHeartRate?.let { max ->
+                            listOf(
+                                HeartRateRecord.Sample(
+                                    end,
+                                    max.toLong()
+                                )
+                            )
+                        }
+                            .orEmpty()
+            )
+        }
+
+        return listOf(session, distance, calories) + listOfNotNull(hrRecord)
+    }*/
+
 }

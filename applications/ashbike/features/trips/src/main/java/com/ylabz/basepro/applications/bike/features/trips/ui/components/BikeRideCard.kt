@@ -16,6 +16,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +50,12 @@ fun BikeRideCard(
 ) {
 
     val isSynced = ride.rideId in syncedIds
+
+    // Log whenever this composable recomposes with its current sync state
+    LaunchedEffect(ride.rideId, isSynced) {
+        Log.d("DebugSync", "RideCard: ${ride.rideId}, isSynced=$isSynced, syncedIds=$syncedIds")
+    }
+
 
     // Date formatter for start/end times
     val dateFormatter = remember {

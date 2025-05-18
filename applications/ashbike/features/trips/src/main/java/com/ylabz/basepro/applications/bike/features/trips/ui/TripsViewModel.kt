@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui
 
+import android.util.Log
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -81,7 +82,9 @@ class TripsViewModel @Inject constructor(
      * Build the full list of Health Connect Records for a given ride.
      */
     fun buildHealthConnectRecordsForRide(ride: BikeRide): List<Record> {
-        return syncRideUseCase(ride)
+        val records = syncRideUseCase(ride)
+        Log.d("DebugSync", "buildRecords: ride=${ride.rideId}, records=[${records.map { it::class.simpleName }}]")
+        return records
     }
     /** Call this once when Stop is pressed
     private fun saveRide() {

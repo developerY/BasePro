@@ -153,7 +153,12 @@ class HealthSessionManager(private val context: Context) {
     }
 
     suspend fun insertRecords(records: List<Record>): InsertRecordsResponse {
+        //val res = healthConnectClient.insertRecords(records)
+
+        Log.d("DebugSync", "HealthSessionManager.insertRecords → ${records.map { it::class.simpleName }}")
         val res = healthConnectClient.insertRecords(records)
+        Log.d("DebugSync", "HealthSessionManager.insertRecords ← ${res.recordIdsList}")
+        return res
 
         // Build a detailed mapping of record type -> (clientId? -> serverId)
         val details = records
@@ -283,7 +288,7 @@ class HealthSessionManager(private val context: Context) {
      * TODO: Writes an [ExerciseSessionRecord] to Health Connect.
      */
     @SuppressLint("RestrictedApi")
-    suspend fun writeExerciseSessionMark(){//start: ZonedDateTime, end: ZonedDateTime) {
+    suspend fun writeExerciseSessionTest(){//start: ZonedDateTime, end: ZonedDateTime) {
         val start = ZonedDateTime.now()
         val sessionStartTime = Instant.now()
         val sessionDuration = Duration.ofMinutes(20)
@@ -291,8 +296,6 @@ class HealthSessionManager(private val context: Context) {
         val end = start.plus(sessionDuration)
 
         Log.d("HealthSessionManager", "Writing exercise session START")
-
-
 
         healthConnectClient.insertRecords(
             listOf(
@@ -787,6 +790,27 @@ class HealthSessionManager(private val context: Context) {
         )
         val response = healthConnectClient.readRecords(request)
         return response.records
+    }
+
+
+    /**
+     *
+     */
+    suspend fun readSessionInputs(): List<ExerciseSessionRecord> {
+        // “All‐time” filter: everything up until now
+        val allTime = TimeRangeFilter.before(Instant.now())
+
+        Log.d("DebugSync", "Reading all sessions before ${Instant.now()}")
+
+        val recs = healthConnectClient.readRecords(
+            ReadRecordsRequest(
+                recordType      = ExerciseSessionRecord::class,
+                timeRangeFilter = allTime
+            )
+        ).records
+
+        Log.d("DebugSync", "Found ${recs.size} session(s): ${recs.map { it.metadata.id }}")
+        return recs
     }
 
     /**
