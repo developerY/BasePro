@@ -2,7 +2,8 @@
 
 ## 1. Executive Summary
 
-Our app serves as a local staging and offline cache via Room, but uses Google Health Connect (GHC) as the authoritative, long‑term store for all health and exercise data when available. Key benefits:
+Our app serves as a local staging and offline cache via Room, but uses Google Health Connect (GHC) as the authoritative, 
+long‑term store for all health and exercise data when available. Key benefits:
 
 * **Temporary local cache**: Activities are written to a Room database for fast display and offline use when offline or if the user opts out of GHC.
 * **Optional fallback**: If users do not have Health Connect installed or choose not to grant permissions, the app continues to function entirely on RoomDB.

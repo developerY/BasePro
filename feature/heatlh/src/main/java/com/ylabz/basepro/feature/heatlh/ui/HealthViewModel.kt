@@ -129,6 +129,15 @@ class HealthViewModel @Inject constructor(
             }
 
             is HealthEvent.RequestPermissions -> checkPermissionsAndLoadData()
+
+            is HealthEvent.ReadAll ->  readAllDAta()
+        }
+    }
+
+
+    private fun readAllDAta() {
+        viewModelScope.launch {
+            healthSessionManager.logAllHealthData()
         }
     }
 
@@ -269,9 +278,4 @@ class HealthViewModel @Inject constructor(
             }
         }
     }
-
-
-
-
-
 }

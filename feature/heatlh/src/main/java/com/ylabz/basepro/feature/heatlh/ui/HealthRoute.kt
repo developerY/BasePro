@@ -92,7 +92,6 @@ fun HealthRoute(
 
             is HealthUiState.Success -> {
                 Column() {
-                    Text(" com.ylabz.basepro.feature.heatlh.ui - HealthRoute")
                     HealthStartScreenFull(
                         modifier = modifier,
                         healthPermState = bundledState,

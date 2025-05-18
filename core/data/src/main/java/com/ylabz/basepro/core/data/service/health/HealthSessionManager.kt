@@ -531,6 +531,8 @@ class HealthSessionManager(private val context: Context) {
         deleteRecordsOfType(DistanceRecord::class,       sessionRange)
         deleteRecordsOfType(TotalCaloriesBurnedRecord::class, sessionRange)
         deleteRecordsOfType(HeartRateRecord::class,      sessionRange)
+
+        deleteAllHealthData()
     }
 
 
@@ -599,6 +601,85 @@ class HealthSessionManager(private val context: Context) {
 
         Log.d(TAG, "🏁 deleteAllSessionData() completed")
     }
+
+    /**
+     * Deletes *all* records of the common Health Connect types up until now.
+     * Any records you have written (sessions, steps, distance, calories, heart-rate, etc.) will be removed.
+     */
+    @SuppressLint("RestrictedApi")
+    suspend fun deleteAllHealthData() {
+        val now = Instant.now()
+        val filter = TimeRangeFilter.before(now)
+
+        // List every Record type you want to purge
+        val recordTypes: List<KClass<out Record>> = listOf(
+            ExerciseSessionRecord::class,
+            StepsRecord::class,
+            DistanceRecord::class,
+            TotalCaloriesBurnedRecord::class,
+            HeartRateRecord::class,
+            // SleepSessionRecord::class,
+            WeightRecord::class
+            // …add any other types your app uses…
+        )
+
+        recordTypes.forEach { type ->
+            try {
+                Log.d(TAG, "🗑 Deleting all ${type.simpleName} records before $now…")
+                // This call deletes *all* records matching the filter for that type
+                healthConnectClient.deleteRecords(type, filter)
+                Log.d(TAG, "✅ Deleted all ${type.simpleName} records")
+            } catch (e: Exception) {
+                Log.e(TAG, "❌ Failed to delete ${type.simpleName}", e)
+            }
+        }
+
+        Log.d(TAG, "🏁 deleteAllHealthData() complete")
+    }
+
+
+    /**
+     * Reads and logs *all* records of the common Health Connect types up until now.
+     */
+    @SuppressLint("RestrictedApi")
+    suspend fun logAllHealthData() {
+        val now = Instant.now()
+        val filter = TimeRangeFilter.before(now)
+
+        // Add any other types your app uses:
+        val recordTypes: List<KClass<out Record>> = listOf(
+            ExerciseSessionRecord::class,
+            StepsRecord::class,
+            DistanceRecord::class,
+            TotalCaloriesBurnedRecord::class,
+            HeartRateRecord::class,
+            //SleepSessionRecord::class,
+            WeightRecord::class
+        )
+
+        recordTypes.forEach { type ->
+            try {
+                Log.d(TAG, "📖 Reading all ${type.simpleName} records before $now…")
+                val response = healthConnectClient.readRecords(
+                    ReadRecordsRequest(
+                        recordType      = type,
+                        timeRangeFilter = filter,
+                        ascendingOrder  = true
+                    )
+                )
+                Log.d(TAG, "🗂 ${type.simpleName}: found ${response.records.size} record(s)")
+                response.records.forEach { record ->
+                    Log.d(TAG, record.toString())
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "❌ Error reading ${type.simpleName}", e)
+            }
+        }
+
+        Log.d(TAG, "🏁 logAllHealthData() complete")
+    }
+
+
 
 
     /**

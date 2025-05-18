@@ -77,13 +77,13 @@ fun HealthExpandableEx(
 @Preview
 @Composable
 fun HealthExpandableExCollapsedPreview() {
-    HealthExpandableEx(expanded = false, onExpandToggle = {}, navTo = {})
+    HealthExpandableEx(expanded = true, onExpandToggle = {}, navTo = {})
 }
 
 @Preview
 @Composable
 fun HealthExpandableExExpandedPreview() {
-    HealthExpandableEx(expanded = true, onExpandToggle = {}, navTo = {})
+    HealthExpandableEx(expanded = false, onExpandToggle = {}, navTo = {})
 }
 
 

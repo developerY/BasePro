@@ -51,6 +51,7 @@ fun HealthStartScreenFull(
         HealthActions(
             onInsertClick = {onEvent(HealthEvent.TestInsert) },
             onDeleteAllClick = { onEvent(HealthEvent.DeleteAll) },
+            onReadAllClick = { onEvent(HealthEvent.ReadAll) }
         )
 
         // Session List Header

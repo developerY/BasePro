@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 fun HealthActions(
     onInsertClick: () -> Unit,
     onDeleteAllClick: () -> Unit,
+    onReadAllClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -29,6 +30,12 @@ fun HealthActions(
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
         ) {
             Text("Add")
+        }
+        Button(
+            onClick = onReadAllClick,
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+        ) {
+            Text("Log!")
         }
         Button(
             onClick = onDeleteAllClick,
@@ -44,6 +51,7 @@ fun HealthActions(
 fun HealthActionsPreview() {
     HealthActions(
         onInsertClick = {},
-        onDeleteAllClick = {}
+        onDeleteAllClick = {},
+        onReadAllClick = {}
     )
 }
