@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -120,6 +121,7 @@ class HealthViewModel @Inject constructor(
         Log.d("DebugSync", "VM healthData = ${_uiState.value}.healthData.map { it.metadata }")
         checkHealthConnectAvailability()
         initialLoad()
+        observeHealthConnectChanges()
     }
 
     fun onEvent(event: HealthEvent) {
@@ -138,6 +140,23 @@ class HealthViewModel @Inject constructor(
 
             is HealthEvent.ReadAll ->  readAllDAta()
         }
+    }
+
+    private fun observeHealthConnectChanges() = viewModelScope.launch {
+        // Get a token for all the types you care about
+        val token = healthSessionManager.getChangesToken(
+            setOf(ExerciseSessionRecord::class)
+        )
+
+        // Subscribe to change messages
+        healthSessionManager.getChanges(token)
+            .filterIsInstance<HealthSessionManager.ChangesMessage.ChangeList>()   // only when there really *are* changes
+            .collect { changeList ->
+                // If *any* of those changes are for sessions, re-load
+                if (changeList.changes.any { it == ExerciseSessionRecord::class }) {
+                    loadHealthData()
+                }
+            }
     }
 
 
