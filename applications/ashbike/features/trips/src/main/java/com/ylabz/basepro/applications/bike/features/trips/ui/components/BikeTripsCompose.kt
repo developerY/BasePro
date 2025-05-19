@@ -118,7 +118,7 @@ fun BikeTripsCompose(
                             .fillMaxWidth(),
                         backgroundColor = bgColor,        // pass it in, or wrap your Card in a Surface
                         ride = rideWithLoc.bikeRideEnt,
-                        syncedIds = emptySet<String>(),
+                        syncedIds = syncedIds,
                         bikeEvent = bikeEvent,
                         healthEvent = healthEvent,
                         bikeToHealthConnectRecords = bikeToHealthConnectRecords,

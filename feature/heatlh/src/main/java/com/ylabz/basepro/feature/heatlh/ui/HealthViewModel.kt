@@ -87,22 +87,24 @@ class HealthViewModel @Inject constructor(
     var backgroundReadGranted = mutableStateOf(false)
 
     /** Expose the set of synced session IDs for the UI to consume directly */
+    // inside HealthViewModel
     val syncedIds: StateFlow<Set<String>> = uiState
         .map { state ->
             (state as? HealthUiState.Success)
                 ?.healthData
-                ?.mapNotNull { it.metadata.clientRecordId }  // ← use clientRecordId
+                ?.mapNotNull { it.metadata.clientRecordId }
                 ?.toSet()
                 .orEmpty()
         }
         .onEach { ids ->
-            Log.d("DebugSync", "→ syncedIds updated = $ids")
+            Log.d("DebugSync", "syncedIds updated → $ids")
         }
         .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5_000),
-            emptySet()
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptySet()
         )
+
 
     val permissionsLauncher = healthSessionManager.requestPermissionsActivityContract()
 
