@@ -80,11 +80,10 @@ class TripsViewModel @Inject constructor(
 
     /**
      * Build the full list of Health Connect Records for a given ride.
+     * Log.d("DebugSync", "buildRecords: ride=${ride.rideId}, records=[${records.map { it::class.simpleName }}]")
      */
     fun buildHealthConnectRecordsForRide(ride: BikeRide): List<Record> {
-        val records = syncRideUseCase(ride)
-        Log.d("DebugSync", "buildRecords: ride=${ride.rideId}, records=[${records.map { it::class.simpleName }}]")
-        return records
+        return syncRideUseCase(ride)
     }
     /** Call this once when Stop is pressed
     private fun saveRide() {

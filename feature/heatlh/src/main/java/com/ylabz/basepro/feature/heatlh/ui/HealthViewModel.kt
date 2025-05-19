@@ -34,7 +34,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -53,14 +52,7 @@ class HealthViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HealthUiState>(HealthUiState.Uninitialized)
-    //var uiState = _uiState.asStateFlow()
-    // at the top of your ViewModel, replace uiState declaration with:
-    val uiState: StateFlow<HealthUiState> = _uiState
-        .onEach { state ->
-            Log.d("DebugSync", "VM uiState → $state")
-        }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, HealthUiState.Uninitialized)
-
+    var uiState = _uiState.asStateFlow()
 
     val permissions = setOf(
         HealthPermission.getWritePermission(ExerciseSessionRecord::class),
@@ -97,13 +89,10 @@ class HealthViewModel @Inject constructor(
                 ?.toSet()
                 .orEmpty()
         }
-        .onEach { ids ->
-            Log.d("DebugSync", "syncedIds updated → $ids")
-        }
         .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptySet()
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            emptySet()
         )
 
 
@@ -118,20 +107,17 @@ class HealthViewModel @Inject constructor(
     }
 
     init {
-        Log.d("DebugSync", "VM healthData = ${_uiState.value}.healthData.map { it.metadata }")
         checkHealthConnectAvailability()
         initialLoad()
         observeHealthConnectChanges()
     }
 
     fun onEvent(event: HealthEvent) {
-        Log.d("HealthViewModel", "onEvent() called with event: $event") // Debug statement
         when (event) {
             is HealthEvent.LoadHealthData -> loadHealthData()
             is HealthEvent.DeleteAll -> delData()
             is HealthEvent.Retry -> checkPermissionsAndLoadData()
             is HealthEvent.TestInsert -> {
-                Log.d("HealthViewModel", "insertTestExerciseSession() called") // Debug statement
                 insertTestExerciseSession()
             }
             is HealthEvent.Insert -> insertExerciseSession(event)
@@ -164,11 +150,6 @@ class HealthViewModel @Inject constructor(
         viewModelScope.launch {
             tryWithPermissionsCheck {
                 // Log it
-                Log.d("DebugSync", "  -> inserting ${event.records.size} records")
-
-
-
-
                 // 1️⃣ Insert the pre-built Record list
                 // healthSessionManager.insertRecords(event.records)
                 val res = healthSessionManager.insertRecords(event.records)
@@ -176,13 +157,13 @@ class HealthViewModel @Inject constructor(
                 // then reload
                 // 2️⃣ Refresh so UI shows the new data
 
-                // Now read back the sessions you just wrote
+                /* Now read back the sessions you just wrote
                 val sessions = healthSessionManager.readExerciseSessions(Instant.EPOCH, Instant.now())
                 sessions
                     .filter { it.metadata.id in res.recordIdsList }
                     .forEach {
                         Log.d("HealthViewModel", "SessionMetadata post-insert: id=${it.metadata.id}, origin=${it.metadata.dataOrigin}")
-                    }
+                    }*/
 
                 loadHealthData()
             }
@@ -222,14 +203,9 @@ class HealthViewModel @Inject constructor(
 
 
     fun initialLoad() {
-        Log.d("HealthViewModel", "initialLoad() called") // Debug statement
-        Log.d("HC onEvent", "SDK status = ${HealthConnectClient.getSdkStatus(appCtx)}")
-
         viewModelScope.launch {
-            Log.d("HealthViewModel", "viewModelScope.launch called") // Debug statement
             try {
                 tryWithPermissionsCheck {
-                    Log.d("HealthViewModel", "Permissions check passed, loading data") // Debug
                     readSessionInputs()
                 }
             } catch (e: Exception) {
@@ -241,24 +217,16 @@ class HealthViewModel @Inject constructor(
     private fun loadHealthData() {
         _uiState.value = HealthUiState.Loading
         viewModelScope.launch {
-
-            Log.d("DebugSync", "  -> loading sessions")
             val sessions = readSessionInputs()
-            Log.d("DebugSync", "  <- loaded ${sessions.size} sessions: ${sessions.map { it.metadata.id }}")
             try {
-                val sessions = readSessionInputs()
-                Log.d("DebugSync", "→ readSessionInputs: ${sessions.map { it.metadata.clientRecordId to it.metadata.id }}")
-                //val weightInputs = readWeightInputs()
-                // You can include more data reading functions here
                 _uiState.value = HealthUiState.Success(readSessionInputs())
-                Log.d("DebugSync", "→ Emitted Success, clientIds = ${sessions.mapNotNull { it.metadata.clientRecordId }}")
-                Log.d("DebugSync", "→ syncedIds now = ${syncedIds.value}")
             } catch (e: Exception) {
                 _uiState.value = HealthUiState.Error("Failed to load health data: ${e.message}")
             }
         }
     }
 
+    // TODO : make this for all time
     private suspend fun readSessionInputs(): List<ExerciseSessionRecord> {
         val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
         val now = Instant.now()
