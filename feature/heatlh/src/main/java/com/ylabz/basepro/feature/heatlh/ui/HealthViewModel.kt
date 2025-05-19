@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -51,7 +52,14 @@ class HealthViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HealthUiState>(HealthUiState.Uninitialized)
-    var uiState = _uiState.asStateFlow()
+    //var uiState = _uiState.asStateFlow()
+    // at the top of your ViewModel, replace uiState declaration with:
+    val uiState: StateFlow<HealthUiState> = _uiState
+        .onEach { state ->
+            Log.d("DebugSync", "VM uiState → $state")
+        }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, HealthUiState.Uninitialized)
+
 
     val permissions = setOf(
         HealthPermission.getWritePermission(ExerciseSessionRecord::class),
@@ -87,12 +95,14 @@ class HealthViewModel @Inject constructor(
                 ?.toSet()
                 .orEmpty()
         }
+        .onEach { ids ->
+            Log.d("DebugSync", "→ syncedIds updated = $ids")
+        }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5_000),
             emptySet()
         )
-
 
     val permissionsLauncher = healthSessionManager.requestPermissionsActivityContract()
 
@@ -105,6 +115,7 @@ class HealthViewModel @Inject constructor(
     }
 
     init {
+        Log.d("DebugSync", "VM healthData = ${_uiState.value}.healthData.map { it.metadata }")
         checkHealthConnectAvailability()
         initialLoad()
     }
@@ -214,6 +225,8 @@ class HealthViewModel @Inject constructor(
             val sessions = readSessionInputs()
             Log.d("DebugSync", "  <- loaded ${sessions.size} sessions: ${sessions.map { it.metadata.id }}")
             try {
+                val sessions = readSessionInputs()
+                Log.d("DebugSync", "→ readSessionInputs: ${sessions.map { it.metadata.clientRecordId to it.metadata.id }}")
                 //val weightInputs = readWeightInputs()
                 // You can include more data reading functions here
                 _uiState.value = HealthUiState.Success(readSessionInputs())

@@ -49,7 +49,7 @@ fun BikeRideCard(
     navTo: (String) -> Unit
 ) {
 
-    val isSynced = ride.rideId in syncedIds
+    val isSynced =  ride.healthConnectRecordId in syncedIds // NOT ride.rideId in syncedIds
 
     // Log whenever this composable recomposes with its current sync state
     LaunchedEffect(ride.rideId, isSynced) {
@@ -176,8 +176,6 @@ fun BikeRideCard(
                     Text("Is Synced = $isSynced")
                     IconButton(
                         onClick = {
-                            Log.d("BikeRideCard", "rideInfo: clicked and we are stuck")
-
                             // 1) Build the Health Connect records from your domain ride
                             val rideInfo: List<Record> = bikeToHealthConnectRecords(ride)
                             Log.d("BikeRideCard", "rideInfo: $rideInfo")

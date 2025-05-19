@@ -31,7 +31,11 @@ class SyncRideUseCase @Inject constructor(
         val offset = ZoneOffset.systemDefault().rules.getOffset(start)
 
         // 1) Pick a recording method. If it’s an “active” session, use activelyRecorded:
-        val rideMetaData = Metadata.activelyRecorded(
+        /**
+         * • Use the manual-entry metadata factory instead of activelyRecorded, because only that
+         * overload guarantees clientRecordId is persisted & returned:
+         */
+        val rideMetaData = Metadata.manualEntry(
             device             = Device(type = Device.TYPE_PHONE),
             clientRecordId     = ride.rideId,    // your domain UUID
             /* clientRecordVersion defaults to 0, no need to supply */

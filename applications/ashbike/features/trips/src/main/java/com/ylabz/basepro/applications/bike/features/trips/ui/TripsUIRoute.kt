@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -28,6 +29,8 @@ fun TripsUIRoute(
 
     // 2. Observe the set of already-synced IDs from HealthViewModel
     val syncedIds by healthViewModel.syncedIds.collectAsState()
+
+    Log.d("DebugSync in TripsUIRoute", "syncedIds = ${syncedIds}")
 
     // 3. Render based on your trips state
     when (uiState) {
