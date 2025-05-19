@@ -232,6 +232,8 @@ class HealthViewModel @Inject constructor(
                 //val weightInputs = readWeightInputs()
                 // You can include more data reading functions here
                 _uiState.value = HealthUiState.Success(readSessionInputs())
+                Log.d("DebugSync", "→ Emitted Success, clientIds = ${sessions.mapNotNull { it.metadata.clientRecordId }}")
+                Log.d("DebugSync", "→ syncedIds now = ${syncedIds.value}")
             } catch (e: Exception) {
                 _uiState.value = HealthUiState.Error("Failed to load health data: ${e.message}")
             }

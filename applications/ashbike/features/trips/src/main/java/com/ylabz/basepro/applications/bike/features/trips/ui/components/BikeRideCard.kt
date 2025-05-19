@@ -49,7 +49,7 @@ fun BikeRideCard(
     navTo: (String) -> Unit
 ) {
 
-    val isSynced =  ride.healthConnectRecordId in syncedIds // NOT ride.rideId in syncedIds
+    val isSynced =  ride.rideId in syncedIds // NOT ride.rideId in syncedIds
 
     // Log whenever this composable recomposes with its current sync state
     LaunchedEffect(ride.rideId, isSynced) {
