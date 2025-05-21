@@ -19,8 +19,8 @@ class WeatherRepoImpl @Inject constructor(
         lon: Double
     ): OpenWeatherResponse? {
         Log.d("WeatherRepoImpl", "openCurrentWeatherByCoords: $lat, $lon")
-        //return openFetchWeatherByCoords(lat, lon)
-        return OpenWeatherResponse(
+        return openFetchWeatherByCoords(lat, lon)
+        /*return OpenWeatherResponse(
             coord = Coord(lon, lat),
             weather = listOf(),
             base = "",
@@ -36,7 +36,7 @@ class WeatherRepoImpl @Inject constructor(
             id = 0,
             name = "",
             cod = 0
-        )
+        )*/
 
     }
 
@@ -44,8 +44,8 @@ class WeatherRepoImpl @Inject constructor(
     // Old Remove
     override suspend fun openCurrentWeatherByCity(location: String): OpenWeatherResponse? {
         Log.d("WeatherRepoImpl", "openCurrentWeatherByCoords: $location")
-        // return openFetchWeatherByCityData(location)
-        return OpenWeatherResponse(
+        return openFetchWeatherByCityData(location)
+        /*return OpenWeatherResponse(
             coord = Coord(lon = 0.0, lat = 0.0),
             weather = listOf(),
             base = "",
@@ -61,6 +61,6 @@ class WeatherRepoImpl @Inject constructor(
             id = 0,
             name = "",
             cod = 0
-        )
+        )*/
     }
 }
