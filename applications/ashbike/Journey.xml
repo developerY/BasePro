@@ -1,0 +1,6 @@
+<journey name="NewUserRegistrationAndLogin">
+    <description>First Journey</description>
+    <actions>
+        <action>Click on the weather icon on the top right corner</action>
+    </actions>
+</journey>
