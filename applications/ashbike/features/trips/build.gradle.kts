@@ -40,6 +40,8 @@ dependencies {
     implementation(project(":applications:ashbike:database"))
     implementation(project(":feature:heatlh"))
     implementation(project(":core:ui"))
+    implementation(project(":core:data"))
+    implementation(project(":core:model"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

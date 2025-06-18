@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.LatLngWithElev
-import com.ylabz.basepro.applications.bike.features.trips.ui.components.haversineMeters
+import com.ylabz.basepro.applications.bike.features.trips.ui.components.unused.haversineMeters
 
 // reuse your haversineMeters(...) from before
 

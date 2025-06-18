@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<journeys>
+    <journey name="onboarding">
+        <description>Test the initial onboarding flow.</description>
+        <actions>
+            <action>Given the user has opened the app for the first time</action>
+            <action>When the user swipes through the onboarding screens</action>
+            <action>And the user taps the 'Get Started' button</action>
+        </actions>
+    </journey>
+
+    <journey name="startAndStopRide">
+        <description>Test starting and stopping a bike ride.</description>
+        <actions>
+            <action>Given the user is on the main dashboard</action>
+            <action>When the user taps the 'Start Ride' button</action>
+            <action>And the user's speed and distance are updated in real-time</action>
+            <action>When the user taps the 'Stop Ride' button</action>
+        </actions>
+    </journey>
+
+    <journey name="viewPastRides">
+        <description>Test viewing past rides from the trips screen.</description>
+        <actions>
+            <action>Given the user is on the main dashboard</action>
+            <action>When the user taps on the 'Trips' tab in the bottom navigation</action>
+            <action>And the user taps on a specific ride from the list</action>
+        </actions>
+    </journey>
+
+    <journey name="changeSettings">
+        <description>Test changing settings from the settings screen.</description>
+        <actions>
+            <action>Given the user is on the main dashboard</action>
+            <action>When the user taps on the 'Settings' tab in the bottom navigation</action>
+            <action>And the user changes a setting (e.g., toggles a switch or selects a different option)</action>
+        </actions>
+    </journey>
+</journeys>
