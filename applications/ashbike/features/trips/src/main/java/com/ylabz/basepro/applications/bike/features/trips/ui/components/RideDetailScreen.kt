@@ -2,6 +2,7 @@ package com.ylabz.basepro.applications.bike.features.trips.ui.components
 
 
 import android.R.attr.path
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,11 +10,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -32,9 +36,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -44,10 +51,12 @@ import com.ylabz.basepro.applications.bike.database.RideLocationEntity
 import com.ylabz.basepro.applications.bike.database.RideWithLocations
 import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.maps.lookupPlaceName
+import com.ylabz.basepro.core.model.yelp.BusinessInfo
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import kotlin.math.roundToInt
 
 data class LocationDto(val lat: Double, val lng: Double)
 
@@ -71,9 +80,10 @@ data class GpsFix(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RideDetailScreen(
+    modifier: Modifier = Modifier,
     rideWithLocs: RideWithLocations?,
+    coffeeShops: List<BusinessInfo> = emptyList(),
     onEvent: (TripsEvent) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     if (rideWithLocs == null) {
         Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -165,7 +175,8 @@ fun RideDetailScreen(
         ) {
             MapPathScreen(
                 fixes = fixes,
-                placeName = placeName?: ""
+                placeName = placeName?: "",
+                coffeeShops = coffeeShops,
             )
 
         //locations = path, placeName = placeName?: "")

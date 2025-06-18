@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.North
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
@@ -39,11 +40,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.core.model.yelp.BusinessInfo
 import kotlin.math.*
 
 @Composable
 fun MapPathScreen(
     fixes: List<GpsFix>,
+    coffeeShops: List<BusinessInfo> = emptyList(),
     placeName: String,
     modifier: Modifier = Modifier
         .fillMaxWidth()
@@ -57,6 +60,7 @@ fun MapPathScreen(
     strokeWidth: Float = 6f,
     inset: Dp = 12.dp,
     markerSize: Dp = 20.dp,
+    pinSize: Dp = 32.dp,
     compassSize: Dp = 24.dp
 ) {
     Card(
@@ -196,7 +200,40 @@ fun MapPathScreen(
                         }
                 )
 
-                // 6) **distance scale** at bottom‐start
+                coffeeShops.forEach { business ->
+                    business.coordinates?.let { coords ->
+                        val position = project(coords?.latitude?.toDouble() ?: 0.0, coords?.longitude?.toDouble() ?: 0.0)
+                        val pinOffset = with(LocalDensity.current) {
+                            IntOffset(
+                                x = (position.x - pinSize.toPx() / 2).roundToInt(),
+                                y = (position.y - pinSize.toPx()).roundToInt()
+                            )
+                        }
+                        Column(
+                            modifier = Modifier.offset { pinOffset },
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = business.name,
+                                //tint = cafeIconColor,
+                                modifier = Modifier.size(pinSize)
+                            )
+                            business.name?.let {
+                                Text(
+                                    text = it,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = Color.Black,
+                                    modifier = Modifier
+                                        .background(Color.White.copy(alpha = 0.7f), RoundedCornerShape(4.dp))
+                                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // G) **distance scale** at bottom‐start
                 Row(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
@@ -216,6 +253,8 @@ fun MapPathScreen(
                         color = Color.Black
                     )
                 }
+
+
 
                 // 7) **speed legend** at bottom‐end
                 Row(

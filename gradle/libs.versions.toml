@@ -1,29 +1,29 @@
 [versions]
 agp = "8.10.1"          # Android Gradle Plugin, used to build Android apps
-kotlin = "2.0.20"               # Kotlin programming language version
-coreKtx = "1.13.1"             # Core KTX, Kotlin extensions for Android core libraries
+kotlin = "2.1.21"               # Kotlin programming language version
+coreKtx = "1.16.0"             # Core KTX, Kotlin extensions for Android core libraries
 junit = "4.13.2"               # JUnit, a framework for writing and running tests in Java
 junitVersion = "1.2.1"         # AndroidX JUnit extension, provides compatibility with JUnit
 espressoCore = "3.6.1"         # Espresso, a library for Android UI testing
 # lifecycleRuntimeKtx = "2.8.4"  # AndroidX Lifecycle runtime KTX, provides Kotlin extensions for lifecycle management
 activityCompose = "1.9.1"      # Activity Compose, allows using Jetpack Compose in Activities
-composeBom = "2025.01.00"      # Compose BOM (Bill of Materials), ensures consistent Compose library versions
+composeBom = "2025.06.01"      # Compose BOM (Bill of Materials), ensures consistent Compose library versions
 
 # Additional Libraries
-hilt = "2.49"                  # Hilt, a dependency injection library for Android
+hilt = "2.56.2"                  # Hilt, a dependency injection library for Android
 androidxCoreKtx = "1.12.0"     # AndroidX Core KTX, Kotlin extensions for Android core libraries
 appCompat = "1.7.0"            # AppCompat, backward-compatible versions of Android components
 material = "1.12.0"            # Material Components for Android, implements Material Design
 constraintLayout = "2.2.0"     # ConstraintLayout, a layout manager for complex layouts
-room = "2.6.1"                 # Room, an abstraction layer over SQLite to allow fluent database access
-work = "2.9.1"                 # WorkManager, manages background work with guaranteed execution
+room = "2.7.2"                 # Room, an abstraction layer over SQLite to allow fluent database access
+work = "2.10.2"                 # WorkManager, manages background work with guaranteed execution
 lifecycle = "2.8.4"            # AndroidX Lifecycle components, manages UI-related data in a lifecycle-conscious way
 hiltLifecycleViewModel = "1.0.0-alpha03"  # Hilt ViewModel injection
 hiltNavigation = "1.0.0"       # Hilt support for Navigation component
 hiltNavigationCompose = "1.2.0" # Hilt support for Jetpack Compose Navigation
 hiltWork = "1.2.0"             # Hilt support for WorkManager
 androidxNavigation = "2.8.2"
-ksp = "2.0.20-1.0.24"
+ksp = "2.1.21-2.0.1"
 serialization = "1.8.0"
 cameraX = "1.3.4"
 accompanistPermissions = "0.36.0"
@@ -133,9 +133,9 @@ room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }  
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }  # Kotlin extensions for Room
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room"}  # Room annotation processor
 
-squareup-retrofit = {module = 'com.squareup.retrofit2:retrofit', version ='2.9.0'}
-squareup-retrofit-converter-gson = {module = 'com.squareup.retrofit2:converter-gson', version ='2.9.0'}
-squareup-okhttp3-logging-interceptor = {module ='com.squareup.okhttp3:logging-interceptor', version = '4.9.1'}
+squareup-retrofit = {module = 'com.squareup.retrofit2:retrofit', version ='3.0.0'}
+squareup-retrofit-converter-gson = {module = 'com.squareup.retrofit2:converter-gson', version ='3.0.0'}
+squareup-okhttp3-logging-interceptor = {module ='com.squareup.okhttp3:logging-interceptor', version = '4.12.0'}
 
 # WorkManager Library
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }  # WorkManager runtime with Kotlin extensions

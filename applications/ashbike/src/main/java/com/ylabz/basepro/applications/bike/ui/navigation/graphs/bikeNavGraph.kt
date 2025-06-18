@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -27,6 +28,9 @@ import com.ylabz.basepro.applications.bike.features.trips.ui.TripsUIState
 import com.ylabz.basepro.applications.bike.features.trips.ui.TripsViewModel
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailScreen
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailViewModel
+import com.ylabz.basepro.feature.places.ui.CoffeeShopEvent
+import com.ylabz.basepro.feature.places.ui.CoffeeShopUIState
+import com.ylabz.basepro.feature.places.ui.CoffeeShopViewModel
 
 // Define BikeNavGraph as an extension function on NavGraphBuilder
 @RequiresPermission(allOf = [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION])
@@ -70,9 +74,31 @@ fun NavGraphBuilder.bikeNavGraph(
         val vm: RideDetailViewModel = hiltViewModel(backStackEntry)
         val rideWithLocs by vm.rideWithLocations.collectAsState()
 
+        val cafeViewModel = hiltViewModel<CoffeeShopViewModel>()
+        val cafeUiState by cafeViewModel.uiState.collectAsState()
+
+        // This effect triggers when rideWithLocs changes from null to a loaded state.
+        LaunchedEffect(rideWithLocs) {
+            rideWithLocs?.locations?.firstOrNull()?.let { location ->
+                cafeViewModel.onEvent(
+                    CoffeeShopEvent.FindCafesNear(
+                        latitude = location.lat,
+                        longitude = location.lng
+                    )
+                )
+            }
+        }
+
+
+        val coffeeShops = when (val state = cafeUiState) {
+            is CoffeeShopUIState.Success -> state.coffeeShops
+            else -> emptyList()
+        }
+
         RideDetailScreen(
             modifier = Modifier.fillMaxSize(),
             rideWithLocs = rideWithLocs,
+            coffeeShops = coffeeShops,
             onEvent = { event -> vm.onEvent(event) },
         )
     }
