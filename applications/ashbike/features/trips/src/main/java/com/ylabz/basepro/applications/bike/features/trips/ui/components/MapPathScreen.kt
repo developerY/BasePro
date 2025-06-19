@@ -182,7 +182,8 @@ fun MapPathScreen(
             Canvas(Modifier.fillMaxSize()) {
                 // 1. Background and Grid
                 drawRect(brush = backgroundGradient)
-                val cols = 10; val rows = 10
+                val cols = 10;
+                val rows = 10
                 val stepX = size.width / cols
                 val stepY = size.height / rows
                 repeat(cols - 1) { i ->
@@ -196,18 +197,11 @@ fun MapPathScreen(
 
                 // 2. Cafe Markers (drawn first, to be underneath)
                 cafesToDisplay.forEach { business ->
-                    val position = project(business?.coordinates?.latitude ?: 0.0, business?.coordinates?.longitude ?: 0.0)
+                    val position = project(
+                        business?.coordinates?.latitude ?: 0.0,
+                        business?.coordinates?.longitude ?: 0.0
+                    )
                     drawCafeMarker(business, position, pinSize, textMeasurer)
-                }
-
-                // 3. Ride Path
-                if (fixes.size >= 2) {
-                    val segments = fixes.zipWithNext().map { (p0, p1) ->
-                        Triple(project(p0.lat, p0.lng), project(p1.lat, p1.lng), 0.0) // Speed calc removed for brevity
-                    }
-                    segments.forEach { (a, b, _) ->
-                        drawLine(Color.Red, a, b, strokeWidth = strokeWidth, cap = StrokeCap.Round)
-                    }
                 }
             }
 
