@@ -254,13 +254,21 @@ fun MapPathScreen(
 
                 // build speed‐colored segments
                 data class Seg(val a: Offset, val b: Offset, val speed: Double)
-                val segments = fixes.zipWithNext().map { (p0,p1) ->
-                    val a    = project(p0.lat, p0.lng)
-                    val b    = project(p1.lat, p1.lng)
-                    val dM   = haversineMeters(p0.lat,p0.lng,p1.lat,p1.lng)
-                    val dt   = ((p1.timeMs - p0.timeMs)/1000.0).coerceAtLeast(0.1)
-                    val kmh  = dM/1000.0 / (dt/3600.0)
-                    Seg(a,b,kmh)
+
+
+
+                val segments = fixes.zipWithNext().map { (p0, p1) ->
+                    val a = project(p0.lat, p0.lng)
+                    val b = project(p1.lat, p1.lng)
+                    val distanceMeters = haversineMeters(p0.lat, p0.lng, p1.lat, p1.lng)
+                    val timeSeconds = (p1.timeMs - p0.timeMs) / 1000.0
+
+                    // Calculate m/s first to avoid large extrapolation errors
+                    val speedMps = if (timeSeconds > 0) distanceMeters / timeSeconds else 0.0
+                    // Convert m/s to km/h for display
+                    val speedKmh = speedMps * 3.6
+
+                    Seg(a, b, speedKmh)
                 }
                 val minSpeed = segments.minOf { it.speed }
                 val maxSpeed = segments.maxOf { it.speed }.coerceAtLeast(minSpeed+0.1)
@@ -268,7 +276,7 @@ fun MapPathScreen(
                 // 4) draw path
                 Canvas(Modifier.fillMaxSize()) {
                     segments.forEach { seg ->
-                        val t = ((seg.speed - minSpeed)/(maxSpeed - minSpeed)).toFloat()
+                        val t = if (maxSpeed > 0) (seg.speed / maxSpeed).toFloat() else 0f
                         val col = lerp(slowColor, fastColor, t)
                         drawLine(col, seg.a, seg.b, strokeWidth = strokeWidth, cap = StrokeCap.Round)
                     }
