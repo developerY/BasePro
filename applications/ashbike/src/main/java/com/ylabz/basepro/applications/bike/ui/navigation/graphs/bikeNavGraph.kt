@@ -2,6 +2,7 @@ package com.ylabz.basepro.applications.bike.ui.navigation.graphs
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +29,7 @@ import com.ylabz.basepro.applications.bike.features.trips.ui.TripsUIState
 import com.ylabz.basepro.applications.bike.features.trips.ui.TripsViewModel
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailScreen
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailViewModel
+import com.ylabz.basepro.core.util.Logging
 import com.ylabz.basepro.feature.places.ui.CoffeeShopEvent
 import com.ylabz.basepro.feature.places.ui.CoffeeShopUIState
 import com.ylabz.basepro.feature.places.ui.CoffeeShopViewModel
@@ -38,6 +40,9 @@ fun NavGraphBuilder.bikeNavGraph(
     modifier: Modifier = Modifier,
     navHostController: NavHostController
 ) {
+
+    val TAG = Logging.getTag(this::class.java)
+
     // 1) Home Tab
     composable(BikeScreen.HomeBikeScreen.route) {
         BikeUiRoute(
@@ -66,9 +71,9 @@ fun NavGraphBuilder.bikeNavGraph(
         )
     }
 
-    // 4) Ride Detail (flat, not nested)
+    // 4) Ride Detail Screen
     composable(
-        route     = BikeScreen.RideDetailScreen.route,
+        route = BikeScreen.RideDetailScreen.route,
         arguments = listOf(navArgument("rideId") { type = NavType.StringType })
     ) { backStackEntry ->
         val vm: RideDetailViewModel = hiltViewModel(backStackEntry)
@@ -77,22 +82,43 @@ fun NavGraphBuilder.bikeNavGraph(
         val cafeViewModel = hiltViewModel<CoffeeShopViewModel>()
         val cafeUiState by cafeViewModel.uiState.collectAsState()
 
-        // This effect triggers when rideWithLocs changes from null to a loaded state.
+        // Key part: When does this fire?
         LaunchedEffect(rideWithLocs) {
+            // Log if rideWithLocs is null or not
+            if (rideWithLocs == null) {
+                Logging.w(TAG, "LaunchedEffect fired, but rideWithLocs is NULL.")
+                return@LaunchedEffect
+            }
+
             rideWithLocs?.locations?.firstOrNull()?.let { location ->
+                Logging.i(TAG, "Ride data loaded. Triggering FindCafesNear for lat=${location.lat}, lon=${location.lng}")
                 cafeViewModel.onEvent(
                     CoffeeShopEvent.FindCafesNear(
                         latitude = location.lat,
                         longitude = location.lng
                     )
                 )
-            }
+            } ?: Logging.w(TAG, "Ride data loaded, but location list is empty.")
         }
 
+        // Log the raw state of the cafe UI
+        Logging.d(TAG, "Recomposing with cafeUiState: ${cafeUiState::class.java.simpleName}")
 
         val coffeeShops = when (val state = cafeUiState) {
-            is CoffeeShopUIState.Success -> state.coffeeShops
-            else -> emptyList()
+            is CoffeeShopUIState.Success -> {
+                Logging.i(TAG, "Cafe UI state is SUCCESS with ${state.coffeeShops.size} cafes.")
+                Logging.i(TAG, "Cafe UI state is SUCCESS with ${state.coffeeShops} cafes.")
+
+                state.coffeeShops
+            }
+            is CoffeeShopUIState.Loading -> {
+                Logging.d(TAG, "Cafe UI state is LOADING.")
+                emptyList()
+            }
+            is CoffeeShopUIState.Error -> {
+                Logging.e(TAG, "Cafe UI state is ERROR: ${state.message}")
+                emptyList()
+            }
         }
 
         RideDetailScreen(

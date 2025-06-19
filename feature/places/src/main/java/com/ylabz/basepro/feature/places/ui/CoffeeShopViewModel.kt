@@ -1,5 +1,6 @@
 package com.ylabz.basepro.feature.places.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.data.api.interfaces.YelpAPI
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @HiltViewModel
 class CoffeeShopViewModel @Inject constructor(
     private val yelpClient: YelpAPI,
@@ -20,9 +22,7 @@ class CoffeeShopViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<CoffeeShopUIState>(CoffeeShopUIState.Loading)
     val uiState: StateFlow<CoffeeShopUIState> = _uiState.asStateFlow()
 
-    init {
-        loadCoffeeShops(37.7749, -122.4194) // SF latitude and longitude
-    }
+    private val TAG = "CoffeeShopViewModel"
 
     fun onEvent(event: CoffeeShopEvent) {
         when (event) {
@@ -39,6 +39,7 @@ class CoffeeShopViewModel @Inject constructor(
     }
 
     private fun loadCoffeeShops(latitude: Double, longitude: Double) {
+        Log.d(TAG, "Loading coffee shops near ($latitude, $longitude)")
         _uiState.value = CoffeeShopUIState.Loading
         viewModelScope.launch {
             try {

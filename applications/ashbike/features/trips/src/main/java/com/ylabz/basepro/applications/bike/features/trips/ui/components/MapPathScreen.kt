@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.applications.bike.features.trips.ui.components.unused.haversineMeters
 import com.ylabz.basepro.core.model.yelp.BusinessInfo
 import kotlin.math.*
 
@@ -130,16 +131,67 @@ fun MapPathScreen(
 
             if (fixes.size >= 2) {
                 // project lat/lng → screen
-                val lats     = fixes.map { it.lat }
-                val lngs     = fixes.map { it.lng }
-                val minLat   = lats.minOrNull()!!; val maxLat = lats.maxOrNull()!!
-                val minLng   = lngs.minOrNull()!!; val maxLng = lngs.maxOrNull()!!
-                val latRange = (maxLat - minLat).takeIf { it>0 } ?: 1.0
-                val lngRange = (maxLng - minLng).takeIf { it>0 } ?: 1.0
-                fun project(lat: Double, lng: Double) = Offset(
-                    x = insetPx + ((lng - minLng)/lngRange * (wPx - 2*insetPx)).toFloat(),
-                    y = insetPx + ((maxLat - lat)/latRange * (hPx - 2*insetPx)).toFloat()
-                )
+
+                val rideLats = fixes.map { it.lat }
+                val rideLngs = fixes.map { it.lng }
+                val cafeLats = coffeeShops.map { it.coordinates?.latitude ?: 0.0 }
+                val cafeLngs = coffeeShops.map { it.coordinates?.longitude ?: 0.0 }
+
+                val allLats = rideLats + cafeLats
+                val allLngs = rideLngs + cafeLngs
+
+// Safety check for empty lists
+
+                if (allLats.isEmpty() || allLngs.isEmpty()) return@BoxWithConstraints
+
+                val minLat = allLats.minOrNull()!!; val maxLat = allLats.maxOrNull()!!
+                val minLng = allLngs.minOrNull()!!; val maxLng = allLngs.maxOrNull()!!
+                // --- END FIX ---
+
+                val latRange = (maxLat - minLat).takeIf { it > 0 } ?: 1.0
+                val lngRange = (maxLng - minLng).takeIf { it > 0 } ?: 1.0
+
+                fun project(lat: Double, lng: Double): Offset {
+                    val x = insetPx + ((lng - minLng) / lngRange * (wPx - 2 * insetPx)).toFloat()
+                    val y = insetPx + ((maxLat - lat) / latRange * (hPx - 2 * insetPx)).toFloat()
+                    return Offset(x, y)
+                }
+
+
+                coffeeShops.forEach { business ->
+                    business.coordinates?.let { coords ->
+                        val position = project(coords?.latitude?.toDouble() ?: 0.0, coords?.longitude?.toDouble() ?: 0.0)
+                        val pinOffset = with(LocalDensity.current) {
+                            IntOffset(
+                                x = (position.x - pinSize.toPx() / 2).roundToInt(),
+                                y = (position.y - pinSize.toPx()).roundToInt()
+                            )
+                        }
+                        Column(
+                            modifier = Modifier.offset { pinOffset },
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = business.name,
+                                tint = Color.Black.copy(alpha = 0.3f),
+                                //tint = cafeIconColor,
+                                modifier = Modifier.size(pinSize)
+                            )
+                            business.name?.let {
+                                Text(
+                                    text = it,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = Color.Black.copy(alpha = 0.3f),
+                                    modifier = Modifier
+                                        .background(Color.White.copy(alpha = 0.7f), RoundedCornerShape(4.dp))
+                                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
 
                 // compute real‐world distance scale (meters → px)
                 val midLat   = (minLat + maxLat)/2
@@ -200,38 +252,7 @@ fun MapPathScreen(
                         }
                 )
 
-                coffeeShops.forEach { business ->
-                    business.coordinates?.let { coords ->
-                        val position = project(coords?.latitude?.toDouble() ?: 0.0, coords?.longitude?.toDouble() ?: 0.0)
-                        val pinOffset = with(LocalDensity.current) {
-                            IntOffset(
-                                x = (position.x - pinSize.toPx() / 2).roundToInt(),
-                                y = (position.y - pinSize.toPx()).roundToInt()
-                            )
-                        }
-                        Column(
-                            modifier = Modifier.offset { pinOffset },
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.LocationOn,
-                                contentDescription = business.name,
-                                //tint = cafeIconColor,
-                                modifier = Modifier.size(pinSize)
-                            )
-                            business.name?.let {
-                                Text(
-                                    text = it,
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = Color.Black,
-                                    modifier = Modifier
-                                        .background(Color.White.copy(alpha = 0.7f), RoundedCornerShape(4.dp))
-                                        .padding(horizontal = 4.dp, vertical = 2.dp)
-                                )
-                            }
-                        }
-                    }
-                }
+
 
                 // G) **distance scale** at bottom‐start
                 Row(
