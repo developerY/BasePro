@@ -82,8 +82,10 @@ fun MapPathScreen(
 ) {
 
     var cafesVisible by rememberSaveable { mutableStateOf(false) }
+    // This state remembers if we've already fetched the data
     var cafesFetched by rememberSaveable { mutableStateOf(false) }
     val textMeasurer = rememberTextMeasurer()
+
 
     Card(
         modifier = modifier,
@@ -104,21 +106,21 @@ fun MapPathScreen(
             // Determine which cafes to use for bounds and rendering
             val cafesToDisplay = if (cafesVisible) coffeeShops else emptyList()
 
-            // Calculate bounding box based on visible items
+            /* Calculate bounding box based on visible items
             val rideLats = fixes.map { it.lat }
             val rideLngs = fixes.map { it.lng }
             val cafeLats = cafesToDisplay.map { it.coordinates?.latitude ?: 0.0}
             val cafeLngs = cafesToDisplay.map { it.coordinates?.longitude ?: 0.0 }
 
             val allLats = rideLats + cafeLats
-            val allLngs = rideLngs + cafeLngs
+            val allLngs = rideLngs + cafeLngs */
 
             val minLat: Double
             val maxLat: Double
             val minLng: Double
             val maxLng: Double
 
-            if (allLats.isNotEmpty() && allLngs.isNotEmpty()) {
+            /*if (allLats.isNotEmpty() && allLngs.isNotEmpty()) {
                 minLat = allLats.reduce { a, b -> min(a, b) }
                 maxLat = allLats.reduce { a, b -> max(a, b) }
                 minLng = allLngs.reduce { a, b -> min(a, b) }
@@ -126,7 +128,18 @@ fun MapPathScreen(
             } else {
                 // Default values if no points are available
                 minLat = 0.0; maxLat = 0.0; minLng = 0.0; maxLng = 0.0
+            }*/
+
+            if (fixes.isNotEmpty()) {
+                minLat = fixes.minOf { it.lat }
+                maxLat = fixes.maxOf { it.lat }
+                minLng = fixes.minOf { it.lng }
+                maxLng = fixes.maxOf { it.lng }
+            } else {
+                // Default view if there's no ride path
+                minLat = 40.7128; maxLat = 40.7128; minLng = -74.0060; maxLng = -74.0060
             }
+            // --- END FIX ---
 
             val latRange = (maxLat - minLat).takeIf { it > 0 } ?: 1.0
             val lngRange = (maxLng - minLng).takeIf { it > 0 } ?: 1.0
@@ -344,7 +357,7 @@ fun MapPathScreen(
                             cafesVisible = !cafesVisible
                             if (cafesVisible && !cafesFetched) {
                                 onFindCafes()
-                                cafesFetched = true
+                                cafesFetched = true // We flip the flag to true
                             }
                         }
                         .padding(8.dp)

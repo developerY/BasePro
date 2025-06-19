@@ -83,61 +83,38 @@ fun NavGraphBuilder.bikeNavGraph(
         val cafeViewModel = hiltViewModel<CoffeeShopViewModel>()
         val cafeUiState by cafeViewModel.uiState.collectAsState()
 
-        // Key part: When does this fire?
-        LaunchedEffect(rideWithLocs) {
-            // Log if rideWithLocs is null or not
-            if (rideWithLocs == null) {
-                Logging.w(TAG, "LaunchedEffect fired, but rideWithLocs is NULL.")
-                return@LaunchedEffect
-            }
-
-            rideWithLocs?.locations?.firstOrNull()?.let { location ->
-                Logging.i(TAG, "Ride data loaded. Triggering FindCafesNear for lat=${location.lat}, lon=${location.lng}")
-                cafeViewModel.onEvent(
-                    CoffeeShopEvent.FindCafesNear(
-                        latitude = location.lat,
-                        longitude = location.lng
-                    )
-                )
-            } ?: Logging.w(TAG, "Ride data loaded, but location list is empty.")
-        }
-
         // Log the raw state of the cafe UI
         Logging.d(TAG, "Recomposing with cafeUiState: ${cafeUiState::class.java.simpleName}")
 
-        // This effect triggers when the locations list is available and not empty
-        LaunchedEffect(rideWithLocs?.locations) {
-            val locations = rideWithLocs?.locations
-            if (!locations.isNullOrEmpty()) {
 
-                // --- CALCULATION LOGIC MOVED TO CALLER ---
-                val centerLat = locations.map { it.lat }.average()
-                val centerLng = locations.map { it.lng }.average()
 
-                // Find the furthest point from the center to define the radius
-                val maxDistanceMeters = locations.maxOfOrNull { location ->
-                    haversineMeters(centerLat, centerLng, location.lat, location.lng)
-                } ?: 250.0 // Default to 250m if calculation fails
+    // The logic to find cafes is now in this lambda.
+    // It is passed down to the UI to be called by the button.
+    val findCafesAction = {
+        val locations = rideWithLocs?.locations
+        if (!locations.isNullOrEmpty()) {
+            val centerLat = locations.map { it.lat }.average()
+            val centerLng = locations.map { it.lng }.average()
 
-                // Use this distance as our search radius, capped to a reasonable limit
-                val searchRadius = maxDistanceMeters.coerceAtMost(1000.0) / 2.0// Cap at 1km
-                // --- END CALCULATION LOGIC ---
+            val routeRadius = locations.maxOfOrNull { location ->
+                haversineMeters(centerLat, centerLng, location.lat, location.lng)
+            } ?: 0.0
 
-                Logging.i(
-                    TAG,
-                    "Requesting cafes with center ($centerLat, $centerLng) and radius $searchRadius"
+            val searchRadius = (routeRadius + 100.0).coerceIn(200.0, 1500.0)
+
+            Logging.i(TAG, "User requested cafes. Searching with center ($centerLat, $centerLng) and dynamic radius ${searchRadius}m")
+
+            cafeViewModel.onEvent(
+                CoffeeShopEvent.FindCafesInArea(
+                    latitude = centerLat,
+                    longitude = centerLng,
+                    radius = searchRadius
                 )
-
-                cafeViewModel.onEvent(
-                    CoffeeShopEvent.FindCafesInArea(
-                        latitude = centerLat,
-                        longitude = centerLng,
-                        radius = searchRadius
-                    )
-                )
-            }
+            )
+        } else {
+            Logging.w(TAG, "User requested cafes, but ride location data is not available.")
         }
-
+    }
 
         val coffeeShops = when (val state = cafeUiState) {
             is CoffeeShopUIState.Success -> state.coffeeShops
@@ -148,6 +125,7 @@ fun NavGraphBuilder.bikeNavGraph(
             modifier = Modifier.fillMaxSize(),
             rideWithLocs = rideWithLocs,
             coffeeShops = coffeeShops,
+            onFindCafes = findCafesAction,
             onEvent = { event -> vm.onEvent(event) },
         )
     }

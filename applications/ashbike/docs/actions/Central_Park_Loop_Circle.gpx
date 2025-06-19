@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1"
+     creator="Gemini"
+     xmlns="http://www.topografix.com/GPX/1/1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+    <metadata>
+        <name>Central Park Loop Track</name>
+        <desc>A simulated bike ride starting at the Central Park Zoo and looping around the park's main drives. This version includes timestamps for better emulator playback.</desc>
+        <time>2025-06-19T12:00:00Z</time>
+    </metadata>
+    <trk>
+        <name>Central Park Loop from Zoo</name>
+        <trkseg>
+            <trkpt lat="40.767778" lon="-73.971833"><time>2025-06-19T12:00:00Z</time></trkpt>
+            <trkpt lat="40.771111" lon="-73.969167"><time>2025-06-19T12:02:00Z</time></trkpt>
+            <trkpt lat="40.775278" lon="-73.965000"><time>2025-06-19T12:04:00Z</time></trkpt>
+            <trkpt lat="40.779444" lon="-73.963056"><time>2025-06-19T12:06:00Z</time></trkpt>
+            <trkpt lat="40.785000" lon="-73.958611"><time>2025-06-19T12:08:00Z</time></trkpt>
+            <trkpt lat="40.790556" lon="-73.955833"><time>2025-06-19T12:10:00Z</time></trkpt>
+            <trkpt lat="40.795000" lon="-73.953056"><time>2025-06-19T12:12:00Z</time></trkpt>
+            <trkpt lat="40.797222" lon="-73.959167"><time>2025-06-19T12:14:00Z</time></trkpt>
+            <trkpt lat="40.794722" lon="-73.965278"><time>2025-06-19T12:16:00Z</time></trkpt>
+            <trkpt lat="40.789167" lon="-73.968611"><time>2025-06-19T12:18:00Z</time></trkpt>
+            <trkpt lat="40.781389" lon="-73.974167"><time>2025-06-19T12:20:00Z</time></trkpt>
+            <trkpt lat="40.775833" lon="-73.978333"><time>2025-06-19T12:22:00Z</time></trkpt>
+            <trkpt lat="40.771389" lon="-73.980000"><time>2025-06-19T12:24:00Z</time></trkpt>
+            <trkpt lat="40.768611" lon="-73.976944"><time>2025-06-19T12:26:00Z</time></trkpt>
+            <trkpt lat="40.767778" lon="-73.971833"><time>2025-06-19T12:28:00Z</time></trkpt>
+        </trkseg>
+    </trk>
+</gpx>
