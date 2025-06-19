@@ -6,15 +6,18 @@ import android.R.attr.strokeWidth
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Coffee
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.North
 import androidx.compose.material.icons.filled.PlayArrow
@@ -22,9 +25,14 @@ import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -34,20 +42,28 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.unused.haversineMeters
 import com.ylabz.basepro.core.model.yelp.BusinessInfo
+import com.ylabz.basepro.core.model.yelp.Coordinates
 import kotlin.math.*
 
 @Composable
 fun MapPathScreen(
     fixes: List<GpsFix>,
     coffeeShops: List<BusinessInfo> = emptyList(),
+    onFindCafes: () -> Unit,
     placeName: String,
     modifier: Modifier = Modifier
         .fillMaxWidth()
@@ -64,6 +80,11 @@ fun MapPathScreen(
     pinSize: Dp = 32.dp,
     compassSize: Dp = 24.dp
 ) {
+
+    var cafesVisible by rememberSaveable { mutableStateOf(false) }
+    var cafesFetched by rememberSaveable { mutableStateOf(false) }
+    val textMeasurer = rememberTextMeasurer()
+
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
@@ -71,10 +92,51 @@ fun MapPathScreen(
     ) {
         BoxWithConstraints {
             val bc = this
-            val wPx     = with(LocalDensity.current) { bc.maxWidth.toPx() }
-            val hPx     = with(LocalDensity.current) { bc.maxHeight.toPx() }
-            val insetPx = with(LocalDensity.current) { inset.toPx() }
+            //val wPx     = with(LocalDensity.current) { bc.maxWidth.toPx() }
+            //val hPx     = with(LocalDensity.current) { bc.maxHeight.toPx() }
+            //val insetPx = with(LocalDensity.current) { inset.toPx() }
             val density = LocalDensity.current
+
+            val wPx = constraints.maxWidth.toFloat()
+            val hPx = constraints.maxHeight.toFloat()
+            val insetPx = with(LocalDensity.current) { inset.toPx() }
+
+            // Determine which cafes to use for bounds and rendering
+            val cafesToDisplay = if (cafesVisible) coffeeShops else emptyList()
+
+            // Calculate bounding box based on visible items
+            val rideLats = fixes.map { it.lat }
+            val rideLngs = fixes.map { it.lng }
+            val cafeLats = cafesToDisplay.map { it.coordinates?.latitude ?: 0.0}
+            val cafeLngs = cafesToDisplay.map { it.coordinates?.longitude ?: 0.0 }
+
+            val allLats = rideLats + cafeLats
+            val allLngs = rideLngs + cafeLngs
+
+            val minLat: Double
+            val maxLat: Double
+            val minLng: Double
+            val maxLng: Double
+
+            if (allLats.isNotEmpty() && allLngs.isNotEmpty()) {
+                minLat = allLats.reduce { a, b -> min(a, b) }
+                maxLat = allLats.reduce { a, b -> max(a, b) }
+                minLng = allLngs.reduce { a, b -> min(a, b) }
+                maxLng = allLngs.reduce { a, b -> max(a, b) }
+            } else {
+                // Default values if no points are available
+                minLat = 0.0; maxLat = 0.0; minLng = 0.0; maxLng = 0.0
+            }
+
+            val latRange = (maxLat - minLat).takeIf { it > 0 } ?: 1.0
+            val lngRange = (maxLng - minLng).takeIf { it > 0 } ?: 1.0
+
+            fun project(lat: Double, lng: Double): Offset {
+                val x = insetPx + ((lng - minLng) / lngRange * (wPx - 2 * insetPx)).toFloat()
+                val y = insetPx + ((maxLat - lat) / latRange * (hPx - 2 * insetPx)).toFloat()
+                return Offset(x, y)
+            }
+
 
             // 1) background + grid
             Canvas(Modifier.fillMaxSize()) {
@@ -99,6 +161,40 @@ fun MapPathScreen(
                         end   = Offset(size.width, y),
                         strokeWidth = if ((j+1)%5==0) 1.5f else 0.8f
                     )
+                }
+            }
+
+
+            // 2. Draw Cafe Markers (FIRST, so they are at the bottom)
+            Canvas(Modifier.fillMaxSize()) {
+                // 1. Background and Grid
+                drawRect(brush = backgroundGradient)
+                val cols = 10; val rows = 10
+                val stepX = size.width / cols
+                val stepY = size.height / rows
+                repeat(cols - 1) { i ->
+                    val x = stepX * (i + 1)
+                    drawLine(gridColor, Offset(x, 0f), Offset(x, size.height), strokeWidth = 0.8f)
+                }
+                repeat(rows - 1) { j ->
+                    val y = stepY * (j + 1)
+                    drawLine(gridColor, Offset(0f, y), Offset(size.width, y), strokeWidth = 0.8f)
+                }
+
+                // 2. Cafe Markers (drawn first, to be underneath)
+                cafesToDisplay.forEach { business ->
+                    val position = project(business?.coordinates?.latitude ?: 0.0, business?.coordinates?.longitude ?: 0.0)
+                    drawCafeMarker(business, position, pinSize, textMeasurer)
+                }
+
+                // 3. Ride Path
+                if (fixes.size >= 2) {
+                    val segments = fixes.zipWithNext().map { (p0, p1) ->
+                        Triple(project(p0.lat, p0.lng), project(p1.lat, p1.lng), 0.0) // Speed calc removed for brevity
+                    }
+                    segments.forEach { (a, b, _) ->
+                        drawLine(Color.Red, a, b, strokeWidth = strokeWidth, cap = StrokeCap.Round)
+                    }
                 }
             }
 
@@ -129,69 +225,8 @@ fun MapPathScreen(
                 )
             }
 
+            //if (fixes.isNotEmpty() || cafesToDisplay.isNotEmpty()) {
             if (fixes.size >= 2) {
-                // project lat/lng → screen
-
-                val rideLats = fixes.map { it.lat }
-                val rideLngs = fixes.map { it.lng }
-                val cafeLats = coffeeShops.map { it.coordinates?.latitude ?: 0.0 }
-                val cafeLngs = coffeeShops.map { it.coordinates?.longitude ?: 0.0 }
-
-                val allLats = rideLats + cafeLats
-                val allLngs = rideLngs + cafeLngs
-
-// Safety check for empty lists
-
-                if (allLats.isEmpty() || allLngs.isEmpty()) return@BoxWithConstraints
-
-                val minLat = allLats.minOrNull()!!; val maxLat = allLats.maxOrNull()!!
-                val minLng = allLngs.minOrNull()!!; val maxLng = allLngs.maxOrNull()!!
-                // --- END FIX ---
-
-                val latRange = (maxLat - minLat).takeIf { it > 0 } ?: 1.0
-                val lngRange = (maxLng - minLng).takeIf { it > 0 } ?: 1.0
-
-                fun project(lat: Double, lng: Double): Offset {
-                    val x = insetPx + ((lng - minLng) / lngRange * (wPx - 2 * insetPx)).toFloat()
-                    val y = insetPx + ((maxLat - lat) / latRange * (hPx - 2 * insetPx)).toFloat()
-                    return Offset(x, y)
-                }
-
-
-                coffeeShops.forEach { business ->
-                    business.coordinates?.let { coords ->
-                        val position = project(coords?.latitude?.toDouble() ?: 0.0, coords?.longitude?.toDouble() ?: 0.0)
-                        val pinOffset = with(LocalDensity.current) {
-                            IntOffset(
-                                x = (position.x - pinSize.toPx() / 2).roundToInt(),
-                                y = (position.y - pinSize.toPx()).roundToInt()
-                            )
-                        }
-                        Column(
-                            modifier = Modifier.offset { pinOffset },
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.LocationOn,
-                                contentDescription = business.name,
-                                tint = Color.Black.copy(alpha = 0.3f),
-                                //tint = cafeIconColor,
-                                modifier = Modifier.size(pinSize)
-                            )
-                            business.name?.let {
-                                Text(
-                                    text = it,
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = Color.Black.copy(alpha = 0.3f),
-                                    modifier = Modifier
-                                        .background(Color.White.copy(alpha = 0.7f), RoundedCornerShape(4.dp))
-                                        .padding(horizontal = 4.dp, vertical = 2.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-
 
                 // compute real‐world distance scale (meters → px)
                 val midLat   = (minLat + maxLat)/2
@@ -297,12 +332,67 @@ fun MapPathScreen(
                     Spacer(Modifier.width(8.dp))
                     Text("${maxSpeed.roundToInt()} km/h", style = MaterialTheme.typography.bodySmall)
                 }
+
+                // Clickable Icon in Top Left
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(8.dp)
+                        .clip(CircleShape)
+                        .background(Color.Black.copy(alpha = 0.4f))
+                        .clickable {
+                            cafesVisible = !cafesVisible
+                            if (cafesVisible && !cafesFetched) {
+                                onFindCafes()
+                                cafesFetched = true
+                            }
+                        }
+                        .padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Coffee,
+                        contentDescription = "Show/Hide Cafes",
+                        tint = if (cafesVisible) MaterialTheme.colorScheme.primary else Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
         }
     }
 }
 
 // -- helper functions below (same as before) --
+
+private fun DrawScope.drawCafeMarker(
+    business: BusinessInfo,
+    position: Offset,
+    pinSize: Dp,
+    textMeasurer: TextMeasurer
+) {
+    val pinSizePx = pinSize.toPx()
+    // Simple circle for the marker body
+    drawCircle(
+        color = Color.Black.copy(alpha = 0.5f),
+        radius = pinSizePx / 2.5f,
+        center = position
+    )
+    // Small inner circle for highlight
+    drawCircle(
+        color = Color.White.copy(alpha=0.6f),
+        radius = pinSizePx / 6f,
+        center = position
+    )
+
+    // Draw the text label for the cafe
+    val textLayoutResult = textMeasurer.measure(
+        text = business.name ?: "",
+        style = TextStyle(fontSize = 10.sp, color = Color.Black)
+    )
+    drawText(
+        textLayoutResult = textLayoutResult,
+        topLeft = position + Offset(-textLayoutResult.size.width / 2f, pinSizePx / 2f + 4.dp.toPx())
+    )
+}
 
 fun haversineMeters(
     lat1: Double, lng1: Double,
@@ -342,8 +432,34 @@ fun MapPathScreenPreview() {
         GpsFix(lat = 34.0550, lng = -118.2460, elevation = 0f, timeMs = 3000, speedMps = 15f),
         GpsFix(lat = 34.0560, lng = -118.2470, elevation = 0f, timeMs = 4000, speedMps = 20f)
     )
+
+    val coffeeShops = listOf(
+        BusinessInfo(
+            id = "1",
+            name = "Central Park Cafe",
+            url = "",
+            rating = 4.5,
+            photos = emptyList(),
+            price = "$$",
+            coordinates = Coordinates(latitude = 40.7682, longitude = -73.9720),
+            categories = emptyList()
+        ),
+        BusinessInfo(
+            id = "2",
+            name = "5th Ave Beans",
+            url = "",
+            rating = 4.8,
+            photos = emptyList(),
+            price = "$$$",
+            coordinates = Coordinates(latitude = 40.7690, longitude = -73.9735),
+            categories = emptyList()
+        )
+    )
+
     MapPathScreen(
         fixes = fixes,
-        placeName = "Sample Place"
+        coffeeShops = coffeeShops,
+        onFindCafes = { }, // Preview doesn't need to fetch, so this is empty
+        placeName = "Ride Around The Plaza"
     )
 }

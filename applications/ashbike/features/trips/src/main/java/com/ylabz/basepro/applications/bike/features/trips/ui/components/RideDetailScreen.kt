@@ -83,6 +83,7 @@ fun RideDetailScreen(
     modifier: Modifier = Modifier,
     rideWithLocs: RideWithLocations?,
     coffeeShops: List<BusinessInfo> = emptyList(),
+    onFindCafes: () -> Unit = {},
     onEvent: (TripsEvent) -> Unit,
 ) {
     if (rideWithLocs == null) {
@@ -177,6 +178,7 @@ fun RideDetailScreen(
                 fixes = fixes,
                 placeName = placeName?: "",
                 coffeeShops = coffeeShops,
+                onFindCafes = onFindCafes
             )
 
         //locations = path, placeName = placeName?: "")

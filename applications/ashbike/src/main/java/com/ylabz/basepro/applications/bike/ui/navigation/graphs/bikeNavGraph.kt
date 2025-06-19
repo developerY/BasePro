@@ -29,6 +29,7 @@ import com.ylabz.basepro.applications.bike.features.trips.ui.TripsUIState
 import com.ylabz.basepro.applications.bike.features.trips.ui.TripsViewModel
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailScreen
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailViewModel
+import com.ylabz.basepro.applications.bike.features.trips.ui.components.haversineMeters
 import com.ylabz.basepro.core.util.Logging
 import com.ylabz.basepro.feature.places.ui.CoffeeShopEvent
 import com.ylabz.basepro.feature.places.ui.CoffeeShopUIState
@@ -104,21 +105,43 @@ fun NavGraphBuilder.bikeNavGraph(
         // Log the raw state of the cafe UI
         Logging.d(TAG, "Recomposing with cafeUiState: ${cafeUiState::class.java.simpleName}")
 
-        val coffeeShops = when (val state = cafeUiState) {
-            is CoffeeShopUIState.Success -> {
-                Logging.i(TAG, "Cafe UI state is SUCCESS with ${state.coffeeShops.size} cafes.")
-                Logging.i(TAG, "Cafe UI state is SUCCESS with ${state.coffeeShops} cafes.")
+        // This effect triggers when the locations list is available and not empty
+        LaunchedEffect(rideWithLocs?.locations) {
+            val locations = rideWithLocs?.locations
+            if (!locations.isNullOrEmpty()) {
 
-                state.coffeeShops
+                // --- CALCULATION LOGIC MOVED TO CALLER ---
+                val centerLat = locations.map { it.lat }.average()
+                val centerLng = locations.map { it.lng }.average()
+
+                // Find the furthest point from the center to define the radius
+                val maxDistanceMeters = locations.maxOfOrNull { location ->
+                    haversineMeters(centerLat, centerLng, location.lat, location.lng)
+                } ?: 250.0 // Default to 250m if calculation fails
+
+                // Use this distance as our search radius, capped to a reasonable limit
+                val searchRadius = maxDistanceMeters.coerceAtMost(1000.0) / 2.0// Cap at 1km
+                // --- END CALCULATION LOGIC ---
+
+                Logging.i(
+                    TAG,
+                    "Requesting cafes with center ($centerLat, $centerLng) and radius $searchRadius"
+                )
+
+                cafeViewModel.onEvent(
+                    CoffeeShopEvent.FindCafesInArea(
+                        latitude = centerLat,
+                        longitude = centerLng,
+                        radius = searchRadius
+                    )
+                )
             }
-            is CoffeeShopUIState.Loading -> {
-                Logging.d(TAG, "Cafe UI state is LOADING.")
-                emptyList()
-            }
-            is CoffeeShopUIState.Error -> {
-                Logging.e(TAG, "Cafe UI state is ERROR: ${state.message}")
-                emptyList()
-            }
+        }
+
+
+        val coffeeShops = when (val state = cafeUiState) {
+            is CoffeeShopUIState.Success -> state.coffeeShops
+            else -> emptyList()
         }
 
         RideDetailScreen(

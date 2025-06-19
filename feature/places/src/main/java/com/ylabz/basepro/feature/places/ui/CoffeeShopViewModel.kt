@@ -26,6 +26,9 @@ class CoffeeShopViewModel @Inject constructor(
 
     fun onEvent(event: CoffeeShopEvent) {
         when (event) {
+            is CoffeeShopEvent.FindCafesInArea -> {
+                loadCoffeeShops(event.latitude, event.longitude, event.radius)
+            }
             // Handle the new event here
             is CoffeeShopEvent.FindCafesNear -> {
                 loadCoffeeShops(event.latitude, event.longitude)
@@ -38,8 +41,8 @@ class CoffeeShopViewModel @Inject constructor(
         }
     }
 
-    private fun loadCoffeeShops(latitude: Double, longitude: Double) {
-        Log.d(TAG, "Loading coffee shops near ($latitude, $longitude)")
+    private fun loadCoffeeShops(latitude: Double, longitude: Double, radius: Double = 1000.0) {
+        Log.d(TAG, "Loading coffee shops near ($latitude, $longitude) with radius $radius")
         _uiState.value = CoffeeShopUIState.Loading
         viewModelScope.launch {
             try {
@@ -47,7 +50,7 @@ class CoffeeShopViewModel @Inject constructor(
                 val coffeeShops = yelpClient.getBusinesses(
                     latitude = latitude,
                     longitude = longitude,
-                    radius = 1000.0,
+                    radius = radius,
                     sort_by = "rating",
                     categories = "coffee"
                 )?.filterNotNull() ?: emptyList()  // Filter out nulls and provide an empty list if null
