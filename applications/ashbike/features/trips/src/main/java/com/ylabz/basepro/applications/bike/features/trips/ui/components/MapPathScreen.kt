@@ -58,8 +58,6 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.floor
 import kotlin.math.log10
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -72,7 +70,7 @@ import kotlin.math.sqrt
  * A custom-drawn map component to visualize a GPS path.
  * It does not use any external map libraries.
  *
- * @param fixes The list of GPS points for the ride path.
+ * @param fixes The list of GPS points for the ride path. The map will scale to fit this path.
  * @param coffeeShops A list of nearby coffee shops to display as markers.
  * @param onFindCafes A callback invoked when the user requests to find cafes.
  * @param placeName A descriptive name for the location, displayed at the top.
@@ -113,24 +111,17 @@ fun MapPathScreen(
             val hPx = constraints.maxHeight.toFloat()
             val insetPx = with(LocalDensity.current) { inset.toPx() }
 
-            val cafesToDisplay = if (cafesVisible) coffeeShops else emptyList()
-
-            // 1. --- Calculate Bounds ---
-            // Combine ride points and visible cafe points to determine the map area.
-            val allPoints = remember(fixes, cafesToDisplay) {
-                fixes.map { it.lat to it.lng } +
-                        cafesToDisplay.mapNotNull { it.coordinates?.let { c -> c.latitude to c.longitude } }
-            }
-
-            if (allPoints.isNotEmpty()) {
-                val minLat = allPoints.minOf { it.first?.toDouble() ?: 0.0 }
-                val maxLat = allPoints.maxOf { it.first?.toDouble() ?: 0.0 }
-                val minLng = allPoints.minOf { it.second?.toDouble() ?: 0.0 }
-                val maxLng = allPoints.maxOf { it.second?.toDouble()?: 0.0 }
+            // 1. --- Calculate Bounds based on the ride path ONLY ---
+            if (fixes.isNotEmpty()) {
+                val minLat = fixes.minOf { it.lat }
+                val maxLat = fixes.maxOf { it.lat }
+                val minLng = fixes.minOf { it.lng }
+                val maxLng = fixes.maxOf { it.lng }
 
                 val latRange = (maxLat - minLat).takeIf { it > 0 } ?: 0.001
                 val lngRange = (maxLng - minLng).takeIf { it > 0 } ?: 0.001
 
+                // Function to project geographical coordinates to screen coordinates.
                 val project: (Double, Double) -> Offset = { lat, lng ->
                     val x = insetPx + ((lng - minLng) / lngRange * (wPx - 2 * insetPx)).toFloat()
                     val y = insetPx + ((maxLat - lat) / latRange * (hPx - 2 * insetPx)).toFloat()
@@ -147,14 +138,13 @@ fun MapPathScreen(
                 val minSpeed = pathSegments.minOfOrNull { it.speedKmh } ?: 0.0
                 val maxSpeed = pathSegments.maxOfOrNull { it.speedKmh }?.coerceAtLeast(minSpeed + 0.1) ?: 1.0
 
-
                 // 2. --- Draw Canvas Content ---
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     drawRect(brush = backgroundGradient)
                     drawGrid(gridColor, 10, 10)
 
                     if (cafesVisible) {
-                        drawCafeMarkers(cafesToDisplay, project, pinSize, textMeasurer)
+                        drawCafeMarkers(coffeeShops, project, pinSize, textMeasurer)
                     }
 
                     if (pathSegments.isNotEmpty()) {
@@ -163,35 +153,9 @@ fun MapPathScreen(
                 }
 
                 // 3. --- Overlay UI Elements ---
-                // Place name label
-                Text(
-                    text = placeName,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Black.copy(alpha = 0.8f),
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(top = 8.dp)
-                        .background(Color.White.copy(alpha = 0.6f), RoundedCornerShape(4.dp))
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                )
+                PlaceNameLabel(placeName, Modifier.align(Alignment.TopCenter))
+                Compass(compassSize, Modifier.align(Alignment.TopEnd))
 
-                // Compass
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(8.dp)
-                ) {
-                    Text("N", style = MaterialTheme.typography.labelSmall.copy(color = Color.Black.copy(alpha = 0.7f)))
-                    Icon(
-                        imageVector = Icons.Default.North,
-                        contentDescription = "North",
-                        tint = Color.Black.copy(alpha = 0.7f),
-                        modifier = Modifier.size(compassSize)
-                    )
-                }
-
-                // Path start/end markers
                 if (pathSegments.isNotEmpty()) {
                     val start = pathSegments.first().startOffset
                     val end = pathSegments.last().endOffset
@@ -199,10 +163,7 @@ fun MapPathScreen(
                     MapMarker(icon = Icons.Filled.Stop, position = end, size = markerSize, color = fastColor)
                 }
 
-                // Distance Scale
                 DistanceScale(minLat, minLng, maxLat, maxLng, wPx, insetPx, Modifier.align(Alignment.BottomStart))
-
-                // Speed Legend
                 SpeedLegend(minSpeed, maxSpeed, slowColor, fastColor, Modifier.align(Alignment.BottomEnd))
 
             } else {
@@ -214,29 +175,16 @@ fun MapPathScreen(
                 Text("No ride data available.", modifier = Modifier.align(Alignment.Center))
             }
 
-
             // Clickable coffee icon
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(8.dp)
-                    .clip(CircleShape)
-                    .background(Color.Black.copy(alpha = 0.4f))
-                    .clickable {
-                        cafesVisible = !cafesVisible
-                        if (cafesVisible && !cafesFetched) {
-                            onFindCafes()
-                            cafesFetched = true
-                        }
-                    }
-                    .padding(8.dp)
+            FindCafesButton(
+                cafesVisible = cafesVisible,
+                modifier = Modifier.align(Alignment.TopStart)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Coffee,
-                    contentDescription = "Show/Hide Cafes",
-                    tint = if (cafesVisible) MaterialTheme.colorScheme.primary else Color.White,
-                    modifier = Modifier.size(24.dp)
-                )
+                cafesVisible = !cafesVisible
+                if (cafesVisible && !cafesFetched) {
+                    onFindCafes()
+                    cafesFetched = true
+                }
             }
         }
     }
@@ -244,6 +192,58 @@ fun MapPathScreen(
 
 
 // --- Helper Composables & Drawing Functions ---
+
+@Composable
+private fun PlaceNameLabel(name: String, modifier: Modifier = Modifier) {
+    Text(
+        text = name,
+        style = MaterialTheme.typography.bodyMedium,
+        color = Color.Black.copy(alpha = 0.8f),
+        modifier = modifier
+            .padding(top = 8.dp)
+            .background(Color.White.copy(alpha = 0.6f), RoundedCornerShape(4.dp))
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+    )
+}
+
+@Composable
+private fun Compass(size: Dp, modifier: Modifier = Modifier) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.padding(8.dp)
+    ) {
+        Text("N", style = MaterialTheme.typography.labelSmall.copy(color = Color.Black.copy(alpha = 0.7f)))
+        Icon(
+            imageVector = Icons.Default.North,
+            contentDescription = "North",
+            tint = Color.Black.copy(alpha = 0.7f),
+            modifier = Modifier.size(size)
+        )
+    }
+}
+
+@Composable
+private fun FindCafesButton(
+    cafesVisible: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .padding(8.dp)
+            .clip(CircleShape)
+            .background(Color.Black.copy(alpha = 0.4f))
+            .clickable(onClick = onClick)
+            .padding(8.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Default.Coffee,
+            contentDescription = "Show/Hide Cafes",
+            tint = if (cafesVisible) MaterialTheme.colorScheme.primary else Color.White,
+            modifier = Modifier.size(24.dp)
+        )
+    }
+}
 
 private data class PathSegment(
     val startOffset: Offset,
@@ -288,19 +288,9 @@ private fun DrawScope.drawCafeMarkers(
         val lng = business.coordinates?.longitude ?: return@forEach
         val position = project(lat, lng)
 
-        // Marker Pin
-        drawCircle(
-            color = Color.Black.copy(alpha = 0.5f),
-            radius = pinSizePx / 3f,
-            center = position
-        )
-        drawCircle(
-            color = Color.White.copy(alpha = 0.6f),
-            radius = pinSizePx / 7f,
-            center = position
-        )
+        drawCircle(Color.Black.copy(alpha = 0.5f), radius = pinSizePx / 3f, center = position)
+        drawCircle(Color.White.copy(alpha = 0.6f), radius = pinSizePx / 7f, center = position)
 
-        // Marker Label
         val textLayoutResult = textMeasurer.measure(
             text = business.name ?: "",
             style = TextStyle(fontSize = 10.sp, color = Color.Black.copy(alpha = 0.9f))
@@ -366,9 +356,10 @@ private fun DistanceScale(minLat: Double, minLng: Double, maxLat: Double, maxLng
     val density = LocalDensity.current
     val midLat = (minLat + maxLat) / 2
     val boxWidthMeters = haversineMeters(midLat, minLng, midLat, maxLng)
-    val metersPerPixel = boxWidthMeters / (viewWidthPx - 2 * insetPx)
+    if (boxWidthMeters == 0.0) return
 
-    val targetScaleWidthPx = viewWidthPx * 0.20f // Aim for scale to be ~20% of map width
+    val metersPerPixel = boxWidthMeters / (viewWidthPx - 2 * insetPx)
+    val targetScaleWidthPx = viewWidthPx * 0.20f
     val targetMeters = targetScaleWidthPx * metersPerPixel
     val niceMeters = niceDistance(targetMeters)
     val scalePx = (niceMeters / metersPerPixel).toFloat()
@@ -379,12 +370,7 @@ private fun DistanceScale(minLat: Double, minLng: Double, maxLat: Double, maxLng
         modifier = modifier.padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            Modifier
-                .height(2.dp)
-                .width(scaleDp)
-                .background(Color.Black)
-        )
+        Box(Modifier.height(2.dp).width(scaleDp).background(Color.Black))
         Spacer(Modifier.width(4.dp))
         Text(scaleLabel, style = MaterialTheme.typography.bodySmall, color = Color.Black)
     }
