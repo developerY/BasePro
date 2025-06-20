@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui.components
 
+import android.R.attr.inset
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,6 +42,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextMeasurer
@@ -62,6 +64,8 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.math.sqrt
+import kotlin.random.Random
+
 
 // Assuming GpsFix is defined in your project.
 // data class GpsFix(val lat: Double, val lng: Double, val timeMs: Long, ...)
@@ -89,9 +93,9 @@ fun MapPathScreen(
     slowColor: Color = Color(0xFFFFEB3B),
     fastColor: Color = Color(0xFFBB190C),
     pathStrokeWidth: Dp = 3.dp,
-    inset: Dp = 16.dp,
+    inset: Dp = 25.dp, //,16.dp,
     markerSize: Dp = 20.dp,
-    pinSize: Dp = 32.dp,
+    pinSize: Dp = 18.dp, //32.dp,
     compassSize: Dp = 24.dp
 ) {
     var cafesVisible by rememberSaveable { mutableStateOf(false) }
@@ -254,7 +258,11 @@ private data class PathSegment(
 private fun createPathSegment(p0: GpsFix, p1: GpsFix, project: (Double, Double) -> Offset): PathSegment {
     val distanceMeters = haversineMeters(p0.lat, p0.lng, p1.lat, p1.lng)
     val timeSeconds = (p1.timeMs - p0.timeMs) / 1000.0
-    val speedMps = if (timeSeconds > 0.1) distanceMeters / timeSeconds else 0.0
+
+    // FIX: Use the more reliable speed from the GpsFix data directly.
+    // We'll use the speed from the second point in the pair.
+    // val speedMps = p1.speedMps.toDouble()
+    val speedMps = if (timeSeconds > 0.1) distanceMeters / timeSeconds else 0.0 // does not work
 
     return PathSegment(
         startOffset = project(p0.lat, p0.lng),
@@ -276,6 +284,18 @@ private fun DrawScope.drawGrid(color: Color, rows: Int, cols: Int) {
     }
 }
 
+
+/**
+ * Generates a random pastel color for Jetpack Compose.
+ */
+fun generateRandomPastelColor(): Color {
+    // Generate random R, G, and B components in the upper range (128-255)
+    // to ensure the color is light and pastel-like.
+    val red = Random.nextInt(128) + 128
+    val green = Random.nextInt(128) + 128
+    val blue = Random.nextInt(128) + 128
+    return Color(red, green, blue)
+}
 private fun DrawScope.drawCafeMarkers(
     cafes: List<BusinessInfo>,
     project: (Double, Double) -> Offset,
@@ -288,9 +308,23 @@ private fun DrawScope.drawCafeMarkers(
         val lng = business.coordinates?.longitude ?: return@forEach
         val position = project(lat, lng)
 
-        drawCircle(Color.Black.copy(alpha = 0.5f), radius = pinSizePx / 3f, center = position)
-        drawCircle(Color.White.copy(alpha = 0.6f), radius = pinSizePx / 7f, center = position)
 
+        // Draw the main marker body with the new random color
+        drawCircle(
+            color = generateRandomPastelColor(),
+            radius = pinSizePx / 2.5f,
+            center = position
+        )
+
+        // Draw a subtle white border around the circle for definition
+        drawCircle(
+            style = Stroke(width = pinSizePx * 0.1f),
+            color = Color.White.copy(alpha = 0.8f),
+            radius = pinSizePx / 2.5f,
+            center = position
+        )
+
+        // Draw the text label for the cafe below the marker
         val textLayoutResult = textMeasurer.measure(
             text = business.name ?: "",
             style = TextStyle(fontSize = 10.sp, color = Color.Black.copy(alpha = 0.9f))
@@ -326,7 +360,12 @@ private fun MapMarker(icon: androidx.compose.ui.graphics.vector.ImageVector, pos
         tint = color,
         modifier = Modifier
             .size(size)
-            .offset { IntOffset((position.x - sizePx / 2).roundToInt(), (position.y - sizePx / 2).roundToInt()) }
+            .offset {
+                IntOffset(
+                    (position.x - sizePx / 2).roundToInt(),
+                    (position.y - sizePx / 2).roundToInt()
+                )
+            }
     )
 }
 
@@ -336,7 +375,8 @@ private fun SpeedLegend(minSpeed: Double, maxSpeed: Double, slowColor: Color, fa
         modifier = modifier.padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text("${minSpeed.roundToInt()} km/h", style = MaterialTheme.typography.bodySmall, color = Color.Black)
+        //Text("${minSpeed.roundToInt()} km/h", style = MaterialTheme.typography.bodySmall, color = Color.Black)
+        Text("Slow", style = MaterialTheme.typography.bodySmall, color = Color.Black)
         Spacer(Modifier.width(4.dp))
         Box(
             Modifier
@@ -347,7 +387,8 @@ private fun SpeedLegend(minSpeed: Double, maxSpeed: Double, slowColor: Color, fa
                 )
         )
         Spacer(Modifier.width(4.dp))
-        Text("${maxSpeed.roundToInt()} km/h", style = MaterialTheme.typography.bodySmall, color = Color.Black)
+        Text("Fast", style = MaterialTheme.typography.bodySmall, color = Color.Black)
+        //Text("${maxSpeed.roundToInt()} km/h", style = MaterialTheme.typography.bodySmall, color = Color.Black)
     }
 }
 
@@ -370,7 +411,10 @@ private fun DistanceScale(minLat: Double, minLng: Double, maxLat: Double, maxLng
         modifier = modifier.padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(Modifier.height(2.dp).width(scaleDp).background(Color.Black))
+        Box(Modifier
+            .height(2.dp)
+            .width(scaleDp)
+            .background(Color.Black))
         Spacer(Modifier.width(4.dp))
         Text(scaleLabel, style = MaterialTheme.typography.bodySmall, color = Color.Black)
     }
