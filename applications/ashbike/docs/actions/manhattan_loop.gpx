@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Gemini"
+     xmlns="http://www.topografix.com/GPX/1/1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+    <metadata>
+        <name>Manhattan Park Ave and 3rd Ave Loop</name>
+        <desc>A simple loop for testing that goes south on Park Avenue and returns north on 3rd Avenue in Manhattan, NYC.</desc>
+    </metadata>
+    <trk>
+        <name>Park/3rd Ave Loop</name>
+        <trkseg>
+            <trkpt lat="40.7527" lon="-73.9772">
+                <ele>15.0</ele>
+                <time>2025-06-20T18:30:00Z</time>
+            </trkpt>
+            <trkpt lat="40.7480" lon="-73.9819">
+                <ele>14.0</ele>
+                <time>2025-06-20T18:31:00Z</time>
+            </trkpt>
+            <trkpt lat="40.7425" lon="-73.9845">
+                <ele>13.0</ele>
+                <time>2025-06-20T18:32:00Z</time>
+            </trkpt>
+            <trkpt lat="40.7420" lon="-73.9835">
+                <ele>12.0</ele>
+                <time>2025-06-20T18:32:30Z</time>
+            </trkpt>
+            <trkpt lat="40.7428" lon="-73.9810">
+                <ele>12.0</ele>
+                <time>2025-06-20T18:33:30Z</time>
+            </trkpt>
+            <trkpt lat="40.7475" lon="-73.9765">
+                <ele>13.0</ele>
+                <time>2025-06-20T18:34:30Z</time>
+            </trkpt>
+            <trkpt lat="40.7520" lon="-73.9750">
+                <ele>14.0</ele>
+                <time>2025-06-20T18:35:30Z</time>
+            </trkpt>
+            <trkpt lat="40.7527" lon="-73.9772">
+                <ele>15.0</ele>
+                <time>2025-06-20T18:36:00Z</time>
+            </trkpt>
+        </trkseg>
+    </trk>
+</gpx>

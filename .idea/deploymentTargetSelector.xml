@@ -24,9 +24,6 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="ImprovedWindAnimationPreview">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="applications.photodo">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
@@ -48,6 +45,9 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="ash_bike_journey.xml (onboarding)">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="find_nearby_cafes.xml (findNearbyCafes)">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

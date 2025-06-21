@@ -2,5 +2,5 @@
 <journey name="My first Journey">
     <description>A Journey that tests weather icon</description>
     <actions>
-        <action>Click on the weather icon on the top right</action></actions>
+        <action>Click on the weather icon on the top righ</action><action>check the weather</action></actions>
 </journey>

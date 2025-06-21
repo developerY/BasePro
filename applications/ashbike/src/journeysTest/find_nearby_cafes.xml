@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<journey name="findNearbyCafes_withTimeCheck">
+    <description>Test finding nearby cafes from the ride detail screen and verifies the ride
+        duration.</description>
+    <actions>
+        <action>Wait for the app to find GPS signal</action>
+        <action>Given the user is on the main dashboard</action>
+        <action>Click the play button to start a ride and the button turns gray</action>
+        <action>Wait for  10 seconds</action>
+        <action>Click the stop button to end the ride then the button turns gray and play button is white</action>
+        <action>When the user taps on the 'Trips' tab in the bottom navigation</action>
+
+        <!--action>Then the ride duration is approximately "00:00" with no minutes</action-->
+
+        <action>And the user taps on a specific ride from the list</action>
+        <action>And the user taps the 'cafe' button on the top right corner of the green map</action>
+        <action>Then the user sees a list of coffee shops</action>
+    </actions>
+</journey>
