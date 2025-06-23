@@ -3,7 +3,6 @@
     <description>Test finding nearby cafes from the ride detail screen and verifies the ride
         duration.</description>
     <actions>
-        <!--action>Wait for the app to find GPS signal</action-->
         <action>Given the user is on the main dashboard</action>
         <action>Click the play button to start a ride and the play button turns from white to gray</action>
         <action>Icons and the background turns to color to show the ride is in progress</action>
@@ -14,9 +13,6 @@
         <action>Click on the weather icon on the top right corner of the screen then the full weather is shown</action>
         <action>Click the stop button to end the ride then the end button turns gray and play button is white</action>
         <action>When the user taps on the 'Trips' tab in the bottom navigation</action>
-
-        <!--action>Then the ride duration is approximately "00:00" with no seconds</action-->
-
         <action>And the user taps on a specific ride from the list</action>
         <action>And the user taps the 'cafe' button on the top left corner of the green map</action>
         <action>Then the user sees circle icons of nearby cafes on the green map</action>

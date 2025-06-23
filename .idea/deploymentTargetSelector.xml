@@ -50,6 +50,9 @@
       <SelectionState runConfigName="find_nearby_cafes.xml (findNearbyCafes)">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="cafe_in_rides.xml (findNearbyCafes_withTimeCheck)">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>
