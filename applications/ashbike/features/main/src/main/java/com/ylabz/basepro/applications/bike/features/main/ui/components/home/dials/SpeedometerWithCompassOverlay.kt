@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path.unused.DigitalCompassCard
 
 @Composable
@@ -26,17 +26,17 @@ fun SpeedometerWithCompassOverlay(
             modifier = Modifier.fillMaxSize()
         )
 
-        // 2) Overlay the digital compass at the bottom center
+        // 2) Overlay the digital compass, now positioned below the speed text
         Box(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                // Adjust negative offset to nudge it upwards between 0 and 60
-                .offset(y = (-24).dp)
+                .align(Alignment.Center) // First, align the container to the center
+                .offset(y = 60.dp)       // Then, push it down with a vertical offset
         ) {
             DigitalCompassCard(
                 headingDegrees = heading,
+                // You can adjust the size here if needed to best fit the new position
                 modifier = Modifier
-                    .size(width = 80.dp, height = 60.dp)
+                    .size(width = 120.dp, height = 40.dp)
             )
         }
     }
