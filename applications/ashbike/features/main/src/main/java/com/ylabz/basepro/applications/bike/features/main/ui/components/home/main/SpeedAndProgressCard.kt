@@ -1,6 +1,5 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.main
 
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -9,27 +8,11 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.WbSunny
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -38,13 +21,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.SpeedometerWithCompassOverlay
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.weather.WeatherBadgeWithDetails
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path.BikePathWithControls
+import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.weather.WeatherBadgeWithDetails
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDialWithSpeed
-
 
 @Composable
 fun SpeedAndProgressCard(
@@ -57,7 +39,7 @@ fun SpeedAndProgressCard(
 
     val speedometerSizeFraction by animateFloatAsState(
         targetValue = if (weatherIconsVisible) 0.8f else 1.0f,
-        animationSpec = tween(durationMillis = 300),
+        animationSpec = tween(durationMillis = 400),
         label = "speedometerSize"
     )
 
@@ -72,43 +54,28 @@ fun SpeedAndProgressCard(
             .shadow(4.dp, shape = MaterialTheme.shapes.large),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(
-            containerColor =
-                if (bikeRideInfo.rideState == RideState.Riding)
-                    Color(0xFF1976D2)
-                else
-                    Color.Gray
+            containerColor = if (bikeRideInfo.rideState == RideState.Riding) Color(0xFF1976D2) else Color.Gray
         )
     ) {
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Main Weather Icon (always visible)
-            Icon(
-                imageVector = Icons.Default.WbSunny,
-                contentDescription = "Toggle Weather",
-                tint = Color.White,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .clickable { weatherIconsVisible = !weatherIconsVisible }
-                    .padding(8.dp)
-                    .size(36.dp)
-            )
-
-            // Wind and Weather Details (animated visibility)
+            // TOP ROW: Wind, a spacer, and Weather
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp), // Fixed height for this row
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top
             ) {
                 // Wind dial
                 AnimatedVisibility(
                     visible = weatherIconsVisible,
-                    enter = fadeIn(animationSpec = tween(300)) +
-                            slideInHorizontally(initialOffsetX = { -it / 2 }),
-                    exit = fadeOut(animationSpec = tween(300)) +
-                            slideOutHorizontally(targetOffsetX = { -it / 2 })
+                    enter = fadeIn(animationSpec = tween(300)) + slideInHorizontally(initialOffsetX = { -it / 2 }),
+                    exit = fadeOut(animationSpec = tween(300)) + slideOutHorizontally(targetOffsetX = { -it / 2 })
                 ) {
                     Box(modifier = Modifier.size(60.dp)) {
                         weather?.let {
@@ -117,52 +84,49 @@ fun SpeedAndProgressCard(
                     }
                 }
 
-                // This Spacer is a placeholder to keep the main icon on the right
-                Box(modifier = Modifier.weight(1f))
+                // Main Weather Icon (always visible)
+                Icon(
+                    imageVector = Icons.Default.WbSunny,
+                    contentDescription = "Toggle Weather",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .clickable { weatherIconsVisible = !weatherIconsVisible }
+                        .padding(8.dp)
+                        .size(36.dp)
+                )
 
                 // Weather badge
                 AnimatedVisibility(
                     visible = weatherIconsVisible,
-                    enter = fadeIn(animationSpec = tween(300)) +
-                            slideInHorizontally(initialOffsetX = { it / 2 }),
-                    exit = fadeOut(animationSpec = tween(300)) +
-                            slideOutHorizontally(targetOffsetX = { it / 2 })
+                    enter = fadeIn(animationSpec = tween(300)) + slideInHorizontally(initialOffsetX = { it / 2 }),
+                    exit = fadeOut(animationSpec = tween(300)) + slideOutHorizontally(targetOffsetX = { it / 2 })
                 ) {
                     weather?.let {
-                        WeatherBadgeWithDetails(
-                            weatherInfo = it
-                        )
+                        WeatherBadgeWithDetails(weatherInfo = it)
                     }
                 }
             }
 
-
             // Middle: Large speedometer (responsive and animated)
             Box(
                 modifier = Modifier
+                    .weight(1f) // Takes up the remaining space
                     .fillMaxWidth()
-                    .fillMaxHeight(0.75f) // Take up most of the vertical space
-                    .align(Alignment.Center),
+                    .padding(vertical = 8.dp),
                 contentAlignment = Alignment.Center
             ) {
-                BoxWithConstraints {
-                    val availableWidth = this.maxWidth
-                    val gaugeSize = availableWidth.coerceAtMost(450.dp) * speedometerSizeFraction
-                    SpeedometerWithCompassOverlay(
-                        currentSpeed = currentSpeed.toFloat(),
-                        maxSpeed = 60f,
-                        heading = heading,
-                        modifier = Modifier.size(gaugeSize)
-                    )
-                }
+                SpeedometerWithCompassOverlay(
+                    currentSpeed = currentSpeed.toFloat(),
+                    maxSpeed = 60f,
+                    heading = heading,
+                    modifier = Modifier.fillMaxSize(speedometerSizeFraction) // Apply animated fraction here
+                )
             }
-
 
             // Bottom: Controls
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
                     .padding(top = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
