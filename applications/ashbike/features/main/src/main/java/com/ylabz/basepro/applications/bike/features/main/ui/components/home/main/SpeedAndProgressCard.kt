@@ -50,7 +50,6 @@ fun SpeedAndProgressCard(
             containerColor = if (bikeRideInfo.rideState == RideState.Riding) Color(0xFF1976D2) else Color.Gray
         )
     ) {
-        // Using a Box as the root layout resolves the scope issue.
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -64,14 +63,14 @@ fun SpeedAndProgressCard(
                     .padding(16.dp)
             )
 
-            // Tappable weather icon, aligned to the top end
+            // Tappable weather icon, aligned to the top center
             Icon(
                 imageVector = Icons.Default.WbSunny,
                 contentDescription = "Toggle Weather",
                 tint = Color.White.copy(alpha = 0.8f),
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(16.dp)
+                    .align(Alignment.TopCenter) // Changed to TopCenter
+                    .padding(top = 8.dp) // Adjusted padding for center alignment
                     .size(24.dp)
                     .clickable { weatherIconsVisible = !weatherIconsVisible }
             )
@@ -102,7 +101,7 @@ fun SpeedAndProgressCard(
                 enter = fadeIn(animationSpec = tween(300)) + slideInHorizontally(initialOffsetX = { it }),
                 exit = fadeOut(animationSpec = tween(300)) + slideOutHorizontally(targetOffsetX = { it })
             ) {
-                Box(modifier = Modifier.padding(top = 48.dp, end = 16.dp)) {
+                Box(modifier = Modifier.padding(16.dp)) {
                     weather?.let {
                         WeatherBadgeWithDetails(weatherInfo = it)
                     }
