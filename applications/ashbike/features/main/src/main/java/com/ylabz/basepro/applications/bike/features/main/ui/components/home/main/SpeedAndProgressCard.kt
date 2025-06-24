@@ -38,7 +38,7 @@ fun SpeedAndProgressCard(
     var weatherIconsVisible by remember { mutableStateOf(false) }
 
     val speedometerSizeFraction by animateFloatAsState(
-        targetValue = if (weatherIconsVisible) 0.8f else 1.0f,
+        targetValue = if (weatherIconsVisible) 0.9f else 1.0f, // Shrinks less
         animationSpec = tween(durationMillis = 400),
         label = "speedometerSize"
     )
@@ -60,14 +60,14 @@ fun SpeedAndProgressCard(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(8.dp), // Reduced padding
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // TOP ROW: Wind, a spacer, and Weather
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp), // Fixed height for this row
+                    .height(48.dp), // Reduced height for this row
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top
             ) {
@@ -77,7 +77,7 @@ fun SpeedAndProgressCard(
                     enter = fadeIn(animationSpec = tween(300)) + slideInHorizontally(initialOffsetX = { -it / 2 }),
                     exit = fadeOut(animationSpec = tween(300)) + slideOutHorizontally(targetOffsetX = { -it / 2 })
                 ) {
-                    Box(modifier = Modifier.size(60.dp)) {
+                    Box(modifier = Modifier.size(48.dp)) { // Smaller wind dial
                         weather?.let {
                             WindDirectionDialWithSpeed(degree = it.windDegree, speed = it.windSpeed)
                         }
@@ -88,11 +88,11 @@ fun SpeedAndProgressCard(
                 Icon(
                     imageVector = Icons.Default.WbSunny,
                     contentDescription = "Toggle Weather",
-                    tint = Color.White,
+                    tint = Color.White.copy(alpha = 0.8f),
                     modifier = Modifier
                         .clickable { weatherIconsVisible = !weatherIconsVisible }
-                        .padding(8.dp)
-                        .size(36.dp)
+                        .padding(4.dp)
+                        .size(24.dp) // Smaller icon
                 )
 
                 // Weather badge
@@ -111,8 +111,7 @@ fun SpeedAndProgressCard(
             Box(
                 modifier = Modifier
                     .weight(1f) // Takes up the remaining space
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
                 SpeedometerWithCompassOverlay(
@@ -127,7 +126,7 @@ fun SpeedAndProgressCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp),
+                    .padding(top = 8.dp),
                 contentAlignment = Alignment.Center
             ) {
                 BikePathWithControls(

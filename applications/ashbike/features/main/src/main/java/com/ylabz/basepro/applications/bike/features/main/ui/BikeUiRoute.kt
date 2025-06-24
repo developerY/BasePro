@@ -62,12 +62,12 @@ fun BikeUiRoute(
     val healthUiState by healthViewModel.uiState.collectAsState()
     val nfcUiState    by nfcViewModel.uiState.collectAsState()
 
-    // Health Connect permission launcher
+    /* Health Connect permission launcher
     val isHcAvailable = healthViewModel.healthSessionManager.availability.value ==
             HealthConnectClient.SDK_AVAILABLE
     val permissionsLauncher = rememberLauncherForActivityResult(
         contract = healthViewModel.permissionsLauncher
-    ) { healthViewModel.onEvent(HealthEvent.RequestPermissions) }
+    ) { healthViewModel.onEvent(HealthEvent.RequestPermissions) } */
 
     // kick off initial health permissions request if needed
     LaunchedEffect(healthUiState) {
