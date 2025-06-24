@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlin.math.cos
@@ -130,13 +131,25 @@ fun FancySpeedometer(
             val lx = center.x + cos(angleRad).toFloat() * labelRadius
             val ly = center.y + sin(angleRad).toFloat() * labelRadius
 
+            // --- THIS IS THE CHANGE ---
             drawContext.canvas.nativeCanvas.apply {
-                val paint = android.graphics.Paint().apply {
-                    color = android.graphics.Color.WHITE
+                // 1. Determine color based on the current speed
+                val isTickActive = tickSpeed <= currentSpeed
+                val labelColor = if (isTickActive) {
+                    // Use a vibrant color for "active" ticks that have been passed
+                    Color(0xFF4BAFDA).toArgb() // A light, vibrant blue
+                } else {
+                    // Use a muted color for "inactive" ticks
+                    Color.Black.copy(alpha = 0.7f).toArgb()
+                }
+
+                // 2. Apply the dynamic color to the paint
+                val paint = Paint().apply {
+                    color = labelColor
                     textSize = 72f
-                    textAlign = android.graphics.Paint.Align.CENTER
+                    textAlign = Paint.Align.CENTER
                     isAntiAlias = true
-                    typeface = android.graphics.Typeface.create("", android.graphics.Typeface.BOLD)
+                    typeface = Typeface.create("", Typeface.BOLD)
                 }
                 drawText(tickSpeed.toString(), lx, ly + 10f, paint)
             }
@@ -164,25 +177,67 @@ fun FancySpeedometer(
             center = center
         )
 
-        // 6) Speed text in center
-            val speedText = "${currentSpeed.roundToInt()}"
-            drawContext.canvas.nativeCanvas.apply {
-                val textPaint = android.graphics.Paint().apply {
-                    color = android.graphics.Color.WHITE
-                    textSize = 250f
-                    textAlign = android.graphics.Paint.Align.CENTER
-                    isAntiAlias = true
-                    typeface = android.graphics.Typeface.create("", android.graphics.Typeface.BOLD)
-                }
-                drawText(
-                    speedText,
-                    center.x,
-                    center.y + 20f,
-                    textPaint
-                )
-            }
-        }
+        // 6) Speed Text (Number + Unit) - COMPLETELY REVISED
+        drawContext.canvas.nativeCanvas.apply {
+            // --- Step 1: Define text strings and paints ---
+            val speedNumberText = currentSpeed.roundToInt().toString()
+            val speedUnitText = "km/h"
 
+            // --- Step 2: Calculate the dynamic color for the number ---
+            val speedFraction = (currentSpeed / maxSpeed).coerceIn(0f, 1f)
+            // This logic creates a simple Green -> Yellow -> Red gradient for the text color
+            val dynamicColor = when {
+                speedFraction < 0.5f -> androidx.compose.ui.graphics.lerp(Color.Green, Color.Yellow, speedFraction * 2).toArgb()
+                else -> androidx.compose.ui.graphics.lerp(Color.Yellow, Color.Red, (speedFraction - 0.5f) * 2).toArgb()
+            }
+
+            // Paint for the HUGE number
+            val numberTextPaint = Paint().apply {
+                color = dynamicColor
+                textSize = 250f // Huge font size
+                textAlign = Paint.Align.LEFT // Align left for manual centering
+                isAntiAlias = true
+                typeface = Typeface.create("", Typeface.BOLD)
+            }
+
+            // Paint for the VERY SMALL unit
+            val unitTextPaint = Paint().apply {
+                color = android.graphics.Color.WHITE
+                textSize = 40f // Very small font size
+                textAlign = Paint.Align.LEFT
+                isAntiAlias = true
+                typeface = Typeface.create("", Typeface.NORMAL)
+            }
+
+            // --- Step 3: Measure and calculate positions ---
+            val numberTextWidth = numberTextPaint.measureText(speedNumberText)
+            val unitTextWidth = unitTextPaint.measureText(speedUnitText)
+            val totalTextWidth = numberTextWidth + unitTextWidth
+
+            // Calculate the starting X position to center the whole block
+            val startX = center.x - (totalTextWidth / 2f)
+            // Use the same Y for vertical alignment
+            val textY = center.y + (numberTextPaint.textSize / 4f)
+
+
+            // --- Step 4: Draw the text ---
+            // Draw the huge number
+            drawText(
+                speedNumberText,
+                startX,
+                textY,
+                numberTextPaint
+            )
+
+            // Draw the small unit right after the number
+            drawText(
+                speedUnitText,
+                startX + numberTextWidth, // Position it right after the number
+                textY,
+                unitTextPaint
+            )
+        }
+    }
 }
 
 private fun Float.toRadians() = this * (Math.PI / 180f).toFloat()
