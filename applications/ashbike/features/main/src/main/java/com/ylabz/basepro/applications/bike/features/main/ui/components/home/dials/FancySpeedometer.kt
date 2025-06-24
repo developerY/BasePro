@@ -191,6 +191,18 @@ fun FancySpeedometer(
                 else -> androidx.compose.ui.graphics.lerp(Color.Yellow, Color.Red, (speedFraction - 0.5f) * 2).toArgb()
             }
 
+            // --- Paint for the OUTLINE ---
+            val outlinePaint = Paint().apply {
+                color = android.graphics.Color.BLACK
+                textSize = 250f
+                textAlign = Paint.Align.LEFT
+                isAntiAlias = true
+                typeface = Typeface.create("", Typeface.BOLD)
+                style = Paint.Style.STROKE // Set the paint style to stroke (outline)
+                strokeWidth = 10f         // Adjust the outline thickness as needed
+                strokeJoin = Paint.Join.ROUND // Optional: for smoother corners
+            }
+
             // Paint for the HUGE number
             val numberTextPaint = Paint().apply {
                 color = dynamicColor
@@ -218,6 +230,14 @@ fun FancySpeedometer(
             val startX = center.x - (totalTextWidth / 2f)
             // Use the same Y for vertical alignment
             val textY = center.y + (numberTextPaint.textSize / 4f)
+
+            // --- Step 1: Draw the outline first (behind the fill) ---
+            drawText(
+                speedNumberText,
+                startX,
+                textY,
+                outlinePaint
+            )
 
 
             // --- Step 4: Draw the text ---
