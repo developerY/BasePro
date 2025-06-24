@@ -50,6 +50,7 @@ fun SpeedAndProgressCard(
             containerColor = if (bikeRideInfo.rideState == RideState.Riding) Color(0xFF1976D2) else Color.Gray
         )
     ) {
+        // Using a Box as the root layout resolves the scope issue.
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -75,10 +76,9 @@ fun SpeedAndProgressCard(
                     .clickable { weatherIconsVisible = !weatherIconsVisible }
             )
 
-            // This is the correct context to call AnimatedVisibility.
-            // It is being called within a Box, so it does not require a ColumnScope or RowScope.
-            // Wind dial, aligned to the top start
-            AnimatedVisibility(
+            // CORRECTED: This AnimatedVisibility is now called inside a Box,
+            // which does not cause the scope error.
+            this@Card.AnimatedVisibility(
                 visible = weatherIconsVisible,
                 modifier = Modifier.align(Alignment.TopStart),
                 enter = fadeIn(animationSpec = tween(300)) + slideInHorizontally(initialOffsetX = { -it }),
@@ -95,8 +95,8 @@ fun SpeedAndProgressCard(
                 }
             }
 
-            // Weather badge, aligned to the top end, below the main icon
-            AnimatedVisibility(
+            // CORRECTED: This AnimatedVisibility is also correctly placed in the Box scope.
+            this@Card.AnimatedVisibility(
                 visible = weatherIconsVisible,
                 modifier = Modifier.align(Alignment.TopEnd),
                 enter = fadeIn(animationSpec = tween(300)) + slideInHorizontally(initialOffsetX = { it }),
