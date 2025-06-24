@@ -163,7 +163,7 @@ fun FancySpeedometer(
             y = center.y + sin(needleAngleRad).toFloat() * needleLength
         )
         drawLine(
-            color = Color.Red.copy(alpha = 0.4f),
+            color = Color.Red.copy(alpha = 0.5f),
             start = center,
             end = needleEnd,
             strokeWidth = 34f,
@@ -172,7 +172,7 @@ fun FancySpeedometer(
 
         // 5) Center cap
         drawCircle(
-            color = Color.Red.copy(alpha = 0.3f),
+            color = Color.Red.copy(alpha = 0.4f),
             radius = 27f,
             center = center
         )
