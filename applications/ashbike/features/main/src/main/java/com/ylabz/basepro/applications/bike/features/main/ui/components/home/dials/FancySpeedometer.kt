@@ -163,7 +163,7 @@ fun FancySpeedometer(
             y = center.y + sin(needleAngleRad).toFloat() * needleLength
         )
         drawLine(
-            color = Color.Red,
+            color = Color.Red.copy(alpha = 0.4f),
             start = center,
             end = needleEnd,
             strokeWidth = 34f,
@@ -172,12 +172,12 @@ fun FancySpeedometer(
 
         // 5) Center cap
         drawCircle(
-            color = Color.Red,
-            radius = 12f,
+            color = Color.Red.copy(alpha = 0.3f),
+            radius = 27f,
             center = center
         )
 
-        // 6) Speed Text (Number + Unit) - COMPLETELY REVISED
+        // G) Speed Text (Number + Unit) - COMPLETELY REVISED
         drawContext.canvas.nativeCanvas.apply {
             // --- Step 1: Define text strings and paints ---
             val speedNumberText = currentSpeed.roundToInt().toString()
@@ -224,7 +224,7 @@ fun FancySpeedometer(
             // --- Step 3: Measure and calculate positions ---
             val numberTextWidth = numberTextPaint.measureText(speedNumberText)
             val unitTextWidth = unitTextPaint.measureText(speedUnitText)
-            val totalTextWidth = numberTextWidth + unitTextWidth
+            val totalTextWidth = numberTextWidth // + unitTextWidth
 
             // Calculate the starting X position to center the whole block
             val startX = center.x - (totalTextWidth / 2f)
