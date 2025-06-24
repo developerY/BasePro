@@ -52,6 +52,10 @@ fun SpeedAndProgressCard(
             containerColor = if (bikeRideInfo.rideState == RideState.Riding) Color(0xFF1976D2) else Color.Gray
         )
     ) {
+        // THE FIX: Since your environment requires an explicit scope, we capture it here.
+        // Card's content provides a `ColumnScope`.
+        val cardScope = this
+
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -79,7 +83,7 @@ fun SpeedAndProgressCard(
 
             // CORRECTED: This AnimatedVisibility is now called inside a Box,
             // which does not cause the scope error.
-            this@Card.AnimatedVisibility(
+            cardScope.AnimatedVisibility(
                 visible = weatherIconsVisible,
                 modifier = Modifier.align(Alignment.TopStart),
                 enter = fadeIn(animationSpec = tween(300)) + slideInHorizontally(initialOffsetX = { -it }),
@@ -97,7 +101,7 @@ fun SpeedAndProgressCard(
             }
 
             // CORRECTED: This AnimatedVisibility is also correctly placed in the Box scope.
-            this@Card.AnimatedVisibility(
+            cardScope.AnimatedVisibility(
                 visible = weatherIconsVisible,
                 modifier = Modifier.align(Alignment.TopEnd),
                 enter = fadeIn(animationSpec = tween(300)) + slideInHorizontally(initialOffsetX = { it }),

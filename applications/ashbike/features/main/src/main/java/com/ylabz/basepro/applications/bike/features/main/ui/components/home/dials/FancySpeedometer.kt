@@ -133,7 +133,7 @@ fun FancySpeedometer(
             drawContext.canvas.nativeCanvas.apply {
                 val paint = android.graphics.Paint().apply {
                     color = android.graphics.Color.WHITE
-                    textSize = 32f
+                    textSize = 72f
                     textAlign = android.graphics.Paint.Align.CENTER
                     isAntiAlias = true
                     typeface = android.graphics.Typeface.create("", android.graphics.Typeface.BOLD)
