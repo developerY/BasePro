@@ -1,4 +1,4 @@
-Below is a **fully functional** example of a **Bike Home Screen** that uses:
+   Below is a **fully functional** example of a **Bike Home Screen** that uses:
 
 - **Material 3** components (e.g., `Scaffold`, `NavigationBar`, `NavigationBarItem`, `CenterAlignedTopAppBar`).
 - **Latest Jetpack Compose UI** patterns for a bottom navigation bar with **3 tabs**.

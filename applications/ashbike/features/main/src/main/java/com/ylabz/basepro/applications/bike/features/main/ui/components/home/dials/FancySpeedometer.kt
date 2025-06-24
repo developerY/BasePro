@@ -7,6 +7,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -86,7 +87,7 @@ fun FancySpeedometer(
             useCenter = false,
             topLeft = Offset(center.x - radius, center.y - radius),
             size = Size(radius * 2, radius * 2),
-            style = Stroke(width = 25f, cap = StrokeCap.Round)
+            style = Stroke(width = 70f, cap = StrokeCap.Round)
         )
 
         // 2) Progress arc (green → red)
@@ -99,7 +100,7 @@ fun FancySpeedometer(
             useCenter = false,
             topLeft = Offset(center.x - radius, center.y - radius),
             size = Size(radius * 2, radius * 2),
-            style = Stroke(width = 25f, cap = StrokeCap.Round)
+            style = Stroke(width = 70f, cap = StrokeCap.Round)
         )
 
         // 3) Tick lines & labels
@@ -112,7 +113,7 @@ fun FancySpeedometer(
 
             // Tick lines
             val outerRadius = radius
-            val innerRadius = radius - 25
+            val innerRadius = radius - 50
             val sx = center.x + cos(angleRad).toFloat() * outerRadius
             val sy = center.y + sin(angleRad).toFloat() * outerRadius
             val ex = center.x + cos(angleRad).toFloat() * innerRadius
@@ -152,7 +153,7 @@ fun FancySpeedometer(
             color = Color.Red,
             start = center,
             end = needleEnd,
-            strokeWidth = 8f,
+            strokeWidth = 34f,
             cap = StrokeCap.Round
         )
 
@@ -164,23 +165,23 @@ fun FancySpeedometer(
         )
 
         // 6) Speed text in center
-        val speedText = "${currentSpeed.roundToInt()} km/h"
-        drawContext.canvas.nativeCanvas.apply {
-            val textPaint = android.graphics.Paint().apply {
-                color = android.graphics.Color.WHITE
-                textSize = 50f
-                textAlign = android.graphics.Paint.Align.CENTER
-                isAntiAlias = true
-                typeface = android.graphics.Typeface.create("", android.graphics.Typeface.BOLD)
+            val speedText = "${currentSpeed.roundToInt()}"
+            drawContext.canvas.nativeCanvas.apply {
+                val textPaint = android.graphics.Paint().apply {
+                    color = android.graphics.Color.WHITE
+                    textSize = 250f
+                    textAlign = android.graphics.Paint.Align.CENTER
+                    isAntiAlias = true
+                    typeface = android.graphics.Typeface.create("", android.graphics.Typeface.BOLD)
+                }
+                drawText(
+                    speedText,
+                    center.x,
+                    center.y + 20f,
+                    textPaint
+                )
             }
-            drawText(
-                speedText,
-                center.x,
-                center.y + 20f,
-                textPaint
-            )
         }
-    }
 
 }
 

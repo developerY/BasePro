@@ -125,7 +125,7 @@ fun Speedometer(
             drawIntoCanvas { canvas ->
                 val textPaint = android.graphics.Paint().apply {
                     color = android.graphics.Color.WHITE
-                    textSize = 50f
+                    textSize = 70f
                     textAlign = android.graphics.Paint.Align.CENTER
                     isAntiAlias = true
                     typeface = android.graphics.Typeface.create("", android.graphics.Typeface.BOLD)
