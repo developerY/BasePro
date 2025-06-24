@@ -1,9 +1,14 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.main
 
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -14,11 +19,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,37 +50,20 @@ import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDial
 fun SpeedAndProgressCard(
     modifier: Modifier = Modifier.fillMaxSize(),
     bikeRideInfo: BikeRideInfo,
-
-    /*currentSpeed: Double,
-    currentTripDistance: Float,
-    totalDistance: Float?,
-    windDegree: Float,
-    windSpeed: Float,
-    weatherConditionText: String,
-    heading: Float,*/
-
     onBikeEvent: (BikeEvent) -> Unit,
-    /*isRiding: Boolean,                               // <--- Added to track if ride is running or paused
-    onStartPauseClicked: () -> Unit,                 // <--- Callback for Start/Pause
-    onStopClicked: () -> Unit*/                    // <--- Callback for Stop
-
     navTo: (String) -> Unit,
+) {
+    var weatherIconsVisible by remember { mutableStateOf(false) }
 
-    ) {
-    // Control the visibility of the wind dial & weather badge for a subtle fade/slide in
-    var showOverlays by remember { mutableStateOf(false) }
-    // Trigger the overlays to appear after composition
-    LaunchedEffect(Unit) {
-        showOverlays = true
-    }
+    val speedometerSizeFraction by animateFloatAsState(
+        targetValue = if (weatherIconsVisible) 0.8f else 1.0f,
+        animationSpec = tween(durationMillis = 300),
+        label = "speedometerSize"
+    )
 
-    // Extract values from bikeRideInfo (if needed)
     val currentSpeed = bikeRideInfo.currentSpeed
     val heading: Float = bikeRideInfo.heading
-
     val weather = bikeRideInfo.bikeWeatherInfo
-
-
 
     Card(
         modifier = modifier
@@ -81,22 +71,32 @@ fun SpeedAndProgressCard(
             .height(400.dp)
             .shadow(4.dp, shape = MaterialTheme.shapes.large),
         shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(containerColor =
-            if (bikeRideInfo.rideState == RideState.Riding)
-                Color(0xFF1976D2)
-            else
-                Color.Gray
-
-
+        colors = CardDefaults.cardColors(
+            containerColor =
+                if (bikeRideInfo.rideState == RideState.Riding)
+                    Color(0xFF1976D2)
+                else
+                    Color.Gray
         )
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+                .padding(16.dp)
         ) {
-            // TOP ROW: wind + weather
+            // Main Weather Icon (always visible)
+            Icon(
+                imageVector = Icons.Default.WbSunny,
+                contentDescription = "Toggle Weather",
+                tint = Color.White,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .clickable { weatherIconsVisible = !weatherIconsVisible }
+                    .padding(8.dp)
+                    .size(36.dp)
+            )
+
+            // Wind and Weather Details (animated visibility)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -104,9 +104,11 @@ fun SpeedAndProgressCard(
             ) {
                 // Wind dial
                 AnimatedVisibility(
-                    visible = showOverlays,
-                    enter = fadeIn(animationSpec = tween(600)) +
-                            slideInHorizontally(initialOffsetX = { -it / 2 }, animationSpec = tween(600))
+                    visible = weatherIconsVisible,
+                    enter = fadeIn(animationSpec = tween(300)) +
+                            slideInHorizontally(initialOffsetX = { -it / 2 }),
+                    exit = fadeOut(animationSpec = tween(300)) +
+                            slideOutHorizontally(targetOffsetX = { -it / 2 })
                 ) {
                     Box(modifier = Modifier.size(60.dp)) {
                         weather?.let {
@@ -115,11 +117,16 @@ fun SpeedAndProgressCard(
                     }
                 }
 
+                // This Spacer is a placeholder to keep the main icon on the right
+                Box(modifier = Modifier.weight(1f))
+
                 // Weather badge
                 AnimatedVisibility(
-                    visible = showOverlays,
-                    enter = fadeIn(animationSpec = tween(600)) +
-                            slideInHorizontally(initialOffsetX = { it / 2 }, animationSpec = tween(600))
+                    visible = weatherIconsVisible,
+                    enter = fadeIn(animationSpec = tween(300)) +
+                            slideInHorizontally(initialOffsetX = { it / 2 }),
+                    exit = fadeOut(animationSpec = tween(300)) +
+                            slideOutHorizontally(targetOffsetX = { it / 2 })
                 ) {
                     weather?.let {
                         WeatherBadgeWithDetails(
@@ -129,18 +136,18 @@ fun SpeedAndProgressCard(
                 }
             }
 
-            // MIDDLE: Large speedometer (responsive)
+
+            // Middle: Large speedometer (responsive and animated)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .fillMaxHeight(0.75f) // Take up most of the vertical space
+                    .align(Alignment.Center),
                 contentAlignment = Alignment.Center
             ) {
-                // We measure the parent width, pick a responsive size for the speedometer
                 BoxWithConstraints {
-                    val boxWithConstraintsScope = this
-                    val availableWidth = boxWithConstraintsScope.maxWidth
-                    val gaugeSize = availableWidth.coerceAtMost(450.dp)
+                    val availableWidth = this.maxWidth
+                    val gaugeSize = availableWidth.coerceAtMost(450.dp) * speedometerSizeFraction
                     SpeedometerWithCompassOverlay(
                         currentSpeed = currentSpeed.toFloat(),
                         maxSpeed = 60f,
@@ -149,19 +156,21 @@ fun SpeedAndProgressCard(
                     )
                 }
             }
+
+
+            // Bottom: Controls
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
                     .padding(top = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                //TripControlsWithProgress
                 BikePathWithControls(
                     bikeRideInfo = bikeRideInfo,
                     onBikeEvent = onBikeEvent,
                 )
             }
-
         }
     }
 }
@@ -221,26 +230,7 @@ fun SpeedAndProgressCardPreview() {
 
     SpeedAndProgressCard(
         bikeRideInfo = bikeRideInfo,
-        onBikeEvent = {
-
-        },
-        navTo = {
-            //navigation
-        }
-
+        onBikeEvent = {},
+        navTo = {}
     )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
