@@ -1,7 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.main
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -37,12 +36,6 @@ fun SpeedAndProgressCard(
 ) {
     var weatherIconsVisible by remember { mutableStateOf(false) }
 
-    val speedometerSizeFraction by animateFloatAsState(
-        targetValue = if (weatherIconsVisible) 0.9f else 1.0f, // Shrinks less
-        animationSpec = tween(durationMillis = 400),
-        label = "speedometerSize"
-    )
-
     val currentSpeed = bikeRideInfo.currentSpeed
     val heading: Float = bikeRideInfo.heading
     val weather = bikeRideInfo.bikeWeatherInfo
@@ -57,76 +50,71 @@ fun SpeedAndProgressCard(
             containerColor = if (bikeRideInfo.rideState == RideState.Riding) Color(0xFF1976D2) else Color.Gray
         )
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp), // Reduced padding
-            horizontalAlignment = Alignment.CenterHorizontally
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
-            // TOP ROW: Wind, a spacer, and Weather
-            Row(
+            // Speedometer is the background, always at max size
+            SpeedometerWithCompassOverlay(
+                currentSpeed = currentSpeed.toFloat(),
+                maxSpeed = 60f,
+                heading = heading,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp), // Reduced height for this row
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
+                    .fillMaxSize()
+                    .padding(16.dp)
+            )
+
+            // Tappable weather icon, aligned to the top end
+            Icon(
+                imageVector = Icons.Default.WbSunny,
+                contentDescription = "Toggle Weather",
+                tint = Color.White.copy(alpha = 0.8f),
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp)
+                    .size(24.dp)
+                    .clickable { weatherIconsVisible = !weatherIconsVisible }
+            )
+
+            // This is the correct context to call AnimatedVisibility.
+            // It is being called within a Box, so it does not require a ColumnScope or RowScope.
+            // Wind dial, aligned to the top start
+            AnimatedVisibility(
+                visible = weatherIconsVisible,
+                modifier = Modifier.align(Alignment.TopStart),
+                enter = fadeIn(animationSpec = tween(300)) + slideInHorizontally(initialOffsetX = { -it }),
+                exit = fadeOut(animationSpec = tween(300)) + slideOutHorizontally(targetOffsetX = { -it })
             ) {
-                // Wind dial
-                AnimatedVisibility(
-                    visible = weatherIconsVisible,
-                    enter = fadeIn(animationSpec = tween(300)) + slideInHorizontally(initialOffsetX = { -it / 2 }),
-                    exit = fadeOut(animationSpec = tween(300)) + slideOutHorizontally(targetOffsetX = { -it / 2 })
+                Box(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .size(48.dp)
                 ) {
-                    Box(modifier = Modifier.size(48.dp)) { // Smaller wind dial
-                        weather?.let {
-                            WindDirectionDialWithSpeed(degree = it.windDegree, speed = it.windSpeed)
-                        }
+                    weather?.let {
+                        WindDirectionDialWithSpeed(degree = it.windDegree, speed = it.windSpeed)
                     }
                 }
+            }
 
-                // Main Weather Icon (always visible)
-                Icon(
-                    imageVector = Icons.Default.WbSunny,
-                    contentDescription = "Toggle Weather",
-                    tint = Color.White.copy(alpha = 0.8f),
-                    modifier = Modifier
-                        .clickable { weatherIconsVisible = !weatherIconsVisible }
-                        .padding(4.dp)
-                        .size(24.dp) // Smaller icon
-                )
-
-                // Weather badge
-                AnimatedVisibility(
-                    visible = weatherIconsVisible,
-                    enter = fadeIn(animationSpec = tween(300)) + slideInHorizontally(initialOffsetX = { it / 2 }),
-                    exit = fadeOut(animationSpec = tween(300)) + slideOutHorizontally(targetOffsetX = { it / 2 })
-                ) {
+            // Weather badge, aligned to the top end, below the main icon
+            AnimatedVisibility(
+                visible = weatherIconsVisible,
+                modifier = Modifier.align(Alignment.TopEnd),
+                enter = fadeIn(animationSpec = tween(300)) + slideInHorizontally(initialOffsetX = { it }),
+                exit = fadeOut(animationSpec = tween(300)) + slideOutHorizontally(targetOffsetX = { it })
+            ) {
+                Box(modifier = Modifier.padding(top = 48.dp, end = 16.dp)) {
                     weather?.let {
                         WeatherBadgeWithDetails(weatherInfo = it)
                     }
                 }
             }
 
-            // Middle: Large speedometer (responsive and animated)
+            // Bottom controls, aligned to the bottom center
             Box(
                 modifier = Modifier
-                    .weight(1f) // Takes up the remaining space
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                SpeedometerWithCompassOverlay(
-                    currentSpeed = currentSpeed.toFloat(),
-                    maxSpeed = 60f,
-                    heading = heading,
-                    modifier = Modifier.fillMaxSize(speedometerSizeFraction) // Apply animated fraction here
-                )
-            }
-
-            // Bottom: Controls
-            Box(
-                modifier = Modifier
+                    .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {
                 BikePathWithControls(
@@ -136,64 +124,4 @@ fun SpeedAndProgressCard(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun SpeedAndProgressCardPreview() {
-    val bikeRideInfo = BikeRideInfo(
-        location = null,
-        currentSpeed = 25.0,
-        averageSpeed = 20.0,
-        maxSpeed = 40.0,
-        currentTripDistance = 1000.0f,
-        totalTripDistance = 5000.0f,
-        remainingDistance = 4000.0f,
-        elevationGain = 100.0,
-        elevationLoss = 50.0,
-        caloriesBurned = 300,
-        rideDuration = "00:30:00",
-        settings = mapOf("speed_unit" to listOf("kmh"), "distance_unit" to listOf("km")),
-        heading = 90.0f,
-        elevation = 150.0,
-        isBikeConnected = true,
-        batteryLevel = 80,
-        motorPower = 50.0f,
-        rideState = RideState.Riding,
-        bikeWeatherInfo = BikeWeatherInfo(
-            windDegree = 12,
-            windSpeed = 12.3,
-            conditionText = "Sunny",
-            conditionDescription = "Clear skies",
-            conditionIcon = "",
-            temperature = 25.0,
-            humidity = 12,
-            feelsLike = 23.0
-        )
-    )
-
-    /*
-        weatherCondition = "",
-        weatherConditionText = "Sunny",
-        windSpeed = 10.0,
-        windDegree = 180.0,
-        temperature = 25.0,
-        feelsLike = 23.0,
-
-        public final val windDegree: Int,
-        public final val windSpeed: Double,
-        public final val conditionText: String,
-        public final val conditionDescription: String?,
-        public final val conditionIcon: String?,
-        public final val temperature: Double?,
-        public final val feelsLike: Double?,
-        public final val humidity: Int?
- */
-
-
-    SpeedAndProgressCard(
-        bikeRideInfo = bikeRideInfo,
-        onBikeEvent = {},
-        navTo = {}
-    )
 }
