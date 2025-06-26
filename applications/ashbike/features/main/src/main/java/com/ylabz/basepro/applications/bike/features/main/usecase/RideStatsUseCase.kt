@@ -1,7 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.main.usecase
 
 import android.location.Location
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.demo.calculateCalories
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

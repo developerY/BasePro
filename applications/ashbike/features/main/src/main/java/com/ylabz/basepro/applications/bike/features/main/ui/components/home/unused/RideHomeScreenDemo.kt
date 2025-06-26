@@ -1,10 +1,5 @@
-package com.ylabz.basepro.applications.bike.features.main.ui.components.home.demo
+package com.ylabz.basepro.applications.bike.features.main.ui.components.home.unused
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,11 +9,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsBike
-import androidx.compose.material.icons.filled.BatteryChargingFull
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.*
@@ -30,20 +22,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Gray
-import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
-import com.google.android.gms.maps.model.LatLng
-import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.StatsSection
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.SpeedAndProgressCard
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatItem
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatsRow
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.bike.BikeBatteryLevels
-import com.ylabz.basepro.core.model.bike.BikeRideInfo
-import com.ylabz.basepro.core.model.bike.RideState
 import kotlin.math.roundToInt
 
 

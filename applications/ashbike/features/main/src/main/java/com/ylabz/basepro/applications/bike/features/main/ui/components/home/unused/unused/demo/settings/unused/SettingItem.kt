@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.unused.demo.settings.unused
+package com.ylabz.basepro.applications.bike.features.main.ui.components.home.unused.unused.demo.settings.unused
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.unused.demo.settings.BikeConfigurationExpandable
+import com.ylabz.basepro.applications.bike.features.main.ui.components.home.unused.unused.demo.settings.BikeConfigurationExpandable
 
 // Example data class for each settings item
 data class SettingItem(

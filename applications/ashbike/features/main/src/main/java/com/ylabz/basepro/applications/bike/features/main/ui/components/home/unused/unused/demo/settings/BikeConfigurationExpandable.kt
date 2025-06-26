@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.unused.demo.settings
+package com.ylabz.basepro.applications.bike.features.main.ui.components.home.unused.unused.demo.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

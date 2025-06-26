@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.unused
+package com.ylabz.basepro.applications.bike.features.main.ui.components.home.unused.unused
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
