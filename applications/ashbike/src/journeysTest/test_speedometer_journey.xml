@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<journeys>
+
+    <journey name="onboarding">
+        <description>Test the initial onboarding flow.</description>
+        <actions>
+            <action>Given the user has opened the app for the first time</action>
+            <action>When the user swipes through the onboarding screens</action>
+            <action>And the user taps the 'Get Started' button</action>
+            <action>Then the user should be on the main dashboard</action>
+        </actions>
+    </journey>
+
+    <journey name="startAndStopRide">
+        <description>Test starting, monitoring, and stopping a bike ride.</description>
+        <actions>
+            <action>Given the user is on the main dashboard and has granted location permissions</action>
+            <action>When the user taps the 'Start Ride' button</action>
+            <action>Then the ride timer should start</action>
+            <action>And the user's speed and distance are updated in real-time</action>
+            <action>When the user taps the 'Stop Ride' button</action>
+            <action>Then the ride summary should be displayed</action>
+        </actions>
+    </journey>
+
+    <journey name="connectBikeWithNFC">
+        <description>Test connecting to a bike using the NFC tap feature.</description>
+        <actions>
+            <action>Given the user is on the main dashboard</action>
+            <action>When the user taps the 'Connect Bike' button</action>
+            <action>And the user chooses the 'NFC' option</action>
+            <action>And the user taps their phone on the bike's NFC tag</action>
+            <action>Then the app should display a 'Connecting...' message</action>
+            <action>And the dashboard should update with live bike data upon connection</action>
+        </actions>
+    </journey>
+
+    <journey name="connectBikeWithQRCode">
+        <description>Test connecting to a bike by scanning a QR code.</description>
+        <actions>
+            <action>Given the user is on the main dashboard</action>
+            <action>When the user taps the 'Connect Bike' button</action>
+            <action>And the user chooses the 'QR' option</action>
+            <action>And the app opens the camera scanner</action>
+            <action>When the user scans the QR code on the bike</action>
+            <action>Then the app should display a 'Bike ID found' message</action>
+            <action>And the dashboard should update with live bike data upon connection</action>
+        </actions>
+    </journey>
+
+    <journey name="handleBLEConnectionFailure">
+        <description>Test the user flow when the app fails to connect to the bike via BLE.</description>
+        <actions>
+            <action>Given the user has scanned a bike's NFC or QR code</action>
+            <action>When the app attempts to connect via BLE and fails</action>
+            <action>Then the app should display an error message 'Could not connect. Please ensure the bike is powered on and within range.'</action>
+            <action>And the user should have an option to retry the connection</action>
+        </actions>
+    </journey>
+
+    <journey name="viewPastRides">
+        <description>Test viewing past rides from the trips screen.</description>
+        <actions>
+            <action>Given the user is on the main dashboard</action>
+            <action>When the user taps on the 'Trips' tab in the bottom navigation</action>
+            <action>Then the user should see a list of past rides</action>
+            <action>When the user taps on a specific ride from the list</action>
+            <action>Then the ride detail screen should be displayed</action>
+        </actions>
+    </journey>
+
+    <journey name="viewRideAndFindCafes">
+        <description>Test viewing a past ride and finding nearby cafes.</description>
+        <actions>
+            <action>Given the user is on the 'Trips' screen</action>
+            <action>When the user taps on a specific ride from the list</action>
+            <action>Then the user sees the details of the ride, including a map</action>
+            <action>When the user taps the 'Find Nearby Cafes' button</action>
+            <action>Then the app should display a list of cafes on the map</action>
+        </actions>
+    </journey>
+
+    <journey name="changeSettings">
+        <description>Test changing settings from the settings screen.</description>
+        <actions>
+            <action>Given the user is on the main dashboard</action>
+            <action>When the user taps on the 'Settings' tab in the bottom navigation</action>
+            <action>Then the settings screen is displayed</action>
+            <action>When the user changes a setting</action>
+            <action>Then the setting change should be saved and reflected in the app</action>
+        </actions>
+    </journey>
+
+    <journey name="handleLocationPermission">
+        <description>Test how the app handles location permission requests.</description>
+        <actions>
+            <action>Given the user has opened the app for the first time</action>
+            <action>When the app requests location permission and the user denies it</action>
+            <action>Then the app should display the 'Waiting for GPS' screen</action>
+            <action>When the user taps the 'Request Permission' button</action>
+            <action>And the user grants the permission</action>
+            <action>Then the main dashboard should be displayed</action>
+        </actions>
+    </journey>
+
+</journeys>

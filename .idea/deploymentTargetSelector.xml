@@ -38,12 +38,6 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="Journey.xml (NewUserRegistrationAndLogin)">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="my_first_journey.xml (My first Journey)">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="ash_bike_journey.xml (onboarding)">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
@@ -51,6 +45,12 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="cafe_in_rides.xml (findNearbyCafes_withTimeCheck)">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="test_speedometer_journey.xml (onboarding)">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="test_speedometer_journey2.xml (startStopAndReviewRide)">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
