@@ -58,7 +58,14 @@ mlkit-text-recognition = "16.0.0"
 qrScannerVersion = "16.1.0"
 playServicesCodeScanner = "16.1.0" # QR Scanner
 
+compileSdk = "36"
+targetSdk = "35"
+
 [libraries]
+compileSdk = { module = "com.android.tools.build:gradle", version.ref = "compileSdk" }
+targetSdk = { module = "com.android.tools.build:gradle", version.ref = "targetSdk" }
+
+
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }  # Core KTX library
 junit = { module = "junit:junit", version.ref = "junit" }  # JUnit testing library
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }  # AndroidX JUnit extension

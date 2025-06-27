@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace = "com.ylabz.basepro.applications.bike"
-    compileSdk = 36
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.ylabz.basepro.applications.bike"
         minSdk = 31
-        targetSdk = 35
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
 
