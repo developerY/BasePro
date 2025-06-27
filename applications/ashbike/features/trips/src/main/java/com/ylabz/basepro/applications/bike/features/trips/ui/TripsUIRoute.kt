@@ -1,8 +1,10 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui
 
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -11,6 +13,7 @@ import com.ylabz.basepro.applications.bike.features.trips.ui.components.BikeTrip
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.ErrorScreen
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.LoadingScreen
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
+import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 import com.ylabz.basepro.feature.heatlh.ui.HealthViewModel
 
 @Composable
@@ -29,6 +32,24 @@ fun TripsUIRoute(
 
     // 2. Observe the set of already-synced IDs from HealthViewModel
     val syncedIds by healthViewModel.syncedIds.collectAsState()
+
+    // 3. Create the permissions launcher
+    val permissionsLauncher = rememberLauncherForActivityResult(
+        contract = healthViewModel.permissionsLauncher,
+        onResult = {
+            // After the user responds, reload the health data
+            healthViewModel.initialLoad()
+        }
+    )
+
+    // 4. Create an effect that listens for the PermissionsRequired state
+    //    This will now launch the dialog from the correct screen.
+    LaunchedEffect(healthUiState) {
+        if (healthUiState is HealthUiState.PermissionsRequired) {
+            permissionsLauncher.launch(healthViewModel.permissions)
+        }
+    }
+
 
     // 3. Render based on your trips state
     when (uiState) {

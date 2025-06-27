@@ -96,8 +96,15 @@ fun BikeTripsCompose(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
-                TripSectionHeader(onEvent = bikeEvent, title = "Bike Rides", bgColor = PastelBlue
-                , healthConnected = connected, onHealthToggle = { healthEvent(HealthEvent.RequestPermissions) })
+                TripSectionHeader(
+                    onEvent = bikeEvent,
+                    title = "Bike Rides",
+                    bgColor = PastelBlue,
+                    healthConnected = connected,
+                    onHealthToggle = {
+                        healthEvent(HealthEvent.RequestPermissions)
+                    }
+                )
             }
 
             if (bikeRides.isEmpty()) {
