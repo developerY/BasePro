@@ -107,9 +107,10 @@ class HealthViewModel @Inject constructor(
     }
 
     init {
+        // Only check for availability and then let the UI trigger the permission check/load.
         checkHealthConnectAvailability()
         initialLoad()
-        observeHealthConnectChanges()
+        // observeHealthConnectChanges() // <--- THIS IS THE PROBLEM
     }
 
     fun onEvent(event: HealthEvent) {
@@ -176,6 +177,9 @@ class HealthViewModel @Inject constructor(
         }
     }
 
+    // Keep track of whether you're already observing changes
+    private var isObservingChanges = false
+
     private fun checkPermissionsAndLoadData() {
         viewModelScope.launch {
             if (healthSessionManager.availability.value != HealthConnectClient.SDK_AVAILABLE) {
@@ -186,6 +190,11 @@ class HealthViewModel @Inject constructor(
             val permissionsGranted = healthSessionManager.hasAllPermissions(permissions)
             if (permissionsGranted) {
                 loadHealthData()
+                // *** ADD THIS: Only start observing after permissions are confirmed ***
+                if (!isObservingChanges) {
+                    observeHealthConnectChanges()
+                    isObservingChanges = true
+                }
             } else {
                 _uiState.value = HealthUiState.PermissionsRequired("Health permissions are required.")
             }
