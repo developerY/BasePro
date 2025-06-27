@@ -45,6 +45,11 @@ import java.util.UUID
 import javax.inject.Inject
 import kotlin.random.Random
 
+// Add this sealed interface inside or outside the HealthViewModel class
+sealed interface HealthSideEffect {
+    data class LaunchPermissions(val permissions: Set<String>) : HealthSideEffect
+}
+
 @HiltViewModel
 class HealthViewModel @Inject constructor(
     @ApplicationContext private val appCtx: Context,
@@ -106,10 +111,15 @@ class HealthViewModel @Inject constructor(
         }
     }
 
+    // 1. ADD a SharedFlow for one-time side effects
+    private val _sideEffect = MutableSharedFlow<HealthSideEffect>()
+    val sideEffect = _sideEffect.asSharedFlow()
+
+    // 2. REMOVE initialLoad() and observeHealthConnectChanges() from the init block
     init {
         // Only check for availability and then let the UI trigger the permission check/load.
         checkHealthConnectAvailability()
-        initialLoad()
+        // By removing initialLoad(), the ViewModel will wait for the UI to tell it what to do.
         // observeHealthConnectChanges() // <--- THIS IS THE PROBLEM
     }
 
@@ -126,6 +136,21 @@ class HealthViewModel @Inject constructor(
             is HealthEvent.RequestPermissions -> checkPermissionsAndLoadData()
 
             is HealthEvent.ReadAll ->  readAllDAta()
+        }
+    }
+
+
+    // 3. CREATE a new function to handle the permission request event
+    private fun requestPermissions() {
+        viewModelScope.launch {
+            val hasPerms = healthSessionManager.hasAllPermissions(permissions)
+            if (!hasPerms) {
+                // If we don't have permissions, emit the side effect to launch the dialog
+                _sideEffect.emit(HealthSideEffect.LaunchPermissions(permissions))
+            } else {
+                // If we already have permissions, just refresh the data
+                loadHealthData()
+            }
         }
     }
 
@@ -147,6 +172,7 @@ class HealthViewModel @Inject constructor(
     }
 
 
+    // The insert function remains a great way to handle the sync icon click
     private fun insertExerciseSession(event: HealthEvent.Insert) {
         viewModelScope.launch {
             tryWithPermissionsCheck {
@@ -259,28 +285,18 @@ class HealthViewModel @Inject constructor(
         return weightInputs
     }
 
+    // This function will now be wrapped in a permission check that can trigger the launch
     private suspend fun tryWithPermissionsCheck(block: suspend () -> Unit) {
-        permissionsGranted.value = healthSessionManager.hasAllPermissions(permissions)
-        backgroundReadAvailable.value = healthSessionManager.isFeatureAvailable(
-            HealthConnectFeatures.FEATURE_READ_HEALTH_DATA_IN_BACKGROUND
-        )
-        backgroundReadGranted.value = healthSessionManager.hasAllPermissions(backgroundReadPermissions)
-
-        _uiState.value = try {
-            if (permissionsGranted.value) {
+        val hasPermissions = healthSessionManager.hasAllPermissions(permissions)
+        if (hasPermissions) {
+            try {
                 block()
-                HealthUiState.Success(readSessionInputs())
-            } else {
-                HealthUiState.PermissionsRequired("permissions")
+            } catch (e: Exception) {
+                _uiState.value = HealthUiState.Error("Action failed: ${e.message}")
             }
-        } catch (remoteException: RemoteException) {
-            HealthUiState.Error(Exception(remoteException).message.toString())
-        } catch (securityException: SecurityException) {
-            HealthUiState.Error(Exception(securityException).message.toString())
-        } catch (ioException: IOException) {
-            HealthUiState.Error(Exception(ioException).message.toString())
-        } catch (illegalStateException: IllegalStateException) {
-            HealthUiState.Error(Exception(illegalStateException).message.toString())
+        } else {
+            // When trying to sync without permissions, trigger the launch effect
+            _sideEffect.emit(HealthSideEffect.LaunchPermissions(permissions))
         }
     }
 

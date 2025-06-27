@@ -13,6 +13,7 @@ import com.ylabz.basepro.applications.bike.features.trips.ui.components.BikeTrip
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.ErrorScreen
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.LoadingScreen
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
+import com.ylabz.basepro.feature.heatlh.ui.HealthSideEffect
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 import com.ylabz.basepro.feature.heatlh.ui.HealthViewModel
 
@@ -38,15 +39,26 @@ fun TripsUIRoute(
         contract = healthViewModel.permissionsLauncher,
         onResult = {
             // After the user responds, reload the health data
-            healthViewModel.initialLoad()
+            // healthViewModel.initialLoad()
+            // After the dialog closes, tell the ViewModel to load the data
+            healthViewModel.onEvent(HealthEvent.LoadHealthData)
         }
     )
 
     // 4. Create an effect that listens for the PermissionsRequired state
     //    This will now launch the dialog from the correct screen.
-    LaunchedEffect(healthUiState) {
-        if (healthUiState is HealthUiState.PermissionsRequired) {
-            permissionsLauncher.launch(healthViewModel.permissions)
+    // Use LaunchedEffect to listen for side effects from the ViewModel
+    LaunchedEffect(Unit) {
+        // Trigger the initial load for health data when the screen appears
+        healthViewModel.onEvent(HealthEvent.LoadHealthData)
+
+        // Listen for the signal to launch the permission dialog
+        healthViewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is HealthSideEffect.LaunchPermissions -> {
+                    permissionsLauncher.launch(effect.permissions)
+                }
+            }
         }
     }
 
