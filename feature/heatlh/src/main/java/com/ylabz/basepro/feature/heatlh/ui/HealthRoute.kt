@@ -12,6 +12,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.HealthConnectClient
 import com.ylabz.basepro.core.model.health.HealthScreenState
@@ -122,15 +123,34 @@ fun HealthRoute(
                 onRetry = { viewModel.initialLoad() },
             )
 
-            is HealthUiState.Uninitialized -> {
-                viewModel.initialLoad()
+            // Combine Uninitialized and Loading to show the same UI
+            is HealthUiState.Uninitialized,
+            is HealthUiState.Loading -> {
+                LoadingScreen()
             }
-
-
-            is HealthUiState.Loading -> LoadingScreen()
         }
     }
 }
+
+@Preview
+@Composable
+fun HealthRoutePreview() {
+    HealthRoute(
+        navTo = {},
+        viewModel = hiltViewModel()
+    )
+}
+
+@Preview
+@Composable
+fun HealthFeatureWithPermissionsPreview() {
+    HealthFeatureWithPermissions(
+        onRequestPermissions = {}
+    )
+}
+
+
+
 
 @Composable
 fun HealthFeatureWithPermissions(onRequestPermissions: () -> Unit) {
