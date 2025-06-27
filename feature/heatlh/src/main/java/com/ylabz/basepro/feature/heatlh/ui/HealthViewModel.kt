@@ -127,13 +127,13 @@ class HealthViewModel @Inject constructor(
         when (event) {
             is HealthEvent.LoadHealthData -> loadHealthData()
             is HealthEvent.DeleteAll -> delData()
-            is HealthEvent.Retry -> checkPermissionsAndLoadData()
-            is HealthEvent.TestInsert -> {
-                insertTestExerciseSession()
-            }
+            is HealthEvent.Retry -> loadHealthData() // Retry should probably just load data
+            is HealthEvent.TestInsert -> insertTestExerciseSession()
             is HealthEvent.Insert -> insertExerciseSession(event)
 
-            is HealthEvent.RequestPermissions -> checkPermissionsAndLoadData()
+            // --- THIS IS THE FIX ---
+            // Point this event to your new function
+            is HealthEvent.RequestPermissions -> requestPermissions()
 
             is HealthEvent.ReadAll ->  readAllDAta()
         }
@@ -252,9 +252,21 @@ class HealthViewModel @Inject constructor(
     private fun loadHealthData() {
         _uiState.value = HealthUiState.Loading
         viewModelScope.launch {
-            val sessions = readSessionInputs()
             try {
-                _uiState.value = HealthUiState.Success(readSessionInputs())
+                // Re-check permissions to be safe
+                if (healthSessionManager.hasAllPermissions(permissions)) {
+                    val sessions = readSessionInputs() // Call only once
+                    _uiState.value = HealthUiState.Success(sessions)
+
+                    // Start observing for changes after a successful load
+                    if (!isObservingChanges) {
+                        observeHealthConnectChanges()
+                        isObservingChanges = true
+                    }
+                } else {
+                    // If for any reason permissions are gone, reflect that in the UI
+                    _uiState.value = HealthUiState.PermissionsRequired("Permissions needed")
+                }
             } catch (e: Exception) {
                 _uiState.value = HealthUiState.Error("Failed to load health data: ${e.message}")
             }
