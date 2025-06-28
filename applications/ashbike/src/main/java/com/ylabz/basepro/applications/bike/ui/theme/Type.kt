@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.features.main.ui.theme
+package com.ylabz.basepro.applications.bike.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
