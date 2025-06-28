@@ -16,10 +16,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BikeScooter
 import androidx.compose.material.icons.filled.Bluetooth
+import androidx.compose.material.icons.filled.BrightnessMedium
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Favorite
@@ -41,6 +43,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
@@ -52,6 +55,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -83,47 +87,18 @@ private val PastelGreen    = Color(0xFFDBF1DB)   // for Bike Settings
 // —————————————————————————————————————————————————————————
 //  SectionHeader WITH “Collapse All” ACTION
 // —————————————————————————————————————————————————————————
-@Composable
-fun SectionHeader(
-    title: String,
-    expanded: Boolean,
-    onToggle: () -> Unit,
-    bgColor: Color
-) {
-    Surface(
-        tonalElevation  = 4.dp,
-        shadowElevation = 4.dp,
-        shape           = RoundedCornerShape(8.dp),
-        color           = bgColor,
-        modifier        = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onToggle)
-            .padding(vertical = 6.dp)
-    ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment     = Alignment.CenterVertically
-        ) {
-            Text(
-                text  = title,
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
-            )
-            Icon(
-                imageVector        = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                contentDescription = if (expanded) "Collapse" else "Expand",
-                tint               = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
+// --- Key for managing which card is expanded ---
+private enum class SettingsCard {
+    THEME, APP, ABOUT, HEALTH, NFC, QR, BLE, BIKE
 }
 
+// —————————————————————————————————————————————————————————
+//  SETTINGS SCREEN (CLEANED UP)
+// —————————————————————————————————————————————————————————
+// --- Enums for type-safe state management ---
+private enum class SectionKey { App, Connectivity, Bike }
+private enum class CardKey { Theme, About, Health, Nfc, Qr, Ble, BikeConfig }
 
-// —————————————————————————————————————————————————————————
-//  SETTINGS SCREEN WITH “Collapse all” BUTTONS
-// —————————————————————————————————————————————————————————
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SettingsScreenEx(
@@ -134,177 +109,224 @@ fun SettingsScreenEx(
     onEvent: (SettingsEvent) -> Unit,
     navTo: (String) -> Unit
 ) {
-
-    // per-section open/closed
-    var appExpanded by rememberSaveable { mutableStateOf(false) }
-    var connExpanded by rememberSaveable { mutableStateOf(false) }
-    var bikeSettingsExpanded by rememberSaveable { mutableStateOf(false) }
-
-
-
-    // All expandable states
-    val expandables = remember {
-        mutableStateMapOf(
-            "bike"   to false,
-            "app"    to false,
-            "about"  to false,
-            "nfc"    to false,
-            "health" to false,
-            "qr"     to false,
-            "ble"    to false
-        )
-    }
+    // State sets to track what's open
+    val expandedSections = remember { mutableStateSetOf<SectionKey>() }
+    val expandedCards = remember { mutableStateSetOf<CardKey>() }
     var isEditing by remember { mutableStateOf(false) }
 
-    Box(
+    // Helper to toggle a key in a set
+    fun <T> toggle(set: MutableSet<T>, key: T) {
+        if (set.contains(key)) set.remove(key) else set.add(key)
+    }
+
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(PastelLavender)
+            .background(Color(0xFFF3E5F5)) // PastelLavender
+            .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        ) {
-            // Profile
+        // --- Profile Card (Always visible) ---
+        item {
+            ProfileInfoCardEx(
+                profile = uiState.profile,
+                isEditing = isEditing,
+                onToggleEdit = { isEditing = !isEditing },
+                onEvent = onEvent
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        // --- App Settings Section ---
+        stickyHeader {
+            SectionHeader(
+                title = "App Settings",
+                expanded = expandedSections.contains(SectionKey.App),
+                bgColor = Color(0xFFDCEEFB), // PastelBlue
+                onToggle = { toggle(expandedSections, SectionKey.App) }
+            )
+        }
+        if (expandedSections.contains(SectionKey.App)) {
             item {
-                ProfileInfoCardEx(
-                    profile = uiState.profile,
-                    isEditing = isEditing,
-                    onToggleEdit = { isEditing = !isEditing },
-                    onEvent = onEvent
+                ThemeExpandable(
+                    expanded = expandedCards.contains(CardKey.Theme),
+                    onExpandToggle = { toggle(expandedCards, CardKey.Theme) },
+                    currentTheme = uiState.selections["Theme"] ?: "System",
+                    onThemeSelected = { }// theme -> onEvent(SettingsEvent.SetTheme(theme)) }
+                )
+            }
+            item {
+                AboutExpandable(
+                    expanded = expandedCards.contains(CardKey.About),
+                    onExpandToggle = { toggle(expandedCards, CardKey.About) }
+                )
+            }
+        }
+
+        // --- Connectivity Section ---
+        stickyHeader {
+            SectionHeader(
+                title = "Connectivity",
+                expanded = expandedSections.contains(SectionKey.Connectivity),
+                bgColor = Color(0xFFEFECF6), // PastelLilac
+                onToggle = { toggle(expandedSections, SectionKey.Connectivity) }
+            )
+        }
+        if (expandedSections.contains(SectionKey.Connectivity)) {
+            item {
+                HealthExpandableEx(
+                    expanded = expandedCards.contains(CardKey.Health),
+                    onExpandToggle = { toggle(expandedCards, CardKey.Health) },
+                    navTo = navTo
+                )
+            }
+            item {
+                NfcExpandableEx(
+                    nfcUiState = nfcUiState,
+                    nfcEvent = nfcEvent,
+                    expanded = expandedCards.contains(CardKey.Nfc),
+                    onExpandToggle = { toggle(expandedCards, CardKey.Nfc) },
+                    navTo = navTo
+                )
+            }
+            item {
+                QrExpandableEx(
+                    expanded = expandedCards.contains(CardKey.Qr),
+                    onExpandToggle = { toggle(expandedCards, CardKey.Qr) }
+                )
+            }
+            item {
+                BLEExpandableCard(
+                    expanded = expandedCards.contains(CardKey.Ble),
+                    onExpandToggle = { toggle(expandedCards, CardKey.Ble) }
+                )
+            }
+        }
+
+        // --- Bike Settings Section ---
+        stickyHeader {
+            SectionHeader(
+                title = "Bike Settings",
+                expanded = expandedSections.contains(SectionKey.Bike),
+                bgColor = Color(0xFFDBF1DB), // PastelGreen
+                onToggle = { toggle(expandedSections, SectionKey.Bike) }
+            )
+        }
+        if (expandedSections.contains(SectionKey.Bike)) {
+            item {
+                BikeConfigurationEx(
+                    expanded = expandedCards.contains(CardKey.BikeConfig),
+                    onExpandToggle = { toggle(expandedCards, CardKey.BikeConfig) },
+                    navTo = navTo
+                )
+            }
+        }
+    }
+}
+
+// Re-usable Section Header composable
+@Composable
+fun SectionHeader(
+    title: String,
+    expanded: Boolean,
+    onToggle: () -> Unit,
+    bgColor: Color
+) {
+    Surface(
+        tonalElevation = 4.dp,
+        shadowElevation = 4.dp,
+        shape = RoundedCornerShape(8.dp),
+        color = bgColor,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp)
+    ) {
+        Row(
+            Modifier
+                .clickable(onClick = onToggle)
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+            )
+            Spacer(Modifier.weight(1f))
+            Icon(
+                imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                contentDescription = if (expanded) "Collapse" else "Expand",
+            )
+        }
+    }
+}
+
+
+// —————————————————————————————————————————————————————————
+//  NEW THEME EXPANDABLE CARD
+// —————————————————————————————————————————————————————————
+@Composable
+fun ThemeExpandable(
+    expanded: Boolean,
+    onExpandToggle: () -> Unit,
+    currentTheme: String,
+    onThemeSelected: (String) -> Unit
+) {
+    val themeOptions = listOf("System", "Light", "Dark")
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier
+                    .clickable { onExpandToggle() }
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.BrightnessMedium,
+                    contentDescription = "Theme",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(text = "Theme", style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.weight(1f))
+                Text(text = currentTheme, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
+                Spacer(modifier = Modifier.width(8.dp))
+                Icon(
+                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    contentDescription = if (expanded) "Collapse" else "Expand"
                 )
             }
 
-            // ——————————————————————————————
-            // App Settings Section
-            // ——————————————————————————————
-
-            // — App Settings Section —
-            stickyHeader {
-                SectionHeader(
-                    title = "App Settings",
-                    expanded = appExpanded,
-                    bgColor = PastelBlue,
-                    onToggle = {
-                        if (appExpanded) {
-                            // collapsing: also collapse children
-                            listOf("bike", "app", "about").forEach { expandables[it] = false }
+            if (expanded) {
+                HorizontalDivider()
+                Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+                    themeOptions.forEach { theme ->
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .selectable(
+                                    selected = (theme == currentTheme),
+                                    onClick = { onThemeSelected(theme) }
+                                )
+                                .padding(vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = (theme == currentTheme),
+                                onClick = { onThemeSelected(theme) }
+                            )
+                            Text(
+                                text = theme,
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.padding(start = 16.dp)
+                            )
                         }
-                        appExpanded = !appExpanded
                     }
-                )
-            }
-            if (appExpanded) {
-                item {
-                    AppPreferencesExpandable(
-                        expanded = expandables["app"] == true,
-                        onExpandToggle = {
-                            expandables["app"] = !(expandables["app"] ?: false)
-                        }
-                    )
-                }
-                item {
-                    AboutExpandable(
-                        expanded = expandables["about"] == true,
-                        onExpandToggle = {
-                            expandables["about"] = !(expandables["about"] ?: false)
-                        }
-                    )
                 }
             }
-            // ——————————————————————————————
-            // Connectivity Section
-            // ——————————————————————————————
-            stickyHeader {
-                SectionHeader(
-                    title = "Connectivity",
-                    expanded = connExpanded,
-                    bgColor = PastelLilac,
-                    onToggle = {
-                        if (connExpanded) {
-                            listOf("health", "nfc", "qr", "ble").forEach { expandables[it] = false }
-                        }
-                        connExpanded = !connExpanded
-                    }
-                )
-            }
-            if (connExpanded) {
-                item {
-                    HealthExpandableEx(
-                        expanded = expandables["health"] == true,
-                        onExpandToggle = {
-                            expandables["health"] = !(expandables["health"] ?: false)
-                        },
-                        navTo = navTo
-                    )
-                }
-                // add your visual break here
-                item {
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 12.dp),
-                        thickness = 1.dp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
-                    )
-                }
-                item {
-                    NfcExpandableEx(
-                        nfcUiState = nfcUiState,
-                        nfcEvent = nfcEvent,
-                        expanded = expandables["nfc"] == true,
-                        onExpandToggle = {
-                            expandables["nfc"] = !(expandables["nfc"] ?: false)
-                        },
-                        navTo = navTo
-                    )
-                }
-                item {
-                    QrExpandableEx(
-                        expanded = expandables["qr"] == true,
-                        onExpandToggle = {
-                            expandables["qr"] = !(expandables["qr"] ?: false)
-                        }
-                    )
-                }
-                item {
-                    BLEExpandableCard(
-                        expanded = expandables["ble"] == true,
-                        onExpandToggle = {
-                            expandables["ble"] = !(expandables["ble"] ?: false)
-                        }
-                    )
-                }
-            }
-
-
-            // — Bike Settings Section ————————————————————————————————
-            stickyHeader {
-                SectionHeader(
-                    title    = "Bike Settings",
-                    expanded = bikeSettingsExpanded,
-                    bgColor  = PastelGreen,
-                    onToggle = {
-                        if (bikeSettingsExpanded) {
-                            expandables["bike"] = false
-                        }
-                        bikeSettingsExpanded = !bikeSettingsExpanded
-                    }
-                )
-            }
-            if (bikeSettingsExpanded) {
-                item {
-                    BikeConfigurationEx(
-                        expanded       = expandables["bike"] == true,
-                        onExpandToggle = { expandables["bike"] = !expandables["bike"]!! },
-                        navTo          = navTo
-                    )
-                }
-            }
-
-
-
         }
     }
 }
