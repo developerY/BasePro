@@ -41,6 +41,7 @@ dependencies {
 
     implementation(project(":applications:ashbike:database"))
     implementation(project(":core:model"))
+    implementation(project(":core:ui"))
 
     implementation(project(":feature:heatlh"))
     implementation(project(":feature:nfc"))

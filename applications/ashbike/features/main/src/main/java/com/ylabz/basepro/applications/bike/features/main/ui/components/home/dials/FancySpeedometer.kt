@@ -78,7 +78,7 @@ fun FancySpeedometer(
     Canvas(modifier = Modifier.fillMaxSize()) {
         // Use 'size.minDimension' to get the smaller dimension if needed
         val center = Offset(size.width / 2, size.height / 2)
-        val radius = size.minDimension / 2.2f
+        val radius = size.minDimension / 2.3f
 
         // 1) Background arc (light gray)
         drawArc(

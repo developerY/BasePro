@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.ui.theme
+package com.ylabz.basepro.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
@@ -50,3 +50,39 @@ val DarkOnSurface = Color(0xFFE4E1E6)
 val DarkSurfaceVariant = Color(0xFF46464F)
 val DarkOnSurfaceVariant = Color(0xFFC7C5D0)
 val DarkOutline = Color(0xFF91909A)
+
+// Add these to your existing Color.kt
+
+// Theme-aware colors for the Speedometer gradient
+val LightSpeedSlow = Color(0xFF4CAF50)      // Material Green 500
+val LightSpeedMedium = Color(0xFFFFEB3B)    // Material Yellow 500
+val LightSpeedFast = Color(0xFFF44336)      // Material Red 500
+
+val DarkSpeedSlow = Color(0xFF81C784)       // Material Green 300
+val DarkSpeedMedium = Color(0xFFFFF176)     // Material Yellow 300
+val DarkSpeedFast = Color(0xFFE57373)       // Material Red 300
+
+
+// Your exact color stops for the light theme speedometer.
+val LightSpeedometerColorStops = arrayOf(
+    0.0f to Color(0xFF1E561F),  // Start with Green
+    0.1f to Color(0xFF349439),
+    0.2f to Color(0xFF68B739),
+    0.4f to Color(0xFFA6C476),
+    0.6f to Color(0xFFCFFF22),
+    0.8f to Color(0xFFFFE607),
+    0.9f to Color(0xFFFFB13B),
+    1.0f to Color(0xFFF44336)   // End with Red
+)
+
+// A brighter, more vibrant version for dark theme.
+val DarkSpeedometerColorStops = arrayOf(
+    0.0f to Color(0xFF68B739),  // Start with a brighter Green
+    0.1f to Color(0xFF81C784),
+    0.2f to Color(0xFFAED581),
+    0.4f to Color(0xFFDCE775),
+    0.6f to Color(0xFFFFF176),
+    0.8f to Color(0xFFFFD54F),
+    0.9f to Color(0xFFFFB74D),
+    1.0f to Color(0xFFE57373)   // End with a softer Red
+)
