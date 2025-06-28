@@ -2,6 +2,7 @@ package com.ylabz.basepro.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+
 // Light Theme Colors
 val LightPrimary = Color(0xFF8B93FF)
 val LightOnPrimary = Color(0xFFFFFFFF)
