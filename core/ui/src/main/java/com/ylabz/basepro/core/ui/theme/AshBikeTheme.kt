@@ -12,18 +12,26 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 
 // At the top of Theme.kt, define the colors for each theme
+// Update the custom color definitions at the top of the file
 private val LightCustomColors = CustomColors(
     speedSlow = LightSpeedSlow,
     speedMedium = LightSpeedMedium,
-    speedFast = LightSpeedFast
+    speedFast = LightSpeedFast,
+    settingsProfile = LightSettingsProfile,
+    settingsNfc = LightSettingsNfc,
+    settingsTheme = LightSettingsTheme,
+    settingsBike = LightSettingsBike
 )
 
 private val DarkCustomColors = CustomColors(
     speedSlow = DarkSpeedSlow,
     speedMedium = DarkSpeedMedium,
-    speedFast = DarkSpeedFast
+    speedFast = DarkSpeedFast,
+    settingsProfile = DarkSettingsProfile,
+    settingsNfc = DarkSettingsNfc,
+    settingsTheme = DarkSettingsTheme,
+    settingsBike = DarkSettingsBike
 )
-
 private val DarkColorScheme = darkColorScheme(
     primary = DarkPrimary,
     onPrimary = DarkOnPrimary,

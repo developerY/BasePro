@@ -20,7 +20,7 @@ fun SpeedometerWithCompassOverlay(
 ) {
     Box(modifier = modifier) {
         // 1) The main speedometer
-        FancySpeedometer(
+        FancySpeedometer(  //BigSpeedometer(
             currentSpeed = currentSpeed,
             maxSpeed = maxSpeed,
             modifier = Modifier.fillMaxSize()
@@ -30,7 +30,7 @@ fun SpeedometerWithCompassOverlay(
         Box(
             modifier = Modifier
                 .align(Alignment.Center) // First, align the container to the center
-                .offset(y = 60.dp)       // Then, push it down with a vertical offset
+                .offset(y = 77.dp)       // Then, push it down with a vertical offset
         ) {
             DigitalCompassCard(
                 headingDegrees = heading,

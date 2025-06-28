@@ -68,6 +68,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.ProfileInfoCardEx
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.health.HealthExpandableEx
+import com.ylabz.basepro.core.ui.theme.LocalCustomColors
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
@@ -75,14 +76,6 @@ import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState.Stopped
 import com.ylabz.basepro.feature.nfc.ui.components.NfcScanScreen
 import com.ylabz.basepro.feature.qrscanner.ui.QRCodeScannerScreen
-
-// —————————————————————————————————————————————————————————
-//  PASTEL COLORS
-// —————————————————————————————————————————————————————————
-private val PastelLavender = Color(0xFFF3E5F5)
-private val PastelBlue     = Color(0xFFDCEEFB)
-private val PastelLilac    = Color(0xFFEFECF6)
-private val PastelGreen    = Color(0xFFDBF1DB)   // for Bike Settings
 
 // —————————————————————————————————————————————————————————
 //  SectionHeader WITH “Collapse All” ACTION
@@ -109,6 +102,15 @@ fun SettingsScreenEx(
     onEvent: (SettingsEvent) -> Unit,
     navTo: (String) -> Unit
 ) {
+
+    // Resolve the pastel colors from our custom theme
+    val customColors = LocalCustomColors.current
+    val profileBgColor = customColors.settingsProfile
+    val nfcBgColor = customColors.settingsNfc
+    val themeBgColor = customColors.settingsTheme
+    val bikeBgColor = customColors.settingsBike
+
+
     // State sets to track what's open
     val expandedSections = remember { mutableStateSetOf<SectionKey>() }
     val expandedCards = remember { mutableStateSetOf<CardKey>() }

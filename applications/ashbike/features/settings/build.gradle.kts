@@ -40,6 +40,9 @@ dependencies {
     implementation(project(":feature:nfc"))
     implementation(project(":feature:heatlh"))
     implementation(project(":applications:ashbike:database"))
+
+    implementation(project("::core:ui"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

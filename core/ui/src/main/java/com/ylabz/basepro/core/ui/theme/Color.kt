@@ -1,5 +1,6 @@
 package com.ylabz.basepro.core.ui.theme
 
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 
@@ -51,6 +52,23 @@ val DarkSurfaceVariant = Color(0xFF46464F)
 val DarkOnSurfaceVariant = Color(0xFFC7C5D0)
 val DarkOutline = Color(0xFF91909A)
 
+
+// Add these to your existing Color.kt
+
+// —————————————————————————————————————————————————————————
+//  PASTEL SETTINGS COLORS
+// —————————————————————————————————————————————————————————
+val LightSettingsProfile = Color(0xFFF3E5F5) // PastelLavender
+val LightSettingsNfc = Color(0xFFDCEEFB)     // PastelBlue
+val LightSettingsTheme = Color(0xFFEFECF6)    // PastelLilac
+val LightSettingsBike = Color(0xFFDBF1DB)     // PastelGreen
+
+// Dark theme versions of the pastel colors
+val DarkSettingsProfile = Color(0xFF4A444C)
+val DarkSettingsNfc = Color(0xFF3B4851)
+val DarkSettingsTheme = Color(0xFF46454A)
+val DarkSettingsBike = Color(0xFF3F4B3F)
+
 // Add these to your existing Color.kt
 
 // Theme-aware colors for the Speedometer gradient
@@ -64,7 +82,7 @@ val DarkSpeedFast = Color(0xFFE57373)       // Material Red 300
 
 
 // Your exact color stops for the light theme speedometer.
-val LightSpeedometerColorStops = arrayOf(
+val LightSpeedometerColorStopsRest = arrayOf(
     0.0f to Color(0xFF1E561F),  // Start with Green
     0.1f to Color(0xFF349439),
     0.2f to Color(0xFF68B739),
@@ -76,7 +94,7 @@ val LightSpeedometerColorStops = arrayOf(
 )
 
 // A brighter, more vibrant version for dark theme.
-val DarkSpeedometerColorStops = arrayOf(
+val DarkSpeedometerColorStopsRest = arrayOf(
     0.0f to Color(0xFF68B739),  // Start with a brighter Green
     0.1f to Color(0xFF81C784),
     0.2f to Color(0xFFAED581),
@@ -85,4 +103,49 @@ val DarkSpeedometerColorStops = arrayOf(
     0.8f to Color(0xFFFFD54F),
     0.9f to Color(0xFFFFB74D),
     1.0f to Color(0xFFE57373)   // End with a softer Red
+)
+
+
+// Your exact color stops for the light theme speedometer.
+val LightSpeedometerColorStops = arrayOf(
+    0.0f to Color(0xFFFF5722),
+    0.2f to Color(0xFFF44336),
+    0.3f to Color(0xFF1E561F),
+    0.4f to Color(0xFF349439),
+    0.5f to Color(0xFF68B739),
+    0.6f to Color(0xFFA6C476),
+    0.7f to Color(0xFFCFFF22),
+    0.8f to Color(0xFFFFE607),
+    0.9f to Color(0xFFFFB13B),
+    1.0f to Color(0xFFFF5722)
+)
+
+// A brighter, more vibrant version of YOUR color palette for dark theme.
+val DarkSpeedometerColorStops = arrayOf(
+    0.0f to Color(0xFFFF8A65), // Brighter version of 0xFFFF5722
+    0.2f to Color(0xFFE57373), // Brighter version of 0xFFF44336
+    0.3f to Color(0xFF66BB6A), // Brighter version of 0xFF1E561F
+    0.4f to Color(0xFF81C784), // Brighter version of 0xFF349439
+    0.5f to Color(0xFFAED581), // Brighter version of 0xFF68B739
+    0.6f to Color(0xFFDCE775), // Brighter version of 0xFFA6C476
+    0.7f to Color(0xFFEEFF41), // Brighter version of 0xFFCFFF22
+    0.8f to Color(0xFFFFF176), // Brighter version of 0xFFFFE607
+    0.9f to Color(0xFFFFD54F), // Brighter version of 0xFFFFB13B
+    1.0f to Color(0xFFFF8A65)  // Brighter version of 0xFFFF5722
+)
+
+
+val progressBrush = Brush.sweepGradient(
+    colorStops = arrayOf(
+        0.0f to Color(0xFFFF5722),  // dark green
+        0.2f to Color(0xFFF44336),
+        0.3f to Color(0xFF1E561F),
+        0.4f to Color(0xFF349439),
+        0.5f to Color(0xFF68B739),
+        0.6f to Color(0xFFA6C476),
+        0.7f to Color(0xFFCFFF22),
+        0.8f to Color(0xFFFFE607),
+        0.9f to Color(0xFFFFB13B),
+        1.0f to Color(0xFFFF5722)// Color(0xFFFF9800)
+    )
 )
