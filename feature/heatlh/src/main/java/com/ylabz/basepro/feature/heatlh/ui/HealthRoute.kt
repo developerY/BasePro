@@ -1,8 +1,10 @@
 package com.ylabz.basepro.feature.heatlh.ui
 
 import android.R.id.message
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
@@ -10,6 +12,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -93,6 +96,13 @@ private fun PermissionsNotGrantedScreen(onEnableClick: () -> Unit) {
 
 @Composable
 private fun PermissionsGrantedScreen() {
+    // 1. Get the current context and create a launcher for the settings Intent
+    val context = LocalContext.current
+    val settingsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = { } // No action needed on result
+    )
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(
             imageVector = Icons.Filled.CheckCircle,
@@ -102,7 +112,20 @@ private fun PermissionsGrantedScreen() {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text("Health Connect Enabled", style = MaterialTheme.typography.headlineSmall)
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // 2. Add the new button to open settings
+        OutlinedButton(
+            onClick = {
+                val intent = Intent(HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS)
+                settingsLauncher.launch(intent)
+            }
+        ) {
+            Text("Manage Permissions")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         Text(
             "To turn this off, you must revoke permissions for this app in your phone's System Settings.",
             textAlign = TextAlign.Center,
@@ -110,6 +133,7 @@ private fun PermissionsGrantedScreen() {
         )
     }
 }
+
 @Preview
 @Composable
 fun HealthRoutePreview() {
