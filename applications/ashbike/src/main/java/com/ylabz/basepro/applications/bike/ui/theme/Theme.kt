@@ -1,4 +1,4 @@
-package com.ylabz.basepro.core.ui.theme
+package com.ylabz.basepro.applications.bike.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
