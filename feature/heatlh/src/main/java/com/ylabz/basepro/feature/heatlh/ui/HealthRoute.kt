@@ -4,139 +4,116 @@ import android.R.id.message
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.HealthConnectClient
 import com.ylabz.basepro.core.model.health.HealthScreenState
 import com.ylabz.basepro.feature.heatlh.ui.components.ErrorScreen
 import com.ylabz.basepro.feature.heatlh.ui.components.HealthHeader
-import com.ylabz.basepro.feature.heatlh.ui.components.HealthStartScreenFull
 import com.ylabz.basepro.feature.heatlh.ui.components.LoadingScreen
 import java.util.UUID
 
 @Composable
 fun HealthRoute(
     modifier: Modifier = Modifier,
-    navTo: (String) -> Unit,
     viewModel: HealthViewModel = hiltViewModel()
 ) {
-
-    // Gather state from the ViewModel.
-    val isHealthConnectAvailable = viewModel.healthSessionManager.availability.value == HealthConnectClient.SDK_AVAILABLE
-    val permissionsGranted by viewModel.permissionsGranted
-    val permissions = viewModel.permissions
-    val backgroundReadPermissions = viewModel.backgroundReadPermissions
-    val backgroundReadAvailable by viewModel.backgroundReadAvailable
-    val backgroundReadGranted by viewModel.backgroundReadGranted
     val healthUiState by viewModel.uiState.collectAsState()
 
-    // Bundle everything into one state object.
-    val bundledState = HealthScreenState(
-        isHealthConnectAvailable = isHealthConnectAvailable,
-        permissionsGranted = permissionsGranted,
-        permissions = permissions,
-        backgroundReadPermissions = backgroundReadPermissions,
-        backgroundReadAvailable = backgroundReadAvailable,
-        backgroundReadGranted = backgroundReadGranted,
+    // This launcher logic remains essential for handling the side effect.
+    val permissionsLauncher = rememberLauncherForActivityResult(
+        contract = viewModel.permissionsLauncher,
+        onResult = { viewModel.onEvent(HealthEvent.LoadHealthData) }
     )
 
+    // --- Add the initial event trigger here ---
+    LaunchedEffect(Unit) {
+        // 1. Tell the ViewModel to load the initial state
+        viewModel.onEvent(HealthEvent.LoadHealthData)
 
-    //val healthUiState by remember { mutableStateOf(viewModel.uiState) }
-    val errorId = rememberSaveable { mutableStateOf(UUID.randomUUID()) }
-    val onPermissionsResult = { viewModel.initialLoad() }
-    val permissionsLauncher =
-        rememberLauncherForActivityResult(viewModel.permissionsLauncher) {
-            onPermissionsResult()
-        }
-
-
-    LaunchedEffect(healthUiState) {
-        // If the initial data load has not taken place, attempt to load the data.
-        if (healthUiState is HealthUiState.Uninitialized) {
-            onPermissionsResult()
-        }
-
-        // The [ExerciseSessionViewModel.UiState] provides details of whether the last action was a
-        // success or resulted in an error. Where an error occurred, for example in reading and
-        // writing to Health Connect, the user is notified, and where the error is one that can be
-        // recovered from, an attempt to do so is made.
-        if (healthUiState is HealthUiState.Error && errorId.value != (healthUiState as HealthUiState.Error).uuid) {
-            //onError(healthUiState.exception)
-            //errorId.value = healthUiState.uuid
+        // 2. Continue listening for side effects
+        viewModel.sideEffect.collect { effect ->
+            if (effect is HealthSideEffect.LaunchPermissions) {
+                permissionsLauncher.launch(effect.permissions)
+            }
         }
     }
 
-    Column(
-       modifier = modifier
-           .fillMaxSize()
-
-    ) {
-        // Display the current UI state in a Text field for debugging purposes
-        val activity = LocalContext.current as? ComponentActivity
-
-        when (healthUiState) {
-            is HealthUiState.PermissionsRequired -> HealthFeatureWithPermissions {
-                // Launch the permissions request
-                permissionsLauncher.launch(viewModel.permissions)
-            }
-
-            //is HealthUiState.Success -> HealthDataScreen((healthUiState as HealthUiState.Success).healthData)
-
-
+    // The new, simpler UI
+    Box(modifier = modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
+        when (val state = healthUiState) {
             is HealthUiState.Success -> {
-                Column() {
-                    HealthStartScreenFull(
-                        modifier = modifier,
-                        healthPermState = bundledState,
-                        sessionsList = (healthUiState as HealthUiState.Success).healthData,
-                        onPermissionsLaunch = { values ->
-                            permissionsLauncher.launch(values)
-                        },
-                        onEvent = { event -> viewModel.onEvent(event) },
-                        navTo = navTo,
-                    )
-                }
+                PermissionsGrantedScreen()
             }
-
-
-            /*is HealthUiState.Success -> {
-                HealthHeader(
-                    healthPermState = bundledState,
-                    onPermissionsLaunch = { values ->
-                        permissionsLauncher.launch(values)
-                    },
-                    backgroundReadPermissions = viewModel.backgroundReadPermissions,
-                    activity = activity
+            is HealthUiState.PermissionsRequired -> {
+                PermissionsNotGrantedScreen(
+                    onEnableClick = { viewModel.onEvent(HealthEvent.RequestPermissions) }
                 )
-            }*/
-
-            is HealthUiState.Error -> ErrorScreen(
-                message = "Error: ${(healthUiState as HealthUiState.Error).message}",
-                onRetry = { viewModel.initialLoad() },
-            )
-
-            // Combine Uninitialized and Loading to show the same UI
-            is HealthUiState.Uninitialized,
-            is HealthUiState.Loading -> {
-                LoadingScreen()
+            }
+            is HealthUiState.Error -> {
+                ErrorScreen(message = state.message, onRetry = { viewModel.onEvent(HealthEvent.Retry) })
+            }
+            else -> { // Loading and Uninitialized
+                CircularProgressIndicator()
             }
         }
     }
 }
 
+@Composable
+private fun PermissionsNotGrantedScreen(onEnableClick: () -> Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text("Enable Health Connect", style = MaterialTheme.typography.headlineSmall)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            "Sync your ride data with Google Health Connect to track your progress and share it with other apps.",
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = onEnableClick) {
+            Text("Enable")
+        }
+    }
+}
+
+@Composable
+private fun PermissionsGrantedScreen() {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Icon(
+            imageVector = Icons.Filled.CheckCircle,
+            contentDescription = "Success",
+            tint = Color.Green,
+            modifier = Modifier.size(48.dp)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("Health Connect Enabled", style = MaterialTheme.typography.headlineSmall)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            "To turn this off, you must revoke permissions for this app in your phone's System Settings.",
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodySmall
+        )
+    }
+}
 @Preview
 @Composable
 fun HealthRoutePreview() {
     HealthRoute(
-        navTo = {},
         viewModel = hiltViewModel()
     )
 }

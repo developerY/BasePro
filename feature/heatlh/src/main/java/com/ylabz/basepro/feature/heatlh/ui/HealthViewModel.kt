@@ -45,7 +45,7 @@ import java.util.UUID
 import javax.inject.Inject
 import kotlin.random.Random
 
-// Add this sealed interface inside or outside the HealthViewModel class
+
 sealed interface HealthSideEffect {
     data class LaunchPermissions(val permissions: Set<String>) : HealthSideEffect
 }
@@ -57,7 +57,10 @@ class HealthViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HealthUiState>(HealthUiState.Uninitialized)
-    var uiState = _uiState.asStateFlow()
+    val uiState = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<HealthSideEffect>()
+    val sideEffect = _sideEffect.asSharedFlow()
 
     val permissions = setOf(
         HealthPermission.getWritePermission(ExerciseSessionRecord::class),
@@ -76,16 +79,12 @@ class HealthViewModel @Inject constructor(
 
     val backgroundReadPermissions = setOf(PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND)
 
-    var permissionsGranted = mutableStateOf(false)
-        private set
-
     var backgroundReadAvailable = mutableStateOf(false)
         private set
-
     var backgroundReadGranted = mutableStateOf(false)
 
-    /** Expose the set of synced session IDs for the UI to consume directly */
-    // inside HealthViewModel
+    val permissionsLauncher = healthSessionManager.requestPermissionsActivityContract()
+
     val syncedIds: StateFlow<Set<String>> = uiState
         .map { state ->
             (state as? HealthUiState.Success)
@@ -100,100 +99,83 @@ class HealthViewModel @Inject constructor(
             emptySet()
         )
 
-
-    val permissionsLauncher = healthSessionManager.requestPermissionsActivityContract()
-
-
-    private fun checkHealthConnectAvailability() {
-        val availability = healthSessionManager.availability.value
-        if (availability != HealthConnectClient.SDK_AVAILABLE) {
-            _uiState.value = HealthUiState.Error("Health Connect is not available.")
-        }
-    }
-
-    // 1. ADD a SharedFlow for one-time side effects
-    private val _sideEffect = MutableSharedFlow<HealthSideEffect>()
-    val sideEffect = _sideEffect.asSharedFlow()
-
-    // 2. REMOVE initialLoad() and observeHealthConnectChanges() from the init block
     init {
-        // Only check for availability and then let the UI trigger the permission check/load.
-        checkHealthConnectAvailability()
-        // By removing initialLoad(), the ViewModel will wait for the UI to tell it what to do.
-        // observeHealthConnectChanges() // <--- THIS IS THE PROBLEM
+        // The ViewModel now waits for the UI to trigger the first data load.
     }
 
     fun onEvent(event: HealthEvent) {
         when (event) {
-            is HealthEvent.LoadHealthData -> loadHealthData()
-            is HealthEvent.DeleteAll -> delData()
-            is HealthEvent.Retry -> loadHealthData() // Retry should probably just load data
-            is HealthEvent.TestInsert -> insertTestExerciseSession()
+            is HealthEvent.LoadHealthData,
+            is HealthEvent.Retry -> initialLoad()
+            is HealthEvent.RequestPermissions -> requestPermissionsOnClick()
             is HealthEvent.Insert -> insertExerciseSession(event)
-
-            // --- THIS IS THE FIX ---
-            // Point this event to your new function
-            is HealthEvent.RequestPermissions -> requestPermissions()
-
+            is HealthEvent.DeleteAll -> delData()
+            //... keep other events if needed
             is HealthEvent.ReadAll ->  readAllDAta()
         }
     }
 
-
-    // 3. CREATE a new function to handle the permission request event
-    private fun requestPermissions() {
+    private fun requestPermissionsOnClick() {
         viewModelScope.launch {
-            val hasPerms = healthSessionManager.hasAllPermissions(permissions)
-            if (!hasPerms) {
-                // If we don't have permissions, emit the side effect to launch the dialog
+            if (!healthSessionManager.hasAllPermissions(permissions)) {
                 _sideEffect.emit(HealthSideEffect.LaunchPermissions(permissions))
-            } else {
-                // If we already have permissions, just refresh the data
-                loadHealthData()
             }
         }
     }
 
-    private fun observeHealthConnectChanges() = viewModelScope.launch {
-        // Get a token for all the types you care about
-        val token = healthSessionManager.getChangesToken(
-            setOf(ExerciseSessionRecord::class)
-        )
-
-        // Subscribe to change messages
-        healthSessionManager.getChanges(token)
-            .filterIsInstance<HealthSessionManager.ChangesMessage.ChangeList>()   // only when there really *are* changes
-            .collect { changeList ->
-                // If *any* of those changes are for sessions, re-load
-                if (changeList.changes.any { it == ExerciseSessionRecord::class }) {
-                    loadHealthData()
-                }
-            }
-    }
-
-
-    // The insert function remains a great way to handle the sync icon click
     private fun insertExerciseSession(event: HealthEvent.Insert) {
         viewModelScope.launch {
             tryWithPermissionsCheck {
-                // Log it
-                // 1️⃣ Insert the pre-built Record list
-                // healthSessionManager.insertRecords(event.records)
-                val res = healthSessionManager.insertRecords(event.records)
-                Log.d("DebugSync", "  <- insertRecords response IDs=${res.recordIdsList}")
-                // then reload
-                // 2️⃣ Refresh so UI shows the new data
-
-                /* Now read back the sessions you just wrote
-                val sessions = healthSessionManager.readExerciseSessions(Instant.EPOCH, Instant.now())
-                sessions
-                    .filter { it.metadata.id in res.recordIdsList }
-                    .forEach {
-                        Log.d("HealthViewModel", "SessionMetadata post-insert: id=${it.metadata.id}, origin=${it.metadata.dataOrigin}")
-                    }*/
-
-                loadHealthData()
+                healthSessionManager.insertRecords(event.records)
+                initialLoad() // Refresh data after a successful sync
             }
+        }
+    }
+
+    private fun initialLoad() {
+        _uiState.value = HealthUiState.Loading
+        viewModelScope.launch {
+            if (healthSessionManager.availability.value != HealthConnectClient.SDK_AVAILABLE) {
+                _uiState.value = HealthUiState.Error("Health Connect is not available.")
+                return@launch
+            }
+            try {
+                if (healthSessionManager.hasAllPermissions(permissions)) {
+                    val sessions = readSessionInputs()
+                    _uiState.value = HealthUiState.Success(sessions)
+                    observeHealthConnectChanges()
+                } else {
+                    _uiState.value = HealthUiState.PermissionsRequired("Permissions needed")
+                }
+            } catch (e: Exception) {
+                _uiState.value = HealthUiState.Error("Failed to read permissions: ${e.message}")
+            }
+        }
+    }
+
+    private suspend fun tryWithPermissionsCheck(block: suspend () -> Unit) {
+        if (healthSessionManager.hasAllPermissions(permissions)) {
+            try {
+                block()
+            } catch (e: Exception) {
+                _uiState.value = HealthUiState.Error("Action failed: ${e.message}")
+            }
+        } else {
+            _sideEffect.emit(HealthSideEffect.LaunchPermissions(permissions))
+        }
+    }
+
+    private var isObservingChanges = false
+    private fun observeHealthConnectChanges() {
+        if (isObservingChanges) return
+        viewModelScope.launch {
+            isObservingChanges = true
+            val token = healthSessionManager.getChangesToken(setOf(ExerciseSessionRecord::class))
+            healthSessionManager.getChanges(token)
+                .filterIsInstance<HealthSessionManager.ChangesMessage.ChangeList>()
+                .collect {
+                    initialLoad() // Reload all data when a change is detected
+                }
         }
     }
 
@@ -203,145 +185,17 @@ class HealthViewModel @Inject constructor(
         }
     }
 
-    // Keep track of whether you're already observing changes
-    private var isObservingChanges = false
-
-    private fun checkPermissionsAndLoadData() {
-        viewModelScope.launch {
-            if (healthSessionManager.availability.value != HealthConnectClient.SDK_AVAILABLE) {
-                _uiState.value = HealthUiState.Error("Health Connect is not available.")
-                return@launch
-            }
-
-            val permissionsGranted = healthSessionManager.hasAllPermissions(permissions)
-            if (permissionsGranted) {
-                loadHealthData()
-                // *** ADD THIS: Only start observing after permissions are confirmed ***
-                if (!isObservingChanges) {
-                    observeHealthConnectChanges()
-                    isObservingChanges = true
-                }
-            } else {
-                _uiState.value = HealthUiState.PermissionsRequired("Health permissions are required.")
-            }
-        }
+    private suspend fun readSessionInputs(): List<ExerciseSessionRecord> {
+        val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
+        val now = Instant.now()
+        return healthSessionManager.readExerciseSessions(startOfDay.toInstant(), now)
     }
-
 
     private fun delData() {
         viewModelScope.launch {
             tryWithPermissionsCheck {
                 healthSessionManager.deleteAllSessionData()
-            }
-        }
-    }
-
-
-    fun initialLoad() {
-        viewModelScope.launch {
-            try {
-                tryWithPermissionsCheck {
-                    readSessionInputs()
-                }
-            } catch (e: Exception) {
-                Log.e("HealthViewModel", "Exception in initialLoad: ${e.message}", e)
-            }
-        }
-    }
-
-    private fun loadHealthData() {
-        _uiState.value = HealthUiState.Loading
-        viewModelScope.launch {
-            try {
-                // Re-check permissions to be safe
-                if (healthSessionManager.hasAllPermissions(permissions)) {
-                    val sessions = readSessionInputs() // Call only once
-                    _uiState.value = HealthUiState.Success(sessions)
-
-                    // Start observing for changes after a successful load
-                    if (!isObservingChanges) {
-                        observeHealthConnectChanges()
-                        isObservingChanges = true
-                    }
-                } else {
-                    // If for any reason permissions are gone, reflect that in the UI
-                    _uiState.value = HealthUiState.PermissionsRequired("Permissions needed")
-                }
-            } catch (e: Exception) {
-                _uiState.value = HealthUiState.Error("Failed to load health data: ${e.message}")
-            }
-        }
-    }
-
-    // TODO : make this for all time
-    private suspend fun readSessionInputs(): List<ExerciseSessionRecord> {
-        val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
-        val now = Instant.now()
-        val endofWeek = startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
-        val lastWeek = startOfDay.toInstant().minus(7, ChronoUnit.DAYS)
-        val sessionInputs = healthSessionManager.readExerciseSessions(startOfDay.toInstant(), now)
-        Log.d("TAG","Did we get anything")
-        Log.d("TAG","${healthSessionManager.readExerciseSessions(lastWeek, now).size}")
-        Log.d("TAG","${healthSessionManager.readExerciseSessions(startOfDay.toInstant(), now).size}")
-        return sessionInputs
-    }
-
-
-    private suspend fun readWeightInputs(): List<WeightRecord> {
-        val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
-        val now = Instant.now()
-        val endofWeek = startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
-        val weightInputs = healthSessionManager.readWeightInputs(startOfDay.toInstant(), now)
-        print("weightInputs: $weightInputs")
-         Log.d("TAG","${healthSessionManager.readWeightInputs(startOfDay.toInstant(), now)}")
-        return weightInputs
-    }
-
-    // This function will now be wrapped in a permission check that can trigger the launch
-    private suspend fun tryWithPermissionsCheck(block: suspend () -> Unit) {
-        val hasPermissions = healthSessionManager.hasAllPermissions(permissions)
-        if (hasPermissions) {
-            try {
-                block()
-            } catch (e: Exception) {
-                _uiState.value = HealthUiState.Error("Action failed: ${e.message}")
-            }
-        } else {
-            // When trying to sync without permissions, trigger the launch effect
-            _sideEffect.emit(HealthSideEffect.LaunchPermissions(permissions))
-        }
-    }
-
-
-
-    fun updatePermissionsState(grantedPermissions: Set<String>) {
-        permissionsGranted.value = permissions.all { it in grantedPermissions }
-        backgroundReadGranted.value = backgroundReadPermissions.all { it in grantedPermissions }
-    }
-
-    fun insertTestExerciseSession() {
-        Log.d("HealthViewModel", "insertExerciseSession() called") // Debug statement
-        viewModelScope.launch {
-            tryWithPermissionsCheck {
-                val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
-                val latestStartOfSession = ZonedDateTime.now().minusMinutes(30)
-                val offset = Random.nextDouble()
-
-                // Generate random start time between the start of the day and (now - 30mins).
-                val startOfSession = startOfDay.plusSeconds(
-                    (Duration.between(startOfDay, latestStartOfSession).seconds * offset).toLong()
-                )
-                val endOfSession = startOfSession.plusMinutes(30)
-
-                healthSessionManager.writeExerciseSessionTest() //startOfSession, endOfSession)
-            }
-        }
-    }
-
-    fun deleteStoredExerciseSession(uid: String) {
-        viewModelScope.launch {
-            tryWithPermissionsCheck {
-                healthSessionManager.deleteExerciseSession(uid)
+                initialLoad()
             }
         }
     }

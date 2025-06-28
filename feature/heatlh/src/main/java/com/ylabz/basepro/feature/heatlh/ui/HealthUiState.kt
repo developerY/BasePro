@@ -14,6 +14,10 @@ sealed class HealthUiState {
     data class Error(val message: String, val uuid: UUID = UUID.randomUUID()) : HealthUiState()
 
 
+    object Disabled : HealthUiState() // Add this new state
+
+
+
 
     /*sealed class Error : HealthUiState() {
         data class Message(val message: String) : Error()

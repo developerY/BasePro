@@ -1,6 +1,7 @@
 package com.ylabz.basepro.applications.bike.features.settings.ui
 
 import com.ylabz.basepro.applications.bike.database.ProfileData
+import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 
 // 3a) Extend your UiState to carry both the *options* and the *current selection*
 /**

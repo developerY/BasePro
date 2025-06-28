@@ -66,10 +66,7 @@ fun HealthExpandableEx(
             // Expanded content
             if (expanded) {
                 HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
-                Text("Health Connect screen")
-                HealthRoute(
-                    navTo = navTo
-                )
+                HealthRoute()
             }
         }
     }
