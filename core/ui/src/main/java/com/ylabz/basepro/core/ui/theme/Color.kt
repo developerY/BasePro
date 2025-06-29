@@ -71,6 +71,7 @@ val SpeedometerRed = Color(0xFFF44336)
 
 val IconBrown = Color(0xFF795548)
 val IconYellow = Color(0xFFFFEB3B)
+val IconPurple = Color(0xFF9C27B0)
 val IconOrange = Color(0xFFFF9800)
 val IconBlue = Color(0xFF2196F3)
 val IconGreen = Color(0xFF4CAF50)

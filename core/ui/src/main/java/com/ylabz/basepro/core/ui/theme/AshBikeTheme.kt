@@ -88,7 +88,7 @@ data class ExtendedColorScheme(
 val LocalExtendedColorScheme = staticCompositionLocalOf { ExtendedColorScheme() }
 
 val ColorScheme.iconColorDistance: Color @Composable get() = IconBrown
-val ColorScheme.iconColorDuration: Color @Composable get() = IconYellow
+val ColorScheme.iconColorDuration: Color @Composable get() = IconPurple
 val ColorScheme.iconColorAvgSpeed: Color @Composable get() = IconOrange
 val ColorScheme.iconColorSpeed: Color @Composable get() = IconBlue // For a potential separate speed stat icon
 val ColorScheme.iconColorElevation: Color @Composable get() = IconGreen

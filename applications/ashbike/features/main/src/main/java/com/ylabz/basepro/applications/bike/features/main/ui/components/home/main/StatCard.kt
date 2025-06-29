@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun StatCard(
     icon: ImageVector,
-    tint: Color = Color.Gray,
+    tint: Color = MaterialTheme.colorScheme.onSurfaceVariant, // Default to a theme color
     label: String,
     value: String,
     modifier: Modifier = Modifier
@@ -44,7 +44,8 @@ fun StatCard(
             .height(80.dp),  // adjust as needed
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
-            containerColor = Color.Blue.copy(alpha = 0.1f)
+            // Use theme color for the card's background
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
     ) {
         Column(
@@ -57,20 +58,23 @@ fun StatCard(
             Icon(
                 imageVector = icon,
                 contentDescription = label,
-                tint = tint,
+                tint = tint, // This will use the passed 'tint' or the default theme color
                 modifier = Modifier.size(20.dp)
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = value,
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
+                    fontWeight = FontWeight.Bold
+                ),
+                // Use theme color for the primary text
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = label,
-                style = MaterialTheme.typography.labelSmall.copy(color = Color.DarkGray)
+                style = MaterialTheme.typography.labelSmall,
+                // Use theme color for the secondary text
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -81,17 +85,20 @@ fun StatCard(
 fun StatCardPreview() {
     // Dummy data for preview
     val dummyIcon = Icons.Filled.Info // Replace with actual icon if available
-    val dummyIconTint = Color.Green // Adjust as needed
+    // For preview, let's explicitly use a theme color if we want to see it,
+    // otherwise it will use the default from the StatCard's signature.
+    val dummyIconTint = MaterialTheme.colorScheme.primary
     val dummyLabel = "Dummy Label"
     val dummyValue = "123"
 
-    // Create a horizontal gradient brush for the background
+    // Create a horizontal gradient brush for the background for preview purposes
+    // In a real app, the screen background would likely also come from the theme
     val gradientBrush = Brush.horizontalGradient(
-        colors = listOf(Color.Cyan, Color.Magenta)
+        colors = listOf(MaterialTheme.colorScheme.surfaceDim, MaterialTheme.colorScheme.surfaceBright)
     )
 
     Column(modifier = Modifier.background(gradientBrush)) {
-        StatCard(icon = dummyIcon, tint = dummyIconTint,label = dummyLabel, value = dummyValue)
+        StatCard(icon = dummyIcon, tint = dummyIconTint, label = dummyLabel, value = dummyValue)
     }
 }
 
@@ -100,16 +107,15 @@ fun StatCardPreview() {
 fun StatCardPreviewGray() {
     // Dummy data for preview
     val dummyIcon = Icons.Filled.Info // Replace with actual icon if available
-    val dummyIconTint = Color.Green // Adjust as needed
     val dummyLabel = "Dummy Label"
     val dummyValue = "123"
 
-    // Create a horizontal gradient brush for the background
     val gradientBrush = Brush.horizontalGradient(
-        colors = listOf(Color.Cyan, Color.Magenta)
+        colors = listOf(MaterialTheme.colorScheme.surfaceDim, MaterialTheme.colorScheme.surfaceBright)
     )
 
     Column(modifier = Modifier.background(gradientBrush)) {
+        // Here, the default tint (MaterialTheme.colorScheme.onSurfaceVariant) will be used
         StatCard(icon = dummyIcon,label = dummyLabel, value = dummyValue)
     }
 }
@@ -119,16 +125,15 @@ fun StatCardPreviewGray() {
 fun StatCardPreviewRed() {
     // Dummy data for preview
     val dummyIcon = Icons.Filled.Info // Replace with actual icon if available
-    val dummyIconTint = Color.Green // Adjust as needed
+    val dummyIconTint = Color.Red // Keep this specific for this preview to test explicit tinting
     val dummyLabel = "Dummy Label"
     val dummyValue = "123"
 
-    // Create a horizontal gradient brush for the background
     val gradientBrush = Brush.horizontalGradient(
-        colors = listOf(Color.Cyan, Color.Magenta)
+        colors = listOf(MaterialTheme.colorScheme.surfaceDim, MaterialTheme.colorScheme.surfaceBright)
     )
 
     Column(modifier = Modifier.background(gradientBrush)) {
-        StatCard(icon = dummyIcon, tint = Color.Red, label = dummyLabel, value = dummyValue)
+        StatCard(icon = dummyIcon, tint = dummyIconTint, label = dummyLabel, value = dummyValue)
     }
 }
