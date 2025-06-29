@@ -105,7 +105,6 @@ fun SettingsScreenEx(
 
     // Resolve the pastel colors from our custom theme
     val customColors = LocalCustomColors.current
-    val profileBgColor = customColors.settingsProfile
     val nfcBgColor = customColors.settingsNfc
     val themeBgColor = customColors.settingsTheme
     val bikeBgColor = customColors.settingsBike
@@ -124,7 +123,7 @@ fun SettingsScreenEx(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFF3E5F5)) // PastelLavender
+            .background(MaterialTheme.colorScheme.background) // FIXED: Use theme background
             .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
         // --- Profile Card (Always visible) ---
@@ -143,7 +142,7 @@ fun SettingsScreenEx(
             SectionHeader(
                 title = "App Settings",
                 expanded = expandedSections.contains(SectionKey.App),
-                bgColor = Color(0xFFDCEEFB), // PastelBlue
+                bgColor = themeBgColor, // FIXED: Use theme settings color
                 onToggle = { toggle(expandedSections, SectionKey.App) }
             )
         }
@@ -169,7 +168,7 @@ fun SettingsScreenEx(
             SectionHeader(
                 title = "Connectivity",
                 expanded = expandedSections.contains(SectionKey.Connectivity),
-                bgColor = Color(0xFFEFECF6), // PastelLilac
+                bgColor = nfcBgColor, // FIXED: Use nfc settings color
                 onToggle = { toggle(expandedSections, SectionKey.Connectivity) }
             )
         }
@@ -209,7 +208,7 @@ fun SettingsScreenEx(
             SectionHeader(
                 title = "Bike Settings",
                 expanded = expandedSections.contains(SectionKey.Bike),
-                bgColor = Color(0xFFDBF1DB), // PastelGreen
+                bgColor = bikeBgColor, // FIXED: Use bike settings color
                 onToggle = { toggle(expandedSections, SectionKey.Bike) }
             )
         }
