@@ -70,6 +70,7 @@ import com.ylabz.basepro.applications.bike.features.settings.ui.components.Profi
 // Add import for ThemeSettingsCard
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.ThemeSettingsCard
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.health.HealthExpandableEx
+import com.ylabz.basepro.core.ui.theme.AshBikeTheme
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
@@ -117,7 +118,7 @@ fun SettingsScreenEx(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background) // FIXED: Use theme background
+            .background(MaterialTheme.colorScheme.background) // Use theme background
             .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
         // --- Profile Card (Always visible) ---
@@ -136,7 +137,6 @@ fun SettingsScreenEx(
             SectionHeader(
                 title = "App Settings",
                 expanded = expandedSections.contains(SectionKey.App),
-                bgColor = MaterialTheme.colorScheme.surfaceVariant, // FIXED: Use theme settings color
                 onToggle = { toggle(expandedSections, SectionKey.App) }
             )
         }
@@ -164,7 +164,6 @@ fun SettingsScreenEx(
             SectionHeader(
                 title = "Connectivity",
                 expanded = expandedSections.contains(SectionKey.Connectivity),
-                bgColor = MaterialTheme.colorScheme.surfaceVariant, // FIXED: Use nfc settings color
                 onToggle = { toggle(expandedSections, SectionKey.Connectivity) }
             )
         }
@@ -204,7 +203,6 @@ fun SettingsScreenEx(
             SectionHeader(
                 title = "Bike Settings",
                 expanded = expandedSections.contains(SectionKey.Bike),
-                bgColor = MaterialTheme.colorScheme.surfaceVariant, // FIXED: Use bike settings color
                 onToggle = { toggle(expandedSections, SectionKey.Bike) }
             )
         }
@@ -225,14 +223,13 @@ fun SettingsScreenEx(
 fun SectionHeader(
     title: String,
     expanded: Boolean,
-    onToggle: () -> Unit,
-    bgColor: Color
+    onToggle: () -> Unit
 ) {
     Surface(
         tonalElevation = 4.dp,
         shadowElevation = 4.dp,
         shape = RoundedCornerShape(8.dp),
-        color = bgColor,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp)
@@ -256,9 +253,6 @@ fun SectionHeader(
     }
 }
 
-// Removed ThemeExpandable Composable function
-
-
 @Preview(showBackground = true)
 @Composable
 fun SettingsScreenExPreview() {
@@ -276,11 +270,12 @@ fun SettingsScreenExPreview() {
         ),
         profile = dummyProfile
     )
-    SettingsScreenEx(
-        nfcUiState = Stopped, nfcEvent = { },
-        // healthUiState = HealthUiState.Uninitialized, healthEvent = { },
-        uiState = dummyUiState, onEvent = { }, navTo = { }
-    )
+    AshBikeTheme {
+        SettingsScreenEx(
+            nfcUiState = Stopped, nfcEvent = { },
+            uiState = dummyUiState, onEvent = { }, navTo = { }
+        )
+    }
 }
 
 // ---------------------------------------------
@@ -297,7 +292,8 @@ fun NfcExpandableEx(
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column {
             // Header row (always visible)
@@ -335,25 +331,10 @@ fun NfcExpandableEx(
                         onEvent = nfcEvent,
                         navTo = navTo
                     )
-
                 }
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun NfcExpandableExPreview() {
-    // Assuming Stopped is a valid initial state for NfcUiState
-    NfcExpandableEx(nfcUiState = Stopped, nfcEvent = { }, expanded = true, onExpandToggle = { }, navTo = { })
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun HealthExpandableExPreview() {
-    HealthExpandableEx(expanded = true, onExpandToggle = { }, navTo = { })
 }
 
 // ---------------------------------------------
@@ -367,7 +348,8 @@ fun QrExpandableEx(
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column {
             // Header row
@@ -399,25 +381,13 @@ fun QrExpandableEx(
             if (expanded) {
                 Divider()
                 Column(modifier = Modifier.padding(16.dp)) {
-                    // TODO: Insert your real QR code UI
-                    // Example:
                     Text(text = "QR Code Scanner: (Placeholder)")
-
                     Spacer(modifier = Modifier.height(8.dp))
-
-                    // For example:
                     QRCodeScannerScreen()
-                    Text(text = "QRCodeScannerScreen() goes here.")
                 }
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun QrExpandableExPreview() {
-    QrExpandableEx(expanded = true, onExpandToggle = { })
 }
 
 // ---------------------------------------------
@@ -436,7 +406,7 @@ fun ProfileBikeInfoCardEx(
             .fillMaxWidth()
             .clickable { onProfileClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
     ) {
         Box(
             modifier = Modifier
@@ -448,30 +418,24 @@ fun ProfileBikeInfoCardEx(
                     imageVector = Icons.Default.Person,
                     contentDescription = "User Profile",
                     modifier = Modifier.size(48.dp),
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
                     Text(
                         text = userName,
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = "Battery: $bikeBattery | Last BikeRide: $lastRide",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ProfileBikeInfoCardExPreview() {
-    ProfileBikeInfoCardEx(userName = "John Doe", bikeBattery = "85%", lastRide = "Yesterday", onProfileClick = { })
 }
 
 // ---------------------------------------------
@@ -486,7 +450,8 @@ fun BikeConfigurationEx(
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column {
             // Header row (always visible)
@@ -518,7 +483,6 @@ fun BikeConfigurationEx(
             if (expanded) {
                 Divider()
                 Column(modifier = Modifier.padding(16.dp)) {
-                    // Example: Motor assistance toggle
                     var motorAssistance by remember { mutableStateOf(true) }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("Motor Assistance")
@@ -529,10 +493,7 @@ fun BikeConfigurationEx(
                             onCheckedChange = { motorAssistance = it }
                         )
                     }
-
                     Spacer(modifier = Modifier.height(16.dp))
-
-                    // Example: Gearing slider
                     var gearingLevel by remember { mutableStateOf(5f) }
                     Text("Gearing Level: ${gearingLevel.toInt()}")
                     Slider(
@@ -541,10 +502,7 @@ fun BikeConfigurationEx(
                         onValueChange = { gearingLevel = it },
                         valueRange = 1f..10f
                     )
-
                     Spacer(modifier = Modifier.height(16.dp))
-
-                    // Button to advanced screen
                     Button(
                         enabled = false,
                         onClick = { navTo("settings_bike_advanced") }
@@ -555,12 +513,6 @@ fun BikeConfigurationEx(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun BikeConfigurationExPreview() {
-    BikeConfigurationEx(expanded = true, onExpandToggle = { }, navTo = { })
 }
 
 // ---------------------------------------------
@@ -574,7 +526,8 @@ fun AppPreferencesExpandable(
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column {
             // Header row
@@ -606,7 +559,6 @@ fun AppPreferencesExpandable(
             if (expanded) {
                 Divider()
                 Column(modifier = Modifier.padding(16.dp)) {
-                    // Example: Dark mode toggle
                     var darkModeEnabled by remember { mutableStateOf(false) }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("Dark Mode")
@@ -617,10 +569,7 @@ fun AppPreferencesExpandable(
                             onCheckedChange = { darkModeEnabled = it }
                         )
                     }
-
                     Spacer(modifier = Modifier.height(16.dp))
-
-                    // Example: Notifications toggle
                     var notificationsEnabled by remember { mutableStateOf(false) }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("Notifications")
@@ -631,10 +580,7 @@ fun AppPreferencesExpandable(
                             onCheckedChange = { notificationsEnabled = it }
                         )
                     }
-
                     Spacer(modifier = Modifier.height(16.dp))
-
-                    // Example: Unit preference (imperial/metric)
                     var useMetric by remember { mutableStateOf(true) }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("Use Metric Units")
@@ -651,12 +597,6 @@ fun AppPreferencesExpandable(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun AppPreferencesExpandablePreview() {
-    AppPreferencesExpandable(expanded = true, onExpandToggle = { })
-}
-
 @Composable
 fun BLEExpandableCard(
     expanded: Boolean,
@@ -665,7 +605,8 @@ fun BLEExpandableCard(
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column {
             // Header row (always visible)
@@ -697,8 +638,6 @@ fun BLEExpandableCard(
             if (expanded) {
                 Divider()
                 Column(modifier = Modifier.padding(16.dp)) {
-                    // TODO: Insert your real BLE UI or scanning logic here.
-                    // This is just a placeholder:
                     Text("BLE status: (Placeholder)")
                     Spacer(modifier = Modifier.height(8.dp))
                     Text("BLE scanning / device list / connect buttons go here.")
@@ -707,13 +646,6 @@ fun BLEExpandableCard(
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun BLEExpandableCardPreview() {
-    BLEExpandableCard(expanded = true, onExpandToggle = { })
-}
-
 
 // ---------------------------------------------
 // ABOUT EXPANDABLE
@@ -726,7 +658,8 @@ fun AboutExpandable(
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column {
             // Header row
@@ -775,5 +708,7 @@ fun AboutExpandable(
 @Preview(showBackground = true)
 @Composable
 fun AboutExpandablePreview() {
-    AboutExpandable(expanded = true, onExpandToggle = { })
+    AshBikeTheme {
+        AboutExpandable(expanded = true, onExpandToggle = { })
+    }
 }
