@@ -67,6 +67,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.ProfileInfoCardEx
+// Add import for ThemeSettingsCard
+import com.ylabz.basepro.applications.bike.features.settings.ui.components.ThemeSettingsCard
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.health.HealthExpandableEx
 import com.ylabz.basepro.core.ui.theme.LocalCustomColors
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
@@ -148,11 +150,13 @@ fun SettingsScreenEx(
         }
         if (expandedSections.contains(SectionKey.App)) {
             item {
-                ThemeExpandable(
+                // Replace ThemeExpandable with ThemeSettingsCard
+                ThemeSettingsCard(
+                    title = "Theme", // Added title parameter
                     expanded = expandedCards.contains(CardKey.Theme),
                     onExpandToggle = { toggle(expandedCards, CardKey.Theme) },
                     currentTheme = uiState.selections["Theme"] ?: "System",
-                    onThemeSelected = { }// theme -> onEvent(SettingsEvent.SetTheme(theme)) }
+                    onThemeSelected = { theme -> onEvent(SettingsEvent.UpdateSetting("Theme", theme)) }
                 )
             }
             item {
@@ -260,77 +264,7 @@ fun SectionHeader(
     }
 }
 
-
-// —————————————————————————————————————————————————————————
-//  NEW THEME EXPANDABLE CARD
-// —————————————————————————————————————————————————————————
-@Composable
-fun ThemeExpandable(
-    expanded: Boolean,
-    onExpandToggle: () -> Unit,
-    currentTheme: String,
-    onThemeSelected: (String) -> Unit
-) {
-    val themeOptions = listOf("System", "Light", "Dark")
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-    ) {
-        Column {
-            Row(
-                modifier = Modifier
-                    .clickable { onExpandToggle() }
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.BrightnessMedium,
-                    contentDescription = "Theme",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(text = "Theme", style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.weight(1f))
-                Text(text = currentTheme, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
-                Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = if (expanded) "Collapse" else "Expand"
-                )
-            }
-
-            if (expanded) {
-                HorizontalDivider()
-                Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-                    themeOptions.forEach { theme ->
-                        Row(
-                            Modifier
-                                .fillMaxWidth()
-                                .selectable(
-                                    selected = (theme == currentTheme),
-                                    onClick = { onThemeSelected(theme) }
-                                )
-                                .padding(vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = (theme == currentTheme),
-                                onClick = { onThemeSelected(theme) }
-                            )
-                            Text(
-                                text = theme,
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.padding(start = 16.dp)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+// Removed ThemeExpandable Composable function
 
 
 @Preview(showBackground = true)
@@ -351,9 +285,9 @@ fun SettingsScreenExPreview() {
         profile = dummyProfile
     )
     SettingsScreenEx(
-        nfcUiState = Stopped, nfcEvent = {},
-        // healthUiState = HealthUiState.Uninitialized, healthEvent = {},
-        uiState = dummyUiState, onEvent = {}, navTo = {}
+        nfcUiState = Stopped, nfcEvent = { },
+        // healthUiState = HealthUiState.Uninitialized, healthEvent = { },
+        uiState = dummyUiState, onEvent = { }, navTo = { }
     )
 }
 
@@ -420,14 +354,14 @@ fun NfcExpandableEx(
 @Composable
 fun NfcExpandableExPreview() {
     // Assuming Stopped is a valid initial state for NfcUiState
-    NfcExpandableEx(nfcUiState = Stopped, nfcEvent = {}, expanded = true, onExpandToggle = {}, navTo = {})
+    NfcExpandableEx(nfcUiState = Stopped, nfcEvent = { }, expanded = true, onExpandToggle = { }, navTo = { })
 }
 
 
 @Preview(showBackground = true)
 @Composable
 fun HealthExpandableExPreview() {
-    HealthExpandableEx(expanded = true, onExpandToggle = {}, navTo = {})
+    HealthExpandableEx(expanded = true, onExpandToggle = { }, navTo = { })
 }
 
 // ---------------------------------------------
@@ -491,7 +425,7 @@ fun QrExpandableEx(
 @Preview(showBackground = true)
 @Composable
 fun QrExpandableExPreview() {
-    QrExpandableEx(expanded = true, onExpandToggle = {})
+    QrExpandableEx(expanded = true, onExpandToggle = { })
 }
 
 // ---------------------------------------------
@@ -547,7 +481,7 @@ fun ProfileBikeInfoCardEx(
 @Preview(showBackground = true)
 @Composable
 fun ProfileBikeInfoCardExPreview() {
-    ProfileBikeInfoCardEx(userName = "John Doe", bikeBattery = "85%", lastRide = "Yesterday", onProfileClick = {})
+    ProfileBikeInfoCardEx(userName = "John Doe", bikeBattery = "85%", lastRide = "Yesterday", onProfileClick = { })
 }
 
 // ---------------------------------------------
@@ -636,7 +570,7 @@ fun BikeConfigurationEx(
 @Preview(showBackground = true)
 @Composable
 fun BikeConfigurationExPreview() {
-    BikeConfigurationEx(expanded = true, onExpandToggle = {}, navTo = {})
+    BikeConfigurationEx(expanded = true, onExpandToggle = { }, navTo = { })
 }
 
 // ---------------------------------------------
@@ -730,7 +664,7 @@ fun AppPreferencesExpandable(
 @Preview(showBackground = true)
 @Composable
 fun AppPreferencesExpandablePreview() {
-    AppPreferencesExpandable(expanded = true, onExpandToggle = {})
+    AppPreferencesExpandable(expanded = true, onExpandToggle = { })
 }
 
 @Composable
@@ -787,7 +721,7 @@ fun BLEExpandableCard(
 @Preview(showBackground = true)
 @Composable
 fun BLEExpandableCardPreview() {
-    BLEExpandableCard(expanded = true, onExpandToggle = {})
+    BLEExpandableCard(expanded = true, onExpandToggle = { })
 }
 
 
@@ -851,6 +785,6 @@ fun AboutExpandable(
 @Preview(showBackground = true)
 @Composable
 fun AboutExpandablePreview() {
-    AboutExpandable(expanded = true, onExpandToggle = {})
+    AboutExpandable(expanded = true, onExpandToggle = { })
 }
 

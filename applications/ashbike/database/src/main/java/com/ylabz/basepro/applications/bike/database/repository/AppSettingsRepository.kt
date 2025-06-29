@@ -34,7 +34,7 @@ class DataStoreAppSettingsRepository @Inject constructor(
 ) : AppSettingsRepository {
 
     override val themeFlow: Flow<String> = dataStore.data
-        .map { it[SettingsPrefsKeys.THEME] ?: "System Default" }
+        .map { it[SettingsPrefsKeys.THEME] ?: "System" }
 
     override val languageFlow: Flow<String> = dataStore.data
         .map { it[SettingsPrefsKeys.LANGUAGE] ?: "English" }
