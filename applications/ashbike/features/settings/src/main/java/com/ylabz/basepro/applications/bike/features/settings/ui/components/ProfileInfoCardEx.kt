@@ -55,7 +55,7 @@ fun ProfileInfoCardEx(
             Modifier
                 .fillMaxWidth()
                 .background(
-                    Brush.verticalGradient(listOf(Color(0xFFE3F2FD), Color(0xFFBBDEFB)))
+                    MaterialTheme.colorScheme.surfaceContainerLow // Replaced hardcoded gradient
                 )
                 .padding(16.dp)
         ) {

@@ -70,7 +70,6 @@ import com.ylabz.basepro.applications.bike.features.settings.ui.components.Profi
 // Add import for ThemeSettingsCard
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.ThemeSettingsCard
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.health.HealthExpandableEx
-import com.ylabz.basepro.core.ui.theme.LocalCustomColors
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
@@ -105,13 +104,6 @@ fun SettingsScreenEx(
     navTo: (String) -> Unit
 ) {
 
-    // Resolve the pastel colors from our custom theme
-    val customColors = LocalCustomColors.current
-    val nfcBgColor = customColors.settingsNfc
-    val themeBgColor = customColors.settingsTheme
-    val bikeBgColor = customColors.settingsBike
-
-
     // State sets to track what's open
     val expandedSections = remember { mutableStateSetOf<SectionKey>() }
     val expandedCards = remember { mutableStateSetOf<CardKey>() }
@@ -144,7 +136,7 @@ fun SettingsScreenEx(
             SectionHeader(
                 title = "App Settings",
                 expanded = expandedSections.contains(SectionKey.App),
-                bgColor = themeBgColor, // FIXED: Use theme settings color
+                bgColor = MaterialTheme.colorScheme.surfaceVariant, // FIXED: Use theme settings color
                 onToggle = { toggle(expandedSections, SectionKey.App) }
             )
         }
@@ -172,7 +164,7 @@ fun SettingsScreenEx(
             SectionHeader(
                 title = "Connectivity",
                 expanded = expandedSections.contains(SectionKey.Connectivity),
-                bgColor = nfcBgColor, // FIXED: Use nfc settings color
+                bgColor = MaterialTheme.colorScheme.surfaceVariant, // FIXED: Use nfc settings color
                 onToggle = { toggle(expandedSections, SectionKey.Connectivity) }
             )
         }
@@ -212,7 +204,7 @@ fun SettingsScreenEx(
             SectionHeader(
                 title = "Bike Settings",
                 expanded = expandedSections.contains(SectionKey.Bike),
-                bgColor = bikeBgColor, // FIXED: Use bike settings color
+                bgColor = MaterialTheme.colorScheme.surfaceVariant, // FIXED: Use bike settings color
                 onToggle = { toggle(expandedSections, SectionKey.Bike) }
             )
         }
@@ -443,16 +435,12 @@ fun ProfileBikeInfoCardEx(
             .padding(16.dp)
             .fillMaxWidth()
             .clickable { onProfileClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(Color(0xFFE3F2FD), Color(0xFFBBDEFB))
-                    )
-                )
                 .padding(16.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -460,17 +448,19 @@ fun ProfileBikeInfoCardEx(
                     imageVector = Icons.Default.Person,
                     contentDescription = "User Profile",
                     modifier = Modifier.size(48.dp),
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
                     Text(
                         text = userName,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     Text(
                         text = "Battery: $bikeBattery | Last BikeRide: $lastRide",
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
             }
@@ -787,4 +777,3 @@ fun AboutExpandable(
 fun AboutExpandablePreview() {
     AboutExpandable(expanded = true, onExpandToggle = { })
 }
-
