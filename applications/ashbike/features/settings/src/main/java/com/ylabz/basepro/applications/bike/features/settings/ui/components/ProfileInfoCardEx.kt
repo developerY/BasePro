@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.settings.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,6 +39,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.database.ProfileData
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsEvent
+import com.ylabz.basepro.core.ui.theme.AshBikeTheme
+
 @Composable
 fun ProfileInfoCardEx(
     profile: ProfileData,
@@ -145,7 +148,7 @@ fun ProfileInfoCardEx(
     }
 }
 
-@Preview
+@Preview(name = "View Mode Light", showBackground = true)
 @Composable
 fun ProfileInfoCardExPreviewViewMode() {
     val profile = ProfileData(
@@ -153,10 +156,12 @@ fun ProfileInfoCardExPreviewViewMode() {
         heightCm = "180",
         weightKg = "75"
     )
-    ProfileInfoCardEx(profile = profile, isEditing = false, onToggleEdit = {}, onEvent = {})
+    AshBikeTheme {
+        ProfileInfoCardEx(profile = profile, isEditing = false, onToggleEdit = {}, onEvent = {})
+    }
 }
 
-@Preview
+@Preview(name = "Edit Mode Light", showBackground = true)
 @Composable
 fun ProfileInfoCardExPreviewEditMode() {
     val profile = ProfileData(
@@ -164,5 +169,33 @@ fun ProfileInfoCardExPreviewEditMode() {
         heightCm = "180",
         weightKg = "75"
     )
-    ProfileInfoCardEx(profile = profile, isEditing = true, onToggleEdit = {}, onEvent = {})
+    AshBikeTheme {
+        ProfileInfoCardEx(profile = profile, isEditing = true, onToggleEdit = {}, onEvent = {})
+    }
+}
+
+@Preview(name = "View Mode Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun ProfileInfoCardExPreviewViewModeDark() {
+    val profile = ProfileData(
+        name = "John Doe",
+        heightCm = "180",
+        weightKg = "75"
+    )
+    AshBikeTheme {
+        ProfileInfoCardEx(profile = profile, isEditing = false, onToggleEdit = {}, onEvent = {})
+    }
+}
+
+@Preview(name = "Edit Mode Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun ProfileInfoCardExPreviewEditModeDark() {
+    val profile = ProfileData(
+        name = "John Doe",
+        heightCm = "180",
+        weightKg = "75"
+    )
+    AshBikeTheme {
+        ProfileInfoCardEx(profile = profile, isEditing = true, onToggleEdit = {}, onEvent = {})
+    }
 }
