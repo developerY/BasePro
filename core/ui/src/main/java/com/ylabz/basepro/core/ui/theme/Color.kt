@@ -65,11 +65,6 @@ val md_theme_dark_surfaceTint = Color(0xFFB3CAD5)
 val md_theme_dark_outlineVariant = Color(0xFF3F484B)
 val md_theme_dark_scrim = Color(0xFF000000)
 
-
-
-
-
-
 // Your exact color stops for the light theme speedometer.
 val LightSpeedometerColorStops = arrayOf(
     0.0f to Color(0xFFFF5722),
@@ -113,3 +108,16 @@ val progressBrush = Brush.sweepGradient(
         1.0f to Color(0xFFFF5722)// Color(0xFFFF9800)
     )
 )
+
+/**
+ * Returns `true` if the color is considered "light" and `false` if it's "dark".
+ *
+ * This is based on the color's calculated luminance.
+ */
+fun Color.isLight(): Boolean {
+    val red = this.red * 255
+    val green = this.green * 255
+    val blue = this.blue * 255
+    val luminance = 1 - (0.299 * red + 0.587 * green + 0.114 * blue) / 255
+    return luminance < 0.5
+}

@@ -40,7 +40,6 @@ import androidx.health.connect.client.records.Record
 @Composable
 fun BikeRideCard(
     modifier: Modifier = Modifier,
-    backgroundColor: Color,
     ride: BikeRideEntity,
     syncedIds: Set<String>,
     bikeEvent: (TripsEvent) -> Unit,
@@ -49,7 +48,7 @@ fun BikeRideCard(
     navTo: (String) -> Unit
 ) {
 
-    val isSynced =  ride.rideId in syncedIds // NOT ride.rideId in syncedIds
+    val isSynced = ride.rideId in syncedIds
 
     // Log whenever this composable recomposes with its current sync state
     LaunchedEffect(ride.rideId, isSynced) {
@@ -80,12 +79,10 @@ fun BikeRideCard(
         modifier = modifier
             .fillMaxWidth()
             .clickable {
-                // use the sealed‑class helper to build the correct route
-                // navTo(BikeScreen.RideDetailScreen.createRoute(ride.rideId))
                 navTo(ride.rideId)
             },
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = backgroundColor),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Box {
@@ -94,7 +91,7 @@ fun BikeRideCard(
                 Modifier
                     .fillMaxWidth()
                     .height(4.dp)
-                    .background(Color(0xFFD2D9DE))
+                    .background(MaterialTheme.colorScheme.secondary)
             )
             Column(modifier = Modifier.padding(16.dp)) {
                 // Header: start – end
@@ -112,19 +109,22 @@ fun BikeRideCard(
                 ) {
                     Text(
                         text = "$startText – $endText",
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(Modifier.weight(1f))
                     Text(
                         text = "(${minutes} min${if (seconds > 0) " ${seconds}s" else ""})",
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     IconButton(onClick = {
                         bikeEvent(TripsEvent.DeleteItem(ride.rideId))
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
-                            contentDescription = "Delete ride"
+                            contentDescription = "Delete ride",
+                            tint = MaterialTheme.colorScheme.error
                         )
                     }
                 }
@@ -135,15 +135,18 @@ fun BikeRideCard(
                 // Key metrics
                 Text(
                     text = "Distance: ${"%.1f".format(ride.totalDistance / 1000)} km",
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = "Avg: ${"%.1f".format(ride.averageSpeed)} km/h",
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = "Max: ${"%.1f".format(ride.maxSpeed)} km/h",
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Spacer(Modifier.height(8.dp))
@@ -151,18 +154,18 @@ fun BikeRideCard(
                 // Optional context row
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     ride.rideType?.let {
-                        Text(it, style = MaterialTheme.typography.bodySmall)
+                        Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
                     }
                     Spacer(Modifier.width(8.dp))
                     ride.weatherCondition?.let {
-                        Text(it, style = MaterialTheme.typography.bodySmall)
+                        Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
 
                 // Optional notes
                 ride.notes?.takeIf { it.isNotBlank() }?.let {
                     Spacer(Modifier.height(8.dp))
-                    Text(it, style = MaterialTheme.typography.bodySmall)
+                    Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
                 }
 
                 Spacer(Modifier.height(8.dp))
@@ -173,7 +176,6 @@ fun BikeRideCard(
                     horizontalArrangement = Arrangement.End
                 ) {
                     // Sync button: only enabled if not already synced
-                    Text("Is Synced = $isSynced")
                     IconButton(
                         onClick = {
                             // 1) Build the Health Connect records from your domain ride
@@ -182,25 +184,17 @@ fun BikeRideCard(
                             // 2) Tell the HealthViewModel to insert them
                             healthEvent(HealthEvent.Insert(rideInfo))
                         },
-                        //enabled = isSynced
+                        enabled = !isSynced
                     ) {
                         Icon(
                             imageVector     = Icons.Default.Sync,
                             contentDescription = if (isSynced) "Already synced" else "Sync to Health",
                             tint = if (isSynced)
-                                Color(0xFF009688)//MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                                MaterialTheme.colorScheme.primary
                             else
-                                Color(0xFFE91E63)//MaterialTheme.colorScheme.primary
+                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
                         )
                     }
-
-                    /* Delete button (again, for convenience)
-                IconButton(onClick = { onEvent(TripsEvent.DeleteItem(ride.rideId)) }) {
-                    Icon(
-                        imageVector     = Icons.Default.Delete,
-                        contentDescription = "Delete ride"
-                    )
-                }*/
                 }
             }
         }
@@ -231,7 +225,6 @@ fun BikeRideCardPreview() {
 
     BikeRideCard(
         ride = ride,
-        backgroundColor = Color.White,
         syncedIds = setOf(),
         bikeEvent = {},
         healthEvent = {},

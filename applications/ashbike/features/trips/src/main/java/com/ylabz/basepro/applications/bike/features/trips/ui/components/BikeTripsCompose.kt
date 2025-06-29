@@ -42,27 +42,6 @@ import kotlin.random.Random
 import androidx.health.connect.client.records.Record
 import kotlin.String
 
-
-// —————————————————————————————————————————————————————————
-//  PASTEL COLORS
-// —————————————————————————————————————————————————————————
-private val PastelLavender = Color(0x6DB6CFE1)
-private val PastelBlue     = Color(0xFFDCEEFB)
-
-
-/**
- * Generate a soft pastel color by picking:
- *   • random hue (0..360°)
- *   • low-to-mid saturation (0.2–0.4)
- *   • high lightness (0.85–0.95)
- */
-fun randomPastelColor(): Color {
-    val hue        = Random.nextFloat() * 360f
-    val saturation = 0.2f + Random.nextFloat() * 0.2f
-    val lightness  = 0.85f + Random.nextFloat() * 0.1f
-    return Color.hsl(hue, saturation, lightness)
-}
-
 // —————————————————————————————————————————————————————————
 //  BIKE TRIPS SCREEN
 // —————————————————————————————————————————————————————————
@@ -85,13 +64,11 @@ fun BikeTripsCompose(
 
     Box(
         modifier = modifier.fillMaxSize(),
-        //containerColor = PastelLavender,
     ) {
         LazyColumn(
             modifier = Modifier
-                //.padding(innerPadding)
                 .fillMaxSize()
-                .background(PastelLavender)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -99,7 +76,7 @@ fun BikeTripsCompose(
                 TripSectionHeader(
                     onEvent = bikeEvent,
                     title = "Bike Rides",
-                    bgColor = PastelBlue,
+                    bgColor = MaterialTheme.colorScheme.surfaceVariant,
                     healthConnected = connected,
                     onHealthToggle = {
                         healthEvent(HealthEvent.RequestPermissions)
@@ -117,13 +94,9 @@ fun BikeTripsCompose(
                 }
             } else {
                 items(bikeRides, key = { it.bikeRideEnt.rideId }) { rideWithLoc ->
-                    // each ride keeps its own pastel color
-                    val bgColor = remember(rideWithLoc.bikeRideEnt.rideId) { randomPastelColor() }
-
                     BikeRideCard(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        backgroundColor = bgColor,        // pass it in, or wrap your Card in a Surface
                         ride = rideWithLoc.bikeRideEnt,
                         syncedIds = syncedIds,
                         bikeEvent = bikeEvent,
