@@ -77,6 +77,37 @@ val IconGreen = Color(0xFF4CAF50)
 val IconRed = Color(0xFFF44336)
 val BikeIconGreen = Color(0xFF00E676)
 
+
+
+// Your exact color stops for the light theme speedometer.
+val LightSpeedometerColorStops = arrayOf(
+    0.0f to Color(0xFFFF5722),
+    0.2f to Color(0xFFF44336),
+    0.3f to Color(0xFF1E561F),
+    0.4f to Color(0xFF349439),
+    0.5f to Color(0xFF68B739),
+    0.6f to Color(0xFFA6C476),
+    0.7f to Color(0xFFCFFF22),
+    0.8f to Color(0xFFFFE607),
+    0.9f to Color(0xFFFFB13B),
+    1.0f to Color(0xFFFF5722)
+)
+
+// A brighter, more vibrant version of YOUR color palette for dark theme.
+val DarkSpeedometerColorStops = arrayOf(
+    0.0f to Color(0xFFFF8A65), // Brighter version of 0xFFFF5722
+    0.2f to Color(0xFFE57373), // Brighter version of 0xFFF44336
+    0.3f to Color(0xFF66BB6A), // Brighter version of 0xFF1E561F
+    0.4f to Color(0xFF81C784), // Brighter version of 0xFF349439
+    0.5f to Color(0xFFAED581), // Brighter version of 0xFF68B739
+    0.6f to Color(0xFFDCE775), // Brighter version of 0xFFA6C476
+    0.7f to Color(0xFFEEFF41), // Brighter version of 0xFFCFFF22
+    0.8f to Color(0xFFFFF176), // Brighter version of 0xFFFFE607
+    0.9f to Color(0xFFFFD54F), // Brighter version of 0xFFFFB13B
+    1.0f to Color(0xFFFF8A65)  // Brighter version of 0xFFFF5722
+)
+
+
 /**
  * Returns a color along a green-yellow-red gradient based on the speed.
  */

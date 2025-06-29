@@ -65,7 +65,7 @@ fun FancySpeedometer(
     )
 
     val progressBrush = Brush.sweepGradient(
-        colors = listOf(SpeedometerGreen, SpeedometerYellow, SpeedometerRed)
+        colors = listOf(SpeedometerRed, SpeedometerGreen, SpeedometerYellow, SpeedometerRed)
     )
 
     Canvas(modifier = Modifier.fillMaxSize()) {
