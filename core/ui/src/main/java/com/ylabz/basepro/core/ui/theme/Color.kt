@@ -1,7 +1,7 @@
 package com.ylabz.basepro.core.ui.theme
 
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 
 // Light Theme Pastel Palette
 val md_theme_light_primary = Color(0xFF4A6572)
@@ -65,49 +65,28 @@ val md_theme_dark_surfaceTint = Color(0xFFB3CAD5)
 val md_theme_dark_outlineVariant = Color(0xFF3F484B)
 val md_theme_dark_scrim = Color(0xFF000000)
 
-// Your exact color stops for the light theme speedometer.
-val LightSpeedometerColorStops = arrayOf(
-    0.0f to Color(0xFFFF5722),
-    0.2f to Color(0xFFF44336),
-    0.3f to Color(0xFF1E561F),
-    0.4f to Color(0xFF349439),
-    0.5f to Color(0xFF68B739),
-    0.6f to Color(0xFFA6C476),
-    0.7f to Color(0xFFCFFF22),
-    0.8f to Color(0xFFFFE607),
-    0.9f to Color(0xFFFFB13B),
-    1.0f to Color(0xFFFF5722)
-)
+val SpeedometerGreen = Color(0xFF4CAF50)
+val SpeedometerYellow = Color(0xFFFFEB3B)
+val SpeedometerRed = Color(0xFFF44336)
 
-// A brighter, more vibrant version of YOUR color palette for dark theme.
-val DarkSpeedometerColorStops = arrayOf(
-    0.0f to Color(0xFFFF8A65), // Brighter version of 0xFFFF5722
-    0.2f to Color(0xFFE57373), // Brighter version of 0xFFF44336
-    0.3f to Color(0xFF66BB6A), // Brighter version of 0xFF1E561F
-    0.4f to Color(0xFF81C784), // Brighter version of 0xFF349439
-    0.5f to Color(0xFFAED581), // Brighter version of 0xFF68B739
-    0.6f to Color(0xFFDCE775), // Brighter version of 0xFFA6C476
-    0.7f to Color(0xFFEEFF41), // Brighter version of 0xFFCFFF22
-    0.8f to Color(0xFFFFF176), // Brighter version of 0xFFFFE607
-    0.9f to Color(0xFFFFD54F), // Brighter version of 0xFFFFB13B
-    1.0f to Color(0xFFFF8A65)  // Brighter version of 0xFFFF5722
-)
+val IconBrown = Color(0xFF795548)
+val IconYellow = Color(0xFFFFEB3B)
+val IconOrange = Color(0xFFFF9800)
+val IconBlue = Color(0xFF2196F3)
+val IconGreen = Color(0xFF4CAF50)
+val IconRed = Color(0xFFF44336)
+val BikeIconGreen = Color(0xFF00E676)
 
-
-val progressBrush = Brush.sweepGradient(
-    colorStops = arrayOf(
-        0.0f to Color(0xFFFF5722),  // dark green
-        0.2f to Color(0xFFF44336),
-        0.3f to Color(0xFF1E561F),
-        0.4f to Color(0xFF349439),
-        0.5f to Color(0xFF68B739),
-        0.6f to Color(0xFFA6C476),
-        0.7f to Color(0xFFCFFF22),
-        0.8f to Color(0xFFFFE607),
-        0.9f to Color(0xFFFFB13B),
-        1.0f to Color(0xFFFF5722)// Color(0xFFFF9800)
-    )
-)
+/**
+ * Returns a color along a green-yellow-red gradient based on the speed.
+ */
+fun getColorForSpeed(speed: Float, maxSpeed: Float): Color {
+    val speedPercentage = (speed / maxSpeed).coerceIn(0f, 1f)
+    return when {
+        speedPercentage < 0.5f -> lerp(SpeedometerGreen, SpeedometerYellow, speedPercentage * 2)
+        else -> lerp(SpeedometerYellow, SpeedometerRed, (speedPercentage - 0.5f) * 2)
+    }
+}
 
 /**
  * Returns `true` if the color is considered "light" and `false` if it's "dark".

@@ -6,9 +6,7 @@ import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -22,49 +20,29 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.ui.theme.AshBikeTheme
-import com.ylabz.basepro.core.ui.theme.DarkSpeedometerColorStops
-import com.ylabz.basepro.core.ui.theme.LightSpeedometerColorStops
+import com.ylabz.basepro.core.ui.theme.SpeedometerGreen
+import com.ylabz.basepro.core.ui.theme.SpeedometerRed
+import com.ylabz.basepro.core.ui.theme.SpeedometerYellow
+import com.ylabz.basepro.core.ui.theme.getColorForSpeed
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
-
-
-/**
- * Calculates the interpolated color from your specific set of color stops.
- * This function is the key to making the text color match your gradient.
- */
-private fun calculateColorFromStops(fraction: Float, colorStops: Array<Pair<Float, Color>>): Color {
-    val stopIndex = colorStops.indexOfLast { (stopFraction, _) -> stopFraction <= fraction }.coerceAtLeast(0)
-
-    if (stopIndex >= colorStops.size - 1) {
-        return colorStops.last().second
-    }
-
-    val start = colorStops[stopIndex]
-    val end = colorStops[stopIndex + 1]
-
-    val localFraction = (fraction - start.first) / (end.first - start.first)
-
-    return lerp(start.second, end.second, localFraction)
-}
-
 
 @Composable
 fun FancySpeedometer(
     currentSpeed: Float,
     maxSpeed: Float = 60f,
-    modifier: Modifier = Modifier.size(250.dp)
+    modifier: Modifier = Modifier.size(250.dp),
+    contentColor: Color
 ) {
     // Arc angles
     val startAngle = 135f
     val sweepAngle = 270f
-    val endAngle = startAngle + sweepAngle
 
     // Convert speed to fraction [0..1]
     val speedFraction = (currentSpeed / maxSpeed).coerceIn(0f, 1f)
@@ -83,35 +61,20 @@ fun FancySpeedometer(
         animationSpec = tween(
             durationMillis = 800,
             easing = overshootEasing
-        )
+        ), label = ""
     )
 
-    // === RESOLVE COLORS AND BRUSH IN COMPOSABLE SCOPE ===
-    val isDarkTheme = isSystemInDarkTheme()
-    val speedometerColorStops = if (isDarkTheme) DarkSpeedometerColorStops else LightSpeedometerColorStops
-
-    val progressBrush = Brush.sweepGradient(colorStops = speedometerColorStops)
-    val backgroundArcColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-    val needleColor = MaterialTheme.colorScheme.onSurface
-    val centerCapColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-    val tickColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-    val speedUnitColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-
-    /* Calculate the text color to EXACTLY match the color on the arc at the needle's position.
-    val animatedSpeedFraction = ((animatedNeedleAngle - startAngle) / sweepAngle).coerceIn(0f, 1f)
-    val speedTextColor = calculateColorFromStops(animatedSpeedFraction, speedometerColorStops)*/
-
-
-
+    val progressBrush = Brush.sweepGradient(
+        colors = listOf(SpeedometerGreen, SpeedometerYellow, SpeedometerRed)
+    )
 
     Canvas(modifier = Modifier.fillMaxSize()) {
-        // Use 'size.minDimension' to get the smaller dimension if needed
         val center = Offset(size.width / 2, size.height / 2)
         val radius = size.minDimension / 2.3f
 
-        // 1) Background arc (light gray)
+        // 1) Background arc
         drawArc(
-            color = Color.LightGray,
+            color = contentColor.copy(alpha = 0.1f),
             startAngle = startAngle,
             sweepAngle = sweepAngle,
             useCenter = false,
@@ -120,8 +83,7 @@ fun FancySpeedometer(
             style = Stroke(width = 70f, cap = StrokeCap.Round)
         )
 
-        // 2) Progress arc (green → red)
-        // Arc is from startAngle to animatedNeedleAngle
+        // 2) Progress arc
         val arcSweep = (animatedNeedleAngle - startAngle).coerceAtLeast(0f)
         drawArc(
             brush = progressBrush,
@@ -141,7 +103,6 @@ fun FancySpeedometer(
             val angle = startAngle + i * tickAngleStep
             val angleRad = Math.toRadians(angle.toDouble())
 
-            // Tick lines
             val outerRadius = radius
             val innerRadius = radius - 50
             val sx = center.x + cos(angleRad).toFloat() * outerRadius
@@ -149,30 +110,24 @@ fun FancySpeedometer(
             val ex = center.x + cos(angleRad).toFloat() * innerRadius
             val ey = center.y + sin(angleRad).toFloat() * innerRadius
             drawLine(
-                color = Color.DarkGray,
+                color = contentColor.copy(alpha = 0.5f),
                 start = Offset(sx, sy),
                 end = Offset(ex, ey),
                 strokeWidth = 3f
             )
 
-            // Speed labels
             val labelRadius = radius - 45
             val lx = center.x + cos(angleRad).toFloat() * labelRadius
             val ly = center.y + sin(angleRad).toFloat() * labelRadius
 
-            // --- THIS IS THE CHANGE ---
             drawContext.canvas.nativeCanvas.apply {
-                // 1. Determine color based on the current speed
                 val isTickActive = tickSpeed <= currentSpeed
                 val labelColor = if (isTickActive) {
-                    // Use a vibrant color for "active" ticks that have been passed
-                    Color(0xFF09719B).toArgb() // A light, vibrant blue
+                    contentColor.toArgb()
                 } else {
-                    // Use a muted color for "inactive" ticks
-                    Color.Black.copy(alpha = 0.7f).toArgb()
+                    contentColor.copy(alpha = 0.7f).toArgb()
                 }
 
-                // 2. Apply the dynamic color to the paint
                 val paint = Paint().apply {
                     color = labelColor
                     textSize = 72f
@@ -192,7 +147,7 @@ fun FancySpeedometer(
             y = center.y + sin(needleAngleRad).toFloat() * needleLength
         )
         drawLine(
-            color = needleColor,//Color.Red.copy(alpha = 0.5f),
+            color = contentColor,
             start = center,
             end = needleEnd,
             strokeWidth = 34f,
@@ -201,66 +156,51 @@ fun FancySpeedometer(
 
         // 5) Center cap
         drawCircle(
-            color = centerCapColor,// Color.Red.copy(alpha = 0.4f),
+            color = contentColor.copy(alpha = 0.4f),
             radius = 27f,
             center = center
         )
 
-        // G) Speed Text (Number + Unit) - COMPLETELY REVISED
+        // G) Speed Text (Number + Unit)
         drawContext.canvas.nativeCanvas.apply {
-            // --- Step 1: Define text strings and paints ---
             val speedNumberText = currentSpeed.roundToInt().toString()
             val speedUnitText = "km/h"
 
-            // --- Step 2: Calculate the dynamic color for the number ---
-            val speedFraction = (currentSpeed / maxSpeed).coerceIn(0f, 1f)
-            // This logic creates a simple Green -> Yellow -> Red gradient for the text color
-            val dynamicColor = when {
-                speedFraction < 0.5f -> androidx.compose.ui.graphics.lerp(Color.Green, Color.Yellow, speedFraction * 2).toArgb()
-                else -> androidx.compose.ui.graphics.lerp(Color.Yellow, Color.Red, (speedFraction - 0.5f) * 2).toArgb()
-            }
+            val dynamicColor = getColorForSpeed(currentSpeed, maxSpeed).toArgb()
 
-            // --- Paint for the OUTLINE ---
             val outlinePaint = Paint().apply {
                 color = android.graphics.Color.BLACK
                 textSize = 380f
                 textAlign = Paint.Align.LEFT
                 isAntiAlias = true
                 typeface = Typeface.create("", Typeface.BOLD)
-                style = Paint.Style.STROKE // Set the paint style to stroke (outline)
-                strokeWidth = 10f         // Adjust the outline thickness as needed
-                strokeJoin = Paint.Join.ROUND // Optional: for smoother corners
+                style = Paint.Style.STROKE
+                strokeWidth = 10f
+                strokeJoin = Paint.Join.ROUND
             }
 
-            // Paint for the HUGE number
             val numberTextPaint = Paint().apply {
                 color = dynamicColor
-                textSize = 380f // Huge font size
-                textAlign = Paint.Align.LEFT // Align left for manual centering
+                textSize = 380f
+                textAlign = Paint.Align.LEFT
                 isAntiAlias = true
                 typeface = Typeface.create("", Typeface.BOLD)
             }
 
-            // Paint for the VERY SMALL unit
             val unitTextPaint = Paint().apply {
-                color = android.graphics.Color.WHITE
-                textSize = 40f // Very small font size
+                color = contentColor.toArgb()
+                textSize = 40f
                 textAlign = Paint.Align.LEFT
                 isAntiAlias = true
                 typeface = Typeface.create("", Typeface.NORMAL)
             }
 
-            // --- Step 3: Measure and calculate positions ---
             val numberTextWidth = numberTextPaint.measureText(speedNumberText)
-            val unitTextWidth = unitTextPaint.measureText(speedUnitText)
-            val totalTextWidth = numberTextWidth // + unitTextWidth
+            val totalTextWidth = numberTextWidth
 
-            // Calculate the starting X position to center the whole block
             val startX = center.x - (totalTextWidth / 2f)
-            // Use the same Y for vertical alignment
             val textY = center.y + (numberTextPaint.textSize / 4f)
 
-            // --- Step 1: Draw the outline first (behind the fill) ---
             drawText(
                 speedNumberText,
                 startX,
@@ -268,9 +208,6 @@ fun FancySpeedometer(
                 outlinePaint
             )
 
-
-            // --- Step 4: Draw the text ---
-            // Draw the huge number
             drawText(
                 speedNumberText,
                 startX,
@@ -278,18 +215,15 @@ fun FancySpeedometer(
                 numberTextPaint
             )
 
-            // Draw the small unit right after the number
             drawText(
                 speedUnitText,
-                startX + numberTextWidth, // Position it right after the number
+                startX + numberTextWidth,
                 textY,
                 unitTextPaint
             )
         }
     }
 }
-
-private fun Float.toRadians() = this * (Math.PI / 180f).toFloat()
 
 @Preview(showBackground = true, widthDp = 300, heightDp = 300)
 @Composable
@@ -299,7 +233,11 @@ fun FancySpeedometerPreview() {
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            FancySpeedometer(modifier = Modifier.size(250.dp), currentSpeed = 35f)
+            FancySpeedometer(
+                modifier = Modifier.size(250.dp),
+                currentSpeed = 35f,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }
@@ -312,8 +250,11 @@ fun FancySpeedometerDarkPreview() {
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            FancySpeedometer(modifier = Modifier.size(250.dp), currentSpeed = 55f)
+            FancySpeedometer(
+                modifier = Modifier.size(250.dp),
+                currentSpeed = 55f,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }
-

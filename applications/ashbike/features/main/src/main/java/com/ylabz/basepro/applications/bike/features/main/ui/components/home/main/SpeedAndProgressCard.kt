@@ -35,6 +35,8 @@ fun SpeedAndProgressCard(
     bikeRideInfo: BikeRideInfo,
     onBikeEvent: (BikeEvent) -> Unit,
     navTo: (String) -> Unit,
+    containerColor: Color,
+    contentColor: Color,
 ) {
     var weatherIconsVisible by remember { mutableStateOf(false) }
 
@@ -49,40 +51,36 @@ fun SpeedAndProgressCard(
             .shadow(4.dp, shape = MaterialTheme.shapes.large),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(
-            containerColor = if (bikeRideInfo.rideState == RideState.Riding) Color(0xFF1976D2) else Color.Gray
+            containerColor = containerColor,
+            contentColor = contentColor
         )
     ) {
-        // THE FIX: Since your environment requires an explicit scope, we capture it here.
-        // Card's content provides a `ColumnScope`.
         val cardScope = this
 
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Speedometer is the background, always at max size
             SpeedometerWithCompassOverlay(
                 currentSpeed = currentSpeed.toFloat(),
                 maxSpeed = 60f,
                 heading = heading,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(16.dp),
+                contentColor = contentColor
             )
 
-            // Tappable weather icon, aligned to the top center
             Icon(
                 imageVector = Icons.Default.WbSunny,
                 contentDescription = "Toggle Weather",
-                tint = Color.White.copy(alpha = 0.8f),
+                tint = contentColor.copy(alpha = 0.8f),
                 modifier = Modifier
-                    .align(Alignment.TopCenter) // Changed to TopCenter
-                    .padding(top = 8.dp) // Adjusted padding for center alignment
+                    .align(Alignment.TopCenter)
+                    .padding(top = 8.dp)
                     .size(24.dp)
                     .clickable { weatherIconsVisible = !weatherIconsVisible }
             )
 
-            // CORRECTED: This AnimatedVisibility is now called inside a Box,
-            // which does not cause the scope error.
             cardScope.AnimatedVisibility(
                 visible = weatherIconsVisible,
                 modifier = Modifier.align(Alignment.TopStart),
@@ -100,7 +98,6 @@ fun SpeedAndProgressCard(
                 }
             }
 
-            // CORRECTED: This AnimatedVisibility is also correctly placed in the Box scope.
             cardScope.AnimatedVisibility(
                 visible = weatherIconsVisible,
                 modifier = Modifier.align(Alignment.TopEnd),
@@ -114,7 +111,6 @@ fun SpeedAndProgressCard(
                 }
             }
 
-            // Bottom controls, aligned to the bottom center
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -131,12 +127,9 @@ fun SpeedAndProgressCard(
     }
 }
 
-// Add other necessary imports if Android Studio prompts you
-
 @Preview(showBackground = true, widthDp = 380, heightDp = 500)
 @Composable
 fun FinalSpeedometerCardPreview() {
-    // Sample data to make the preview look complete and realistic
     val sampleBikeRideInfo = BikeRideInfo(
         location = LatLng(37.4219999, -122.0862462),
         currentSpeed = 42.5,
@@ -150,7 +143,7 @@ fun FinalSpeedometerCardPreview() {
         caloriesBurned = 500,
         rideDuration = "01:15:30",
         settings = emptyMap(),
-        heading = 292f, // For the compass
+        heading = 292f,
         elevation = 200.0,
         isBikeConnected = true,
         batteryLevel = 88,
@@ -169,18 +162,19 @@ fun FinalSpeedometerCardPreview() {
     )
 
     MaterialTheme {
-        // Using a Box to center the card against a dark background
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFF1A1A1A)), // Dark background for contrast
+                .background(Color(0xFF1A1A1A)),
             contentAlignment = Alignment.Center
         ) {
             SpeedAndProgressCard(
                 modifier = Modifier.padding(16.dp),
                 bikeRideInfo = sampleBikeRideInfo,
                 onBikeEvent = { },
-                navTo = { }
+                navTo = { },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
     }

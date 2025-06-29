@@ -2,9 +2,13 @@ package com.ylabz.basepro.core.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme = darkColorScheme(
     primary = md_theme_dark_primary,
@@ -70,6 +74,28 @@ private val LightColorScheme = lightColorScheme(
     scrim = md_theme_light_scrim,
 )
 
+@Immutable
+data class ExtendedColorScheme(
+    val iconColorDistance: Color = Color.Unspecified,
+    val iconColorDuration: Color = Color.Unspecified,
+    val iconColorAvgSpeed: Color = Color.Unspecified,
+    val iconColorSpeed: Color = Color.Unspecified, // For a potential separate speed stat icon
+    val iconColorElevation: Color = Color.Unspecified,
+    val iconColorCalories: Color = Color.Unspecified,
+    val iconColorBikeActive: Color = Color.Unspecified
+)
+
+val LocalExtendedColorScheme = staticCompositionLocalOf { ExtendedColorScheme() }
+
+val ColorScheme.iconColorDistance: Color @Composable get() = IconBrown
+val ColorScheme.iconColorDuration: Color @Composable get() = IconYellow
+val ColorScheme.iconColorAvgSpeed: Color @Composable get() = IconOrange
+val ColorScheme.iconColorSpeed: Color @Composable get() = IconBlue // For a potential separate speed stat icon
+val ColorScheme.iconColorElevation: Color @Composable get() = IconGreen
+val ColorScheme.iconColorCalories: Color @Composable get() = IconRed
+val ColorScheme.iconColorBikeActive: Color @Composable get() = BikeIconGreen
+
+
 @Composable
 fun AshBikeTheme(
     theme: String = "System",
@@ -81,6 +107,9 @@ fun AshBikeTheme(
         else -> isSystemInDarkTheme()
     }
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+
+    // You might want to provide the extended color scheme here if you prefer a CompositionLocal approach
+    // For now, direct extensions on MaterialTheme.colorScheme are used.
 
     MaterialTheme(
         colorScheme = colorScheme,

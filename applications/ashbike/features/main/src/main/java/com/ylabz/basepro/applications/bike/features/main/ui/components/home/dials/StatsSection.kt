@@ -10,17 +10,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Straight
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.graphics.Color
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatItem
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatCard
+import com.ylabz.basepro.core.ui.theme.iconColorCalories
+import com.ylabz.basepro.core.ui.theme.iconColorSpeed
 
 @Composable
 fun StatsSection(
     stats: List<StatItem>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentColor: Color // Default content color when not active
 ) {
-    // Display the given stats in a row, each as a card
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -28,11 +34,11 @@ fun StatsSection(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Distribute space among all stat items
         stats.forEach { stat ->
             StatCard(
                 icon = stat.icon,
-                tint = stat.tint,
+                // Use activeColor if available, otherwise default contentColor
+                tint = stat.activeColor ?: contentColor,
                 label = stat.label,
                 value = stat.value,
                 modifier = Modifier.weight(1f, fill = false)
@@ -43,18 +49,44 @@ fun StatsSection(
 
 @Preview
 @Composable
-fun StatsSectionPreview() {
+fun StatsSectionPreviewOn() {
     val stats = listOf(
         StatItem(
-            icon = Icons.Filled.Straight,
-            label = "Distance",
-            value = "10.0 km"
+            icon = Icons.Filled.Favorite,
+            label = "Heart Rate",
+            value = "120 bpm",
+            activeColor = MaterialTheme.colorScheme.iconColorSpeed // Example active color
         ),
         StatItem(
-            icon = Icons.Filled.Speed,
-            label = "Avg Speed",
-            value = "25.0 km/h"
+            icon = Icons.Filled.LocalFireDepartment,
+            label = "Calories",
+            value = "300 kcal",
+            activeColor = MaterialTheme.colorScheme.iconColorCalories // Example active color
         )
     )
-    StatsSection(stats = stats)
+    StatsSection(
+        stats = stats,
+        contentColor = MaterialTheme.colorScheme.onSurface
+    )
+}
+
+@Preview
+@Composable
+fun StatsSectionPreviewOff() {
+    val stats = listOf(
+        StatItem(
+            icon = Icons.Filled.Favorite,
+            label = "Heart Rate",
+            value = "-- bpm"
+        ),
+        StatItem(
+            icon = Icons.Filled.LocalFireDepartment,
+            label = "Calories",
+            value = "-- kcal"
+        )
+    )
+    StatsSection(
+        stats = stats,
+        contentColor = MaterialTheme.colorScheme.onSurfaceVariant // Or a more muted color for off state
+    )
 }
