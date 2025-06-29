@@ -15,7 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
@@ -46,14 +45,14 @@ private fun calculateColorForSpeed(fraction: Float, colors: CustomColors): Color
 @Composable
 fun BigSpeedometer(
     currentSpeed: Float,
-    maxSpeed: Float = 60f,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    maxSpeed: Float = 60f
 ) {
     val startAngle = 135f
     val sweepAngle = 270f
     val speedFraction = (currentSpeed / maxSpeed).coerceIn(0f, 1f)
 
-    val overshootEasing: Easing = Easing { fraction ->
+    val overshootEasing = Easing { fraction ->
         val tension = 2.0f
         val x = fraction - 1.0f
         x * x * ((tension + 1) * x + tension) + 1.0f
@@ -193,12 +192,12 @@ fun BigSpeedometer(
 @Preview(showBackground = true, widthDp = 300, heightDp = 300)
 @Composable
 fun BigSpeedometerPreview() {
-    AshBikeTheme(darkTheme = false) {
+    AshBikeTheme(theme = "Light") {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            FancySpeedometer(modifier = Modifier.size(250.dp), currentSpeed = 35f)
+            BigSpeedometer(modifier = Modifier.size(250.dp), currentSpeed = 35f)
         }
     }
 }
@@ -206,12 +205,12 @@ fun BigSpeedometerPreview() {
 @Preview(showBackground = true, widthDp = 300, heightDp = 300)
 @Composable
 fun BigSpeedometerDarkPreview() {
-    AshBikeTheme(darkTheme = true) {
+    AshBikeTheme(theme = "Dark") {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            FancySpeedometer(modifier = Modifier.size(250.dp), currentSpeed = 65f)
+            BigSpeedometer(modifier = Modifier.size(250.dp), currentSpeed = 65f)
         }
     }
 }

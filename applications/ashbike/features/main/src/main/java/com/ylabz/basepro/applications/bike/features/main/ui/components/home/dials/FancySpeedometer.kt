@@ -294,7 +294,7 @@ private fun Float.toRadians() = this * (Math.PI / 180f).toFloat()
 @Preview(showBackground = true, widthDp = 300, heightDp = 300)
 @Composable
 fun FancySpeedometerPreview() {
-    AshBikeTheme(darkTheme = false) {
+    AshBikeTheme(theme = "Light") {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -307,7 +307,7 @@ fun FancySpeedometerPreview() {
 @Preview(showBackground = true, widthDp = 300, heightDp = 300)
 @Composable
 fun FancySpeedometerDarkPreview() {
-    AshBikeTheme(darkTheme = true) {
+    AshBikeTheme(theme = "Dark") {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center

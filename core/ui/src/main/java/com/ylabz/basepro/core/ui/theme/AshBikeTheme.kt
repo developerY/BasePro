@@ -1,15 +1,11 @@
 package com.ylabz.basepro.core.ui.theme
 
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.platform.LocalContext
 
 // At the top of Theme.kt, define the colors for each theme
 // Update the custom color definitions at the top of the file
@@ -71,17 +67,21 @@ private val LightColorScheme = lightColorScheme(
     onBackground = LightOnBackground,
     surface = LightSurface,
     onSurface = LightOnSurface,
-    surfaceVariant = LightSurfaceVariant,
-    onSurfaceVariant = LightOnSurfaceVariant,
-    outline = LightOutline
+surfaceVariant = LightSurfaceVariant,
+onSurfaceVariant = LightOnSurfaceVariant,
+outline = LightOutline
 )
 
 @Composable
 fun AshBikeTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = false, // Set to false to use your custom theme
+    theme: String = "System",
     content: @Composable () -> Unit
 ) {
+    val darkTheme = when (theme) {
+        "Light" -> false
+        "Dark" -> true
+        else -> isSystemInDarkTheme()
+    }
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     val customColors = if (darkTheme) DarkCustomColors else LightCustomColors
 

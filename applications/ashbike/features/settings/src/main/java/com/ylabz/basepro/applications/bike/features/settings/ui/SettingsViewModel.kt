@@ -2,17 +2,13 @@ package com.ylabz.basepro.applications.bike.features.settings.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import javax.inject.Inject
-import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.database.ProfileData
 import com.ylabz.basepro.applications.bike.database.repository.AppSettingsRepository
 import com.ylabz.basepro.applications.bike.database.repository.UserProfileRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 // 3c) The ViewModel
 @HiltViewModel
@@ -20,6 +16,14 @@ class SettingsViewModel @Inject constructor(
     private val appRepo: AppSettingsRepository,
     private val profileRepo: UserProfileRepository
 ) : ViewModel() {
+
+    // Expose a dedicated, hot StateFlow for the theme, compliant with MAD principles
+    val theme: StateFlow<String> = appRepo.themeFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = "System" // Default value
+        )
 
     // 1) Static option lists
     private val staticOptions = mapOf(
