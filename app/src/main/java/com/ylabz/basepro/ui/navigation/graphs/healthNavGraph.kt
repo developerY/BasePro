@@ -44,7 +44,7 @@ fun NavGraphBuilder.healthNavGraph(
             ) { paddingVals ->
                 HealthRoute(
                     modifier = Modifier.padding(paddingVals),
-                    navTo = { path -> navController.navigate(path) }
+                    //navTo = { path -> navController.navigate(path) }
                 )
             }
         }
