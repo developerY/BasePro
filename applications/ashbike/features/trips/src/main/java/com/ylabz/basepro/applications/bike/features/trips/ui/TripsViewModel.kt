@@ -34,6 +34,10 @@ class TripsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<TripsUIState>(TripsUIState.Loading)
     val uiState: StateFlow<TripsUIState> = _uiState
 
+    // Unsynced rides count
+    private val _unsyncedRidesCount = MutableStateFlow(0)
+    val unsyncedRidesCount: StateFlow<Int> = _unsyncedRidesCount
+
     // session start/end times
     private var startTime = 0L
     private var endTime = 0L
@@ -171,6 +175,8 @@ class TripsViewModel @Inject constructor(
                     .getAllRidesWithLocations()                        // Flow<List<RideWithLocations>>
                     .collect { ridesWithLocs ->
                         _uiState.value = TripsUIState.Success(ridesWithLocs)
+                        // Calculate and update unsynced rides count
+                        _unsyncedRidesCount.value = ridesWithLocs.count { !it.bikeRideEnt.isHealthDataSynced }
                     }
             } catch (e: Exception) {
                 _uiState.value = TripsUIState.Error(e.localizedMessage ?: "Unknown error")

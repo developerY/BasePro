@@ -19,14 +19,21 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+// Removed HiltViewModel and TripsViewModel imports as they are no longer needed here
+// import androidx.hilt.navigation.compose.hiltViewModel
+// import com.ylabz.basepro.applications.bike.features.trips.ui.TripsViewModel
+// import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.ylabz.basepro.core.ui.BikeScreen
 
 @Composable
 fun HomeBottomBar(
-    navController: NavHostController
+    navController: NavHostController,
+    unsyncedRidesCount: Int // Accept the count as a parameter
 ) {
+
+    // val unsyncedRidesCount by tripsViewModel.unsyncedRidesCount.collectAsState() // Removed
 
     val items = listOf(
         BottomNavigationItem(
@@ -40,13 +47,13 @@ fun HomeBottomBar(
             selectedIcon = Icons.AutoMirrored.TwoTone.List,
             unselectedIcon = Icons.AutoMirrored.Outlined.List,
             hasNews = false,
-            badgeCount = 0
+            badgeCount = unsyncedRidesCount // Use the passed-in count
         ),
         BottomNavigationItem(
             title = "Settings", // Category -> Cat
             selectedIcon = Icons.TwoTone.Settings,
             unselectedIcon = Icons.Outlined.Settings,
-            hasNews = true,
+            hasNews = true, // This item can still have its own news indicator
         ),
     )
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
@@ -69,11 +76,12 @@ fun HomeBottomBar(
                 icon = {
                     BadgedBox(
                         badge = {
-                            if (item.badgeCount != null) {
+                            // Updated condition: show badge if badgeCount is greater than 0
+                            if (item.badgeCount != null && item.badgeCount > 0) {
                                 Badge {
                                     Text(text = item.badgeCount.toString())
                                 }
-                            } else if (item.hasNews) {
+                            } else if (item.hasNews) { // Existing logic for other types of badges (e.g., "Settings")
                                 Badge()
                             }
                         }

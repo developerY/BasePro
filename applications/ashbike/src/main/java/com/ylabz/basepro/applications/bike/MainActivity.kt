@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsViewModel
+import com.ylabz.basepro.applications.bike.features.trips.ui.TripsViewModel
 import com.ylabz.basepro.applications.bike.ui.navigation.root.RootNavGraph
 import com.ylabz.basepro.core.ui.theme.AshBikeTheme
 import dagger.hilt.android.AndroidEntryPoint

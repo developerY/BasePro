@@ -1,57 +1,94 @@
 package com.ylabz.basepro.applications.bike.ui.navigation.main
 
+import android.Manifest // Required for permission strings
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.List
-import androidx.compose.material.icons.automirrored.twotone.List
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.twotone.Home
-import androidx.compose.material.icons.twotone.Settings
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext // Required for context
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.core.content.ContextCompat // Required for ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.ylabz.basepro.applications.bike.features.trips.ui.TripsViewModel
 import com.ylabz.basepro.applications.bike.ui.navigation.graphs.bikeNavGraph
 import com.ylabz.basepro.core.ui.BikeScreen
 
-
+// The @RequiresPermission annotation can be helpful for static analysis
+// but the runtime check is the most crucial part.
+// It should be on the composable that directly uses the permission-gated features
+// or the screen that orchestrates it.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavHostController) {
-    Scaffold(
-        topBar = { TopBarForCurrentRoute(navController)}, //TopAppBar(title = { Text("AshBike") }) }, //  MinTopAppBar()
-        bottomBar = { HomeBottomBar(navController = navController) },
-    ) { innerPadding ->
-        NavHost(
-            navController    = navController,
-            startDestination = BikeScreen.HomeBikeScreen.route,
-            modifier         = Modifier.padding(innerPadding)
-        ) {
-            bikeNavGraph(modifier = Modifier, navHostController = navController)
+fun MainScreen(
+    navController: NavHostController,
+    viewModel: MainScreenViewModel = hiltViewModel() // Correctly injecting MainScreenViewModel
+) {
+    val unsyncedRidesCount by viewModel.unsyncedRidesCount.collectAsState() // Correctly collecting the state
+    val context = LocalContext.current
+
+    val locationPermissions = arrayOf(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    )
+
+    var hasLocationPermissions by remember {
+        mutableStateOf(
+            locationPermissions.all {
+                ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+            }
+        )
+    }
+
+    val permissionsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        onResult = { permissionsMap ->
+            hasLocationPermissions = permissionsMap.values.reduce { acc, isGranted -> acc && isGranted }
         }
-        /*RootNavGraph(
-            modifier = Modifier.padding(innerPadding),
-            navHostController = navController
-        )*/
+    )
+
+    LaunchedEffect(Unit) {
+        if (!hasLocationPermissions) {
+            permissionsLauncher.launch(locationPermissions)
+        }
+    }
+
+    if (hasLocationPermissions) {
+        Scaffold(
+            topBar = { TopBarForCurrentRoute(navController) },
+            bottomBar = { HomeBottomBar(navController = navController, unsyncedRidesCount = unsyncedRidesCount) },
+        ) { innerPadding ->
+            NavHost(
+                navController = navController,
+                startDestination = BikeScreen.HomeBikeScreen.route,
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                bikeNavGraph(modifier = Modifier, navHostController = navController)
+            }
+        }
+    } else {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Location permissions are required. Please grant them in app settings or restart the app to try again.")
+            // Consider adding buttons to request again or go to settings.
+        }
     }
 }
 
@@ -63,9 +100,6 @@ data class BottomNavigationItem(
     val badgeCount: Int? = null
 )
 
-// only used by the bottom bar
-
-
 @Preview
 @Composable
 fun MainScreenPreview() {
@@ -75,5 +109,5 @@ fun MainScreenPreview() {
 @Preview
 @Composable
 fun HomeBottomBarPreview() {
-    HomeBottomBar(navController = rememberNavController())
+    HomeBottomBar(navController = rememberNavController(), unsyncedRidesCount = 2)
 }
