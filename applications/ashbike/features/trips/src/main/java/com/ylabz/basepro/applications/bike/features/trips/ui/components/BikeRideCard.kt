@@ -82,7 +82,7 @@ fun BikeRideCard(
                 navTo(ride.rideId)
             },
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Box {
@@ -91,7 +91,7 @@ fun BikeRideCard(
                 Modifier
                     .fillMaxWidth()
                     .height(4.dp)
-                    .background(MaterialTheme.colorScheme.secondary)
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
             )
             Column(modifier = Modifier.padding(16.dp)) {
                 // Header: start – end

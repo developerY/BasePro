@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun StatCard(
     icon: ImageVector,
+    cardColor : Color = MaterialTheme.colorScheme.surfaceVariant,
     tint: Color = MaterialTheme.colorScheme.onSurfaceVariant, // Default to a theme color
     label: String,
     value: String,
@@ -45,7 +46,7 @@ fun StatCard(
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             // Use theme color for the card's background
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = cardColor// MaterialTheme.colorScheme.surfaceVariant // MaterialTheme.colorScheme.surfaceVariant
         )
     ) {
         Column(

@@ -32,6 +32,7 @@ data class StatItem(
 fun StatsRow(
     bikeRideInfo: BikeRideInfo,
     modifier: Modifier = Modifier,
+    cardColor: Color = MaterialTheme.colorScheme.surfaceContainer,
     contentColor: Color, // Default content color when not active
     isBikeComputerOn: Boolean // To determine which color to use
 ) {
@@ -83,6 +84,7 @@ fun StatsRow(
         stats.forEach { stat ->
             StatCard(
                 icon = stat.icon,
+                cardColor = cardColor,
                 // Use activeColor if available and bike computer is on, otherwise default contentColor
                 tint = stat.activeColor ?: contentColor,
                 label = stat.label,

@@ -67,6 +67,7 @@ fun BikeDashboardContent(
 
     val containerColor = if (currRiding) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer
     val contentColor = if (currRiding) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+    val cardColor = if (currRiding) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
 
 
     Column(
@@ -87,6 +88,7 @@ fun BikeDashboardContent(
 
         StatsRow(
             bikeRideInfo = bikeRideInfo,
+            cardColor = cardColor,
             contentColor = contentColor, // Default color when not active
             isBikeComputerOn = currRiding
         )

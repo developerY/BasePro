@@ -25,6 +25,7 @@ import com.ylabz.basepro.core.ui.theme.iconColorSpeed
 fun StatsSection(
     stats: List<StatItem>,
     modifier: Modifier = Modifier,
+    cardColor: Color = MaterialTheme.colorScheme.surfaceContainer,
     contentColor: Color // Default content color when not active
 ) {
     Row(
@@ -36,6 +37,7 @@ fun StatsSection(
     ) {
         stats.forEach { stat ->
             StatCard(
+                cardColor = cardColor,
                 icon = stat.icon,
                 // Use activeColor if available, otherwise default contentColor
                 tint = stat.activeColor ?: contentColor,
