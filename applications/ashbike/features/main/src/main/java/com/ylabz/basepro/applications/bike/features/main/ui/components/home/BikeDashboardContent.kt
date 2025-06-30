@@ -57,14 +57,17 @@ fun BikeDashboardContent(
         onDispose { view.keepScreenOn = false }
     }
 
-    val isBikeConnected = bikeRideInfo.isBikeConnected
+    val isBikeConnected = bikeRideInfo.isBikeConnected // we need to use the ride state not connected state
     val batteryLevel = bikeRideInfo.batteryLevel
     val motorPower = bikeRideInfo.motorPower
     val heartRate = null // Replace with actual heart rate data if available
     val calories = bikeRideInfo.caloriesBurned
+    val rideState = bikeRideInfo.rideState
+    val currRiding = if (rideState == RideState.Riding) true else false
 
-    val containerColor = if (isBikeConnected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer
-    val contentColor = if (isBikeConnected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+    val containerColor = if (currRiding) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer
+    val contentColor = if (currRiding) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+
 
     Column(
         modifier = modifier
@@ -85,7 +88,7 @@ fun BikeDashboardContent(
         StatsRow(
             bikeRideInfo = bikeRideInfo,
             contentColor = contentColor, // Default color when not active
-            isBikeComputerOn = isBikeConnected
+            isBikeComputerOn = currRiding
         )
 
         val healthStats = listOf(
@@ -93,13 +96,13 @@ fun BikeDashboardContent(
                 icon = Icons.Filled.Favorite,
                 label = "Heart Rate",
                 value = if (heartRate != null) "$heartRate bpm" else "-- bpm",
-                activeColor = if (isBikeConnected) MaterialTheme.colorScheme.iconColorSpeed else null // Assuming IconBlue for HR
+                activeColor = if (currRiding) MaterialTheme.colorScheme.iconColorSpeed else null // Assuming IconBlue for HR
             ),
             StatItem(
                 icon = Icons.Filled.LocalFireDepartment,
                 label = "Calories",
                 value = if (calories != null) "$calories" else "--",
-                activeColor = if (isBikeConnected) MaterialTheme.colorScheme.iconColorCalories else null
+                activeColor = if (currRiding) MaterialTheme.colorScheme.iconColorCalories else null
             )
         )
         StatsSection(stats = healthStats, contentColor = contentColor)

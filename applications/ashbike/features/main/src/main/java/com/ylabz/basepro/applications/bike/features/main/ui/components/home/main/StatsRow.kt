@@ -39,6 +39,7 @@ fun StatsRow(
     val duration = bikeRideInfo.rideDuration
     val avgSpeed = bikeRideInfo.averageSpeed
     val elevation: Double? = bikeRideInfo.elevation.takeIf { it > 0.0 }
+    val isBikeConnected = bikeRideInfo.isBikeConnected
 
     val stats = mutableListOf(
         StatItem(
