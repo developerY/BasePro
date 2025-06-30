@@ -37,8 +37,8 @@ fun StatsSection(
     ) {
         stats.forEach { stat ->
             StatCard(
-                cardColor = cardColor,
                 icon = stat.icon,
+                cardColor = cardColor,
                 // Use activeColor if available, otherwise default contentColor
                 tint = stat.activeColor ?: contentColor,
                 label = stat.label,

@@ -65,7 +65,7 @@ fun BikeDashboardContent(
     val rideState = bikeRideInfo.rideState
     val currRiding = if (rideState == RideState.Riding) true else false
 
-    val containerColor = if (currRiding) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer
+    val containerColor = if (currRiding) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
     val contentColor = if (currRiding) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
     val cardColor = if (currRiding) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
 
@@ -107,7 +107,7 @@ fun BikeDashboardContent(
                 activeColor = if (currRiding) MaterialTheme.colorScheme.iconColorCalories else null
             )
         )
-        StatsSection(stats = healthStats, contentColor = contentColor)
+        StatsSection(stats = healthStats, cardColor = cardColor, contentColor = contentColor)
 
         var expanded by rememberSaveable { mutableStateOf(false) }
         Card(
