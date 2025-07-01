@@ -141,7 +141,7 @@ fun BikeRideCardMapPreview() {
         caloriesBurned = 450,
         avgHeartRate = 120,
         maxHeartRate = 160,
-        healthConnectRecordId = "health-connect-id",
+        // healthConnectRecordId = "health-connect-id", // Not used
         isHealthDataSynced = true,
         weatherCondition = "Sunny",
         rideType = "Road",

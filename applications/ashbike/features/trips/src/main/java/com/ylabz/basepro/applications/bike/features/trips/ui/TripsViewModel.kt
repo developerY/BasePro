@@ -206,7 +206,7 @@ class TripsViewModel @Inject constructor(
                     // Optional Health Connect
                     avgHeartRate          = 125,            // bpm
                     maxHeartRate          = 158,            // bpm
-                    healthConnectRecordId = null,
+                    // healthConnectRecordId = null,        // not used
                     isHealthDataSynced    = false,
 
                     // Environmental & Context
