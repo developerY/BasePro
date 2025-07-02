@@ -25,6 +25,17 @@ import javax.inject.Named
 import androidx.health.connect.client.records.Record
 
 
+/**
+ * So, the data flow is:
+ * 1.BikeRideCard (UI) triggers sync.
+ * 2.It prepares List<Record> (using a helper like bikeToHealthConnectRecords).
+ * 3.It sends HealthEvent.Insert to HealthViewModel.
+ * 4.HealthViewModel calls insertExerciseSession with the records.
+ * 5.HealthViewModel.insertExerciseSession delegates to HealthSessionManager.insertExerciseSession.
+ * 6.HealthSessionManager.insertExerciseSession calls healthConnectClient.insertRecords(records).
+ * 7.Updating the isSynced or isHealthDataSynced flag in your local database
+ */
+
 @HiltViewModel
 class TripsViewModel @Inject constructor(
     private val bikeRideRepo: BikeRideRepo,
