@@ -158,8 +158,6 @@ class HealthSessionManager(private val context: Context) {
         Log.d("DebugSync", "HealthSessionManager.insertRecords → ${records.map { it::class.simpleName }}")
         val res = healthConnectClient.insertRecords(records)
         Log.d("DebugSync", "HealthSessionManager.insertRecords ← ${res.recordIdsList}")
-        return res
-
         // Build a detailed mapping of record type -> (clientId? -> serverId)
         val details = records
             .mapIndexed { index, record ->
@@ -175,8 +173,26 @@ class HealthSessionManager(private val context: Context) {
             append("insertRecords: inserted ${res.recordIdsList.size} record(s):")
             append(details)
         })
-        showAllRecs()
+        // showAllRecs() // This might be excessive for every insert, consider if needed
         return res
+    }
+
+    suspend fun insertBikeRideWithAssociatedData(rideId: String, records: List<Record>): String {
+        Log.d(TAG, "Attempting to insert bike ride data for rideId: $rideId consisting of ${records.map { it::class.simpleName }}")
+        try {
+            val response = healthConnectClient.insertRecords(records)
+            Log.d(TAG, "Successfully inserted ${response.recordIdsList.size} records for rideId $rideId. HC IDs: ${response.recordIdsList}")
+            // We return the original rideId. It's assumed to be the clientRecordId for the main session,
+            // or at least the identifier the ViewModel layer needs to update the local database.
+            // If you need the specific Health Connect generated ID for the ExerciseSessionRecord,
+            // you would find it in response.recordIdsList. This requires identifying the
+            // ExerciseSessionRecord within the 'records' list and getting its corresponding ID
+            // from the response.recordIdsList using its index or clientRecordId if set.
+            return rideId
+        } catch (e: Exception) {
+            Log.e(TAG, "Error inserting bike ride data for rideId $rideId into Health Connect", e)
+            throw e // Propagate the error to be handled by the caller (HealthViewModel)
+        }
     }
 
     /**

@@ -6,7 +6,6 @@ import com.ylabz.basepro.applications.bike.database.BikeRideDatabase
 import com.ylabz.basepro.applications.bike.database.BikeRideDao
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import com.ylabz.basepro.applications.bike.database.repository.BikeRideRepoImpl
-import com.ylabz.basepro.applications.bike.database.repository.DemoBikeRideRepo
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -45,9 +44,9 @@ object DatabaseModule {
         rideDao: BikeRideDao
     ): BikeRideRepo = BikeRideRepoImpl(rideDao)
 
-    @Provides
+    /*@Provides
     @Singleton
     @Named("demo")
     fun provideDemoBikeRideRepository(
-    ): BikeRideRepo = DemoBikeRideRepo()
+    ): BikeRideRepo = DemoBikeRideRepo()*/
 }

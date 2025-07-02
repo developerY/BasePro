@@ -76,4 +76,16 @@ class BikeRideRepoImpl @Inject constructor(
     override suspend fun updateRideNotes(rideId: String, notes: String) {
         bikeRideDao.updateNotes(rideId, notes)
     }
+
+    /** Marks a ride as synced to Health Connect and stores the Health Connect ID. */
+    @WorkerThread
+    override suspend fun markRideAsSyncedToHealthConnect(rideId: String, healthConnectId: String?) {
+        bikeRideDao.markRideAsSyncedToHealthConnect(rideId, healthConnectId)
+    }
+
+    /** Gets the count of rides that are not yet synced to Health Connect. */
+    @WorkerThread // Added @WorkerThread for consistency, though Flow might not strictly need it here
+    override fun getUnsyncedRidesCount(): Flow<Int> {
+        return bikeRideDao.getUnsyncedRidesCount()
+    }
 }

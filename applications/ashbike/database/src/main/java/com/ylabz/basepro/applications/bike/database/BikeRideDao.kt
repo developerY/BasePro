@@ -1,7 +1,7 @@
 package com.ylabz.basepro.applications.bike.database
 
 import androidx.room.Dao
-import androidx.room.Delete
+import androidx.room.Delete // Not used in the provided snippet, but good to keep if used elsewhere
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -34,4 +34,12 @@ interface BikeRideDao {
     /** Wipe entire rides table. */
     @Query("DELETE FROM bike_rides_table")
     suspend fun deleteAllBikeRides()
+
+    /** Marks a ride as synced to Health Connect and stores the Health Connect ID. */
+    @Query("UPDATE bike_rides_table SET isHealthDataSynced = 1, healthConnectRecordId = :healthConnectId WHERE rideId = :rideId")
+    suspend fun markRideAsSyncedToHealthConnect(rideId: String, healthConnectId: String?)
+
+    /** Gets the count of rides that are not yet synced to Health Connect. */
+    @Query("SELECT COUNT(*) FROM bike_rides_table WHERE isHealthDataSynced = 0")
+    fun getUnsyncedRidesCount(): Flow<Int>
 }

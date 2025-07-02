@@ -10,7 +10,8 @@ sealed interface HealthEvent {
     object ReadAll             : HealthEvent
 
     /** Insert a prepared list of Health Connect Record objects */
-    data class Insert(val records: List<Record>) : HealthEvent
+    data class Insert(
+        val rideId: String, // Added rideId
+        val records: List<Record>
+    ) : HealthEvent
 }
-
-

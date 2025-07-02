@@ -183,7 +183,7 @@ fun BikeRideCard(
                             val rideInfo: List<Record> = bikeToHealthConnectRecords(ride)
                             Log.d("BikeRideCard", "rideInfo: $rideInfo")
                             // 2) Tell the HealthViewModel to insert them
-                            healthEvent(HealthEvent.Insert(rideInfo))
+                            healthEvent(HealthEvent.Insert(rideId = ride.rideId, records = rideInfo))
                         },
                         enabled = !isSynced
                     ) {

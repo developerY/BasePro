@@ -23,6 +23,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import javax.inject.Named
 import androidx.health.connect.client.records.Record
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 
 
 /**
@@ -40,14 +42,19 @@ import androidx.health.connect.client.records.Record
 class TripsViewModel @Inject constructor(
     private val bikeRideRepo: BikeRideRepo,
     private val syncRideUseCase: SyncRideUseCase
-    ) : ViewModel() {
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow<TripsUIState>(TripsUIState.Loading)
     val uiState: StateFlow<TripsUIState> = _uiState
 
-    // Unsynced rides count
-    private val _unsyncedRidesCount = MutableStateFlow(0)
-    val unsyncedRidesCount: StateFlow<Int> = _unsyncedRidesCount
+    // Unsynced rides count - now directly from the repository
+    val unsyncedRidesCount: StateFlow<Int> =
+        bikeRideRepo.getUnsyncedRidesCount() // Assumes getUnsyncedRidesCount returns Flow<Int>
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = 0
+            )
 
     // session start/end times
     private var startTime = 0L
@@ -69,16 +76,28 @@ class TripsViewModel @Inject constructor(
             is TripsEvent.DeleteItem -> deleteItem(event.itemId)
             is TripsEvent.DeleteAll -> deleteAll()
             is TripsEvent.OnRetry -> onEvent(TripsEvent.LoadData)
-            // is TripsEvent.OnItemClicked -> selectItem(event.itemId)
-            // is TripsEvent.AddBikeRide -> addBikeRide()
             is TripsEvent.StopSaveRide -> {
-                // stop and persist
                 endTime = System.currentTimeMillis()
                 isTracking = false
             }
+            is TripsEvent.BuildBikeRec -> { buildHealthConnectRecordsForRide(event.ride) }
+        }
+    }
 
-            is TripsEvent.BuildBikeRec ->  { buildHealthConnectRecordsForRide(event.ride) }
-
+    // Function to be called from the UI layer (e.g., TripsUIRoute)
+    fun markRideAsSyncedInLocalDb(rideId: String, healthConnectId: String?) {
+        viewModelScope.launch {
+            try {
+                bikeRideRepo.markRideAsSyncedToHealthConnect(rideId, healthConnectId)
+                Log.d("TripsViewModel", "Successfully marked ride $rideId as synced in local DB.")
+                // Data will refresh automatically due to observing flows from the repo.
+                // If not, you might need to trigger a refresh via onEvent(TripsEvent.LoadData)
+                // but ideally, the flows handle this.
+            } catch (e: Exception) {
+                Log.e("TripsViewModel", "Failed to mark ride $rideId as synced in local DB.", e)
+                // Optionally, communicate this error back to the UI, e.g., via a SharedFlow for snackbars
+                handleError(e) // Using existing error handler
+            }
         }
     }
 
@@ -86,92 +105,33 @@ class TripsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 bikeRideRepo.updateRideNotes(rideId, notes)
-                onEvent(TripsEvent.LoadData)
+                onEvent(TripsEvent.LoadData) // Keep this to refresh the list if notes change UI
             } catch (e: Exception) {
                 handleError(e)
             }
         }
     }
 
-    /**
-     * Build the full list of Health Connect Records for a given ride.
-     * Log.d("DebugSync", "buildRecords: ride=${ride.rideId}, records=[${records.map { it::class.simpleName }}]")
-     */
     fun buildHealthConnectRecordsForRide(ride: BikeRide): List<Record> {
         return syncRideUseCase(ride)
     }
-    /** Call this once when Stop is pressed
-    private fun saveRide() {
-        viewModelScope.launch {
-            try {
-                // 1) compute summary stats
-                val totalDistance = /* sum lengths between pathPoints… */
-                val averageSpeed  = /* totalDistance / ((endTime-startTime)/1000h) */
-                val maxSpeed      = /* track your max during ride */
-                val elevationGain = /* your accumulated elevation… */
-                val calories      = /* your algorithm… */
-                // 2) serialize the path to JSON
-                val routeJson = Gson().toJson(pathPoints.map {
-                    mapOf("lat" to it.latitude, "lng" to it.longitude)
-                })
-
-                // 3) build the entity (UUID auto‐generated in ctor)
-                val ride = BikeRideEntity(
-                    startTime     = startTime,
-                    endTime       = endTime,
-                    totalDistance = totalDistance.toFloat(),
-                    averageSpeed  = averageSpeed.toFloat(),
-                    maxSpeed      = maxSpeed.toFloat(),
-                    elevationGain = elevationGain.toFloat(),
-                    elevationLoss = 0f,
-                    caloriesBurned= calories,
-                    startLat      = pathPoints.first().latitude,
-                    startLng      = pathPoints.first().longitude,
-                    endLat        = pathPoints.last().latitude,
-                    endLng        = pathPoints.last().longitude,
-                    routeJson     = routeJson
-                    // … fill the rest of your optional fields …
-                )
-
-                // 4) hand it off to your Repo
-                bikeRideRepo.insert(ride)
-
-                // 5) finally reload your list
-                onEvent(TripsEvent.LoadData)
-            } catch (e: Exception) {
-                handleError(e)
-            }
-        }
-    }
-    */
 
     fun deleteItem(itemId: String) {
         viewModelScope.launch {
             try {
                 bikeRideRepo.deleteById(itemId)
-                onEvent(TripsEvent.LoadData)
+                onEvent(TripsEvent.LoadData) // Keep this to refresh list
             } catch (e: Exception) {
                 handleError(e)
             }
         }
     }
 
-    /*fun selectItem(itemId: Int) {
-        viewModelScope.launch {
-            // Fetch the item details only if they are not already loaded
-            if (_selectedItem.value?.id != itemId) {
-
-                _selectedItem.value = bikeRideRepo.get(itemId)
-            }
-        }
-    }*/
-
     private fun deleteAll() {
         viewModelScope.launch {
             try {
                 bikeRideRepo.deleteAll()
-                // Optionally refresh data after deletion
-                onEvent(TripsEvent.LoadData)
+                onEvent(TripsEvent.LoadData) // Keep this to refresh list
             } catch (e: Exception) {
                 handleError(e)
             }
@@ -183,11 +143,11 @@ class TripsViewModel @Inject constructor(
             _uiState.value = TripsUIState.Loading
             try {
                 bikeRideRepo
-                    .getAllRidesWithLocations()                        // Flow<List<RideWithLocations>>
+                    .getAllRidesWithLocations() // Flow<List<RideWithLocations>>
                     .collect { ridesWithLocs ->
                         _uiState.value = TripsUIState.Success(ridesWithLocs)
-                        // Calculate and update unsynced rides count
-                        _unsyncedRidesCount.value = ridesWithLocs.count { !it.bikeRideEnt.isHealthDataSynced }
+                        // The _unsyncedRidesCount is now handled by its own StateFlow from the repo
+                        // No longer need: _unsyncedRidesCount.value = ridesWithLocs.count { !it.bikeRideEnt.isHealthDataSynced }
                     }
             } catch (e: Exception) {
                 _uiState.value = TripsUIState.Error(e.localizedMessage ?: "Unknown error")
@@ -195,60 +155,6 @@ class TripsViewModel @Inject constructor(
         }
     }
 
-
-    private fun addBikeRide() {
-        viewModelScope.launch {
-            try {
-                val now = System.currentTimeMillis()
-
-                val newRide = BikeRideEntity(
-                    // Core BikeRide Information
-                    startTime        = now,
-                    endTime          = now + 30 * 60_000L,  // 30‑minute ride
-                    totalDistance    = 10_000f,             // 10 km
-                    averageSpeed     = 5.6f,                // ≈20 km/h
-                    maxSpeed         = 8.3f,                // ≈30 km/h
-
-                    // Elevation and Fitness Data
-                    elevationGain    = 120f,                // meters climbed
-                    elevationLoss    = 115f,                // meters descended
-                    caloriesBurned   = 450,                 // kcal
-
-                    // Optional Health Connect
-                    avgHeartRate          = 125,            // bpm
-                    maxHeartRate          = 158,            // bpm
-                    // healthConnectRecordId = null,        // not used
-                    isHealthDataSynced    = false,
-
-                    // Environmental & Context
-                    weatherCondition = "Sunny, 22°C",
-                    rideType         = "Road",
-
-                    // User Feedback
-                    notes   = "Evening loop around the park",
-                    rating  = 4,     // out of 5
-
-                    // Bike & Battery
-                    bikeId       = "RoadBike‑123",
-                    batteryStart = 100,  // %
-                    batteryEnd   = 95,   // %
-
-                    // Start/End coords for quick queries
-                    startLat = 37.7749,
-                    startLng = -122.4194,
-                    endLat   = 37.7793,
-                    endLng   = -122.4188
-                )
-
-                bikeRideRepo.insert(newRide)
-                onEvent(TripsEvent.LoadData)
-            } catch (e: Exception) {
-                handleError(e)
-            }
-        }
-    }
-
-    // Centralized error handling
     private fun handleError(e: Exception) {
         _uiState.value = TripsUIState.Error(message = e.localizedMessage ?: "Unknown error")
     }

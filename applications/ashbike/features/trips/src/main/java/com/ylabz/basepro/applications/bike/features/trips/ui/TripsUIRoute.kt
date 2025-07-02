@@ -45,18 +45,37 @@ fun TripsUIRoute(
         }
     )
 
+    // In your TripsUIRoute (or similar Composable file)
+
+    // Assuming you have access to both viewModels here:
+    // val healthViewModel: HealthViewModel = hiltViewModel()
+    // val tripsViewModel: TripsViewModel = hiltViewModel()
+    // And permissionsLauncher is correctly initialized in this scope or passed down.
+
     // 4. Create an effect that listens for the PermissionsRequired state
     //    This will now launch the dialog from the correct screen.
     // Use LaunchedEffect to listen for side effects from the ViewModel
-    LaunchedEffect(Unit) {
+    LaunchedEffect(Unit) { // Or use a key that makes sense if healthViewModel can change
         // Trigger the initial load for health data when the screen appears
+        // Consider if this should always be LoadHealthData or based on current state.
+        // If Health Connect isn't available or permissions aren't granted yet,
+        // LoadHealthData might immediately transition to PermissionsRequired or Error state.
         healthViewModel.onEvent(HealthEvent.LoadHealthData)
 
         // Listen for the signal to launch the permission dialog
         healthViewModel.sideEffect.collect { effect ->
             when (effect) {
                 is HealthSideEffect.LaunchPermissions -> {
+                    // Ensure permissionsLauncher is available and correctly initialized in this Composable's scope
                     permissionsLauncher.launch(effect.permissions)
+                }
+
+                is HealthSideEffect.BikeRideSyncedToHealth -> {
+                    // Call the method on TripsViewModel to update the local database
+                    tripsViewModel.markRideAsSyncedInLocalDb(
+                        rideId = effect.rideId,
+                        healthConnectId = effect.healthConnectId
+                    )
                 }
             }
         }
