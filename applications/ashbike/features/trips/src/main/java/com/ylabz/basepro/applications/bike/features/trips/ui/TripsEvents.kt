@@ -13,6 +13,8 @@ sealed class TripsEvent {
     object StopSaveRide : TripsEvent()
     //data class SyncHeathConnect(val ride : BikeRide) : TripsEvent()
 
+    data class SyncRide(val rideId: String) : TripsEvent()
+
     data class BuildBikeRec(val ride: BikeRide) : TripsEvent()
 
 }

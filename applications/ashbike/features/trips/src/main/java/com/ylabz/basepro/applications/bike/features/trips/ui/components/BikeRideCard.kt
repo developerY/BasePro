@@ -1,7 +1,5 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui.components
 
-import android.R.attr.onClick
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,78 +14,30 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.applications.bike.database.BikeRideEntity
-import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
-import java.time.Instant
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import androidx.compose.ui.tooling.preview.Preview
-import com.ylabz.basepro.applications.bike.database.RideWithLocations
-import com.ylabz.basepro.core.ui.*
-import com.ylabz.basepro.core.ui.theme.BikeIconGreen // Added import
-import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
-import java.time.ZoneId
-import kotlin.time.Duration.Companion.milliseconds
-import androidx.health.connect.client.records.Record
-
+import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.features.trips.ui.model.BikeRideUiModel
+import com.ylabz.basepro.core.ui.theme.BikeIconGreen
 
 @Composable
 fun BikeRideCard(
     modifier: Modifier = Modifier,
-    ride: BikeRideEntity,
-    syncedIds: Set<String>,
-    bikeEvent: (TripsEvent) -> Unit,
-    healthEvent: (HealthEvent) -> Unit, // Removed
-    bikeToHealthConnectRecords: (BikeRideEntity) -> List<Record>, // Removed
-    navTo: (String) -> Unit
+    ride: BikeRideUiModel,
+    onDeleteClick: () -> Unit,
+    onSyncClick: () -> Unit,
+    onNavigate: () -> Unit
 ) {
-
-    val isSynced = ride.rideId in syncedIds
-
-    // Log whenever this composable recomposes with its current sync state
-    LaunchedEffect(ride.rideId, isSynced) {
-        Log.d("DebugSync", "RideCard: ${ride.rideId}, isSynced=$isSynced, syncedIds=$syncedIds")
-    }
-
-
-    // Date formatter for start/end times
-    val dateFormatter = remember {
-        SimpleDateFormat("MMM dd, HH:mm", Locale.getDefault())
-    }
-
-    // 1) Compute Kotlin Duration from millis difference
-    val duration = (ride.endTime - ride.startTime).milliseconds
-
-    // 2) Extract minutes (and seconds, if you like)
-    val minutes = duration.inWholeMinutes
-    val seconds = duration.inWholeSeconds % 60
-
-    // 3) Format your start/end times
-    val start = Instant.ofEpochMilli(ride.startTime)
-        .atZone(ZoneId.systemDefault())
-    val end = Instant.ofEpochMilli(ride.endTime)
-        .atZone(ZoneId.systemDefault())
-
-
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable {
-                navTo(ride.rideId)
-            },
+            .clickable(onClick = onNavigate),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Box {
-            // Accent stripe…
             Box(
                 Modifier
                     .fillMaxWidth()
@@ -95,33 +45,24 @@ fun BikeRideCard(
                     .background(MaterialTheme.colorScheme.secondaryContainer)
             )
             Column(modifier = Modifier.padding(16.dp)) {
-                // Header: start – end
-                val startText = dateFormatter.format(Date(ride.startTime))
-                val endText = SimpleDateFormat("HH:mm", Locale.getDefault())
-                    .format(Date(ride.endTime))
-
-
-                // Header: start – end + delete icon
+                // Header: Date Range and Duration
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "$startText – $endText",
+                        text = ride.dateRange,
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(Modifier.weight(1f))
                     Text(
-                        text = "(${minutes} min${if (seconds > 0) " ${seconds}s" else ""})",
+                        text = ride.duration,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                    IconButton(onClick = {
-                        bikeEvent(TripsEvent.DeleteItem(ride.rideId))
-                    }) {
+                    IconButton(onClick = onDeleteClick) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
                             contentDescription = "Delete ride",
@@ -130,25 +71,12 @@ fun BikeRideCard(
                     }
                 }
 
-
                 Spacer(Modifier.height(8.dp))
 
                 // Key metrics
-                Text(
-                    text = "Distance: ${"%.1f".format(ride.totalDistance / 1000)} km",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = "Avg: ${"%.1f".format(ride.averageSpeed)} km/h",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = "Max: ${"%.1f".format(ride.maxSpeed)} km/h",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                Text(text = ride.distance, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
+                Text(text = ride.avgSpeed, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
+                Text(text = ride.maxSpeed, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
 
                 Spacer(Modifier.height(8.dp))
 
@@ -164,37 +92,26 @@ fun BikeRideCard(
                 }
 
                 // Optional notes
-                ride.notes?.takeIf { it.isNotBlank() }?.let {
+                ride.notes?.let {
                     Spacer(Modifier.height(8.dp))
                     Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
                 }
 
                 Spacer(Modifier.height(8.dp))
 
-                // ─── Bottom Action Row ────────────────────────────────────
+                // Bottom Action Row
                 Row(
                     Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    // Sync button: only enabled if not already synced
                     IconButton(
-                        onClick = {
-                            // 1) Build the Health Connect records from your domain ride
-                            val rideInfo: List<Record> = bikeToHealthConnectRecords(ride)
-                            Log.d("BikeRideCard", "rideInfo: $rideInfo")
-                            // 2) Tell the HealthViewModel to insert them
-                            healthEvent(HealthEvent.Insert(rideId = ride.rideId, records = rideInfo))
-                        },
-                        enabled = !isSynced
+                        onClick = onSyncClick,
+                        enabled = !ride.isSynced
                     ) {
                         Icon(
-                            imageVector     = Icons.Default.Sync,
-                            contentDescription = if (isSynced) "Already synced" else "Sync to Health",
-                            tint = if (isSynced) {
-                                BikeIconGreen // Use BikeIconGreen when synced (button is disabled)
-                            } else {
-                                MaterialTheme.colorScheme.primary // Use primary color when not synced (button is enabled)
-                            }
+                            imageVector = Icons.Default.Sync,
+                            contentDescription = if (ride.isSynced) "Already synced" else "Sync to Health",
+                            tint = if (ride.isSynced) BikeIconGreen else MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -203,34 +120,48 @@ fun BikeRideCard(
     }
 }
 
-
 @Preview
 @Composable
 fun BikeRideCardPreview() {
-    val ride = BikeRideEntity(
-        startTime = Instant.now().toEpochMilli(),
-        endTime = Instant.now().plusSeconds(3600).toEpochMilli(),
-        totalDistance = 10000f,
-        averageSpeed = 20f,
-        maxSpeed = 30f,
-        elevationGain = 100f,
-        elevationLoss = 50f,
-        caloriesBurned = 500,
-        weatherCondition = "Sunny",
+    val previewRide = BikeRideUiModel(
+        rideId = "123",
+        dateRange = "Oct 26, 10:00 – 11:30",
+        duration = "(90 min)",
+        distance = "Distance: 25.1 km",
+        avgSpeed = "Avg: 16.7 km/h",
+        maxSpeed = "Max: 35.2 km/h",
         rideType = "Road",
-        notes = "Great ride!",
-        startLat = 40.7128,
-        startLng = -74.0060,
-        endLat = 40.7580,
-        endLng = -73.9855
+        weatherCondition = "Sunny",
+        notes = "A beautiful morning ride through the park.",
+        isSynced = false
     )
-
     BikeRideCard(
-        ride = ride,
-        syncedIds = setOf(),
-        bikeEvent = {},
-        healthEvent = {}, // Removed
-        bikeToHealthConnectRecords = { emptyList() }, // Removed
-        navTo = {}
+        ride = previewRide,
+        onDeleteClick = {},
+        onSyncClick = {},
+        onNavigate = {}
+    )
+}
+
+@Preview
+@Composable
+fun BikeRideCardSyncedPreview() {
+    val previewRide = BikeRideUiModel(
+        rideId = "124",
+        dateRange = "Oct 25, 18:00 – 19:00",
+        duration = "(60 min)",
+        distance = "Distance: 15.5 km",
+        avgSpeed = "Avg: 15.5 km/h",
+        maxSpeed = "Max: 28.0 km/h",
+        rideType = "Commute",
+        weatherCondition = "Cloudy",
+        notes = null,
+        isSynced = true
+    )
+    BikeRideCard(
+        ride = previewRide,
+        onDeleteClick = {},
+        onSyncClick = {},
+        onNavigate = {}
     )
 }

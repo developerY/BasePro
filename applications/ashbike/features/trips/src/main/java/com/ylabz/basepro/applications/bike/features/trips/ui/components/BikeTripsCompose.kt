@@ -1,67 +1,29 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui.components
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import com.ylabz.basepro.applications.bike.database.BikeRideEntity
-import com.ylabz.basepro.applications.bike.database.RideLocationEntity
-import com.ylabz.basepro.applications.bike.database.RideWithLocations
-import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
-import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
-import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
-import kotlin.random.Random
-import androidx.health.connect.client.records.Record
-import kotlin.String
+import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.features.trips.ui.model.BikeRideUiModel
 
-// —————————————————————————————————————————————————————————
-//  BIKE TRIPS SCREEN
-// —————————————————————————————————————————————————————————
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BikeTripsCompose(
     modifier: Modifier = Modifier,
-    bikeRides: List<RideWithLocations>,
-    syncedIds: Set<String>,
-    bikeEvent: (TripsEvent) -> Unit,
-    healthEvent: (HealthEvent) -> Unit,
-    bikeToHealthConnectRecords: (BikeRideEntity) -> List<Record>,
-    healthUiState: HealthUiState,
+    bikeRides: List<BikeRideUiModel>,
+    onDeleteClick: (String) -> Unit,
+    onSyncClick: (String) -> Unit,
     navTo: (String) -> Unit
 ) {
-
-
-    // derive a simple “connected?” flag
-    val connected = healthUiState is HealthUiState.Success
-
     Box(
         modifier = modifier.fillMaxSize(),
     ) {
@@ -72,18 +34,6 @@ fun BikeTripsCompose(
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item {
-                TripSectionHeader(
-                    onEvent = bikeEvent,
-                    title = "Bike Rides",
-                    bgColor = MaterialTheme.colorScheme.surfaceVariant,
-                    healthConnected = connected,
-                    onHealthToggle = {
-                        healthEvent(HealthEvent.RequestPermissions)
-                    }
-                )
-            }
-
             if (bikeRides.isEmpty()) {
                 item {
                     Text(
@@ -93,16 +43,13 @@ fun BikeTripsCompose(
                     )
                 }
             } else {
-                items(bikeRides, key = { it.bikeRideEnt.rideId }) { rideWithLoc ->
+                items(bikeRides, key = { it.rideId }) { rideModel ->
                     BikeRideCard(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        ride = rideWithLoc.bikeRideEnt,
-                        syncedIds = syncedIds,
-                        bikeEvent = bikeEvent,
-                        healthEvent = healthEvent,
-                        bikeToHealthConnectRecords = bikeToHealthConnectRecords,
-                        navTo = navTo,
+                        modifier = Modifier.fillMaxWidth(),
+                        ride = rideModel,
+                        onDeleteClick = { onDeleteClick(rideModel.rideId) },
+                        onSyncClick = { onSyncClick(rideModel.rideId) },
+                        onNavigate = { navTo(rideModel.rideId) },
                     )
                 }
             }
@@ -113,78 +60,36 @@ fun BikeTripsCompose(
 @Preview
 @Composable
 fun BikeTripsComposePreview() {
-    val bikeRides = listOf(
-        RideWithLocations(
-            BikeRideEntity(
-                startTime = System.currentTimeMillis(),
-                endTime = System.currentTimeMillis() + 3600000,
-                totalDistance = 10000f,
-                averageSpeed = 15f,
-                maxSpeed = 30f,
-                elevationGain = 100f,
-                elevationLoss = 50f,
-                caloriesBurned = 500,
-                startLat = 40.7128,
-                startLng = -74.0060,
-                endLat = 40.7580,
-                endLng = -73.9855
-            ),
-            listOf(
-                RideLocationEntity(
-                    rideId = "1",
-                    timestamp = System.currentTimeMillis(),
-                    lat = 40.7128,
-                    lng = -74.0060
-                ),
-                RideLocationEntity(
-                    rideId = "1",
-                    timestamp = System.currentTimeMillis() + 1800000,
-                    lat = 40.7354,
-                    lng = -73.9980
-                ),
-                RideLocationEntity(
-                    rideId = "1",
-                    timestamp = System.currentTimeMillis() + 3600000,
-                    lat = 40.7580,
-                    lng = -73.9855
-                )
-            )
+    val previewRides = listOf(
+        BikeRideUiModel(
+            rideId = "123",
+            dateRange = "Oct 26, 10:00 – 11:30",
+            duration = "(90 min)",
+            distance = "Distance: 25.1 km",
+            avgSpeed = "Avg: 16.7 km/h",
+            maxSpeed = "Max: 35.2 km/h",
+            rideType = "Road",
+            weatherCondition = "Sunny",
+            notes = "A beautiful morning ride through the park.",
+            isSynced = false
+        ),
+        BikeRideUiModel(
+            rideId = "124",
+            dateRange = "Oct 25, 18:00 – 19:00",
+            duration = "(60 min)",
+            distance = "Distance: 15.5 km",
+            avgSpeed = "Avg: 15.5 km/h",
+            maxSpeed = "Max: 28.0 km/h",
+            rideType = "Commute",
+            weatherCondition = "Cloudy",
+            notes = null,
+            isSynced = true
         )
     )
     BikeTripsCompose(
-        bikeRides = bikeRides,
-        bikeEvent = {},
-        syncedIds = emptySet(),
-        healthEvent = {},
-        healthUiState = HealthUiState.Loading,
-        bikeToHealthConnectRecords = { listOf() },
+        bikeRides = previewRides,
+        onDeleteClick = {},
+        onSyncClick = {},
         navTo = {}
     )
-}
-
-// —————————————————————————————————————————————————————————
-//  IMAGE PREVIEW, LOADING & ERROR SCREENS (unchanged)
-// —————————————————————————————————————————————————————————
-@Composable
-fun CapturedImagePreview(imageUri: Uri) {
-    val context = LocalContext.current
-    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
-
-    LaunchedEffect(imageUri) {
-        context.contentResolver.openInputStream(imageUri)?.use { stream ->
-            bitmap = BitmapFactory.decodeStream(stream)
-        }
-    }
-
-    bitmap?.let {
-        Image(
-            painter = BitmapPainter(it.asImageBitmap()),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(250.dp)
-                .padding(16.dp),
-            contentScale = ContentScale.Crop
-        )
-    }
 }
