@@ -31,6 +31,7 @@ import java.util.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.applications.bike.database.RideWithLocations
 import com.ylabz.basepro.core.ui.*
+import com.ylabz.basepro.core.ui.theme.BikeIconGreen // Added import
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import java.time.ZoneId
 import kotlin.time.Duration.Companion.milliseconds
@@ -43,8 +44,8 @@ fun BikeRideCard(
     ride: BikeRideEntity,
     syncedIds: Set<String>,
     bikeEvent: (TripsEvent) -> Unit,
-    healthEvent: (HealthEvent) -> Unit,
-    bikeToHealthConnectRecords: (BikeRideEntity) -> List<Record>,
+    healthEvent: (HealthEvent) -> Unit, // Removed
+    bikeToHealthConnectRecords: (BikeRideEntity) -> List<Record>, // Removed
     navTo: (String) -> Unit
 ) {
 
@@ -189,10 +190,11 @@ fun BikeRideCard(
                         Icon(
                             imageVector     = Icons.Default.Sync,
                             contentDescription = if (isSynced) "Already synced" else "Sync to Health",
-                            tint = if (isSynced)
-                                MaterialTheme.colorScheme.primary
-                            else
-                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                            tint = if (isSynced) {
+                                BikeIconGreen // Use BikeIconGreen when synced (button is disabled)
+                            } else {
+                                MaterialTheme.colorScheme.primary // Use primary color when not synced (button is enabled)
+                            }
                         )
                     }
                 }
@@ -227,8 +229,8 @@ fun BikeRideCardPreview() {
         ride = ride,
         syncedIds = setOf(),
         bikeEvent = {},
-        healthEvent = {},
-        bikeToHealthConnectRecords = { emptyList() },
+        healthEvent = {}, // Removed
+        bikeToHealthConnectRecords = { emptyList() }, // Removed
         navTo = {}
     )
 }

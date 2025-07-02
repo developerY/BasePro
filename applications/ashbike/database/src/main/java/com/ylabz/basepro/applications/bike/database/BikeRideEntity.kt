@@ -23,7 +23,7 @@ data class BikeRideEntity(
     // Optional Health Connect
     val avgHeartRate: Int? = null,
     val maxHeartRate: Int? = null,
-    // val healthConnectRecordId: String? = null, We are using the rideId for this
+    val healthConnectRecordId: String? = null, // We are using the rideId for this
     val isHealthDataSynced: Boolean = false,
 
     // Environmental & Context
@@ -33,7 +33,7 @@ data class BikeRideEntity(
     // User Feedback
     val notes: String? = null,
     val rating: Int? = null,
-    //val isSynced: Boolean = false,
+    val isSynced: Boolean = false,
 
     // Bike & Battery
     val bikeId: String? = null,
