@@ -1,6 +1,7 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui
 
-import com.ylabz.basepro.applications.bike.database.mapper.BikeRide
+import com.ylabz.basepro.core.model.bike.BikeRide
+
 
 sealed class TripsEvent {
     object LoadData : TripsEvent()

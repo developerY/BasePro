@@ -13,6 +13,7 @@ import androidx.health.connect.client.records.metadata.Metadata
 import androidx.health.connect.client.units.Energy
 import androidx.health.connect.client.units.Length
 import com.ylabz.basepro.applications.bike.database.BikeRideEntity
+import com.ylabz.basepro.core.model.bike.BikeRide
 import java.time.Instant
 import java.time.ZoneOffset
 import javax.inject.Inject
@@ -23,7 +24,7 @@ import javax.inject.Singleton
 class SyncRideUseCase @Inject constructor(
 ) {
     @SuppressLint("RestrictedApi")
-    operator fun invoke(ride: BikeRideEntity): List<Record> {
+    operator fun invoke(ride: BikeRide): List<Record> {
         val start  = Instant.ofEpochMilli(ride.startTime)
         val end    = Instant.ofEpochMilli(ride.endTime)
         val offset = ZoneOffset.systemDefault().rules.getOffset(start)

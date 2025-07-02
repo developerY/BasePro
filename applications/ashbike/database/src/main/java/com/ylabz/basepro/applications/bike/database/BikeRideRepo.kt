@@ -1,8 +1,6 @@
 package com.ylabz.basepro.applications.bike.database
 
-// com.ylabz.basepro.applications.bike.database.repository.BikeRideRepo.kt
-
-import com.ylabz.basepro.applications.bike.database.mapper.BikeRide // Assuming this is the domain model
+import com.ylabz.basepro.core.model.bike.BikeRide
 import kotlinx.coroutines.flow.Flow
 
 interface BikeRideRepo {

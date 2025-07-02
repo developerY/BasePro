@@ -1,6 +1,7 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui
 
 import android.util.Log
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.health.connect.client.records.Record
@@ -9,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import com.ylabz.basepro.applications.bike.database.mapper.toBikeRide
 import com.ylabz.basepro.applications.bike.features.trips.data.SyncRideUseCase
-import com.ylabz.basepro.applications.bike.features.trips.domain.usecase.MarkRideAsSyncedUseCase
 import com.ylabz.basepro.applications.bike.features.trips.ui.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.ylabz.basepro.applications.bike.features.trips.domain.MarkRideAsSyncedUseCase
 
 // Side-effect definition
 sealed interface TripsSideEffect {

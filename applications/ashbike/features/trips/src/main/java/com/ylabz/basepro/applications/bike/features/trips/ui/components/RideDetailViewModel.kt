@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.ylabz.basepro.applications.bike.database.mapper.BikeRide
 import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
@@ -45,6 +44,7 @@ class RideDetailViewModel @Inject constructor(
             TripsEvent.OnRetry -> TODO()
             TripsEvent.StopSaveRide -> TODO()
             is TripsEvent.BuildBikeRec -> TODO()
+            is TripsEvent.SyncRide -> TODO()
         }
     }
     /** Called by the UI when the notes text changes */

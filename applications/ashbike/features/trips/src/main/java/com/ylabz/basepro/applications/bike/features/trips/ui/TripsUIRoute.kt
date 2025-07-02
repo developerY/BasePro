@@ -81,7 +81,7 @@ fun TripsUIRoute(
             // Note the simplified parameters passed to BikeTripsCompose
             BikeTripsCompose(
                 modifier      = modifier,
-                bikeRides     = state.bikeRides, // This is now List<BikeRideUiModel>
+                bikeRides     = state.rides, // This is now List<BikeRideUiModel>
                 onDeleteClick = { rideId ->
                     tripsViewModel.onEvent(TripsEvent.DeleteItem(rideId))
                 },

@@ -7,9 +7,9 @@ import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import com.ylabz.basepro.applications.bike.database.BikeRideDao
 import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.RideLocationEntity
-import com.ylabz.basepro.applications.bike.database.mapper.BikeRide
 import com.ylabz.basepro.applications.bike.database.mapper.toEntity
 import com.ylabz.basepro.applications.bike.database.mapper.toBikeRide
+import com.ylabz.basepro.core.model.bike.BikeRide
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
