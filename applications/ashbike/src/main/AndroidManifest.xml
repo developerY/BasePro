@@ -2,7 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Health permissions -->
+    <!-- =================================================================== -->
+    <!-- PERMISSIONS                                                         -->
+    <!-- =================================================================== -->
+
+    <!-- Health Connect Permissions -->
     <uses-permission android:name="android.permission.health.READ_HEART_RATE"/>
     <uses-permission android:name="android.permission.health.WRITE_HEART_RATE"/>
     <uses-permission android:name="android.permission.health.READ_STEPS"/>
@@ -16,6 +20,23 @@
     <uses-permission android:name="android.permission.health.READ_HEALTH_DATA_IN_BACKGROUND" />
     <uses-permission android:name="android.permission.health.READ_DISTANCE"/>
     <uses-permission android:name="android.permission.health.WRITE_DISTANCE"/>
+    <!-- Add other health permissions as needed -->
+
+    <!-- Location Permissions -->
+    <!-- Required for location access in the foreground -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- Required for background location access on Android 10 (API 29) and above -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <!-- Foreground Service Permissions -->
+    <!-- Required for all foreground services -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- ADDED: Required for location-based foreground services on Android 14 (API 34)+ -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+
+    <!-- Notifications Permission (for Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <!-- BLE Permissions -->
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
@@ -29,17 +50,20 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
 
 
-
-    <!-- allowBackup should be true -->
+    <!-- =================================================================== -->
+    <!-- APPLICATION                                                         -->
+    <!-- =================================================================== -->
     <application
         android:name=".MyApplication"
-        android:allowBackup="false"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BasePro"
-        tools:targetApi="31">
+        tools:targetApi="34">
+
+        <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -52,9 +76,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <!-- TODO: Add intent filter to handle permission rationale intent -->
-            <!-- Permission handling for Android 13- -->
+            <!-- Health Connect Permission Handling -->
             <intent-filter>
                 <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
             </intent-filter>
@@ -70,11 +92,16 @@
 
         </activity>
 
+        <!-- CORRECTED: Service Declaration -->
+        <service
+            android:name=".features.main.service.BikeForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="location" />
 
-        <meta-data
+        <!-- Google Maps API Key -->
+        <!--meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" />
-
+            android:value="${MAPS_API_KEY}" /-->
 
     </application>
 

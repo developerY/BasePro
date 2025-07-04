@@ -8,12 +8,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoadingScreen() {
     Text(text = "Loading...", modifier = Modifier.fillMaxSize())
 }
+
+@Preview
+@Composable
+fun LoadingScreenPreview() {
+    LoadingScreen()
+}
+
 
 @Composable
 fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
@@ -34,4 +42,10 @@ fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
                 .padding(vertical = 8.dp)
         )
     }
+}
+
+@Preview
+@Composable
+fun ErrorScreenPreview() {
+    ErrorScreen(errorMessage = "Something went wrong", onRetry = {})
 }
