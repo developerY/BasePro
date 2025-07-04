@@ -34,6 +34,9 @@ fun TripsUIRoute(
         }
     )
 
+    val healthUiState by healthViewModel.uiState.collectAsState()
+
+    val syncId = healthViewModel.syncedIds.collectAsState().value
     // Effect handler for HealthViewModel (remains the same)
     LaunchedEffect(Unit) {
         healthViewModel.sideEffect.collect { effect ->
@@ -82,6 +85,9 @@ fun TripsUIRoute(
             BikeTripsCompose(
                 modifier      = modifier,
                 bikeRides     = state.rides, // This is now List<BikeRideUiModel>
+                bikeEvent     = tripsViewModel::onEvent,
+                syncedIds     = syncId,
+                healthEvent   = healthViewModel::onEvent,
                 onDeleteClick = { rideId ->
                     tripsViewModel.onEvent(TripsEvent.DeleteItem(rideId))
                 },
@@ -89,6 +95,7 @@ fun TripsUIRoute(
                     // This triggers the new side effect flow in TripsViewModel
                     tripsViewModel.onEvent(TripsEvent.SyncRide(rideId))
                 },
+                healthUiState = healthUiState,
                 navTo         = navTo
             )
         }

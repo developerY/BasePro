@@ -14,16 +14,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
 import com.ylabz.basepro.applications.bike.features.trips.ui.model.BikeRideUiModel
+import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
+import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
 
 @Composable
 fun BikeTripsCompose(
     modifier: Modifier = Modifier,
     bikeRides: List<BikeRideUiModel>,
+    bikeEvent: (TripsEvent) -> Unit,
+    syncedIds: Set<String>,
+    healthEvent: (HealthEvent) -> Unit,
     onDeleteClick: (String) -> Unit,
     onSyncClick: (String) -> Unit,
+    healthUiState: HealthUiState,
     navTo: (String) -> Unit
 ) {
+
+    // derive a simple “connected?” flag
+    val connected = healthUiState is HealthUiState.Success
     Box(
         modifier = modifier.fillMaxSize(),
     ) {
@@ -34,6 +44,19 @@ fun BikeTripsCompose(
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+
+            item {
+                TripSectionHeader(
+                    onEvent = bikeEvent,
+                    title = "Bike Rides",
+                    bgColor = MaterialTheme.colorScheme.surfaceVariant,
+                    healthConnected = connected,
+                    onHealthToggle = {
+                        healthEvent(HealthEvent.RequestPermissions)
+                    }
+                )
+            }
+
             if (bikeRides.isEmpty()) {
                 item {
                     Text(
@@ -55,41 +78,4 @@ fun BikeTripsCompose(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun BikeTripsComposePreview() {
-    val previewRides = listOf(
-        BikeRideUiModel(
-            rideId = "123",
-            dateRange = "Oct 26, 10:00 – 11:30",
-            duration = "(90 min)",
-            distance = "Distance: 25.1 km",
-            avgSpeed = "Avg: 16.7 km/h",
-            maxSpeed = "Max: 35.2 km/h",
-            rideType = "Road",
-            weatherCondition = "Sunny",
-            notes = "A beautiful morning ride through the park.",
-            isSynced = false
-        ),
-        BikeRideUiModel(
-            rideId = "124",
-            dateRange = "Oct 25, 18:00 – 19:00",
-            duration = "(60 min)",
-            distance = "Distance: 15.5 km",
-            avgSpeed = "Avg: 15.5 km/h",
-            maxSpeed = "Max: 28.0 km/h",
-            rideType = "Commute",
-            weatherCondition = "Cloudy",
-            notes = null,
-            isSynced = true
-        )
-    )
-    BikeTripsCompose(
-        bikeRides = previewRides,
-        onDeleteClick = {},
-        onSyncClick = {},
-        navTo = {}
-    )
 }
