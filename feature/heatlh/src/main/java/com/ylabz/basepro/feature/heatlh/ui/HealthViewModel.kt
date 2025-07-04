@@ -110,12 +110,18 @@ class HealthViewModel @Inject constructor(
         }
     }
 
+    // In HealthViewModel.kt
     private fun requestPermissionsOnClick() {
         viewModelScope.launch {
-            if (!healthSessionManager.hasAllPermissions(permissions)) {
+            val hasPermissions = healthSessionManager.hasAllPermissions(permissions) // Store the result
+            Log.d("HealthViewModel", "RequestPermissions: healthSessionManager.hasAllPermissions returned: $hasPermissions") // Log the result
+            if (!hasPermissions) {
+                Log.d("HealthViewModel", "RequestPermissions: Permissions NOT granted. Emitting LaunchPermissions side effect.") // Log before emitting
                 _sideEffect.emit(HealthSideEffect.LaunchPermissions(permissions))
             } else {
-                _uiState.value = HealthUiState.Success(readSessionInputs())
+                Log.d("HealthViewModel", "RequestPermissions: Permissions ARE already granted. Setting UI to Success.") // Log if already granted
+                // _uiState.value = HealthUiState.Success(readSessionInputs()) // This line might need to be careful if readSessionInputs() is heavy or has side effects itself before UI is ready
+                initialLoad() // Calling initialLoad() here might be better as it handles setting Loading then Success/Error/PermissionsRequired
             }
         }
     }

@@ -2,6 +2,7 @@ package com.ylabz.basepro.feature.heatlh.ui
 
 import android.R.id.message
 import android.content.Intent
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -52,6 +53,7 @@ fun HealthRoute(
         // 2. Continue listening for side effects
         viewModel.sideEffect.collect { effect ->
             if (effect is HealthSideEffect.LaunchPermissions) {
+                Log.d("SettingsHealthRoute", "LaunchPermissions side effect received IN SETTINGS. Launching its permissionsLauncher.") // <-- ADD THIS LINE
                 permissionsLauncher.launch(effect.permissions)
             }
         }

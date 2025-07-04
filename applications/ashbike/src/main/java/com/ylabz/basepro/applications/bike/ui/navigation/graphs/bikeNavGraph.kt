@@ -1,19 +1,10 @@
 package com.ylabz.basepro.applications.bike.ui.navigation.graphs
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.util.Log
 import androidx.annotation.RequiresPermission
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -22,11 +13,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiRoute
 import com.ylabz.basepro.core.ui.BikeScreen
-import com.ylabz.basepro.applications.bike.features.trips.ui.TripsUIRoute
 
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsUiRoute
-import com.ylabz.basepro.applications.bike.features.trips.ui.TripsUIState
-import com.ylabz.basepro.applications.bike.features.trips.ui.TripsViewModel
+import com.ylabz.basepro.applications.bike.features.trips.ui.TripsUIRoute
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailScreen
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailViewModel
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.haversineMeters

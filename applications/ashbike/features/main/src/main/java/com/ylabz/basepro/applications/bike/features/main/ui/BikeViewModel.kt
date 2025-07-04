@@ -69,7 +69,7 @@ class BikeViewModel @Inject constructor(
                 _weatherInfo,             // BikeWeatherInfo?
                 _rideState                // RideState
             ) { session, gpsKm, rawSpeed, weather, rideState ->
-                Log.d("StatsColorDebug", "Combine is running with rideState: $rideState") // <-- ADD THIS
+                //Log.d("StatsColorDebug", "Combine is running with rideState: $rideState") // <-- ADD THIS
                 session.toBikeRideInfo(
                     weather = weather,
                     totalDistance = null             // no user override yet
@@ -116,11 +116,11 @@ class BikeViewModel @Inject constructor(
     }
 
     private fun startRide() {
-        Log.d("StatsColorDebug", "startRide() called. Current state is ${_rideState.value}") // <-- ADD THIS
+        //Log.d("StatsColorDebug", "startRide() called. Current state is ${_rideState.value}") // <-- ADD THIS
         if (_rideState.value == RideState.NotStarted) {
             tracker.start()
             _rideState.value = RideState.Riding
-            Log.d("StatsColorDebug", "ViewModel _rideState updated to: ${_rideState.value}") // <-- ADD THIS
+            //Log.d("StatsColorDebug", "ViewModel _rideState updated to: ${_rideState.value}") // <-- ADD THIS
         }
     }
 
