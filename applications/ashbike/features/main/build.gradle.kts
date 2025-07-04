@@ -38,10 +38,12 @@ android {
 dependencies {
     implementation(project(":applications:ashbike:features:settings"))
     implementation(project(":applications:ashbike:features:trips"))
-
     implementation(project(":applications:ashbike:database"))
+
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
+    implementation(project(":core:data"))
+
 
     implementation(project(":feature:heatlh"))
     implementation(project(":feature:nfc"))
@@ -55,10 +57,17 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.viewmodel.android)
 
+    //lifecycle
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.process)
+    implementation(libs.androidx.lifecycle.service)
+
+    //Maps
+    implementation(libs.play.services.location)
+
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.material3)
-    implementation(project(":core:data"))
     debugImplementation(libs.androidx.ui.tooling)
 
     // Permissions
