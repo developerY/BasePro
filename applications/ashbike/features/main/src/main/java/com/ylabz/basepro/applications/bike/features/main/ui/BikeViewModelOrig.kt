@@ -28,7 +28,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class BikeViewModel @Inject constructor(
+class BikeViewModelOrig @Inject constructor(
     @HighPower private val locationRepo: UnifiedLocationRepository,
     private val tracker: RideSessionUseCase,
     private val weatherUseCase: WeatherUseCase,

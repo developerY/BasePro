@@ -48,12 +48,12 @@ import java.util.UUID
 @OptIn(ExperimentalPermissionsApi::class)
 @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
 @Composable
-fun BikeUiRoute(
+fun BikeUiRouteOrig(
     modifier: Modifier = Modifier,
     navTo: (String) -> Unit
 ) {
     // obtain view models
-    val bikeViewModel   = hiltViewModel<BikeViewModel>()
+    val bikeViewModel   = hiltViewModel<BikeViewModelOrig>()
     val healthViewModel = hiltViewModel<HealthViewModel>()
     val nfcViewModel    = hiltViewModel<NfcViewModel>()
 

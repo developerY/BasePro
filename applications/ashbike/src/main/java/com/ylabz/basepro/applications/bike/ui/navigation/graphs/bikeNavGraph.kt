@@ -11,7 +11,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiRoute
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiRouteNew
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeViewModelNew
 import com.ylabz.basepro.core.ui.BikeScreen
 
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsUiRoute
@@ -28,16 +29,18 @@ import com.ylabz.basepro.feature.places.ui.CoffeeShopViewModel
 @RequiresPermission(allOf = [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION])
 fun NavGraphBuilder.bikeNavGraph(
     modifier: Modifier = Modifier,
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    bikeViewModel: BikeViewModelNew // <<< MODIFIED LINE: Added bikeViewModel parameter
 ) {
 
     val TAG = Logging.getTag(this::class.java)
 
     // 1) Home Tab
     composable(BikeScreen.HomeBikeScreen.route) {
-        BikeUiRoute(
+        BikeUiRouteNew(
             modifier = modifier,
-            navTo = { path -> navHostController.navigate(path) }
+            navTo = { path -> navHostController.navigate(path) },
+            viewModel = bikeViewModel // <<< MODIFIED LINE: Pass the bikeViewModel instance
         )
     }
 

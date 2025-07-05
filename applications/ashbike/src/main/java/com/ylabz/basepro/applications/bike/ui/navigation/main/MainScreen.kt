@@ -11,6 +11,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -20,15 +21,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext // Required for context
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat // Required for ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.ylabz.basepro.applications.bike.features.trips.ui.TripsViewModel
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeViewModelNew
 import com.ylabz.basepro.applications.bike.ui.navigation.graphs.bikeNavGraph
 import com.ylabz.basepro.core.ui.BikeScreen
 
@@ -40,10 +45,34 @@ import com.ylabz.basepro.core.ui.BikeScreen
 @Composable
 fun MainScreen(
     navController: NavHostController,
-    viewModel: MainScreenViewModel = hiltViewModel() // Correctly injecting MainScreenViewModel
+    viewModel: MainScreenViewModel = hiltViewModel()
 ) {
-    val unsyncedRidesCount by viewModel.unsyncedRidesCount.collectAsState() // Correctly collecting the state
+    val unsyncedRidesCount by viewModel.unsyncedRidesCount.collectAsState()
     val context = LocalContext.current
+
+    // --- Service Binding Logic ---
+    val bikeViewModel: BikeViewModelNew = hiltViewModel() // Instance for MainScreen and its children
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner, bikeViewModel) { // Added bikeViewModel as a key
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_START -> {
+                    bikeViewModel.bindToService(context)
+                }
+
+                Lifecycle.Event.ON_STOP -> {
+                    bikeViewModel.unbindFromService(context)
+                }
+
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     val locationPermissions = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -81,7 +110,11 @@ fun MainScreen(
                 startDestination = BikeScreen.HomeBikeScreen.route,
                 modifier = Modifier.padding(innerPadding)
             ) {
-                bikeNavGraph(modifier = Modifier, navHostController = navController)
+                bikeNavGraph(
+                    modifier = Modifier,
+                    navHostController = navController,
+                    bikeViewModel = bikeViewModel // <<< MODIFIED LINE: Pass the bikeViewModel instance
+                )
             }
         }
     } else {
