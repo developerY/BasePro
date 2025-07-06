@@ -53,7 +53,7 @@ class BikeViewModelOrig @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             // wait for first GPS fix so we have coords
             val loc = locationRepo.locationFlow.first()
-            _weatherInfo.value = weatherUseCase.getWeather(
+            _weatherInfo.value = weatherUseCase(
                 lat = loc.latitude,
                 lng = loc.longitude
             )

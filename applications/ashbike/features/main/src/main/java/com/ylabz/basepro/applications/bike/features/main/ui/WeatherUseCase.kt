@@ -23,8 +23,12 @@ class WeatherUseCase @Inject constructor(
     // keep one cached result per app run
     private var lastWeather: BikeWeatherInfo? = null
 
+    suspend operator fun invoke(lat: Double, lng: Double): BikeWeatherInfo? {
+        return getWeather(lat, lng)
+    }
+
     /** One‐shot fetch of BikeWeatherInfo or null on error */
-    suspend fun getWeather(lat: Double, lng: Double): BikeWeatherInfo? {
+    private suspend fun getWeather(lat: Double, lng: Double): BikeWeatherInfo? {
         // if we’ve already fetched once, just return it
         lastWeather?.let { return it }
 

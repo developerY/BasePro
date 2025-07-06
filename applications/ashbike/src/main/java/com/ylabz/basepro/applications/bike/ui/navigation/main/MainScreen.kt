@@ -22,18 +22,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat // Required for ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.ylabz.basepro.applications.bike.features.main.ui.BikeViewModelNew
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeViewModel
 import com.ylabz.basepro.applications.bike.ui.navigation.graphs.bikeNavGraph
 import com.ylabz.basepro.core.ui.BikeScreen
 
@@ -51,7 +48,7 @@ fun MainScreen(
     val context = LocalContext.current
 
     // --- Service Binding Logic ---
-    val bikeViewModel: BikeViewModelNew = hiltViewModel() // Instance for MainScreen and its children
+    val bikeViewModel: BikeViewModel = hiltViewModel() // Instance for MainScreen and its children
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
 
     DisposableEffect(lifecycleOwner, bikeViewModel) { // Added bikeViewModel as a key

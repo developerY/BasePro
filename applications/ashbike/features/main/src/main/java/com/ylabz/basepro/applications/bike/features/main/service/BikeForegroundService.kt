@@ -45,12 +45,6 @@ class BikeForegroundService : LifecycleService() {
 
     @Inject
     lateinit var repo: BikeRideRepo
-
-    @Inject
-    lateinit var weatherUseCase: WeatherUseCase
-
-    private var weatherFetchJob: Job? = null
-
     @Inject
     lateinit var calculateCaloriesUseCase: CalculateCaloriesUseCase
 
@@ -256,8 +250,6 @@ class BikeForegroundService : LifecycleService() {
         // formalRideSegmentStartOffsetCalories no longer needed here
         formalRideSegmentMaxSpeedKph = 0.0
 
-        fetchWeatherIfNeeded()
-
         _rideInfo.value = _rideInfo.value.copy(
             rideState = RideState.Riding,
             currentTripDistance = 0f,
@@ -355,28 +347,9 @@ class BikeForegroundService : LifecycleService() {
             rideState = RideState.NotStarted
         )
 
-        weatherFetchJob?.cancel()
         caloriesCalculationJob?.cancel()
 
         stopForeground(STOP_FOREGROUND_REMOVE)
-    }
-
-    private fun fetchWeatherIfNeeded() {
-        /*if (_rideInfo.value.location != null && _rideInfo.value.location!!.latitude != 0.0 && _rideInfo.value.location!!.longitude != 0.0) {
-            weatherFetchJob?.cancel()
-            weatherFetchJob = lifecycleScope.launch {
-                try {
-                    val location = _rideInfo.value.location!!
-                    val weather = weatherUseCase(location.latitude, location.longitude)
-                    _rideInfo.value = _rideInfo.value.copy(bikeWeatherInfo = weather)
-                    Log.d("BikeForegroundService", "Weather fetched: $weather")
-                } catch (e: Exception) {
-                    Log.e("BikeForegroundService", "Error fetching weather", e)
-                }
-            }
-        } else {
-            Log.d("BikeForegroundService", "Skipping weather fetch, location not available.")
-        }*/
     }
 
     private fun startForegroundService() {

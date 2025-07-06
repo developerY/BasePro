@@ -12,7 +12,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiRouteNew
-import com.ylabz.basepro.applications.bike.features.main.ui.BikeViewModelNew
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeViewModel
 import com.ylabz.basepro.core.ui.BikeScreen
 
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsUiRoute
@@ -30,7 +30,7 @@ import com.ylabz.basepro.feature.places.ui.CoffeeShopViewModel
 fun NavGraphBuilder.bikeNavGraph(
     modifier: Modifier = Modifier,
     navHostController: NavHostController,
-    bikeViewModel: BikeViewModelNew // <<< MODIFIED LINE: Added bikeViewModel parameter
+    bikeViewModel: BikeViewModel // <<< MODIFIED LINE: Added bikeViewModel parameter
 ) {
 
     val TAG = Logging.getTag(this::class.java)

@@ -27,7 +27,7 @@ import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
 fun BikeUiRouteNew(
     modifier: Modifier = Modifier,
     navTo: (String) -> Unit,
-    viewModel: BikeViewModelNew // <<< MODIFIED LINE: Accept BikeViewModel as a parameter
+    viewModel: BikeViewModel // <<< MODIFIED LINE: Accept BikeViewModel as a parameter
 ) {
     // DO NOT call hiltViewModel() for BikeViewModel here. Use the passed-in 'viewModel'.
     // val bikeViewModelFromHilt = hiltViewModel<BikeViewModel>() // THIS LINE IS REMOVED/AVOIDED

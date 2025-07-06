@@ -11,21 +11,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.features.main.service.BikeForegroundService
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
+import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.jvm.java
 
 @HiltViewModel
-class BikeViewModelNew @Inject constructor(
-    private val application: Application // <-- Inject Application here
-) : ViewModel() {
+class BikeViewModel @Inject constructor(
+    private val application: Application, // <-- Inject Application here
+    private val weatherUseCase: WeatherUseCase // Inject WeatherUseCase here
+    ) : ViewModel() {
 
     // --- State for the Service Connection ---
     private val _bound = MutableStateFlow(false)
@@ -38,6 +41,10 @@ class BikeViewModelNew @Inject constructor(
     // --- In-memory UI-only override for total distance ---
     private val _uiPathDistance = MutableStateFlow<Float?>(null)
 
+    // 2) One‐shot weather at ride start (null until we fetch it)
+    private val _weatherInfo = MutableStateFlow<BikeWeatherInfo?>(null)
+
+
     // --- Service Connection ---
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -46,7 +53,9 @@ class BikeViewModelNew @Inject constructor(
             bikeService = binder.getService() // Updated usage
             _bound.value = true
             Log.d("BikeViewModel", "BikeForegroundService instance obtained: $bikeService") // Updated usage
+            // CORRECT PLACE: Start both observers after bikeService is guaranteed to be non-null.
             observeServiceData()
+            fetchWeatherForDashboard()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -59,19 +68,23 @@ class BikeViewModelNew @Inject constructor(
     private fun observeServiceData() {
         Log.d("BikeViewModel", "observeServiceData called.")
         viewModelScope.launch {
-            bikeService?.let { service -> // Updated usage
+            bikeService?.let { service ->
                 Log.d("BikeViewModel", "Starting to collect from service.rideInfo.")
-                // Combine the service's "true" data with our UI-only override
+                // --- CORRECTED COMBINE FUNCTION ---
+                // We now combine all three sources of truth for the UI
                 combine(
                     service.rideInfo,
-                    _uiPathDistance
-                ) { serviceInfo, uiTotalKm ->
-                    Log.d("BikeViewModel", "Service.rideInfo emitted: Location: ${serviceInfo.location}, RideState: ${serviceInfo.rideState}, uiTotalKm: $uiTotalKm")
+                    _uiPathDistance,
+                    _weatherInfo // <-- ADDED
+                ) { serviceInfo, uiTotalKm, weather ->
+                    Log.d("BikeViewModel", "Combining data. Location: ${serviceInfo.location}, Weather: ${weather?.conditionDescription}")
+                    // Create the final UI object, now including weather
                     serviceInfo.copy(
-                        totalTripDistance = uiTotalKm
+                        totalTripDistance = uiTotalKm,
+                        bikeWeatherInfo = weather // <-- ADDED
                     )
                 }.map<BikeRideInfo, BikeUiState> { info ->
-                    Log.d("BikeViewModel", "Mapping to BikeUiState.Success. Location: ${info.location}, RideState: ${info.rideState}")
+                    Log.d("BikeViewModel", "Mapping to BikeUiState.Success. Location: ${info.location}")
                     BikeUiState.Success(info)
                 }.catch { e ->
                     Log.e("BikeViewModel", "Error in service.rideInfo flow: ${e.message}", e)
@@ -81,7 +94,27 @@ class BikeViewModelNew @Inject constructor(
                     _uiState.value = state
                 }
             } ?: run {
-                Log.w("BikeViewModel", "observeServiceData: bikeService is null, cannot collect.") // Updated usage
+                Log.w("BikeViewModel", "observeServiceData: bikeService is null, cannot collect.")
+            }
+        }
+    }
+
+
+    private fun fetchWeatherForDashboard() {
+        // This check prevents re-fetching if the service reconnects
+        if (_weatherInfo.value != null) return
+
+        viewModelScope.launch {
+            // Now we know bikeService is not null when this is called.
+            val location = bikeService?.rideInfo?.first { it.location != null }?.location ?: return@launch
+
+            try {
+                // CORRECTED: Use the class-level property directly, which Kotlin can now resolve.
+                // The previous `this.` was ambiguous inside the coroutine scope.
+                _weatherInfo.value = weatherUseCase(location.latitude, location.longitude)
+                Log.d("BikeViewModel", "Weather fetched successfully for dashboard.")
+            } catch (e: Exception) {
+                Log.e("BikeViewModel", "Error fetching weather for dashboard", e)
             }
         }
     }
@@ -91,7 +124,10 @@ class BikeViewModelNew @Inject constructor(
         when (event) {
             is BikeEvent.SetTotalDistance -> _uiPathDistance.value = event.distanceKm
             BikeEvent.StartRide -> sendCommandToService(BikeForegroundService.ACTION_START_RIDE) // This will now correctly refer to the class
-            BikeEvent.StopRide -> sendCommandToService(BikeForegroundService.ACTION_STOP_RIDE)  // This will now correctly refer to the class
+            BikeEvent.StopRide -> {
+                sendCommandToService(BikeForegroundService.ACTION_STOP_RIDE) // This will now correctly refer to the class
+                _uiPathDistance.value = null // Resetting the UI path distance
+            }
         }
     }
 
