@@ -11,7 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiRouteNew
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiRoute
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeViewModel
 import com.ylabz.basepro.core.ui.BikeScreen
 
@@ -37,7 +37,7 @@ fun NavGraphBuilder.bikeNavGraph(
 
     // 1) Home Tab
     composable(BikeScreen.HomeBikeScreen.route) {
-        BikeUiRouteNew(
+        BikeUiRoute(
             modifier = modifier,
             navTo = { path -> navHostController.navigate(path) },
             viewModel = bikeViewModel // <<< MODIFIED LINE: Pass the bikeViewModel instance

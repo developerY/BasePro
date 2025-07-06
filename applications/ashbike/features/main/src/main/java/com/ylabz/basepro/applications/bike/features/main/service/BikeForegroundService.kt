@@ -23,7 +23,6 @@ import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import com.ylabz.basepro.applications.bike.database.RideLocationEntity
 import com.ylabz.basepro.applications.bike.database.repository.UserProfileRepository
-import com.ylabz.basepro.applications.bike.features.main.ui.WeatherUseCase
 import com.ylabz.basepro.applications.bike.features.main.usecase.CalculateCaloriesUseCase
 import com.ylabz.basepro.applications.bike.features.main.usecase.UserStats
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
@@ -45,6 +44,7 @@ class BikeForegroundService : LifecycleService() {
 
     @Inject
     lateinit var repo: BikeRideRepo
+
     @Inject
     lateinit var calculateCaloriesUseCase: CalculateCaloriesUseCase
 
@@ -155,19 +155,41 @@ class BikeForegroundService : LifecycleService() {
         var displayCalories: Int
         var displayDuration: String
         var displayMaxSpeed: Double
+        var displayAverageSpeed: Double
 
         if (isFormalRideActive) {
-            displayDistanceKm = (continuousDistanceMeters - formalRideSegmentStartOffsetDistanceMeters) / 1000f
-            displayCalories = _rideInfo.value.caloriesBurned // This is now updated monotonically by the calorie collector
+            val segmentDistanceMeters = continuousDistanceMeters - formalRideSegmentStartOffsetDistanceMeters
+            val segmentDurationMillis = System.currentTimeMillis() - formalRideSegmentStartTimeMillis
+            val segmentDurationSeconds = segmentDurationMillis / 1000f
+
+            displayDistanceKm = segmentDistanceMeters / 1000f
+            displayCalories = _rideInfo.value.caloriesBurned
             displayDuration = formatDuration(System.currentTimeMillis() - formalRideSegmentUiResetTimeMillis)
             formalRideSegmentMaxSpeedKph = max(formalRideSegmentMaxSpeedKph, speedKph)
             displayMaxSpeed = formalRideSegmentMaxSpeedKph
+
+            displayAverageSpeed = if (segmentDurationSeconds > 0 && segmentDistanceMeters > 0) {
+                (segmentDistanceMeters / segmentDurationSeconds) * 3.6
+            } else {
+                0.0
+            }
+
             formalRideTrackPoints.add(location)
         } else {
+            val continuousDurationMillis = System.currentTimeMillis() - continuousSessionStartTimeMillis
+            val continuousDurationSeconds = continuousDurationMillis / 1000f
+
             displayDistanceKm = continuousDistanceMeters / 1000f
             displayCalories = continuousCaloriesBurned.toInt()
-            displayDuration = formatDuration(System.currentTimeMillis() - continuousSessionStartTimeMillis)
+            displayDuration = formatDuration(continuousDurationMillis)
             displayMaxSpeed = continuousMaxSpeedKph
+
+            // --- CORRECTED: Calculate average speed for continuous session as well ---
+            displayAverageSpeed = if (continuousDurationSeconds > 0 && continuousDistanceMeters > 0) {
+                (continuousDistanceMeters / continuousDurationSeconds) * 3.6
+            } else {
+                0.0
+            }
         }
 
         _rideInfo.value = _rideInfo.value.copy(
@@ -177,6 +199,7 @@ class BikeForegroundService : LifecycleService() {
             caloriesBurned = displayCalories,
             rideDuration = displayDuration,
             maxSpeed = displayMaxSpeed,
+            averageSpeed = displayAverageSpeed,
             elevation = location.altitude,
             heading = if (location.hasBearing()) location.bearing else _rideInfo.value.heading,
             rideState = _rideInfo.value.rideState
@@ -256,6 +279,7 @@ class BikeForegroundService : LifecycleService() {
             caloriesBurned = 0, // UI reset for calories
             rideDuration = "00:00",
             maxSpeed = 0.0,
+            averageSpeed = 0.0, // Reset average speed for the new segment
             bikeWeatherInfo = null // Clear old weather before fetching
         )
 
@@ -317,7 +341,8 @@ class BikeForegroundService : LifecycleService() {
                 currentTripDistance = continuousDistanceMeters / 1000f,
                 caloriesBurned = continuousCaloriesBurned.toInt(), // Revert to continuous calories
                 rideDuration = formatDuration(System.currentTimeMillis() - continuousSessionStartTimeMillis),
-                maxSpeed = continuousMaxSpeedKph
+                maxSpeed = continuousMaxSpeedKph,
+                averageSpeed = 0.0 // Reset average speed after ride ends
             )
             currentFormalRideId = null
             formalRideTrackPoints.clear()
@@ -432,3 +457,4 @@ class BikeForegroundService : LifecycleService() {
         )
     }
 }
+

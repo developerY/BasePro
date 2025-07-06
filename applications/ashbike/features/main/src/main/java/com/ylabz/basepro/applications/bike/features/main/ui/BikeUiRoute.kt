@@ -24,7 +24,7 @@ import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
 @OptIn(ExperimentalPermissionsApi::class)
 @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
 @Composable
-fun BikeUiRouteNew(
+fun BikeUiRoute(
     modifier: Modifier = Modifier,
     navTo: (String) -> Unit,
     viewModel: BikeViewModel // <<< MODIFIED LINE: Accept BikeViewModel as a parameter
