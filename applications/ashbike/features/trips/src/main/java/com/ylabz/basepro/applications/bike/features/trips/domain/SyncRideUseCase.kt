@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.features.trips.data
+package com.ylabz.basepro.applications.bike.features.trips.domain
 
 import android.annotation.SuppressLint
 import android.health.connect.datatypes.ExerciseSegmentType
