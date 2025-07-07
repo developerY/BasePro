@@ -68,6 +68,10 @@ class BikeForegroundService : LifecycleService() {
     // private var formalRideSegmentStartOffsetCalories: Float = 0f // No longer needed due to currentFormalRideHighestCalories
     private var formalRideSegmentMaxSpeedKph: Double = 0.0
     private var currentFormalRideHighestCalories: Int = 0 // <<<< NEW VARIABLE
+    // --- ADDED: Elevation tracking for formal rides ---
+    private var formalRideElevationGainMeters: Double = 0.0
+    private var formalRideElevationLossMeters: Double = 0.0
+
 
     private lateinit var userStatsFlow: Flow<UserStats>
     private var caloriesCalculationJob: Job? = null
@@ -147,9 +151,18 @@ class BikeForegroundService : LifecycleService() {
                 if (distanceIncrement >= MIN_DISTANCE_THRESHOLD_METERS) { // Check min distance
                     continuousDistanceMeters += distanceIncrement
                 }
+
+                // --- ADDED: Elevation Gain/Loss Calculation ---
+                if (isFormalRideActive && location.hasAltitude() && lastLoc.hasAltitude()) {
+                    val altitudeChange = location.altitude - lastLoc.altitude
+                    if (altitudeChange > 0) {
+                        formalRideElevationGainMeters += altitudeChange
+                    } else {
+                        formalRideElevationLossMeters += -altitudeChange // Add the positive value of the loss
+                    }
+                }
             }
         }
-
 
         var displayDistanceKm: Float
         var displayCalories: Int
@@ -201,6 +214,8 @@ class BikeForegroundService : LifecycleService() {
             maxSpeed = displayMaxSpeed,
             averageSpeed = displayAverageSpeed,
             elevation = location.altitude,
+            elevationGain = formalRideElevationGainMeters, // <-- ADDED
+            elevationLoss = formalRideElevationLossMeters, // <-- ADDED
             heading = if (location.hasBearing()) location.bearing else _rideInfo.value.heading,
             rideState = _rideInfo.value.rideState
         )
@@ -268,6 +283,8 @@ class BikeForegroundService : LifecycleService() {
         formalRideSegmentUiResetTimeMillis = System.currentTimeMillis()
         formalRideTrackPoints.clear()
         currentFormalRideHighestCalories = 0 // <<<< RESETTING THE NEW VARIABLE
+        formalRideElevationGainMeters = 0.0 // <-- ADDED: Reset on new ride
+        formalRideElevationLossMeters = 0.0 // <-- ADDED: Reset on new ride
 
         formalRideSegmentStartOffsetDistanceMeters = continuousDistanceMeters
         // formalRideSegmentStartOffsetCalories no longer needed here
@@ -279,8 +296,9 @@ class BikeForegroundService : LifecycleService() {
             caloriesBurned = 0, // UI reset for calories
             rideDuration = "00:00",
             maxSpeed = 0.0,
-            averageSpeed = 0.0, // Reset average speed for the new segment
-            bikeWeatherInfo = null // Clear old weather before fetching
+            averageSpeed = 0.0,
+            elevationGain = 0.0, // <-- ADDED: Reset UI
+            elevationLoss = 0.0  // <-- ADDED: Reset UI
         )
 
         startOrRestartCalorieCalculation(isFormalRideActive = true)
@@ -320,8 +338,8 @@ class BikeForegroundService : LifecycleService() {
             startLng = formalRideTrackPoints.firstOrNull()?.longitude ?: 0.0,
             endLat = formalRideTrackPoints.lastOrNull()?.latitude ?: 0.0,
             endLng = formalRideTrackPoints.lastOrNull()?.longitude ?: 0.0,
-            elevationGain = 0f,
-            elevationLoss = 0f,
+            elevationGain = formalRideElevationGainMeters.toFloat(), // <-- CORRECTED: Save final value
+            elevationLoss = formalRideElevationLossMeters.toFloat(), // <-- CORRECTED: Save final value
             caloriesBurned = segmentCalories,
             isHealthDataSynced = false,
             weatherCondition = _rideInfo.value.bikeWeatherInfo?.conditionDescription
