@@ -304,8 +304,10 @@ class BikeForegroundService : LifecycleService() {
         val segmentMaxSpeed = formalRideSegmentMaxSpeedKph
 
         val averageSpeedKph = if (segmentDurationSeconds > 0 && segmentDistanceMeters > 0) {
-            (segmentDistanceMeters / segmentDurationSeconds) * 3.6f
-        } else 0f
+            (segmentDistanceMeters.toDouble() / segmentDurationSeconds.toDouble()) * 3.6
+        } else {
+            0.0
+        }
 
         val rideSummaryEntity = BikeRideEntity(
             rideId = rideIdToFinalize,
