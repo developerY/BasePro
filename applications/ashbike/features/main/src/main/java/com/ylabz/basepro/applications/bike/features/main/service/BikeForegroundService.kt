@@ -28,12 +28,14 @@ import com.ylabz.basepro.applications.bike.features.main.usecase.UserStats
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.UUID
 import javax.inject.Inject
 import kotlin.math.max
@@ -116,6 +118,14 @@ class BikeForegroundService : LifecycleService() {
             }
         }
         return START_STICKY
+    }
+
+    // --- ADDED: Resource Cleanup ---
+    override fun onDestroy() {
+        super.onDestroy()
+        // Stop location updates when the service is destroyed to prevent leaks.
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+        Log.d("BikeForegroundService", "Service destroyed, location updates removed.")
     }
 
     @SuppressLint("MissingPermission")
@@ -367,9 +377,13 @@ class BikeForegroundService : LifecycleService() {
         }
 
         lifecycleScope.launch {
-            repo.insertRideWithLocations(rideSummaryEntity, locationEntities)
-            Log.d("BikeForegroundService", "Formal ride $rideIdToFinalize saved.")
+            // --- CORRECTED: Move database operation to a background thread ---
+            withContext(Dispatchers.IO) {
+                repo.insertRideWithLocations(rideSummaryEntity, locationEntities)
+                Log.d("BikeForegroundService", "Formal ride $rideIdToFinalize saved.")
+            }
 
+            // --- CORRECTED: Update state and restart calculations after saving ---
             _rideInfo.value = _rideInfo.value.copy(
                 rideState = RideState.Ended,
                 currentTripDistance = continuousDistanceMeters / 1000f,
