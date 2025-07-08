@@ -61,6 +61,10 @@ playServicesCodeScanner = "16.1.0" # QR Scanner
 compileSdk = "36"
 targetSdk = "35"
 lifecycleService = "2.9.1"
+# firebaseCrashlytics = "19.4.4" # Removed, BoM will manage
+firebaseBom = "33.16.0" # Added Firebase BoM version
+googleGmsGoogleServices = "4.4.3"
+googleFirebaseCrashlytics = "3.0.4"
 
 [libraries]
 compileSdk = { module = "com.android.tools.build:gradle", version.ref = "compileSdk" }
@@ -194,6 +198,13 @@ gms-play-services-code-scanner = { module = "com.google.android.gms:play-service
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycleService" }
 
+# Firebase
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" } # Added
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" } # Version removed
+# firebase-auth = { group = "com.google.firebase", name = "firebase-auth" } # Added
+# firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" } # Added
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" } # Added
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }  # Android application plugin
@@ -207,3 +218,5 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 mapsplatform-secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "mapsplatformSecretsPlugin" }
 
 apollo-graphql = { id = "com.apollographql.apollo3", version.ref = "apollo" }
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "googleFirebaseCrashlytics" }

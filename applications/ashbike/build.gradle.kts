@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
     alias(libs.plugins.mapsplatform.secrets)
+    alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.google.firebase.crashlytics)
 }
 
 android {
@@ -90,6 +92,13 @@ dependencies {
     ksp(libs.hilt.android.compiler)   // Hilt compiler dependency for annotation processing
     // Hilt Dependency Injection
     // kapt(libs.hilt.compiler)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom)) // Import the BoM
+    implementation(libs.firebase.crashlytics)  // Now managed by BoM
+    // implementation(libs.firebase.auth)         // Added
+    // implementation(libs.firebase.firestore)    // Added
+    implementation(libs.firebase.analytics)    // Added
 
     // Compose Navigation
     implementation(libs.androidx.navigation.compose) // Added Compose Navigation dependency with safe args plugin
