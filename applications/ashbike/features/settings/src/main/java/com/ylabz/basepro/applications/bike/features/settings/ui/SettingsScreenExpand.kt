@@ -123,13 +123,28 @@ fun SettingsScreenEx(
     ) {
         // --- Profile Card (Always visible) ---
         item {
-            ProfileInfoCardEx(
-                profile = uiState.profile,
-                isEditing = isEditing,
-                onToggleEdit = { isEditing = !isEditing },
-                onEvent = onEvent
-            )
+            // Check if profile is not null before calling ProfileInfoCardEx
+            uiState.profile?.let { nonNullProfile ->
+                ProfileInfoCardEx(
+                    profile = nonNullProfile, // Pass the non-null profile
+                    isEditing = isEditing,
+                    onToggleEdit = { isEditing = !isEditing },
+                    onEvent = onEvent
+                )
+            } ?: run {
+                // Optional: What to display if profile is null
+                Text("Profile data is not available or still loading.")
+            }
             Spacer(modifier = Modifier.height(16.dp))
+
+            // Display an inline alert message if the profile is incomplete
+            if (uiState.isProfileIncomplete && uiState.profile != null) { // Show only if profile exists but is incomplete
+                Text(
+                    text = "Please complete your height and weight in your profile.",
+                    color = Color.Red, // Or MaterialTheme.colorScheme.error
+                    modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
+                )
+            }
         }
 
         // --- App Settings Section ---
@@ -268,7 +283,8 @@ fun SettingsScreenExPreview() {
             "Language" to "English",
             "Notifications" to "Enabled"
         ),
-        profile = dummyProfile
+        profile = dummyProfile,
+        isProfileIncomplete = false // Added for preview consistency
     )
     AshBikeTheme {
         SettingsScreenEx(

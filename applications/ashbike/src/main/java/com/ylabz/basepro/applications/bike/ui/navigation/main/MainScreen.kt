@@ -31,6 +31,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeViewModel
+import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsUiState
+import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsViewModel
 import com.ylabz.basepro.applications.bike.ui.navigation.graphs.bikeNavGraph
 import com.ylabz.basepro.core.ui.BikeScreen
 
@@ -46,6 +48,14 @@ fun MainScreen(
 ) {
     val unsyncedRidesCount by viewModel.unsyncedRidesCount.collectAsState()
     val context = LocalContext.current
+
+    // --- Settings ViewModel for Profile Alert ---
+    val settingsViewModel: SettingsViewModel = hiltViewModel()
+    val settingsUiState by settingsViewModel.uiState.collectAsState()
+    val showProfileAlert = when (val state = settingsUiState) {
+        is SettingsUiState.Success -> state.isProfileIncomplete
+        else -> true // Default to true (show alert) if state is not Success (e.g., Loading)
+    }
 
     // --- Service Binding Logic ---
     val bikeViewModel: BikeViewModel = hiltViewModel() // Instance for MainScreen and its children
@@ -100,7 +110,13 @@ fun MainScreen(
     if (hasLocationPermissions) {
         Scaffold(
             topBar = { TopBarForCurrentRoute(navController) },
-            bottomBar = { HomeBottomBar(navController = navController, unsyncedRidesCount = unsyncedRidesCount) },
+            bottomBar = {
+                HomeBottomBar(
+                    navController = navController,
+                    unsyncedRidesCount = unsyncedRidesCount,
+                    showSettingsProfileAlert = showProfileAlert // Pass the new state here
+                )
+            },
         ) { innerPadding ->
             NavHost(
                 navController = navController,
@@ -139,5 +155,9 @@ fun MainScreenPreview() {
 @Preview
 @Composable
 fun HomeBottomBarPreview() {
-    HomeBottomBar(navController = rememberNavController(), unsyncedRidesCount = 2)
+    HomeBottomBar(
+        navController = rememberNavController(),
+        unsyncedRidesCount = 2,
+        showSettingsProfileAlert = true // Add default for preview
+    )
 }

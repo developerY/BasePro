@@ -1,8 +1,10 @@
-package com.ylabz.basepro.settings.ui
+package com.ylabz.basepro.feature.settings.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
+import com.ylabz.basepro.settings.ui.SettingsEvent
+import com.ylabz.basepro.settings.ui.SettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

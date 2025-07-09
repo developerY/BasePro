@@ -1,10 +1,10 @@
 package com.ylabz.basepro.settings.ui
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ylabz.basepro.feature.settings.ui.SettingsViewModel
 import com.ylabz.basepro.settings.ui.components.ErrorScreen
 import com.ylabz.basepro.settings.ui.components.LoadingScreen
 import com.ylabz.basepro.settings.ui.components.SettingsCompose

@@ -12,7 +12,8 @@ sealed interface SettingsUiState {
     data class Success(
         val options: Map<String, List<String>>,
         val selections: Map<String, String>,
-        val profile: ProfileData
+        val profile: ProfileData? = null, // Make nullable and provide default
+        val isProfileIncomplete: Boolean = true // Add this field
     ) : SettingsUiState
     data class Error(val message: String) : SettingsUiState
 }

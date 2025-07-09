@@ -30,7 +30,8 @@ import com.ylabz.basepro.core.ui.BikeScreen
 @Composable
 fun HomeBottomBar(
     navController: NavHostController,
-    unsyncedRidesCount: Int // Accept the count as a parameter
+    unsyncedRidesCount: Int, // Accept the count as a parameter
+    showSettingsProfileAlert: Boolean // New parameter
 ) {
 
     // val unsyncedRidesCount by tripsViewModel.unsyncedRidesCount.collectAsState() // Removed
@@ -53,7 +54,7 @@ fun HomeBottomBar(
             title = "Settings", // Category -> Cat
             selectedIcon = Icons.TwoTone.Settings,
             unselectedIcon = Icons.Outlined.Settings,
-            hasNews = true, // This item can still have its own news indicator
+            hasNews = showSettingsProfileAlert, // Use the new parameter
         ),
     )
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
