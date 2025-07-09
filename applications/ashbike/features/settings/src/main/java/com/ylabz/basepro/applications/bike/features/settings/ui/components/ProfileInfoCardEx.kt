@@ -45,6 +45,7 @@ import com.ylabz.basepro.core.ui.theme.AshBikeTheme
 fun ProfileInfoCardEx(
     profile: ProfileData,
     isEditing: Boolean,
+    isProfileIncomplete: Boolean, // Added this parameter
     onToggleEdit: () -> Unit,
     onEvent: (SettingsEvent) -> Unit
 ) {
@@ -64,28 +65,37 @@ fun ProfileInfoCardEx(
         ) {
             if (!isEditing) {
                 // — VIEW MODE: always show latest profile from uiState
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(Icons.Default.Person, contentDescription = null, Modifier.size(48.dp))
-                    Spacer(Modifier.width(16.dp))
-                    Column {
+                Column {
+                    // Display an inline alert message if the profile is incomplete
+                    if (isProfileIncomplete) { // Condition uses the new parameter
                         Text(
-                            profile.name,
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                        )
-                        Text(
-                            "Height: ${profile.heightCm} cm | Weight: ${profile.weightKg} kg",
-                            style = MaterialTheme.typography.bodyMedium
+                            text = "Please update your height & weight.",
+                            color = Color.Red, // Or MaterialTheme.colorScheme.error
+                            modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
                         )
                     }
-                    Spacer(Modifier.weight(1f))
-                    IconButton(onClick = onToggleEdit) {
-                        Icon(Icons.Default.Edit, contentDescription = "Edit Profile")
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.Person, contentDescription = null, Modifier.size(48.dp))
+                        Spacer(Modifier.width(16.dp))
+                        Column {
+                            Text(
+                                profile.name,
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                            )
+                            Text(
+                                "Height: ${profile.heightCm} cm | Weight: ${profile.weightKg} kg",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                        Spacer(Modifier.weight(1f))
+                        IconButton(onClick = onToggleEdit) {
+                            Icon(Icons.Default.Edit, contentDescription = "Edit Profile")
+                        }
                     }
                 }
-
             } else {
                 // — EDIT MODE: local, saveable state initialized once
                 var localName by rememberSaveable { mutableStateOf(profile.name) }
@@ -148,54 +158,58 @@ fun ProfileInfoCardEx(
     }
 }
 
-@Preview(name = "View Mode Light", showBackground = true)
+
+@Preview(name = "View Mode Light - Incomplete", showBackground = true)
 @Composable
-fun ProfileInfoCardExPreviewViewMode() {
-    val profile = ProfileData(
-        name = "John Doe",
-        heightCm = "180",
-        weightKg = "75"
-    )
+fun ProfileInfoCardExPreviewViewModeIncomplete() {
+    val profile = ProfileData(name = "John Doe", heightCm = "0", weightKg = "0")
     AshBikeTheme {
-        ProfileInfoCardEx(profile = profile, isEditing = false, onToggleEdit = {}, onEvent = {})
+        ProfileInfoCardEx(profile = profile, isEditing = false, isProfileIncomplete = true, onToggleEdit = {}, onEvent = {})
+    }
+}
+
+@Preview(name = "View Mode Light - Complete", showBackground = true)
+@Composable
+fun ProfileInfoCardExPreviewViewModeComplete() {
+    val profile = ProfileData(name = "John Doe", heightCm = "180", weightKg = "75")
+    AshBikeTheme {
+        ProfileInfoCardEx(profile = profile, isEditing = false, isProfileIncomplete = false, onToggleEdit = {}, onEvent = {})
     }
 }
 
 @Preview(name = "Edit Mode Light", showBackground = true)
 @Composable
 fun ProfileInfoCardExPreviewEditMode() {
-    val profile = ProfileData(
-        name = "John Doe",
-        heightCm = "180",
-        weightKg = "75"
-    )
+    val profile = ProfileData(name = "John Doe", heightCm = "180", weightKg = "75")
     AshBikeTheme {
-        ProfileInfoCardEx(profile = profile, isEditing = true, onToggleEdit = {}, onEvent = {})
+        ProfileInfoCardEx(profile = profile, isEditing = true, isProfileIncomplete = false, onToggleEdit = {}, onEvent = {})
     }
 }
 
-@Preview(name = "View Mode Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "View Mode Dark - Incomplete", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun ProfileInfoCardExPreviewViewModeDark() {
-    val profile = ProfileData(
-        name = "John Doe",
-        heightCm = "180",
-        weightKg = "75"
-    )
+fun ProfileInfoCardExPreviewViewModeDarkIncomplete() {
+    val profile = ProfileData(name = "John Doe", heightCm = "", weightKg = "")
     AshBikeTheme {
-        ProfileInfoCardEx(profile = profile, isEditing = false, onToggleEdit = {}, onEvent = {})
+        ProfileInfoCardEx(profile = profile, isEditing = false, isProfileIncomplete = true, onToggleEdit = {}, onEvent = {})
     }
 }
+
+@Preview(name = "View Mode Dark - Complete", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun ProfileInfoCardExPreviewViewModeDarkComplete() {
+    val profile = ProfileData(name = "John Doe", heightCm = "180", weightKg = "75")
+    AshBikeTheme {
+        ProfileInfoCardEx(profile = profile, isEditing = false, isProfileIncomplete = false, onToggleEdit = {}, onEvent = {})
+    }
+}
+
 
 @Preview(name = "Edit Mode Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun ProfileInfoCardExPreviewEditModeDark() {
-    val profile = ProfileData(
-        name = "John Doe",
-        heightCm = "180",
-        weightKg = "75"
-    )
+    val profile = ProfileData(name = "John Doe", heightCm = "180", weightKg = "75")
     AshBikeTheme {
-        ProfileInfoCardEx(profile = profile, isEditing = true, onToggleEdit = {}, onEvent = {})
+        ProfileInfoCardEx(profile = profile, isEditing = true, isProfileIncomplete = false, onToggleEdit = {}, onEvent = {})
     }
 }

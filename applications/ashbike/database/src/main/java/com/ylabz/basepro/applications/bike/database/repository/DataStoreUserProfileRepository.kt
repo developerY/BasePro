@@ -7,6 +7,7 @@ import javax.inject.Singleton
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -18,6 +19,7 @@ private object UserPrefsDefaults {
     const val NAME_DEFAULT   = "Ash Monster"
     const val HEIGHT_DEFAULT = "171"  // cm
     const val WEIGHT_DEFAULT = "72"   // kg
+    const val PROFILE_REVIEWED_OR_SAVED_DEFAULT = false // Default for the new flag
 }
 
 // Keys for your preferences
@@ -25,6 +27,8 @@ private object UserPrefsKeys {
     val NAME   = stringPreferencesKey("user_name")
     val HEIGHT = stringPreferencesKey("user_height_cm")
     val WEIGHT = stringPreferencesKey("user_weight_kg")
+    // Add the new boolean key
+    val PROFILE_REVIEWED_OR_SAVED = booleanPreferencesKey("profile_reviewed_or_saved_by_user")
 }
 
 // 2) DataStore implementation
@@ -52,6 +56,12 @@ class DataStoreUserProfileRepository @Inject constructor(
                 ?: UserPrefsDefaults.WEIGHT_DEFAULT
         }
 
+    // Implement the new flow from the interface
+    override val profileReviewedOrSavedFlow: Flow<Boolean> = dataStore.data
+        .map { prefs ->
+            prefs[UserPrefsKeys.PROFILE_REVIEWED_OR_SAVED] ?: UserPrefsDefaults.PROFILE_REVIEWED_OR_SAVED_DEFAULT
+        }
+
     override suspend fun setName(newName: String) {
         dataStore.edit { prefs -> prefs[UserPrefsKeys.NAME] = newName }
     }
@@ -66,9 +76,11 @@ class DataStoreUserProfileRepository @Inject constructor(
 
     override suspend fun saveProfile(profile: ProfileData) {
         dataStore.edit { prefs ->
-            prefs[UserPrefsKeys.NAME]   = profile.name
+            prefs[UserPrefsKeys.NAME] = profile.name
             prefs[UserPrefsKeys.HEIGHT] = profile.heightCm
             prefs[UserPrefsKeys.WEIGHT] = profile.weightKg
+            // Set the reviewed/saved flag to true when profile is saved
+            prefs[UserPrefsKeys.PROFILE_REVIEWED_OR_SAVED] = true
         }
     }
 }

@@ -126,25 +126,20 @@ fun SettingsScreenEx(
             // Check if profile is not null before calling ProfileInfoCardEx
             uiState.profile?.let { nonNullProfile ->
                 ProfileInfoCardEx(
-                    profile = nonNullProfile, // Pass the non-null profile
+                    profile = nonNullProfile,
                     isEditing = isEditing,
                     onToggleEdit = { isEditing = !isEditing },
-                    onEvent = onEvent
+                    onEvent = onEvent,
+                    isProfileIncomplete = uiState.isProfileIncomplete // Pass the flag here
                 )
             } ?: run {
                 // Optional: What to display if profile is null
-                Text("Profile data is not available or still loading.")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Display an inline alert message if the profile is incomplete
-            if (uiState.isProfileIncomplete && uiState.profile != null) { // Show only if profile exists but is incomplete
                 Text(
-                    text = "Please complete your height and weight in your profile.",
-                    color = Color.Red, // Or MaterialTheme.colorScheme.error
-                    modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
+                    "Profile data is not available or still loading.",
+                    modifier = Modifier.padding(16.dp)
                 )
             }
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
         // --- App Settings Section ---

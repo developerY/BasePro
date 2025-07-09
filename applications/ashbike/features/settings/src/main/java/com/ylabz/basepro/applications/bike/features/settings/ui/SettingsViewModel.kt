@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.settings.ui
 
+import android.util.Log // Added for robust logging
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.database.ProfileData
@@ -56,20 +57,48 @@ class SettingsViewModel @Inject constructor(
 
     // 4) Combine everything into one UiState
     val uiState: StateFlow<SettingsUiState> =
-        combine(settingsSelections, profileData) { selections, profile ->
+        combine(
+            settingsSelections,
+            profileData,
+            profileRepo.profileReviewedOrSavedFlow // Collect the new flow
+        ) { selections, profile, profileHasBeenReviewedOrSaved -> // New parameter from the flow
+
+            Log.d("ViewModelCombine", "Profile in combine: Name='${profile.name}', H='${profile.heightCm}', W='${profile.weightKg}'")
+            Log.d("ViewModelCombine", "Profile reviewed or saved by user: $profileHasBeenReviewedOrSaved")
+
+            // Badge is ON until the first save, then it's OFF permanently.
+            val actuallyIncomplete = if (!profileHasBeenReviewedOrSaved) {
+                true // Profile hasn't been explicitly saved/reviewed by user yet
+            } else {
+                false // User has saved at least once, badge turns off and stays off
+            }
+            Log.d("ViewModelCombine", "Calculated actuallyIncomplete (isProfileIncomplete): $actuallyIncomplete")
+
             SettingsUiState.Success(
-                options    = staticOptions,
+                options = staticOptions,
                 selections = selections,
-                profile    = profile
-            ) as SettingsUiState
+                profile = profile,
+                isProfileIncomplete = actuallyIncomplete
+            )
         }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, SettingsUiState.Loading)
+            .map { successState -> successState as SettingsUiState } // Upcast to allow Error emission in catch
+            .catch { e ->
+                Log.e("ViewModelCombine", "Error in uiState combine: ${e.message}", e)
+                emit(SettingsUiState.Error("Failed to combine UI state: ${e.message}"))
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.Eagerly,
+                initialValue = SettingsUiState.Loading
+            )
 
     // 5) Handle both settings and profile updates
     fun onEvent(event: SettingsEvent) {
         when (event) {
             is SettingsEvent.LoadSettings -> {
-                // no-op: Flows are already hot
+                // no-op: Flows are already hot and uiState is actively combining them.
+                // If there's a need to force a refresh from repository (e.g., if repo doesn't use hot flows),
+                // you would trigger that here. But with DataStore flows, it's usually not needed.
             }
             is SettingsEvent.UpdateSetting -> {
                 viewModelScope.launch {
@@ -77,12 +106,26 @@ class SettingsViewModel @Inject constructor(
                         "Theme"         -> appRepo.setTheme(event.value)
                         "Language"      -> appRepo.setLanguage(event.value)
                         "Notifications" -> appRepo.setNotifications(event.value)
+                        // Add other settings handling here if necessary
+                        else -> Log.w("SettingsViewModel", "Unhandled setting key: ${event.key}")
                     }
                 }
             }
             is SettingsEvent.SaveProfile -> {
                 viewModelScope.launch {
-                    profileRepo.saveProfile(event.profile)
+                    Log.d("SettingsViewModel", "Saving profile: Name=${event.profile.name}, H=${event.profile.heightCm}, W=${event.profile.weightKg}")
+                    try {
+                        profileRepo.saveProfile(event.profile)
+                        Log.d("SettingsViewModel", "Profile save initiated for ${event.profile.name}")
+                        // The uiState flow will automatically update due to DataStore's reactive nature
+                        // if profileRepo.saveProfile successfully updates the DataStore values that
+                        // nameFlow, heightFlow, and weightFlow are observing.
+                    } catch (e: Exception) {
+                        Log.e("SettingsViewModel", "Failed to save profile for ${event.profile.name}", e)
+                        // Optionally update UI to show error, though the state itself might not change
+                        // if the save fails silently in the repo or if the flows don't reflect the error.
+                        // Consider emitting a temporary error event or using a separate error StateFlow.
+                    }
                 }
             }
         }

@@ -16,6 +16,8 @@ interface UserProfileRepository {
     val heightFlow: Flow<String>
     val weightFlow: Flow<String>
 
+    val profileReviewedOrSavedFlow: Flow<Boolean>
+
     suspend fun setName(newName: String)
     suspend fun setHeight(cm: String)
     suspend fun setWeight(kg: String)
