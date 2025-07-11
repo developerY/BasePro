@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gpx version="1.1" creator="ChatGPT"
+     xmlns="http://www.topografix.com/GPX/1/1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+    <metadata>
+        <name>Bryant Park Zigzag Short Loop</name>
+        <desc>Compact loop around Bryant Park for testing, with more turns and half the distance.
+        </desc>
+    </metadata>
+    <trk>
+        <name>Bryant Park Short Zigzag</name>
+        <trkseg>
+            <trkpt lat="40.7536" lon="-73.9832">
+                <ele>12.0</ele>
+                <time>2025-06-20T18:30:00Z</time>
+            </trkpt>
+            <trkpt lat="40.7536" lon="-73.987">
+                <ele>12.5</ele>
+                <time>2025-06-20T18:30:30Z</time>
+            </trkpt>
+            <trkpt lat="40.75" lon="-73.987">
+                <ele>13.0</ele>
+                <time>2025-06-20T18:31:00Z</time>
+            </trkpt>
+            <trkpt lat="40.75" lon="-73.985">
+                <ele>13.5</ele>
+                <time>2025-06-20T18:31:30Z</time>
+            </trkpt>
+            <trkpt lat="40.7517" lon="-73.985">
+                <ele>14.0</ele>
+                <time>2025-06-20T18:32:00Z</time>
+            </trkpt>
+            <trkpt lat="40.7517" lon="-73.9835">
+                <ele>14.5</ele>
+                <time>2025-06-20T18:32:30Z</time>
+            </trkpt>
+            <trkpt lat="40.7536" lon="-73.9832">
+                <ele>15.0</ele>
+                <time>2025-06-20T18:33:00Z</time>
+            </trkpt>
+        </trkseg>
+    </trk>
+</gpx>

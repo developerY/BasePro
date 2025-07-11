@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gpx version="1.1" creator="Gemini"
+     xmlns="http://www.topografix.com/GPX/1/1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+    <metadata>
+        <name>Midtown Manhattan Dense Zigzag Loop</name>
+        <desc>A dense, high-turn-count loop for GPS simulation. The route zigzags between 8th and 9th Avenues from W 42nd St down to W 35th St. It features many turns over a short distance.</desc>
+    </metadata>
+    <trk>
+        <name>Midtown Dense Zigzag (8th-9th Ave)</name>
+        <trkseg>
+            <!-- Start at 8th Ave & W 42nd St -->
+            <trkpt lat="40.7578" lon="-73.9906"><ele>15.5</ele><time>2025-07-11T19:00:00Z</time></trkpt>
+            <!-- West on 42nd St -->
+            <trkpt lat="40.7583" lon="-73.9920"><ele>15.7</ele><time>2025-07-11T19:00:15Z</time></trkpt>
+            <trkpt lat="40.7588" lon="-73.9934"><ele>15.8</ele><time>2025-07-11T19:00:30Z</time></trkpt>
+            <!-- South on 9th Ave -->
+            <trkpt lat="40.7582" lon="-73.9938"><ele>15.9</ele><time>2025-07-11T19:00:45Z</time></trkpt>
+            <trkpt lat="40.7576" lon="-73.9942"><ele>16.0</ele><time>2025-07-11T19:01:00Z</time></trkpt>
+            <!-- East on 41st St -->
+            <trkpt lat="40.7572" lon="-73.9928"><ele>15.8</ele><time>2025-07-11T19:01:15Z</time></trkpt>
+            <trkpt lat="40.7567" lon="-73.9913"><ele>15.6</ele><time>2025-07-11T19:01:30Z</time></trkpt>
+            <!-- South on 8th Ave -->
+            <trkpt lat="40.7561" lon="-73.9915"><ele>15.5</ele><time>2025-07-11T19:01:45Z</time></trkpt>
+            <trkpt lat="40.7555" lon="-73.9917"><ele>15.4</ele><time>2025-07-11T19:02:00Z</time></trkpt>
+            <!-- West on 40th St -->
+            <trkpt lat="40.7560" lon="-73.9931"><ele>15.6</ele><time>2025-07-11T19:02:15Z</time></trkpt>
+            <trkpt lat="40.7565" lon="-73.9945"><ele>15.8</ele><time>2025-07-11T19:02:30Z</time></trkpt>
+            <!-- South on 9th Ave -->
+            <trkpt lat="40.7559" lon="-73.9949"><ele>15.9</ele><time>2025-07-11T19:02:45Z</time></trkpt>
+            <trkpt lat="40.7553" lon="-73.9953"><ele>16.0</ele><time>2025-07-11T19:03:00Z</time></trkpt>
+            <!-- East on 39th St -->
+            <trkpt lat="40.7549" lon="-73.9939"><ele>15.8</ele><time>2025-07-11T19:03:15Z</time></trkpt>
+            <trkpt lat="40.7544" lon="-73.9924"><ele>15.6</ele><time>2025-07-11T19:03:30Z</time></trkpt>
+            <!-- South on 8th Ave -->
+            <trkpt lat="40.7538" lon="-73.9926"><ele>15.5</ele><time>2025-07-11T19:03:45Z</time></trkpt>
+            <trkpt lat="40.7532" lon="-73.9928"><ele>15.4</ele><time>2025-07-11T19:04:00Z</time></trkpt>
+            <!-- West on 38th St -->
+            <trkpt lat="40.7537" lon="-73.9942"><ele>15.6</ele><time>2025-07-11T19:04:15Z</time></trkpt>
+            <trkpt lat="40.7542" lon="-73.9956"><ele>15.8</ele><time>2025-07-11T19:04:30Z</time></trkpt>
+            <!-- South on 9th Ave -->
+            <trkpt lat="40.7536" lon="-73.9960"><ele>15.9</ele><time>2025-07-11T19:04:45Z</time></trkpt>
+            <trkpt lat="40.7530" lon="-73.9964"><ele>16.0</ele><time>2025-07-11T19:05:00Z</time></trkpt>
+            <!-- East on 37th St -->
+            <trkpt lat="40.7526" lon="-73.9950"><ele>15.8</ele><time>2025-07-11T19:05:15Z</time></trkpt>
+            <trkpt lat="40.7521" lon="-73.9935"><ele>15.6</ele><time>2025-07-11T19:05:30Z</time></trkpt>
+            <!-- South on 8th Ave -->
+            <trkpt lat="40.7515" lon="-73.9937"><ele>15.5</ele><time>2025-07-11T19:05:45Z</time></trkpt>
+            <trkpt lat="40.7509" lon="-73.9939"><ele>15.4</ele><time>2025-07-11T19:06:00Z</time></trkpt>
+            <!-- West on 36th St -->
+            <trkpt lat="40.7514" lon="-73.9953"><ele>15.6</ele><time>2025-07-11T19:06:15Z</time></trkpt>
+            <trkpt lat="40.7519" lon="-73.9967"><ele>15.8</ele><time>2025-07-11T19:06:30Z</time></trkpt>
+            <!-- South on 9th Ave -->
+            <trkpt lat="40.7513" lon="-73.9971"><ele>15.9</ele><time>2025-07-11T19:06:45Z</time></trkpt>
+            <trkpt lat="40.7507" lon="-73.9975"><ele>16.0</ele><time>2025-07-11T19:07:00Z</time></trkpt>
+            <!-- East on 35th St to end -->
+            <trkpt lat="40.7503" lon="-73.9961"><ele>15.8</ele><time>2025-07-11T19:07:15Z</time></trkpt>
+            <trkpt lat="40.7498" lon="-73.9946"><ele>15.6</ele><time>2025-07-11T19:07:30Z</time></trkpt>
+        </trkseg>
+    </trk>
+</gpx>

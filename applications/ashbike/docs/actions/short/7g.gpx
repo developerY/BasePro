@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gpx version="1.1" creator="Gemini"
+     xmlns="http://www.topografix.com/GPX/1/1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+    <metadata>
+        <name>Midtown Dense Zigzag Loop (7th-8th Ave)</name>
+        <desc>A dense, high-turn-count loop between 7th and 8th Avenues, from W 42nd St to W 38th St. Features significant speed variations (20-50 km/h) for advanced GPS simulation.</desc>
+    </metadata>
+    <trk>
+        <name>Midtown Dense Zigzag (7th-8th Ave) with Speed Variation</name>
+        <trkseg>
+            <!-- Start at 7th Ave & W 42nd St -->
+            <trkpt lat="40.7568" lon="-73.9878"><ele>15.2</ele><time>2025-07-11T20:00:00Z</time></trkpt>
+
+            <!-- West on 42nd St to 8th Ave (Fast Speed: ~50 km/h) -->
+            <trkpt lat="40.7578" lon="-73.9906"><ele>15.5</ele><time>2025-07-11T20:00:17Z</time></trkpt>
+
+            <!-- South on 8th Ave to W 41st St (Slow Speed: ~20 km/h) -->
+            <trkpt lat="40.7570" lon="-73.9909"><ele>15.4</ele><time>2025-07-11T20:00:31Z</time></trkpt>
+
+            <!-- East on 41st St to 7th Ave (Medium Speed: ~35 km/h) -->
+            <trkpt lat="40.7560" lon="-73.9881"><ele>15.1</ele><time>2025-07-11T20:00:56Z</time></trkpt>
+
+            <!-- South on 7th Ave to W 40th St (Fast Speed: ~50 km/h) -->
+            <trkpt lat="40.7552" lon="-73.9884"><ele>15.0</ele><time>2025-07-11T20:01:02Z</time></trkpt>
+
+            <!-- West on 40th St to 8th Ave (Slow Speed: ~20 km/h) -->
+            <trkpt lat="40.7562" lon="-73.9912"><ele>15.4</ele><time>2025-07-11T20:01:45Z</time></trkpt>
+
+            <!-- South on 8th Ave to W 39th St (Medium Speed: ~35 km/h) -->
+            <trkpt lat="40.7554" lon="-73.9915"><ele>15.3</ele><time>2025-07-11T20:01:53Z</time></trkpt>
+
+            <!-- East on 39th St to 7th Ave (Fast Speed: ~50 km/h) -->
+            <trkpt lat="40.7544" lon="-73.9887"><ele>15.0</ele><time>2025-07-11T20:02:10Z</time></trkpt>
+
+            <!-- South on 7th Ave to W 38th St (Slow Speed: ~20 km/h) -->
+            <trkpt lat="40.7536" lon="-73.9890"><ele>14.9</ele><time>2025-07-11T20:02:24Z</time></trkpt>
+
+            <!-- West on 38th St to 8th Ave (Medium Speed: ~35 km/h) -->
+            <trkpt lat="40.7546" lon="-73.9918"><ele>15.3</ele><time>2025-07-11T20:02:49Z</time></trkpt>
+
+            <!-- North on 8th Ave back to W 42nd St (Fast Speed: ~50 km/h) -->
+            <trkpt lat="40.7578" lon="-73.9906"><ele>15.5</ele><time>2025-07-11T20:03:12Z</time></trkpt>
+
+            <!-- East on 42nd St to 7th Ave to close the loop (Medium Speed: ~35 km/h) -->
+            <trkpt lat="40.7568" lon="-73.9878"><ele>15.2</ele><time>2025-07-11T20:03:37Z</time></trkpt>
+        </trkseg>
+    </trk>
+</gpx>

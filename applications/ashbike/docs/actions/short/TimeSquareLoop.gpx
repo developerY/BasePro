@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gpx version="1.1" creator="Gemini"
+     xmlns="http://www.topografix.com/GPX/1/1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+    <metadata>
+        <name>Times Square Dense Zigzag Loop (7th-8th Ave)</name>
+        <desc>A dense, high-turn-count loop in the heart of Times Square between 7th and 8th Avenues, from W 47th St to W 43rd St. Features significant speed variations (20-50 km/h) for advanced GPS simulation.</desc>
+    </metadata>
+    <trk>
+        <name>Times Square Dense Zigzag (7th-8th Ave) with Speed Variation</name>
+        <trkseg>
+            <trkpt lat="40.7593" lon="-73.9848"><ele>16.0</ele><time>2025-07-11T21:00:00Z</time></trkpt>
+
+            <trkpt lat="40.7603" lon="-73.9876"><ele>16.2</ele><time>2025-07-11T21:00:25Z</time></trkpt>
+
+            <trkpt lat="40.7595" lon="-73.9879"><ele>16.1</ele><time>2025-07-11T21:00:40Z</time></trkpt>
+
+            <trkpt lat="40.7585" lon="-73.9851"><ele>15.8</ele><time>2025-07-11T21:00:58Z</time></trkpt>
+
+            <trkpt lat="40.7577" lon="-73.9854"><ele>15.7</ele><time>2025-07-11T21:01:07Z</time></trkpt>
+
+            <trkpt lat="40.7587" lon="-73.9882"><ele>16.0</ele><time>2025-07-11T21:01:50Z</time></trkpt>
+
+            <trkpt lat="40.7579" lon="-73.9885"><ele>15.9</ele><time>2025-07-11T21:01:56Z</time></trkpt>
+
+            <trkpt lat="40.7569" lon="-73.9857"><ele>15.6</ele><time>2025-07-11T21:02:21Z</time></trkpt>
+
+            <trkpt lat="40.7561" lon="-73.9860"><ele>15.5</ele><time>2025-07-11T21:02:36Z</time></trkpt>
+
+            <trkpt lat="40.7571" lon="-73.9888"><ele>15.8</ele><time>2025-07-11T21:02:54Z</time></trkpt>
+
+            <trkpt lat="40.7603" lon="-73.9876"><ele>16.2</ele><time>2025-07-11T21:03:18Z</time></trkpt>
+
+            <trkpt lat="40.7593" lon="-73.9848"><ele>16.0</ele><time>2025-07-11T21:03:43Z</time></trkpt>
+        </trkseg>
+    </trk>
+</gpx>

@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gpx version="1.1" creator="Gemini"
+     xmlns="http://www.topografix.com/GPX/1/1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+    <metadata>
+        <name>Midtown Manhattan Street Loop (7th-9th Ave)</name>
+        <desc>A rectangular loop in Midtown Manhattan that follows the streets. The route goes from 7th Ave to 9th Ave between W 42nd St and W 35th St. Ideal for GPS simulation.</desc>
+    </metadata>
+    <trk>
+        <name>Midtown Street Loop (7th to 9th Ave)</name>
+        <trkseg>
+            <!-- Start at 7th Ave & W 42nd St, heading West on 42nd -->
+            <trkpt lat="40.7568" lon="-73.9878">
+                <ele>15.2</ele>
+                <time>2025-07-11T18:00:00Z</time>
+            </trkpt>
+            <!-- Crossing 8th Ave -->
+            <trkpt lat="40.7578" lon="-73.9906">
+                <ele>15.5</ele>
+                <time>2025-07-11T18:01:30Z</time>
+            </trkpt>
+            <!-- Turning South onto 9th Ave -->
+            <trkpt lat="40.7588" lon="-73.9934">
+                <ele>15.8</ele>
+                <time>2025-07-11T18:03:00Z</time>
+            </trkpt>
+            <!-- Heading South on 9th Ave -->
+            <trkpt lat="40.7562" lon="-73.9952">
+                <ele>16.0</ele>
+                <time>2025-07-11T18:05:00Z</time>
+            </trkpt>
+            <!-- Turning East onto W 35th St -->
+            <trkpt lat="40.7541" lon="-73.9965">
+                <ele>15.7</ele>
+                <time>2025-07-11T18:07:00Z</time>
+            </trkpt>
+            <!-- Heading East on 35th, crossing 8th Ave -->
+            <trkpt lat="40.7522" lon="-73.9920">
+                <ele>15.4</ele>
+                <time>2025-07-11T18:09:00Z</time>
+            </trkpt>
+            <!-- Turning North onto 7th Ave -->
+            <trkpt lat="40.7512" lon="-73.9898">
+                <ele>15.1</ele>
+                <time>2025-07-11T18:10:30Z</time>
+            </trkpt>
+            <!-- Heading North on 7th Ave -->
+            <trkpt lat="40.7540" lon="-73.9888">
+                <ele>15.0</ele>
+                <time>2025-07-11T18:12:30Z</time>
+            </trkpt>
+            <!-- Closing the loop at 7th Ave & W 42nd St -->
+            <trkpt lat="40.7568" lon="-73.9878">
+                <ele>15.2</ele>
+                <time>2025-07-11T18:14:00Z</time>
+            </trkpt>
+        </trkseg>
+    </trk>
+</gpx>
