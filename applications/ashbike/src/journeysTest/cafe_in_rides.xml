@@ -3,19 +3,25 @@
     <description>Test finding nearby cafes from the ride detail screen and verifies the ride
         duration.</description>
     <actions>
-        <action>Given the user is on the main dashboard</action>
-        <action>Click the white "play" button on the middle left side of the screen to start a ride
-            and the play button turns from white to gray</action>
-        <action>Icons and the background turns to color to show the ride is in progress</action>
-        <action>Click on the bike icon between the start and stop buttons this opens a dialog box</action>
-        <action>Enter "10" for the distance</action>
-        <action>Click save</action>
+        <action>Given the user is on the main dashboard and the speedometer is colored</action>
+        <action>Click the white "play" button on the left side of the screen
+            and the play button turns from white to gray with a bike icon</action>
+        <action>The bike icon turns green</action>
+        <!-- action>The stop button the right turns from gray to white</action-->
+        <!--action>Icons and the background turns to color to show the ride is in progress</action-->
+        <action>Click on the green bike icon brings up a distance popup</action>
+        <action>Do not click on anywhere outside the popup as that will close the popup</action>
+        <action>Make sure the distance popup is showing</action>
+        <action>Click on text input field</action>
+        <action>input distance 10</action>
+        <action> Make sure 10 is showing in the input field</action>
+        <action> Make sure 10 is showing in the input field as you keep missing this</action>
         <action>The green bike icon starts moving along the gray bar</action>
-        <action>Click on the weather icon on the top right corner of the screen then the full weather is shown</action>
+        <!-- action>Click on the weather icon on the top right corner of the screen then the full weather is shown</action>
         <action>Click the stop button to end the ride then the end button turns gray and play button is white</action>
         <action>When the user taps on the 'Trips' tab in the bottom navigation</action>
         <action>And the user taps on a specific ride from the list</action>
         <action>And the user taps the 'cafe' button on the top left corner of the green map</action>
-        <action>Then the user sees circle icons of nearby cafes on the green map</action>
+        <action>Then the user sees circle icons of nearby cafes on the green map</action-->
     </actions>
 </journey>
