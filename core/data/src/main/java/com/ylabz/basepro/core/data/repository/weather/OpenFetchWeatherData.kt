@@ -1,5 +1,6 @@
 package com.ylabz.basepro.core.data.repository.weather
 
+import android.util.Log
 import com.ylabz.basepro.core.model.weather.OpenWeatherResponse
 import com.ylabz.basepro.core.data.api.interfaces.OpenWeatherService
 import okhttp3.OkHttpClient
@@ -17,13 +18,13 @@ suspend fun openFetchWeatherByCityData(cityName: String) : OpenWeatherResponse? 
         call = OpenRetrofitClient.openWeatherService.getCurrentOpenWeatherByCity(cityName, OPEN_WEATHER_API_KEY)
     } catch (e: HttpException) {
         if (e.code() == 404) {
-            print("City not found")
+            Log.d("WeatherRepoImpl", "City not found")
         } else {
-            print("Error: ${e.message()}")
+            Log.d("WeatherRepoImpl", "Error: ${e.message()}")
         }
         call = null
     } catch (e: Exception) {
-        print("An unexpected error occurred")
+        Log.d("WeatherRepoImpl", "An unexpected error occurred")
         call = null
     }
     return call
@@ -37,13 +38,13 @@ suspend fun openFetchWeatherByCoords(lat: Double, lon: Double) : OpenWeatherResp
         call = OpenRetrofitClient.openWeatherService.getCurrentOpenWeatherByCoords(lat = lat, lon = lon, OPEN_WEATHER_API_KEY)
     } catch (e: HttpException) {
         if (e.code() == 404) {
-            print("City not found")
+            Log.d("WeatherRepoImpl", "City not found")
         } else {
-            print("Error: ${e.message()}")
+            Log.d("WeatherRepoImpl", "Error: ${e.message()}")
         }
         call = null
     } catch (e: Exception) {
-        print("An unexpected error occurred")
+        Log.d("WeatherRepoImpl", "An unexpected error occurred")
         call = null
     }
     return call
