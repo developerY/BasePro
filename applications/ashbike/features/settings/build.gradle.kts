@@ -39,6 +39,7 @@ dependencies {
     implementation(project(":feature:qrscanner"))
     implementation(project(":feature:nfc"))
     implementation(project(":feature:heatlh"))
+    implementation(project(":feature:ble"))
     implementation(project(":applications:ashbike:database"))
 
     implementation(project("::core:ui"))
