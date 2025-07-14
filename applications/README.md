@@ -1,109 +1,78 @@
-Yes, you can absolutely split out your “features” and your “apps” into separate top-level directories in a multi-module Android project. The Gradle build system doesn’t care too much about *where* your modules live on disk—what matters is that you properly include each module in your **settings.gradle** file and set up dependencies correctly in each module’s Gradle file.
+# AshBike: A Feature-Rich Cycling Computer
 
----
+## 🚴 Overview
 
-## Example directory structure
+Welcome to AshBike, a standalone cycling computer application built on the **BasePro** framework. This application serves as a prime example of how to build a feature-rich, product-focused app by leveraging the shared modules and robust architecture provided by the BasePro project.
 
-A common approach is something like this:
+AshBike provides cyclists with a comprehensive toolset for tracking, analyzing, and managing their rides, from live metric dashboards to historical data analysis and health platform integration.
+
+## ✨ Key Features
+
+* **Live Ride Dashboard**: A real-time, state-driven UI built with Jetpack Compose that displays critical metrics like speed, distance, elevation gain, and calories burned.
+* **Resilient Background Tracking**: Utilizes a `ForegroundService` to ensure accurate and uninterrupted GPS tracking, safeguarding ride data even if the app is backgrounded or the UI is destroyed.
+* **Dedicated Local Database**: All ride data, including detailed location paths, is stored in a dedicated Room database, ensuring full offline functionality and data integrity.
+* **Health Connect Synchronization**: Seamlessly syncs completed rides with Google Health Connect, allowing users to consolidate their fitness data across multiple platforms.
+* **Historical Ride Analysis**: A master-detail interface for browsing past rides, complete with map visualizations of the route taken and detailed performance statistics.
+* **Dynamic Theming**: Adapts its visual theme based on user preferences stored in a local DataStore.
+
+## 🏛️ AshBike Architecture
+
+The `ashbike` application is a self-contained product within the BasePro monorepo. It has its own internal feature and data modules while also consuming the shared `core` libraries.
 
 ```
-Root
- ├─ apps
- │   ├─ MyMainApp
- │   │   ├─ build.gradle.kts
- │   │   └─ ...
- │   ├─ MyOtherApp
- │   │   ├─ build.gradle.kts
- │   │   └─ ...
- │   └─ ...
- ├─ features
- │   ├─ feature_alarm
- │   ├─ feature_camera
- │   ├─ feature_home
- │   ├─ ...
- ├─ core
- │   ├─ data
- │   ├─ domain
- │   ├─ common_ui
- │   └─ ...
- ├─ settings.gradle.kts
- └─ build.gradle.kts
-```
 
-Inside **settings.gradle.kts**, you would include them like this:
+applications/ashbike/
+│
+├── features/                   \# Internal features specific to AshBike
+│   ├── main/                   \# Core ride tracking UI, ViewModel, and ForegroundService
+│   ├── settings/               \# AshBike-specific settings and user profile management
+│   └── trips/                  \# UI and logic for displaying historical ride data
+│
+├── database/                   \# AshBike's dedicated Room database
+│   ├── src/main/java/com/ylabz/basepro/applications/bike/database/
+│   │   ├── di/                 \# Hilt modules for providing the database and DAOs
+│   │   ├── repository/         \# Repository implementation for ride data
+│   │   ├── BikeRideDB.kt       \# The Room database definition
+│   │   ├── BikeRideDao.kt      \# Data Access Object for ride entities
+│   │   └── BikeRideEntity.kt   \# Room entity for storing ride data
+│   └── build.gradle.kts
+│
+├── src/main/java/com/ylabz/basepro/applications/bike/
+│   ├── MainActivity.kt         \# The application's main entry point
+│   ├── ui/navigation/          \# Navigation graphs specific to AshBike
+│   └── MyApplication.kt        \# Hilt application class
+│
+└── build.gradle.kts            \# Application-level build script
 
-```kotlin
-rootProject.name = "BasePro"
+````
 
-include(":apps:MyMainApp")
-include(":apps:MyOtherApp")
+### Architectural Highlights
 
-include(":features:feature_alarm")
-include(":features:feature_camera")
-include(":features:feature_home")
-// etc.
+* **Self-Contained Features**: AshBike's primary functionalities (`main`, `settings`, `trips`) are organized into their own internal `features` modules. This keeps the application's logic isolated and focused.
+* **Dedicated Data Persistence**: By having its own `database` module, AshBike ensures its data schema is decoupled from other applications in the monorepo, preventing conflicts and allowing it to evolve independently.
+* **Leveraging Core Modules**: AshBike heavily relies on the `core` modules of the BasePro project. It uses `core:ui` for theming, `core:data` for sensor repositories (GPS, Compass), and `core:model` for shared data structures, demonstrating the power of the framework's code reuse strategy.
 
-include(":core:data")
-include(":core:domain")
-include(":core:common_ui")
-// etc.
-```
+## 🚀 Getting Started with AshBike
 
-Then, within each module’s **build.gradle.kts**, you declare its dependencies. For example, if your `MyMainApp` depends on the `feature_home` and `feature_camera` modules, you’d have something like:
+Follow these instructions to build and run the AshBike application specifically.
 
-```kotlin
-dependencies {
-    implementation(project(":features:feature_home"))
-    implementation(project(":features:feature_camera"))
-    implementation(project(":core:data"))
-    // etc.
-}
-```
+### Prerequisites
 
----
+* Android Studio (Iguana | 2023.2.1 or later recommended)
+* Java Development Kit (JDK) 17
+* Gradle 8.4
 
-## Considerations for Hilt and Compose Navigation
+### Setup and Installation
 
-1. **Hilt DI**  
-   Hilt doesn’t really care about your file structure; it only cares that each module is set up with Hilt’s Gradle plugin and that your Dagger/Hilt modules (e.g., `@Module`, `@InstallIn`) are discoverable at compile time.
-    - If you have a shared “core” or “data” module that provides repositories or network dependencies, just make sure the `@InstallIn` scopes and the `kapt`/`annotationProcessor` dependencies are configured properly in each Gradle module where you need them.
-
-2. **Compose Navigation**  
-   With Compose Navigation, you can organize each “feature” module so it exports one or more `@Composable` destination(s).
-    - If you’re doing multi-module navigation, you can keep a central `NavHost` in your “app” module and import the Composable screens from your feature modules.
-    - Alternatively, each feature can define its own navigation graph extension, but you just need to ensure you have a consistent way of combining them in the “app” module’s NavHost.
-
-3. **Gradle Settings**
-    - As soon as you physically move a module into a new directory, you must update `include(":...")` paths in **settings.gradle**.
-    - The name after the colon (`:`) in `include` is just the logical name of the module. The path in parentheses (like `(":features:feature_home")`) should match the directory structure you set up.
-
-4. **Package Names**
-    - The package name inside your source files (e.g., `com.example.feature.home`) does not have to match the folder structure in the project. You can keep them the same or rename them.
-    - The important piece is that the `groupId` or `namespace` in the module’s **build.gradle** is set correctly for your code organization and publishing (if applicable).
-
-5. **Refactoring**
-    - If you have existing modules inside `feature/` that are actually entire “app” modules, you can move them into a new `apps/` folder. Then rename them in `settings.gradle` from `(":feature:myApp")` to `(":apps:myApp")`.
-    - Once you do that, you’ll just update any project dependencies that referred to `(":feature:myApp")` to the new name.
-
----
-
-## High-level steps to reorganize
-
-1. **Create new directories**
-    - Create `apps/` at the root level, next to `features/`, `core/`, etc.
-
-2. **Move existing app modules**
-    - Move any modules that are actual Android app “application” modules (i.e., have an `applicationId`, `com.android.application` plugin, etc.) into `apps/`.
-
-3. **Update settings.gradle**
-    - Remove old `include(":feature:someApp")` lines.
-    - Add `include(":apps:someApp")` lines.
-
-4. **Update module references**
-    - In any `build.gradle.kts` that references those modules, change the dependency from `project(":feature:someApp")` to `project(":apps:someApp")`.
-
-5. **Verify**
-    - Sync Gradle and verify that all modules are recognized.
-    - Confirm you can still run each app from Android Studio.
-
-That’s it. The Android Gradle Plugin, Hilt, and Compose Navigation do not have any intrinsic limitations about how you structure your directories. As long as the modules are properly declared in **settings.gradle** and the dependencies are set up, you can freely organize your modules to keep your “features” separate from your “apps.”
+1.  **Clone the BasePro repository**:
+    ```
+    git clone [https://github.com/developerY/BasePro.git](https://github.com/developerY/BasePro.git)
+    cd BasePro
+    ```
+2.  **Open** the project in Android **Studio**.
+3.  **Sync the project with Gradle**.
+4.  **Build and Run AshBike**:
+    * In the top toolbar of Android Studio, find the "Edit Run/Debug Configurations" dropdown.
+    * Select `applications.ashbike`.
+    * Connect your Android device or start an emulator.
+    * Click the "Run" button (▶️) to build and deploy the AshBike app.
