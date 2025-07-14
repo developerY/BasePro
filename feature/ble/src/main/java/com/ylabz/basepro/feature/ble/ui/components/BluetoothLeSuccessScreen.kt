@@ -1,6 +1,6 @@
 package com.ylabz.basepro.feature.ble.ui.components
 
-import android.R.attr.fontWeight
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,13 +9,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,25 +31,23 @@ import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
 import com.ylabz.basepro.core.model.ble.DeviceCharacteristic
 import com.ylabz.basepro.core.model.ble.DeviceService
-import com.ylabz.basepro.core.model.ble.GattCharacteristicValue
 import com.ylabz.basepro.core.model.ble.GattConnectionState
 import com.ylabz.basepro.core.model.ble.ScanState
-import com.ylabz.basepro.feature.ble.ui.BluetoothLeEvent
-import com.ylabz.basepro.feature.ble.ui.BluetoothLeEvent.GattCharacteristicList
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @Composable
 fun BluetoothLeSuccessScreen(
     scanState: ScanState,
     gattConnectionState: GattConnectionState,
-    device: BluetoothDeviceInfo?,
+    activeDevice: BluetoothDeviceInfo?,
+    discoveredDevices: List<BluetoothDeviceInfo>,
+    scanAllDevices: Boolean,
+    onScanAllDevicesChanged: (Boolean) -> Unit,
     isStartScanningEnabled: Boolean,
     startScan: () -> Unit,
     stopScan: () -> Unit,
-    connectToDevice: () -> Unit,
+    connectToActiveDevice: () -> Unit, // Renamed for clarity
     readCharacteristics: () -> Unit,
+    onDeviceSelected: (BluetoothDeviceInfo) -> Unit, // Callback for when a device is selected from the list
     gattServicesList: List<DeviceService>
 ) {
     Column(
@@ -55,12 +56,30 @@ fun BluetoothLeSuccessScreen(
             .padding(8.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        // Header Section
-        if (device != null && device.name.contains("CC2650 SensorTag", ignoreCase = true)) {
+        // Scan Mode Toggle
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Scan for all devices:")
+            Switch(
+                checked = scanAllDevices,
+                onCheckedChange = onScanAllDevicesChanged
+            )
+        }
+
+        HorizontalDivider()
+
+        // Header Section - Connection to Active Device
+        // This section is primarily relevant when an activeDevice is set (either by SensorTag scan or selection)
+        if (activeDevice != null) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(vertical = 8.dp),
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(4.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
@@ -74,20 +93,20 @@ fun BluetoothLeSuccessScreen(
                 ) {
                     Column {
                         Text(
-                            text = "TI Tag Sensor Found!",
+                            text = activeDevice.name ?: "Unnamed Device",
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.titleMedium
                         )
                         Text(
-                            text = "RSSI: ${device.rssi} dBm",
+                            text = "RSSI: ${activeDevice.rssi} dBm",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray
+                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                         )
                     }
                     if (gattConnectionState == GattConnectionState.Disconnected) {
                         Button(
-                            onClick = connectToDevice,
+                            onClick = connectToActiveDevice,
                             shape = RoundedCornerShape(12.dp)
                         ) {
                             Text("Connect")
@@ -103,9 +122,9 @@ fun BluetoothLeSuccessScreen(
                     }
                 }
             }
-        } else {
+        } else if (!scanAllDevices && scanState == ScanState.SCANNING) {
             Text(
-                text = if (scanState == ScanState.NOT_SCANNING) "Idle" else "Searching for TI Tag Sensor...",
+                text = "Searching for TI Tag Sensor...",
                 color = Color.Gray,
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
@@ -117,57 +136,75 @@ fun BluetoothLeSuccessScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Device Info Section
+        // Main Content: Discovered Devices List or Active Device Details
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
             verticalArrangement = Arrangement.Top
         ) {
-            if (device == null) {
-                Text(
-                    text = "No devices found. Try (re)scanning.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp)
-                )
+            if (scanAllDevices) {
+                if (scanState == ScanState.SCANNING && discoveredDevices.isEmpty()) {
+                    Text(
+                        text = "Scanning for all devices...",
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                } else if (discoveredDevices.isEmpty()) {
+                    Text(
+                        text = "No devices found. Try scanning.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                } else {
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        items(discoveredDevices, key = { it.address }) { device ->
+                            DiscoveredDeviceItem(device = device, onDeviceSelected = onDeviceSelected)
+                            HorizontalDivider()
+                        }
+                    }
+                }
             } else {
-                Card(
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    elevation = CardDefaults.cardElevation(4.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                // Show details of the activeDevice if not in scanAllDevices mode
+                if (activeDevice != null) {
+                    Card(
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                        elevation = CardDefaults.cardElevation(4.dp)
                     ) {
-                        Text(
-                            text = "${device.name} (${device.address})",
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        // GATT Services List Section
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                        Column(
+                            modifier = Modifier.padding(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
-                                text = "GATT Services:",
-                                style = MaterialTheme.typography.bodyMedium,
+                                text = "${activeDevice.name ?: "N/A"} (${activeDevice.address})",
+                                style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold
                             )
+                            // GATT Services List Section for activeDevice
+                            if (gattConnectionState == GattConnectionState.Connected) {
+                                Text(
+                                    text = "GATT Services:",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                GattServicesList(services = gattServicesList)
+                            } else {
+                                Text("Connect to device to see services.")
+                            }
                         }
-
-                        GattServicesList(
-                            services = gattServicesList,
-                        )
                     }
+                } else if (scanState != ScanState.SCANNING) {
+                    Text(
+                        text = "No TI Tag Sensor found. Try scanning or switch to scan all devices.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+                    )
                 }
             }
         }
@@ -187,11 +224,12 @@ fun BluetoothLeSuccessScreen(
                 ),
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Text("Start Scan")
+                Text(if (scanState == ScanState.SCANNING) "Scanning..." else "Start Scan")
             }
 
             Button(
                 onClick = stopScan,
+                enabled = scanState == ScanState.SCANNING,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
                 shape = RoundedCornerShape(16.dp)
             ) {
@@ -201,53 +239,129 @@ fun BluetoothLeSuccessScreen(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun BluetoothLeSuccessScreenPreview() {
-    BluetoothLeSuccessScreen(
-        scanState = ScanState.SCANNING,
-        gattConnectionState = GattConnectionState.Disconnected,
-        device = BluetoothDeviceInfo(
-            name = "CC2650 SensorTag",
-            address = "00:11:22:33:44:55",
-            rssi = -70
-        ),
-        isStartScanningEnabled = true,
-        startScan = { println("Start scanning...") },
-        stopScan = { println("Stop scanning...") },
-        connectToDevice = { println("Connecting to device...") },
-        readCharacteristics = { println("Reading characteristics from device ...") },
-        gattServicesList = listOf(
-            DeviceService(
-                uuid = "0000180f-0000-1000-8000-00805f9b34fb",
-                name = "Battery Service",
-                characteristics = listOf(
-                    DeviceCharacteristic(
-                        uuid = "00002a19-0000-1000-8000-00805f9b34fb",
-                        name = "Battery Level",
-                        isReadable = true,
-                        isWritable = false,
-                        isNotifiable = true,
-                        value = "90%"
-                    )
+fun DiscoveredDeviceItem(
+    device: BluetoothDeviceInfo,
+    onDeviceSelected: (BluetoothDeviceInfo) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .clickable { onDeviceSelected(device) },
+        elevation = CardDefaults.cardElevation(2.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = device.name ?: "Unnamed Device",
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodyLarge
                 )
+                Text(
+                    text = device.address,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+            Text(
+                text = "RSSI: ${device.rssi}",
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "Scanning All Devices")
+@Composable
+fun BluetoothLeSuccessScreenPreview_ScanAll() {
+    MaterialTheme {
+        BluetoothLeSuccessScreen(
+            scanState = ScanState.SCANNING,
+            gattConnectionState = GattConnectionState.Disconnected,
+            activeDevice = null,
+            discoveredDevices = listOf(
+                BluetoothDeviceInfo(name = "Device A", address = "AA:BB:CC:DD:EE:FF", rssi = -50),
+                BluetoothDeviceInfo(name = "Device B", address = "11:22:33:44:55:66", rssi = -65)
             ),
-            DeviceService(
-            uuid = "0000180a-0000-1000-8000-00805f9b34fb",
-            name = "Device Information Service",
-            characteristics = listOf(
-                DeviceCharacteristic(
-                    uuid = "00002a24-0000-1000-8000-00805f9b34fb",
-                    name = "Model Number",
-                    isReadable = true,
-                    isWritable = false,
-                    isNotifiable = false,
-                    value = "CC2650 Sensor"
+            scanAllDevices = true,
+            onScanAllDevicesChanged = {},
+            isStartScanningEnabled = false,
+            startScan = {},
+            stopScan = {},
+            connectToActiveDevice = {},
+            readCharacteristics = {},
+            onDeviceSelected = {},
+            gattServicesList = emptyList()
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "SensorTag Mode - Found & Connected")
+@Composable
+fun BluetoothLeSuccessScreenPreview_SensorTagConnected() {
+    MaterialTheme {
+        BluetoothLeSuccessScreen(
+            scanState = ScanState.NOT_SCANNING,
+            gattConnectionState = GattConnectionState.Connected,
+            activeDevice = BluetoothDeviceInfo(
+                name = "CC2650 SensorTag",
+                address = "00:11:22:33:44:55",
+                rssi = -70
+            ),
+            discoveredDevices = listOf( BluetoothDeviceInfo(
+                name = "CC2650 SensorTag",
+                address = "00:11:22:33:44:55",
+                rssi = -70
+            )), // Should ideally be just the activeDevice here
+            scanAllDevices = false,
+            onScanAllDevicesChanged = {},
+            isStartScanningEnabled = true,
+            startScan = {},
+            stopScan = {},
+            connectToActiveDevice = {},
+            readCharacteristics = {},
+            onDeviceSelected = {},
+            gattServicesList = listOf(
+                DeviceService(
+                    uuid = "f000aa00-0451-4000-b000-000000000000", name = "Movement Service", characteristics = listOf(
+                        DeviceCharacteristic(
+                            uuid = "f000aa01-0451-4000-b000-000000000000", name = "Movement Data",
+                            isReadable = true,
+                            isWritable = false,
+                            isNotifiable = true,
+                            value = "90%"
+                        )
+                    )
                 )
             )
         )
-
-        )
-    )
+    }
 }
 
+@Preview(showBackground = true, name = "SensorTag Mode - Not Found")
+@Composable
+fun BluetoothLeSuccessScreenPreview_SensorTagNotFound() {
+    MaterialTheme {
+        BluetoothLeSuccessScreen(
+            scanState = ScanState.NOT_SCANNING,
+            gattConnectionState = GattConnectionState.Disconnected,
+            activeDevice = null,
+            discoveredDevices = emptyList(),
+            scanAllDevices = false,
+            onScanAllDevicesChanged = {},
+            isStartScanningEnabled = true,
+            startScan = {},
+            stopScan = {},
+            connectToActiveDevice = {},
+            readCharacteristics = {},
+            onDeviceSelected = {},
+            gattServicesList = emptyList()
+        )
+    }
+}

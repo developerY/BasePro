@@ -666,7 +666,7 @@ fun BLEExpandableCard(
                 ) {
                     BluetoothLeRoute(
                         paddingValues = PaddingValues(),
-                        navTo = {} // path -> navController.navigate(path) },
+                        // navTo = {} // path -> navController.navigate(path) },
                     )
                 }
             }

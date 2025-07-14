@@ -1,6 +1,5 @@
 package com.ylabz.basepro.feature.ble.ui
 
-import android.R.attr.level
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
@@ -9,23 +8,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.ylabz.basepro.core.model.ble.DeviceCharacteristic
-import com.ylabz.basepro.core.model.ble.DeviceService
-import com.ylabz.basepro.core.model.ble.GattCharacteristicValue
-import com.ylabz.basepro.core.model.ble.GattConnectionState
 import com.ylabz.basepro.feature.ble.ui.components.BluetoothLeSuccessScreen
 import com.ylabz.basepro.feature.ble.ui.components.ErrorScreen
 import com.ylabz.basepro.feature.ble.ui.components.LoadingScreen
@@ -38,21 +29,14 @@ import com.ylabz.basepro.feature.ble.ui.components.StatusBar
 @Composable
 fun BluetoothLeRoute(
     paddingValues: PaddingValues,
-    navTo: (String) -> Unit,
     viewModel: BluetoothLeViewModel = hiltViewModel()
 ) {
-    val TAG = "BluetoothLeRoute"
-    //val healthUiState by remember { mutableStateOf(viewModel.uiState) }
-    val uiState = viewModel.uiState.collectAsState().value
+    val uiState by viewModel.uiState.collectAsState()
     val scanState by viewModel.scanState.collectAsState()
     val gattConnectionState by viewModel.gattConnectionState.collectAsState()
-    val gattCharacteristicList by viewModel.gattCharacteristicList.collectAsState()
     val isStartButtonEnabled by viewModel.isStartButtonEnabled.collectAsState()
     val context = LocalContext.current
-
-
     val gattServicesList by viewModel.gattServicesList.collectAsState()
-
 
     // Define BLE permissions
     val blePermissions = listOf(
@@ -65,16 +49,7 @@ fun BluetoothLeRoute(
 
     // Remember permission state
     val permissionState = rememberMultiplePermissionsState(permissions = blePermissions)
-    // Observe the state of BLE permissions and notify the ViewModel of changes.
-    // LaunchedEffect ensures this block of code is executed whenever the
-    // 'permissionState.allPermissionsGranted' value changes. This effect runs
-    // only while the Composable is in the Composition and cancels itself
-    // if the Composable is recomposed with a different key or leaves the Composition.
-    // If all required permissions are granted, it triggers the PermissionsGranted
-    // event to proceed with BLE scanning. If permissions are denied and the rationale
-    // should not be shown (e.g., the user permanently denied permissions), it triggers
-    // the PermissionsDenied event to update the UI accordingly.
-    // Observe permission state and send events to the ViewModel
+
     LaunchedEffect(permissionState.allPermissionsGranted) {
         if (permissionState.allPermissionsGranted) {
             viewModel.onEvent(BluetoothLeEvent.PermissionsGranted)
@@ -89,33 +64,29 @@ fun BluetoothLeRoute(
             .fillMaxSize()
             .padding(paddingValues)
     ) {
-        //PermissionStatusUI(permissionState) // Show BLE permission status visually
-        // Status Bar at the top of the screen
         StatusBar(
             permissionState = permissionState,
             onManagePermissionsClick = {
-                // Navigate to BLE permissions settings or trigger permission request
                 permissionState.launchMultiplePermissionRequest()
             },
             scanState = scanState
         )
 
-        when (uiState) {
+        when (val currentUiState = uiState) {
             BluetoothLeUiState.ShowBluetoothDialog -> {
                 LaunchedEffect(Unit) {
                     val enableBluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
                     val activity = context as Activity
                     activity.startActivityForResult(enableBluetoothIntent, 1)
                 }
-            } // Show Bluetooth dialog and trigger permission request
+            }
 
             is BluetoothLeUiState.PermissionsRequired -> PermissionsRationale {
-                permissionState.launchMultiplePermissionRequest() // Trigger permission request
+                permissionState.launchMultiplePermissionRequest()
             }
 
             is BluetoothLeUiState.PermissionsDenied -> PermissionsDenied {
-                permissionState.launchMultiplePermissionRequest() // Trigger permission request
-                // viewModel.onEvent(BluetoothLeEvent.PermissionsDenied)
+                permissionState.launchMultiplePermissionRequest()
             }
 
             is BluetoothLeUiState.Loading -> LoadingScreen()
@@ -123,22 +94,40 @@ fun BluetoothLeRoute(
             is BluetoothLeUiState.ScanDevices -> BluetoothLeSuccessScreen(
                 scanState = scanState,
                 gattConnectionState = gattConnectionState,
-                device = uiState.devices,
+                activeDevice = null, // No single active device in general scan
+                discoveredDevices = listOfNotNull(currentUiState.devices), // Corrected: wrap in list
+                scanAllDevices = true, // Default to true as ScanDevices implies general scanning
                 isStartScanningEnabled = isStartButtonEnabled,
                 startScan = { viewModel.onEvent(BluetoothLeEvent.StartScan) },
-                stopScan = { viewModel.onEvent(BluetoothLeEvent.StopScan) }, // Trigger rescan
-                connectToDevice = { viewModel.onEvent(BluetoothLeEvent.ConnectToSensorTag) },
-                // getCharacteristicValue = { } as (DeviceService, DeviceCharacteristic) -> GattCharacteristicValue,
+                stopScan = { viewModel.onEvent(BluetoothLeEvent.StopScan) },
+                connectToActiveDevice = { viewModel.onEvent(BluetoothLeEvent.ConnectToSensorTag) }, // Corrected: event name
                 readCharacteristics = { viewModel.onEvent(BluetoothLeEvent.ReadCharacteristics) },
-                gattServicesList = gattServicesList
+                gattServicesList = gattServicesList,
+                onScanAllDevicesChanged = { viewModel.onEvent(BluetoothLeEvent.ToggleScanMode) },
+                onDeviceSelected = { device ->
+                    viewModel.onEvent(BluetoothLeEvent.SetActiveDevice(device)) // Corrected: event is now defined
+                }
             )
 
-            is BluetoothLeUiState.Error -> ErrorScreen(uiState.message)
+            is BluetoothLeUiState.DataLoaded -> BluetoothLeSuccessScreen(
+                scanState = scanState,
+                gattConnectionState = gattConnectionState,
+                activeDevice = currentUiState.activeDevice,
+                discoveredDevices = currentUiState.discoveredDevices,
+                scanAllDevices = currentUiState.scanAllDevices,
+                isStartScanningEnabled = isStartButtonEnabled,
+                startScan = { viewModel.onEvent(BluetoothLeEvent.StartScan) },
+                stopScan = { viewModel.onEvent(BluetoothLeEvent.StopScan) },
+                connectToActiveDevice = { viewModel.onEvent(BluetoothLeEvent.ConnectToSensorTag) }, // Corrected: event name
+                readCharacteristics = { viewModel.onEvent(BluetoothLeEvent.ReadCharacteristics) },
+                gattServicesList = gattServicesList,
+                onScanAllDevicesChanged = { viewModel.onEvent(BluetoothLeEvent.ToggleScanMode) },
+                onDeviceSelected = { device ->
+                    viewModel.onEvent(BluetoothLeEvent.SetActiveDevice(device)) // Corrected: event is now defined
+                }
+            )
 
-            is BluetoothLeUiState.DataLoaded -> TODO()
+            is BluetoothLeUiState.Error -> ErrorScreen(currentUiState.message)
         }
     }
 }
-
-// Ex.
-// https://github.com/santansarah/ble-scanner/blob/main/app/src/main/java/com/santansarah/scan/presentation/scan/Home.kt

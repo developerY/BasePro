@@ -13,7 +13,7 @@ interface BluetoothLeRepository {
     val gattConnectionState: StateFlow<GattConnectionState>
     val gattCharacteristicList: StateFlow<List<GattCharacteristicValue>>
     val gattServicesList: StateFlow<List<DeviceService>>
-    suspend fun startScan()
+    suspend fun startScan(scanAll: Boolean) // Added scanAll parameter
     suspend fun stopScan()
     suspend fun connectToDevice()
     suspend fun readAllCharacteristics()

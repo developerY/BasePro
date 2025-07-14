@@ -13,11 +13,15 @@ sealed interface BluetoothLeEvent {
     object RequestPermissions : BluetoothLeEvent
     object PermissionsGranted : BluetoothLeEvent
     object PermissionsDenied : BluetoothLeEvent
-    object ConnectToSensorTag : BluetoothLeEvent
+    object ConnectToSensorTag : BluetoothLeEvent // This is used to connect to the active device
     object GattCharacteristicList : BluetoothLeEvent
 
     // Add this new event for battery level reading
     object ReadCharacteristics : BluetoothLeEvent
+
+    object ToggleScanMode : BluetoothLeEvent // Added event for toggling scan mode
+
+    data class SetActiveDevice(val device: BluetoothDeviceInfo) : BluetoothLeEvent // Added event for setting the active device
 
 
     //object FetchGattServices : BluetoothLeEvent
@@ -41,4 +45,3 @@ sealed interface BluetoothLeEvent {
         val value: String
     ) : BluetoothLeEvent*/
 }
-

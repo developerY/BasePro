@@ -294,7 +294,7 @@ fun GattServicesCombinedPreview() {
             ExpandableGattServiceCardPreview() // Preview of ExpandableGattServiceCard
         }
         item {
-            BluetoothLeSuccessScreenPreview() // Preview of the success screen
+            //BluetoothLeSuccessScreenPreview() // Preview of the success screen
         }
     }
 }
@@ -344,7 +344,7 @@ fun ExpandableGattServiceCardPreview2() {
     )
 }
 
-@Preview(group = "GattServicesList")
+/*@Preview(group = "GattServicesList")
 @Composable
 fun BluetoothLeSuccessScreenPreview2() {
     BluetoothLeSuccessScreen(
@@ -377,5 +377,5 @@ fun BluetoothLeSuccessScreenPreview2() {
             )
         )
     )
-}
+}*/
 

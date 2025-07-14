@@ -11,10 +11,12 @@ import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.os.Build
+import android.os.ParcelUuid
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
@@ -62,6 +64,9 @@ private val LUX_DATA_UUID  = UUID.fromString("f000aa71-0451-4000-b000-0000000000
 private val LUX_CONF_UUID  = UUID.fromString("f000aa72-0451-4000-b000-000000000000") // 0: disable, 1: enable
 private val LUX_PERI_UUID  = UUID.fromString("f000aa73-0451-4000-b000-000000000000") // Period
 
+// Service UUID for TI SensorTags (used for filtering when not scanning all)
+private val TI_SENSOR_TAG_SERVICE_UUID = ParcelUuid.fromString("0000aa80-0000-1000-8000-00805f9b34fb")
+
 class BluetoothLeRepImpl @Inject constructor(
     private val bluetoothAdapter: BluetoothAdapter,
     private val context: Context
@@ -99,6 +104,7 @@ class BluetoothLeRepImpl @Inject constructor(
 
     var tagSensorFound: BluetoothDeviceInfo? = null
     private val scanStateMutex = Mutex()
+    private var currentScanAllFlag: Boolean = false // Store the flag for scanCallback
 
     // Storage for barometer calibration bytes (older firmware only)
     private var barometerCalibrationData: ByteArray? = null
@@ -112,34 +118,37 @@ class BluetoothLeRepImpl @Inject constructor(
 
             coroutineScope.launch {
                 var shouldStopScan = false
-                var deviceToEmit: BluetoothDeviceInfo? = null
+                val discoveredDevice = BluetoothDeviceInfo(
+                    name = deviceName,
+                    address = deviceAddress,
+                    rssi = deviceRssi
+                )
 
-                scanStateMutex.withLock {
-                    if (deviceName.contains("CC2650 SensorTag", ignoreCase = true) &&
-                        _scanState.value != ScanState.STOPPING
-                    ) {
-                        // Update the state and store the SensorTag device
-                        _scanState.value = ScanState.STOPPING
-                        tagSensorFound = BluetoothDeviceInfo(
-                            name = deviceName,
-                            address = deviceAddress,
-                            rssi = deviceRssi
-                        )
-                        shouldStopScan = true
+                if (!currentScanAllFlag) { // Only try to auto-stop if we are NOT scanning for all
+                    scanStateMutex.withLock {
+                        if (deviceName.contains("SensorTag", ignoreCase = true) && // Broader check for SensorTag
+                            _scanState.value != ScanState.STOPPING
+                        ) {
+                            _scanState.value = ScanState.STOPPING
+                            tagSensorFound = discoveredDevice
+                            shouldStopScan = true
+                        }
                     }
-
-                    // Prepare the device to emit
-                    deviceToEmit = tagSensorFound ?: BluetoothDeviceInfo(
-                        name = deviceName,
-                        address = deviceAddress,
-                        rssi = deviceRssi
-                    )
+                } else {
+                     // If scanning for all, always update currentDevice with the latest found one
+                     // and don't set tagSensorFound unless it IS a sensortag (for potential connection)
+                     if (deviceName.contains("SensorTag", ignoreCase = true)) {
+                         tagSensorFound = discoveredDevice
+                     }
                 }
+
+                // Emit the device that was just found
+                 _currentDevice.emit(discoveredDevice)
 
                 if (shouldStopScan) {
                     try {
-                        stopScan() // Stop scanning
-                        Log.d(TAG, "Stopping scan after detecting SensorTag.")
+                        stopScan() 
+                        Log.d(TAG, "Stopping scan after detecting SensorTag (scanAll=false).")
                     } catch (e: Exception) {
                         Log.e(TAG, "Error stopping scan: ${e.message}", e)
                     } finally {
@@ -148,17 +157,19 @@ class BluetoothLeRepImpl @Inject constructor(
                         }
                     }
                 }
-
-                deviceToEmit?.let {
-                    _currentDevice.emit(it)
-                }
             }
         }
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     override suspend fun connectToDevice() {
-        val device: BluetoothDevice = bluetoothAdapter.getRemoteDevice(tagSensorFound?.address)
+        val deviceToConnect = tagSensorFound ?: _currentDevice.value // Prefer specifically found SensorTag
+        if (deviceToConnect == null) {
+            Log.e(TAG, "No device to connect to.")
+            _gattConnectionState.value = GattConnectionState.Disconnected
+            return
+        }
+        val device: BluetoothDevice = bluetoothAdapter.getRemoteDevice(deviceToConnect.address)
         _gattConnectionState.value = GattConnectionState.Connecting
         gatt = device.connectGatt(context, false, object : BluetoothGattCallback() {
 
@@ -175,7 +186,6 @@ class BluetoothLeRepImpl @Inject constructor(
                 }
             }
 
-            // Called when services are discovered
             @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
             override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
@@ -221,7 +231,7 @@ class BluetoothLeRepImpl @Inject constructor(
                             activateLuxometerSensor()
                             delay(1000)
 
-                            val deviceName = tagSensorFound?.name ?: "Unknown"
+                            val deviceName = deviceToConnect.name // Use the connected device name
                             if (deviceName.contains("CC2650 SensorTag", ignoreCase = true)) {
                                 // For CC2650 firmware >= 1.50, there's no manual baro calibration char
                                 Log.d(TAG, "Skipping manual barometer calibration for CC2650.")
@@ -252,7 +262,7 @@ class BluetoothLeRepImpl @Inject constructor(
             ) {
                 if (status == BluetoothGatt.GATT_SUCCESS && characteristic != null) {
                     val description = getHumanReadableName(characteristic.uuid.toString())
-                    val rawValue = characteristic.value ?: ByteArray(0)  // Get the raw bytes
+                    val rawValue = characteristic.value ?: ByteArray(0)  
 
                     val serviceUUID = characteristic.service.uuid.toString()
                     val charUUID = characteristic.uuid.toString()
@@ -291,15 +301,13 @@ class BluetoothLeRepImpl @Inject constructor(
                     // debug temp
                     if (charUUID == "f000aa01-0451-4000-b000-000000000000") {
                         Log.d(TAG, "Reading Temperature Data Characteristic...")
-
-                        val rawValue = characteristic.value ?: ByteArray(0)
-                        Log.d(TAG, "Raw Value Length: ${rawValue.size} bytes")
-                        rawValue.forEachIndexed { index, byte ->
+                        val rawValueTemp = characteristic.value ?: ByteArray(0)
+                        Log.d(TAG, "Raw Value Length: ${rawValueTemp.size} bytes")
+                        rawValueTemp.forEachIndexed { index, byte ->
                             Log.d(TAG, "Byte $index: ${byte.toInt() and 0xFF}")
                         }
-
-                        val parsedValue = characteristicParsers[charUUID]?.invoke(rawValue) ?: "Unknown Value"
-                        Log.d(TAG, "Parsed Temperature Value: $parsedValue")
+                        val parsedValueTemp = characteristicParsers[charUUID]?.invoke(rawValueTemp) ?: "Unknown Value"
+                        Log.d(TAG, "Parsed Temperature Value: $parsedValueTemp")
                     } else {
                         Log.d(TAG, "Non-temperature characteristic read: $charUUID")
                     }
@@ -349,15 +357,28 @@ class BluetoothLeRepImpl @Inject constructor(
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
-    override suspend fun startScan() {
+    override suspend fun startScan(scanAll: Boolean) { // Added scanAll parameter
         _gattServicesList.value = emptyList<DeviceService>()
+        currentScanAllFlag = scanAll // Store for scanCallback
         synchronized(_scanState) {
             if (_scanState.value == ScanState.NOT_SCANNING) {
                 tagSensorFound = null
+                _currentDevice.value = null // Clear previous device before new scan
                 _scanState.value = ScanState.SCANNING
                 try {
-                    bleScanner.startScan(null, scanSettings, scanCallback)
-                    Log.d(TAG, "startScan - Scan started successfully.")
+                    val filters: List<ScanFilter>? = if (scanAll) {
+                        null // No filters for scanning all devices
+                    } else {
+                        // Filter for TI SensorTag by service UUID or name
+                        listOf(
+                            ScanFilter.Builder()
+                                //.setDeviceName("CC2650 SensorTag") // More specific
+                                .setServiceUuid(TI_SENSOR_TAG_SERVICE_UUID) // More general TI Tag
+                                .build()
+                        )
+                    }
+                    bleScanner.startScan(filters, scanSettings, scanCallback)
+                    Log.d(TAG, "startScan - Scan started (scanAll=$scanAll). Filters: ${filters?.joinToString { it.toString() } ?: "None"}")
                 } catch (e: Exception) {
                     _scanState.value = ScanState.NOT_SCANNING
                     Log.e(TAG, "startScan - Error starting scan: ${e.message}", e)
@@ -371,17 +392,19 @@ class BluetoothLeRepImpl @Inject constructor(
     @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     override suspend fun stopScan() {
         synchronized(_scanState) {
-            if (_scanState.value == ScanState.NOT_SCANNING) {
-                Log.d(TAG, "stopScan - No active scan to stop.")
+            if (_scanState.value == ScanState.NOT_SCANNING && _scanState.value != ScanState.STOPPING) {
+                 Log.d(TAG, "stopScan - No active scan to stop, or already stopping.")
                 return
             }
-            try {
-                bleScanner.stopScan(scanCallback)
-                Log.d(TAG, "stopScan - Scan stopped successfully.")
-            } catch (e: Exception) {
-                Log.e(TAG, "stopScan - Error stopping scan: ${e.message}", e)
-            } finally {
-                _scanState.value = ScanState.NOT_SCANNING
+             if (_scanState.value == ScanState.SCANNING || _scanState.value == ScanState.STOPPING) {
+                try {
+                    bleScanner.stopScan(scanCallback)
+                    Log.d(TAG, "stopScan - Scan stopped successfully.")
+                } catch (e: Exception) {
+                    Log.e(TAG, "stopScan - Error stopping scan: ${e.message}", e)
+                } finally {
+                    _scanState.value = ScanState.NOT_SCANNING
+                }
             }
         }
     }
@@ -458,10 +481,11 @@ class BluetoothLeRepImpl @Inject constructor(
                         if (success == BluetoothGatt.GATT_SUCCESS) {
                             Log.d(TAG, "Activated service: $uuid with value: ${value.joinToString(", ") { "0x%02X".format(it) }}")
                         } else {
-                            Log.e(TAG, "Failed to activate service: $uuid")
+                            Log.e(TAG, "Failed to activate service: $uuid, status: $success")
                         }
                     } else {
                         characteristic.value = value
+                        @Suppress("DEPRECATION")
                         val success = gatt.writeCharacteristic(characteristic)
                         if (success) {
                             Log.d(TAG, "Activated service (deprecated write): $uuid with value: ${value.joinToString(", ") { "0x%02X".format(it) }}")

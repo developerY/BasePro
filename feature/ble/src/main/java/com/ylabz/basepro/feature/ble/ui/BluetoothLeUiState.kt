@@ -11,17 +11,17 @@ sealed interface BluetoothLeUiState {
     object Loading : BluetoothLeUiState
     object PermissionsRequired : BluetoothLeUiState
     object PermissionsDenied : BluetoothLeUiState
-    data class ScanDevices(val devices: BluetoothDeviceInfo?) : BluetoothLeUiState
+    data class ScanDevices(val devices: BluetoothDeviceInfo?) : BluetoothLeUiState // This might be legacy and can be reviewed later
     data class Error(val message: String) : BluetoothLeUiState
 
     // Unified "success" state holding all BLE device data
     data class DataLoaded(
-        val scannedDevice: BluetoothDeviceInfo? = null,  // Holds discovered device details
-        val services: List<DeviceService> = emptyList(),  // Discovered GATT services
-        val selectedService: DeviceService? = null,  // Selected service
-        val selectedCharacteristic: DeviceCharacteristic? = null,  // Selected characteristic
-        val characteristicValues: Map<String, String?> = emptyMap()  // Cached values for each characteristic UUID
+        val activeDevice: BluetoothDeviceInfo? = null,  // Holds the currently active/selected device details
+        val discoveredDevices: List<BluetoothDeviceInfo> = emptyList(), // Holds all devices found when scanAllDevices is true
+        val services: List<DeviceService> = emptyList(),  // Discovered GATT services for the activeDevice
+        val selectedService: DeviceService? = null,  // Selected service for the activeDevice
+        val selectedCharacteristic: DeviceCharacteristic? = null,  // Selected characteristic for the activeDevice
+        val characteristicValues: Map<String, String?> = emptyMap(),  // Cached values for characteristics of the activeDevice
+        val scanAllDevices: Boolean = false // Controls scan mode
     ) : BluetoothLeUiState
 }
-
-
