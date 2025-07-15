@@ -77,7 +77,7 @@ fun StatusBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "BLE Status",
+                    text = "BLE.Status",
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.primary
                 )

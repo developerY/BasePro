@@ -35,7 +35,7 @@ fun NavGraphBuilder.bluetoothLeNavGraph(
             ) { innerPadding ->
                 BluetoothLeRoute(
                     paddingValues = innerPadding,
-                    navTo = { path -> navController.navigate(path) },
+                    // navTo = { path -> navController.navigate(path) },
                 )
             }
         }
