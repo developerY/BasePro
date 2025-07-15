@@ -1,5 +1,6 @@
 package com.ylabz.basepro.feature.ble.ui.components
 
+// Removed AnimatedVisibility for now to fix layout, can be added back carefully for item animations
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,21 +12,25 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown // Chevron style
+import androidx.compose.material.icons.filled.KeyboardArrowUp   // Chevron style
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
@@ -41,200 +46,206 @@ fun BluetoothLeSuccessScreen(
     activeDevice: BluetoothDeviceInfo?,
     discoveredDevices: List<BluetoothDeviceInfo>,
     scanAllDevices: Boolean,
-    onScanAllDevicesChanged: (Boolean) -> Unit,
     isStartScanningEnabled: Boolean,
     startScan: () -> Unit,
     stopScan: () -> Unit,
-    connectToActiveDevice: () -> Unit, // Renamed for clarity
+    connectToActiveDevice: () -> Unit,
     readCharacteristics: () -> Unit,
-    onDeviceSelected: (BluetoothDeviceInfo) -> Unit, // Callback for when a device is selected from the list
-    gattServicesList: List<DeviceService>
+    gattServicesList: List<DeviceService>,
+    onScanAllDevicesChanged: (Boolean) -> Unit,
+    onDeviceSelected: (BluetoothDeviceInfo) -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(8.dp),
-        verticalArrangement = Arrangement.SpaceBetween
+            .padding(16.dp), // Apply padding once to the main column
+        horizontalAlignment = Alignment.CenterHorizontally,
+        // Removed main column's verticalArrangement.spacedBy to allow weight to work correctly for GATT list
     ) {
-        // Scan Mode Toggle
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text("Scan for all devices:")
-            Switch(
-                checked = scanAllDevices,
-                onCheckedChange = onScanAllDevicesChanged
-            )
-        }
+        ScanControls(
+            scanState = scanState,
+            isStartScanningEnabled = isStartScanningEnabled,
+            startScan = startScan,
+            stopScan = stopScan,
+            scanAllDevices = scanAllDevices,
+            onScanAllDevicesChanged = onScanAllDevicesChanged
+        )
 
+        Spacer(modifier = Modifier.height(10.dp))
         HorizontalDivider()
+        Spacer(modifier = Modifier.height(10.dp))
 
-        // Header Section - Connection to Active Device
-        // This section is primarily relevant when an activeDevice is set (either by SensorTag scan or selection)
-        if (activeDevice != null) {
+
+        activeDevice?.let { device ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                shape = RoundedCornerShape(16.dp),
-                elevation = CardDefaults.cardElevation(4.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                    .padding(vertical = 8.dp), // Keep padding local to card if needed
+                elevation = CardDefaults.cardElevation(4.dp)
             ) {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Column {
-                        Text(
-                            text = activeDevice.name ?: "Unnamed Device",
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            text = "RSSI: ${activeDevice.rssi} dBm",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                        )
-                    }
-                    if (gattConnectionState == GattConnectionState.Disconnected) {
-                        Button(
-                            onClick = connectToActiveDevice,
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Text("Connect")
+                    Text(
+                        text = device.name ?: "Unnamed Device",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = device.address,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        if (gattConnectionState == GattConnectionState.Disconnected) {
+                            Button(
+                                onClick = { connectToActiveDevice() },
+                                enabled = scanState == ScanState.NOT_SCANNING
+                            ) {
+                                Text("Connect")
+                            }
                         }
-                    } else if (gattConnectionState == GattConnectionState.Connected) {
-                        Button(
-                            onClick = readCharacteristics,
-                            shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
-                        ) {
-                            Text("Read Values")
+
+                        if (gattConnectionState == GattConnectionState.Connected) {
+                            Button(
+                                onClick = { readCharacteristics() }
+                            ) {
+                                Text("Read Values")
+                            }
+                            // TODO: Add a Disconnect button here
                         }
                     }
+                    Text(
+                        text = "Status: ${gattConnectionState}", // .name.replace("_", " ")}",
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
             }
-        } else if (!scanAllDevices && scanState == ScanState.SCANNING) {
-            Text(
-                text = "Searching for TI Tag Sensor...",
-                color = Color.Gray,
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            )
+            Spacer(modifier = Modifier.height(10.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(10.dp))
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        // Section for discovered devices OR "not found" message
+        if (scanAllDevices) {
+            var isDeviceListExpanded by remember { mutableStateOf(true) }
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth()
+                // This LazyColumn wraps its content height.
+                // If it needs to scroll within a fixed portion of the screen NOT taken by GATT services,
+                // then this LazyColumn and the GATT services LazyColumn would need to be in a sub-Column
+                // with weights, or this one given a specific Modifier.height(someDp).
+                // For now, it will take its own content's height.
+            ) {
+                item { // Header as an item
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { isDeviceListExpanded = !isDeviceListExpanded }
+                            .padding(vertical = 8.dp), // Padding for the clickable header row
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Discovered Devices (${discoveredDevices.size})",
+                            style = MaterialTheme.typography.titleMedium, // Made it a bit larger
+                            modifier = Modifier.weight(1f)
+                        )
+                        Icon(
+                            imageVector = if (isDeviceListExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                            contentDescription = if (isDeviceListExpanded) "Collapse" else "Expand"
+                        )
+                    }
+                    HorizontalDivider()
+                }
 
-        // Main Content: Discovered Devices List or Active Device Details
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            verticalArrangement = Arrangement.Top
-        ) {
-            if (scanAllDevices) {
-                if (scanState == ScanState.SCANNING && discoveredDevices.isEmpty()) {
-                    Text(
-                        text = "Scanning for all devices...",
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                } else if (discoveredDevices.isEmpty()) {
-                    Text(
-                        text = "No devices found. Try scanning.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                } else {
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                if (isDeviceListExpanded) { // Conditionally add device items
+                    if (discoveredDevices.isEmpty() && scanState == ScanState.SCANNING) {
+                        item {
+                            Text(
+                                "Scanning for devices...",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+                    } else if (discoveredDevices.isEmpty() && scanState != ScanState.SCANNING) {
+                        item {
+                            Text(
+                                "No devices found.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+                    } else {
                         items(discoveredDevices, key = { it.address }) { device ->
                             DiscoveredDeviceItem(device = device, onDeviceSelected = onDeviceSelected)
                             HorizontalDivider()
                         }
                     }
                 }
-            } else {
-                // Show details of the activeDevice if not in scanAllDevices mode
-                if (activeDevice != null) {
-                    Card(
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
-                        elevation = CardDefaults.cardElevation(4.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Text(
-                                text = "${activeDevice.name ?: "N/A"} (${activeDevice.address})",
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold
-                            )
-                            // GATT Services List Section for activeDevice
-                            if (gattConnectionState == GattConnectionState.Connected) {
-                                Text(
-                                    text = "GATT Services:",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                GattServicesList(services = gattServicesList)
-                            } else {
-                                Text("Connect to device to see services.")
-                            }
-                        }
-                    }
-                } else if (scanState != ScanState.SCANNING) {
-                    Text(
-                        text = "No TI Tag Sensor found. Try scanning or switch to scan all devices.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
-                    )
-                }
+            }
+            Spacer(modifier = Modifier.height(10.dp)) // Spacer after the discovered devices list/header
+        } else {
+            // This section is for when scanAllDevices is false
+            if (activeDevice == null && scanState == ScanState.NOT_SCANNING) {
+                Text(
+                    "SensorTag not found. Ensure it's discoverable and try scanning.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(16.dp)
+                )
+                Spacer(modifier = Modifier.height(10.dp))
             }
         }
 
-        // Scan Control Buttons
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Button(
-                onClick = startScan,
-                enabled = isStartScanningEnabled,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isStartScanningEnabled) MaterialTheme.colorScheme.primary else Color.Gray
-                ),
-                shape = RoundedCornerShape(16.dp)
+        // GATT Services section
+        if (gattConnectionState == GattConnectionState.Connected && gattServicesList.isNotEmpty()) {
+            HorizontalDivider() // Divider before GATT services title
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                "GATT Services",
+                style = MaterialTheme.typography.titleMedium, // Made it a bit larger
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f) // GATT services list takes remaining space
             ) {
-                Text(if (scanState == ScanState.SCANNING) "Scanning..." else "Start Scan")
+                items(gattServicesList) { service ->
+                    Text("Service: ${service.uuid}", style = MaterialTheme.typography.bodySmall)
+                    service.characteristics.forEach { characteristic ->
+                        Text(
+                            "  Char: ${characteristic.uuid} - Value: ${characteristic.value ?: "N/A"}",
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                }
             }
-
-            Button(
-                onClick = stopScan,
-                enabled = scanState == ScanState.SCANNING,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text("Stop Scan")
-            }
+        } else if (gattConnectionState == GattConnectionState.Connected && gattServicesList.isEmpty() && activeDevice != null) {
+            // If connected but no services (yet or none found)
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                "GATT Services",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+            Text(
+                "No services discovered or available for this device.",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+            Spacer(modifier = Modifier.weight(1f)) // Ensure this section can also push content up if it's last
+        } else {
+            // If not connected, or no active device for GATT, make sure layout doesn't break
+            // This Spacer will fill remaining space if GATT list is not shown, preventing other elements
+            // from undesirably expanding.
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }
@@ -252,7 +263,7 @@ fun DiscoveredDeviceItem(
     ) {
         Text(
             text = device.name?.takeIf { it.isNotBlank() } ?: "Unknown Device",
-            style = MaterialTheme. typography.titleMedium,
+            style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold
         )
         Spacer(modifier = Modifier.height(4.dp))
@@ -269,9 +280,32 @@ fun DiscoveredDeviceItem(
     }
 }
 
-@Preview(showBackground = true, name = "Scanning All Devices")
+
+@Preview(showBackground = true, name = "Scanning All Devices - Empty")
 @Composable
-fun BluetoothLeSuccessScreenPreview_ScanAll() {
+fun BluetoothLeSuccessScreenPreview_ScanAllEmpty() {
+    MaterialTheme {
+        BluetoothLeSuccessScreen(
+            scanState = ScanState.SCANNING,
+            gattConnectionState = GattConnectionState.Disconnected,
+            activeDevice = null,
+            discoveredDevices = emptyList(),
+            scanAllDevices = true,
+            onScanAllDevicesChanged = {},
+            isStartScanningEnabled = false,
+            startScan = {},
+            stopScan = {},
+            connectToActiveDevice = {},
+            readCharacteristics = {},
+            onDeviceSelected = {},
+            gattServicesList = emptyList()
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Scanning All Devices - Found")
+@Composable
+fun BluetoothLeSuccessScreenPreview_ScanAllFound() {
     MaterialTheme {
         BluetoothLeSuccessScreen(
             scanState = ScanState.SCANNING,
@@ -294,7 +328,7 @@ fun BluetoothLeSuccessScreenPreview_ScanAll() {
     }
 }
 
-@Preview(showBackground = true, name = "SensorTag Mode - Found & Connected")
+@Preview(showBackground = true, name = "SensorTag Mode - Found & Connected with GATT")
 @Composable
 fun BluetoothLeSuccessScreenPreview_SensorTagConnected() {
     MaterialTheme {
@@ -306,12 +340,12 @@ fun BluetoothLeSuccessScreenPreview_SensorTagConnected() {
                 address = "00:11:22:33:44:55",
                 rssi = -70
             ),
-            discoveredDevices = listOf( BluetoothDeviceInfo(
+            discoveredDevices = listOf( BluetoothDeviceInfo( // Usually empty if scanAllDevices is false
                 name = "CC2650 SensorTag",
                 address = "00:11:22:33:44:55",
                 rssi = -70
-            )), // Should ideally be just the activeDevice here
-            scanAllDevices = false,
+            )),
+            scanAllDevices = false, // SensorTag mode, so not scanning all
             onScanAllDevicesChanged = {},
             isStartScanningEnabled = true,
             startScan = {},
@@ -324,10 +358,19 @@ fun BluetoothLeSuccessScreenPreview_SensorTagConnected() {
                     uuid = "f000aa00-0451-4000-b000-000000000000", name = "Movement Service", characteristics = listOf(
                         DeviceCharacteristic(
                             uuid = "f000aa01-0451-4000-b000-000000000000", name = "Movement Data",
-                            isReadable = true,
-                            isWritable = false,
-                            isNotifiable = true,
-                            value = "90%"
+                            isReadable = true, isWritable = false, isNotifiable = true, value = "Raw: AB-CD-EF"
+                        ),
+                        DeviceCharacteristic(
+                            uuid = "f000aa02-0451-4000-b000-000000000000", name = "Movement Config",
+                            isReadable = true, isWritable = true, isNotifiable = false, value = "0x01"
+                        )
+                    )
+                ),
+                DeviceService(
+                    uuid = "f000ab00-0451-4000-b000-000000000000", name = "Light Service", characteristics = listOf(
+                        DeviceCharacteristic(
+                            uuid = "f000ab01-0451-4000-b000-000000000000", name = "Light Data",
+                            isReadable = true, isWritable = false, isNotifiable = true, value = "500 lux"
                         )
                     )
                 )
