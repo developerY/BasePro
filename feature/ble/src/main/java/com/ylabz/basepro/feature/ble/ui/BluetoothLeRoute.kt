@@ -91,24 +91,6 @@ fun BluetoothLeRoute(
 
             is BluetoothLeUiState.Loading -> LoadingScreen()
 
-            is BluetoothLeUiState.ScanDevices -> BluetoothLeSuccessScreen(
-                scanState = scanState,
-                gattConnectionState = gattConnectionState,
-                activeDevice = null, // No single active device in general scan
-                discoveredDevices = listOfNotNull(currentUiState.devices), // Corrected: wrap in list
-                scanAllDevices = true, // Default to true as ScanDevices implies general scanning
-                isStartScanningEnabled = isStartButtonEnabled,
-                startScan = { viewModel.onEvent(BluetoothLeEvent.StartScan) },
-                stopScan = { viewModel.onEvent(BluetoothLeEvent.StopScan) },
-                connectToActiveDevice = { viewModel.onEvent(BluetoothLeEvent.ConnectToSensorTag) }, // Corrected: event name
-                readCharacteristics = { viewModel.onEvent(BluetoothLeEvent.ReadCharacteristics) },
-                gattServicesList = gattServicesList,
-                onScanAllDevicesChanged = { viewModel.onEvent(BluetoothLeEvent.ToggleScanMode) },
-                onDeviceSelected = { device ->
-                    viewModel.onEvent(BluetoothLeEvent.SetActiveDevice(device)) // Corrected: event is now defined
-                }
-            )
-
             is BluetoothLeUiState.DataLoaded -> BluetoothLeSuccessScreen(
                 scanState = scanState,
                 gattConnectionState = gattConnectionState,

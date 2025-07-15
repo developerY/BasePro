@@ -11,7 +11,6 @@ sealed interface BluetoothLeUiState {
     object Loading : BluetoothLeUiState
     object PermissionsRequired : BluetoothLeUiState
     object PermissionsDenied : BluetoothLeUiState
-    data class ScanDevices(val devices: BluetoothDeviceInfo?) : BluetoothLeUiState // This might be legacy and can be reviewed later
     data class Error(val message: String) : BluetoothLeUiState
 
     // Unified "success" state holding all BLE device data

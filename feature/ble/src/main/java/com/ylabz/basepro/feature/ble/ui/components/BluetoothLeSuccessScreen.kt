@@ -244,36 +244,28 @@ fun DiscoveredDeviceItem(
     device: BluetoothDeviceInfo,
     onDeviceSelected: (BluetoothDeviceInfo) -> Unit
 ) {
-    Card(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .clickable { onDeviceSelected(device) },
-        elevation = CardDefaults.cardElevation(2.dp)
+            .clickable { onDeviceSelected(device) }
+            .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = device.name ?: "Unnamed Device",
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Text(
-                    text = device.address,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            Text(
-                text = "RSSI: ${device.rssi}",
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
+        Text(
+            text = device.name?.takeIf { it.isNotBlank() } ?: "Unknown Device",
+            style = MaterialTheme. typography.titleMedium,
+            fontWeight = FontWeight.SemiBold
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = "Address: ${device.address}",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = "RSSI: ${device.rssi} dBm",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
