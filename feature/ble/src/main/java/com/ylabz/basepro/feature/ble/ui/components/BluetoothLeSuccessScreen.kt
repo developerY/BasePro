@@ -2,15 +2,15 @@ package com.ylabz.basepro.feature.ble.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column // Keep for internal structures like DiscoveredDeviceItem
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn // Main scrolling container
-import androidx.compose.foundation.lazy.items // For lists within items if necessary
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -53,18 +53,16 @@ fun BluetoothLeSuccessScreen(
     onScanAllDevicesChanged: (Boolean) -> Unit,
     onDeviceSelected: (BluetoothDeviceInfo) -> Unit,
 ) {
-    // State for the collapsible discovered devices list
     var isDeviceListExpanded by remember { mutableStateOf(true) }
 
-    LazyColumn( // Main scrolling container for the entire screen
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .height(500.dp) // Temporarily give it a fixed height
             .padding(horizontal = 16.dp), // Apply horizontal padding once
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        item {"See Here"} // Top padding
-        item { Spacer(modifier = Modifier.height(16.dp)) } // Top padding
+        item { Spacer(modifier = Modifier.height(16.dp)) }
 
         item {
             ScanControls(
@@ -118,16 +116,13 @@ fun BluetoothLeSuccessScreen(
                                 }
                             }
                             if (gattConnectionState == GattConnectionState.Connected) {
-                                Button(
-                                    onClick = { readCharacteristics() }
-                                ) {
+                                Button(onClick = { readCharacteristics() }) {
                                     Text("Read Values")
                                 }
-                                // TODO: Add a Disconnect button here
                             }
                         }
                         Text(
-                            text = "Status: ${gattConnectionState}", //.name.replace("_", " ")}",
+                            text = "Status: ${gattConnectionState}",//.name.replace("_", " ")}",
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -138,9 +133,7 @@ fun BluetoothLeSuccessScreen(
             item { Spacer(modifier = Modifier.height(10.dp)) }
         }
 
-        // Section for discovered devices OR "not found" message
         if (scanAllDevices) {
-            // Header for the discovered devices list
             item {
                 Row(
                     modifier = Modifier
@@ -149,7 +142,7 @@ fun BluetoothLeSuccessScreen(
                         .padding(vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
+                    Text( // This count remains the total
                         text = "Discovered Devices (${discoveredDevices.size})",
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.weight(1f)
@@ -162,8 +155,12 @@ fun BluetoothLeSuccessScreen(
                 HorizontalDivider()
             }
 
-            // Conditionally add device items or messages
             if (isDeviceListExpanded) {
+                val namedDevices = discoveredDevices.filter { device ->
+                    val name = device.name
+                    name != null && name.isNotBlank() && !name.equals("Unknown Device", ignoreCase = true)
+                }
+
                 if (discoveredDevices.isEmpty()) {
                     item {
                         Text(
@@ -172,16 +169,23 @@ fun BluetoothLeSuccessScreen(
                             modifier = Modifier.padding(16.dp)
                         )
                     }
+                } else if (namedDevices.isEmpty()) {
+                    item {
+                        Text(
+                            text = "No devices with usable names found. (Total scanned: ${discoveredDevices.size})",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
                 } else {
-                    items(discoveredDevices, key = { it.address }) { device ->
+                    items(namedDevices, key = { it.address }) { device ->
                         DiscoveredDeviceItem(device = device, onDeviceSelected = onDeviceSelected)
                         HorizontalDivider()
                     }
                 }
             }
-            item { Spacer(modifier = Modifier.height(10.dp)) } // Spacer after the list
+            item { Spacer(modifier = Modifier.height(10.dp)) }
         } else {
-            // This section is for when scanAllDevices is false
             if (activeDevice == null && scanState == ScanState.NOT_SCANNING) {
                 item {
                     Text(
@@ -194,7 +198,6 @@ fun BluetoothLeSuccessScreen(
             }
         }
 
-        // GATT Services section
         if (gattConnectionState == GattConnectionState.Connected) {
             item { HorizontalDivider() }
             item { Spacer(modifier = Modifier.height(8.dp)) }
@@ -207,9 +210,6 @@ fun BluetoothLeSuccessScreen(
             }
             if (gattServicesList.isNotEmpty()) {
                 items(gattServicesList, key = { it.uuid }) { service ->
-                    // This creates a Column for each service and its characteristics.
-                    // This is not a LazyColumn, it will render all services and characteristics
-                    // as part of the main LazyColumn's scrollable content.
                     Column(modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
                         Text("Service: ${service.uuid}", style = MaterialTheme.typography.bodySmall)
                         service.characteristics.forEach { characteristic ->
@@ -221,7 +221,7 @@ fun BluetoothLeSuccessScreen(
                         }
                     }
                 }
-            } else if (activeDevice != null) { // Connected but no services
+            } else if (activeDevice != null) {
                 item {
                     Text(
                         "No services discovered or available for this device.",
@@ -231,11 +231,10 @@ fun BluetoothLeSuccessScreen(
                 }
             }
         }
-        item { Spacer(modifier = Modifier.height(16.dp)) } // Bottom padding
+        item { Spacer(modifier = Modifier.height(16.dp)) }
     }
 }
 
-// DiscoveredDeviceItem remains the same
 @Composable
 fun DiscoveredDeviceItem(
     device: BluetoothDeviceInfo,
@@ -245,9 +244,11 @@ fun DiscoveredDeviceItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onDeviceSelected(device) }
-            .padding(horizontal = 16.dp, vertical = 12.dp) // Item-specific padding
+            .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
         Text(
+            // This will display "Unknown Device" if name is null/blank,
+            // but we've already filtered out "Unknown Device" names for the list itself.
             text = device.name?.takeIf { it.isNotBlank() } ?: "Unknown Device",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold
@@ -266,24 +267,20 @@ fun DiscoveredDeviceItem(
     }
 }
 
-
-// Previews would also need to be adjusted if they were wrapping BluetoothLeSuccessScreen
-// in a Column or Box that might conflict, but usually, they are direct.
-// For brevity, I'll omit the Preview updates here but they should be reviewed.
-// The existing Preview annotations on BluetoothLeSuccessScreen itself might be sufficient if it's the root.
-
-@Preview(showBackground = true, name = "Scanning All Devices - Found & Expanded")
+@Preview(showBackground = true, name = "Scanning All - Named & Unnamed")
 @Composable
-fun BluetoothLeSuccessScreenPreview_ScanAllFoundExpanded() {
+fun BluetoothLeSuccessScreenPreview_ScanAllMixed() {
     MaterialTheme {
         BluetoothLeSuccessScreen(
-            scanState = ScanState.SCANNING,
+            scanState = ScanState.NOT_SCANNING,
             gattConnectionState = GattConnectionState.Disconnected,
             activeDevice = null,
             discoveredDevices = listOf(
                 BluetoothDeviceInfo(name = "Device A", address = "AA:BB:CC:DD:EE:FF", rssi = -50),
-                BluetoothDeviceInfo(name = "Device B", address = "11:22:33:44:55:66", rssi = -65),
-                BluetoothDeviceInfo(name = "Device C", address = "77:88:99:AA:BB:CC", rssi = -75)
+                BluetoothDeviceInfo(name = "null", address = "11:22:33:44:55:66", rssi = -65),
+                BluetoothDeviceInfo(name = "Device C", address = "77:88:99:AA:BB:CC", rssi = -75),
+                BluetoothDeviceInfo(name = "Unknown Device", address = "DD:EE:FF:00:11:22", rssi = -80),
+                BluetoothDeviceInfo(name = "", address = "EE:FF:00:11:22:33", rssi = -85)
             ),
             scanAllDevices = true,
             onScanAllDevicesChanged = {},
@@ -298,9 +295,34 @@ fun BluetoothLeSuccessScreenPreview_ScanAllFoundExpanded() {
     }
 }
 
-@Preview(showBackground = true, name = "SensorTag Mode - Found & Connected with GATT")
+@Preview(showBackground = true, name = "Scanning All - Only Unnamed")
 @Composable
-fun BluetoothLeSuccessScreenPreview_SensorTagConnected() {
+fun BluetoothLeSuccessScreenPreview_ScanAllOnlyUnnamed() {
+    MaterialTheme {
+        BluetoothLeSuccessScreen(
+            scanState = ScanState.NOT_SCANNING,
+            gattConnectionState = GattConnectionState.Disconnected,
+            activeDevice = null,
+            discoveredDevices = listOf(
+                BluetoothDeviceInfo(name = "null", address = "11:22:33:44:55:66", rssi = -65),
+                BluetoothDeviceInfo(name = "Unknown Device", address = "DD:EE:FF:00:11:22", rssi = -80)
+            ),
+            scanAllDevices = true,
+            onScanAllDevicesChanged = {},
+            isStartScanningEnabled = false,
+            startScan = {},
+            stopScan = {},
+            connectToActiveDevice = {},
+            readCharacteristics = {},
+            onDeviceSelected = {},
+            gattServicesList = emptyList()
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "SensorTag Mode - Connected with GATT")
+@Composable
+fun BluetoothLeSuccessScreenPreview_SensorTagConnectedWithGatt() {
     MaterialTheme {
         BluetoothLeSuccessScreen(
             scanState = ScanState.NOT_SCANNING,
@@ -310,53 +332,6 @@ fun BluetoothLeSuccessScreenPreview_SensorTagConnected() {
                 address = "00:11:22:33:44:55",
                 rssi = -70
             ),
-            discoveredDevices = listOf( BluetoothDeviceInfo( // Usually empty if scanAllDevices is false
-                name = "CC2650 SensorTag",
-                address = "00:11:22:33:44:55",
-                rssi = -70
-            )),
-            scanAllDevices = false, // SensorTag mode, so not scanning all
-            onScanAllDevicesChanged = {},
-            isStartScanningEnabled = true,
-            startScan = {},
-            stopScan = {},
-            connectToActiveDevice = {},
-            readCharacteristics = {},
-            onDeviceSelected = {},
-            gattServicesList = listOf(
-                DeviceService(
-                    uuid = "f000aa00-0451-4000-b000-000000000000", name = "Movement Service", characteristics = listOf(
-                        DeviceCharacteristic(
-                            uuid = "f000aa01-0451-4000-b000-000000000000", name = "Movement Data",
-                            isReadable = true, isWritable = false, isNotifiable = true, value = "Raw: AB-CD-EF"
-                        ),
-                        DeviceCharacteristic(
-                            uuid = "f000aa02-0451-4000-b000-000000000000", name = "Movement Config",
-                            isReadable = true, isWritable = true, isNotifiable = false, value = "0x01"
-                        )
-                    )
-                ),
-                DeviceService(
-                    uuid = "f000ab00-0451-4000-b000-000000000000", name = "Light Service", characteristics = listOf(
-                        DeviceCharacteristic(
-                            uuid = "f000ab01-0451-4000-b000-000000000000", name = "Light Data",
-                            isReadable = true, isWritable = false, isNotifiable = true, value = "500 lux"
-                        )
-                    )
-                )
-            )
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "SensorTag Mode - Not Found")
-@Composable
-fun BluetoothLeSuccessScreenPreview_SensorTagNotFound() {
-    MaterialTheme {
-        BluetoothLeSuccessScreen(
-            scanState = ScanState.NOT_SCANNING,
-            gattConnectionState = GattConnectionState.Disconnected,
-            activeDevice = null,
             discoveredDevices = emptyList(),
             scanAllDevices = false,
             onScanAllDevicesChanged = {},

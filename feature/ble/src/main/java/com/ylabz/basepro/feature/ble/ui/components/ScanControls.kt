@@ -44,14 +44,14 @@ fun ScanControls(
                 onClick = startScan,
                 enabled = isStartScanningEnabled && scanState != ScanState.SCANNING // && scanState != ScanState.BleNotEnabled
             ) {
-                Text("Start.Scan")
+                Text("Start Scan")
             }
             Spacer(Modifier.width(8.dp))
             Button(
                 onClick = stopScan,
                 enabled = scanState == ScanState.SCANNING
             ) {
-                Text("Stop.Scan")
+                Text("Stop Scan")
             }
         }
 
