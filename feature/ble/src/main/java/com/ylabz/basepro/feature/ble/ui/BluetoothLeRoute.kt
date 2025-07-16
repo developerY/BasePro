@@ -91,21 +91,38 @@ fun BluetoothLeRoute(
 
             is BluetoothLeUiState.Loading -> LoadingScreen()
 
-            is BluetoothLeUiState.DataLoaded -> BluetoothLeSuccessScreen(
-                scanState = scanState,
-                gattConnectionState = gattConnectionState,
-                activeDevice = currentUiState.activeDevice,
-                discoveredDevices = currentUiState.discoveredDevices,
-                isStartScanningEnabled = isStartButtonEnabled,
-                startScan = { viewModel.onEvent(BluetoothLeEvent.StartScan) },
-                stopScan = { viewModel.onEvent(BluetoothLeEvent.StopScan) },
-                connectToActiveDevice = { viewModel.onEvent(BluetoothLeEvent.ConnectToSensorTag) }, // Corrected: event name
-                readCharacteristics = { viewModel.onEvent(BluetoothLeEvent.ReadCharacteristics) },
-                gattServicesList = gattServicesList,
-                onDeviceSelected = { device ->
-                    viewModel.onEvent(BluetoothLeEvent.SetActiveDevice(device)) // Corrected: event is now defined
+            is BluetoothLeUiState.DataLoaded -> {
+                // V V V V V ADD THIS LOGGING LINE V V V V V
+                android.util.Log.d(
+                    "BluetoothLeRoute",
+                    "In DataLoaded. Discovered Devices count: ${currentUiState.discoveredDevices.size}"
+                )
+                currentUiState.discoveredDevices.forEachIndexed { index, device ->
+                    android.util.Log.d(
+                        "BluetoothLeRoute",
+                        "Device $index: Name='${device.name}', Address='${device.address}', RSSI=${device.rssi}"
+                    )
                 }
-            )
+
+                // ^ ^ ^ ^ ^ END OF LOGGING ^ ^ ^ ^ ^
+
+
+                BluetoothLeSuccessScreen(
+                    scanState = scanState,
+                    gattConnectionState = gattConnectionState,
+                    activeDevice = currentUiState.activeDevice,
+                    discoveredDevices = currentUiState.discoveredDevices,
+                    isStartScanningEnabled = isStartButtonEnabled,
+                    startScan = { viewModel.onEvent(BluetoothLeEvent.StartScan) },
+                    stopScan = { viewModel.onEvent(BluetoothLeEvent.StopScan) },
+                    connectToActiveDevice = { viewModel.onEvent(BluetoothLeEvent.ConnectToSensorTag) }, // Corrected: event name
+                    readCharacteristics = { viewModel.onEvent(BluetoothLeEvent.ReadCharacteristics) },
+                    gattServicesList = gattServicesList,
+                    onDeviceSelected = { device ->
+                        viewModel.onEvent(BluetoothLeEvent.SetActiveDevice(device)) // Corrected: event is now defined
+                    }
+                )
+            }
 
             is BluetoothLeUiState.Error -> ErrorScreen(currentUiState.message)
         }

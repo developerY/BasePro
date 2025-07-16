@@ -19,8 +19,6 @@ sealed interface BluetoothLeEvent {
     // Add this new event for battery level reading
     object ReadCharacteristics : BluetoothLeEvent
 
-    object ToggleScanMode : BluetoothLeEvent // Added event for toggling scan mode
-
     data class SetActiveDevice(val device: BluetoothDeviceInfo) : BluetoothLeEvent // Added event for setting the active device
 
 

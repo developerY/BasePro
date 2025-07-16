@@ -1,7 +1,7 @@
 package com.ylabz.basepro.feature.ble.ui
 
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
+// import android.bluetooth.BluetoothDevice // No longer directly used here
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -53,10 +53,10 @@ class BluetoothLeViewModel @Inject constructor(
             is BluetoothLeEvent.RequestEnableBluetooth -> checkBluetoothState()
             is BluetoothLeEvent.RequestPermissions -> _uiState.value = PermissionsRequired
             is BluetoothLeEvent.PermissionsGranted -> {
-                // Ensure we have a DataLoaded state to work with, defaulting scanAllDevices
+                // Ensure we have a DataLoaded state to work with, defaulting to scanAllDevices = true
                 if (_uiState.value !is DataLoaded) {
                     _uiState.value = DataLoaded(
-                        scanAllDevices = false, // Default to specific scan
+                        scanAllDevices = true, // MODIFIED: Default to true
                         activeDevice = null,
                         discoveredDevices = emptyList()
                     )
@@ -65,36 +65,19 @@ class BluetoothLeViewModel @Inject constructor(
             }
             is BluetoothLeEvent.PermissionsDenied -> _uiState.value = PermissionsDenied
             is BluetoothLeEvent.FetchDevices -> fetchBleDevices()
-            is BluetoothLeEvent.ConnectToSensorTag -> connectToActiveDevice()
+            is BluetoothLeEvent.ConnectToSensorTag -> connectToActiveDevice() // "ConnectToSensorTag" is now a misnomer, consider renaming event if it's generic connect
             BluetoothLeEvent.StartScan -> scanning()
             BluetoothLeEvent.StopScan -> stopping()
-            BluetoothLeEvent.GattCharacteristicList -> gattCharacteristicList // This is a StateFlow, direct access is fine
+            BluetoothLeEvent.GattCharacteristicList -> gattCharacteristicList
             is BluetoothLeEvent.ReadCharacteristics -> readAllCharacteristics()
-            BluetoothLeEvent.ToggleScanMode -> {
-                _uiState.update { currentState ->
-                    if (currentState is DataLoaded) {
-                        currentState.copy(
-                            scanAllDevices = !currentState.scanAllDevices,
-                            activeDevice = null, // Reset active device on mode toggle
-                            discoveredDevices = emptyList() // Clear previous scan results
-                        )
-                    } else {
-                        // If not DataLoaded, initialize with the new scan mode
-                        DataLoaded(
-                            scanAllDevices = true, // Default to true if current state was not DataLoaded
-                            activeDevice = null,
-                            discoveredDevices = emptyList()
-                        )
-                    }
-                }
-            }
-
+            // BluetoothLeEvent.ToggleScanMode -> { // REMOVED: No longer needed
+            // }
             is BluetoothLeEvent.SetActiveDevice -> {
                 _uiState.update { currentState ->
-                    if (currentState is BluetoothLeUiState.DataLoaded) {
+                    if (currentState is DataLoaded) {
                         currentState.copy(activeDevice = event.device)
                     } else {
-                        currentState // Or log an error if not expected
+                        currentState
                     }
                 }
             }
@@ -112,13 +95,16 @@ class BluetoothLeViewModel @Inject constructor(
         _isStartButtonEnabled.value = false
 
         _uiState.update { currentState ->
-            val currentScanAllDevices = (currentState as? BluetoothLeUiState.DataLoaded)?.scanAllDevices ?: false
-            if (currentState is BluetoothLeUiState.DataLoaded) {
-                currentState.copy(activeDevice = null, discoveredDevices = emptyList()) // Clear previous results
+            // Ensure DataLoaded state and scanAllDevices is true
+            if (currentState is DataLoaded) {
+                currentState.copy(
+                    scanAllDevices = true, // MODIFIED: Ensure true
+                    activeDevice = null,
+                    discoveredDevices = emptyList() // Clear previous results
+                )
             } else {
-                // Ensure DataLoaded state before scan if somehow not set
-                BluetoothLeUiState.DataLoaded(
-                    scanAllDevices = currentScanAllDevices,
+                DataLoaded(
+                    scanAllDevices = true, // MODIFIED: Ensure true
                     activeDevice = null,
                     discoveredDevices = emptyList()
                 )
@@ -127,15 +113,24 @@ class BluetoothLeViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                // Get the scanAll flag from the potentially updated state
-                val scanAll = (_uiState.value as? BluetoothLeUiState.DataLoaded)?.scanAllDevices ?: false
-                bleRepository.startScan(scanAll)
+                // MODIFIED: Explicitly pass true for scanning all devices
+                bleRepository.startScan(true)
+                Logging.d(TAG, "Scan started (scanAll=true)")
             } catch (e: Exception) {
-                _uiState.value = BluetoothLeUiState.Error("Failed to start scan: ${e.message}")
-                _isStartButtonEnabled.value = true // Re-enable button on error
+                Logging.e(TAG, "Failed to start scan: ${e.message}", e)
+                _uiState.value = Error("Failed to start scan: ${e.message}")
+                _isStartButtonEnabled.value = true
             }
-            delay(5000L) // Scan duration, consider making this configurable or based on scanState
-            _isStartButtonEnabled.value = true
+            // Consider if this delay is always needed, or if scan should run until explicitly stopped.
+            // For continuous discovery, you might rely on bleRepository.scanState.
+            // For now, keeping original delay.
+            delay(5000L)
+            // If scan is meant to be continuous, this auto-stop and button re-enable might be an issue.
+            // But if it's a timed scan, it's okay.
+            if (scanState.value == ScanState.SCANNING) { // Only stop if it was successfully started
+                stopping() // Automatically stop after delay, consider if this is desired.
+            }
+            _isStartButtonEnabled.value = true // Re-enable button
         }
     }
 
@@ -152,14 +147,13 @@ class BluetoothLeViewModel @Inject constructor(
     private fun checkBluetoothState() {
         if (!bluetoothAdapter.isEnabled) {
             if (!isBluetoothDialogAlreadyShown) {
-                _uiState.value = BluetoothLeUiState.ShowBluetoothDialog
+                _uiState.value = ShowBluetoothDialog
                 isBluetoothDialogAlreadyShown = true
             }
         } else {
-            // Bluetooth is enabled, ensure we are in a DataLoaded state if coming from PermissionsRequired/ShowBluetoothDialog
-            if (_uiState.value !is BluetoothLeUiState.DataLoaded) {
-                 _uiState.value = BluetoothLeUiState.DataLoaded(
-                    scanAllDevices = false, // Default
+            if (_uiState.value !is DataLoaded) {
+                _uiState.value = DataLoaded(
+                    scanAllDevices = true, // MODIFIED: Default to true
                     activeDevice = null,
                     discoveredDevices = emptyList()
                 )
@@ -170,46 +164,45 @@ class BluetoothLeViewModel @Inject constructor(
 
     private fun connectToActiveDevice() {
         viewModelScope.launch {
-            val currentActiveDevice = (_uiState.value as? BluetoothLeUiState.DataLoaded)?.activeDevice
+            val currentActiveDevice = (_uiState.value as? DataLoaded)?.activeDevice
             if (currentActiveDevice != null) {
                 // Assuming bleRepository.connectToDevice() uses an internally managed device
                 // or needs the device info. The current repo takes no args.
                 bleRepository.connectToDevice() // If it connects to its 'currentItem'
             } else {
                 Log.w(TAG, "ConnectToActiveDevice called but no active device set in UIState")
-                _uiState.value = BluetoothLeUiState.Error("No device selected or found to connect.")
+                _uiState.value = Error("No device selected or found to connect.")
             }
         }
     }
 
     private fun fetchBleDevices() {
         viewModelScope.launch {
+            Logging.d(TAG, "Starting to collect devices from repository")
             bleRepository.fetchBluetoothDevice().collect { deviceFromRepo -> // deviceFromRepo is BluetoothDeviceInfo?
+                Logging.d(TAG, "Device from repo: ${deviceFromRepo?.address ?: "null"}")
                 _uiState.update { currentUiState ->
-                    if (currentUiState is BluetoothLeUiState.DataLoaded) {
+                    if (currentUiState is DataLoaded) {
+                        // The scanAllDevices flag in currentUiState should now reliably be true
+                        // if a scan was started via scanning()
                         if (deviceFromRepo == null) {
-                            // If scanAll is false and repo emits null, it means the specific device was lost or not found
-                            if (!currentUiState.scanAllDevices) {
+                            // If scanning all and repo emits null, it might mean end of a specific device emission,
+                            // or simply no new device. If scanAllDevices is true, we usually accumulate.
+                            // The original logic for specific device (scanAllDevices=false) is less relevant now.
+                            if (!currentUiState.scanAllDevices) { // This branch becomes less likely if scanAllDevices is always true
                                 currentUiState.copy(activeDevice = null)
                             } else {
-                                currentUiState // No change if scanning for all and a null comes through (should ideally not happen)
+                                currentUiState // No change if scanning for all and a null comes through
                             }
                         } else {
-                            if (currentUiState.scanAllDevices) {
-                                val updatedDiscoveredDevices = currentUiState.discoveredDevices
-                                    .filterNot { it.address == deviceFromRepo.address } + deviceFromRepo
-                                currentUiState.copy(discoveredDevices = updatedDiscoveredDevices)
-                            } else {
-                                // If not scanning for all, this device is the one we were looking for.
-                                currentUiState.copy(
-                                    activeDevice = deviceFromRepo,
-                                    // Optionally, also set it as the only discovered device for UI consistency
-                                    discoveredDevices = listOf(deviceFromRepo) 
-                                )
-                            }
+                            // Always accumulate if scanAllDevices is true (which should be the case now for scans)
+                            val updatedDiscoveredDevices = currentUiState.discoveredDevices
+                                .filterNot { it.address == deviceFromRepo.address } + deviceFromRepo
+                            Logging.d(TAG, "Updating discovered devices. New count: ${updatedDiscoveredDevices.size}")
+                            currentUiState.copy(discoveredDevices = updatedDiscoveredDevices)
                         }
                     } else {
-                        currentUiState // Not DataLoaded, so no place to put discovered devices yet
+                        currentUiState
                     }
                 }
             }
