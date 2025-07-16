@@ -144,7 +144,7 @@ fun BluetoothLeSuccessScreen(
                     modifier = Modifier.weight(1f)
                 )
                 Icon(
-                    imageVector = if (isDeviceListExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                    imageVector = if (isDeviceListExpanded) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
                     contentDescription = if (isDeviceListExpanded) "Collapse" else "Expand"
                 )
             }
