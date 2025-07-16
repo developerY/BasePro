@@ -96,14 +96,12 @@ fun BluetoothLeRoute(
                 gattConnectionState = gattConnectionState,
                 activeDevice = currentUiState.activeDevice,
                 discoveredDevices = currentUiState.discoveredDevices,
-                scanAllDevices = currentUiState.scanAllDevices,
                 isStartScanningEnabled = isStartButtonEnabled,
                 startScan = { viewModel.onEvent(BluetoothLeEvent.StartScan) },
                 stopScan = { viewModel.onEvent(BluetoothLeEvent.StopScan) },
                 connectToActiveDevice = { viewModel.onEvent(BluetoothLeEvent.ConnectToSensorTag) }, // Corrected: event name
                 readCharacteristics = { viewModel.onEvent(BluetoothLeEvent.ReadCharacteristics) },
                 gattServicesList = gattServicesList,
-                onScanAllDevicesChanged = { viewModel.onEvent(BluetoothLeEvent.ToggleScanMode) },
                 onDeviceSelected = { device ->
                     viewModel.onEvent(BluetoothLeEvent.SetActiveDevice(device)) // Corrected: event is now defined
                 }

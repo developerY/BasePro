@@ -10,13 +10,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.core.model.ble.ScanState // Ensure this import is correct
+import com.ylabz.basepro.core.model.ble.ScanState
 
 @Composable
 fun ScanControls(
@@ -24,9 +23,7 @@ fun ScanControls(
     isStartScanningEnabled: Boolean,
     startScan: () -> Unit,
     stopScan: () -> Unit,
-    scanAllDevices: Boolean,
-    onScanAllDevicesChanged: (Boolean) -> Unit,
-    modifier: Modifier = Modifier // Allow passing a modifier
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -42,7 +39,7 @@ fun ScanControls(
         ) {
             Button(
                 onClick = startScan,
-                enabled = isStartScanningEnabled && scanState != ScanState.SCANNING // && scanState != ScanState.BleNotEnabled
+                enabled = isStartScanningEnabled && scanState != ScanState.SCANNING
             ) {
                 Text("Start Scan")
             }
@@ -55,25 +52,7 @@ fun ScanControls(
             }
         }
 
-        Spacer(Modifier.height(8.dp))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Scan for all devices:",
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Switch(
-                checked = scanAllDevices,
-                onCheckedChange = onScanAllDevicesChanged,
-                enabled = scanState != ScanState.SCANNING // Disable toggle while scanning
-            )
-        }
+        Spacer(Modifier.height(8.dp)) // Keep this spacer for visual separation
 
         Text(
             text = "Scan Status: ${scanState.name.replace("_", " ")}",

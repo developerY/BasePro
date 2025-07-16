@@ -43,14 +43,12 @@ fun BluetoothLeSuccessScreen(
     gattConnectionState: GattConnectionState,
     activeDevice: BluetoothDeviceInfo?,
     discoveredDevices: List<BluetoothDeviceInfo>,
-    scanAllDevices: Boolean,
     isStartScanningEnabled: Boolean,
     startScan: () -> Unit,
     stopScan: () -> Unit,
     connectToActiveDevice: () -> Unit,
     readCharacteristics: () -> Unit,
     gattServicesList: List<DeviceService>,
-    onScanAllDevicesChanged: (Boolean) -> Unit,
     onDeviceSelected: (BluetoothDeviceInfo) -> Unit,
 ) {
     var isDeviceListExpanded by remember { mutableStateOf(true) }
@@ -69,9 +67,7 @@ fun BluetoothLeSuccessScreen(
                 scanState = scanState,
                 isStartScanningEnabled = isStartScanningEnabled,
                 startScan = startScan,
-                stopScan = stopScan,
-                scanAllDevices = scanAllDevices,
-                onScanAllDevicesChanged = onScanAllDevicesChanged
+                stopScan = stopScan
             )
         }
 
@@ -110,7 +106,7 @@ fun BluetoothLeSuccessScreen(
                             if (gattConnectionState == GattConnectionState.Disconnected) {
                                 Button(
                                     onClick = { connectToActiveDevice() },
-                                    enabled = scanState == ScanState.NOT_SCANNING
+                                    enabled = scanState != ScanState.SCANNING // Simplified condition
                                 ) {
                                     Text("Connect")
                                 }
@@ -133,70 +129,60 @@ fun BluetoothLeSuccessScreen(
             item { Spacer(modifier = Modifier.height(10.dp)) }
         }
 
-        if (scanAllDevices) {
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { isDeviceListExpanded = !isDeviceListExpanded }
-                        .padding(vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text( // This count remains the total
-                        text = "Discovered Devices (${discoveredDevices.size})",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Icon(
-                        imageVector = if (isDeviceListExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                        contentDescription = if (isDeviceListExpanded) "Collapse" else "Expand"
-                    )
-                }
-                HorizontalDivider()
+        // Section for displaying discovered devices (always active now)
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { isDeviceListExpanded = !isDeviceListExpanded }
+                    .padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Discovered Devices (${discoveredDevices.size})",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f)
+                )
+                Icon(
+                    imageVector = if (isDeviceListExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                    contentDescription = if (isDeviceListExpanded) "Collapse" else "Expand"
+                )
+            }
+            HorizontalDivider()
+        }
+
+        if (isDeviceListExpanded) {
+            val sortedTotalDevices = discoveredDevices.sortedByDescending { it.rssi }
+            val sortedNamedDevices = sortedTotalDevices.filter { device ->
+                val name = device.name
+                name != null && name.isNotBlank() && !name.equals("Unknown Device", ignoreCase = true)
             }
 
-            if (isDeviceListExpanded) {
-                val namedDevices = discoveredDevices.filter { device ->
-                    val name = device.name
-                    name != null && name.isNotBlank() && !name.equals("Unknown Device", ignoreCase = true)
-                }
-
-                if (discoveredDevices.isEmpty()) {
-                    item {
-                        Text(
-                            text = if (scanState == ScanState.SCANNING) "Scanning for devices..." else "No devices found.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                } else if (namedDevices.isEmpty()) {
-                    item {
-                        Text(
-                            text = "No devices with usable names found. (Total scanned: ${discoveredDevices.size})",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                } else {
-                    items(namedDevices, key = { it.address }) { device ->
-                        DiscoveredDeviceItem(device = device, onDeviceSelected = onDeviceSelected)
-                        HorizontalDivider()
-                    }
-                }
-            }
-            item { Spacer(modifier = Modifier.height(10.dp)) }
-        } else {
-            if (activeDevice == null && scanState == ScanState.NOT_SCANNING) {
+            if (discoveredDevices.isEmpty()) {
                 item {
                     Text(
-                        "SensorTag not found. Ensure it's discoverable and try scanning.",
+                        text = if (scanState == ScanState.SCANNING) "Scanning for devices..." else "No devices found.",
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(16.dp)
                     )
-                    Spacer(modifier = Modifier.height(10.dp))
+                }
+            } else if (sortedNamedDevices.isEmpty()) {
+                item {
+                    Text(
+                        text = "No devices with usable names found. (Total scanned: ${discoveredDevices.size})",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            } else {
+                items(sortedNamedDevices, key = { it.address }) { device ->
+                    DiscoveredDeviceItem(device = device, onDeviceSelected = onDeviceSelected)
+                    HorizontalDivider()
                 }
             }
         }
+        item { Spacer(modifier = Modifier.height(10.dp)) }
+
 
         if (gattConnectionState == GattConnectionState.Connected) {
             item { HorizontalDivider() }
@@ -267,74 +253,20 @@ fun DiscoveredDeviceItem(
     }
 }
 
-@Preview(showBackground = true, name = "Scanning All - Named & Unnamed")
+@Preview(showBackground = true, name = "Screen Preview - Devices Found")
 @Composable
-fun BluetoothLeSuccessScreenPreview_ScanAllMixed() {
+fun BluetoothLeSuccessScreenPreview_DevicesFound() {
     MaterialTheme {
         BluetoothLeSuccessScreen(
-            scanState = ScanState.NOT_SCANNING,
+            scanState = ScanState.SCANNING, // Or ScanState.NOT_SCANNING
             gattConnectionState = GattConnectionState.Disconnected,
             activeDevice = null,
             discoveredDevices = listOf(
-                BluetoothDeviceInfo(name = "Device A", address = "AA:BB:CC:DD:EE:FF", rssi = -50),
-                BluetoothDeviceInfo(name = "null", address = "11:22:33:44:55:66", rssi = -65),
-                BluetoothDeviceInfo(name = "Device C", address = "77:88:99:AA:BB:CC", rssi = -75),
-                BluetoothDeviceInfo(name = "Unknown Device", address = "DD:EE:FF:00:11:22", rssi = -80),
-                BluetoothDeviceInfo(name = "", address = "EE:FF:00:11:22:33", rssi = -85)
-            ),
-            scanAllDevices = true,
-            onScanAllDevicesChanged = {},
-            isStartScanningEnabled = false,
-            startScan = {},
-            stopScan = {},
-            connectToActiveDevice = {},
-            readCharacteristics = {},
-            onDeviceSelected = {},
-            gattServicesList = emptyList()
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Scanning All - Only Unnamed")
-@Composable
-fun BluetoothLeSuccessScreenPreview_ScanAllOnlyUnnamed() {
-    MaterialTheme {
-        BluetoothLeSuccessScreen(
-            scanState = ScanState.NOT_SCANNING,
-            gattConnectionState = GattConnectionState.Disconnected,
-            activeDevice = null,
-            discoveredDevices = listOf(
-                BluetoothDeviceInfo(name = "null", address = "11:22:33:44:55:66", rssi = -65),
+                BluetoothDeviceInfo(name = "Device A (Close)", address = "AA:BB:CC:DD:EE:FF", rssi = -50),
+                BluetoothDeviceInfo(name = "Device B (Far)", address = "11:22:33:44:55:66", rssi = -85),
+                BluetoothDeviceInfo(name = "null", address = "77:88:99:AA:BB:CC", rssi = -40),
                 BluetoothDeviceInfo(name = "Unknown Device", address = "DD:EE:FF:00:11:22", rssi = -80)
             ),
-            scanAllDevices = true,
-            onScanAllDevicesChanged = {},
-            isStartScanningEnabled = false,
-            startScan = {},
-            stopScan = {},
-            connectToActiveDevice = {},
-            readCharacteristics = {},
-            onDeviceSelected = {},
-            gattServicesList = emptyList()
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "SensorTag Mode - Connected with GATT")
-@Composable
-fun BluetoothLeSuccessScreenPreview_SensorTagConnectedWithGatt() {
-    MaterialTheme {
-        BluetoothLeSuccessScreen(
-            scanState = ScanState.NOT_SCANNING,
-            gattConnectionState = GattConnectionState.Connected,
-            activeDevice = BluetoothDeviceInfo(
-                name = "CC2650 SensorTag",
-                address = "00:11:22:33:44:55",
-                rssi = -70
-            ),
-            discoveredDevices = emptyList(),
-            scanAllDevices = false,
-            onScanAllDevicesChanged = {},
             isStartScanningEnabled = true,
             startScan = {},
             stopScan = {},
@@ -342,6 +274,66 @@ fun BluetoothLeSuccessScreenPreview_SensorTagConnectedWithGatt() {
             readCharacteristics = {},
             onDeviceSelected = {},
             gattServicesList = emptyList()
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Screen Preview - No Devices")
+@Composable
+fun BluetoothLeSuccessScreenPreview_NoDevices() {
+    MaterialTheme {
+        BluetoothLeSuccessScreen(
+            scanState = ScanState.NOT_SCANNING,
+            gattConnectionState = GattConnectionState.Disconnected,
+            activeDevice = null,
+            discoveredDevices = emptyList(),
+            isStartScanningEnabled = true,
+            startScan = {},
+            stopScan = {},
+            connectToActiveDevice = {},
+            readCharacteristics = {},
+            onDeviceSelected = {},
+            gattServicesList = emptyList()
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Screen Preview - Active Device Connected")
+@Composable
+fun BluetoothLeSuccessScreenPreview_ActiveDeviceConnected() {
+    MaterialTheme {
+        BluetoothLeSuccessScreen(
+            scanState = ScanState.NOT_SCANNING,
+            gattConnectionState = GattConnectionState.Connected,
+            activeDevice = BluetoothDeviceInfo(
+                name = "My BLE Device",
+                address = "00:11:22:33:44:55",
+                rssi = -60
+            ),
+            discoveredDevices = listOf( /* Can be empty or have other devices */ ),
+            isStartScanningEnabled = true,
+            startScan = {},
+            stopScan = {},
+            connectToActiveDevice = {},
+            readCharacteristics = {},
+            onDeviceSelected = {},
+            gattServicesList = listOf(
+                DeviceService(
+                    uuid = "f000aa00",
+                    characteristics = listOf(
+                        DeviceCharacteristic(
+                            uuid = "f000aa01",
+                            value = "0x01",
+                            name = TODO(),
+                            isReadable = TODO(),
+                            isWritable = TODO(),
+                            isNotifiable = TODO()
+                        )
+                    ),
+                    name ="null"
+                ),
+
+            )
         )
     }
 }
