@@ -1,3 +1,49 @@
+# Feature: Near Field Communication (NFC)
+
+## Overview
+
+The `feature:nfc` module provides a complete, self-contained feature for interacting with Near Field Communication (NFC) tags. It encapsulates the entire workflow, including detecting NFC hardware, handling enabled/disabled states, and processing foreground dispatches to read from and write to NFC tags.
+
+This module allows any application in the `BasePro` ecosystem to easily add NFC-based features, such as tapping a tag to launch an action, storing configuration data on a tag, or sharing small amounts of data between devices.
+
+## Key Components
+
+-   **`NfcUiRoute.kt`**: The main Jetpack Compose UI entry point. It acts as a router, displaying the appropriate screen based on the device's NFC capabilities and the current state of the NFC interaction.
+-   **`NfcViewModel.kt`**: Manages the UI state (`NfcUiState`) and handles user events (`NfcRwEvent`). It interacts with the `NfcRepository` to get the NFC status and process tag data.
+-   **`NfcRepository.kt`**: An interface defining the contract for NFC operations. It is implemented in the `core:data` module by `NfcRepositoryImpl`.
+-   **UI Screens**:
+   -   `NfcScanScreen.kt`: The main screen that prompts the user to scan an NFC tag.
+   -   `NfcNotSupportedScreen.kt`: Shown if the device does not have NFC hardware.
+   -   `NfcDisabledScreen.kt`: Shown if NFC is turned off in the device settings.
+   -   `TagScanned.kt`: Displays the data read from a successfully scanned tag.
+   -   `NfcWriteScreen.kt`: Provides an interface for writing data to an NFC tag.
+
+## Core Functionality
+
+-   **NFC Hardware Detection:** Checks if the device supports NFC.
+-   **State Management:** Detects and reacts to the NFC adapter being enabled or disabled.
+-   **Tag Reading:** Handles the Android `NFC_DISCOVERED` intent to read data from various types of NFC tags (e.g., NDEF).
+-   **Tag Writing:** Provides the logic to format and write NDEF messages to writable NFC tags.
+-   **User Guidance:** Provides clear UI feedback to the user throughout the scanning and writing process.
+
+## Dependencies
+
+-   **`core:data`**: Relies on the `NfcRepositoryImpl` to handle the low-level interactions with the Android NFC framework.
+-   **`core:model`**: Uses shared data models to represent NFC tag information.
+-   **Android NFC Framework**: Directly uses the `android.nfc` package.
+-   **Jetpack Compose**: For all UI components.
+-   **Hilt**: For ViewModel injection.
+
+## Usage
+
+To integrate NFC functionality, an application would add the `NfcUiRoute` to its navigation graph. The route manages the entire user experience, from checking permissions and hardware status to guiding the user to scan a tag.
+
+```kotlin
+// Example of navigating to the NFC feature
+navController.navigate("nfc_route")
+```
+
+
 
 Using a single-Activity approach with Hilt for DI and a ViewModel to manage NFC 
 state—where the Activity's `onNewIntent` passes tag data to the ViewModel, and the UI observes that 

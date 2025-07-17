@@ -1,7 +1,44 @@
-Structure
-[RxSpary -Not used](https://bitbucket.org/developerY/rxspray/src/main/)
-[Base source](https://github.com/developerY/Nourish)
+# Feature: Health
 
+## Overview
+
+The `feature:health` module serves as the primary interface for interacting with health and fitness data via **Google Health Connect**. It provides a standardized way for applications within the `BasePro` ecosystem to request permissions, read, and write health data, such as exercise sessions.
+
+This module is crucial for fitness-oriented applications like `AshBike`, allowing them to contribute to and read from the user's centralized health data store on their device.
+
+## Key Components
+
+-   **`HealthRoute.kt`**: The main Jetpack Compose UI entry point. It handles the overall screen layout and orchestrates the display of data fetched from Health Connect.
+-   **`HealthViewModel.kt`**: Manages the UI state (`HealthUiState`) for the health screen. It is responsible for initiating data reads/writes and handling permissions via the `HealthConnectRepository`.
+-   **`HealthConnectRepository.kt`**: An interface defining the contract for all interactions with Health Connect. This includes checking for availability, managing permissions, and CRUD (Create, Read, Update, Delete) operations on health data. It is implemented in the `core:data` module by `HealthConnectRepositoryImpl`.
+-   **UI Components**:
+    -   `SessionList.kt`: Displays a list of exercise sessions fetched from Health Connect.
+    -   `SessionDetailScreen.kt`: Shows detailed metrics for a selected exercise session.
+    -   `HealthActions.kt`: Provides UI buttons for common actions like reading data or generating sample data.
+
+## Core Functionality
+
+-   **Health Connect Availability:** Checks if the Health Connect client is installed and available on the device.
+-   **Permissions Management:** Handles the Health Connect permission flow, allowing users to grant or deny access to specific data types.
+    -- **Data Synchronization:** Provides the logic to read exercise sessions from Health Connect and, in the context of an app like `AshBike`, to write completed workouts *to* Health Connect.
+-   **Data Display:** Offers UI components to visualize the fetched health data in a user-friendly format.
+
+## Dependencies
+
+-   **Health Connect SDK (`androidx.health.connect:connect-client`)**: The core library for all Health Connect interactions.
+-   **`core:data`**: Relies on the `HealthConnectRepositoryImpl` from this module to perform the actual data operations.
+-   **`core:model`**: Uses shared data models like `ExerciseSessionData` to represent health information consistently.
+-   **Jetpack Compose**: For all UI components.
+-   **Hilt**: For injecting the `HealthViewModel` and its repository dependencies.
+
+## Usage
+
+This module can be used as a standalone screen to view Health Connect data or as a background service to sync data. An application would typically navigate to `HealthRoute` to allow the user to manage permissions and view their data.
+
+```kotlin
+// Example of navigating to the Health Connect screen
+navController.navigate("health_route")
+```
 
 Files:
 Do not name  -- https://developer.android.com/reference/android/health/connect/HealthConnectManager
@@ -126,4 +163,7 @@ Permissions:
 
 We do not use 
 1. HealthSessionManager -- 
+
+
+
 
