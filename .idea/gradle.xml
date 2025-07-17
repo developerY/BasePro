@@ -24,6 +24,7 @@
             <option value="$PROJECT_DIR$/applications/rxdigita" />
             <option value="$PROJECT_DIR$/applications/rxdigita/features" />
             <option value="$PROJECT_DIR$/applications/rxdigita/features/main" />
+            <option value="$PROJECT_DIR$/applications/rxdigita/features/settings" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core/data" />
             <option value="$PROJECT_DIR$/core/database" />
