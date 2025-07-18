@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 // import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import com.ylabz.basepro.core.ui.RxDigitaScreen
 
 @Composable
 fun HomeBottomBar(
@@ -99,10 +100,10 @@ fun HomeBottomBar(
 
 private fun navigateTo(tabTitle: String, navController: NavHostController) {
     val route = when (tabTitle) {
-        "Home"-> {}//BikeScreen.HomeBikeScreen.route
-        "Ride" -> {}//BikeScreen.TripBikeScreen.route
-        "Settings" -> {}//BikeScreen.SettingsBikeScreen.route
-        else -> {} //BikeScreen.HomeBikeScreen.route
+        "Home"-> RxDigitaScreen.HomeRxDigitaScreen.route
+        "Ride" -> RxDigitaScreen.TripRxDigitaScreen.route
+        "Settings" -> RxDigitaScreen.SettingsRxDigitaScreen.route
+        else -> RxDigitaScreen.HomeRxDigitaScreen.route // Default fallback
     }
 
     navController.navigate(route) {

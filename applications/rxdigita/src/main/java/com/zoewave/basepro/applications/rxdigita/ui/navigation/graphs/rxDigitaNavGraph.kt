@@ -7,6 +7,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.ylabz.basepro.core.ui.RxDigitaScreen // Import the correct Screen definitions
 import com.ylabz.basepro.core.util.Logging
+import com.zoewave.basepro.applications.rxdigita.features.main.ui.MainUiRoute
+import com.zoewave.basepro.applications.rxdigita.features.medlist.ui.MedListUiRoute
+import com.zoewave.basepro.applications.rxdigita.features.settings.ui.SettingsUiRoute
 
 // Define rxDigitaNavGraph as an extension function on NavGraphBuilder
 // @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
@@ -20,22 +23,25 @@ fun NavGraphBuilder.rxDigitaNavGraph(
 
     // 1) Home Tab
     composable(RxDigitaScreen.HomeRxDigitaScreen.route) { // Use RxDigitaScreen
-        /*RxDigitaUiRoute(
+        MainUiRoute(
             modifier = modifier,
-            navTo = { path -> navHostController.navigate(path) },
-            //viewModel = bikeViewModel // <<< MODIFIED LINE: Pass the bikeViewModel instance
-        )*/
-        // Placeholder for content, you'll need to add your actual Home screen composable here
-        Text("Home RxDigita Screen Content")
+            navTo = { path -> navHostController.navigate(path) }
+        )
     }
 
-    // 2) Trips Tab
+    // 2) Trips Tab (Assuming MedlistUiRoute for "Ride" or "Trip")
     composable(RxDigitaScreen.TripRxDigitaScreen.route) { // Use RxDigitaScreen
-        Text("Trips RxDigita Screen Content")
+        MedListUiRoute(
+            modifier = modifier,
+            navTo = { path -> navHostController.navigate(path) }
+        )
     }
     // 3) Settings Tab
     composable(RxDigitaScreen.SettingsRxDigitaScreen.route) { // Use RxDigitaScreen
-        Text("Settings RxDigita Screen Content")
+        SettingsUiRoute(
+            modifier = modifier,
+            navTo = { path -> navHostController.navigate(path) }
+        )
     }
 
 }

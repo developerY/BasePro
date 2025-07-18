@@ -46,6 +46,18 @@ dependencies {
     implementation(libs.androidx.material3)
     debugImplementation(libs.androidx.ui.tooling)
 
+    // Hilt
+    implementation(libs.hilt.android)
+    implementation(project(":applications:ashbike:features:main"))
+    implementation(project(":core:ui"))
+    ksp(libs.hilt.android.compiler)   // Hilt compiler dependency for annotation processing
+    // Hilt Dependency Injection
+    // kapt(libs.hilt.compiler)
+
+    // Compose Navigation
+    implementation(libs.androidx.navigation.compose) // Added Compose Navigation dependency with safe args plugin
+    implementation(libs.hilt.navigation.compose)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

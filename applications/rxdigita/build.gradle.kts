@@ -50,8 +50,11 @@ android {
 
 dependencies {
     implementation(project(":core:util"))
+    implementation(project(":applications:rxdigita:features:main"))
+    implementation(project(":applications:rxdigita:features:medlist"))
+    implementation(project(":applications:rxdigita:features:settings"))
 
-    
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
