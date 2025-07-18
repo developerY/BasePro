@@ -6,57 +6,31 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 
-// Assume these will be created or already exist in a similar pattern
-// import com.zoewave.basepro.applications.rxdigita.features.main.ui.MainViewModel
-// import com.zoewave.basepro.applications.rxdigita.features.main.ui.MainUiState
-// import com.zoewave.basepro.applications.rxdigita.features.main.ui.MainEvent
-
-// Placeholder for a ViewModel - you'''ll need to create this
-@Composable
-fun MainViewModel(): Any = hiltViewModel() // Replace Any with actual MainViewModel
-
-// Placeholder for UI State - you'''ll need to create this
-sealed interface MainUiState {
-    object Loading : MainUiState
-    data class Error(val message: String) : MainUiState
-    object Success : MainUiState // Add data if needed
-}
-
-// Placeholder for Events - you'''ll need to create this
-interface MainEvent {
-    // Define events
-}
-
-
 @Composable
 fun MainUiRoute(
     modifier: Modifier = Modifier,
     navTo: (String) -> Unit,
-    viewModel: Any = MainViewModel() // Replace Any with actual MainViewModel
+    viewModel: MainViewModel = hiltViewModel()
 ) {
-    // val uiState = viewModel.uiState.collectAsState().value // Assuming viewModel has uiState
+    val uiState = viewModel.uiState.collectAsState().value
 
-    // For now, let'''s just show a placeholder
-    // Replace this with your actual UI structure based on uiState, similar to SettingsUiRoute
-    Text(modifier = modifier, text = "Main Feature Screen")
-
-    /*
-    // Example structure based on your SettingsUiRoute:
+    // Replace this with your actual UI structure based on uiState
+    // This is a basic example how you might handle different states.
     when (uiState) {
         is MainUiState.Loading -> {
-            // LoadingScreen() // Assuming you have a common LoadingScreen
-            Text(modifier = modifier, text = "Loading Main...")
+            // You would typically show a loading indicator here
+            // e.g., LoadingScreen()
+            Text(modifier = modifier, text = "Loading Main Feature...")
         }
         is MainUiState.Error -> {
-            // ErrorScreen(errorMessage = uiState.message) {
-            //     viewModel.onEvent(MainEvent.LoadData) // Example event
-            // }
-            Text(modifier = modifier, text = "Error in Main: ${uiState.message}")
+            // You would typically show an error message here
+            // e.g., ErrorScreen(errorMessage = uiState.message, onRetry = { viewModel.onEvent(MainEvent.LoadData) })
+            Text(modifier = modifier, text = "Error: ${uiState.message}")
         }
         is MainUiState.Success -> {
-            // MainScreen(...) // Your actual screen composable for the main feature
-            Text(modifier = modifier, text = "Main Feature Loaded Successfully")
+            // This is where you'''d call your actual screen composable for the main feature
+            // e.g., MainScreen(data = uiState.data, onEvent = viewModel::onEvent, navTo = navTo)
+            Text(modifier = modifier, text = "Main Feature Loaded: ${uiState.data}")
         }
     }
-    */
 }
