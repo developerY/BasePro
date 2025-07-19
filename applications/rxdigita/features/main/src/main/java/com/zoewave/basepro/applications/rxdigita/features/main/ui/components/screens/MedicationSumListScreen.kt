@@ -55,7 +55,7 @@ import java.util.Locale
  * @param time The specific time for this dose (e.g., "8:00 AM").
  * @param taken Whether the dose has been marked as taken.
  */
-data class MedicationDose(
+data class MedicationDoseList(
     val id: Int,
     val name: String,
     val dosage: String,
@@ -66,26 +66,26 @@ data class MedicationDose(
 /**
  * Groups medication doses by time of day.
  */
-data class ScheduleGroup(
+data class ScheduleGroupList(
     val title: String,
-    val doses: List<MedicationDose>
+    val doses: List<MedicationDoseList>
 )
 
 // Sample data for the summary screen
 val todaysSchedule = listOf(
-    ScheduleGroup(
+    ScheduleGroupList(
         title = "Morning",
         doses = listOf(
-            MedicationDose(1, "Lisinopril", "10 mg", "8:00 AM", true),
-            MedicationDose(2, "Metformin", "500 mg", "9:00 AM", false),
-            MedicationDose(3, "Vitamin D3", "1000 IU", "9:00 AM", false)
+            MedicationDoseList(1, "Lisinopril", "10 mg", "8:00 AM", true),
+            MedicationDoseList(2, "Metformin", "500 mg", "9:00 AM", false),
+            MedicationDoseList(3, "Vitamin D3", "1000 IU", "9:00 AM", false)
         )
     ),
-    ScheduleGroup(
+    ScheduleGroupList(
         title = "Evening",
         doses = listOf(
-            MedicationDose(4, "Atorvastatin", "20 mg", "8:00 PM", false),
-            MedicationDose(5, "Amoxicillin", "250 mg", "10:00 PM", false)
+            MedicationDoseList(4, "Atorvastatin", "20 mg", "8:00 PM", false),
+            MedicationDoseList(5, "Amoxicillin", "250 mg", "10:00 PM", false)
         )
     )
 )
@@ -98,11 +98,11 @@ val todaysSchedule = listOf(
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MedicationSummaryScreen() {
+fun MedicationSumListScreen() {
     // State to hold the schedule, allowing for updates (e.g., checking off a dose)
     var schedule by remember { mutableStateOf(todaysSchedule) }
 
-    val onDoseTakenChange: (MedicationDose, Boolean) -> Unit = { dose, taken ->
+    val onDoseTakenChange: (MedicationDoseList, Boolean) -> Unit = { dose, taken ->
         val newSchedule = schedule.map { group ->
             group.copy(doses = group.doses.map {
                 if (it.id == dose.id) {
@@ -147,7 +147,7 @@ fun MedicationSummaryScreen() {
                     )
                 }
                 items(group.doses) { dose ->
-                    MedicationDoseItem(
+                    MedicationDoseListItem(
                         dose = dose,
                         onTakenChange = { taken -> onDoseTakenChange(dose, taken) }
                     )
@@ -197,7 +197,7 @@ fun CurrentTimeCard() {
  * Displays summary statistics like adherence percentage.
  */
 @Composable
-fun SummaryStatsCard(schedule: List<ScheduleGroup>) {
+fun SummaryStatsCard(schedule: List<ScheduleGroupList>) {
     val totalDoses = schedule.sumOf { it.doses.size }
     val takenDoses = schedule.sumOf { group -> group.doses.count { it.taken } }
     val adherence = if (totalDoses > 0) (takenDoses.toFloat() / totalDoses * 100).toInt() else 0
@@ -261,8 +261,8 @@ fun ActionButtonsRow() {
  * Displays a single medication dose with a checkbox.
  */
 @Composable
-fun MedicationDoseItem(
-    dose: MedicationDose,
+fun MedicationDoseListItem(
+    dose: MedicationDoseList,
     onTakenChange: (Boolean) -> Unit
 ) {
     Card(
@@ -295,7 +295,7 @@ fun MedicationDoseItem(
  */
 @Preview(showBackground = true, widthDp = 360, heightDp = 780)
 @Composable
-fun MedicationSummaryScreenPreview() {
+fun MedicationSumListScreenPreview() {
     MaterialTheme {
         Surface {
             MedicationSummaryScreen()
