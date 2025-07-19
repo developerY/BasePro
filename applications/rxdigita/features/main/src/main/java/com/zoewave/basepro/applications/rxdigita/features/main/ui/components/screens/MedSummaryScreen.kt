@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
@@ -113,7 +112,6 @@ val sampleSchedule = listOf(
 @Composable
 fun MedicationSummaryScreen() {
     var schedule by remember { mutableStateOf(sampleSchedule) }
-    var isScheduleVisible by remember { mutableStateOf(true) }
 
     val onDoseTakenChange: (Int, Boolean) -> Unit = { doseId, taken ->
         schedule = schedule.map { group ->
@@ -155,20 +153,10 @@ fun MedicationSummaryScreen() {
                 HealthStatsCard(stats = sampleHealthStats)
             }
             item {
-                ScheduleSectionHeader(
-                    isExpanded = isScheduleVisible,
+                ScheduleSectionCard(
                     schedule = schedule,
-                    onClick = { isScheduleVisible = !isScheduleVisible }
+                    onDoseTakenChange = onDoseTakenChange
                 )
-            }
-            // The actual list of medication cards is now animated
-            if (isScheduleVisible) {
-                items(schedule) { group ->
-                    ExpandableScheduleCard(
-                        group = group,
-                        onDoseTakenChange = onDoseTakenChange
-                    )
-                }
             }
         }
     }
@@ -177,38 +165,60 @@ fun MedicationSummaryScreen() {
 // UI COMPONENT COMPOSABLES //
 
 @Composable
-fun ScheduleSectionHeader(
-    isExpanded: Boolean,
+fun ScheduleSectionCard(
     schedule: List<ScheduleGroup>,
-    onClick: () -> Unit
+    onDoseTakenChange: (Int, Boolean) -> Unit
 ) {
+    var isExpanded by remember { mutableStateOf(true) }
     val totalDoses = schedule.sumOf { it.doses.size }
     val takenDoses = schedule.sumOf { group -> group.doses.count { it.isTaken } }
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Text(
-            "Today's Schedule",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.weight(1f)
-        )
-        if (!isExpanded) {
-            Text(
-                "$takenDoses of $totalDoses Taken",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(end = 8.dp)
-            )
+        Column {
+            // This is the main header for the entire schedule section
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { isExpanded = !isExpanded }
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Today's Schedule",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    "$takenDoses of $totalDoses Taken",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Icon(
+                    imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                    contentDescription = "Expand or collapse schedule",
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            }
+
+            // This is the animated content that shows/hides the schedule groups
+            AnimatedVisibility(visible = isExpanded) {
+                Column(
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    schedule.forEach { group ->
+                        ExpandableScheduleGroup(
+                            group = group,
+                            onDoseTakenChange = onDoseTakenChange
+                        )
+                    }
+                }
+            }
         }
-        Icon(
-            imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-            contentDescription = "Expand or collapse schedule"
-        )
     }
 }
 
@@ -258,7 +268,7 @@ fun HealthStatItem(icon: ImageVector, label: String, value: String, unit: String
 }
 
 @Composable
-fun ExpandableScheduleCard(
+fun ExpandableScheduleGroup(
     group: ScheduleGroup,
     onDoseTakenChange: (Int, Boolean) -> Unit
 ) {
@@ -266,10 +276,11 @@ fun ExpandableScheduleCard(
     val takenCount = group.doses.count { it.isTaken }
     val totalCount = group.doses.size
 
+    // This card is for each group (Morning, Afternoon, Evening)
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha=0.5f)),
     ) {
         Column {
             Row(
@@ -279,11 +290,11 @@ fun ExpandableScheduleCard(
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(group.title, style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
+                Text(group.title, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
                 Text(
                     "$takenCount of $totalCount Taken",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
