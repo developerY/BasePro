@@ -1,4 +1,6 @@
 package com.zoewave.basepro.applications.rxdigita.features.main.ui.components.screens
+
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -111,6 +113,7 @@ val sampleSchedule = listOf(
 @Composable
 fun MedicationSummaryScreen() {
     var schedule by remember { mutableStateOf(sampleSchedule) }
+    var isScheduleVisible by remember { mutableStateOf(true) }
 
     val onDoseTakenChange: (Int, Boolean) -> Unit = { doseId, taken ->
         schedule = schedule.map { group ->
@@ -152,23 +155,63 @@ fun MedicationSummaryScreen() {
                 HealthStatsCard(stats = sampleHealthStats)
             }
             item {
-                Text(
-                    "Today's Schedule",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(top = 8.dp)
+                ScheduleSectionHeader(
+                    isExpanded = isScheduleVisible,
+                    schedule = schedule,
+                    onClick = { isScheduleVisible = !isScheduleVisible }
                 )
             }
-            items(schedule) { group ->
-                ExpandableScheduleCard(
-                    group = group,
-                    onDoseTakenChange = onDoseTakenChange
-                )
+            // The actual list of medication cards is now animated
+            if (isScheduleVisible) {
+                items(schedule) { group ->
+                    ExpandableScheduleCard(
+                        group = group,
+                        onDoseTakenChange = onDoseTakenChange
+                    )
+                }
             }
         }
     }
 }
 
 // UI COMPONENT COMPOSABLES //
+
+@Composable
+fun ScheduleSectionHeader(
+    isExpanded: Boolean,
+    schedule: List<ScheduleGroup>,
+    onClick: () -> Unit
+) {
+    val totalDoses = schedule.sumOf { it.doses.size }
+    val takenDoses = schedule.sumOf { group -> group.doses.count { it.isTaken } }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            "Today's Schedule",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.weight(1f)
+        )
+        if (!isExpanded) {
+            Text(
+                "$takenDoses of $totalDoses Taken",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(end = 8.dp)
+            )
+        }
+        Icon(
+            imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+            contentDescription = "Expand or collapse schedule"
+        )
+    }
+}
+
 
 @Composable
 fun HealthStatsCard(stats: HealthStats) {
@@ -250,7 +293,7 @@ fun ExpandableScheduleCard(
             }
             AnimatedVisibility(visible = isExpanded) {
                 Column(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     group.doses.forEach { dose ->
