@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.outlined.Bloodtype
@@ -31,15 +32,19 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -58,6 +63,7 @@ import androidx.compose.ui.window.Dialog
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.roundToInt
 
 // DATA MODELS //
 
@@ -102,8 +108,8 @@ val sampleSchedule = listOf(
 @Composable
 fun MedicationSummaryScreen() {
     var schedule by remember { mutableStateOf(sampleSchedule) }
-    // State to manage which medication dose is being logged via the dialog
     var doseToLog by remember { mutableStateOf<MedicationDose?>(null) }
+    var showLogSymptomDialog by remember { mutableStateOf(false) }
 
     val onDoseTakenChange: (Int, Boolean) -> Unit = { doseId, taken ->
         schedule = schedule.map { group ->
@@ -113,7 +119,6 @@ fun MedicationSummaryScreen() {
         }
     }
 
-    // When a user confirms taking a dose from the dialog
     val onConfirmDoseLog: (MedicationDose) -> Unit = { dose ->
         onDoseTakenChange(dose.id, true)
         doseToLog = null
@@ -128,37 +133,96 @@ fun MedicationSummaryScreen() {
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // All other cards remain the same
             item { HealthStatsCard(stats = sampleHealthStats) }
-            item { SymptomTrackerCard(symptom = sampleSymptom) }
+            item {
+                SymptomTrackerCard(
+                    symptom = sampleSymptom,
+                    onLogSymptomClick = { showLogSymptomDialog = true }
+                )
+            }
             item { BloodGlucoseCard(glucose = sampleGlucose) }
 
             item {
                 ScheduleSectionCard(
                     schedule = schedule,
                     onDoseTakenChange = onDoseTakenChange,
-                    // When "Take" is clicked, set the dose to be logged
                     onTakePrnDose = { dose -> doseToLog = dose }
                 )
             }
         }
 
-        // Show the dialog when a dose is selected to be logged
         if (doseToLog != null) {
             TakeDoseDialog(
                 dose = doseToLog!!,
                 onDismiss = { doseToLog = null },
-                onConfirm = {
-                    // Here you would navigate to the "link symptom" screen
-                    // For now, we just log it and show a toast
-                    onConfirmDoseLog(it)
+                onConfirm = { onConfirmDoseLog(it) }
+            )
+        }
+
+        if (showLogSymptomDialog) {
+            LogSymptomDialog(
+                onDismiss = { showLogSymptomDialog = false },
+                onConfirm = { name, severity ->
+                    // In a real app, save this and navigate to link to meds
+                    showLogSymptomDialog = false
                 }
             )
         }
     }
 }
 
-// DIALOG COMPOSABLE //
+// DIALOG COMPOSABLES //
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LogSymptomDialog(
+    onDismiss: () -> Unit,
+    onConfirm: (symptomName: String, severity: Int) -> Unit
+) {
+    var symptomName by remember { mutableStateOf("") }
+    var severity by remember { mutableFloatStateOf(1f) }
+    val context = LocalContext.current
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Log Symptom", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(16.dp))
+                TextField(
+                    value = symptomName,
+                    onValueChange = { symptomName = it },
+                    label = { Text("Symptom Name (e.g. Headache)") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Severity: ${severity.roundToInt()}", style = MaterialTheme.typography.bodyLarge)
+                Slider(
+                    value = severity,
+                    onValueChange = { severity = it },
+                    valueRange = 1f..5f,
+                    steps = 3
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                Button(
+                    onClick = {
+                        Toast.makeText(context, "Symptom Logged. Navigating to link meds...", Toast.LENGTH_SHORT).show()
+                        onConfirm(symptomName, severity.roundToInt())
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = symptomName.isNotBlank()
+                ) {
+                    Text("Next")
+                }
+            }
+        }
+    }
+}
+
 @Composable
 fun TakeDoseDialog(
     dose: MedicationDose,
@@ -176,27 +240,14 @@ fun TakeDoseDialog(
                 modifier = Modifier.padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    "Log Dose",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
-                )
+                Text("Log Dose", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    dose.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                Text(dose.name, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    "What is this dose for?",
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Center
-                )
+                Text("What is this dose for?", style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
                     onClick = {
-                        // This is where you would navigate to the "Link Symptom" screen
                         Toast.makeText(context, "Linking to symptom...", Toast.LENGTH_SHORT).show()
                         onConfirm(dose)
                     },
@@ -223,12 +274,74 @@ fun TakeDoseDialog(
 // MODIFIED COMPOSABLES //
 
 @Composable
+fun ExpandableCard(
+    title: String,
+    icon: ImageVector,
+    isExpanded: Boolean,
+    onClick: () -> Unit,
+    action: (@Composable () -> Unit)? = null, // New parameter for an action icon
+    content: @Composable () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(imageVector = icon, contentDescription = title, tint = MaterialTheme.colorScheme.primary)
+                Text(text = title, style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f).padding(start = 12.dp))
+                if (action != null) {
+                    action()
+                }
+                Icon(
+                    imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                    contentDescription = "Expand or collapse",
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            }
+            AnimatedVisibility(visible = isExpanded) {
+                Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) { content() }
+            }
+        }
+    }
+}
+
+@Composable
+fun SymptomTrackerCard(
+    symptom: SymptomLog,
+    onLogSymptomClick: () -> Unit
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+    ExpandableCard(
+        title = "Symptom Tracker",
+        icon = Icons.Outlined.Mood,
+        isExpanded = isExpanded,
+        onClick = { isExpanded = !isExpanded },
+        action = {
+            IconButton(onClick = onLogSymptomClick) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Log a new symptom")
+            }
+        }
+    ) {
+        Text("Last log: ${symptom.lastUpdated}", style = MaterialTheme.typography.bodySmall)
+        Spacer(Modifier.height(16.dp))
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(symptom.name, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+            Text("Severity: ${symptom.severity}/5", style = MaterialTheme.typography.titleMedium)
+        }
+    }
+}
+
+@Composable
 fun ScheduleSectionCard(
     schedule: List<ScheduleGroup>,
     onDoseTakenChange: (Int, Boolean) -> Unit,
-    onTakePrnDose: (MedicationDose) -> Unit // New callback for the "Take" button
+    onTakePrnDose: (MedicationDose) -> Unit
 ) {
-    // This component's logic remains largely the same, just passes the new callback down
     var isExpanded by remember { mutableStateOf(true) }
     val totalDoses = schedule.sumOf { it.doses.size }
     val takenDoses = schedule.sumOf { group -> group.doses.count { it.isTaken } }
@@ -260,7 +373,7 @@ fun ScheduleSectionCard(
                         ExpandableScheduleGroup(
                             group = group,
                             onDoseTakenChange = onDoseTakenChange,
-                            onTakePrnDose = onTakePrnDose // Pass callback down
+                            onTakePrnDose = onTakePrnDose
                         )
                     }
                 }
@@ -273,10 +386,9 @@ fun ScheduleSectionCard(
 fun ExpandableScheduleGroup(
     group: ScheduleGroup,
     onDoseTakenChange: (Int, Boolean) -> Unit,
-    onTakePrnDose: (MedicationDose) -> Unit // New callback
+    onTakePrnDose: (MedicationDose) -> Unit
 ) {
-    // This component's logic also remains largely the same
-    var isExpanded by remember { mutableStateOf(group.title == "As Needed") } // Default open "As Needed"
+    var isExpanded by remember { mutableStateOf(group.title == "As Needed") }
     val takenCount = group.doses.count { it.isTaken }
     val totalCount = group.doses.size
 
@@ -309,7 +421,7 @@ fun ExpandableScheduleGroup(
                         MedicationDoseItem(
                             dose = dose,
                             onCheckedChange = { onDoseTakenChange(dose.id, it) },
-                            onTakeClick = { onTakePrnDose(dose) } // Pass callback down
+                            onTakeClick = { onTakePrnDose(dose) }
                         )
                     }
                 }
@@ -322,7 +434,7 @@ fun ExpandableScheduleGroup(
 fun MedicationDoseItem(
     dose: MedicationDose,
     onCheckedChange: (Boolean) -> Unit,
-    onTakeClick: () -> Unit // New callback
+    onTakeClick: () -> Unit
 ) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.weight(1f)) {
@@ -331,21 +443,18 @@ fun MedicationDoseItem(
         }
         Spacer(modifier = Modifier.width(16.dp))
 
-        // ** This is the key UI change **
         if (dose.isPrn) {
-            // Show a "Take" button for as-needed meds
             Button(onClick = onTakeClick, enabled = !dose.isTaken) {
                 Text(if (dose.isTaken) "Taken" else "Take")
             }
         } else {
-            // Show a checkbox for regularly scheduled meds
             Checkbox(checked = dose.isTaken, onCheckedChange = onCheckedChange)
         }
     }
 }
 
 
-// UNCHANGED COMPOSABLES (for brevity, not repeating all of them) //
+// UNCHANGED COMPOSABLES //
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar() {
@@ -366,22 +475,6 @@ fun TopBar() {
 }
 
 @Composable
-fun ExpandableCard(title: String, icon: ImageVector, isExpanded: Boolean, onClick: () -> Unit, content: @Composable () -> Unit) {
-    Card(modifier = Modifier.fillMaxWidth(), elevation = CardDefaults.cardElevation(defaultElevation = 2.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
-        Column {
-            Row(modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(imageVector = icon, contentDescription = title, tint = MaterialTheme.colorScheme.primary)
-                Text(text = title, style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f).padding(start = 12.dp))
-                Icon(imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore, contentDescription = "Expand or collapse")
-            }
-            AnimatedVisibility(visible = isExpanded) {
-                Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) { content() }
-            }
-        }
-    }
-}
-
-@Composable
 fun HealthStatsCard(stats: HealthStats) {
     var isExpanded by remember { mutableStateOf(true) }
     ExpandableCard("Current Health", Icons.Outlined.MonitorHeart, isExpanded, { isExpanded = !isExpanded }) {
@@ -394,19 +487,6 @@ fun HealthStatsCard(stats: HealthStats) {
         }
         Spacer(Modifier.height(16.dp))
         LinearProgressIndicator(progress = { stats.hydrationPercent }, modifier = Modifier.fillMaxWidth().height(8.dp).clip(MaterialTheme.shapes.small))
-    }
-}
-
-@Composable
-fun SymptomTrackerCard(symptom: SymptomLog) {
-    var isExpanded by remember { mutableStateOf(false) }
-    ExpandableCard("Symptom Tracker", Icons.Outlined.Mood, isExpanded, { isExpanded = !isExpanded }) {
-        Text("Last log: ${symptom.lastUpdated}", style = MaterialTheme.typography.bodySmall)
-        Spacer(Modifier.height(16.dp))
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(symptom.name, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
-            Text("Severity: ${symptom.severity}/5", style = MaterialTheme.typography.titleMedium)
-        }
     }
 }
 
@@ -445,4 +525,3 @@ fun MedicationSummaryScreenPreview() {
         }
     }
 }
-
