@@ -1,5 +1,4 @@
-package com.zoewave.basepro.applications.rxdigita.features.main.ui.components.home
-
+package com.zoewave.basepro.applications.rxdigita.features.main.ui.components.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -43,23 +41,56 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.zoewave.basepro.applications.rxdigita.features.main.ui.MedEvent
-import com.zoewave.basepro.applications.rxdigita.features.main.ui.components.screens.MedicationDose
-import com.zoewave.basepro.applications.rxdigita.features.main.ui.components.screens.ScheduleGroup
-import com.zoewave.basepro.applications.rxdigita.features.main.ui.components.screens.todaysSchedule
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@Composable
-fun MedDashboardContent(
-    modifier: Modifier = Modifier,
-    onMedEvent: (MedEvent) -> Unit, // viewModel::onEvent, // <<< MODIFIED LINE: Use the passed-in viewModel
-    navTo: (String) -> Unit
-) {
-    MedicationSummaryScreen()
-}
+
+
+/**
+ * Data class representing a single medication dose for the schedule.
+ *
+ * @param name The name of the medication.
+ * @param dosage The prescribed dosage (e.g., "500 mg").
+ * @param time The specific time for this dose (e.g., "8:00 AM").
+ * @param taken Whether the dose has been marked as taken.
+ */
+data class MedicationDose(
+    val id: Int,
+    val name: String,
+    val dosage: String,
+    val time: String,
+    var taken: Boolean
+)
+
+/**
+ * Groups medication doses by time of day.
+ */
+data class ScheduleGroup(
+    val title: String,
+    val doses: List<MedicationDose>
+)
+
+// Sample data for the summary screen
+val todaysSchedule = listOf(
+    ScheduleGroup(
+        title = "Morning",
+        doses = listOf(
+            MedicationDose(1, "Lisinopril", "10 mg", "8:00 AM", true),
+            MedicationDose(2, "Metformin", "500 mg", "9:00 AM", false),
+            MedicationDose(3, "Vitamin D3", "1000 IU", "9:00 AM", false)
+        )
+    ),
+    ScheduleGroup(
+        title = "Evening",
+        doses = listOf(
+            MedicationDose(4, "Atorvastatin", "20 mg", "8:00 PM", false),
+            MedicationDose(5, "Amoxicillin", "250 mg", "10:00 PM", false)
+        )
+    )
+)
+
+
 
 /**
  * The main composable for the Medication Summary Screen (Dashboard).
