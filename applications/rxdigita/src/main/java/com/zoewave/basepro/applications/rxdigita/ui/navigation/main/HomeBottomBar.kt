@@ -43,7 +43,7 @@ fun HomeBottomBar(
             hasNews = false,
         ),
         BottomNavigationItem(
-            title = "Ride",
+            title = "MedList",
             selectedIcon = Icons.AutoMirrored.TwoTone.List,
             unselectedIcon = Icons.AutoMirrored.Outlined.List,
             hasNews = false,
@@ -101,7 +101,7 @@ fun HomeBottomBar(
 private fun navigateTo(tabTitle: String, navController: NavHostController) {
     val route = when (tabTitle) {
         "Home"-> RxDigitaScreen.HomeRxDigitaScreen.route
-        "Ride" -> RxDigitaScreen.TripRxDigitaScreen.route
+        "MedList" -> RxDigitaScreen.TripRxDigitaScreen.route
         "Settings" -> RxDigitaScreen.SettingsRxDigitaScreen.route
         else -> RxDigitaScreen.HomeRxDigitaScreen.route // Default fallback
     }

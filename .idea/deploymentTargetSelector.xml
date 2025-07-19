@@ -53,6 +53,9 @@
       <SelectionState runConfigName="test_speedometer_journey2.xml (startStopAndReviewRide)">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="applications.rxdigita">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>
