@@ -2,8 +2,10 @@ package com.zoewave.basepro.applications.rxdigita.features.main.ui.components.sc
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -73,8 +75,11 @@ data class MedicationDose(
     val dosage: String,
     val time: String,
     val isTaken: Boolean,
-    val isPrn: Boolean = false // Pro re nata (as-needed)
+    val isPrn: Boolean = false, // Pro re nata (as-needed)
+    val knownSideEffects: List<String> = emptyList() // Populated from label scan
 )
+
+data class SymptomLogEntry(val name: String, val severity: Int)
 
 // Other data models remain the same...
 data class HealthStats(val bpSystolic: Int, val bpDiastolic: Int, val heartRate: Int, val hydrationPercent: Float, val lastUpdated: String)
@@ -90,15 +95,14 @@ val sampleGlucose = GlucoseLog(105, "mg/dL", "Normal", "8:15 AM")
 
 val sampleSchedule = listOf(
     ScheduleGroup("Morning", listOf(
-        MedicationDose(1, "Lisinopril", "10 mg", "8:00 AM", true),
-        MedicationDose(2, "Metformin", "500 mg", "9:00 AM", true)
+        MedicationDose(1, "Lisinopril", "10 mg", "8:00 AM", true, knownSideEffects = listOf("Dizziness", "Headache")),
+        MedicationDose(2, "Metformin", "500 mg", "9:00 AM", true, knownSideEffects = listOf("Nausea", "Diarrhea"))
     )),
     ScheduleGroup("As Needed", listOf(
-        // This is our new "as-needed" medication
-        MedicationDose(4, "Ibuprofen", "200 mg", "PRN", false, isPrn = true)
+        MedicationDose(4, "Ibuprofen", "200 mg", "PRN", false, isPrn = true, knownSideEffects = listOf("Stomach Pain"))
     )),
     ScheduleGroup("Evening", listOf(
-        MedicationDose(5, "Atorvastatin", "20 mg", "8:00 PM", false)
+        MedicationDose(5, "Atorvastatin", "20 mg", "8:00 PM", false, knownSideEffects = listOf("Muscle Pain"))
     ))
 )
 
@@ -110,6 +114,7 @@ fun MedicationSummaryScreen() {
     var schedule by remember { mutableStateOf(sampleSchedule) }
     var doseToLog by remember { mutableStateOf<MedicationDose?>(null) }
     var showLogSymptomDialog by remember { mutableStateOf(false) }
+    var symptomToLink by remember { mutableStateOf<SymptomLogEntry?>(null) }
 
     val onDoseTakenChange: (Int, Boolean) -> Unit = { doseId, taken ->
         schedule = schedule.map { group ->
@@ -163,8 +168,20 @@ fun MedicationSummaryScreen() {
             LogSymptomDialog(
                 onDismiss = { showLogSymptomDialog = false },
                 onConfirm = { name, severity ->
-                    // In a real app, save this and navigate to link to meds
                     showLogSymptomDialog = false
+                    symptomToLink = SymptomLogEntry(name, severity)
+                }
+            )
+        }
+
+        if (symptomToLink != null) {
+            LinkMedicationDialog(
+                symptom = symptomToLink!!,
+                recentMeds = schedule.flatMap { it.doses }.filter { it.isTaken },
+                onDismiss = { symptomToLink = null },
+                onConfirm = {
+                    // In a real app, save the link
+                    symptomToLink = null
                 }
             )
         }
@@ -172,6 +189,65 @@ fun MedicationSummaryScreen() {
 }
 
 // DIALOG COMPOSABLES //
+@Composable
+fun LinkMedicationDialog(
+    symptom: SymptomLogEntry,
+    recentMeds: List<MedicationDose>,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            Column(modifier = Modifier.padding(24.dp)) {
+                Text("Link to Recent Medications?", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("Did '${symptom.name}' occur after taking any of these?")
+                Spacer(modifier = Modifier.height(16.dp))
+
+                recentMeds.forEach { med ->
+                    LinkableMedicationItem(med = med, symptomName = symptom.name)
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+                Button(onClick = onConfirm, modifier = Modifier.fillMaxWidth()) {
+                    Text("Save Links")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun LinkableMedicationItem(med: MedicationDose, symptomName: String) {
+    var isChecked by remember { mutableStateOf(false) }
+    // Simple case-insensitive check
+    val isCommonSideEffect = med.knownSideEffects.any { it.equals(symptomName, ignoreCase = true) }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { isChecked = !isChecked },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Checkbox(checked = isChecked, onCheckedChange = { isChecked = it })
+        Column(modifier = Modifier.padding(start = 8.dp)) {
+            Text(med.name, style = MaterialTheme.typography.bodyLarge)
+            if (isCommonSideEffect) {
+                Text(
+                    "Common side effect",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.tertiary
+                )
+            }
+        }
+    }
+}
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogSymptomDialog(
@@ -180,7 +256,6 @@ fun LogSymptomDialog(
 ) {
     var symptomName by remember { mutableStateOf("") }
     var severity by remember { mutableFloatStateOf(1f) }
-    val context = LocalContext.current
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -209,10 +284,7 @@ fun LogSymptomDialog(
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
-                    onClick = {
-                        Toast.makeText(context, "Symptom Logged. Navigating to link meds...", Toast.LENGTH_SHORT).show()
-                        onConfirm(symptomName, severity.roundToInt())
-                    },
+                    onClick = { onConfirm(symptomName, severity.roundToInt()) },
                     modifier = Modifier.fillMaxWidth(),
                     enabled = symptomName.isNotBlank()
                 ) {
