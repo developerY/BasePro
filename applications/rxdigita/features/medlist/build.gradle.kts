@@ -46,6 +46,9 @@ dependencies {
     implementation(libs.androidx.material3)
     debugImplementation(libs.androidx.ui.tooling)
 
+    // Icons
+    implementation(libs.androidx.material.icons.extended)
+
 
     // Hilt
     implementation(libs.hilt.android)

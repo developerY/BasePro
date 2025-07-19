@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    // alias(libs.plugins.hilt.gradle)
+    alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
 }
 
@@ -57,6 +57,9 @@ dependencies {
     // Compose Navigation
     implementation(libs.androidx.navigation.compose) // Added Compose Navigation dependency with safe args plugin
     implementation(libs.hilt.navigation.compose)
+
+    // Icons
+    implementation(libs.androidx.material.icons.extended)
 
 
     testImplementation(libs.junit)

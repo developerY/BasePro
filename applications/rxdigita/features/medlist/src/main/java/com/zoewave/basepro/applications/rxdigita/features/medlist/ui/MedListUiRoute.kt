@@ -23,7 +23,11 @@ fun MedListUiRoute(
             Text(modifier = modifier, text = "Error: ${uiState.message}")
         }
         is MedListUiState.Success -> {
-            Text(modifier = modifier, text = "MedList Feature Loaded: ${uiState.data}")
+            MedListContent(
+                modifier = modifier,
+                onMedListEvent = {},//viewModel::onMedListEvent,
+                navTo = navTo
+            )
         }
     }
 }

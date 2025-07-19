@@ -4,10 +4,13 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.ylabz.basepro.core.ui.BikeScreen
 import com.ylabz.basepro.core.ui.RxDigitaScreen // Import the correct Screen definitions
 import com.ylabz.basepro.core.util.Logging
-import com.zoewave.basepro.applications.rxdigita.features.main.ui.MainUiRoute
+import com.zoewave.basepro.applications.rxdigita.features.main.ui.MedUiRoute
 import com.zoewave.basepro.applications.rxdigita.features.medlist.ui.MedListUiRoute
 import com.zoewave.basepro.applications.rxdigita.features.settings.ui.SettingsUiRoute
 
@@ -23,7 +26,7 @@ fun NavGraphBuilder.rxDigitaNavGraph(
 
     // 1) Home Tab
     composable(RxDigitaScreen.HomeRxDigitaScreen.route) { // Use RxDigitaScreen
-        MainUiRoute(
+        MedUiRoute(
             modifier = modifier,
             navTo = { path -> navHostController.navigate(path) }
         )
@@ -43,5 +46,12 @@ fun NavGraphBuilder.rxDigitaNavGraph(
             navTo = { path -> navHostController.navigate(path) }
         )
     }
+
+    /* 4) Ride Detail Screen
+    composable(
+        route = BikeScreen.RideDetailScreen.route,
+        arguments = listOf(navArgument("rideId") { type = NavType.StringType })
+    ) { backStackEntry ->
+    }*/
 
 }
