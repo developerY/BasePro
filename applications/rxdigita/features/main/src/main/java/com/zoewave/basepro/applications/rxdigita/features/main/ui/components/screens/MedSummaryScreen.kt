@@ -2,10 +2,8 @@ package com.zoewave.basepro.applications.rxdigita.features.main.ui.components.sc
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -38,6 +38,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
@@ -92,6 +93,7 @@ data class ScheduleGroup(val title: String, val doses: List<MedicationDose>)
 val sampleHealthStats = HealthStats(122, 78, 67, 0.75f, "2:00 PM")
 val sampleSymptom = SymptomLog("Headache", 2, "1:30 PM")
 val sampleGlucose = GlucoseLog(105, "mg/dL", "Normal", "8:15 AM")
+val commonSymptoms = listOf("Headache", "Nausea", "Back Pain")
 
 val sampleSchedule = listOf(
     ScheduleGroup("Morning", listOf(
@@ -115,6 +117,7 @@ fun MedicationSummaryScreen() {
     var doseToLog by remember { mutableStateOf<MedicationDose?>(null) }
     var showLogSymptomDialog by remember { mutableStateOf(false) }
     var symptomToLink by remember { mutableStateOf<SymptomLogEntry?>(null) }
+    var showLinkSymptomToDoseDialog by remember { mutableStateOf(false) }
 
     val onDoseTakenChange: (Int, Boolean) -> Unit = { doseId, taken ->
         schedule = schedule.map { group ->
@@ -122,11 +125,6 @@ fun MedicationSummaryScreen() {
                 if (it.id == doseId) it.copy(isTaken = taken) else it
             })
         }
-    }
-
-    val onConfirmDoseLog: (MedicationDose) -> Unit = { dose ->
-        onDoseTakenChange(dose.id, true)
-        doseToLog = null
     }
 
     Scaffold(
@@ -160,7 +158,13 @@ fun MedicationSummaryScreen() {
             TakeDoseDialog(
                 dose = doseToLog!!,
                 onDismiss = { doseToLog = null },
-                onConfirm = { onConfirmDoseLog(it) }
+                onConfirmForSymptom = {
+                    showLinkSymptomToDoseDialog = true
+                },
+                onConfirmOther = {
+                    onDoseTakenChange(it.id, true)
+                    doseToLog = null
+                }
             )
         }
 
@@ -179,9 +183,21 @@ fun MedicationSummaryScreen() {
                 symptom = symptomToLink!!,
                 recentMeds = schedule.flatMap { it.doses }.filter { it.isTaken },
                 onDismiss = { symptomToLink = null },
-                onConfirm = {
-                    // In a real app, save the link
-                    symptomToLink = null
+                onConfirm = { symptomToLink = null }
+            )
+        }
+
+        if (showLinkSymptomToDoseDialog) {
+            LinkSymptomToDoseDialog(
+                dose = doseToLog!!,
+                onDismiss = {
+                    showLinkSymptomToDoseDialog = false
+                    doseToLog = null
+                },
+                onConfirm = { symptomName ->
+                    onDoseTakenChange(doseToLog!!.id, true)
+                    showLinkSymptomToDoseDialog = false
+                    doseToLog = null
                 }
             )
         }
@@ -189,6 +205,75 @@ fun MedicationSummaryScreen() {
 }
 
 // DIALOG COMPOSABLES //
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LinkSymptomToDoseDialog(
+    dose: MedicationDose,
+    onDismiss: () -> Unit,
+    onConfirm: (symptomName: String) -> Unit
+) {
+    val (selectedSymptom, onSymptomSelected) = remember { mutableStateOf("") }
+    var customSymptom by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            Column(modifier = Modifier.padding(24.dp)) {
+                Text("Which symptom are you treating?", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(16.dp))
+
+                commonSymptoms.forEach { symptom ->
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .selectable(
+                                selected = (symptom == selectedSymptom),
+                                onClick = { onSymptomSelected(symptom) }
+                            )
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = (symptom == selectedSymptom),
+                            onClick = { onSymptomSelected(symptom) }
+                        )
+                        Text(
+                            text = symptom,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(start = 16.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+                TextField(
+                    value = customSymptom,
+                    onValueChange = { customSymptom = it },
+                    label = { Text("Or add a new one (e.g. Knee Pain)")},
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+                Button(
+                    onClick = {
+                        val symptomToLog = if (customSymptom.isNotBlank()) customSymptom else selectedSymptom
+                        Toast.makeText(context, "Logged ${dose.name} for $symptomToLog", Toast.LENGTH_LONG).show()
+                        onConfirm(symptomToLog)
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = selectedSymptom.isNotBlank() || customSymptom.isNotBlank()
+                ) {
+                    Text("Log Dose")
+                }
+            }
+        }
+    }
+}
+
+
 @Composable
 fun LinkMedicationDialog(
     symptom: SymptomLogEntry,
@@ -207,9 +292,11 @@ fun LinkMedicationDialog(
                 Text("Did '${symptom.name}' occur after taking any of these?")
                 Spacer(modifier = Modifier.height(16.dp))
 
-                recentMeds.forEach { med ->
-                    LinkableMedicationItem(med = med, symptomName = symptom.name)
-                    Spacer(modifier = Modifier.height(8.dp))
+                LazyColumn {
+                    items(recentMeds) { med ->
+                        LinkableMedicationItem(med = med, symptomName = symptom.name)
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -299,10 +386,9 @@ fun LogSymptomDialog(
 fun TakeDoseDialog(
     dose: MedicationDose,
     onDismiss: () -> Unit,
-    onConfirm: (MedicationDose) -> Unit
+    onConfirmForSymptom: (MedicationDose) -> Unit,
+    onConfirmOther: (MedicationDose) -> Unit
 ) {
-    val context = LocalContext.current
-
     Dialog(onDismissRequest = onDismiss) {
         Card(
             shape = RoundedCornerShape(16.dp),
@@ -319,20 +405,14 @@ fun TakeDoseDialog(
                 Text("What is this dose for?", style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
-                    onClick = {
-                        Toast.makeText(context, "Linking to symptom...", Toast.LENGTH_SHORT).show()
-                        onConfirm(dose)
-                    },
+                    onClick = { onConfirmForSymptom(dose) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("For a Symptom (e.g. Headache)")
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedButton(
-                    onClick = {
-                        Toast.makeText(context, "Logging as 'Other'", Toast.LENGTH_SHORT).show()
-                        onConfirm(dose)
-                    },
+                    onClick = { onConfirmOther(dose) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Other Reason")
