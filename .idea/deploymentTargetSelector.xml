@@ -27,17 +27,6 @@
       <SelectionState runConfigName="applications.photodo">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="applications.bike">
-        <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-07-15T23:04:11.562121Z">
-          <Target type="DEFAULT_BOOT">
-            <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=8BQX1E6VA" />
-            </handle>
-          </Target>
-        </DropdownSelection>
-        <DialogSelection />
-      </SelectionState>
       <SelectionState runConfigName="ash_bike_journey.xml (onboarding)">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
@@ -54,6 +43,9 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="applications.rxdigita">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="applications.rxtrack">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
