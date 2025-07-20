@@ -30,7 +30,9 @@ fun SettingsUiRoute(
             Text(modifier = modifier, text = "Error in RxDigita Settings: ${uiState.message}")
         }
         is SettingsUiState.Success -> {
-            Text(modifier = modifier, text = "RxDigita Settings Loaded: ${uiState.data}")
+            SettingsScreen(
+                onNavigateBack = { navTo("rxdigita_main") },
+            )
         }
     }
 }
