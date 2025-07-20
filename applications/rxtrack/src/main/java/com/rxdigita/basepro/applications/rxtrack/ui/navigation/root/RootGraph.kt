@@ -2,7 +2,7 @@ package com.rxdigita.basepro.applications.rxtrack.ui.navigation.root
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import com.zoewave.basepro.applications.rxdigita.ui.navigation.main.MainScreen
+import com.rxdigita.basepro.applications.rxtrack.ui.navigation.main.MainScreen
 
 
 @Composable

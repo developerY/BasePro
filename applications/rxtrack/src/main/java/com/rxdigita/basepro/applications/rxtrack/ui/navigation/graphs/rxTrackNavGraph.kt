@@ -1,22 +1,18 @@
 package com.rxdigita.basepro.applications.rxtrack.ui.navigation.graphs
 
-import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.ylabz.basepro.core.ui.BikeScreen
 import com.ylabz.basepro.core.ui.RxDigitaScreen // Import the correct Screen definitions
 import com.ylabz.basepro.core.util.Logging
-import com.zoewave.basepro.applications.rxdigita.features.main.ui.MedUiRoute
-import com.zoewave.basepro.applications.rxdigita.features.medlist.ui.MedListUiRoute
-import com.zoewave.basepro.applications.rxdigita.features.settings.ui.SettingsUiRoute
+import com.rxdigita.basepro.applications.rxtrack.features.main.ui.MedUiRoute
+import com.rxdigita.basepro.applications.rxtrack.features.medlist.ui.MedListUiRoute
+import com.rxdigita.basepro.applications.rxtrack.features.settings.ui.SettingsUiRoute
 
 // Define rxDigitaNavGraph as an extension function on NavGraphBuilder
 // @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
-fun NavGraphBuilder.rxDigitaNavGraph(
+fun NavGraphBuilder.rxTrackNavGraph(
     modifier: Modifier = Modifier,
     navHostController: NavHostController,
     //bikeViewModel: BikeViewModel // <<< MODIFIED LINE: Added bikeViewModel parameter

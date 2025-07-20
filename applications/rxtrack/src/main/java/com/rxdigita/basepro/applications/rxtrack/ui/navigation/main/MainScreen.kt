@@ -12,7 +12,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.ylabz.basepro.core.ui.RxDigitaScreen
-import com.zoewave.basepro.applications.rxdigita.ui.navigation.graphs.rxDigitaNavGraph
+import com.rxdigita.basepro.applications.rxtrack.ui.navigation.graphs.rxTrackNavGraph
 
 
 // The @RequiresPermission annotation can be helpful for static analysis
@@ -40,7 +40,7 @@ fun MainScreen(
             startDestination = RxDigitaScreen.HomeRxDigitaScreen.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            rxDigitaNavGraph(
+            rxTrackNavGraph(
                 modifier = Modifier,
                 navHostController = navController,
                 //bikeViewModel = rxDigitaViewModel // <<< MODIFIED LINE: Pass the bikeViewModel instance

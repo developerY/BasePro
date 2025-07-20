@@ -1,4 +1,4 @@
-package com.zoewave.basepro.applications.rxdigita
+package com.rxdigita.basepro.applications.rxtrack
 
 import android.app.Application
 import android.app.NotificationChannel

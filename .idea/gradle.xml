@@ -27,6 +27,10 @@
             <option value="$PROJECT_DIR$/applications/rxdigita/features/medlist" />
             <option value="$PROJECT_DIR$/applications/rxdigita/features/settings" />
             <option value="$PROJECT_DIR$/applications/rxtrack" />
+            <option value="$PROJECT_DIR$/applications/rxtrack/features" />
+            <option value="$PROJECT_DIR$/applications/rxtrack/features/main" />
+            <option value="$PROJECT_DIR$/applications/rxtrack/features/medlist" />
+            <option value="$PROJECT_DIR$/applications/rxtrack/features/settings" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core/data" />
             <option value="$PROJECT_DIR$/core/database" />
