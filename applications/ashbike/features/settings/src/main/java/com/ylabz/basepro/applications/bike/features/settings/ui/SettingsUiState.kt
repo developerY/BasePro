@@ -20,6 +20,7 @@ sealed interface SettingsUiState {
 
 /*
 "Theme" to listOf("Light", "Dark", "System Default"),
-        "Language" to listOf("English", "Spanish", "French"),
-        "Notifications" to listOf("Enabled", "Disabled")
+"Language" to listOf("English", "Spanish", "French"),
+"Notifications" to listOf("Enabled", "Disabled"),
+"Units" to listOf("Imperial (English)", "Metric (SI)")
  */

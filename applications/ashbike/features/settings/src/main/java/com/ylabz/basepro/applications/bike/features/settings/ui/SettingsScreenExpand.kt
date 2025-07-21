@@ -100,7 +100,7 @@ private enum class SettingsCard {
 // —————————————————————————————————————————————————————————
 // --- Enums for type-safe state management ---
 private enum class SectionKey { App, Connectivity, Bike }
-private enum class CardKey { Theme, About, Health, Nfc, Qr, Ble, BikeConfig }
+private enum class CardKey { Theme, About, Health, Nfc, Qr, Ble, BikeConfig, AppPrefs }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -162,13 +162,20 @@ fun SettingsScreenEx(
         }
         if (expandedSections.contains(SectionKey.App)) {
             item {
-                // Replace ThemeExpandable with ThemeSettingsCard
                 ThemeSettingsCard(
-                    title = "Theme", // Added title parameter
+                    title = "Theme",
                     expanded = expandedCards.contains(CardKey.Theme),
                     onExpandToggle = { toggle(expandedCards, CardKey.Theme) },
                     currentTheme = uiState.selections["Theme"] ?: "System",
                     onThemeSelected = { theme -> onEvent(SettingsEvent.UpdateSetting("Theme", theme)) }
+                )
+            }
+            item {
+                AppPreferencesExpandable(
+                    expanded = expandedCards.contains(CardKey.AppPrefs),
+                    onExpandToggle = { toggle(expandedCards, CardKey.AppPrefs) },
+                    uiState = uiState,
+                    onEvent = onEvent
                 )
             }
             item {
@@ -281,12 +288,14 @@ fun SettingsScreenExPreview() {
         options = mapOf(
             "Theme" to listOf("Light", "Dark", "System Default"),
             "Language" to listOf("English", "Spanish", "French"),
-            "Notifications" to listOf("Enabled", "Disabled")
+            "Notifications" to listOf("Enabled", "Disabled"),
+            "Units" to listOf("Imperial (English)", "Metric (SI)")
         ),
         selections = mapOf(
             "Theme" to "System Default",
             "Language" to "English",
-            "Notifications" to "Enabled"
+            "Notifications" to "Enabled",
+            "Units" to "Metric (SI)"
         ),
         profile = dummyProfile,
         isProfileIncomplete = false // Added for preview consistency
@@ -543,8 +552,13 @@ fun BikeConfigurationEx(
 @Composable
 fun AppPreferencesExpandable(
     expanded: Boolean,
-    onExpandToggle: () -> Unit
+    onExpandToggle: () -> Unit,
+    uiState: SettingsUiState.Success,
+    onEvent: (SettingsEvent) -> Unit
 ) {
+    val unitOptions = uiState.options["Units"] ?: listOf("Imperial (English)", "Metric (SI)")
+    val currentUnit = uiState.selections["Units"] ?: "Metric (SI)"
+
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
@@ -581,37 +595,60 @@ fun AppPreferencesExpandable(
             if (expanded) {
                 Divider()
                 Column(modifier = Modifier.padding(16.dp)) {
-                    var darkModeEnabled by remember { mutableStateOf(false) }
+                    // Dark Mode Setting (existing)
+                    var darkModeEnabled by rememberSaveable { mutableStateOf(uiState.selections["Theme"] == "Dark") } // Assuming "Theme" selection handles dark mode
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("Dark Mode")
                         Spacer(modifier = Modifier.weight(1f))
                         Switch(
-                            enabled = false,
                             checked = darkModeEnabled,
-                            onCheckedChange = { darkModeEnabled = it }
+                            onCheckedChange = {
+                                darkModeEnabled = it
+                                val newTheme = if (it) "Dark" else "Light" // Or "System" if that's an option
+                                onEvent(SettingsEvent.UpdateSetting("Theme", newTheme))
+                            }
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    var notificationsEnabled by remember { mutableStateOf(false) }
+
+                    // Notifications Setting (existing)
+                    var notificationsEnabled by rememberSaveable { mutableStateOf(uiState.selections["Notifications"] == "Enabled") }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("Notifications")
                         Spacer(modifier = Modifier.weight(1f))
                         Switch(
-                            enabled = false,
                             checked = notificationsEnabled,
-                            onCheckedChange = { notificationsEnabled = it }
+                            onCheckedChange = {
+                                notificationsEnabled = it
+                                onEvent(SettingsEvent.UpdateSetting("Notifications", if (it) "Enabled" else "Disabled"))
+                            }
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    var useMetric by remember { mutableStateOf(true) }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Use Metric Units")
-                        Spacer(modifier = Modifier.weight(1f))
-                        Switch(
-                            enabled = false,
-                            checked = useMetric,
-                            onCheckedChange = { useMetric = it }
-                        )
+
+                    // Units Setting (New)
+                    Text("Units", style = MaterialTheme.typography.titleSmall)
+                    unitOptions.forEach { option ->
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .selectable(
+                                    selected = (option == currentUnit),
+                                    onClick = { onEvent(SettingsEvent.UpdateSetting("Units", option)) }
+                                )
+                                .padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = (option == currentUnit),
+                                onClick = { onEvent(SettingsEvent.UpdateSetting("Units", option)) }
+                            )
+                            Text(
+                                text = option,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
                     }
                 }
             }

@@ -30,19 +30,22 @@ class SettingsViewModel @Inject constructor(
     private val staticOptions = mapOf(
         "Theme" to listOf("Light", "Dark", "System Default"),
         "Language" to listOf("English", "Spanish", "French"),
-        "Notifications" to listOf("Enabled", "Disabled")
+        "Notifications" to listOf("Enabled", "Disabled"),
+        "Units" to listOf("Imperial (English)", "Metric (SI)") // Added Units
     )
 
     // 2) Build a flow of Map<settingKey,selectedValue>
     private val settingsSelections = combine(
         appRepo.themeFlow,
         appRepo.languageFlow,
-        appRepo.notificationsFlow
-    ) { theme, lang, notif ->
+        appRepo.notificationsFlow,
+        appRepo.unitsFlow // Added Units Flow
+    ) { theme: String, lang: String, notif: String, units: String ->
         mapOf(
             "Theme" to theme,
             "Language" to lang,
-            "Notifications" to notif
+            "Notifications" to notif,
+            "Units" to units // Added Units
         )
     }
 
@@ -51,7 +54,7 @@ class SettingsViewModel @Inject constructor(
         profileRepo.nameFlow,
         profileRepo.heightFlow,
         profileRepo.weightFlow
-    ) { name, h, w ->
+    ) { name: String, h: Int, w: Int ->
         ProfileData(name = name, heightCm = h, weightKg = w)
     }
 
@@ -61,7 +64,7 @@ class SettingsViewModel @Inject constructor(
             settingsSelections,
             profileData,
             profileRepo.profileReviewedOrSavedFlow // Collect the new flow
-        ) { selections, profile, profileHasBeenReviewedOrSaved -> // New parameter from the flow
+        ) { selections: Map<String, String>, profile: ProfileData, profileHasBeenReviewedOrSaved: Boolean -> // New parameter from the flow
 
             Log.d("ViewModelCombine", "Profile in combine: Name='${profile.name}', H='${profile.heightCm}', W='${profile.weightKg}'")
             Log.d("ViewModelCombine", "Profile reviewed or saved by user: $profileHasBeenReviewedOrSaved")
@@ -106,6 +109,7 @@ class SettingsViewModel @Inject constructor(
                         "Theme"         -> appRepo.setTheme(event.value)
                         "Language"      -> appRepo.setLanguage(event.value)
                         "Notifications" -> appRepo.setNotifications(event.value)
+                        "Units"         -> appRepo.setUnits(event.value) // Added Units
                         // Add other settings handling here if necessary
                         else -> Log.w("SettingsViewModel", "Unhandled setting key: ${event.key}")
                     }
