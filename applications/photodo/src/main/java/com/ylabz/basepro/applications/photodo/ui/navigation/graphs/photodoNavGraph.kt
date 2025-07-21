@@ -6,7 +6,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.ylabz.basepro.core.ui.RxDigitaScreen // Import the correct Screen definitions
 import com.ylabz.basepro.core.util.Logging
-
+import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
+import com.ylabz.basepro.applications.photodo.features.photodolist.ui.PhotoDoListUiRoute
+import com.ylabz.basepro.applications.photodo.features.settings.ui.PhotoDoSettingsUiRoute
 
 // Define rxDigitaNavGraph as an extension function on NavGraphBuilder
 // @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
@@ -20,25 +22,25 @@ fun NavGraphBuilder.photodoNavGraph(
 
     // 1) Home Tab
     composable(RxDigitaScreen.HomeRxDigitaScreen.route) { // Use RxDigitaScreen
-        /*PhotoDoUiRoute(
+        PhotoDoHomeUiRoute(
             modifier = modifier,
             navTo = { path -> navHostController.navigate(path) }
-        )*/
+        )
     }
 
     // 2) Trips Tab (Assuming MedlistUiRoute for "Ride" or "Trip")
     composable(RxDigitaScreen.TripRxDigitaScreen.route) { // Use RxDigitaScreen
-        /* PhotoDoListUiRoute(
+        PhotoDoListUiRoute(
             modifier = modifier,
             navTo = { path -> navHostController.navigate(path) }
-        ) */
+        )
     }
     // 3) Settings Tab
     composable(RxDigitaScreen.SettingsRxDigitaScreen.route) { // Use RxDigitaScreen
-        /* SettingsUiRoute(
+        PhotoDoSettingsUiRoute(
             modifier = modifier,
             navTo = { path -> navHostController.navigate(path) }
-        )*/
+        )
     }
 
     /* 4) Ride Detail Screen

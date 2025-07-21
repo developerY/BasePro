@@ -53,9 +53,9 @@ android {
 dependencies {
 
     implementation(project(":core:util"))
-    // implementation(project(":applications:rxtrack:features:main"))
-    // implementation(project(":applications:rxtrack:features:medlist"))
-    // implementation(project(":applications:rxtrack:features:settings"))
+    implementation(project(":applications:photodo:features:main"))
+    implementation(project(":applications:photodo:features:photodolist"))
+    implementation(project(":applications:photodo:features:settings"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
