@@ -14,6 +14,7 @@ private object SettingsPrefsKeys {
     val THEME         = stringPreferencesKey("settings_theme")
     val LANGUAGE      = stringPreferencesKey("settings_language")
     val NOTIFICATIONS = stringPreferencesKey("settings_notifications")
+    val UNITS         = stringPreferencesKey("settings_units") // Added Units Key
 }
 
 // 2b) Repository contract – your ViewModel only talks to this
@@ -21,10 +22,12 @@ interface AppSettingsRepository {
     val themeFlow: Flow<String>
     val languageFlow: Flow<String>
     val notificationsFlow: Flow<String>
+    val unitsFlow: Flow<String> // Added Units Flow
 
     suspend fun setTheme(theme: String)
     suspend fun setLanguage(language: String)
     suspend fun setNotifications(option: String)
+    suspend fun setUnits(units: String) // Added setUnits function
 }
 
 // 2c) DataStore-backed impl
@@ -42,6 +45,9 @@ class DataStoreAppSettingsRepository @Inject constructor(
     override val notificationsFlow: Flow<String> = dataStore.data
         .map { it[SettingsPrefsKeys.NOTIFICATIONS] ?: "Enabled" }
 
+    override val unitsFlow: Flow<String> = dataStore.data // Added Units Flow implementation
+        .map { it[SettingsPrefsKeys.UNITS] ?: "Metric (SI)" } // Defaulting to Metric
+
     override suspend fun setTheme(theme: String) {
         dataStore.edit { prefs -> prefs[SettingsPrefsKeys.THEME] = theme }
     }
@@ -50,5 +56,8 @@ class DataStoreAppSettingsRepository @Inject constructor(
     }
     override suspend fun setNotifications(option: String) {
         dataStore.edit { prefs -> prefs[SettingsPrefsKeys.NOTIFICATIONS] = option }
+    }
+    override suspend fun setUnits(units: String) { // Added setUnits implementation
+        dataStore.edit { prefs -> prefs[SettingsPrefsKeys.UNITS] = units }
     }
 }

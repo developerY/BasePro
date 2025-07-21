@@ -51,11 +51,12 @@ class SettingsViewModel @Inject constructor(
 
     // 3) Build a flow of ProfileData
     private val profileData = combine(
-        profileRepo.nameFlow,
-        profileRepo.heightFlow,
-        profileRepo.weightFlow
-    ) { name: String, h: Int, w: Int ->
-        ProfileData(name = name, heightCm = h, weightKg = w)
+        profileRepo.nameFlow, // Flow<String>
+        profileRepo.heightFlow, // Flow<String> from UserProfileRepository
+        profileRepo.weightFlow  // Flow<String> from UserProfileRepository
+    ) { name: String, heightStr: String, weightStr: String ->
+        // Pass String values directly as expected by ProfileData constructor
+        ProfileData(name = name, heightCm = heightStr, weightKg = weightStr)
     }
 
     // 4) Combine everything into one UiState
