@@ -2,16 +2,19 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.hilt.gradle)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.mapsplatform.secrets)
 }
 
 android {
     namespace = "com.ylabz.basepro.applications.photodo"
-    compileSdk = 35
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.ylabz.basepro.applications.photodo"
         minSdk = 32
-        targetSdk = 35
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
 
@@ -28,14 +31,22 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "21"
     }
+
+
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+
+
+    secrets {
+        defaultPropertiesFileName = "secrets.defaults.properties"
     }
 }
 
@@ -49,6 +60,37 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
+    // androidx-lifecycle-viewmodel-compose
+    implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.lifecycle.viewmodel.android)
+
+    // AndroidX + Compose
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.material3)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    implementation(project(":applications:ashbike:features:main"))
+    implementation(project(":core:ui"))
+    ksp(libs.hilt.android.compiler)   // Hilt compiler dependency for annotation processing
+    // Hilt Dependency Injection
+    // kapt(libs.hilt.compiler)
+
+    // Compose Navigation
+    implementation(libs.androidx.navigation.compose) // Added Compose Navigation dependency with safe args plugin
+    implementation(libs.hilt.navigation.compose)
+
+    // Icons
+    implementation(libs.androidx.material.icons.extended)
+
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
