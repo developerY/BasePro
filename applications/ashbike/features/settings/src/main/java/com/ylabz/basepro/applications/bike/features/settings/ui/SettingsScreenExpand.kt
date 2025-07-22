@@ -621,34 +621,22 @@ fun AppPreferencesExpandable(
                             onCheckedChange = {
                                 notificationsEnabled = it
                                 onEvent(SettingsEvent.UpdateSetting("Notifications", if (it) "Enabled" else "Disabled"))
-                            }
+                            },
+                            enabled = false
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Units Setting (New)
-                    Text("Units", style = MaterialTheme.typography.titleSmall)
-                    unitOptions.forEach { option ->
-                        Row(
-                            Modifier
-                                .fillMaxWidth()
-                                .selectable(
-                                    selected = (option == currentUnit),
-                                    onClick = { onEvent(SettingsEvent.UpdateSetting("Units", option)) }
-                                )
-                                .padding(vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = (option == currentUnit),
-                                onClick = { onEvent(SettingsEvent.UpdateSetting("Units", option)) }
-                            )
-                            Text(
-                                text = option,
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.padding(start = 8.dp)
-                            )
-                        }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("Units:   ")
+                        Text("Metric (SI)", style = MaterialTheme.typography.titleSmall)
+                        Spacer(modifier = Modifier.weight(1f))
+                        Switch(
+                            checked = true,
+                            onCheckedChange = {},
+                            enabled = false
+                        )
                     }
                 }
             }
