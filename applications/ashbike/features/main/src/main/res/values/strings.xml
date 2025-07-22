@@ -25,4 +25,5 @@
     <string name="feature_main_label_motor">Motor</string>
     <string name="feature_main_label_heart_rate">Heart Rate</string>
     <string name="feature_main_label_calories">Calories</string>
+    <string name="feature_trips_all_bike_trips_title">All Bike Trips</string>
 </resources>
