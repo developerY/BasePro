@@ -38,4 +38,13 @@
     <string name="feature_trips_map_cafes_button_content_desc">Show/Hide Cafes</string>
     <string name="feature_trips_map_legend_slow">Slow</string>
     <string name="feature_trips_map_legend_fast">Fast</string>
+    <string name="feature_trips_map_loading">Loading map...</string>
+    <string name="feature_trips_map_unavailable">Map Unavailable</string>
+    <string name="feature_trips_map_selected_location_title">Selected Location</string>
+    <string name="feature_trips_map_selected_location_lat">Lat: %1$.6f</string>
+    <string name="feature_trips_map_selected_location_lng">Lng: %1$.6f</string>
+    <string name="feature_trips_map_tap_to_dismiss">Tap to dismiss</string>
+    <string name="feature_trips_elevation_profile_no_data_placeholder">---</string>
+    <string name="feature_trips_elevation_label_start_distance">0 m</string>
+    <string name="feature_trips_elevation_label_total_distance_km">%.1f km</string>
 </resources>

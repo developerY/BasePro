@@ -11,9 +11,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.applications.bike.features.trips.R
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.LatLngWithElev
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.unused.haversineMeters
 
@@ -107,7 +109,7 @@ fun ElevationProfile(
 
         // e) axis labels
         Text(
-            text = "0 m",
+            text = stringResource(R.string.feature_trips_elevation_label_start_distance),
             style = MaterialTheme.typography.bodySmall,
             color = Color.Black,
             modifier = Modifier
@@ -115,7 +117,7 @@ fun ElevationProfile(
                 .padding(4.dp)
         )
         Text(
-            text = "%.1f km".format(totalDist / 1000f),
+            text = stringResource(R.string.feature_trips_elevation_label_total_distance_km, totalDist / 1000f),
             style = MaterialTheme.typography.bodySmall,
             color = Color.Black,
             modifier = Modifier
