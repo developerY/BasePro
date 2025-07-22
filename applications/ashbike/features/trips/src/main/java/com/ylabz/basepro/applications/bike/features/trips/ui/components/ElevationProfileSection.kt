@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.maps.ElevationProfile
 import androidx.compose.ui.res.stringResource
 import com.ylabz.basepro.applications.bike.features.trips.R
+import com.ylabz.basepro.applications.bike.features.trips.R.string.feature_trips_elevation_profile_title
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,7 +50,7 @@ fun ElevationProfileSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.feature_trips_elevation__profile_title),
+                    text = stringResource(feature_trips_elevation_profile_title),
                     style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(Modifier.weight(1f))
