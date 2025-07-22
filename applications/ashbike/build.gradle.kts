@@ -44,6 +44,10 @@ android {
         buildConfig = true
     }
 
+    androidResources {
+        localeFilters.addAll(listOf("en", "es"))
+    }
+
 
     secrets {
         defaultPropertiesFileName = "secrets.defaults.properties"
@@ -52,26 +56,26 @@ android {
 
 dependencies {
     // Core + shared
-    implementation(project(":core:data"))
-    implementation(project(":core:database"))
-    implementation(project(":core:model"))
-    implementation(project(":core:ui"))
-    implementation(project(":core:util"))
+    implementation(project(""":core:data"""))
+    implementation(project(""":core:database"""))
+    implementation(project(""":core:model"""))
+    implementation(project(""":core:ui"""))
+    implementation(project(""":core:util"""))
     // Feature modules
-    implementation(project(":feature:listings"))
-    implementation(project(":feature:camera"))
-    implementation(project(":feature:places"))
-    implementation(project(":feature:heatlh"))
-    implementation(project(":feature:maps"))
-    implementation(project(":feature:ble"))
-    implementation(project(":feature:alarm"))
-    implementation(project(":feature:weather"))
-    implementation(project(":feature:qrscanner"))
-    implementation(project(":feature:nfc"))
-    implementation(project(":feature:ml"))
-    implementation(project(":applications:ashbike:database"))
-    implementation(project(":applications:ashbike:features:trips"))
-    implementation(project(":applications:ashbike:features:settings"))
+    implementation(project(""":feature:listings"""))
+    implementation(project(""":feature:camera"""))
+    implementation(project(""":feature:places"""))
+    implementation(project(""":feature:heatlh"""))
+    implementation(project(""":feature:maps"""))
+    implementation(project(""":feature:ble"""))
+    implementation(project(""":feature:alarm"""))
+    implementation(project(""":feature:weather"""))
+    implementation(project(""":feature:qrscanner"""))
+    implementation(project(""":feature:nfc"""))
+    implementation(project(""":feature:ml"""))
+    implementation(project(""":applications:ashbike:database"""))
+    implementation(project(""":applications:ashbike:features:trips"""))
+    implementation(project(""":applications:ashbike:features:settings"""))
 
     // androidx-lifecycle-viewmodel-compose
     implementation(libs.lifecycle.viewmodel.compose)
@@ -88,7 +92,7 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
-    implementation(project(":applications:ashbike:features:main"))
+    implementation(project(""":applications:ashbike:features:main"""))
     ksp(libs.hilt.android.compiler)   // Hilt compiler dependency for annotation processing
     // Hilt Dependency Injection
     // kapt(libs.hilt.compiler)
