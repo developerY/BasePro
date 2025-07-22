@@ -10,10 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.ylabz.basepro.applications.bike.features.trips.R
 
 @Composable
 fun LoadingScreen() {
-    Text(text = "Loading...", modifier = Modifier.fillMaxSize())
+    Text(text = stringResource(R.string.state_loading), modifier = Modifier.fillMaxSize())
 }
 
 @Preview
@@ -30,12 +32,12 @@ fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
         .padding(16.dp)
     ) {
         Text(
-            text = "Error: $errorMessage",
+            text = stringResource(R.string.state_error_generic_with_message, errorMessage),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(bottom = 16.dp)
         )
         Text(
-            text = "Retry",
+            text = stringResource(R.string.action_retry),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier
                 .clickable { onRetry() }
@@ -47,5 +49,5 @@ fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
 @Preview
 @Composable
 fun ErrorScreenPreview() {
-    ErrorScreen(errorMessage = "Something went wrong", onRetry = {})
+    ErrorScreen(errorMessage = stringResource(R.string.preview_error_something_went_wrong), onRetry = {})
 }

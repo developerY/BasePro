@@ -30,4 +30,12 @@
     <string name="state_error_generic_with_message">Error: %1$s</string>
     <string name="action_retry">Retry</string>
     <string name="preview_error_something_went_wrong">Something went wrong</string>
+
+    <string name="feature_trips_map_no_ride_data">No ride data available.</string>
+    <string name="feature_trips_preview_ride_around_plaza">Ride Around The Plaza</string>
+    <string name="feature_trips_map_compass_n">N</string>
+    <string name="feature_trips_map_compass_content_desc_north">North</string>
+    <string name="feature_trips_map_cafes_button_content_desc">Show/Hide Cafes</string>
+    <string name="feature_trips_map_legend_slow">Slow</string>
+    <string name="feature_trips_map_legend_fast">Fast</string>
 </resources>

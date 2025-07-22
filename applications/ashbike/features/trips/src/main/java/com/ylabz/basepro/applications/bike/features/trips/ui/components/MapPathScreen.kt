@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -54,6 +55,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ylabz.basepro.applications.bike.features.trips.R
 import com.ylabz.basepro.core.model.yelp.BusinessInfo
 import com.ylabz.basepro.core.model.yelp.Coordinates
 import kotlin.math.atan2
@@ -176,7 +178,7 @@ fun MapPathScreen(
                     drawRect(brush = backgroundGradient)
                     drawGrid(gridColor, 10, 10)
                 }
-                Text("No ride data available.", modifier = Modifier.align(Alignment.Center))
+                Text(stringResource(R.string.feature_trips_map_no_ride_data), modifier = Modifier.align(Alignment.Center))
             }
 
             // Clickable coffee icon
@@ -216,10 +218,10 @@ private fun Compass(size: Dp, modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.padding(8.dp)
     ) {
-        Text("N", style = MaterialTheme.typography.labelSmall.copy(color = Color.Black.copy(alpha = 0.7f)))
+        Text(stringResource(R.string.feature_trips_map_compass_n), style = MaterialTheme.typography.labelSmall.copy(color = Color.Black.copy(alpha = 0.7f)))
         Icon(
             imageVector = Icons.Default.North,
-            contentDescription = "North",
+            contentDescription = stringResource(R.string.feature_trips_map_compass_content_desc_north),
             tint = Color.Black.copy(alpha = 0.7f),
             modifier = Modifier.size(size)
         )
@@ -242,7 +244,7 @@ private fun FindCafesButton(
     ) {
         Icon(
             imageVector = Icons.Default.Coffee,
-            contentDescription = "Show/Hide Cafes",
+            contentDescription = stringResource(R.string.feature_trips_map_cafes_button_content_desc),
             tint = if (cafesVisible) MaterialTheme.colorScheme.primary else Color.White,
             modifier = Modifier.size(24.dp)
         )
@@ -376,7 +378,7 @@ private fun SpeedLegend(minSpeed: Double, maxSpeed: Double, slowColor: Color, fa
         verticalAlignment = Alignment.CenterVertically
     ) {
         //Text("${minSpeed.roundToInt()} km/h", style = MaterialTheme.typography.bodySmall, color = Color.Black)
-        Text("Slow", style = MaterialTheme.typography.bodySmall, color = Color.Black)
+        Text(stringResource(R.string.feature_trips_map_legend_slow), style = MaterialTheme.typography.bodySmall, color = Color.Black)
         Spacer(Modifier.width(4.dp))
         Box(
             Modifier
@@ -387,7 +389,7 @@ private fun SpeedLegend(minSpeed: Double, maxSpeed: Double, slowColor: Color, fa
                 )
         )
         Spacer(Modifier.width(4.dp))
-        Text("Fast", style = MaterialTheme.typography.bodySmall, color = Color.Black)
+        Text(stringResource(R.string.feature_trips_map_legend_fast), style = MaterialTheme.typography.bodySmall, color = Color.Black)
         //Text("${maxSpeed.roundToInt()} km/h", style = MaterialTheme.typography.bodySmall, color = Color.Black)
     }
 }
@@ -466,6 +468,6 @@ private fun MapPathScreenPreview() {
         fixes = fixes,
         coffeeShops = coffeeShops,
         onFindCafes = { },
-        placeName = "Ride Around The Plaza"
+        placeName = stringResource(R.string.feature_trips_preview_ride_around_plaza)
     )
 }
