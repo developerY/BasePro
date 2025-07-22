@@ -18,6 +18,8 @@ import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
 import com.ylabz.basepro.applications.bike.features.trips.ui.model.BikeRideUiModel
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
+import androidx.compose.ui.res.stringResource
+import com.ylabz.basepro.applications.bike.features.trips.R
 
 @Composable
 fun BikeTripsCompose(
@@ -48,7 +50,7 @@ fun BikeTripsCompose(
             item {
                 TripSectionHeader(
                     onEvent = bikeEvent,
-                    title = "Bike Rides",
+                    title = stringResource(R.string.feature_trips_bike_rides_section_title),
                     bgColor = MaterialTheme.colorScheme.surfaceVariant,
                     healthConnected = connected,
                     onHealthToggle = {
@@ -62,7 +64,7 @@ fun BikeTripsCompose(
             if (bikeRides.isEmpty()) {
                 item {
                     Text(
-                        text = "You haven’t recorded any rides yet.",
+                        text = stringResource(R.string.feature_trips_you_havent_recorded_any_rides),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.padding(16.dp)
                     )

@@ -23,6 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.maps.ElevationProfile
+import androidx.compose.ui.res.stringResource
+import com.ylabz.basepro.applications.bike.features.trips.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,13 +49,13 @@ fun ElevationProfileSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Elevation Profile",
+                    text = stringResource(R.string.feature_trips_elevation__profile_title),
                     style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(Modifier.weight(1f))
                 Icon(
                     imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                    contentDescription = if (expanded) "Hide" else "Show"
+                    contentDescription = if (expanded) stringResource(R.string.action_hide) else stringResource(R.string.action_show)
                 )
             }
 

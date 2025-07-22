@@ -1,4 +1,33 @@
 <resources>
     <string name="feature_trips_all_bike_trips_title">All Bike Trips</string>
     <string name="feature_trips_ride_details_title">Ride Details</string>
+    <string name="feature_trips_loading_ride_details">Loading ride details...</string>
+    <string name="feature_trips_detail_date_label">Date: %1$s</string>
+    <string name="feature_trips_detail_duration_label">Duration: %1$s</string>
+    <string name="feature_trips_detail_distance_km_label">Distance: %1$.2f km</string>
+    <string name="feature_trips_detail_avg_speed_kmh_label">Average Speed: %1$.1f km/h</string>
+    <string name="feature_trips_detail_max_speed_kmh_label">Max Speed: %1$.1f km/h</string>
+    <string name="feature_trips_detail_elevation_gain_m_label">Elevation Gain: %1$.0f m</string>
+    <string name="feature_trips_detail_route_section_title">Route</string>
+    <string name="feature_trips_detail_no_route_data">No route data available.</string>
+    <string name="feature_trips_detail_statistics_section_title">Statistics</string>
+    <string name="feature_trips_detail_notes_section_title">Notes</string>
+    <string name="feature_trips_detail_no_notes">No notes for this ride.</string>
+    <string name="feature_trips_action_add_note">Add Note</string>
+    <string name="feature_trips_action_edit">Edit</string>
+    <string name="feature_trips_action_delete">Delete</string>
+    <string name="feature_trips_you_havent_recorded_any_rides">You haven’t recorded any rides yet.</string>
+    <string name="feature_trips_bike_rides_section_title">Bike Rides</string>
+    <string name="feature_trips_elevation_profile_title">Elevation Profile</string>
+    <string name="action_hide">Hide</string>
+    <string name="action_show">Show</string>
+    <string name="feature_trips_no_data_available">No data available</string>
+    <string name="feature_trips_stat_min">Min: %1$s</string>
+    <string name="feature_trips_stat_avg">Avg: %1$s</string>
+    <string name="feature_trips_stat_max">Max: %1$s</string>
+
+    <string name="state_loading">Loading...</string>
+    <string name="state_error_generic_with_message">Error: %1$s</string>
+    <string name="action_retry">Retry</string>
+    <string name="preview_error_something_went_wrong">Something went wrong</string>
 </resources>
