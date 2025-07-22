@@ -66,11 +66,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.ylabz.basepro.applications.bike.features.settings.R // Fully qualified R class
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.ProfileInfoCardEx
 // Add import for ThemeSettingsCard
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.ThemeSettingsCard
@@ -309,9 +311,9 @@ fun SettingsScreenExPreview() {
     }
 }
 
-// ---------------------------------------------
+// --------------------------------------------
 // NFC Expandable
-// ---------------------------------------------
+// --------------------------------------------
 @Composable
 fun NfcExpandableEx(
     nfcUiState: NfcUiState,
@@ -368,9 +370,9 @@ fun NfcExpandableEx(
     }
 }
 
-// ---------------------------------------------
+// --------------------------------------------
 // QR Scanner Expandable
-// ---------------------------------------------
+// --------------------------------------------
 @Composable
 fun QrExpandableEx(
     expanded: Boolean,
@@ -421,9 +423,9 @@ fun QrExpandableEx(
     }
 }
 
-// ---------------------------------------------
+// --------------------------------------------
 // PROFILE / BIKE INFO CARD
-// ---------------------------------------------
+// --------------------------------------------
 @Composable
 fun ProfileBikeInfoCardEx(
     userName: String,
@@ -469,9 +471,9 @@ fun ProfileBikeInfoCardEx(
     }
 }
 
-// ---------------------------------------------
+// --------------------------------------------
 // BIKE CONFIGURATION EXPANDABLE
-// ---------------------------------------------
+// --------------------------------------------
 @Composable
 fun BikeConfigurationEx(
     expanded: Boolean,
@@ -546,9 +548,9 @@ fun BikeConfigurationEx(
     }
 }
 
-// ---------------------------------------------
+// --------------------------------------------
 // APP PREFERENCES EXPANDABLE
-// ---------------------------------------------
+// --------------------------------------------
 @Composable
 fun AppPreferencesExpandable(
     expanded: Boolean,
@@ -634,7 +636,7 @@ fun AppPreferencesExpandable(
                         Spacer(modifier = Modifier.weight(1f))
                         Switch(
                             checked = true,
-                            onCheckedChange = {},
+                            onCheckedChange = { /* TODO */ },
                             enabled = false
                         )
                     }
@@ -699,9 +701,9 @@ fun BLEExpandableCard(
     }
 }
 
-// ---------------------------------------------
+// --------------------------------------------
 // ABOUT EXPANDABLE
-// ---------------------------------------------
+// --------------------------------------------
 @Composable
 fun AboutExpandable(
     expanded: Boolean,
@@ -743,8 +745,8 @@ fun AboutExpandable(
             if (expanded) {
                 HorizontalDivider()
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("App Version: Alpha 0.9.7")
-                    Text("Build Number: 43")
+                    Text(stringResource(R.string.settings_app_version_label, "Alpha 0.9.7"))
+                    Text(stringResource(R.string.settings_build_number_label, "43"))
                     Spacer(modifier = Modifier.height(8.dp))
                     Text("For licenses, support, or more info, visit:")
                     Text(

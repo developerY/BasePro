@@ -18,4 +18,11 @@
 
     <!-- Content description for accessibility -->
     <string name="weather_content_desc">Current weather: %1$s, %2$d°C</string>
+    <string name="feature_main_ebike_stats_title">E-bike Stats</string>
+    <string name="feature_main_action_collapse">Collapse</string>
+    <string name="feature_main_action_expand">Expand</string>
+    <string name="feature_main_label_battery">Battery</string>
+    <string name="feature_main_label_motor">Motor</string>
+    <string name="feature_main_label_heart_rate">Heart Rate</string>
+    <string name="feature_main_label_calories">Calories</string>
 </resources>

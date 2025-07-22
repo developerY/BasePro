@@ -43,6 +43,8 @@ import com.ylabz.basepro.core.ui.theme.iconColorBikeActive
 import com.ylabz.basepro.core.ui.theme.iconColorCalories
 import com.ylabz.basepro.core.ui.theme.iconColorElevation
 import com.ylabz.basepro.core.ui.theme.iconColorSpeed
+import androidx.compose.ui.res.stringResource
+import com.ylabz.basepro.applications.bike.features.main.R
 
 @Composable
 fun BikeDashboardContent(
@@ -96,13 +98,13 @@ fun BikeDashboardContent(
         val healthStats = listOf(
             StatItem(
                 icon = Icons.Filled.Favorite,
-                label = "Heart Rate",
+                label = stringResource(R.string.feature_main_label_heart_rate),
                 value = if (heartRate != null) "$heartRate bpm" else "-- bpm",
                 activeColor = if (currRiding) MaterialTheme.colorScheme.iconColorSpeed else null // Assuming IconBlue for HR
             ),
             StatItem(
                 icon = Icons.Filled.LocalFireDepartment,
-                label = "Calories",
+                label = stringResource(R.string.feature_main_label_calories),
                 value = if (calories != null) "$calories" else "--",
                 activeColor = if (currRiding) MaterialTheme.colorScheme.iconColorCalories else null
             )
@@ -128,13 +130,13 @@ fun BikeDashboardContent(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "E-bike Stats",
+                        text = stringResource(com.ylabz.basepro.applications.bike.features.main.R.string.feature_main_ebike_stats_title),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface // Ensure text color is from theme
                     )
                     Icon(
                         imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
-                        contentDescription = if (expanded) "Collapse" else "Expand",
+                        contentDescription = if (expanded) stringResource(R.string.feature_main_action_collapse) else stringResource(R.string.feature_main_action_expand),
                         tint = MaterialTheme.colorScheme.onSurface // Ensure icon color is from theme
                     )
                 }
@@ -154,13 +156,13 @@ fun BikeDashboardContent(
                         val eBikeStats = listOf(
                             StatItem(
                                 icon = Icons.AutoMirrored.Filled.BatteryUnknown,
-                                label = "Battery",
+                                label = stringResource(R.string.feature_main_label_battery),
                                 value = if (isBikeConnected && batteryLevel != null) "$batteryLevel%" else "--%",
                                 activeColor = if (isBikeConnected) MaterialTheme.colorScheme.primary else null // Example active color
                             ),
                             StatItem(
                                 icon = Icons.Filled.ElectricBike,
-                                label = "Motor",
+                                label = stringResource(R.string.feature_main_label_motor),
                                 value = if (isBikeConnected && motorPower != null) "$motorPower W" else "-- W",
                                 activeColor = if (isBikeConnected) MaterialTheme.colorScheme.iconColorBikeActive else null
                             )
