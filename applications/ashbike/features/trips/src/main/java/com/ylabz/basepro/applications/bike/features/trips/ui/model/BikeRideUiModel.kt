@@ -1,10 +1,10 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui.model
 
+import android.content.res.Resources
 import com.ylabz.basepro.applications.bike.database.RideWithLocations
+import com.ylabz.basepro.applications.bike.features.trips.R
 import java.text.SimpleDateFormat
 import java.time.Duration
-import java.time.Instant
-import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
 
@@ -29,7 +29,7 @@ data class BikeRideUiModel(
  * Maps a [RideWithLocations] object from the database layer to a UI-friendly [BikeRideUiModel].
  * All data formatting logic is centralized here.
  */
-fun RideWithLocations.toUiModel(): BikeRideUiModel {
+fun RideWithLocations.toUiModel(resources: Resources): BikeRideUiModel {
     val ride = this.bikeRideEnt
 
     // Date and duration formatting
@@ -41,16 +41,23 @@ fun RideWithLocations.toUiModel(): BikeRideUiModel {
     val minutes = rideDuration.toMinutes()
     val seconds = rideDuration.seconds % 60
 
+    val durationText = if (seconds > 0) {
+        resources.getString(R.string.feature_trips_model_duration_min_sec_format, minutes, seconds)
+    } else {
+        resources.getString(R.string.feature_trips_model_duration_min_only_format, minutes)
+    }
+
     return BikeRideUiModel(
         rideId = ride.rideId,
-        dateRange = "${dateFormatter.format(startDate)} – ${endFormatter.format(endDate)}",
-        duration = "(${minutes} min${if (seconds > 0) " ${seconds}s" else ""})",
-        distance = "Distance: ${"%.1f".format(ride.totalDistance / 1000)} km",
-        avgSpeed = "Avg: ${"%.1f".format(ride.averageSpeed)} km/h",
-        maxSpeed = "Max: ${"%.1f".format(ride.maxSpeed)} km/h",
+        dateRange = resources.getString(R.string.feature_trips_model_daterange_format, dateFormatter.format(startDate), endFormatter.format(endDate)),
+        duration = durationText,
+        distance = resources.getString(R.string.feature_trips_model_distance_format, ride.totalDistance / 1000.0),
+        avgSpeed = resources.getString(R.string.feature_trips_model_avg_speed_format, ride.averageSpeed),
+        maxSpeed = resources.getString(R.string.feature_trips_model_max_speed_format, ride.maxSpeed),
         rideType = ride.rideType,
         weatherCondition = ride.weatherCondition,
         notes = ride.notes?.takeIf { it.isNotBlank() },
         isSynced = ride.isHealthDataSynced
     )
 }
+

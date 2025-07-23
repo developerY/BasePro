@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui
 
+import android.app.Application // <-- Add this import
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +32,7 @@ sealed interface TripsSideEffect {
 
 @HiltViewModel
 class TripsViewModel @Inject constructor(
+    private val application: Application, // <-- Inject Application
     private val bikeRideRepo: BikeRideRepo,
     private val syncRideUseCase: SyncRideUseCase,
     private val markRideAsSyncedUseCase: MarkRideAsSyncedUseCase
@@ -39,7 +41,9 @@ class TripsViewModel @Inject constructor(
     private val _uiState: StateFlow<TripsUIState> =
         bikeRideRepo.getAllRidesWithLocations()
             .map { rides ->
-                val uiModels = rides.map { it.toUiModel() }
+                val uiModels = rides.map { it.toUiModel(
+                    resources = application.resources // <-- Use application.resources
+                ) }
                 TripsUIState.Success(uiModels) as TripsUIState
             }
             .catch { e -> emit(TripsUIState.Error(e.localizedMessage ?: "Unknown error")) }

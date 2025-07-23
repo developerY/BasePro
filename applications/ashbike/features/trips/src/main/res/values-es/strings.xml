@@ -69,4 +69,11 @@
 
     <string name="feature_trips_distance_km_format">%.1f km</string>
     <string name="feature_trips_distance_meters_format">%d m</string>
+
+    <string name="feature_trips_model_daterange_format">%1$s – %2$s</string>
+    <string name="feature_trips_model_duration_min_only_format">(%1$d min)</string>
+    <string name="feature_trips_model_duration_min_sec_format">(%1$d min %2$d s)</string>
+    <string name="feature_trips_model_distance_format">Distancia: %.1f km</string>
+    <string name="feature_trips_model_avg_speed_format">Prom: %.1f km/h</string>
+    <string name="feature_trips_model_max_speed_format">Máx: %.1f km/h</string>
 </resources>
