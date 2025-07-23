@@ -17,6 +17,8 @@ import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.compose.ui.res.stringResource
+import com.ylabz.basepro.applications.bike.features.trips.R // Added R class import
 
 
 @Composable
@@ -65,16 +67,16 @@ fun BikeRideCardMap(
     ) {
         Column(Modifier.padding(16.dp)) {
             // Header
-            Text("$startFmt – $endFmt", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.feature_trips_card_header_format, startFmt, endFmt), style = MaterialTheme.typography.titleMedium)
 
             Spacer(Modifier.height(8.dp))
 
             // Metrics
-            Text("Distance: ${"%.1f".format(ride.totalDistance / 1000)} km",
+            Text(stringResource(R.string.feature_trips_card_label_distance) + stringResource(R.string.feature_trips_card_value_km_format, ride.totalDistance / 1000),
                 style = MaterialTheme.typography.bodyMedium)
-            Text("Avg: ${"%.1f".format(ride.averageSpeed)} km/h",
+            Text(stringResource(R.string.feature_trips_card_label_avg_speed) + stringResource(R.string.feature_trips_card_value_kmh_format, ride.averageSpeed),
                 style = MaterialTheme.typography.bodyMedium)
-            Text("Max: ${"%.1f".format(ride.maxSpeed)} km/h",
+            Text(stringResource(R.string.feature_trips_card_label_max_speed) + stringResource(R.string.feature_trips_card_value_kmh_format, ride.maxSpeed),
                 style = MaterialTheme.typography.bodyMedium)
 
             Spacer(Modifier.height(8.dp))
@@ -99,12 +101,12 @@ fun BikeRideCardMap(
                         // start marker
                         Marker(
                             state = MarkerState(position = pathPoints.first()),
-                            title = "Start"
+                            title = stringResource(R.string.feature_trips_card_map_marker_start)
                         )
                         // end marker
                         Marker(
                             state = MarkerState(position = pathPoints.last()),
-                            title = "End"
+                            title = stringResource(R.string.feature_trips_card_map_marker_end)
                         )
                     }
                 }

@@ -57,6 +57,16 @@
     <string name="feature_trips_content_desc_follow">Seguir</string>
     <string name="feature_trips_content_desc_open_yelp">Abrir Yelp</string>
 
+    <string name="feature_trips_card_header_format">%1$s – %2$s</string>
+    <string name="feature_trips_card_label_distance">Distancia: </string>
+    <string name="feature_trips_card_value_km_format">%.1f km</string>
+    <string name="feature_trips_card_label_avg_speed">Prom: </string>
+    <string name="feature_trips_card_value_kmh_format">%.1f km/h</string>
+    <string name="feature_trips_card_label_max_speed">Máx: </string>
+    <string name="feature_trips_card_map_marker_start">Inicio</string>
+    <string name="feature_trips_card_map_marker_end">Fin</string>
+
+
     <string name="feature_trips_distance_km_format">%.1f km</string>
     <string name="feature_trips_distance_meters_format">%d m</string>
 </resources>
