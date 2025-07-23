@@ -26,4 +26,12 @@
     <string name="feature_main_label_heart_rate">Ritmo Cardíaco</string>
     <string name="feature_main_label_calories">Calorías</string>
     <string name="feature_trips_all_bike_trips_title">Todos los Viajes en Bici</string>
+    <string name="feature_main_stats_label_distance">Distancia</string>
+    <string name="feature_main_stats_value_km_format">%.1f km</string>
+    <string name="feature_main_stats_label_duration">Duración</string>
+    <string name="feature_main_stats_label_avg_speed">Vel. Prom.</string>
+    <string name="feature_main_stats_value_kmh_format">%.1f km/h</string>
+    <string name="feature_main_stats_label_elevation">Elevación</string>
+    <string name="feature_main_stats_value_meters_format">%.0f m</string>
+
 </resources>

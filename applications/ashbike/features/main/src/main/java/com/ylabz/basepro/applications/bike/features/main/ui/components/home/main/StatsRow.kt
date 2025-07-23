@@ -20,6 +20,8 @@ import com.ylabz.basepro.core.ui.theme.iconColorAvgSpeed
 import com.ylabz.basepro.core.ui.theme.iconColorDistance
 import com.ylabz.basepro.core.ui.theme.iconColorDuration
 import com.ylabz.basepro.core.ui.theme.iconColorElevation
+import androidx.compose.ui.res.stringResource
+import com.ylabz.basepro.applications.bike.features.main.R // Assuming this is the correct R class
 
 data class StatItem(
     val icon: ImageVector,
@@ -45,20 +47,20 @@ fun StatsRow(
     val stats = mutableListOf(
         StatItem(
             icon = Icons.Filled.Straight,
-            label = "Distance",
-            value = "%.1f km".format(distance),
+            label = stringResource(R.string.feature_main_stats_label_distance),
+            value = stringResource(R.string.feature_main_stats_value_km_format, distance),
             activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorDistance else null
         ),
         StatItem(
             icon = Icons.Filled.Timer,
-            label = "Duration",
-            value = duration,
+            label = stringResource(R.string.feature_main_stats_label_duration),
+            value = duration, // Assuming duration is already a formatted string or doesn't need localization here
             activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorDuration else null
         ),
         StatItem(
             icon = Icons.Filled.Speed,
-            label = "Avg Speed",
-            value = "%.1f km/h".format(avgSpeed),
+            label = stringResource(R.string.feature_main_stats_label_avg_speed),
+            value = stringResource(R.string.feature_main_stats_value_kmh_format, avgSpeed),
             activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorAvgSpeed else null
         )
     ).apply {
@@ -66,8 +68,8 @@ fun StatsRow(
             add(
                 StatItem(
                     icon = Icons.Filled.Terrain,
-                    label = "Elevation",
-                    value = "${"%.0f".format(it)} m",
+                    label = stringResource(R.string.feature_main_stats_label_elevation),
+                    value = stringResource(R.string.feature_main_stats_value_meters_format, it),
                     activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorElevation else null
                 )
             )
