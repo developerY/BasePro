@@ -56,4 +56,7 @@
     <string name="feature_trips_content_desc_stop_following">Stop Following</string>
     <string name="feature_trips_content_desc_follow">Follow</string>
     <string name="feature_trips_content_desc_open_yelp">Open Yelp</string>
+
+    <string name="feature_trips_distance_km_format">%.1f km</string>
+    <string name="feature_trips_distance_meters_format">%d m</string>
 </resources>

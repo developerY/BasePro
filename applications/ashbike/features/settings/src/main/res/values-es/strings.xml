@@ -1,0 +1,4 @@
+<resources>
+    <string name="settings_build_number_label">Número de Compilación: %1$s</string>
+    <string name="settings_app_version_label">Versión de la App: %1$s</string>
+</resources>

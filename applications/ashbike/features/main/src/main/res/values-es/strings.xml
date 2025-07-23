@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AshBike</string>
+    <string name="app_name">bike</string>
 
     <!-- Title for the weather detail dialog -->
     <string name="weather_details_title">Detalles del Clima</string>
@@ -18,4 +18,12 @@
 
     <!-- Content description for accessibility -->
     <string name="weather_content_desc">Clima actual: %1$s, %2$d°C</string>
+    <string name="feature_main_ebike_stats_title">Estadísticas E-bike</string>
+    <string name="feature_main_action_collapse">Contraer</string>
+    <string name="feature_main_action_expand">Expandir</string>
+    <string name="feature_main_label_battery">Batería</string>
+    <string name="feature_main_label_motor">Motor</string>
+    <string name="feature_main_label_heart_rate">Ritmo Cardíaco</string>
+    <string name="feature_main_label_calories">Calorías</string>
+    <string name="feature_trips_all_bike_trips_title">Todos los Viajes en Bici</string>
 </resources>
