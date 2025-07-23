@@ -47,4 +47,13 @@
     <string name="feature_trips_elevation_profile_no_data_placeholder">---</string>
     <string name="feature_trips_elevation_label_start_distance">0 m</string>
     <string name="feature_trips_elevation_label_total_distance_km">%.1f km</string>
+    <string name="feature_trips_action_pause_ride">Pause Ride</string>
+    <string name="feature_trips_action_finish_ride">Finish Ride</string>
+    <string name="feature_trips_content_desc_zoom_in">Zoom In</string>
+    <string name="feature_trips_content_desc_zoom_out">Zoom Out</string>
+    <string name="feature_trips_content_desc_toggle_follow_mode">Toggle Follow Mode</string>
+    <string name="feature_trips_content_desc_recenter_on_path">Recenter on Path</string>
+    <string name="feature_trips_content_desc_stop_following">Stop Following</string>
+    <string name="feature_trips_content_desc_follow">Follow</string>
+    <string name="feature_trips_content_desc_open_yelp">Open Yelp</string>
 </resources>
