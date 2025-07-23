@@ -57,6 +57,8 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
+import androidx.compose.ui.res.stringResource
+import com.ylabz.basepro.applications.bike.features.trips.R
 
 data class LocationDto(val lat: Double, val lng: Double)
 
@@ -120,14 +122,14 @@ fun RideDetailScreen(
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            StatCard(label = "Distance", value = "%.1f km".format(ride.totalDistance / 1000f), modifier = Modifier.weight(1f))
-            StatCard(label = "Avg Speed", value = "%.1f km/h".format(ride.averageSpeed), modifier = Modifier.weight(1f))
-            StatCard(label = "Max Speed", value = "%.1f km/h".format(ride.maxSpeed), modifier = Modifier.weight(1f))
+            StatCard(label = stringResource(R.string.feature_trips_detail_label_distance), value = stringResource(R.string.feature_trips_distance_km_format, ride.totalDistance / 1000f), modifier = Modifier.weight(1f))
+            StatCard(label = stringResource(R.string.feature_trips_detail_label_avg_speed), value = stringResource(R.string.feature_trips_detail_value_kmh_format, ride.averageSpeed), modifier = Modifier.weight(1f))
+            StatCard(label = stringResource(R.string.feature_trips_detail_label_max_speed), value = stringResource(R.string.feature_trips_detail_value_kmh_format, ride.maxSpeed), modifier = Modifier.weight(1f))
         }
 
         // 2) Single-line timestamp + duration
         Text(
-            text = "${startZoned.format(dateTimeFmt)} — ${endZoned.format(timeFmt)}  ($minutes min)",
+            text = stringResource(R.string.feature_trips_detail_full_timespan_format, startZoned.format(dateTimeFmt), endZoned.format(timeFmt), minutes.toLong()),
             style = MaterialTheme.typography.bodyMedium
         )
 
@@ -194,7 +196,7 @@ fun RideDetailScreen(
                 }
             }*/
         }
-        //}
+        //} 
 
         ElevationProfileSection(elevPoints)
 
@@ -205,18 +207,18 @@ fun RideDetailScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             StatCard(
-                label    = "Elevation",
-                value    = "${ride.elevationGain.toInt()}↑/${ride.elevationLoss.toInt()}↓ m",
+                label    = stringResource(R.string.feature_trips_detail_label_elevation),
+                value    = stringResource(R.string.feature_trips_detail_value_elevation_format, ride.elevationGain.toInt(), ride.elevationLoss.toInt()),
                 modifier = Modifier.weight(1f)
             )
             StatCard(
-                label    = "Duration",
-                value    = "%02d:%02d".format(minutes / 60, minutes % 60),
+                label    = stringResource(R.string.feature_trips_detail_label_duration),
+                value    = stringResource(R.string.feature_trips_detail_value_duration_format, minutes / 60, minutes % 60),
                 modifier = Modifier.weight(1f)
             )
             StatCard(
-                label    = "Calories",
-                value    = "${ride.caloriesBurned} kcal",
+                label    = stringResource(R.string.feature_trips_detail_label_calories),
+                value    = stringResource(R.string.feature_trips_detail_value_calories_format, ride.caloriesBurned),
                 modifier = Modifier.weight(1f)
             )
         }
@@ -228,7 +230,7 @@ fun RideDetailScreen(
                 notesState = it
                 isDirty    = it != ride.notes.orEmpty()
             },
-            label          = { Text("Notes") },
+            label          = { Text(stringResource(R.string.feature_trips_detail_label_notes)) },
             modifier       = Modifier.fillMaxWidth(),
             trailingIcon   = {
                 if (isDirty) {
@@ -236,7 +238,7 @@ fun RideDetailScreen(
                         onEvent(TripsEvent.UpdateRideNotes(ride.rideId, notesState))
                         isDirty = false
                     }) {
-                        Icon(Icons.Default.Save, contentDescription = "Save notes")
+                        Icon(Icons.Default.Save, contentDescription = stringResource(R.string.feature_trips_detail_cd_save_notes))
                     }
                 }
             },
@@ -247,7 +249,7 @@ fun RideDetailScreen(
 
         // 6) Optional weather
         ride.weatherCondition?.let {
-            Text("Weather: $it", style = MaterialTheme.typography.bodyMedium)
+            Text(stringResource(R.string.feature_trips_detail_weather_format, it), style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

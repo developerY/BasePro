@@ -76,4 +76,19 @@
     <string name="feature_trips_model_distance_format">Distancia: %.1f km</string>
     <string name="feature_trips_model_avg_speed_format">Prom: %.1f km/h</string>
     <string name="feature_trips_model_max_speed_format">Máx: %.1f km/h</string>
+
+    <string name="feature_trips_detail_label_distance">Distancia</string>
+    <string name="feature_trips_detail_label_avg_speed">Vel. Prom.</string>
+    <string name="feature_trips_detail_label_max_speed">Vel. Máx.</string>
+    <string name="feature_trips_detail_full_timespan_format">%1$s — %2$s (%3$d min)</string>
+    <string name="feature_trips_detail_label_elevation">Elevación</string>
+    <string name="feature_trips_detail_value_elevation_format">%1$d↑/%2$d↓ m</string>
+    <string name="feature_trips_detail_label_duration">Duración</string>
+    <string name="feature_trips_detail_value_duration_format">%02d:%02d</string>
+    <string name="feature_trips_detail_label_calories">Calorías</string>
+    <string name="feature_trips_detail_value_calories_format">%d kcal</string>
+    <string name="feature_trips_detail_label_notes">Notas</string>
+    <string name="feature_trips_detail_cd_save_notes">Guardar notas</string>
+    <string name="feature_trips_detail_weather_format">Clima: %s</string>
+    <string name="feature_trips_detail_value_kmh_format">%.1f km/h</string>
 </resources>
