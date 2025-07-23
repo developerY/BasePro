@@ -1,4 +1,11 @@
 <resources>
     <string name="settings_build_number_label">Número de Compilación: %1$s</string>
     <string name="settings_app_version_label">Versión de la App: %1$s</string>
+    <string name="settings_section_title_app">Ajustes de la App</string>
+    <string name="settings_card_title_theme">Tema</string>
+    <string name="settings_profile_data_unavailable">Los datos del perfil no están disponibles o aún se están cargando.</string>
+    <string name="settings_section_title_connectivity">Conectividad</string>
+    <string name="settings_section_title_bike">Ajustes de la Bici</string>
+    <string name="settings_action_collapse">Contraer</string>
+    <string name="settings_action_expand">Expandir</string>
 </resources>

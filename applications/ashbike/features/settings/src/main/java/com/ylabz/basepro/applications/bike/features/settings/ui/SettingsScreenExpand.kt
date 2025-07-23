@@ -147,7 +147,7 @@ fun SettingsScreenEx(
             } ?: run {
                 // Optional: What to display if profile is null
                 Text(
-                    "Profile data is not available or still loading.",
+                    stringResource(R.string.settings_profile_data_unavailable),
                     modifier = Modifier.padding(16.dp)
                 )
             }
@@ -157,7 +157,7 @@ fun SettingsScreenEx(
         // --- App Settings Section ---
         stickyHeader {
             SectionHeader(
-                title = "App Settings",
+                title = stringResource(R.string.settings_section_title_app),
                 expanded = expandedSections.contains(SectionKey.App),
                 onToggle = { toggle(expandedSections, SectionKey.App) }
             )
@@ -165,7 +165,7 @@ fun SettingsScreenEx(
         if (expandedSections.contains(SectionKey.App)) {
             item {
                 ThemeSettingsCard(
-                    title = "Theme",
+                    title = stringResource(R.string.settings_card_title_theme),
                     expanded = expandedCards.contains(CardKey.Theme),
                     onExpandToggle = { toggle(expandedCards, CardKey.Theme) },
                     currentTheme = uiState.selections["Theme"] ?: "System",
@@ -191,7 +191,7 @@ fun SettingsScreenEx(
         // --- Connectivity Section ---
         stickyHeader {
             SectionHeader(
-                title = "Connectivity",
+                title = stringResource(R.string.settings_section_title_connectivity),
                 expanded = expandedSections.contains(SectionKey.Connectivity),
                 onToggle = { toggle(expandedSections, SectionKey.Connectivity) }
             )
@@ -230,7 +230,7 @@ fun SettingsScreenEx(
         // --- Bike Settings Section ---
         stickyHeader {
             SectionHeader(
-                title = "Bike Settings",
+                title = stringResource(R.string.settings_section_title_bike),
                 expanded = expandedSections.contains(SectionKey.Bike),
                 onToggle = { toggle(expandedSections, SectionKey.Bike) }
             )
@@ -276,7 +276,7 @@ fun SectionHeader(
             Spacer(Modifier.weight(1f))
             Icon(
                 imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                contentDescription = if (expanded) "Collapse" else "Expand",
+                contentDescription = if (expanded) stringResource(R.string.settings_action_collapse) else stringResource(R.string.settings_action_expand),
             )
         }
     }
@@ -326,7 +326,7 @@ fun NfcExpandableEx(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
             .fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant) // Softer color for less emphasis
     ) {
         Column {
             // Header row (always visible)
@@ -484,7 +484,7 @@ fun BikeConfigurationEx(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
             .fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Column {
             // Header row (always visible)

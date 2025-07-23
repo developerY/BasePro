@@ -1,4 +1,11 @@
 <resources>
     <string name="settings_build_number_label">Build Number: %1$s</string>
     <string name="settings_app_version_label">App Version: %1$s</string>
+    <string name="settings_section_title_app">App Settings</string>
+    <string name="settings_card_title_theme">Theme</string>
+    <string name="settings_profile_data_unavailable">Profile data is not available or still loading.</string>
+    <string name="settings_section_title_connectivity">Connectivity</string>
+    <string name="settings_section_title_bike">Bike Settings</string>
+    <string name="settings_action_collapse">Collapse</string>
+    <string name="settings_action_expand">Expand</string>
 </resources>
