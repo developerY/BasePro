@@ -1,4 +1,13 @@
 <resources>
+
+
+        <string name="bike_bottom_nav_home">Inicio</string>
+        <string name="bike_bottom_nav_ride">Viaje</string> <!-- Or "Paseo" or whatever fits best -->
+        <string name="bike_bottom_nav_settings">Ajustes</string>
+        <!-- other strings specific to ashbike in Spanish -->
+
+
+
     <string name="app_name">AshBike</string>
 
     <!-- Title for the weather detail dialog -->

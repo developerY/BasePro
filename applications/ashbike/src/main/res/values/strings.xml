@@ -1,4 +1,12 @@
 <resources>
+
+
+        <string name="bike_bottom_nav_home">Home</string>
+        <string name="bike_bottom_nav_ride">Ride</string>
+        <string name="bike_bottom_nav_settings">Settings</string>
+        <!-- other strings specific to ashbike -->
+
+
     <string name="app_name">AshBike</string>
 
     <!-- Title for the weather detail dialog -->
