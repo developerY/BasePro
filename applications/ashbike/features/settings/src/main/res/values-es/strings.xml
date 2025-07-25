@@ -27,6 +27,45 @@
     <string name="settings_value_units_imperial">Imperial (Inglés)</string>
 
 
+        <!-- ... existing strings ... -->
+
+        <!-- For NfcExpandableEx -->
+        <string name="settings_nfc_cd">Icono NFC</string>
+        <string name="settings_nfc_title">NFC</string>
+
+        <!-- For QrExpandableEx -->
+        <string name="settings_qr_scanner_cd">Icono de Escáner QR</string>
+        <string name="settings_qr_scanner_title">Escáner QR</string>
+        <string name="settings_qr_scanner_placeholder_text">Escáner de Códigos QR: (Apunte la cámara para escanear)</string>
+
+        <!-- For ProfileBikeInfoCardEx -->
+        <string name="settings_user_profile_cd">Icono de Perfil de Usuario</string>
+        <string name="settings_profile_bike_info_details" formatted="true">Batería: %1$s | Último Viaje: %2$s</string>
+
+        <!-- For BikeConfigurationEx -->
+        <string name="settings_bike_config_cd">Icono de Configuración de Bicicleta</string>
+        <string name="settings_bike_config_title">Configuración de Bicicleta</string>
+        <string name="settings_motor_assistance_label">Asistencia del Motor</string>
+        <string name="settings_gearing_level_label" formatted="true">Nivel de Marcha: %1$d</string>
+        <string name="settings_advanced_bike_settings_button">Configuración Avanzada de Bicicleta</string>
+
+        <!-- For BLEExpandableCard -->
+        <string name="settings_ble_cd">Icono de Bluetooth</string>
+        <string name="settings_ble_title">Bluetooth (BLE)</string>
+
+        <!-- For AboutExpandable -->
+        <string name="settings_about_cd">Icono de Información</string>
+        <string name="settings_about_title">Acerca de</string>
+        <string name="settings_app_version_value_text">Alfa 0.9.7</string> <!-- Considerar hacerlo dinámico mediante BuildConfig -->
+        <string name="settings_build_number_value_text">43</string> <!-- Considerar hacerlo dinámico mediante BuildConfig -->
+        <string name="settings_about_info_visit_text">Para licencias, soporte o más información, visite:</string>
+        <string name="settings_about_website_url">https://www.ashbike.com</string>
+
+        <!-- ... other existing strings ... -->
+
+
+
+
 
     <string name="settings_app_preferences_cd_icon">Preferencias de la aplicación</string>
 

@@ -352,19 +352,19 @@ fun NfcExpandableEx(
             ) {
                 Icon(
                     imageVector = Icons.Default.Nfc,
-                    contentDescription = "NFC",
+                    contentDescription = stringResource(R.string.settings_nfc_cd),
                     tint = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = "NFC",
+                    text = stringResource(R.string.settings_nfc_title),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp
                     else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null
+                    contentDescription = stringResource(if (expanded) R.string.settings_action_collapse else R.string.settings_action_expand)
                 )
             }
 
@@ -408,19 +408,19 @@ fun QrExpandableEx(
             ) {
                 Icon(
                     imageVector = Icons.Default.QrCodeScanner,
-                    contentDescription = "QR Scanner",
+                    contentDescription = stringResource(R.string.settings_qr_scanner_cd),
                     tint = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = "QR Scanner",
+                    text = stringResource(R.string.settings_qr_scanner_title),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp
                     else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null
+                    contentDescription = stringResource(if (expanded) R.string.settings_action_collapse else R.string.settings_action_expand)
                 )
             }
 
@@ -428,7 +428,7 @@ fun QrExpandableEx(
             if (expanded) {
                 Divider()
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text(text = "QR Code Scanner: (Placeholder)")
+                    Text(text = stringResource(R.string.settings_qr_scanner_placeholder_text))
                     Spacer(modifier = Modifier.height(8.dp))
                     QRCodeScannerScreen()
                 }
@@ -463,7 +463,7 @@ fun ProfileBikeInfoCardEx(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = "User Profile",
+                    contentDescription = stringResource(R.string.settings_user_profile_cd),
                     modifier = Modifier.size(48.dp),
                     tint = MaterialTheme.colorScheme.onSurface
                 )
@@ -475,7 +475,7 @@ fun ProfileBikeInfoCardEx(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Battery: $bikeBattery | Last BikeRide: $lastRide",
+                        text = stringResource(R.string.settings_profile_bike_info_details, bikeBattery, lastRide),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -510,19 +510,19 @@ fun BikeConfigurationEx(
             ) {
                 Icon(
                     imageVector = Icons.Default.BikeScooter,
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.settings_bike_config_cd),
                     tint = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = "Bike Configuration",
+                    text = stringResource(R.string.settings_bike_config_title),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp
                     else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null
+                    contentDescription = stringResource(if (expanded) R.string.settings_action_collapse else R.string.settings_action_expand)
                 )
             }
 
@@ -532,7 +532,7 @@ fun BikeConfigurationEx(
                 Column(modifier = Modifier.padding(16.dp)) {
                     var motorAssistance by remember { mutableStateOf(true) }
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Motor Assistance")
+                        Text(stringResource(R.string.settings_motor_assistance_label))
                         Spacer(modifier = Modifier.weight(1f))
                         Switch(
                             checked = motorAssistance,
@@ -542,7 +542,7 @@ fun BikeConfigurationEx(
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     var gearingLevel by remember { mutableStateOf(5f) }
-                    Text("Gearing Level: ${gearingLevel.toInt()}")
+                    Text(stringResource(R.string.settings_gearing_level_label, gearingLevel.toInt()))
                     Slider(
                         enabled = false,
                         value = gearingLevel,
@@ -554,7 +554,7 @@ fun BikeConfigurationEx(
                         enabled = false,
                         onClick = { navTo("settings_bike_advanced") }
                     ) {
-                        Text("Advanced Bike Settings")
+                        Text(stringResource(R.string.settings_advanced_bike_settings_button))
                     }
                 }
             }
@@ -687,19 +687,19 @@ fun BLEExpandableCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.Bluetooth, // or any suitable BLE icon
-                    contentDescription = "Bluetooth",
+                    contentDescription = stringResource(R.string.settings_ble_cd),
                     tint = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = "Bluetooth (BLE)",
+                    text = stringResource(R.string.settings_ble_title),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp
                     else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null
+                    contentDescription = stringResource(if (expanded) R.string.settings_action_collapse else R.string.settings_action_expand)
                 )
             }
 
@@ -745,19 +745,19 @@ fun AboutExpandable(
             ) {
                 Icon(
                     imageVector = Icons.Default.Info,
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.settings_about_cd),
                     tint = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = "About",
+                    text = stringResource(R.string.settings_about_title),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp
                     else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null
+                    contentDescription = stringResource(if (expanded) R.string.settings_action_collapse else R.string.settings_action_expand)
                 )
             }
 
@@ -765,12 +765,12 @@ fun AboutExpandable(
             if (expanded) {
                 HorizontalDivider()
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text(stringResource(R.string.settings_app_version_label, "Alpha 0.9.7"))
-                    Text(stringResource(R.string.settings_build_number_label, "43"))
+                    Text(stringResource(R.string.settings_app_version_label, stringResource(R.string.settings_app_version_value_text)))
+                    Text(stringResource(R.string.settings_build_number_label, stringResource(R.string.settings_build_number_value_text)))
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("For licenses, support, or more info, visit:")
+                    Text(stringResource(R.string.settings_about_info_visit_text))
                     Text(
-                        text = "https://www.ashbike.com",
+                        text = stringResource(R.string.settings_about_website_url),
                         color = MaterialTheme.colorScheme.primary
                     )
                 }

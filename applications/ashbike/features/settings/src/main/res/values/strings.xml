@@ -30,7 +30,41 @@
     <string name="settings_value_units_metric">Metric (SI)</string>
     <string name="settings_value_units_imperial">Imperial (English)</string>
 
+    <!-- ... existing strings ... -->
 
+    <!-- For NfcExpandableEx -->
+    <string name="settings_nfc_cd">NFC Icon</string>
+    <string name="settings_nfc_title">NFC</string>
+
+    <!-- For QrExpandableEx -->
+    <string name="settings_qr_scanner_cd">QR Scanner Icon</string>
+    <string name="settings_qr_scanner_title">QR Scanner</string>
+    <string name="settings_qr_scanner_placeholder_text">QR Code Scanner: (Point camera to scan)</string>
+
+    <!-- For ProfileBikeInfoCardEx -->
+    <string name="settings_user_profile_cd">User Profile Icon</string>
+    <string name="settings_profile_bike_info_details" formatted="true">Battery: %1$s | Last Ride: %2$s</string>
+
+    <!-- For BikeConfigurationEx -->
+    <string name="settings_bike_config_cd">Bike Configuration Icon</string>
+    <string name="settings_bike_config_title">Bike Configuration</string>
+    <string name="settings_motor_assistance_label">Motor Assistance</string>
+    <string name="settings_gearing_level_label" formatted="true">Gearing Level: %1$d</string>
+    <string name="settings_advanced_bike_settings_button">Advanced Bike Settings</string>
+
+    <!-- For BLEExpandableCard -->
+    <string name="settings_ble_cd">Bluetooth Icon</string>
+    <string name="settings_ble_title">Bluetooth (BLE)</string>
+
+    <!-- For AboutExpandable -->
+    <string name="settings_about_cd">About Icon</string>
+    <string name="settings_about_title">About</string>
+    <string name="settings_app_version_value_text">Alpha 0.9.7</string> <!-- Consider making this dynamic via BuildConfig -->
+    <string name="settings_build_number_value_text">43</string> <!-- Consider making this dynamic via BuildConfig -->
+    <string name="settings_about_info_visit_text">For licenses, support, or more info, visit:</string>
+    <string name="settings_about_website_url">https://www.ashbike.com</string>
+
+    <!-- ... other existing strings ... -->
 
 
     <string name="settings_app_preferences_cd_icon">Application preferences</string>
