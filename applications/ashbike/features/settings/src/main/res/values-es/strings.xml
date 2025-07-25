@@ -18,6 +18,15 @@
         <string name="settings_units_metric">Métrico (SI)</string>
         <string name="settings_units_imperial">Imperial (Inglés)</string>
 
+    <string name="settings_value_theme_dark">Oscuro</string>
+    <string name="settings_value_theme_light">Claro</string>
+    <string name="settings_value_theme_system">Sistema</string>
+    <string name="settings_value_notifications_enabled">Activado</string>
+    <string name="settings_value_notifications_disabled">Desactivado</string>
+    <string name="settings_value_units_metric">Métrico (SI)</string>
+    <string name="settings_value_units_imperial">Imperial (Inglés)</string>
+
+
 
     <string name="settings_app_preferences_cd_icon">Preferencias de la aplicación</string>
 

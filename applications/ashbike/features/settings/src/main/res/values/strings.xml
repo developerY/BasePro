@@ -22,7 +22,13 @@
              are handled by the state itself rather than being separate displayed labels for the state.
              For this example, I'll focus on the primary labels. -->
 
-
+    <string name="settings_value_theme_dark">Dark</string>
+    <string name="settings_value_theme_light">Light</string>
+    <string name="settings_value_theme_system">System</string>
+    <string name="settings_value_notifications_enabled">Enabled</string>
+    <string name="settings_value_notifications_disabled">Disabled</string>
+    <string name="settings_value_units_metric">Metric (SI)</string>
+    <string name="settings_value_units_imperial">Imperial (English)</string>
 
 
 
