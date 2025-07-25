@@ -1,7 +1,16 @@
 <resources>
 
 
-        <string name="bike_bottom_nav_home">Home</string>
+    <!-- ... other strings ... -->
+    <string name="top_bar_title_ashbike">AshBike</string>
+    <string name="top_bar_title_trips">Trips</string>
+    <string name="top_bar_title_settings">Settings</string>
+    <string name="top_bar_title_ride_details">Ride Details</string>
+    <string name="top_bar_back_button_description">Back</string>
+
+
+
+    <string name="bike_bottom_nav_home">Home</string>
         <string name="bike_bottom_nav_ride">Ride</string>
         <string name="bike_bottom_nav_settings">Settings</string>
         <!-- other strings specific to ashbike -->

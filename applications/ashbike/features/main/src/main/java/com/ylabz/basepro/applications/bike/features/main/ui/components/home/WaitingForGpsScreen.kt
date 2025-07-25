@@ -41,12 +41,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
+import com.ylabz.basepro.applications.bike.features.main.R
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -155,12 +157,12 @@ fun WaitingForGpsScreen(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
 
-            Text("Waiting for GPS…")
+            Text(stringResource(R.string.waiting_for_GPS_content_desc))
             // Animated icon
             Box (modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = Icons.Rounded.LocationSearching,
-                    contentDescription = "Waiting for GPS",
+                    contentDescription = stringResource(R.string.waiting_for_GPS_content_desc),
                     tint = tintIn,
                     modifier = Modifier
                         .size(90.dp)

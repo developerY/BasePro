@@ -17,6 +17,7 @@
     <string name="wind_format">Wind: %1$dkm/h at %2$d°</string>
 
     <!-- Content description for accessibility -->
+    <string name="waiting_for_GPS_content_desc">Waiting for GPS…</string>
     <string name="weather_content_desc">Current weather: %1$s, %2$d°C</string>
     <string name="feature_main_ebike_stats_title">E-bike Stats</string>
     <string name="feature_main_action_collapse">Collapse</string>
