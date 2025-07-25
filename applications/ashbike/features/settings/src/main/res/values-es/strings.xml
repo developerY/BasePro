@@ -19,5 +19,6 @@
         <string name="settings_units_imperial">Imperial (Inglés)</string>
 
 
+    <string name="settings_app_preferences_cd_icon">Preferencias de la aplicación</string>
 
 </resources>
