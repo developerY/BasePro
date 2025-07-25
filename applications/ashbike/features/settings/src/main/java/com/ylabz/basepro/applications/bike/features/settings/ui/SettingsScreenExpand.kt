@@ -558,8 +558,10 @@ fun AppPreferencesExpandable(
     uiState: SettingsUiState.Success,
     onEvent: (SettingsEvent) -> Unit
 ) {
-    val unitOptions = uiState.options["Units"] ?: listOf("Imperial (English)", "Metric (SI)")
-    val currentUnit = uiState.selections["Units"] ?: "Metric (SI)"
+    // These options might eventually also come from string resources if they are user-facing choices.
+    // For now, focusing on the labels within this composable.
+    // val unitOptions = uiState.options["Units"] ?: listOf("Imperial (English)", "Metric (SI)")
+    // val currentUnit = uiState.selections["Units"] ?: "Metric (SI)"
 
     Card(
         modifier = Modifier
@@ -577,19 +579,20 @@ fun AppPreferencesExpandable(
             ) {
                 Icon(
                     imageVector = Icons.Default.Settings,
-                    contentDescription = null,
+                    contentDescription = null, // Or stringResource(R.string.settings_app_preferences_title)
                     tint = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = "App Preferences",
+                    // Use stringResource for the title
+                    text = stringResource(id = R.string.settings_app_preferences_title),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp
                     else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null
+                    contentDescription = null // Decorative
                 )
             }
 
@@ -597,26 +600,26 @@ fun AppPreferencesExpandable(
             if (expanded) {
                 Divider()
                 Column(modifier = Modifier.padding(16.dp)) {
-                    // Dark Mode Setting (existing)
-                    var darkModeEnabled by rememberSaveable { mutableStateOf(uiState.selections["Theme"] == "Dark") } // Assuming "Theme" selection handles dark mode
+                    // Dark Mode Setting
+                    var darkModeEnabled by rememberSaveable { mutableStateOf(uiState.selections["Theme"] == "Dark") }
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Dark Mode")
+                        Text(stringResource(id = R.string.settings_dark_mode_label)) // Localized label
                         Spacer(modifier = Modifier.weight(1f))
                         Switch(
                             checked = darkModeEnabled,
                             onCheckedChange = {
                                 darkModeEnabled = it
-                                val newTheme = if (it) "Dark" else "Light" // Or "System" if that's an option
+                                val newTheme = if (it) "Dark" else "Light"
                                 onEvent(SettingsEvent.UpdateSetting("Theme", newTheme))
                             }
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Notifications Setting (existing)
+                    // Notifications Setting
                     var notificationsEnabled by rememberSaveable { mutableStateOf(uiState.selections["Notifications"] == "Enabled") }
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Notifications")
+                        Text(stringResource(id = R.string.settings_notifications_label)) // Localized label
                         Spacer(modifier = Modifier.weight(1f))
                         Switch(
                             checked = notificationsEnabled,
@@ -624,20 +627,38 @@ fun AppPreferencesExpandable(
                                 notificationsEnabled = it
                                 onEvent(SettingsEvent.UpdateSetting("Notifications", if (it) "Enabled" else "Disabled"))
                             },
-                            enabled = false
+                            enabled = false // Assuming this is intentionally disabled as per original code
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Units Setting (New)
+                    // Units Setting
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Units:   ")
-                        Text("Metric (SI)", style = MaterialTheme.typography.titleSmall)
+                        // Using stringResource for "Units: " part of the label
+                        Text(stringResource(id = R.string.settings_units_label) + ":   ")
+                        // The value "Metric (SI)" might also come from a string resource or be based on currentUnit
+                        // For simplicity, if currentUnit holds the localized string already, this is fine.
+                        // Otherwise, you'd map currentUnit to a string resource.
+                        Text(
+                            text = if (uiState.selections["Units"] == "Metric (SI)") {
+                                stringResource(id = R.string.settings_units_metric)
+                            } else {
+                                stringResource(id = R.string.settings_units_imperial) // Assuming these are the only two
+                            },
+                            style = MaterialTheme.typography.titleSmall
+                        )
                         Spacer(modifier = Modifier.weight(1f))
                         Switch(
-                            checked = true,
-                            onCheckedChange = { /* TODO */ },
-                            enabled = false
+                            // This checked state and onCheckedChange should reflect the actual unit selection logic
+                            checked = uiState.selections["Units"] == "Metric (SI)", // Example logic
+                            onCheckedChange = { isMetric ->
+                                val newUnit = if (isMetric) "Metric (SI)" else "Imperial (English)" // These keys should match your uiState
+                                onEvent(SettingsEvent.UpdateSetting("Units", newUnit))
+                                // Note: The actual string "Metric (SI)" used as a key in onEvent
+                                // should be a constant, non-localized key if your backend/uiState expects that.
+                                // The display string (from R.string.settings_units_metric) is for UI only.
+                            },
+                            enabled = true // Assuming this should be enabled to change units
                         )
                     }
                 }

@@ -8,4 +8,25 @@
     <string name="settings_section_title_bike">Bike Settings</string>
     <string name="settings_action_collapse">Collapse</string>
     <string name="settings_action_expand">Expand</string>
+
+
+        <!-- ... other strings ... -->
+        <string name="settings_app_preferences_title">App Preferences</string>
+        <string name="settings_dark_mode_label">Dark Mode</string>
+        <string name="settings_notifications_label">Notifications</string>
+        <string name="settings_units_label">Units</string>
+        <string name="settings_units_metric">Metric (SI)</string>
+        <string name="settings_units_imperial">Imperial (English)</string>
+        <!-- You might also need string resources for "Light", "Dark", "Enabled", "Disabled"
+             if these are also displayed and come from your uiState, though often these
+             are handled by the state itself rather than being separate displayed labels for the state.
+             For this example, I'll focus on the primary labels. -->
+
+
+
+
+
+
+
+
 </resources>
