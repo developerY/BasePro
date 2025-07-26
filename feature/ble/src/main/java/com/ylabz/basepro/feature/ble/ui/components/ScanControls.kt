@@ -43,14 +43,14 @@ fun ScanControls(
                 onClick = startScan,
                 enabled = isStartScanningEnabled && scanState != ScanState.SCANNING
             ) {
-                Text(stringResource(id = R.string.ble_scan_controls_start_scan))
+                Text(stringResource(id = R.string.ble_scan_controls_start_scan_button))
             }
             Spacer(Modifier.width(8.dp))
             Button(
                 onClick = stopScan,
                 enabled = scanState == ScanState.SCANNING
             ) {
-                Text(stringResource(id = R.string.ble_scan_controls_stop_scan))
+                Text(stringResource(id = R.string.ble_scan_controls_stop_scan_button))
             }
         }
 

@@ -36,6 +36,8 @@ import com.ylabz.basepro.core.model.ble.DeviceCharacteristic
 import com.ylabz.basepro.core.model.ble.DeviceService
 import com.ylabz.basepro.core.model.ble.GattConnectionState
 import com.ylabz.basepro.core.model.ble.ScanState
+import androidx.compose.ui.res.stringResource // Added import
+import com.ylabz.basepro.feature.ble.R // Added import
 
 @Composable
 fun BluetoothLeSuccessScreen(
@@ -91,7 +93,8 @@ fun BluetoothLeSuccessScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            text = device.name ?: "Unnamed Device",
+                            // Assuming device.name can be null
+                            text = device.name ?: stringResource(id = R.string.ble_success_unnamed_device),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
@@ -106,19 +109,19 @@ fun BluetoothLeSuccessScreen(
                             if (gattConnectionState == GattConnectionState.Disconnected) {
                                 Button(
                                     onClick = { connectToActiveDevice() },
-                                    enabled = scanState != ScanState.SCANNING // Simplified condition
+                                    enabled = scanState != ScanState.SCANNING
                                 ) {
-                                    Text("Connect")
+                                    Text(stringResource(id = R.string.ble_success_connect_button))
                                 }
                             }
                             if (gattConnectionState == GattConnectionState.Connected) {
                                 Button(onClick = { readCharacteristics() }) {
-                                    Text("Read Values")
+                                    Text(stringResource(id = R.string.ble_success_read_values_button))
                                 }
                             }
                         }
                         Text(
-                            text = "Status: ${gattConnectionState}",//.name.replace("_", " ")}",
+                            text = stringResource(id = R.string.ble_success_status_label, gattConnectionState.toString()),
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -139,13 +142,13 @@ fun BluetoothLeSuccessScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Discovered Devices (${discoveredDevices.size})",
+                    text = stringResource(id = R.string.ble_success_discovered_devices_title, discoveredDevices.size),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f)
                 )
                 Icon(
                     imageVector = if (isDeviceListExpanded) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
-                    contentDescription = if (isDeviceListExpanded) "Collapse" else "Expand"
+                    contentDescription = if (isDeviceListExpanded) stringResource(id = R.string.ble_success_cd_collapse) else stringResource(id = R.string.ble_success_cd_expand)
                 )
             }
             HorizontalDivider()
@@ -153,15 +156,23 @@ fun BluetoothLeSuccessScreen(
 
         if (isDeviceListExpanded) {
             val sortedTotalDevices = discoveredDevices.sortedByDescending { it.rssi }
+            // Assuming device.name can be null, the filter needs to handle it.
+            // The original warning "Condition is always 'true'" for 'name != null' suggests 'name' might have been non-nullable in a previous version or context.
+            // If device.name IS nullable, the check is valid. If it's NOT nullable, then 'name.isNotBlank()' is sufficient.
+            // For safety and to match typical BLE device name handling where names can be null:
             val sortedNamedDevices = sortedTotalDevices.filter { device ->
                 val name = device.name
+                // Original logic: name != null && name.isNotBlank() && !name.equals("Unknown Device", ignoreCase = true)
+                // If name is String?, then `name != null` is correct.
+                // If name is String (non-nullable), then `name != null` is redundant.
+                // Let's assume name is String? based on typical BluetoothDeviceInfo models.
                 name != null && name.isNotBlank() && !name.equals("Unknown Device", ignoreCase = true)
             }
 
             if (discoveredDevices.isEmpty()) {
                 item {
                     Text(
-                        text = if (scanState == ScanState.SCANNING) "Scanning for devices..." else "No devices found.",
+                        text = if (scanState == ScanState.SCANNING) stringResource(id = R.string.ble_success_scanning_for_devices) else stringResource(id = R.string.ble_success_no_devices_found),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(16.dp)
                     )
@@ -169,7 +180,7 @@ fun BluetoothLeSuccessScreen(
             } else if (sortedNamedDevices.isEmpty()) {
                 item {
                     Text(
-                        text = "No devices with usable names found. (Total scanned: ${discoveredDevices.size})",
+                        text = stringResource(id = R.string.ble_success_no_named_devices_found, discoveredDevices.size),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(16.dp)
                     )
@@ -189,7 +200,7 @@ fun BluetoothLeSuccessScreen(
             item { Spacer(modifier = Modifier.height(8.dp)) }
             item {
                 Text(
-                    "GATT Services",
+                    stringResource(id = R.string.ble_success_gatt_services_title),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
@@ -197,20 +208,22 @@ fun BluetoothLeSuccessScreen(
             if (gattServicesList.isNotEmpty()) {
                 items(gattServicesList, key = { it.uuid }) { service ->
                     Column(modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
-                        Text("Service: ${service.uuid}", style = MaterialTheme.typography.bodySmall)
+                        Text(stringResource(id = R.string.ble_success_service_uuid, service.uuid), style = MaterialTheme.typography.bodySmall)
                         service.characteristics.forEach { characteristic ->
+                            // Assuming characteristic.value can be null
+                            val valueDisplay = characteristic.value ?: stringResource(id = R.string.ble_success_value_not_available)
                             Text(
-                                "  Char: ${characteristic.uuid} - Value: ${characteristic.value ?: "N/A"}",
+                                text = stringResource(id = R.string.ble_success_characteristic_details, characteristic.uuid, valueDisplay),
                                 style = MaterialTheme.typography.labelSmall,
                                 modifier = Modifier.padding(start = 8.dp)
                             )
                         }
                     }
                 }
-            } else if (activeDevice != null) {
+            } else if (activeDevice != null) { // Only show "no services" if an active device is connected but no services found
                 item {
                     Text(
-                        "No services discovered or available for this device.",
+                        stringResource(id = R.string.ble_success_no_services_discovered),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(16.dp)
                     )
@@ -233,32 +246,36 @@ fun DiscoveredDeviceItem(
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
         Text(
-            // This will display "Unknown Device" if name is null/blank,
-            // but we've already filtered out "Unknown Device" names for the list itself.
-            text = device.name?.takeIf { it.isNotBlank() } ?: "Unknown Device",
+            // Assuming device.name can be null.
+            // The warning "Unnecessary safe call on a non-null receiver" for `device.name?.takeIf` suggests
+            // device.name might be non-nullable in your model. If so, `device.name.takeIf` is fine.
+            // If device.name IS nullable, then `device.name?.takeIf` is correct.
+            // Let's assume device.name is String?
+            text = device.name?.takeIf { it.isNotBlank() } ?: stringResource(id = R.string.ble_success_unknown_device_item),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "Address: ${device.address}",
+            text = stringResource(id = R.string.ble_success_device_address, device.address),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
-            text = "RSSI: ${device.rssi} dBm",
+            text = stringResource(id = R.string.ble_success_device_rssi, device.rssi),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
 
+// Preview functions remain unchanged as per previous agreement
 @Preview(showBackground = true, name = "Screen Preview - Devices Found")
 @Composable
 fun BluetoothLeSuccessScreenPreview_DevicesFound() {
     MaterialTheme {
         BluetoothLeSuccessScreen(
-            scanState = ScanState.SCANNING, // Or ScanState.NOT_SCANNING
+            scanState = ScanState.SCANNING,
             gattConnectionState = GattConnectionState.Disconnected,
             activeDevice = null,
             discoveredDevices = listOf(
@@ -319,21 +336,21 @@ fun BluetoothLeSuccessScreenPreview_ActiveDeviceConnected() {
             onDeviceSelected = {},
             gattServicesList = listOf(
                 DeviceService(
-                    uuid = "f000aa00",
+                    uuid = "f000aa00-0000-1000-8000-00805f9b34fb", // Example full UUID
                     characteristics = listOf(
                         DeviceCharacteristic(
-                            uuid = "f000aa01",
-                            value = "0x01",
-                            name = TODO(),
-                            isReadable = TODO(),
-                            isWritable = TODO(),
-                            isNotifiable = TODO()
+                            uuid = "f000aa01-0000-1000-8000-00805f9b34fb", // Example full UUID
+                            value = "0x01", // This is likely a byte array or hex string in reality
+                            name = "Some Characteristic", // Made name nullable
+                            isReadable = true,
+                            isWritable = false,
+                            isNotifiable = true
                         )
                     ),
-                    name ="null"
-                ),
-
+                    name = "Example Service" // Made name nullable
+                )
             )
         )
     }
 }
+
