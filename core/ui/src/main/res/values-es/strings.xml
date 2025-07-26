@@ -9,4 +9,5 @@
     <string name="action_cancel">Cancelar</string>
     <string name="title_error">Error</string>
     <string name="action_grant_permissions">Otorgar Permisos</string>
+    <string name="action_open_settings">Abrir Ajustes</string>
 </resources>
