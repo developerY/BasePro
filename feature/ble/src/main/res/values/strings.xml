@@ -43,7 +43,7 @@
     <string name="ble_text_no_named_devices_found">No usable named devices found. (Total scanned: %1$d)</string>
     <string name="ble_title_gatt_services">GATT Services</string>
     <string name="ble_text_service_uuid">Service: %1$s</string>
-    <string name="ble_text_characteristic_details">\tChar: %1$s - Value: %2$s</string>
+    <string name="ble_text_characteristic_details">	Char: %1$s - Value: %2$s</string>
     <string name="ble_error_no_services_discovered">No services discovered or available for this device.</string>
     <string name="ble_text_device_address">Address: %1$s</string>
     <string name="ble_text_device_rssi">RSSI: %1$d dBm</string>
@@ -79,12 +79,14 @@
     <string name="ble_label_uuid">UUID:</string> <!-- Generic UUID label -->
     <string name="ble_title_characteristics">Characteristics:</string>
     <string name="ble_action_read_battery_level">Read Battery Level</string>
+    <string name="ble_text_characteristic_name">Characteristic: %1$s</string> <!-- Added this line -->
     <string name="ble_cd_read_characteristic">Read characteristic</string>
     <string name="ble_title_sensor_tag_details">Sensor Tag Details</string>
     <string name="ble_label_battery_level_formatted">Battery Level: %1$d%%</string>
     <string name="ble_label_temperature_formatted">Temperature: %1$s</string>
     <string name="ble_label_humidity_formatted">Humidity: %1$s</string>
     <string name="ble_label_last_synced_formatted">Last Synced: %1$s</string>
-    <string name="ble_unit_percent">%</string>
+    <string name="ble_text_characteristic_value_label">Value: %1$s</string> <!-- Added this line -->
+    <string name="ble_unit_percent">%%</string>
     <string name="ble_unit_celsius">°C</string>
 </resources>

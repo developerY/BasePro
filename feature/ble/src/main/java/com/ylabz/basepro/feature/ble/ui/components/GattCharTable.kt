@@ -36,6 +36,8 @@ import com.ylabz.basepro.core.model.ble.DeviceCharacteristic
 import com.ylabz.basepro.core.model.ble.DeviceService
 import com.ylabz.basepro.core.model.ble.GattCharacteristicValue
 import com.ylabz.basepro.feature.ble.ui.BluetoothLeEvent
+import androidx.compose.ui.res.stringResource // Added import
+import com.ylabz.basepro.feature.ble.R // Added import
 
 
 @Composable
@@ -50,7 +52,7 @@ fun GattServices(
         Button(
             onClick = readBat
         ) {
-            Text("Read Battery Level")
+            Text(stringResource(id = R.string.ble_action_read_battery_level)) // Updated
         }
 
         LazyColumn(
@@ -60,7 +62,7 @@ fun GattServices(
         ) {
             item {
                 Text(
-                    text = "GATT Services",
+                    text = stringResource(id = R.string.ble_title_gatt_services), // Updated
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                 )
@@ -80,14 +82,15 @@ fun GattServices(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = "Characteristic: ${characteristic.name}",
+                                    // Updated with new string R.string.ble_text_characteristic_name
+                                    text = stringResource(id = R.string.ble_text_characteristic_name, characteristic.name), 
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Color.Gray
                                 )
                                 IconButton(onClick = { /*onCharacteristicClick(entry, characteristic)*/ }) {
                                     Icon(
                                         Icons.Default.Info,
-                                        contentDescription = "Read characteristic"
+                                        contentDescription = stringResource(id = R.string.ble_cd_read_characteristic) // Updated
                                     )
                                 }
                             }
@@ -112,32 +115,36 @@ fun Gattab(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Sensor Tag Details",
+                text = stringResource(id = R.string.ble_title_sensor_tag_details), // Updated
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             Divider(modifier = Modifier.padding(vertical = 8.dp))
             Text(
-                text = "Battery Level: ${batteryLevel()}%",
+                // Updated
+                text = stringResource(id = R.string.ble_label_battery_level_formatted, batteryLevel()), 
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             Text(
-                text = "Temperature: 22°C",
+                // Updated - Assuming "22°C" is a placeholder for a dynamic value.
+                // For now, we format it with the existing placeholder.
+                text = stringResource(id = R.string.ble_label_temperature_formatted, "22°C"), 
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             Text(
-                text = "Humidity: 45%",
+                // Updated - Assuming "45%" is a placeholder.
+                text = stringResource(id = R.string.ble_label_humidity_formatted, "45%"), 
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             Text(
-                text = "Last Synced: 0",
+                // Updated - Assuming "0" is a placeholder.
+                text = stringResource(id = R.string.ble_label_last_synced_formatted, "0"), 
                 style = MaterialTheme.typography.bodyMedium
             )
         }
     }
 }
-

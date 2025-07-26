@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,6 +40,8 @@ import com.ylabz.basepro.core.model.ble.DeviceCharacteristic
 import com.ylabz.basepro.core.model.ble.DeviceService
 import com.ylabz.basepro.core.model.ble.GattConnectionState
 import com.ylabz.basepro.core.model.ble.ScanState
+import com.ylabz.basepro.feature.ble.R
+import com.ylabz.basepro.core.ui.R as CoreUiR
 
 @Composable
 fun GattServicesList(
@@ -88,14 +91,14 @@ fun ExpandableGattServiceCard(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "UUID: ${service.uuid}",
+                        text = stringResource(id = R.string.ble_text_service_uuid, service.uuid),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray
                     )
                 }
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = if (isExpanded) "Collapse" else "Expand",
+                    contentDescription = if (isExpanded) stringResource(id = CoreUiR.string.action_collapse) else stringResource(id = CoreUiR.string.action_expand),
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -103,7 +106,7 @@ fun ExpandableGattServiceCard(
             if (isExpanded) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Characteristics:",
+                    text = stringResource(id = R.string.ble_title_characteristics),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -126,7 +129,7 @@ fun ExpandableGattServiceCard(
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
                             Text(
-                                text = "Value: ${characteristic.value}",
+                                text = stringResource(id = R.string.ble_text_characteristic_value_label, characteristic.value ?: stringResource(id = CoreUiR.string.text_na)),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -161,7 +164,7 @@ fun ExpandableGattServiceCardOrig(service: DeviceService) {
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "UUID: ${service.uuid}",
+                text = stringResource(id = R.string.ble_text_service_uuid, service.uuid),
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray
             )
@@ -169,7 +172,7 @@ fun ExpandableGattServiceCardOrig(service: DeviceService) {
             if (isExpanded) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Characteristics:",
+                    text = stringResource(id = R.string.ble_title_characteristics),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -184,7 +187,7 @@ fun ExpandableGattServiceCardOrig(service: DeviceService) {
                             color = Color.Gray
                         )
                         Text(
-                            text = "Value: ${characteristic.value}",
+                            text = stringResource(id = R.string.ble_text_characteristic_value_label, characteristic.value ?: stringResource(id = CoreUiR.string.text_na)),
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -378,4 +381,3 @@ fun BluetoothLeSuccessScreenPreview2() {
         )
     )
 }*/
-

@@ -75,12 +75,14 @@
     <string name="ble_label_uuid">UUID:</string>
     <string name="ble_title_characteristics">Características:</string>
     <string name="ble_action_read_battery_level">Leer Nivel de Batería</string>
+    <string name="ble_text_characteristic_name">Característica: %1$s</string> <!-- Added this line -->
     <string name="ble_cd_read_characteristic">Leer característica</string>
     <string name="ble_title_sensor_tag_details">Detalles de la Etiqueta del Sensor</string>
     <string name="ble_label_battery_level_formatted">Nivel de Batería: %1$d%%</string>
     <string name="ble_label_temperature_formatted">Temperatura: %1$s</string>
     <string name="ble_label_humidity_formatted">Humedad: %1$s</string>
     <string name="ble_label_last_synced_formatted">Última Sincronización: %1$s</string>
+    <string name="ble_text_characteristic_value_label">Valor: %1$s</string> <!-- Added this line -->
     <string name="ble_unit_percent">%</string>
     <string name="ble_unit_celsius">°C</string>
 </resources>
