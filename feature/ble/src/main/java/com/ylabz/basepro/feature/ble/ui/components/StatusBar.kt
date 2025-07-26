@@ -49,6 +49,8 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.ylabz.basepro.core.model.ble.ScanState
+import androidx.compose.ui.res.stringResource // Added import
+import com.ylabz.basepro.feature.ble.R // Added import
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -77,7 +79,7 @@ fun StatusBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "BLE.Status",
+                    text = stringResource(id = R.string.ble_status_bar_title), // Changed
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -92,9 +94,9 @@ fun StatusBar(
                             ScanState.STOPPING -> Icons.Outlined.Clear
                         },
                         contentDescription = when (scanState) {
-                            ScanState.NOT_SCANNING -> "Not Scanning"
-                            ScanState.SCANNING -> "Scanning"
-                            ScanState.STOPPING -> "Stopping"
+                            ScanState.NOT_SCANNING -> stringResource(id = R.string.ble_status_bar_cd_scan_state_not_scanning) // Changed
+                            ScanState.SCANNING -> stringResource(id = R.string.ble_status_bar_cd_scan_state_scanning) // Changed
+                            ScanState.STOPPING -> stringResource(id = R.string.ble_status_bar_cd_scan_state_stopping) // Changed
                         },
                         tint = when (scanState) {
                             ScanState.NOT_SCANNING -> Color.Red //MaterialTheme.colorScheme.error
@@ -106,9 +108,9 @@ fun StatusBar(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = when (scanState) {
-                            ScanState.NOT_SCANNING -> "Not Scanning"
-                            ScanState.SCANNING -> "Scanning..."
-                            ScanState.STOPPING -> "Stopping..."
+                            ScanState.NOT_SCANNING -> stringResource(id = R.string.ble_status_bar_text_scan_state_not_scanning) // Changed
+                            ScanState.SCANNING -> stringResource(id = R.string.ble_status_bar_text_scan_state_scanning) // Changed
+                            ScanState.STOPPING -> stringResource(id = R.string.ble_status_bar_text_scan_state_stopping) // Changed
                         },
                         color = //MaterialTheme.colorScheme.onPrimary,
                             when (scanState) {
@@ -120,19 +122,13 @@ fun StatusBar(
                     )
                 }
 
-
-
-
-
-
-
                 IconButton(
                     onClick = { isExpanded = !isExpanded }, // Toggle expand/collapse
                     modifier = Modifier.size(24.dp)
                 ) {
                     Icon(
                         imageVector = if (isExpanded) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
-                        contentDescription = if (isExpanded) "Collapse" else "Expand",
+                        contentDescription = if (isExpanded) stringResource(id = R.string.ble_status_bar_cd_collapse) else stringResource(id = R.string.ble_status_bar_cd_expand), // Changed
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -141,29 +137,28 @@ fun StatusBar(
             // Content: List permissions when expanded
             if (isExpanded) {
                 permissionState.permissions.forEach { permission ->
-                    val (friendlyName, icon, color) = when {
-                    !permission.status.isGranted && permission.status.shouldShowRationale -> Triple(
-                        getFriendlyName(permission.permission),
-                        Icons.Default.Info, // Not Yet Requested
-                        Color.Yellow
-                    )
-                    !permission.status.isGranted -> Triple(
-                        getFriendlyName(permission.permission),
-                        Icons.Default.Warning, // Permanently Denied
-                        Color.Red
-                    )
-                    permission.status.isGranted -> Triple(
-                        getFriendlyName(permission.permission),
-                        Icons.Default.CheckCircle, // Granted
-                        Color.Green
-                    )
-                    else -> Triple(
-                        getFriendlyName(permission.permission),
-                        Icons.Default.Info,
-                        Color.Yellow // Default fallback to yellow
-                    )
-                }
-
+                    val (friendlyNameText, icon, color) = when { // Renamed friendlyName to friendlyNameText to avoid conflict
+                        !permission.status.isGranted && permission.status.shouldShowRationale -> Triple(
+                            getFriendlyName(permission.permission), // This will return a String from stringResource
+                            Icons.Default.Info, // Not Yet Requested
+                            Color.Yellow
+                        )
+                        !permission.status.isGranted -> Triple(
+                            getFriendlyName(permission.permission), // This will return a String from stringResource
+                            Icons.Default.Warning, // Permanently Denied
+                            Color.Red
+                        )
+                        permission.status.isGranted -> Triple(
+                            getFriendlyName(permission.permission), // This will return a String from stringResource
+                            Icons.Default.CheckCircle, // Granted
+                            Color.Green
+                        )
+                        else -> Triple(
+                            getFriendlyName(permission.permission), // This will return a String from stringResource
+                            Icons.Default.Info,
+                            Color.Yellow // Default fallback to yellow
+                        )
+                    }
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -177,7 +172,7 @@ fun StatusBar(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = friendlyName,
+                            text = friendlyNameText, // Use the variable that holds the string from stringResource
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onBackground
                         )
@@ -195,7 +190,7 @@ fun StatusBar(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Manage Permissions",
+                            contentDescription = stringResource(id = R.string.ble_status_bar_cd_manage_permissions), // Changed
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -214,7 +209,7 @@ fun Legend() {
 
     Column {
         Text(
-            text = "Legend:",
+            text = stringResource(id = R.string.ble_status_bar_legend_title), // Changed
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(bottom = 4.dp)
@@ -222,17 +217,17 @@ fun Legend() {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color.Green, modifier = Modifier.size(16.dp))
             Spacer(modifier = Modifier.width(4.dp))
-            Text("Granted", style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(id = R.string.ble_status_bar_legend_granted), style = MaterialTheme.typography.bodySmall) // Changed
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Default.Warning, contentDescription = null, tint = Color.Red, modifier = Modifier.size(16.dp))
             Spacer(modifier = Modifier.width(4.dp))
-            Text("Permanently Denied", style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(id = R.string.ble_status_bar_legend_denied), style = MaterialTheme.typography.bodySmall) // Changed
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Default.Info, contentDescription = null, tint = Color.Yellow, modifier = Modifier.size(16.dp))
             Spacer(modifier = Modifier.width(4.dp))
-            Text("Not Yet Requested", style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(id = R.string.ble_status_bar_legend_not_requested), style = MaterialTheme.typography.bodySmall) // Changed
         }
     }
 }
@@ -240,12 +235,12 @@ fun Legend() {
 @Composable
 private fun getFriendlyName(permission: String): String {
     return when (permission) {
-        android.Manifest.permission.BLUETOOTH_SCAN -> "Scan Nearby"
-        android.Manifest.permission.BLUETOOTH_CONNECT -> "Connect"
-        android.Manifest.permission.BLUETOOTH_ADVERTISE -> "Advertise"
-        android.Manifest.permission.ACCESS_COARSE_LOCATION -> "Coarse Location"
-        android.Manifest.permission.ACCESS_FINE_LOCATION -> "Fine Location"
-        else -> "Unknown"
+        android.Manifest.permission.BLUETOOTH_SCAN -> stringResource(id = R.string.ble_status_bar_perm_scan_nearby) // Changed
+        android.Manifest.permission.BLUETOOTH_CONNECT -> stringResource(id = R.string.ble_status_bar_perm_connect) // Changed
+        android.Manifest.permission.BLUETOOTH_ADVERTISE -> stringResource(id = R.string.ble_status_bar_perm_advertise) // Changed
+        android.Manifest.permission.ACCESS_COARSE_LOCATION -> stringResource(id = R.string.ble_status_bar_perm_coarse_location) // Changed
+        android.Manifest.permission.ACCESS_FINE_LOCATION -> stringResource(id = R.string.ble_status_bar_perm_fine_location) // Changed
+        else -> stringResource(id = R.string.ble_status_bar_perm_unknown) // Changed
     }
 }
 
@@ -255,7 +250,7 @@ private fun getFriendlyName(permission: String): String {
 fun StatusBarPreview() {
     // Mock permissions state for preview
     val permissions = listOf(
-       android.Manifest.permission.BLUETOOTH_SCAN,
+        android.Manifest.permission.BLUETOOTH_SCAN,
         android.Manifest.permission.BLUETOOTH_CONNECT,
         android.Manifest.permission.ACCESS_FINE_LOCATION
     )

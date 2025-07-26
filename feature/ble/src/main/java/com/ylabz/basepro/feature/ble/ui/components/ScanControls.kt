@@ -14,8 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.model.ble.ScanState
+import com.ylabz.basepro.feature.ble.R
 
 @Composable
 fun ScanControls(
@@ -41,21 +43,26 @@ fun ScanControls(
                 onClick = startScan,
                 enabled = isStartScanningEnabled && scanState != ScanState.SCANNING
             ) {
-                Text("Start Scan")
+                Text(stringResource(id = R.string.ble_scan_controls_start_scan))
             }
             Spacer(Modifier.width(8.dp))
             Button(
                 onClick = stopScan,
                 enabled = scanState == ScanState.SCANNING
             ) {
-                Text("Stop Scan")
+                Text(stringResource(id = R.string.ble_scan_controls_stop_scan))
             }
         }
 
         Spacer(Modifier.height(8.dp)) // Keep this spacer for visual separation
 
+        val statusText = when (scanState) {
+            ScanState.NOT_SCANNING -> stringResource(id = R.string.ble_scan_controls_status_not_scanning)
+            ScanState.SCANNING -> stringResource(id = R.string.ble_scan_controls_status_scanning)
+            ScanState.STOPPING -> stringResource(id = R.string.ble_scan_controls_status_stopping)
+        }
         Text(
-            text = "Scan Status: ${scanState.name.replace("_", " ")}",
+            text = stringResource(id = R.string.ble_scan_controls_status_label) + " " + statusText,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
