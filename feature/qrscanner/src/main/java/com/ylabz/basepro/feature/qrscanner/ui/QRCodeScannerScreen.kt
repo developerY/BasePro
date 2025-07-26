@@ -22,12 +22,14 @@ import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
+import androidx.compose.ui.res.stringResource
+import com.ylabz.basepro.feature.qrscanner.R
 
 
 @Composable
 fun QRCodeScannerScreen() {
     val context = LocalContext.current
-    var scanResult by remember { mutableStateOf("No result") }
+    var scanResult by remember { mutableStateOf(context.getString(R.string.qr_scanner_initial_result)) }
 
     // Build options for scanning QR and Aztec codes
     val options = remember {
@@ -47,15 +49,15 @@ fun QRCodeScannerScreen() {
             val result: Task<Barcode> = scanner.startScan()
             result.addOnSuccessListener { barcode ->
                 // barcode.rawValue contains the scanned text
-                scanResult = barcode.rawValue ?: "No value"
+                scanResult = barcode.rawValue ?: context.getString(R.string.qr_scanner_no_value_found)
             }.addOnFailureListener { exception ->
-                scanResult = "Error: ${exception.message}"
+                scanResult = context.getString(R.string.qr_scanner_error_prefix, exception.message ?: "Unknown error")
             }
         }) {
-            Text("Scan QR Code")
+            Text(stringResource(id = R.string.qr_scanner_button_text))
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Result: $scanResult")
+        Text(text = stringResource(id = R.string.qr_scanner_result_prefix, scanResult))
     }
 }
 
@@ -64,4 +66,3 @@ fun QRCodeScannerScreen() {
 fun QRCodeScannerScreenPreview() {
     QRCodeScannerScreen()
 }
-

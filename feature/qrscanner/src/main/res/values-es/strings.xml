@@ -1,0 +1,7 @@
+<resources>
+    <string name="qr_scanner_initial_result">Aún no hay resultado</string>
+    <string name="qr_scanner_no_value_found">No se encontró valor en el código QR</string>
+    <string name="qr_scanner_error_prefix">Error: %1$s</string>
+    <string name="qr_scanner_button_text">Escanear Código QR</string>
+    <string name="qr_scanner_result_prefix">Resultado: %1$s</string>
+</resources>
