@@ -57,9 +57,9 @@ fun ScanControls(
         Spacer(Modifier.height(8.dp)) // Keep this spacer for visual separation
 
         val statusText = when (scanState) {
-            ScanState.NOT_SCANNING -> stringResource(id = R.string.ble_scan_controls_status_not_scanning)
-            ScanState.SCANNING -> stringResource(id = R.string.ble_scan_controls_status_scanning)
-            ScanState.STOPPING -> stringResource(id = R.string.ble_scan_controls_status_stopping)
+            ScanState.NOT_SCANNING -> stringResource(id = R.string.ble_scan_controls_status_display_not_scanning) // Updated
+            ScanState.SCANNING -> stringResource(id = R.string.ble_scan_controls_status_display_scanning)       // Updated
+            ScanState.STOPPING -> stringResource(id = R.string.ble_scan_controls_status_display_stopping)     // Updated
         }
         Text(
             text = stringResource(id = R.string.ble_scan_controls_status_label) + " " + statusText,

@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.feature.ble.R
+import com.ylabz.basepro.core.ui.R as CoreUiR // Ensured this import
 
 
 @Composable
@@ -30,13 +31,13 @@ fun PermissionsRationale(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = stringResource(id = R.string.ble_permissions_rationale_message_scan),
+            text = stringResource(id = R.string.ble_message_permissions_rationale_scan), // Updated
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = onGrantPermissions) {
-            Text(stringResource(id = R.string.ble_permissions_rationale_action_grant))
+            Text(stringResource(id = CoreUiR.string.action_grant_permissions)) // Updated
         }
     }
 }

@@ -1,22 +1,20 @@
-<!-- For values-es/strings.xml (Spanish) -->
 <resources>
     <!-- Strings for StatusBar.kt -->
     <string name="ble_status_bar_title">Estado BLE</string>
-    <string name="ble_status_bar_cd_scan_state_not_scanning">No Escaneando</string>
-    <string name="ble_status_bar_cd_scan_state_scanning">Escaneando</string>
-    <string name="ble_status_bar_cd_scan_state_stopping">Deteniendo</string>
-    <string name="ble_status_bar_text_scan_state_not_scanning">No Escaneando</string>
-    <string name="ble_status_bar_text_scan_state_scanning">Escaneando…</string>
-    <string name="ble_status_bar_text_scan_state_stopping">Deteniendo…</string>
-    <string name="ble_status_bar_cd_collapse">Contraer</string>
-    <string name="ble_status_bar_cd_expand">Expandir</string>
+    <string name="ble_text_scan_state_not_scanning">No Escaneando</string>
+    <string name="ble_text_scan_state_scanning">Escaneando…</string>
+    <string name="ble_text_scan_state_stopping">Deteniendo…</string>
+    <string name="ble_cd_scan_state_not_scanning">Estado de Escaneo: No Escaneando</string>
+    <string name="ble_cd_scan_state_scanning">Estado de Escaneo: Escaneando</string>
+    <string name="ble_cd_scan_state_stopping">Estado de Escaneo: Deteniendo</string>
+
     <string name="ble_status_bar_cd_manage_permissions">Administrar Permisos</string>
     <string name="ble_status_bar_legend_title">Leyenda:</string>
     <string name="ble_status_bar_legend_granted">Concedido</string>
     <string name="ble_status_bar_legend_denied">Denegado Permanentemente</string>
     <string name="ble_status_bar_legend_not_requested">Aún No Solicitado</string>
     <string name="ble_status_bar_perm_scan_nearby">Escanear Cercanos</string>
-    <string name="ble_status_bar_perm_connect">Conectar</string>
+    <!-- "Conectar" movido a core:ui -->
     <string name="ble_status_bar_perm_advertise">Anunciar</string>
     <string name="ble_status_bar_perm_coarse_location">Ubicación Aproximada</string>
     <string name="ble_status_bar_perm_fine_location">Ubicación Precisa</string>
@@ -26,92 +24,63 @@
     <string name="ble_scan_controls_start_scan_button">Iniciar Escaneo</string>
     <string name="ble_scan_controls_stop_scan_button">Detener Escaneo</string>
     <string name="ble_scan_controls_status_label">Estado de Escaneo:</string>
-    <string name="ble_scan_controls_scan_status_scanning">Estado: Escaneando…</string>
-    <string name="ble_scan_controls_scan_status_not_scanning">Estado: No Escaneando</string>
-    <string name="ble_scan_controls_scan_status_stopping">Estado: Deteniendo…</string>
     <string name="ble_scan_controls_scan_status_error">Estado: Error - %1$s</string>
     <string name="ble_scan_controls_scan_status_unknown_error">Estado: Error Desconocido</string>
-    <string name="ble_scan_controls_status_not_scanning">NO ESCANEANDO</string>
-    <string name="ble_scan_controls_status_scanning">ESCANEAR</string>
-    <string name="ble_scan_controls_status_stopping">DETENIENDO</string>
+    <string name="ble_scan_controls_status_display_not_scanning">NO ESCANEANDO</string>
+    <string name="ble_scan_controls_status_display_scanning">ESCANEAR</string> <!-- Note: Spanish should be ESCANEANDO for consistency with "DETENIENDO" -->
+    <string name="ble_scan_controls_status_display_stopping">DETENIENDO</string>
 
     <!-- Strings for BluetoothLeSuccessScreen.kt & DiscoveredDeviceItem -->
-    <string name="ble_success_unnamed_device">Dispositivo Sin Nombre</string>
-    <string name="ble_success_connect_button">Conectar</string>
-    <string name="ble_success_read_values_button">Leer Valores</string>
-    <string name="ble_success_status_label">Estado: %1$s</string>
-    <string name="ble_success_discovered_devices_title">Dispositivos Descubiertos (%1$d)</string>
-    <string name="ble_success_cd_collapse">Contraer</string>
-    <string name="ble_success_cd_expand">Expandir</string>
-    <string name="ble_success_scanning_for_devices">Escaneando dispositivos…</string>
-    <string name="ble_success_no_devices_found">No se encontraron dispositivos.</string>
-    <string name="ble_success_no_named_devices_found">No se encontraron dispositivos con nombres utilizables. (Total escaneados: %1$d)</string>
-    <string name="ble_success_gatt_services_title">Servicios GATT</string>
-    <string name="ble_success_service_uuid">Servicio: %1$s</string>
-    <string name="ble_success_characteristic_details">	Caract.: %1$s - Valor: %2$s</string>
-    <string name="ble_success_value_not_available">N/D</string>
-    <string name="ble_success_no_services_discovered">No se descubrieron servicios o no están disponibles para este dispositivo.</string>
-    <string name="ble_success_unknown_device_item">Dispositivo Desconocido</string>
-    <string name="ble_success_device_address">Dirección: %1$s</string>
-    <string name="ble_success_device_rssi">RSSI: %1$d dBm</string>
-    <!-- Retained original separate labels from Spanish file -->
-    <string name="ble_success_service_uuid_label">Servicio:</string>
-    <string name="ble_success_characteristic_label">Caract.:</string>
-    <string name="ble_success_characteristic_value_label">Valor:</string>
-    <string name="ble_success_characteristic_value_na">N/D</string> <!-- Note: Standardized to ble_success_value_not_available above -->
-    <string name="ble_success_no_services_found">No se descubrieron servicios o no están disponibles para este dispositivo.</string> <!-- Note: English uses ble_success_no_services_discovered -->
-    <string name="ble_success_address_label">Dirección:</string>
-    <string name="ble_success_rssi_label">RSSI:</string>
-    <string name="ble_success_rssi_unit">dBm</string>
-    <string name="ble_success_unknown_device">Dispositivo Desconocido</string>
+    <string name="ble_text_unnamed_device">Dispositivo Sin Nombre</string>
+    <string name="ble_action_read_values">Leer Valores</string>
+    <string name="ble_text_status_label">Estado: %1$s</string>
+    <string name="ble_title_discovered_devices">Dispositivos Descubiertos (%1$d)</string>
+    <string name="ble_text_scanning_for_devices">Escaneando dispositivos…</string>
+    <string name="ble_text_no_devices_found">No se encontraron dispositivos.</string>
+    <string name="ble_text_no_named_devices_found">No se encontraron dispositivos con nombres utilizables. (Total escaneados: %1$d)</string>
+    <string name="ble_title_gatt_services">Servicios GATT</string>
+    <string name="ble_text_service_uuid">Servicio: %1$s</string>
+    <string name="ble_text_characteristic_details">\tCaract.: %1$s - Valor: %2$s</string>
+    <string name="ble_error_no_services_discovered">No se descubrieron servicios o no están disponibles para este dispositivo.</string>
+    <string name="ble_text_device_address">Dirección: %1$s</string>
+    <string name="ble_text_device_rssi">RSSI: %1$d dBm</string>
 
+    <string name="ble_label_service">Servicio:</string>
+    <string name="ble_label_characteristic">Característica:</string>
+    <string name="ble_label_value">Valor:</string>
+    <string name="ble_label_address">Dirección:</string>
+    <string name="ble_label_rssi">RSSI:</string>
+    <string name="ble_unit_rssi_dbm">dBm</string>
 
     <!-- Strings for PermissionsRationale.kt -->
-    <string name="ble_permissions_rationale_title">Se Requieren Permisos de Bluetooth</string>
-    <string name="ble_permissions_rationale_message">Se requieren permisos de Bluetooth para escanear dispositivos.</string>
-    <string name="ble_permissions_rationale_message_scan_connect_location">Esta aplicación necesita permisos de escaneo Bluetooth, conexión y ubicación para descubrir e interactuar con dispositivos BLE cercanos. Android requiere la ubicación para el escaneo Bluetooth.</string>
-    <string name="ble_permissions_rationale_message_scan_connect">Esta aplicación necesita permisos de escaneo y conexión Bluetooth para descubrir e interactuar con dispositivos BLE cercanos.</string>
-    <string name="ble_permissions_rationale_message_scan_location">Esta aplicación necesita permisos de escaneo Bluetooth y ubicación para descubrir dispositivos BLE cercanos. Android requiere la ubicación para el escaneo Bluetooth.</string>
-    <string name="ble_permissions_rationale_message_scan">Esta aplicación necesita permiso de escaneo Bluetooth para descubrir dispositivos BLE cercanos.</string>
-    <string name="ble_permissions_rationale_message_connect_location">Esta aplicación necesita permisos de conexión Bluetooth y ubicación para interactuar con dispositivos BLE. La ubicación podría ser necesaria para la funcionalidad completa con algunos dispositivos.</string>
-    <string name="ble_permissions_rationale_message_connect">Esta aplicación necesita permiso de conexión Bluetooth para interactuar con dispositivos BLE.</string>
-    <string name="ble_permissions_rationale_message_location">Esta aplicación necesita permiso de ubicación para la funcionalidad Bluetooth según lo requiere Android.</string>
-    <string name="ble_permissions_rationale_message_advertise">Esta aplicación necesita permiso de publicidad Bluetooth para transmitir información.</string>
-    <string name="ble_permissions_rationale_message_generic">Esta aplicación necesita permisos de Bluetooth para funcionar correctamente.</string>
-    <string name="ble_permissions_rationale_grant_permissions_button">Otorgar Permisos</string>
-    <string name="ble_permissions_rationale_action_grant">Otorgar Permisos</string> <!-- Kept from original Spanish file -->
-    <string name="ble_permissions_rationale_bluetooth_disabled_title">Bluetooth Desactivado</string>
-    <string name="ble_permissions_rationale_bluetooth_disabled_message">Bluetooth está actualmente desactivado. Por favor, actívalo en los ajustes para permitir la funcionalidad BLE.</string>
-    <string name="ble_permissions_rationale_open_settings_button">Abrir Ajustes</string>
+    <string name="ble_title_permissions_rationale">Se Requieren Permisos de Bluetooth</string>
+    <string name="ble_message_permissions_rationale_scan_connect_location">Esta aplicación necesita permisos de escaneo Bluetooth, conexión y ubicación para descubrir e interactuar con dispositivos BLE cercanos. Android requiere la ubicación para el escaneo Bluetooth.</string>
+    <string name="ble_message_permissions_rationale_scan_connect">Esta aplicación necesita permisos de escaneo y conexión Bluetooth para descubrir e interactuar con dispositivos BLE cercanos.</string>
+    <string name="ble_message_permissions_rationale_scan_location">Esta aplicación necesita permisos de escaneo Bluetooth y ubicación para descubrir dispositivos BLE cercanos. Android requiere la ubicación para el escaneo Bluetooth.</string>
+    <string name="ble_message_permissions_rationale_scan">Esta aplicación necesita permiso de escaneo Bluetooth para descubrir dispositivos BLE cercanos.</string>
+    <string name="ble_message_permissions_rationale_connect_location">Esta aplicación necesita permisos de conexión Bluetooth y ubicación para interactuar con dispositivos BLE. La ubicación podría ser necesaria para la funcionalidad completa con algunos dispositivos.</string>
+    <string name="ble_message_permissions_rationale_connect">Esta aplicación necesita permiso de conexión Bluetooth para interactuar con dispositivos BLE.</string>
+    <string name="ble_message_permissions_rationale_location">Esta aplicación necesita permiso de ubicación para la funcionalidad Bluetooth según lo requiere Android.</string>
+    <string name="ble_message_permissions_rationale_advertise">Esta aplicación necesita permiso de publicidad Bluetooth para transmitir información.</string>
+    <string name="ble_message_permissions_rationale_generic">Esta aplicación necesita permisos de Bluetooth para funcionar correctamente.</string>
+    <string name="ble_title_bluetooth_disabled">Bluetooth Desactivado</string>
+    <string name="ble_message_bluetooth_disabled">Bluetooth está actualmente desactivado. Por favor, actívalo en los ajustes para permitir la funcionalidad BLE.</string>
+    <string name="ble_action_open_settings">Abrir Ajustes</string>
 
     <!-- Strings for PermissionsDenied.kt -->
-    <string name="ble_permissions_denied_message">Los permisos de Bluetooth están denegados. Por favor, habilítalos en los ajustes.</string>
-    <string name="ble_permissions_denied_action_enable">Por favor, habilita los permisos</string>
+    <string name="ble_message_permissions_denied">Los permisos de Bluetooth están denegados. Por favor, habilítalos en los ajustes.</string>
+    <string name="ble_action_enable_permissions">Por favor, habilita los permisos</string>
 
     <!-- Strings for GattCharTable.kt & related GATT details -->
-    <string name="ble_gatt_service_uuid_label">UUID:</string>
-    <string name="ble_gatt_service_characteristics_title">Características:</string>
-    <string name="ble_gatt_service_characteristic_value_label">Valor:</string>
-    <string name="ble_gatt_read_battery_level">Leer Nivel de Batería</string>
-    <string name="ble_gatt_services_title">Servicios GATT</string>
-    <string name="ble_gatt_characteristic_label">Característica:</string>
-    <string name="ble_gatt_cd_read_characteristic">Leer característica</string>
-    <string name="ble_gatt_sensor_tag_details_title">Detalles de la Etiqueta del Sensor</string>
-    <string name="ble_gatt_battery_level_label">Nivel de Batería: %1$d%%</string>
-    <string name="ble_gatt_temperature_label">Temperatura: %1$s</string>
-    <string name="ble_gatt_humidity_label">Humedad: %1$s</string>
-    <string name="ble_gatt_last_synced_label">Última Sincronización: %1$s</string>
-    <string name="ble_gatt_unit_percent">%</string>
-    <string name="ble_gatt_unit_celsius">°C</string>
-    <!-- Specific for GattCharTable.kt list items -->
-    <string name="ble_gatt_char_table_read_battery_level">Leer Nivel de Batería</string>
-    <string name="ble_gatt_char_table_gatt_services_title">Servicios GATT</string>
-    <string name="ble_gatt_char_table_characteristic_name">Característica: %1$s</string>
-    <string name="ble_gatt_char_table_cd_read_characteristic">Leer característica</string>
-    <string name="ble_gatt_char_table_sensor_tag_details_title">Detalles de la Etiqueta del Sensor</string>
-    <string name="ble_gatt_char_table_battery_level">Nivel de Batería: %1$d%%</string>
-    <string name="ble_gatt_char_table_temperature">Temperatura: %1$s</string>
-    <string name="ble_gatt_char_table_humidity">Humedad: %1$s</string>
-    <string name="ble_gatt_char_table_last_synced">Última Sincronización: %1$s</string>
-
+    <string name="ble_label_uuid">UUID:</string>
+    <string name="ble_title_characteristics">Características:</string>
+    <string name="ble_action_read_battery_level">Leer Nivel de Batería</string>
+    <string name="ble_cd_read_characteristic">Leer característica</string>
+    <string name="ble_title_sensor_tag_details">Detalles de la Etiqueta del Sensor</string>
+    <string name="ble_label_battery_level_formatted">Nivel de Batería: %1$d%%</string>
+    <string name="ble_label_temperature_formatted">Temperatura: %1$s</string>
+    <string name="ble_label_humidity_formatted">Humedad: %1$s</string>
+    <string name="ble_label_last_synced_formatted">Última Sincronización: %1$s</string>
+    <string name="ble_unit_percent">%</string>
+    <string name="ble_unit_celsius">°C</string>
 </resources>
