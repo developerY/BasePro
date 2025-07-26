@@ -74,6 +74,12 @@
     <string name="profile_button_save">Guardar</string>
 
 
+    <string name="theme_system_display">Sistema</string>
+    <string name="theme_light_display">Claro</string>
+    <string name="theme_dark_display">Oscuro</string>
+    <string name="theme_settings_card_title">Configuración de Tema</string> <!-- For the preview -->
+    <string name="theme_icon_cd">Icono de selección de tema</string>
+
     <string name="settings_app_preferences_cd_icon">Preferencias de la aplicación</string>
 
 </resources>

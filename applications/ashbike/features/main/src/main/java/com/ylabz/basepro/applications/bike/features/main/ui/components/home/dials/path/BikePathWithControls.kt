@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pause
+// import androidx.compose.material.icons.filled.Pause // Not directly used after string resources
 import androidx.compose.material.icons.filled.PedalBike
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
@@ -28,10 +28,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.applications.bike.features.main.R // Assuming this is your R file
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
@@ -60,10 +62,10 @@ fun BikePathWithControls(
         RideState.Ended   -> Icons.Default.PlayArrow
     }
     val fabDesc = when (rideState) {
-        RideState.Riding  -> "Pause"
+        RideState.Riding  -> stringResource(R.string.bike_action_pause)
         //RideState.Paused,
         RideState.NotStarted,
-        RideState.Ended   -> "Start"
+        RideState.Ended   -> stringResource(R.string.bike_action_start)
     }
 
 
@@ -114,7 +116,7 @@ fun BikePathWithControls(
             contentColor  = Color.Red,
             modifier      = Modifier.size(buttonSize)
         ) {
-            Icon(imageVector = Icons.Default.Stop, contentDescription = "Stop")
+            Icon(imageVector = Icons.Default.Stop, contentDescription = stringResource(R.string.bike_action_stop))
         }
     }
 
@@ -128,12 +130,12 @@ fun BikePathWithControls(
 
         AlertDialog(
             onDismissRequest = { showDistanceDialog = false },
-            title            = { Text("Enter total distance (km)") },
+            title            = { Text(stringResource(R.string.bike_dialog_set_distance_title)) },
             text             = {
                 OutlinedTextField(
                     value            = text,
                     onValueChange    = { text = it },
-                    label            = { Text("Distance in km") },
+                    label            = { Text(stringResource(R.string.bike_dialog_set_distance_label)) },
                     keyboardOptions  = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine       = true,
                     modifier         = Modifier.fillMaxWidth()
@@ -146,14 +148,14 @@ fun BikePathWithControls(
                     }
                     showDistanceDialog = false
                 }) {
-                    Text("Save")
+                    Text(stringResource(R.string.bike_action_save))
                 }
             },
             dismissButton    = {
                 TextButton(onClick = {
                     showDistanceDialog = false
                 }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.bike_action_cancel))
                 }
             }
         )

@@ -35,4 +35,14 @@
     <string name="feature_main_stats_label_elevation">Elevation</string>
     <string name="feature_main_stats_value_meters_format">%.0f m</string>
 
+
+    <!-- ... existing strings ... -->
+    <string name="bike_action_pause">Pause</string>
+    <string name="bike_action_start">Start</string>
+    <string name="bike_action_stop">Stop</string>
+    <string name="bike_dialog_set_distance_title">Enter total distance (km)</string>
+    <string name="bike_dialog_set_distance_label">Distance in km</string>
+    <string name="bike_action_save">Save</string>
+    <string name="bike_action_cancel">Cancel</string>
+
 </resources>

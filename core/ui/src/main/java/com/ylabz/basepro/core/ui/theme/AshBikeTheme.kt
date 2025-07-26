@@ -95,16 +95,21 @@ val ColorScheme.iconColorElevation: Color @Composable get() = IconGreen
 val ColorScheme.iconColorCalories: Color @Composable get() = IconRed
 val ColorScheme.iconColorBikeActive: Color @Composable get() = BikeIconGreen
 
+object ThemeIdentifiers {
+    const val LIGHT = "Light"
+    const val DARK = "Dark"
+    const val SYSTEM = "System"
+}
 
 @Composable
 fun AshBikeTheme(
-    theme: String = "System",
+    theme: String = ThemeIdentifiers.SYSTEM,
     content: @Composable () -> Unit
 ) {
     val darkTheme = when (theme) {
-        "Light" -> false
-        "Dark" -> true
-        else -> isSystemInDarkTheme()
+        ThemeIdentifiers.LIGHT -> false
+        ThemeIdentifiers.DARK -> true
+        else -> isSystemInDarkTheme() // Defaults to System if an unknown string is passed
     }
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
