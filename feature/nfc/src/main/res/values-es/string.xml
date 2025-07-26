@@ -1,0 +1,17 @@
+<resources>
+    <!-- ... existing strings ... -->
+    <string name="nfc_status_label">Estado NFC:</string>
+    <string name="nfc_status_not_supported">NFC No Soportado</string>
+    <string name="nfc_status_disabled">NFC Deshabilitado</string>
+    <string name="nfc_status_ready_not_scanning">NFC Listo (No Escaneando)</string>
+    <string name="nfc_status_waiting_for_tag">Escaneando: Esperando Etiqueta</string>
+    <string name="nfc_status_tag_scanned">Etiqueta Escaneada</string>
+    <string name="nfc_status_loading">Cargando…</string>
+    <string name="nfc_status_error" formatted="true">Error: %1$s</string>
+    <string name="nfc_status_write_error" formatted="true">Error de Escritura: %1$s</string>
+    <string name="nfc_status_write_success" formatted="true">Escritura Exitosa: %1$s</string>
+    <string name="nfc_status_writing_to_tag">Escribiendo en Etiqueta…</string>
+    <!-- ... existing strings ... -->
+    <string name="nfc_not_supported_message">Tu dispositivo no soporta NFC.</string>
+    <string name="nfc_action_retry">Reintentar</string>
+</resources>
