@@ -32,12 +32,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+// import androidx.compose.ui.graphics.Brush // No longer used
+import androidx.compose.ui.graphics.Color // Keep if used elsewhere, but not for Color.Red
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.database.ProfileData
+// Make sure this R class is correct for your 'settings' module
+import com.ylabz.basepro.applications.bike.features.settings.R
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsEvent
 import com.ylabz.basepro.core.ui.theme.AshBikeTheme
 
@@ -45,7 +48,7 @@ import com.ylabz.basepro.core.ui.theme.AshBikeTheme
 fun ProfileInfoCardEx(
     profile: ProfileData,
     isEditing: Boolean,
-    isProfileIncomplete: Boolean, // Added this parameter
+    isProfileIncomplete: Boolean,
     onToggleEdit: () -> Unit,
     onEvent: (SettingsEvent) -> Unit
 ) {
@@ -59,18 +62,17 @@ fun ProfileInfoCardEx(
             Modifier
                 .fillMaxWidth()
                 .background(
-                    MaterialTheme.colorScheme.surfaceContainerLow // Replaced hardcoded gradient
+                    MaterialTheme.colorScheme.surfaceContainerLow
                 )
                 .padding(16.dp)
         ) {
             if (!isEditing) {
-                // — VIEW MODE: always show latest profile from uiState
+                // — VIEW MODE
                 Column {
-                    // Display an inline alert message if the profile is incomplete
-                    if (isProfileIncomplete) { // Condition uses the new parameter
+                    if (isProfileIncomplete) {
                         Text(
-                            text = "Please update your height & weight.",
-                            color = Color.Red, // Or MaterialTheme.colorScheme.error
+                            text = stringResource(R.string.profile_incomplete_warning),
+                            color = MaterialTheme.colorScheme.error, // Using theme error color
                             modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
                         )
                     }
@@ -78,26 +80,33 @@ fun ProfileInfoCardEx(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Icon(Icons.Default.Person, contentDescription = null, Modifier.size(48.dp))
+                        Icon(
+                            Icons.Default.Person,
+                            contentDescription = stringResource(R.string.profile_person_icon_cd),
+                            Modifier.size(48.dp)
+                        )
                         Spacer(Modifier.width(16.dp))
                         Column {
                             Text(
-                                profile.name,
+                                profile.name, // Name is dynamic, not a static string resource
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                             )
                             Text(
-                                "Height: ${profile.heightCm} cm | Weight: ${profile.weightKg} kg",
+                                stringResource(R.string.profile_details_format, profile.heightCm, profile.weightKg),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
                         Spacer(Modifier.weight(1f))
                         IconButton(onClick = onToggleEdit) {
-                            Icon(Icons.Default.Edit, contentDescription = "Edit Profile")
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = stringResource(R.string.profile_edit_icon_cd)
+                            )
                         }
                     }
                 }
             } else {
-                // — EDIT MODE: local, saveable state initialized once
+                // — EDIT MODE
                 var localName by rememberSaveable { mutableStateOf(profile.name) }
                 var localHeight by rememberSaveable { mutableStateOf(profile.heightCm) }
                 var localWeight by rememberSaveable { mutableStateOf(profile.weightKg) }
@@ -106,7 +115,7 @@ fun ProfileInfoCardEx(
                     OutlinedTextField(
                         value = localName,
                         onValueChange = { localName = it },
-                        label = { Text("Name") },
+                        label = { Text(stringResource(R.string.profile_label_name)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -115,7 +124,7 @@ fun ProfileInfoCardEx(
                         OutlinedTextField(
                             value = localHeight,
                             onValueChange = { localHeight = it },
-                            label = { Text("Height (cm)") },
+                            label = { Text(stringResource(R.string.profile_label_height_cm)) },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             modifier = Modifier.weight(1f)
@@ -123,7 +132,7 @@ fun ProfileInfoCardEx(
                         OutlinedTextField(
                             value = localWeight,
                             onValueChange = { localWeight = it },
-                            label = { Text("Weight (kg)") },
+                            label = { Text(stringResource(R.string.profile_label_weight_kg)) },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             modifier = Modifier.weight(1f)
@@ -137,7 +146,6 @@ fun ProfileInfoCardEx(
                         horizontalArrangement = Arrangement.End
                     ) {
                         Button(onClick = {
-                            // Single event to save all three fields at once
                             onEvent(
                                 SettingsEvent.SaveProfile(
                                     ProfileData(
@@ -149,7 +157,7 @@ fun ProfileInfoCardEx(
                             )
                             onToggleEdit()
                         }) {
-                            Text("Save")
+                            Text(stringResource(R.string.profile_button_save))
                         }
                     }
                 }
@@ -189,7 +197,7 @@ fun ProfileInfoCardExPreviewEditMode() {
 @Preview(name = "View Mode Dark - Incomplete", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun ProfileInfoCardExPreviewViewModeDarkIncomplete() {
-    val profile = ProfileData(name = "John Doe", heightCm = "", weightKg = "")
+    val profile = ProfileData(name = "John Doe", heightCm = "", weightKg = "") 
     AshBikeTheme {
         ProfileInfoCardEx(profile = profile, isEditing = false, isProfileIncomplete = true, onToggleEdit = {}, onEvent = {})
     }

@@ -64,7 +64,14 @@
         <!-- ... other existing strings ... -->
 
 
-
+    <string name="profile_incomplete_warning">Por favor, actualice su altura y peso.</string>
+    <string name="profile_person_icon_cd">Perfil</string>
+    <string name="profile_details_format" formatted="true">Altura: %1$s cm | Peso: %2$s kg</string>
+    <string name="profile_edit_icon_cd">Editar Perfil</string>
+    <string name="profile_label_name">Nombre</string>
+    <string name="profile_label_height_cm">Altura (cm)</string>
+    <string name="profile_label_weight_kg">Peso (kg)</string>
+    <string name="profile_button_save">Guardar</string>
 
 
     <string name="settings_app_preferences_cd_icon">Preferencias de la aplicación</string>

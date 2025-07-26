@@ -32,6 +32,15 @@
 
     <!-- ... existing strings ... -->
 
+    <string name="profile_incomplete_warning">Please update your height &amp; weight.</string>
+    <string name="profile_person_icon_cd">Profile</string>
+    <string name="profile_details_format" formatted="true">Height: %1$s cm | Weight: %2$s kg</string>
+    <string name="profile_edit_icon_cd">Edit Profile</string>
+    <string name="profile_label_name">Name</string>
+    <string name="profile_label_height_cm">Height (cm)</string>
+    <string name="profile_label_weight_kg">Weight (kg)</string>
+    <string name="profile_button_save">Save</string>
+
     <!-- For NfcExpandableEx -->
     <string name="settings_nfc_cd">NFC Icon</string>
     <string name="settings_nfc_title">NFC</string>
