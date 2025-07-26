@@ -2,6 +2,8 @@ package com.ylabz.basepro.applications.bike.database.converter
 
 import android.net.Uri
 import androidx.room.TypeConverter
+import androidx.core.net.toUri
+
 //import kotlinx.datetime.LocalDateTime
 
 class Converters {
@@ -18,7 +20,7 @@ class Converters {
 
     @TypeConverter
     fun fromString(value: String?): Uri? {
-        return if (value == null) null else Uri.parse(value)
+        return if (value == null) null else value.toUri()
     }
 
     @TypeConverter

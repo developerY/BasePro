@@ -1,7 +1,7 @@
 <resources>
     <string name="feature_trips_all_bike_trips_title">Todos los Viajes en Bici</string>
     <string name="feature_trips_ride_details_title">Detalles del Viaje</string>
-    <string name="feature_trips_loading_ride_details">Cargando detalles del viaje...</string>
+    <string name="feature_trips_loading_ride_details">Cargando detalles del viaje…</string>
     <string name="feature_trips_detail_date_label">Fecha: %1$s</string>
     <string name="feature_trips_detail_duration_label">Duración: %1$s</string>
     <string name="feature_trips_detail_distance_km_label">Distancia: %1$.2f km</string>
@@ -26,7 +26,7 @@
     <string name="feature_trips_stat_avg">Prom: %1$s</string>
     <string name="feature_trips_stat_max">Máx: %1$s</string>
 
-    <string name="state_loading">Cargando...</string>
+    <string name="state_loading">Cargando…</string>
     <string name="state_error_generic_with_message">Error: %1$s</string>
     <string name="action_retry">Reintentar</string>
     <string name="preview_error_something_went_wrong">Algo salió mal</string>
@@ -38,7 +38,7 @@
     <string name="feature_trips_map_cafes_button_content_desc">Mostrar/Ocultar Cafés</string>
     <string name="feature_trips_map_legend_slow">Lento</string>
     <string name="feature_trips_map_legend_fast">Rápido</string>
-    <string name="feature_trips_map_loading">Cargando mapa...</string>
+    <string name="feature_trips_map_loading">Cargando mapa…</string>
     <string name="feature_trips_map_unavailable">Mapa No Disponible</string>
     <string name="feature_trips_map_selected_location_title">Ubicación Seleccionada</string>
     <string name="feature_trips_map_selected_location_lat">Lat: %1$.6f</string>

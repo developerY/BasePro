@@ -1,7 +1,7 @@
 <resources>
     <string name="feature_trips_all_bike_trips_title">All Bike Trips</string>
     <string name="feature_trips_ride_details_title">Ride Details</string>
-    <string name="feature_trips_loading_ride_details">Loading ride details...</string>
+    <string name="feature_trips_loading_ride_details">Loading ride details…</string>
     <string name="feature_trips_detail_date_label">Date: %1$s</string>
     <string name="feature_trips_detail_duration_label">Duration: %1$s</string>
     <string name="feature_trips_detail_distance_km_label">Distance: %1$.2f km</string>
@@ -26,7 +26,7 @@
     <string name="feature_trips_stat_avg">Avg: %1$s</string>
     <string name="feature_trips_stat_max">Max: %1$s</string>
 
-    <string name="state_loading">Loading...</string>
+    <string name="state_loading">Loading…</string>
     <string name="state_error_generic_with_message">Error: %1$s</string>
     <string name="action_retry">Retry</string>
     <string name="preview_error_something_went_wrong">Something went wrong</string>
@@ -38,7 +38,7 @@
     <string name="feature_trips_map_cafes_button_content_desc">Show/Hide Cafes</string>
     <string name="feature_trips_map_legend_slow">Slow</string>
     <string name="feature_trips_map_legend_fast">Fast</string>
-    <string name="feature_trips_map_loading">Loading map...</string>
+    <string name="feature_trips_map_loading">Loading map…</string>
     <string name="feature_trips_map_unavailable">Map Unavailable</string>
     <string name="feature_trips_map_selected_location_title">Selected Location</string>
     <string name="feature_trips_map_selected_location_lat">Lat: %1$.6f</string>
