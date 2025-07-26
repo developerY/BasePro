@@ -1,0 +1,12 @@
+<resources>
+    <!-- ... existing strings ... -->
+    <string name="health_route_enable_health_connect_title">Habilitar Health Connect</string>
+    <string name="health_route_enable_description">Sincroniza los datos de tus recorridos con Google Health Connect para seguir tu progreso y compartirlo con otras aplicaciones.</string>
+    <string name="health_route_action_enable">Habilitar</string>
+    <string name="health_route_cd_success_icon">Éxito</string>
+    <string name="health_route_health_connect_enabled_title">Health Connect Habilitado</string>
+    <string name="health_route_action_manage_permissions">Administrar Permisos</string>
+    <string name="health_route_revoke_permissions_info">Para desactivar esto, debes revocar los permisos para esta aplicación en los Ajustes del Sistema de tu teléfono.</string>
+    <string name="health_route_permissions_required_message">Se requieren permisos de salud para continuar.</string>
+    <string name="health_route_action_grant_permissions">Otorgar Permisos</string>
+</resources>

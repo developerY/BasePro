@@ -1,0 +1,12 @@
+<resources>
+    <!-- ... existing strings ... -->
+    <string name="health_route_enable_health_connect_title">Enable Health Connect</string>
+    <string name="health_route_enable_description">Sync your ride data with Google Health Connect to track your progress and share it with other apps.</string>
+    <string name="health_route_action_enable">Enable</string>
+    <string name="health_route_cd_success_icon">Success</string>
+    <string name="health_route_health_connect_enabled_title">Health Connect Enabled</string>
+    <string name="health_route_action_manage_permissions">Manage Permissions</string>
+    <string name="health_route_revoke_permissions_info">To turn this off, you must revoke permissions for this app in your phone\'s System Settings.</string>
+    <string name="health_route_permissions_required_message">Health permissions are required to proceed.</string>
+    <string name="health_route_action_grant_permissions">Grant Permissions</string>
+</resources>

@@ -22,11 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.HealthConnectClient
 import com.ylabz.basepro.core.model.health.HealthScreenState
+import com.ylabz.basepro.feature.heatlh.R
 import com.ylabz.basepro.feature.heatlh.ui.components.ErrorScreen
 import com.ylabz.basepro.feature.heatlh.ui.components.HealthHeader
 import com.ylabz.basepro.feature.heatlh.ui.components.LoadingScreen
@@ -83,15 +85,15 @@ fun HealthRoute(
 @Composable
 private fun PermissionsNotGrantedScreen(onEnableClick: () -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("Enable Health Connect", style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(id = R.string.health_route_enable_health_connect_title), style = MaterialTheme.typography.headlineSmall)
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            "Sync your ride data with Google Health Connect to track your progress and share it with other apps.",
+            stringResource(id = R.string.health_route_enable_description),
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = onEnableClick) {
-            Text("Enable")
+            Text(stringResource(id = R.string.health_route_action_enable))
         }
     }
 }
@@ -108,12 +110,12 @@ private fun PermissionsGrantedScreen() {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(
             imageVector = Icons.Filled.CheckCircle,
-            contentDescription = "Success",
+            contentDescription = stringResource(id = R.string.health_route_cd_success_icon),
             tint = Color.Green,
             modifier = Modifier.size(48.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Health Connect Enabled", style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(id = R.string.health_route_health_connect_enabled_title), style = MaterialTheme.typography.headlineSmall)
         Spacer(modifier = Modifier.height(16.dp))
 
         // 2. Add the new button to open settings
@@ -123,13 +125,13 @@ private fun PermissionsGrantedScreen() {
                 settingsLauncher.launch(intent)
             }
         ) {
-            Text("Manage Permissions")
+            Text(stringResource(id = R.string.health_route_action_manage_permissions))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            "To turn this off, you must revoke permissions for this app in your phone's System Settings.",
+            stringResource(id = R.string.health_route_revoke_permissions_info),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodySmall
         )
@@ -167,10 +169,10 @@ fun HealthFeatureWithPermissions(onRequestPermissions: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text("Health permissions are required to proceed.")
+            Text(stringResource(id = R.string.health_route_permissions_required_message))
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = onRequestPermissions) {
-                Text("Grant Permissions")
+                Text(stringResource(id = R.string.health_route_action_grant_permissions))
             }
         }
     }
