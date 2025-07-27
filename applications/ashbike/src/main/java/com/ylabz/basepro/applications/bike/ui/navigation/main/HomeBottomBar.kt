@@ -29,6 +29,7 @@ import androidx.navigation.NavHostController
 // The exact package will depend on your module's namespace defined in its build.gradle.kts
 import com.ylabz.basepro.applications.bike.R
 import com.ylabz.basepro.core.ui.BikeScreen
+import com.ylabz.basepro.core.ui.R as CoreUiR // Added import
 
 // Local data class to hold tab information, including the navigation key and title resource ID
 private data class TabInfo(
@@ -50,14 +51,14 @@ fun HomeBottomBar(
     val tabs = listOf(
         TabInfo(
             navigationKey = "Home", // This key is used by navigateTo
-            titleResId = R.string.bike_bottom_nav_home, // Localized display title
+            titleResId = CoreUiR.string.navigation_home, // Localized display title - UPDATED
             selectedIcon = Icons.TwoTone.Home,
             unselectedIcon = Icons.Outlined.Home,
             hasNews = false
         ),
         TabInfo(
             navigationKey = "Ride",
-            titleResId = R.string.bike_bottom_nav_ride,
+            titleResId = R.string.bike_bottom_nav_ride, // This one is ashbike specific, leave as is
             selectedIcon = Icons.AutoMirrored.TwoTone.List,
             unselectedIcon = Icons.AutoMirrored.Outlined.List,
             hasNews = false,
@@ -65,7 +66,7 @@ fun HomeBottomBar(
         ),
         TabInfo(
             navigationKey = "Settings",
-            titleResId = R.string.bike_bottom_nav_settings,
+            titleResId = CoreUiR.string.action_settings, // UPDATED
             selectedIcon = Icons.TwoTone.Settings,
             unselectedIcon = Icons.Outlined.Settings,
             hasNews = showSettingsProfileAlert

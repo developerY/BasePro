@@ -18,4 +18,5 @@
     <string name="action_pause">Pause</string>
     <string name="action_resume">Resume</string>
     <string name="cd_navigate_back">Back</string>
+    <string name="navigation_home">Home</string>
 </resources>

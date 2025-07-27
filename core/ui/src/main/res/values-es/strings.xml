@@ -18,4 +18,5 @@
     <string name="action_pause">Pausar</string>
     <string name="action_resume">Reanudar</string>
     <string name="cd_navigate_back">Atrás</string>
+    <string name="navigation_home">Inicio</string>
 </resources>
