@@ -13,4 +13,9 @@
     <string name="action_save">Save</string>
     <string name="action_edit">Edit</string>
     <string name="action_delete">Delete</string>
+    <string name="action_start">Start</string>
+    <string name="action_stop">Stop</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_resume">Resume</string>
+    <string name="cd_navigate_back">Back</string>
 </resources>

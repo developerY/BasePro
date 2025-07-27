@@ -63,10 +63,10 @@ fun BikePathWithControls(
         RideState.Ended   -> Icons.Default.PlayArrow
     }
     val fabDesc = when (rideState) {
-        RideState.Riding  -> stringResource(R.string.bike_action_pause)
+        RideState.Riding  -> stringResource(CoreUiR.string.action_pause)
         //RideState.Paused,
         RideState.NotStarted,
-        RideState.Ended   -> stringResource(R.string.bike_action_start)
+        RideState.Ended   -> stringResource(CoreUiR.string.action_start)
     }
 
 
@@ -117,7 +117,7 @@ fun BikePathWithControls(
             contentColor  = Color.Red,
             modifier      = Modifier.size(buttonSize)
         ) {
-            Icon(imageVector = Icons.Default.Stop, contentDescription = stringResource(R.string.bike_action_stop))
+            Icon(imageVector = Icons.Default.Stop, contentDescription = stringResource(CoreUiR.string.action_stop))
         }
     }
 
@@ -149,14 +149,14 @@ fun BikePathWithControls(
                     }
                     showDistanceDialog = false
                 }) {
-                    Text(stringResource(CoreUiR.string.action_save)) // Updated
+                    Text(stringResource(CoreUiR.string.action_save))
                 }
             },
             dismissButton    = {
                 TextButton(onClick = {
                     showDistanceDialog = false
                 }) {
-                    Text(stringResource(CoreUiR.string.action_cancel)) // Updated
+                    Text(stringResource(CoreUiR.string.action_cancel))
                 }
             }
         )

@@ -15,6 +15,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.ylabz.basepro.core.ui.BikeScreen
 import com.ylabz.basepro.applications.bike.R // Import R class from your ashbike module
+import com.ylabz.basepro.core.ui.R as CoreUiR // Added import
 
 @Composable
 fun TopBarForCurrentRoute(navController: NavHostController) {
@@ -27,7 +28,7 @@ fun TopBarForCurrentRoute(navController: NavHostController) {
     val titleResId: Int? = when (currentRoute) {
         BikeScreen.HomeBikeScreen.route     -> R.string.top_bar_title_ashbike
         BikeScreen.TripBikeScreen.route     -> R.string.top_bar_title_trips
-        BikeScreen.SettingsBikeScreen.route -> R.string.top_bar_title_settings
+        BikeScreen.SettingsBikeScreen.route -> CoreUiR.string.action_settings // Updated
         // For RideDetailScreen, the title is handled by DetailTopBar,
         // but if AppTopBar were to handle it, it would be here.
         else                                -> null // Or a default title resource
@@ -62,7 +63,7 @@ fun DetailTopBar(onBack: () -> Unit) {
             IconButton(onClick = onBack) {
                 Icon(
                     Icons.AutoMirrored.Filled.ArrowBack, // Use AutoMirrored version
-                    contentDescription = stringResource(id = R.string.top_bar_back_button_description) // Localized description
+                    contentDescription = stringResource(id = CoreUiR.string.cd_navigate_back) // Updated
                 )
             }
         }
