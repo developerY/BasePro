@@ -164,18 +164,22 @@ class BikeViewModel @Inject constructor(
     }
 
     fun unbindFromService(context: Context) {
-        if (_bound.value) {
-            Log.d("BikeViewModel", "unbindFromService called.")
-            try {
-                context.unbindService(serviceConnection)
-                _bound.value = false
-                bikeService = null // Clear reference immediately // Updated usage
-                Log.d("BikeViewModel", "Service unbound successfully.")
-            } catch (e: Exception) {
-                Log.e("BikeViewModel", "Exception during unbindFromService: ${e.message}", e)
-            }
-        } else {
-            Log.d("BikeViewModel", "unbindFromService called, but not bound.")
+        Log.d("BikeViewModel", "unbindFromService called. Current internal _bound state: ${_bound.value}")
+        try {
+            // Always attempt to unbind. The Android system tracks the actual binding.
+            // If it's not bound, context.unbindService will throw IllegalArgumentException.
+            context.unbindService(serviceConnection)
+            Log.d("BikeViewModel", "context.unbindService() called successfully.")
+        } catch (e: IllegalArgumentException) {
+            // This is expected if the service was already unbound or was never bound with this connection.
+            Log.w("BikeViewModel", "IllegalArgumentException during unbindService: ${e.message}. Service might have been already unbound or not registered.")
+        } catch (e: Exception) {
+            // Catch any other unexpected exceptions during unbinding.
+            Log.e("BikeViewModel", "Generic exception during unbindFromService: ${e.message}", e)
         }
+        // Regardless of whether unbindService threw an exception (e.g., already unbound),
+        // update our internal state to reflect that we've processed the unbind request.
+        _bound.value = false
+        bikeService = null
     }
 }
