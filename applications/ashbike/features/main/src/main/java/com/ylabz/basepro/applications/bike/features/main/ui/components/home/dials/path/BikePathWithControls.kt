@@ -37,6 +37,7 @@ import com.ylabz.basepro.applications.bike.features.main.R // Assuming this is y
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
+import com.ylabz.basepro.core.ui.R as CoreUiR // Added import
 
 
 @Composable
@@ -148,14 +149,14 @@ fun BikePathWithControls(
                     }
                     showDistanceDialog = false
                 }) {
-                    Text(stringResource(R.string.bike_action_save))
+                    Text(stringResource(CoreUiR.string.action_save)) // Updated
                 }
             },
             dismissButton    = {
                 TextButton(onClick = {
                     showDistanceDialog = false
                 }) {
-                    Text(stringResource(R.string.bike_action_cancel))
+                    Text(stringResource(CoreUiR.string.action_cancel)) // Updated
                 }
             }
         )

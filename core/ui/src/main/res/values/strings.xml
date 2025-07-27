@@ -10,4 +10,7 @@
     <string name="title_error">Error</string>
     <string name="action_grant_permissions">Grant Permissions</string>
     <string name="action_open_settings">Open Settings</string> 
+    <string name="action_save">Save</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
 </resources>

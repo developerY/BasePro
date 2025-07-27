@@ -42,7 +42,6 @@
     <string name="bike_action_stop">Detener</string>
     <string name="bike_dialog_set_distance_title">Introducir distancia total (km)</string>
     <string name="bike_dialog_set_distance_label">Distancia en km</string>
-    <string name="bike_action_save">Guardar</string>
-    <string name="bike_action_cancel">Cancelar</string>
+    
 
 </resources>

@@ -14,8 +14,6 @@
     <string name="feature_trips_detail_notes_section_title">Notes</string>
     <string name="feature_trips_detail_no_notes">No notes for this ride.</string>
     <string name="feature_trips_action_add_note">Add Note</string>
-    <string name="feature_trips_action_edit">Edit</string>
-    <string name="feature_trips_action_delete">Delete</string>
     <string name="feature_trips_you_havent_recorded_any_rides">You haven’t recorded any rides yet.</string>
     <string name="feature_trips_bike_rides_section_title">Bike Rides</string>
     <string name="feature_trips_elevation_profile_title">Elevation Profile</string>

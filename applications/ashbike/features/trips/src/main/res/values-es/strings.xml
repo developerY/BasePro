@@ -14,8 +14,6 @@
     <string name="feature_trips_detail_notes_section_title">Notas</string>
     <string name="feature_trips_detail_no_notes">No hay notas para este viaje.</string>
     <string name="feature_trips_action_add_note">Añadir Nota</string>
-    <string name="feature_trips_action_edit">Editar</string>
-    <string name="feature_trips_action_delete">Eliminar</string>
     <string name="feature_trips_you_havent_recorded_any_rides">Aún no has grabado ningún viaje.</string>
     <string name="feature_trips_bike_rides_section_title">Viajes en Bici</string>
     <string name="feature_trips_elevation_profile_title">Perfil de Elevación</string>

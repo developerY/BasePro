@@ -15,7 +15,6 @@
     <string name="ble_status_bar_legend_denied">Permanently Denied</string>
     <string name="ble_status_bar_legend_not_requested">Not Yet Requested</string>
     <string name="ble_status_bar_perm_scan_nearby">Scan Nearby</string>
-    <!-- "Connect" moved to core:ui -->
     <string name="ble_status_bar_perm_advertise">Advertise</string>
     <string name="ble_status_bar_perm_coarse_location">Coarse Location</string>
     <string name="ble_status_bar_perm_fine_location">Fine Location</string>
