@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.applications.bike.features.main.R
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.StatsSection
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.bike.BikeBatteryLevels
@@ -41,10 +42,9 @@ import com.ylabz.basepro.core.model.bike.RideState
 import com.ylabz.basepro.core.ui.theme.AshBikeTheme
 import com.ylabz.basepro.core.ui.theme.iconColorBikeActive
 import com.ylabz.basepro.core.ui.theme.iconColorCalories
-import com.ylabz.basepro.core.ui.theme.iconColorElevation
-import com.ylabz.basepro.core.ui.theme.iconColorSpeed
+// import com.ylabz.basepro.core.ui.theme.iconColorElevation // Not used directly here
+// import com.ylabz.basepro.core.ui.theme.iconColorSpeed // Not used directly here
 import androidx.compose.ui.res.stringResource
-import com.ylabz.basepro.applications.bike.features.main.R
 
 @Composable
 fun BikeDashboardContent(
@@ -59,13 +59,13 @@ fun BikeDashboardContent(
         onDispose { view.keepScreenOn = false }
     }
 
-    val isBikeConnected = bikeRideInfo.isBikeConnected // we need to use the ride state not connected state
+    val isBikeConnected = bikeRideInfo.isBikeConnected
     val batteryLevel = bikeRideInfo.batteryLevel
     val motorPower = bikeRideInfo.motorPower
     val heartRate = null // Replace with actual heart rate data if available
     val calories = bikeRideInfo.caloriesBurned
     val rideState = bikeRideInfo.rideState
-    val currRiding = if (rideState == RideState.Riding) true else false
+    val currRiding = rideState == RideState.Riding
 
     val containerColor = if (currRiding) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
     val contentColor = if (currRiding) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
@@ -81,7 +81,12 @@ fun BikeDashboardContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SpeedAndProgressCard(
-            bikeRideInfo = bikeRideInfo,
+            getCurrentSpeed = { bikeRideInfo.currentSpeed },
+            getHeading = { bikeRideInfo.heading },
+            getBikeWeatherInfo = { bikeRideInfo.bikeWeatherInfo },
+            getRideState = { bikeRideInfo.rideState },
+            getCurrentTripDistance = { bikeRideInfo.currentTripDistance },
+            getTotalTripDistance = { bikeRideInfo.totalTripDistance },
             onBikeEvent = onBikeEvent,
             navTo = navTo,
             containerColor = containerColor,
@@ -100,7 +105,7 @@ fun BikeDashboardContent(
                 icon = Icons.Filled.Favorite,
                 label = stringResource(R.string.feature_main_label_heart_rate),
                 value = if (heartRate != null) "$heartRate bpm" else "-- bpm",
-                activeColor = if (currRiding) MaterialTheme.colorScheme.iconColorSpeed else null // Assuming IconBlue for HR
+                activeColor = if (currRiding) MaterialTheme.colorScheme.error else null // Assuming IconBlue for HR
             ),
             StatItem(
                 icon = Icons.Filled.LocalFireDepartment,
@@ -193,19 +198,20 @@ fun BikeDashboardContentPreviewConnected() {
         averageSpeed = 18.2,
         maxSpeed = 40.0,
         currentTripDistance = 10.5f,
-        totalTripDistance = null,
+        totalTripDistance = 20.0f, // Added for preview consistency
         remainingDistance = null,
         elevationGain = 120.0,
         elevationLoss = 30.0,
         caloriesBurned = 350,
         rideDuration = "00:45:30",
         settings = mapOf(),
-        heading = 0f,
+        heading = 90f, // Added for preview consistency
         elevation = 150.0,
         isBikeConnected = true, // Bike computer is ON
         batteryLevel = 85,
         motorPower = 250f,
-        rideState = RideState.NotStarted
+        rideState = RideState.Riding, // Changed to Riding for a more active preview
+        bikeWeatherInfo = null // Placeholder, can be filled if needed
     )
 
     AshBikeTheme {
@@ -238,7 +244,8 @@ fun BikeDashboardContentPreviewDisconnected() {
         isBikeConnected = false, // Bike computer is OFF
         batteryLevel = null,
         motorPower = null,
-        rideState = RideState.NotStarted
+        rideState = RideState.NotStarted,
+        bikeWeatherInfo = null // Placeholder
     )
 
     AshBikeTheme {

@@ -24,7 +24,7 @@ import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.SpeedometerWithCompassOverlay
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path.BikePathWithControls
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.weather.WeatherBadgeWithDetails
-import com.ylabz.basepro.core.model.bike.BikeRideInfo
+// import com.ylabz.basepro.core.model.bike.BikeRideInfo // No longer needed
 import com.ylabz.basepro.core.model.bike.RideState
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDialWithSpeed
@@ -32,7 +32,12 @@ import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDial
 @Composable
 fun SpeedAndProgressCard(
     modifier: Modifier = Modifier.fillMaxSize(),
-    bikeRideInfo: BikeRideInfo,
+    getCurrentSpeed: () -> Double,
+    getHeading: () -> Float,
+    getBikeWeatherInfo: () -> BikeWeatherInfo?,
+    getRideState: () -> RideState,
+    getCurrentTripDistance: () -> Float,
+    getTotalTripDistance: () -> Float?,
     onBikeEvent: (BikeEvent) -> Unit,
     navTo: (String) -> Unit,
     containerColor: Color,
@@ -40,9 +45,9 @@ fun SpeedAndProgressCard(
 ) {
     var weatherIconsVisible by remember { mutableStateOf(false) }
 
-    val currentSpeed = bikeRideInfo.currentSpeed
-    val heading: Float = bikeRideInfo.heading
-    val weather = bikeRideInfo.bikeWeatherInfo
+    val currentSpeed = getCurrentSpeed()
+    val heading = getHeading()
+    val weather = getBikeWeatherInfo()
 
     Card(
         modifier = modifier
@@ -62,7 +67,7 @@ fun SpeedAndProgressCard(
         ) {
             SpeedometerWithCompassOverlay(
                 currentSpeed = currentSpeed.toFloat(),
-                maxSpeed = 60f,
+                maxSpeed = 60f, // Consider making this dynamic if needed
                 heading = heading,
                 modifier = Modifier
                     .fillMaxSize()
@@ -90,7 +95,7 @@ fun SpeedAndProgressCard(
                 Box(
                     modifier = Modifier
                         .padding(16.dp)
-                        .size(48.dp)
+                        .size(48.dp) // Consider adjusting size if necessary
                 ) {
                     weather?.let {
                         WindDirectionDialWithSpeed(degree = it.windDegree, speed = it.windSpeed)
@@ -119,8 +124,11 @@ fun SpeedAndProgressCard(
                 contentAlignment = Alignment.Center
             ) {
                 BikePathWithControls(
-                    bikeRideInfo = bikeRideInfo,
+                    getRideState = getRideState,
+                    getCurrentTripDistance = getCurrentTripDistance,
+                    getTotalTripDistance = getTotalTripDistance,
                     onBikeEvent = onBikeEvent,
+                    //navTo = navTo
                 )
             }
         }
@@ -130,47 +138,38 @@ fun SpeedAndProgressCard(
 @Preview(showBackground = true, widthDp = 380, heightDp = 500)
 @Composable
 fun FinalSpeedometerCardPreview() {
-    val sampleBikeRideInfo = BikeRideInfo(
-        location = LatLng(37.4219999, -122.0862462),
-        currentSpeed = 42.5,
-        averageSpeed = 25.0,
-        maxSpeed = 55.0,
-        currentTripDistance = 12500.0f,
-        totalTripDistance = 20000.0f,
-        remainingDistance = 7500.0f,
-        elevationGain = 150.0,
-        elevationLoss = 75.0,
-        caloriesBurned = 500,
-        rideDuration = "01:15:30",
-        settings = emptyMap(),
-        heading = 292f,
-        elevation = 200.0,
-        isBikeConnected = true,
-        batteryLevel = 88,
-        motorPower = 250f,
-        rideState = RideState.Riding,
-        bikeWeatherInfo = BikeWeatherInfo(
-            windDegree = 45,
-            windSpeed = 15.0,
-            conditionText = "Sunny",
-            conditionDescription = "Clear sky",
-            conditionIcon = "01d",
-            temperature = 22.0,
-            feelsLike = 21.0,
-            humidity = 60
-        )
+    // Sample data for previewing
+    val sampleCurrentSpeed = 42.5
+    val sampleHeading = 292f
+    val sampleWeatherInfo = BikeWeatherInfo(
+        windDegree = 45,
+        windSpeed = 15.0,
+        conditionText = "Sunny",
+        conditionDescription = "Clear sky",
+        conditionIcon = "01d",
+        temperature = 22.0,
+        feelsLike = 21.0,
+        humidity = 60
     )
+    val sampleRideState = RideState.Riding
+    val sampleCurrentTripDistance = 12.5f
+    val sampleTotalTripDistance = 20.0f
 
     MaterialTheme {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFF1A1A1A)),
+                .background(Color(0xFF1A1A1A)), // Dark background for contrast
             contentAlignment = Alignment.Center
         ) {
             SpeedAndProgressCard(
                 modifier = Modifier.padding(16.dp),
-                bikeRideInfo = sampleBikeRideInfo,
+                getCurrentSpeed = { sampleCurrentSpeed },
+                getHeading = { sampleHeading },
+                getBikeWeatherInfo = { sampleWeatherInfo },
+                getRideState = { sampleRideState },
+                getCurrentTripDistance = { sampleCurrentTripDistance },
+                getTotalTripDistance = { sampleTotalTripDistance },
                 onBikeEvent = { },
                 navTo = { },
                 containerColor = MaterialTheme.colorScheme.primaryContainer,

@@ -1,4 +1,5 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -43,35 +44,32 @@ import com.ylabz.basepro.core.ui.R as CoreUiR // Added import
 @Composable
 fun BikePathWithControls(
     modifier: Modifier = Modifier,
-    bikeRideInfo: BikeRideInfo,
+    getRideState: () -> RideState,
+    getCurrentTripDistance: () -> Float,
+    getTotalTripDistance: () -> Float?,
     onBikeEvent: (BikeEvent) -> Unit,
     iconSize: Dp = 48.dp,
     trackHeight: Dp = 8.dp,
     buttonSize: Dp = 60.dp
 ) {
-    // UI-only override for total distance
-    //var manualTotal by remember { mutableStateOf(bikeRideInfo.totalTripDistance) }
     var showDistanceDialog by remember { mutableStateOf(false) }
 
-    val rideState = bikeRideInfo.rideState
+    val rideState = getRideState()
 
     // Determine the FAB icon & description based on rideState
     val fabIcon = when (rideState) {
-        RideState.Riding  -> Icons.Default.PedalBike
-        //RideState.Paused,
+        RideState.Riding -> Icons.Default.PedalBike
         RideState.NotStarted,
-        RideState.Ended   -> Icons.Default.PlayArrow
+        RideState.Ended -> Icons.Default.PlayArrow
     }
     val fabDesc = when (rideState) {
-        RideState.Riding  -> stringResource(CoreUiR.string.action_pause)
-        //RideState.Paused,
+        RideState.Riding -> stringResource(CoreUiR.string.action_pause)
         RideState.NotStarted,
-        RideState.Ended   -> stringResource(CoreUiR.string.action_start)
+        RideState.Ended -> stringResource(CoreUiR.string.action_start)
     }
 
-
-    val currentDistance = bikeRideInfo.currentTripDistance
-    val totalDistance   = bikeRideInfo.totalTripDistance
+    val currentDistance = getCurrentTripDistance()
+    val totalDistance = getTotalTripDistance()
 
     Row(
         modifier = modifier
@@ -80,69 +78,60 @@ fun BikePathWithControls(
             .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Start / Pause
-        // Start / Pause / Resume button
-        /*StartPauseButton(
-            rideState = rideState,
-            onToggle  = { onBikeEvent(BikeEvent.StartPauseRide) }
-        )*/
         FloatingActionButton(
-            onClick       = { onBikeEvent(BikeEvent.StartRide) },
-            containerColor=  if (rideState == RideState.Riding) Color.Gray else Color.White,
-            contentColor  = Color.Black,
-            modifier      = Modifier.size(buttonSize)
+            onClick = { onBikeEvent(BikeEvent.StartRide) },
+            containerColor = if (rideState == RideState.Riding) Color.Gray else Color.White,
+            contentColor = Color.Black,
+            modifier = Modifier.size(buttonSize)
         ) {
             Icon(imageVector = fabIcon, contentDescription = fabDesc)
         }
-        // Bike progress (centered when totalDistance == null)
         Box(
-            modifier         = Modifier.weight(1f).fillMaxHeight(),
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
             contentAlignment = Alignment.Center
         ) {
             BigBikeProgressIndicator(
                 currentDistance = currentDistance,
-                totalDistance   = totalDistance,
-                trackHeight     = trackHeight,
-                iconSize        = iconSize,
-                iconTint        = if (rideState == RideState.Riding) Color(0xFF4CAF50) else Color.LightGray,
+                totalDistance = totalDistance,
+                trackHeight = trackHeight,
+                iconSize = iconSize,
+                iconTint = if (rideState == RideState.Riding) Color(0xFF4CAF50) else Color.LightGray,
                 containerHeight = buttonSize,
-                onBikeClick     = { showDistanceDialog = true }
+                onBikeClick = { showDistanceDialog = true }
             )
         }
-
-        // Stop & Save
         FloatingActionButton(
-            onClick       = { onBikeEvent(BikeEvent.StopRide) },
-            containerColor= if (rideState == RideState.Riding) Color.White else Color.LightGray,
-            contentColor  = Color.Red,
-            modifier      = Modifier.size(buttonSize)
+            onClick = { onBikeEvent(BikeEvent.StopRide) },
+            containerColor = if (rideState == RideState.Riding) Color.White else Color.LightGray,
+            contentColor = Color.Red,
+            modifier = Modifier.size(buttonSize)
         ) {
             Icon(imageVector = Icons.Default.Stop, contentDescription = stringResource(CoreUiR.string.action_stop))
         }
     }
 
-    // ——— Distance entry dialog ———
     if (showDistanceDialog) {
-        // local text state for the TextField
         var text by remember { mutableStateOf("") }
-        LaunchedEffect(bikeRideInfo.totalTripDistance) {
-            text = bikeRideInfo.totalTripDistance?.toString() ?: ""
+        LaunchedEffect(getTotalTripDistance()) { // Keyed to the result of the lambda
+            text = getTotalTripDistance()?.toString() ?: ""
         }
 
         AlertDialog(
             onDismissRequest = { showDistanceDialog = false },
-            title            = { Text(stringResource(R.string.bike_dialog_set_distance_title)) },
-            text             = {
+            title = { Text(stringResource(R.string.bike_dialog_set_distance_title)) },
+            text = {
                 OutlinedTextField(
-                    value            = text,
-                    onValueChange    = { text = it },
-                    label            = { Text(stringResource(R.string.bike_dialog_set_distance_label)) },
-                    keyboardOptions  = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine       = true,
-                    modifier         = Modifier.fillMaxWidth()
+                    value = text,
+                    onValueChange = { text = it },
+                    label = { Text(stringResource(R.string.bike_dialog_set_distance_label)) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
                 )
             },
-            confirmButton    = {
+            confirmButton = {
                 TextButton(onClick = {
                     text.toFloatOrNull()?.let { entered ->
                         onBikeEvent(BikeEvent.SetTotalDistance(entered))
@@ -152,7 +141,7 @@ fun BikePathWithControls(
                     Text(stringResource(CoreUiR.string.action_save))
                 }
             },
-            dismissButton    = {
+            dismissButton = {
                 TextButton(onClick = {
                     showDistanceDialog = false
                 }) {
@@ -167,29 +156,31 @@ fun BikePathWithControls(
 @Composable
 fun BikePathWithControlsPreview() {
     val demoInfo = BikeRideInfo(
-        location            = LatLng(37.42, -122.08),
-        currentSpeed        = 0.0,
-        averageSpeed        = 0.0,
-        maxSpeed            = 0.0,
-        currentTripDistance = 0.0f,
-        totalTripDistance   = null,
-        remainingDistance   = null,
-        elevationGain       = 0.0,
-        elevationLoss       = 0.0,
-        caloriesBurned      = 0,
-        rideDuration        = "00:00",
-        settings            = emptyMap(),
-        heading             = 0f,
-        elevation           = 0.0,
-        isBikeConnected     = false,
-        batteryLevel        = null,
-        motorPower          = null,
-        rideState           = RideState.NotStarted,
-        bikeWeatherInfo     = null
+        location = LatLng(37.42, -122.08),
+        currentSpeed = 0.0,
+        averageSpeed = 0.0,
+        maxSpeed = 0.0,
+        currentTripDistance = 10.0f, // Example value
+        totalTripDistance = 25.0f,   // Example value
+        remainingDistance = null,
+        elevationGain = 0.0,
+        elevationLoss = 0.0,
+        caloriesBurned = 0,
+        rideDuration = "00:00",
+        settings = emptyMap(),
+        heading = 0f,
+        elevation = 0.0,
+        isBikeConnected = false,
+        batteryLevel = null,
+        motorPower = null,
+        rideState = RideState.Riding, // Example state
+        bikeWeatherInfo = null
     )
     BikePathWithControls(
-        bikeRideInfo = demoInfo,
-        onBikeEvent  = {}
+        getRideState = { demoInfo.rideState },
+        getCurrentTripDistance = { demoInfo.currentTripDistance },
+        getTotalTripDistance = { demoInfo.totalTripDistance },
+        onBikeEvent = {}
     )
 }
 
