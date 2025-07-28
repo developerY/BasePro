@@ -32,17 +32,20 @@ data class StatItem(
 
 @Composable
 fun StatsRow(
-    bikeRideInfo: BikeRideInfo,
+    getCurrentTripDistance: () -> Float,
+    getRideDuration: () -> String,
+    getAverageSpeed: () -> Double,
+    getElevation: () -> Double,
     modifier: Modifier = Modifier,
     cardColor: Color = MaterialTheme.colorScheme.surfaceContainer,
     contentColor: Color, // Default content color when not active
     isBikeComputerOn: Boolean // To determine which color to use
 ) {
-    val distance = bikeRideInfo.currentTripDistance
-    val duration = bikeRideInfo.rideDuration
-    val avgSpeed = bikeRideInfo.averageSpeed
-    val elevation: Double? = bikeRideInfo.elevation.takeIf { it > 0.0 }
-    val isBikeConnected = bikeRideInfo.isBikeConnected
+    val distance = getCurrentTripDistance()
+    val duration = getRideDuration()
+    val avgSpeed = getAverageSpeed()
+    val elevationValue: Double? = getElevation().takeIf { it > 0.0 }
+    // val isBikeConnected = bikeRideInfo.isBikeConnected // This was not used by StatsRow items
 
     val stats = mutableListOf(
         StatItem(
@@ -64,7 +67,7 @@ fun StatsRow(
             activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorAvgSpeed else null
         )
     ).apply {
-        elevation?.let {
+        elevationValue?.let {
             add(
                 StatItem(
                     icon = Icons.Filled.Terrain,
@@ -104,24 +107,27 @@ fun StatsRowPreview() {
     val demoInfo = BikeRideInfo(
         location            = LatLng(37.4219999, -122.0862462),
         currentSpeed        = 0.0,
-        averageSpeed        = 0.0,
-        maxSpeed            = 0.0,
-        currentTripDistance = 0.0f,
+        averageSpeed        = 18.5,
+        maxSpeed            = 35.2,
+        currentTripDistance = 12.3f,
         totalTripDistance   = null,
         remainingDistance   = null,
-        elevationGain       = 0.0,
+        elevationGain       = 123.0,
         elevationLoss       = 0.0,
         caloriesBurned      = 0,
-        rideDuration        = "00:00",
+        rideDuration        = "01:15:30",
         settings            = mapOf(),
         heading             = 0f,
-        elevation           = 0.0,
+        elevation           = 25.0,
         isBikeConnected     = false,
         batteryLevel        = null,
         motorPower          = null
     )
     StatsRow(
-        bikeRideInfo = demoInfo,
+        getCurrentTripDistance = { demoInfo.currentTripDistance },
+        getRideDuration = { demoInfo.rideDuration },
+        getAverageSpeed = { demoInfo.averageSpeed },
+        getElevation = { demoInfo.elevation },
         contentColor = MaterialTheme.colorScheme.onSurface,
         isBikeComputerOn = true // Preview with active colors
     )
@@ -133,24 +139,27 @@ fun StatsRowPreviewOff() {
     val demoInfo = BikeRideInfo(
         location            = LatLng(37.4219999, -122.0862462),
         currentSpeed        = 0.0,
-        averageSpeed        = 0.0,
-        maxSpeed            = 0.0,
-        currentTripDistance = 0.0f,
+        averageSpeed        = 18.5,
+        maxSpeed            = 35.2,
+        currentTripDistance = 12.3f,
         totalTripDistance   = null,
         remainingDistance   = null,
-        elevationGain       = 0.0,
+        elevationGain       = 123.0,
         elevationLoss       = 0.0,
         caloriesBurned      = 0,
-        rideDuration        = "00:00",
+        rideDuration        = "01:15:30",
         settings            = mapOf(),
         heading             = 0f,
-        elevation           = 0.0,
+        elevation           = 0.0, // example for elevation not shown
         isBikeConnected     = false,
         batteryLevel        = null,
         motorPower          = null
     )
     StatsRow(
-        bikeRideInfo = demoInfo,
+        getCurrentTripDistance = { demoInfo.currentTripDistance },
+        getRideDuration = { demoInfo.rideDuration },
+        getAverageSpeed = { demoInfo.averageSpeed },
+        getElevation = { demoInfo.elevation },
         contentColor = MaterialTheme.colorScheme.onSurfaceVariant, // Or a more muted color for off state
         isBikeComputerOn = false // Preview with inactive colors
     )
