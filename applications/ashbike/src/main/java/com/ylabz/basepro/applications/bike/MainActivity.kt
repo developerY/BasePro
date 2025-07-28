@@ -25,123 +25,153 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsViewModel
 import com.ylabz.basepro.applications.bike.ui.navigation.root.RootNavGraph
 import com.ylabz.basepro.core.ui.theme.AshBikeTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val settingsViewModel: SettingsViewModel by viewModels()
-    private var showRationaleDialog by mutableStateOf(false)
 
-    // --- SOLUTION: Move the permission launcher here ---
+    // This state will be managed within the composable scope using rememberSaveable
+    // The Activity will trigger actions that influence this state.
+    private val permissionAction = mutableStateOf<PermissionAction?>(null)
+
+    sealed class PermissionAction {
+        object RequestPermission : PermissionAction()
+        object ShowRationale : PermissionAction()
+        object Granted : PermissionAction()
+        object Denied : PermissionAction()
+        object CheckPermission : PermissionAction() // Initial action
+    }
+
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 Log.d("MainActivity", "Permission Granted")
-                // Permission is granted. The content will recompose automatically.
+                permissionAction.value = PermissionAction.Granted
             } else {
                 Log.d("MainActivity", "Permission Denied")
-                // If permission is denied, renderContent will show the PermissionDeniedScreen
+                permissionAction.value = PermissionAction.Denied
             }
-            // Re-render the content after the permission result is received.
-            // This is important because even if rationale was shown, the permission state might have changed.
-            renderContent()
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        checkAndRequestLocationPermission()
-    }
-
-    private fun checkAndRequestLocationPermission() {
-        when {
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                Log.d("MainActivity", "Permission already granted.")
-                renderContent()
-            }
-            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
-                Log.d("MainActivity", "Showing permission rationale.")
-                showRationaleDialog = true // Trigger the rationale dialog
-                // renderContent() will be called when the dialog is dismissed or action is taken
-                // We also need to render content here to show the dialog itself.
-                renderContent()
-            }
-            else -> {
-                Log.d("MainActivity", "Requesting permission (first time or denied permanently).")
-                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                // renderContent() will be called by the launcher's callback.
-                // If the user previously selected "Don't ask again", the system won't show a dialog,
-                // and isGranted will be false. renderContent() will then show PermissionDeniedScreen.
-            }
+        // Set the initial action to trigger the permission check flow within Compose
+        if (savedInstanceState == null) { // Only on first creation
+            permissionAction.value = PermissionAction.CheckPermission
         }
-    }
 
-    private fun renderContent() {
         setContent {
             val theme by settingsViewModel.theme.collectAsStateWithLifecycle()
+            var showRationaleDialogState by rememberSaveable { mutableStateOf(false) }
+            var currentPermissionStatus by rememberSaveable {
+                mutableStateOf(
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                )
+            }
+
+            // Observe the permissionAction from the Activity
+            // Using LaunchedEffect here to react to permissionAction changes from the Activity
+            // This is a common pattern for bridging Activity logic with Composable state.
+            val currentPermissionAction = permissionAction.value
+
+            LaunchedEffect(currentPermissionAction) {
+                when (currentPermissionAction) {
+                    PermissionAction.CheckPermission -> {
+                        when {
+                            ContextCompat.checkSelfPermission(
+                                this@MainActivity,
+                                Manifest.permission.ACCESS_FINE_LOCATION
+                            ) == PackageManager.PERMISSION_GRANTED -> {
+                                currentPermissionStatus = true
+                                permissionAction.value = PermissionAction.Granted // Move to granted state
+                            }
+                            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
+                                showRationaleDialogState = true
+                                permissionAction.value = null // Consume action
+                            }
+                            else -> {
+                                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                                permissionAction.value = null // Consume action
+                            }
+                        }
+                    }
+                    PermissionAction.RequestPermission -> { // Can be triggered from rationale dialog
+                        requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                        permissionAction.value = null // Consume action
+                    }
+                    PermissionAction.Granted -> {
+                        currentPermissionStatus = true
+                        showRationaleDialogState = false
+                        permissionAction.value = null // Consume action
+                    }
+                    PermissionAction.Denied -> {
+                        currentPermissionStatus = false
+                        showRationaleDialogState = false // Ensure rationale dialog is dismissed if it was part of denial
+                        permissionAction.value = null // Consume action
+                    }
+                    PermissionAction.ShowRationale -> { // Can be explicitly set if needed
+                        showRationaleDialogState = true
+                        permissionAction.value = null
+                    }
+                    null -> { /* No action */ }
+                }
+            }
+
 
             AshBikeTheme(theme = theme) {
-                // Now, the UI just needs to display the content, not manage permissions.
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // Check if the rationale dialog should be shown
-                    if (showRationaleDialog) {
+                    if (showRationaleDialogState) {
                         LocationPermissionRationaleDialog(
                             onConfirm = {
-                                showRationaleDialog = false // Dismiss dialog
-                                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                                showRationaleDialogState = false
+                                permissionAction.value = PermissionAction.RequestPermission
                             },
                             onDismiss = {
-                                showRationaleDialog = false // Dismiss dialog
-                                renderContent() // Re-render to show PermissionDeniedScreen if needed
+                                showRationaleDialogState = false
+                                // If rationale dismissed, treat as denied for current UI update
+                                permissionAction.value = PermissionAction.Denied
                             }
                         )
-                    }
-
-                    // Determine content based on permission status
-                    if (ContextCompat.checkSelfPermission(
-                            this,
-                            Manifest.permission.ACCESS_FINE_LOCATION
-                        ) == PackageManager.PERMISSION_GRANTED
-                    ) {
+                    } else if (currentPermissionStatus) {
                         RootNavGraph(navController = rememberNavController())
                     } else {
-                        // If rationale is not being shown, and permission is not granted,
-                        // show the denied screen.
-                        if (!showRationaleDialog) {
-                            PermissionDeniedScreen(
-                                onGoToSettings = { openAppSettings() },
-                                onTryAgain = {
-                                    // Re-trigger the permission check and request flow.
-                                    // This allows the user to try again if they didn't deny permanently.
-                                    checkAndRequestLocationPermission()
-                                }
-                            )
-                        }
+                        // This screen is shown if currentPermissionStatus is false AND rationale is not showing
+                        PermissionDeniedScreen(
+                            onGoToSettings = { openAppSettings() },
+                            onTryAgain = {
+                                permissionAction.value = PermissionAction.CheckPermission // Re-trigger the check
+                            }
+                        )
                     }
                 }
             }
         }
     }
+
 
     @Composable
     fun LocationPermissionRationaleDialog(
@@ -206,6 +236,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 // Dummy Greeting and Preview for completeness if needed by IDE
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
@@ -219,7 +250,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     AshBikeTheme {
-        // You could preview PermissionDeniedScreen here for example
-        // MainActivity().PermissionDeniedScreen({}, {}) // MainActivity instance needed for context in preview
+        // MainActivity().PermissionDeniedScreen({}, {}) // Preview needs context or a static composable
     }
 }
+
