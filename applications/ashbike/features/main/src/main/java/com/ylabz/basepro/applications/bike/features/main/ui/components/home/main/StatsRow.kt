@@ -15,56 +15,67 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.gms.maps.model.LatLng
-import com.ylabz.basepro.core.model.bike.BikeRideInfo
+import com.ylabz.basepro.core.model.bike.BikeRideInfo // Keep for Preview's dummy data
 import com.ylabz.basepro.core.ui.theme.iconColorAvgSpeed
 import com.ylabz.basepro.core.ui.theme.iconColorDistance
 import com.ylabz.basepro.core.ui.theme.iconColorDuration
 import com.ylabz.basepro.core.ui.theme.iconColorElevation
 import androidx.compose.ui.res.stringResource
-import com.ylabz.basepro.applications.bike.features.main.R // Assuming this is the correct R class
+import com.ylabz.basepro.applications.bike.features.main.R
 
+// StatItem data class remains the same
 data class StatItem(
     val icon: ImageVector,
     val label: String,
     val value: String,
-    val activeColor: Color? = null // New property for active state color
+    val activeColor: Color? = null
 )
+
+// Define the UiState for StatsRow
+data class StatsRowUiState(
+    val currentTripDistance: Float,
+    val rideDuration: String,
+    val averageSpeed: Double,
+    val elevation: Double,
+    val isBikeComputerOn: Boolean,
+    val cardColor: Color,
+    val contentColor: Color // This will be the base content color
+)
+
+// Define the Events for StatsRow (currently none)
+sealed interface StatsRowEvent {
+    // No events defined for StatsRow yet
+}
 
 @Composable
 fun StatsRow(
-    getCurrentTripDistance: () -> Float,
-    getRideDuration: () -> String,
-    getAverageSpeed: () -> Double,
-    getElevation: () -> Double,
     modifier: Modifier = Modifier,
-    cardColor: Color = MaterialTheme.colorScheme.surfaceContainer,
-    contentColor: Color, // Default content color when not active
-    isBikeComputerOn: Boolean // To determine which color to use
+    uiState: StatsRowUiState,
+    onEvent: (StatsRowEvent) -> Unit // Included for architectural consistency, though unused for now
 ) {
-    val distance = getCurrentTripDistance()
-    val duration = getRideDuration()
-    val avgSpeed = getAverageSpeed()
-    val elevationValue: Double? = getElevation().takeIf { it > 0.0 }
-    // val isBikeConnected = bikeRideInfo.isBikeConnected // This was not used by StatsRow items
+    val distance = uiState.currentTripDistance
+    val duration = uiState.rideDuration
+    val avgSpeed = uiState.averageSpeed
+    val elevationValue: Double? = uiState.elevation.takeIf { it > 0.0 }
 
     val stats = mutableListOf(
         StatItem(
             icon = Icons.Filled.Straight,
             label = stringResource(R.string.feature_main_stats_label_distance),
             value = stringResource(R.string.feature_main_stats_value_km_format, distance),
-            activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorDistance else null
+            activeColor = if (uiState.isBikeComputerOn) MaterialTheme.colorScheme.iconColorDistance else null
         ),
         StatItem(
             icon = Icons.Filled.Timer,
             label = stringResource(R.string.feature_main_stats_label_duration),
-            value = duration, // Assuming duration is already a formatted string or doesn't need localization here
-            activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorDuration else null
+            value = duration,
+            activeColor = if (uiState.isBikeComputerOn) MaterialTheme.colorScheme.iconColorDuration else null
         ),
         StatItem(
             icon = Icons.Filled.Speed,
             label = stringResource(R.string.feature_main_stats_label_avg_speed),
             value = stringResource(R.string.feature_main_stats_value_kmh_format, avgSpeed),
-            activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorAvgSpeed else null
+            activeColor = if (uiState.isBikeComputerOn) MaterialTheme.colorScheme.iconColorAvgSpeed else null
         )
     ).apply {
         elevationValue?.let {
@@ -73,7 +84,7 @@ fun StatsRow(
                     icon = Icons.Filled.Terrain,
                     label = stringResource(R.string.feature_main_stats_label_elevation),
                     value = stringResource(R.string.feature_main_stats_value_meters_format, it),
-                    activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorElevation else null
+                    activeColor = if (uiState.isBikeComputerOn) MaterialTheme.colorScheme.iconColorElevation else null
                 )
             )
         }
@@ -89,9 +100,8 @@ fun StatsRow(
         stats.forEach { stat ->
             StatCard(
                 icon = stat.icon,
-                cardColor = cardColor,
-                // Use activeColor if available and bike computer is on, otherwise default contentColor
-                tint = stat.activeColor ?: contentColor,
+                cardColor = uiState.cardColor,
+                tint = stat.activeColor ?: uiState.contentColor, // Use activeColor or fallback to base contentColor from uiState
                 label = stat.label,
                 value = stat.value,
                 modifier = Modifier.weight(1f, fill = false)
@@ -104,7 +114,7 @@ fun StatsRow(
 @Preview(showBackground = true)
 @Composable
 fun StatsRowPreview() {
-    val demoInfo = BikeRideInfo(
+    val demoInfo = BikeRideInfo( // Still using BikeRideInfo to create dummy data for the preview
         location            = LatLng(37.4219999, -122.0862462),
         currentSpeed        = 0.0,
         averageSpeed        = 18.5,
@@ -119,17 +129,24 @@ fun StatsRowPreview() {
         settings            = mapOf(),
         heading             = 0f,
         elevation           = 25.0,
-        isBikeConnected     = false,
+        isBikeConnected     = false, // Not directly used by StatsRowUiState, but influences isBikeComputerOn
         batteryLevel        = null,
         motorPower          = null
     )
+
+    val previewUiState = StatsRowUiState(
+        currentTripDistance = demoInfo.currentTripDistance,
+        rideDuration = demoInfo.rideDuration,
+        averageSpeed = demoInfo.averageSpeed,
+        elevation = demoInfo.elevation,
+        isBikeComputerOn = true, // Preview with active colors
+        cardColor = MaterialTheme.colorScheme.surfaceContainer,
+        contentColor = MaterialTheme.colorScheme.onSurface
+    )
+
     StatsRow(
-        getCurrentTripDistance = { demoInfo.currentTripDistance },
-        getRideDuration = { demoInfo.rideDuration },
-        getAverageSpeed = { demoInfo.averageSpeed },
-        getElevation = { demoInfo.elevation },
-        contentColor = MaterialTheme.colorScheme.onSurface,
-        isBikeComputerOn = true // Preview with active colors
+        uiState = previewUiState,
+        onEvent = {}
     )
 }
 
@@ -150,17 +167,24 @@ fun StatsRowPreviewOff() {
         rideDuration        = "01:15:30",
         settings            = mapOf(),
         heading             = 0f,
-        elevation           = 0.0, // example for elevation not shown
+        elevation           = 0.0, 
         isBikeConnected     = false,
         batteryLevel        = null,
         motorPower          = null
     )
+
+    val previewUiStateOff = StatsRowUiState(
+        currentTripDistance = demoInfo.currentTripDistance,
+        rideDuration = demoInfo.rideDuration,
+        averageSpeed = demoInfo.averageSpeed,
+        elevation = demoInfo.elevation,
+        isBikeComputerOn = false, // Preview with inactive colors
+        cardColor = MaterialTheme.colorScheme.surfaceContainer,
+        contentColor = MaterialTheme.colorScheme.onSurfaceVariant // Or a more muted color for off state
+    )
+
     StatsRow(
-        getCurrentTripDistance = { demoInfo.currentTripDistance },
-        getRideDuration = { demoInfo.rideDuration },
-        getAverageSpeed = { demoInfo.averageSpeed },
-        getElevation = { demoInfo.elevation },
-        contentColor = MaterialTheme.colorScheme.onSurfaceVariant, // Or a more muted color for off state
-        isBikeComputerOn = false // Preview with inactive colors
+        uiState = previewUiStateOff,
+        onEvent = {}
     )
 }

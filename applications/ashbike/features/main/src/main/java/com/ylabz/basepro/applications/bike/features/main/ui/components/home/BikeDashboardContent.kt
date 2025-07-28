@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -37,6 +38,7 @@ import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dial
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.SpeedAndProgressCard
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatItem
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatsRow
+import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatsRowUiState
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
 import com.ylabz.basepro.core.ui.theme.AshBikeTheme
@@ -93,14 +95,28 @@ fun BikeDashboardContent(
             contentColor = contentColor
         )
 
+        val statsRowUiState = remember(
+            bikeRideInfo.currentTripDistance,
+            bikeRideInfo.rideDuration,
+            bikeRideInfo.averageSpeed,
+            bikeRideInfo.elevation,
+            currRiding, // This is isBikeComputerOn for StatsRowUiState
+            cardColor,  // This is cardColor for StatsRowUiState
+            contentColor // This is contentColor for StatsRowUiState (base tint)
+        ) {
+            StatsRowUiState(
+                currentTripDistance = bikeRideInfo.currentTripDistance,
+                rideDuration = bikeRideInfo.rideDuration,
+                averageSpeed = bikeRideInfo.averageSpeed,
+                elevation = bikeRideInfo.elevation,
+                isBikeComputerOn = currRiding,
+                cardColor = cardColor,
+                contentColor = contentColor
+            )
+        }
         StatsRow(
-            getCurrentTripDistance = { bikeRideInfo.currentTripDistance },
-            getRideDuration = { bikeRideInfo.rideDuration },
-            getAverageSpeed = { bikeRideInfo.averageSpeed },
-            getElevation = { bikeRideInfo.elevation },
-            cardColor = cardColor,
-            contentColor = contentColor,
-            isBikeComputerOn = currRiding
+            uiState = statsRowUiState,
+            onEvent = { /* No events from StatsRow to handle for now */ }
         )
 
         val healthStats = listOf(
@@ -121,7 +137,7 @@ fun BikeDashboardContent(
 
         var expanded by rememberSaveable { mutableStateOf(false) }
         Card(
-            modifier = modifier
+            modifier = modifier //FIXME: this should be a local modifier not the one passed to the function
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp),
             shape = RoundedCornerShape(8.dp),
