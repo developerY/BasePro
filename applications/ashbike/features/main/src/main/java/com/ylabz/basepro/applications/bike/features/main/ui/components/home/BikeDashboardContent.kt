@@ -94,9 +94,12 @@ fun BikeDashboardContent(
         )
 
         StatsRow(
-            bikeRideInfo = bikeRideInfo,
+            getCurrentTripDistance = { bikeRideInfo.currentTripDistance },
+            getRideDuration = { bikeRideInfo.rideDuration },
+            getAverageSpeed = { bikeRideInfo.averageSpeed },
+            getElevation = { bikeRideInfo.elevation },
             cardColor = cardColor,
-            contentColor = contentColor, // Default color when not active
+            contentColor = contentColor,
             isBikeComputerOn = currRiding
         )
 
