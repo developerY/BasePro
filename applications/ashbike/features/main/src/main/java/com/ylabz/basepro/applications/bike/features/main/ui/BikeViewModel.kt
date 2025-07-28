@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.sample // <<< IMPORT ADDED HERE
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.jvm.java
@@ -73,7 +74,7 @@ class BikeViewModel @Inject constructor(
                 // --- CORRECTED COMBINE FUNCTION ---
                 // We now combine all three sources of truth for the UI
                 combine(
-                    service.rideInfo,
+                    service.rideInfo.sample(1000L), // <<< MODIFICATION HERE
                     _uiPathDistance,
                     _weatherInfo // <-- ADDED
                 ) { serviceInfo, uiTotalKm, weather ->
