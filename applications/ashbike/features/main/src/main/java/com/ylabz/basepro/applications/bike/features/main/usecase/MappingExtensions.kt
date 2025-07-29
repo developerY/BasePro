@@ -61,7 +61,8 @@ fun RideSession.toBikeRideInfo(
         batteryLevel        = null,
         motorPower          = null,
         rideState           = if (totalDistance != null) RideState.Ended else RideState.Riding,
-        bikeWeatherInfo     = weather
+        bikeWeatherInfo     = weather,
+        heartbeat           = null
     )
 }
 

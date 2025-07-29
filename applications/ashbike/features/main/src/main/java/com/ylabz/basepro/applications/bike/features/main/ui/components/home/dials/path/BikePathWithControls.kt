@@ -175,7 +175,8 @@ fun BikePathWithControlsPreview() {
         batteryLevel = null,
         motorPower = null,
         rideState = RideState.Riding, // Example state
-        bikeWeatherInfo = null
+        bikeWeatherInfo = null,
+        heartbeat = null
     )
     BikePathWithControls(
         getRideState = { demoInfo.rideState },

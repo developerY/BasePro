@@ -163,8 +163,9 @@ fun FinalSpeedometerCardPreview() {
             conditionIcon = "01d",
             temperature = 22.0,
             feelsLike = 21.0,
-            humidity = 60
-        )
+            humidity = 60,
+            ),
+        heartbeat = null,
     )
     val sampleUiState = BikeUiState.Success(sampleBikeData) // Wrapped in Success state
 

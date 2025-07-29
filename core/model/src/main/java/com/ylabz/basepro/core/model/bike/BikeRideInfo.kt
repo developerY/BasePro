@@ -63,6 +63,7 @@ data class BikeRideInfo(
     val heading: Float,
     val elevation: Double,
     val isBikeConnected: Boolean,
+    val heartbeat: Int?,
     val batteryLevel: Int?,
     val motorPower: Float?,
     val rideState: RideState = RideState.NotStarted,

@@ -518,7 +518,8 @@ class BikeForegroundService : LifecycleService() {
             batteryLevel = null,
             motorPower = null,
             rideState = RideState.NotStarted,
-            bikeWeatherInfo = null
+            bikeWeatherInfo = null,
+            heartbeat = null,
         )
     }
 }

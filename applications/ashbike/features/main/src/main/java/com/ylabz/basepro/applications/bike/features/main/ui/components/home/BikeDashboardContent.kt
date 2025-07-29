@@ -35,9 +35,10 @@ import com.ylabz.basepro.applications.bike.features.main.R
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState // Added import
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.StatsSection
+import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.StatsSectionType // Import for the enum
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.bike.BikeBatteryLevels
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.SpeedAndProgressCard
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatItem
+// StatItem no longer needed here as StatsSection builds its own
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatsRow
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
@@ -66,8 +67,7 @@ fun BikeDashboardContent(
     val isBikeConnected = bikeRideInfo.isBikeConnected
     val batteryLevel = bikeRideInfo.batteryLevel
     val motorPower = bikeRideInfo.motorPower
-    val heartRate = null // Replace with actual heart rate data if available
-    val calories = bikeRideInfo.caloriesBurned
+    // heartRate and calories are now handled within StatsSection based on uiState
     val rideState = bikeRideInfo.rideState
     val currRiding = rideState == RideState.Riding
 
@@ -97,27 +97,18 @@ fun BikeDashboardContent(
             onEvent = { /* No events from StatsRow to handle for now */ }
         )
 
-        val healthStats = listOf(
-            StatItem(
-                icon = Icons.Filled.Favorite,
-                label = stringResource(R.string.feature_main_label_heart_rate),
-                value = if (heartRate != null) "$heartRate bpm" else "-- bpm",
-                activeColor = if (currRiding) MaterialTheme.colorScheme.error else null // Assuming IconBlue for HR
-            ),
-            StatItem(
-                icon = Icons.Filled.LocalFireDepartment,
-                label = stringResource(R.string.feature_main_label_calories),
-                value = if (calories != null) "$calories" else "--",
-                activeColor = if (currRiding) MaterialTheme.colorScheme.iconColorCalories else null
-            )
+        // Health Stats Section - uses uiState directly
+        StatsSection(
+            uiState = uiState,
+            sectionType = StatsSectionType.HEALTH,
+            onEvent = onBikeEvent
         )
-        StatsSection(stats = healthStats, cardColor = cardColor, contentColor = contentColor)
 
         var expanded by rememberSaveable { mutableStateOf(false) }
         Card(
             modifier = Modifier // Corrected to use a local Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp),
+                .padding(horizontal = 8.dp), // Consider if this padding is needed or if StatsSection handles it
             shape = RoundedCornerShape(8.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow) // Consistent card bg
@@ -132,7 +123,7 @@ fun BikeDashboardContent(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = stringResource(com.ylabz.basepro.applications.bike.features.main.R.string.feature_main_ebike_stats_title),
+                        text = stringResource(R.string.feature_main_ebike_stats_title),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface // Ensure text color is from theme
                     )
@@ -151,25 +142,16 @@ fun BikeDashboardContent(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                            .padding(horizontal = 16.dp, vertical = 8.dp), // Consider padding with StatsSection
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        val eBikeStats = listOf(
-                            StatItem(
-                                icon = Icons.AutoMirrored.Filled.BatteryUnknown,
-                                label = stringResource(R.string.feature_main_label_battery),
-                                value = if (isBikeConnected && batteryLevel != null) "$batteryLevel%" else "--%",
-                                activeColor = if (isBikeConnected) MaterialTheme.colorScheme.primary else null // Example active color
-                            ),
-                            StatItem(
-                                icon = Icons.Filled.ElectricBike,
-                                label = stringResource(R.string.feature_main_label_motor),
-                                value = if (isBikeConnected && motorPower != null) "$motorPower W" else "-- W",
-                                activeColor = if (isBikeConnected) MaterialTheme.colorScheme.iconColorBikeActive else null
-                            )
+                        // EBike Stats Section - uses uiState directly
+                        StatsSection(
+                            uiState = uiState,
+                            sectionType = StatsSectionType.EBIKE,
+                            onEvent = onBikeEvent
                         )
-                        StatsSection(stats = eBikeStats, contentColor = contentColor)
 
                         BikeBatteryLevels(
                             isConnected = isBikeConnected,
@@ -208,7 +190,8 @@ fun BikeDashboardContentPreviewConnected() {
         batteryLevel = 85,
         motorPower = 250f,
         rideState = RideState.Riding, // Changed to Riding for a more active preview
-        bikeWeatherInfo = null // Placeholder, can be filled if needed
+        bikeWeatherInfo = null, // Placeholder, can be filled if needed
+        heartbeat = 78 // Added for preview consistency
     )
     val uiState = BikeUiState.Success(dummyBikeRideInfo) // Wrap in Success state
 
@@ -243,7 +226,8 @@ fun BikeDashboardContentPreviewDisconnected() {
         batteryLevel = null,
         motorPower = null,
         rideState = RideState.NotStarted,
-        bikeWeatherInfo = null // Placeholder
+        bikeWeatherInfo = null, // Placeholder
+        heartbeat = null // Added for preview consistency
     )
     val uiState = BikeUiState.Success(dummyBikeRideInfo) // Wrap in Success state
 

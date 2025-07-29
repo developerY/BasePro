@@ -33,12 +33,12 @@ import androidx.compose.ui.unit.dp
  */
 @Composable
 fun StatCard(
+    modifier: Modifier = Modifier,
     icon: ImageVector,
-    cardColor : Color = MaterialTheme.colorScheme.surfaceVariant,
-    tint: Color = MaterialTheme.colorScheme.onSurfaceVariant, // Default to a theme color
     label: String,
     value: String,
-    modifier: Modifier = Modifier
+    cardColor : Color = MaterialTheme.colorScheme.surfaceVariant,
+    tint: Color = MaterialTheme.colorScheme.onSurfaceVariant, // Default to a theme color
 ) {
     Card(
         modifier = modifier

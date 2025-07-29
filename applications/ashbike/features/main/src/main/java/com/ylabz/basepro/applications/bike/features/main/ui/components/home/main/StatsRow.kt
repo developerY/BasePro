@@ -112,10 +112,10 @@ fun StatsRow(
 @Composable
 fun StatsRowPreview() {
     val demoInfoOn = BikeRideInfo(
-        location            = LatLng(37.4219999, -122.0862462),
-        currentSpeed        = 0.0,
-        averageSpeed        = 18.5,
-        maxSpeed            = 35.2,
+        location = LatLng(37.4219999, -122.0862462),
+        currentSpeed = 0.0,
+        averageSpeed = 18.5,
+        maxSpeed = 35.2,
         currentTripDistance = 12.3f,
         totalTripDistance   = null,
         remainingDistance   = null,
@@ -129,7 +129,8 @@ fun StatsRowPreview() {
         isBikeConnected     = true,
         batteryLevel        = 80,
         motorPower          = 100f,
-        rideState           = RideState.Riding // Simulates BikeComputerOn
+        rideState           = RideState.Riding, // Simulates BikeComputerOn
+        heartbeat           = null,
     )
 
     val previewUiStateOn = BikeUiState.Success(demoInfoOn)
@@ -160,7 +161,8 @@ fun StatsRowPreviewOff() {
         elevation           = 0.0,
         isBikeConnected     = false,
         batteryLevel        = null,
-        motorPower          = null
+        motorPower          = null,
+        heartbeat           = null,
     )
 
      val previewUiStateOff = BikeUiState.Success(demoInfoOff)
