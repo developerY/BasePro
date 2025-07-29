@@ -86,12 +86,7 @@ fun BikeDashboardContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SpeedAndProgressCard(
-            getCurrentSpeed = { bikeRideInfo.currentSpeed },
-            getHeading = { bikeRideInfo.heading },
-            getBikeWeatherInfo = { bikeRideInfo.bikeWeatherInfo },
-            getRideState = { bikeRideInfo.rideState },
-            getCurrentTripDistance = { bikeRideInfo.currentTripDistance },
-            getTotalTripDistance = { bikeRideInfo.totalTripDistance },
+            uiState = uiState, // Pass the full uiState
             onBikeEvent = onBikeEvent,
             navTo = navTo,
             containerColor = containerColor,

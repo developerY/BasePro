@@ -19,25 +19,22 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLng // Needed for BikeRideInfo in preview
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState // Added import
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.SpeedometerWithCompassOverlay
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path.BikePathWithControls
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.weather.WeatherBadgeWithDetails
-// import com.ylabz.basepro.core.model.bike.BikeRideInfo // No longer needed
+import com.ylabz.basepro.core.model.bike.BikeRideInfo // Added import
 import com.ylabz.basepro.core.model.bike.RideState
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDialWithSpeed
+import kotlinx.collections.immutable.persistentMapOf // Needed for BikeRideInfo in preview
 
 @Composable
 fun SpeedAndProgressCard(
     modifier: Modifier = Modifier.fillMaxSize(),
-    getCurrentSpeed: () -> Double,
-    getHeading: () -> Float,
-    getBikeWeatherInfo: () -> BikeWeatherInfo?,
-    getRideState: () -> RideState,
-    getCurrentTripDistance: () -> Float,
-    getTotalTripDistance: () -> Float?,
+    uiState: BikeUiState.Success, // Changed parameter
     onBikeEvent: (BikeEvent) -> Unit,
     navTo: (String) -> Unit,
     containerColor: Color,
@@ -45,9 +42,10 @@ fun SpeedAndProgressCard(
 ) {
     var weatherIconsVisible by remember { mutableStateOf(false) }
 
-    val currentSpeed = getCurrentSpeed()
-    val heading = getHeading()
-    val weather = getBikeWeatherInfo()
+    val bikeData = uiState.bikeData // Access bikeData from uiState
+    val currentSpeed = bikeData.currentSpeed
+    val heading = bikeData.heading
+    val weather = bikeData.bikeWeatherInfo
 
     Card(
         modifier = modifier
@@ -124,9 +122,9 @@ fun SpeedAndProgressCard(
                 contentAlignment = Alignment.Center
             ) {
                 BikePathWithControls(
-                    getRideState = getRideState,
-                    getCurrentTripDistance = getCurrentTripDistance,
-                    getTotalTripDistance = getTotalTripDistance,
+                    getRideState = { bikeData.rideState }, // Updated
+                    getCurrentTripDistance = { bikeData.currentTripDistance }, // Updated
+                    getTotalTripDistance = { bikeData.totalTripDistance }, // Updated
                     onBikeEvent = onBikeEvent,
                     //navTo = navTo
                 )
@@ -138,22 +136,37 @@ fun SpeedAndProgressCard(
 @Preview(showBackground = true, widthDp = 380, heightDp = 500)
 @Composable
 fun FinalSpeedometerCardPreview() {
-    // Sample data for previewing
-    val sampleCurrentSpeed = 42.5
-    val sampleHeading = 292f
-    val sampleWeatherInfo = BikeWeatherInfo(
-        windDegree = 45,
-        windSpeed = 15.0,
-        conditionText = "Sunny",
-        conditionDescription = "Clear sky",
-        conditionIcon = "01d",
-        temperature = 22.0,
-        feelsLike = 21.0,
-        humidity = 60
+    val sampleBikeData = BikeRideInfo( // Updated preview data
+        location = LatLng(37.4219999, -122.0862462),
+        currentSpeed = 42.5,
+        averageSpeed = 30.0,
+        maxSpeed = 55.0,
+        currentTripDistance = 12.5f,
+        totalTripDistance = 20.0f,
+        remainingDistance = 7.5f,
+        elevationGain = 100.0,
+        elevationLoss = 20.0,
+        caloriesBurned = 250,
+        rideDuration = "00:30:00",
+        settings = persistentMapOf(),
+        heading = 292f,
+        elevation = 50.0,
+        isBikeConnected = true,
+        batteryLevel = 75,
+        motorPower = 250f,
+        rideState = RideState.Riding,
+        bikeWeatherInfo = BikeWeatherInfo(
+            windDegree = 45,
+            windSpeed = 15.0,
+            conditionText = "Sunny",
+            conditionDescription = "Clear sky",
+            conditionIcon = "01d",
+            temperature = 22.0,
+            feelsLike = 21.0,
+            humidity = 60
+        )
     )
-    val sampleRideState = RideState.Riding
-    val sampleCurrentTripDistance = 12.5f
-    val sampleTotalTripDistance = 20.0f
+    val sampleUiState = BikeUiState.Success(sampleBikeData) // Wrapped in Success state
 
     MaterialTheme {
         Box(
@@ -164,12 +177,7 @@ fun FinalSpeedometerCardPreview() {
         ) {
             SpeedAndProgressCard(
                 modifier = Modifier.padding(16.dp),
-                getCurrentSpeed = { sampleCurrentSpeed },
-                getHeading = { sampleHeading },
-                getBikeWeatherInfo = { sampleWeatherInfo },
-                getRideState = { sampleRideState },
-                getCurrentTripDistance = { sampleCurrentTripDistance },
-                getTotalTripDistance = { sampleTotalTripDistance },
+                uiState = sampleUiState, // Pass uiState
                 onBikeEvent = { },
                 navTo = { },
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
