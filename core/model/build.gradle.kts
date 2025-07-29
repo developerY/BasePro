@@ -43,6 +43,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.tooling)
 
+    implementation(libs.kotlinx.collections.immutable)
+
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.androidx.health.connect.client)

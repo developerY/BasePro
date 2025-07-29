@@ -9,6 +9,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
+import kotlinx.collections.immutable.persistentMapOf
 
 /**
  * Convert a RideSession into your Room summary entity.
@@ -53,7 +54,7 @@ fun RideSession.toBikeRideInfo(
         elevationLoss       = elevationLossM.toDouble(),
         caloriesBurned      = caloriesBurned,
         rideDuration        = formatDuration(elapsedMs),
-        settings            = emptyMap(),
+        settings            = persistentMapOf(),
         heading             = lastLoc?.bearingTo(lastLoc) ?: heading, // or just heading
         elevation           = lastLoc?.altitude ?: 0.0,
         isBikeConnected     = false,

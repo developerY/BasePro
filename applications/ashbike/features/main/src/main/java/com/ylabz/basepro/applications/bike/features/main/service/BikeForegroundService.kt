@@ -40,6 +40,9 @@ import java.util.UUID
 import javax.inject.Inject
 import kotlin.math.max
 import com.ylabz.basepro.applications.bike.features.main.R
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.persistentMapOf
 
 @AndroidEntryPoint
 class BikeForegroundService : LifecycleService() {
@@ -255,8 +258,8 @@ class BikeForegroundService : LifecycleService() {
 
         if (!::userStatsFlow.isInitialized) {
             Log.e("BikeForegroundService", "userStatsFlow not initialized! Re-initializing.")
-            userStatsFlow = userProfileRepository.weightFlow.map { weightString ->
-                val weightKg = weightString.toFloatOrNull() ?: 70f
+            userStatsFlow = userProfileRepository.weightFlow.map { weightString: String -> // Or whatever type weightFlow emits
+                val weightKg: Float = weightString.toFloatOrNull() ?: 70f
                 UserStats(heightCm = 0f, weightKg = weightKg)
             }
         }
@@ -508,7 +511,7 @@ class BikeForegroundService : LifecycleService() {
             elevationLoss = 0.0,
             caloriesBurned = 0,
             rideDuration = "00:00",
-            settings = emptyMap(),
+            settings = persistentMapOf(),
             heading = 0f,
             elevation = 0.0,
             isBikeConnected = false,

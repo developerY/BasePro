@@ -3,6 +3,8 @@ package com.ylabz.basepro.core.model.bike
 import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
 
 enum class RideState {
     NotStarted,
@@ -57,7 +59,7 @@ data class BikeRideInfo(
     val elevationLoss: Double,
     val caloriesBurned: Int,
     val rideDuration: String,
-    val settings: Map<String, List<String>>,
+    val settings: ImmutableMap<String, ImmutableList<String>>,
     val heading: Float,
     val elevation: Double,
     val isBikeConnected: Boolean,
@@ -105,4 +107,3 @@ val bikeRideInfo = BikeRideInfo(
     motorPower = bikeState.motorPower
 )
 */
-

@@ -47,6 +47,7 @@ import com.ylabz.basepro.core.ui.theme.iconColorCalories
 // import com.ylabz.basepro.core.ui.theme.iconColorElevation // Not used directly here
 // import com.ylabz.basepro.core.ui.theme.iconColorSpeed // Not used directly here
 import androidx.compose.ui.res.stringResource
+import kotlinx.collections.immutable.persistentMapOf
 
 @Composable
 fun BikeDashboardContent(
@@ -223,7 +224,7 @@ fun BikeDashboardContentPreviewConnected() {
         elevationLoss = 30.0,
         caloriesBurned = 350,
         rideDuration = "00:45:30",
-        settings = mapOf(),
+        settings = persistentMapOf(),
         heading = 90f, // Added for preview consistency
         elevation = 150.0,
         isBikeConnected = true, // Bike computer is ON
@@ -257,7 +258,7 @@ fun BikeDashboardContentPreviewDisconnected() {
         elevationLoss = 0.0,
         caloriesBurned = 0,
         rideDuration = "00:00",
-        settings = mapOf(),
+        settings = persistentMapOf(),
         heading = 0f,
         elevation = 0.0,
         isBikeConnected = false, // Bike computer is OFF

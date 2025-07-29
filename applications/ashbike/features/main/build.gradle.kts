@@ -88,6 +88,8 @@ dependencies {
     // maps
     implementation(libs.google.maps.compose)
 
+    implementation(libs.kotlinx.collections.immutable)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

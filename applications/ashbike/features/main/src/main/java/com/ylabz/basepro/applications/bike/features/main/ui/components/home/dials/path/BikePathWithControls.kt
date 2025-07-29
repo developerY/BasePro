@@ -38,6 +38,7 @@ import com.ylabz.basepro.applications.bike.features.main.R // Assuming this is y
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
+import kotlinx.collections.immutable.persistentMapOf
 import com.ylabz.basepro.core.ui.R as CoreUiR // Added import
 
 
@@ -167,7 +168,7 @@ fun BikePathWithControlsPreview() {
         elevationLoss = 0.0,
         caloriesBurned = 0,
         rideDuration = "00:00",
-        settings = emptyMap(),
+        settings = persistentMapOf(),
         heading = 0f,
         elevation = 0.0,
         isBikeConnected = false,

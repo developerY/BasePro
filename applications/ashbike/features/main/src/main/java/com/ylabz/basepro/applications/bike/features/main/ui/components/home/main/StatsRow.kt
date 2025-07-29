@@ -22,6 +22,7 @@ import com.ylabz.basepro.core.ui.theme.iconColorDuration
 import com.ylabz.basepro.core.ui.theme.iconColorElevation
 import androidx.compose.ui.res.stringResource
 import com.ylabz.basepro.applications.bike.features.main.R
+import kotlinx.collections.immutable.persistentMapOf
 
 // StatItem data class remains the same
 data class StatItem(
@@ -126,7 +127,7 @@ fun StatsRowPreview() {
         elevationLoss       = 0.0,
         caloriesBurned      = 0,
         rideDuration        = "01:15:30",
-        settings            = mapOf(),
+        settings            = persistentMapOf(),
         heading             = 0f,
         elevation           = 25.0,
         isBikeConnected     = false, // Not directly used by StatsRowUiState, but influences isBikeComputerOn
@@ -165,7 +166,7 @@ fun StatsRowPreviewOff() {
         elevationLoss       = 0.0,
         caloriesBurned      = 0,
         rideDuration        = "01:15:30",
-        settings            = mapOf(),
+        settings            = persistentMapOf(),
         heading             = 0f,
         elevation           = 0.0, 
         isBikeConnected     = false,

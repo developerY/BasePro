@@ -53,7 +53,7 @@ playServicesLocation = "21.3.0" # apollo-graphql
 playServicesCoroutines = "1.6.4"
 playServicesMaps = "19.1.0"
 mlkit-text-recognition = "16.0.0"
-
+immutableColections = "0.4.0"
 
 qrScannerVersion = "16.1.0"
 playServicesCodeScanner = "16.1.0" # QR Scanner
@@ -93,6 +93,7 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "composeMaterial" }
 
 
+
 # datastore
 androidx-datastore-preferences = {module = "androidx.datastore:datastore-preferences", version.ref = "datastore"}
 androidx-datastore-core = {module = "androidx.datastore:datastore-core", version.ref = "datastore"}
@@ -124,8 +125,12 @@ horologist-tiles = { group = "com.google.android.horologist", name = "horologist
 horologist-composables = { module = "com.google.android.horologist:horologist-composables", version.ref = "horologist" }
 horologist-compose-material = { module = "com.google.android.horologist:horologist-compose-material", version.ref = "horologist" }
 
+
+# Jetbrains Libraries
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
 kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "playServicesCoroutines"}
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutableColections"}
+
 
 
 # Hilt Librariesandroidx.navigation:navigation-compose
