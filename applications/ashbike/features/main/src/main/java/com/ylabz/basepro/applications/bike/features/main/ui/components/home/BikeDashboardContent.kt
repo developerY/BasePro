@@ -39,7 +39,6 @@ import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dial
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.SpeedAndProgressCard
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatItem
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatsRow
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatsRowUiState
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
 import com.ylabz.basepro.core.ui.theme.AshBikeTheme
@@ -93,27 +92,8 @@ fun BikeDashboardContent(
             contentColor = contentColor
         )
 
-        val statsRowUiState = remember(
-            bikeRideInfo.currentTripDistance,
-            bikeRideInfo.rideDuration,
-            bikeRideInfo.averageSpeed,
-            bikeRideInfo.elevation,
-            currRiding, // This is isBikeComputerOn for StatsRowUiState
-            cardColor,  // This is cardColor for StatsRowUiState
-            contentColor // This is contentColor for StatsRowUiState (base tint)
-        ) {
-            StatsRowUiState(
-                currentTripDistance = bikeRideInfo.currentTripDistance,
-                rideDuration = bikeRideInfo.rideDuration,
-                averageSpeed = bikeRideInfo.averageSpeed,
-                elevation = bikeRideInfo.elevation,
-                isBikeComputerOn = currRiding,
-                cardColor = cardColor,
-                contentColor = contentColor
-            )
-        }
         StatsRow(
-            uiState = statsRowUiState,
+            uiState = uiState,
             onEvent = { /* No events from StatsRow to handle for now */ }
         )
 
