@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.features.main.R
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState // Added import
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.StatsSection
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.bike.BikeBatteryLevels
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.SpeedAndProgressCard
@@ -52,10 +53,11 @@ import kotlinx.collections.immutable.persistentMapOf
 @Composable
 fun BikeDashboardContent(
     modifier: Modifier = Modifier,
-    bikeRideInfo: BikeRideInfo,
+    uiState: BikeUiState.Success, // Changed parameter
     onBikeEvent: (BikeEvent) -> Unit,
     navTo: (String) -> Unit,
 ) {
+    val bikeRideInfo = uiState.bikeData // Access bikeData from uiState
     val view = LocalView.current
     DisposableEffect(view) {
         view.keepScreenOn = true
@@ -138,7 +140,7 @@ fun BikeDashboardContent(
 
         var expanded by rememberSaveable { mutableStateOf(false) }
         Card(
-            modifier = modifier //FIXME: this should be a local modifier not the one passed to the function
+            modifier = Modifier // Corrected to use a local Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp),
             shape = RoundedCornerShape(8.dp),
@@ -233,10 +235,11 @@ fun BikeDashboardContentPreviewConnected() {
         rideState = RideState.Riding, // Changed to Riding for a more active preview
         bikeWeatherInfo = null // Placeholder, can be filled if needed
     )
+    val uiState = BikeUiState.Success(dummyBikeRideInfo) // Wrap in Success state
 
     AshBikeTheme {
         BikeDashboardContent(
-            bikeRideInfo = dummyBikeRideInfo,
+            uiState = uiState, // Pass uiState
             onBikeEvent = { },
             navTo = { }
         )
@@ -267,10 +270,11 @@ fun BikeDashboardContentPreviewDisconnected() {
         rideState = RideState.NotStarted,
         bikeWeatherInfo = null // Placeholder
     )
+    val uiState = BikeUiState.Success(dummyBikeRideInfo) // Wrap in Success state
 
     AshBikeTheme {
         BikeDashboardContent(
-            bikeRideInfo = dummyBikeRideInfo,
+            uiState = uiState, // Pass uiState
             onBikeEvent = { },
             navTo = { }
         )

@@ -67,12 +67,12 @@ fun BikeUiRoute(
             )
         }
         is BikeUiState.Success -> {
-            val bikeData = currentBikeUiState.bikeData
-            if (bikeData.location != null && (bikeData?.location?.latitude != 0.0 || bikeData?.location?.longitude != 0.0)) {
+            // val bikeData = currentBikeUiState.bikeData // This line is no longer needed
+            if (currentBikeUiState.bikeData.location != null && (currentBikeUiState.bikeData.location?.latitude != 0.0 || currentBikeUiState.bikeData.location?.longitude != 0.0)) {
                 BikeDashboardContent(
                     modifier = modifier.fillMaxSize(),
-                    bikeRideInfo = bikeData,
-                    onBikeEvent = viewModel::onEvent, // <<< MODIFIED LINE: Use the passed-in viewModel
+                    uiState = currentBikeUiState, // Pass the whole UiState.Success object
+                    onBikeEvent = viewModel::onEvent, 
                     navTo = navTo
                 )
             } else {
@@ -91,7 +91,7 @@ fun BikeUiRoute(
         is BikeUiState.Error -> {
             ErrorScreen(
                 errorMessage = currentBikeUiState.message,
-                onRetry = { viewModel.onEvent(BikeEvent.StartRide) } // <<< MODIFIED LINE: Use the passed-in viewModel
+                onRetry = { viewModel.onEvent(BikeEvent.StartRide) } 
             )
         }
         BikeUiState.Loading -> {
