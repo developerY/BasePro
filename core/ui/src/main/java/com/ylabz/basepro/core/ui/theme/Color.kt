@@ -79,6 +79,10 @@ val IconRed = Color(0xFFF44336)
 val BikeIconGreen = Color(0xFF00E676)
 
 
+// On but not used
+val IconGlayBlue = Color(0xFF769AB2)
+
+
 
 // Your exact color stops for the light theme speedometer.
 val LightSpeedometerColorStops = arrayOf(

@@ -95,7 +95,7 @@ val ColorScheme.iconColorElevation: Color @Composable get() = IconGreen
 val ColorScheme.iconColorCalories: Color @Composable get() = IconRed
 val ColorScheme.iconColorBikeActive: Color @Composable get() = BikeIconGreen
 
-val ColorScheme.iconColorHeartRate: Color @Composable get() = IconRed
+val ColorScheme.iconColorHeartRate: Color @Composable get() = IconGlayBlue // on but not connected ???
 
 
 object ThemeIdentifiers {
