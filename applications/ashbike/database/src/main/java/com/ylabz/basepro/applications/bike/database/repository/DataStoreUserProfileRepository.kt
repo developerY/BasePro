@@ -10,8 +10,10 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey // Added import
 import androidx.datastore.preferences.preferencesDataStore
 import com.ylabz.basepro.applications.bike.database.ProfileData
+import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -20,6 +22,8 @@ private object UserPrefsDefaults {
     const val HEIGHT_DEFAULT = "171"  // cm
     const val WEIGHT_DEFAULT = "72"   // kg
     const val PROFILE_REVIEWED_OR_SAVED_DEFAULT = false // Default for the new flag
+    // --- New default for Location Energy Level ---
+    val LOCATION_ENERGY_LEVEL_DEFAULT = LocationEnergyLevel.BALANCED.ordinal
 }
 
 // Keys for your preferences
@@ -29,6 +33,8 @@ private object UserPrefsKeys {
     val WEIGHT = stringPreferencesKey("user_weight_kg")
     // Add the new boolean key
     val PROFILE_REVIEWED_OR_SAVED = booleanPreferencesKey("profile_reviewed_or_saved_by_user")
+    // --- New key for Location Energy Level (stores the ordinal as an Int) ---
+    val LOCATION_ENERGY_LEVEL = intPreferencesKey("location_energy_level")
 }
 
 // 2) DataStore implementation
@@ -61,6 +67,20 @@ class DataStoreUserProfileRepository @Inject constructor(
         .map { prefs ->
             prefs[UserPrefsKeys.PROFILE_REVIEWED_OR_SAVED] ?: UserPrefsDefaults.PROFILE_REVIEWED_OR_SAVED_DEFAULT
         }
+
+    // --- Implementation for Location Energy Level ---
+    override val locationEnergyLevelFlow: Flow<LocationEnergyLevel> = dataStore.data
+        .map { prefs ->
+            val ordinal = prefs[UserPrefsKeys.LOCATION_ENERGY_LEVEL] ?: UserPrefsDefaults.LOCATION_ENERGY_LEVEL_DEFAULT
+            LocationEnergyLevel.fromOrdinal(ordinal)
+        }
+
+    override suspend fun setLocationEnergyLevel(level: LocationEnergyLevel) {
+        dataStore.edit { prefs ->
+            prefs[UserPrefsKeys.LOCATION_ENERGY_LEVEL] = level.ordinal
+        }
+    }
+    // --- End of implementation for Location Energy Level ---
 
     override suspend fun setName(newName: String) {
         dataStore.edit { prefs -> prefs[UserPrefsKeys.NAME] = newName }

@@ -40,6 +40,10 @@ import java.util.UUID
 import javax.inject.Inject
 import kotlin.math.max
 import com.ylabz.basepro.applications.bike.features.main.R
+import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentMapOf
@@ -58,24 +62,26 @@ class BikeForegroundService : LifecycleService() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
+    // --- StateFlow for current energy level ---
+    private lateinit var currentEnergyLevelState: StateFlow<LocationEnergyLevel>
+
+
     // --- Continuous Tracking State (Session-long) ---
     private var continuousSessionStartTimeMillis: Long = 0L
     private var continuousDistanceMeters: Float = 0f
     private var continuousCaloriesBurned: Float = 0f
     private var continuousMaxSpeedKph: Double = 0.0
-    private var continuousElevationGainMeters: Double = 0.0 // ADDED for continuous elevation
-    private var continuousElevationLossMeters: Double = 0.0 // ADDED for continuous elevation
+    private var continuousElevationGainMeters: Double = 0.0
+    private var continuousElevationLossMeters: Double = 0.0
 
-    // --- Formal Ride Segment State (for UI "reset" and saving the specific segment) ---
+    // --- Formal Ride Segment State ---
     private var currentFormalRideId: String? = null
     private val formalRideTrackPoints = mutableListOf<Location>()
     private var formalRideSegmentStartTimeMillis: Long = 0L
     private var formalRideSegmentUiResetTimeMillis: Long = 0L
     private var formalRideSegmentStartOffsetDistanceMeters: Float = 0f
-    // private var formalRideSegmentStartOffsetCalories: Float = 0f // No longer needed due to currentFormalRideHighestCalories
     private var formalRideSegmentMaxSpeedKph: Double = 0.0
-    private var currentFormalRideHighestCalories: Int = 0 // <<<< NEW VARIABLE
-    // --- ADDED: Elevation tracking for formal rides ---
+    private var currentFormalRideHighestCalories: Int = 0
     private var formalRideElevationGainMeters: Double = 0.0
     private var formalRideElevationLossMeters: Double = 0.0
 
@@ -102,14 +108,37 @@ class BikeForegroundService : LifecycleService() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         continuousSessionStartTimeMillis = System.currentTimeMillis()
 
+        // --- Initialize and collect LocationEnergyLevel ---
+        currentEnergyLevelState = userProfileRepository.locationEnergyLevelFlow
+            .stateIn(
+                scope = lifecycleScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = LocationEnergyLevel.BALANCED // Default
+            )
+
+        lifecycleScope.launch {
+            currentEnergyLevelState.collect { level ->
+                Log.d("BikeForegroundService", "LocationEnergyLevel changed to: ${level.name}")
+                // If not in a formal ride, update location request with new passive intervals
+                if (_rideInfo.value.rideState != RideState.Riding) {
+                    startLocationUpdates(
+                        intervalMillis = level.passiveTrackingIntervalMillis,
+                        minUpdateIntervalMillis = level.passiveTrackingMinUpdateIntervalMillis
+                    )
+                }
+            }
+        }
+
         userStatsFlow = userProfileRepository.weightFlow.map { weightString ->
             val weightKg = weightString.toFloatOrNull() ?: 70f
             UserStats(heightCm = 0f, weightKg = weightKg)
         }
-        // Start with non-recording frequency
-        startLocationUpdates(intervalMillis = 5000L, minUpdateIntervalMillis = 2500L)
+
+        // Initial location updates will be set by the collector of currentEnergyLevelState
+        // based on the default or stored passive intervals.
+
         startOrRestartCalorieCalculation(isFormalRideActive = false)
-        Log.d("BikeForegroundService", "Service created. Continuous tracking and calorie calculation initiated.")
+        Log.d("BikeForegroundService", "Service created.")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -124,10 +153,8 @@ class BikeForegroundService : LifecycleService() {
         return START_STICKY
     }
 
-    // --- ADDED: Resource Cleanup ---
     override fun onDestroy() {
         super.onDestroy()
-        // Stop location updates when the service is destroyed to prevent leaks.
         fusedLocationClient.removeLocationUpdates(locationCallback)
         Log.d("BikeForegroundService", "Service destroyed, location updates removed.")
     }
@@ -135,13 +162,12 @@ class BikeForegroundService : LifecycleService() {
     @SuppressLint("MissingPermission")
     private fun startLocationUpdates(intervalMillis: Long, minUpdateIntervalMillis: Long) {
         Log.d("BikeForegroundService", "Attempting to start location updates with interval: $intervalMillis ms, minInterval: $minUpdateIntervalMillis ms")
-        // Always remove previous updates before starting new ones
         fusedLocationClient.removeLocationUpdates(locationCallback)
 
         val locationRequest = GmsLocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, intervalMillis)
             .setWaitForAccurateLocation(false)
             .setMinUpdateIntervalMillis(minUpdateIntervalMillis)
-            .setMaxUpdateDelayMillis(intervalMillis + 2000) // Allow a bit of delay, related to the main interval
+            .setMaxUpdateDelayMillis(intervalMillis + 2000)
             .build()
         try {
             fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
@@ -166,26 +192,25 @@ class BikeForegroundService : LifecycleService() {
         continuousMaxSpeedKph = max(continuousMaxSpeedKph, speedKph)
         val prevLocationLatLng = _rideInfo.value.location
         if (prevLocationLatLng != null && (prevLocationLatLng.latitude != 0.0 || prevLocationLatLng.longitude != 0.0)) {
-            val lastLoc = Location("").apply { latitude = prevLocationLatLng.latitude; longitude = prevLocationLatLng.longitude; if (_rideInfo.value.elevation != 0.0) altitude = _rideInfo.value.elevation } // Ensure lastLoc also has altitude if available
+            val lastLoc = Location("").apply { latitude = prevLocationLatLng.latitude; longitude = prevLocationLatLng.longitude; if (_rideInfo.value.elevation != 0.0) altitude = _rideInfo.value.elevation }
 
             if (location.accuracy <= MAX_ACCURACY_THRESHOLD_METERS) {
                 val distanceIncrement = location.distanceTo(lastLoc)
-                if (distanceIncrement >= MIN_DISTANCE_THRESHOLD_METERS) { // Check min distance
+                if (distanceIncrement >= MIN_DISTANCE_THRESHOLD_METERS) {
                     continuousDistanceMeters += distanceIncrement
                 }
 
-                // --- MODIFIED: Elevation Gain/Loss Calculation ---
-                if (location.hasAltitude() && lastLoc.hasAltitude()) { // Check for altitude data first
+                if (location.hasAltitude() && lastLoc.hasAltitude()) {
                     val altitudeChange = location.altitude - lastLoc.altitude
                     if (altitudeChange > 0) {
-                        continuousElevationGainMeters += altitudeChange // Always update continuous
+                        continuousElevationGainMeters += altitudeChange
                         if (isFormalRideActive) {
-                            formalRideElevationGainMeters += altitudeChange // Update formal if active
+                            formalRideElevationGainMeters += altitudeChange
                         }
-                    } else if (altitudeChange < 0) { // Only count actual loss, and use 'else if'
-                        continuousElevationLossMeters += -altitudeChange // Always update continuous
+                    } else if (altitudeChange < 0) {
+                        continuousElevationLossMeters += -altitudeChange
                         if (isFormalRideActive) {
-                            formalRideElevationLossMeters += -altitudeChange // Update formal if active
+                            formalRideElevationLossMeters += -altitudeChange
                         }
                     }
                 }
@@ -228,7 +253,6 @@ class BikeForegroundService : LifecycleService() {
             displayDuration = formatDuration(continuousDurationMillis)
             displayMaxSpeed = continuousMaxSpeedKph
 
-            // --- CORRECTED: Calculate average speed for continuous session as well ---
             displayAverageSpeed = if (continuousDurationSeconds > 0 && continuousDistanceMeters > 0) {
                 (continuousDistanceMeters / continuousDurationSeconds) * 3.6
             } else {
@@ -264,7 +288,7 @@ class BikeForegroundService : LifecycleService() {
 
         if (!::userStatsFlow.isInitialized) {
             Log.e("BikeForegroundService", "userStatsFlow not initialized! Re-initializing.")
-            userStatsFlow = userProfileRepository.weightFlow.map { weightString: String -> // Or whatever type weightFlow emits
+            userStatsFlow = userProfileRepository.weightFlow.map { weightString: String ->
                 val weightKg: Float = weightString.toFloatOrNull() ?: 70f
                 UserStats(heightCm = 0f, weightKg = weightKg)
             }
@@ -284,7 +308,6 @@ class BikeForegroundService : LifecycleService() {
                 .collect { calculatedCalories ->
                     val newCalories = calculatedCalories.toInt()
                     if (isFormalRideActive) {
-                        // <<<< START OF MODIFIED SECTION >>>>
                         if (newCalories >= currentFormalRideHighestCalories) {
                             currentFormalRideHighestCalories = newCalories
                             _rideInfo.value = _rideInfo.value.copy(caloriesBurned = currentFormalRideHighestCalories)
@@ -292,7 +315,6 @@ class BikeForegroundService : LifecycleService() {
                             _rideInfo.value = _rideInfo.value.copy(caloriesBurned = currentFormalRideHighestCalories)
                         }
                         Log.d("BikeForegroundService", "Formal Ride Calories: ${_rideInfo.value.caloriesBurned} (New from calc: $newCalories, Highest: $currentFormalRideHighestCalories)")
-                        // <<<< END OF MODIFIED SECTION >>>>
                     } else {
                         continuousCaloriesBurned = newCalories.toFloat()
                         if (_rideInfo.value.rideState != RideState.Riding) {
@@ -311,19 +333,21 @@ class BikeForegroundService : LifecycleService() {
         }
         Log.d("BikeForegroundService", "Starting formal ride. UI will reset for this segment.")
 
-        // Switch to high-frequency updates for active ride
-        startLocationUpdates(intervalMillis = 2000L, minUpdateIntervalMillis = 1000L)
+        val currentLevel = currentEnergyLevelState.value // Get current energy level
+        startLocationUpdates(
+            intervalMillis = currentLevel.activeRideIntervalMillis,
+            minUpdateIntervalMillis = currentLevel.activeRideMinUpdateIntervalMillis
+        )
 
         currentFormalRideId = UUID.randomUUID().toString()
         formalRideSegmentStartTimeMillis = System.currentTimeMillis()
         formalRideSegmentUiResetTimeMillis = System.currentTimeMillis()
         formalRideTrackPoints.clear()
-        currentFormalRideHighestCalories = 0 // <<<< RESETTING THE NEW VARIABLE
-        formalRideElevationGainMeters = 0.0 // <-- ADDED: Reset on new ride
-        formalRideElevationLossMeters = 0.0 // <-- ADDED: Reset on new ride
+        currentFormalRideHighestCalories = 0
+        formalRideElevationGainMeters = 0.0
+        formalRideElevationLossMeters = 0.0
 
         formalRideSegmentStartOffsetDistanceMeters = continuousDistanceMeters
-        // formalRideSegmentStartOffsetCalories no longer needed here
         formalRideSegmentMaxSpeedKph = 0.0
 
         _rideInfo.value = _rideInfo.value.copy(
@@ -333,8 +357,8 @@ class BikeForegroundService : LifecycleService() {
             rideDuration = "00:00",
             maxSpeed = 0.0,
             averageSpeed = 0.0,
-            elevationGain = 0.0, // UI Reset
-            elevationLoss = 0.0  // UI Reset
+            elevationGain = 0.0,
+            elevationLoss = 0.0
         )
 
         startOrRestartCalorieCalculation(isFormalRideActive = true)
@@ -349,10 +373,8 @@ class BikeForegroundService : LifecycleService() {
         }
         Log.d("BikeForegroundService", "Stopping and finalizing formal ride: $rideIdToFinalize")
 
-        // Switch back to low-frequency updates
-        startLocationUpdates(intervalMillis = 5000L, minUpdateIntervalMillis = 2500L)
-
-        // caloriesCalculationJob?.cancel() // Consider if still needed, as new calc starts for continuous
+        // No need to explicitly call startLocationUpdates here for passive,
+        // as the collector in onCreate will handle it when rideState changes.
 
         val segmentDistanceMeters = continuousDistanceMeters - formalRideSegmentStartOffsetDistanceMeters
         val segmentCalories = _rideInfo.value.caloriesBurned
@@ -377,8 +399,8 @@ class BikeForegroundService : LifecycleService() {
             startLng = formalRideTrackPoints.firstOrNull()?.longitude ?: 0.0,
             endLat = formalRideTrackPoints.lastOrNull()?.latitude ?: 0.0,
             endLng = formalRideTrackPoints.lastOrNull()?.longitude ?: 0.0,
-            elevationGain = formalRideElevationGainMeters.toFloat(), // Saves the segment-specific gain
-            elevationLoss = formalRideElevationLossMeters.toFloat(), // Saves the segment-specific loss
+            elevationGain = formalRideElevationGainMeters.toFloat(),
+            elevationLoss = formalRideElevationLossMeters.toFloat(),
             caloriesBurned = segmentCalories,
             isHealthDataSynced = false,
             weatherCondition = _rideInfo.value.bikeWeatherInfo?.conditionDescription
@@ -392,28 +414,26 @@ class BikeForegroundService : LifecycleService() {
         }
 
         lifecycleScope.launch {
-            // --- CORRECTED: Move database operation to a background thread ---
             withContext(Dispatchers.IO) {
                 repo.insertRideWithLocations(rideSummaryEntity, locationEntities)
                 Log.d("BikeForegroundService", "Formal ride $rideIdToFinalize saved.")
             }
-
-            resetServiceStateAndStopForeground()
+            resetServiceStateAndStopForeground() // This will trigger passive updates via collector
         }
     }
 
     private fun resetServiceStateAndStopForeground() {
         Log.d("BikeForegroundService", "Full service reset: continuous and formal states. Preparing for new session.")
-
-        // Reset to non-recording frequency if a reset is called
-        startLocationUpdates(intervalMillis = 5000L, minUpdateIntervalMillis = 2500L)
+        
+        // The collector in onCreate will set the correct passive intervals
+        // when rideState changes back to NotStarted or Ended.
 
         continuousSessionStartTimeMillis = System.currentTimeMillis()
         continuousDistanceMeters = 0f
         continuousCaloriesBurned = 0f
         continuousMaxSpeedKph = 0.0
-        continuousElevationGainMeters = 0.0 // Reset continuous elevation
-        continuousElevationLossMeters = 0.0 // Reset continuous elevation
+        continuousElevationGainMeters = 0.0
+        continuousElevationLossMeters = 0.0
 
         currentFormalRideId = null
         formalRideTrackPoints.clear()
@@ -421,13 +441,13 @@ class BikeForegroundService : LifecycleService() {
         formalRideSegmentUiResetTimeMillis = 0L
         formalRideSegmentMaxSpeedKph = 0.0
         currentFormalRideHighestCalories = 0
-        formalRideElevationGainMeters = 0.0 // Also reset formal ride elevation
-        formalRideElevationLossMeters = 0.0 // Also reset formal ride elevation
+        formalRideElevationGainMeters = 0.0
+        formalRideElevationLossMeters = 0.0
 
         _rideInfo.value = getInitialRideInfo().copy(
-            location = _rideInfo.value.location, // Keep last known location
-            bikeWeatherInfo = _rideInfo.value.bikeWeatherInfo, // Keep weather info
-            rideState = RideState.NotStarted
+            location = _rideInfo.value.location,
+            bikeWeatherInfo = _rideInfo.value.bikeWeatherInfo,
+            rideState = RideState.NotStarted // This state change will trigger the collector
         )
 
         caloriesCalculationJob?.cancel()
@@ -453,15 +473,9 @@ class BikeForegroundService : LifecycleService() {
         val rideState = _rideInfo.value
         val currentSpeedFormatted = String.format("%.1f", rideState.currentSpeed)
         val currentDistanceFormatted = String.format("%.1f", rideState.currentTripDistance)
-        // val currentDurationFormatted = rideState.rideDuration // Not used in simplified text
-        // val currentCaloriesFormatted = rideState.caloriesBurned // Not used in simplified text
         val currentElevationGainFormatted = String.format("%.0f", rideState.elevationGain)
 
-
         val notificationText = "Speed: $currentSpeedFormatted km/h, Dist: $currentDistanceFormatted km, Elev Gain: $currentElevationGainFormatted m"
-        // Simplified notification text to avoid clutter, can be expanded later
-        // val notificationText = "Speed: $currentSpeedFormatted km/h, Dist: $currentDistanceFormatted km, Time: $currentDurationFormatted, Cal: $currentCaloriesFormatted, Elev Gain: $currentElevationGainFormatted"
-
 
         val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setContentTitle("Bike Ride Active")
