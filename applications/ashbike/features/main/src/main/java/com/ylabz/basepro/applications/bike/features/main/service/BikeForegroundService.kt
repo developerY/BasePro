@@ -398,30 +398,12 @@ class BikeForegroundService : LifecycleService() {
                 Log.d("BikeForegroundService", "Formal ride $rideIdToFinalize saved.")
             }
 
-            // --- CORRECTED: Update state and restart calculations after saving ---\
-            _rideInfo.value = _rideInfo.value.copy(
-                rideState = RideState.Ended,
-                currentTripDistance = continuousDistanceMeters / 1000f,
-                caloriesBurned = continuousCaloriesBurned.toInt(),
-                rideDuration = formatDuration(System.currentTimeMillis() - continuousSessionStartTimeMillis),
-                maxSpeed = continuousMaxSpeedKph,
-                averageSpeed = if ((System.currentTimeMillis() - continuousSessionStartTimeMillis) / 1000f > 0 && continuousDistanceMeters > 0) { // Recalculate continuous average speed
-                    (continuousDistanceMeters / ((System.currentTimeMillis() - continuousSessionStartTimeMillis) / 1000f)) * 3.6
-                } else {
-                    0.0
-                },
-                elevationGain = continuousElevationGainMeters, // Revert UI to continuous
-                elevationLoss = continuousElevationLossMeters  // Revert UI to continuous
-            )
-            currentFormalRideId = null
-            formalRideTrackPoints.clear()
-            startOrRestartCalorieCalculation(isFormalRideActive = false)
-            stopForeground(STOP_FOREGROUND_REMOVE)
+            resetServiceStateAndStopForeground()
         }
     }
 
     private fun resetServiceStateAndStopForeground() {
-        Log.d("BikeForegroundService", "Full service reset: continuous and formal states.")
+        Log.d("BikeForegroundService", "Full service reset: continuous and formal states. Preparing for new session.")
 
         // Reset to non-recording frequency if a reset is called
         startLocationUpdates(intervalMillis = 5000L, minUpdateIntervalMillis = 2500L)
@@ -449,8 +431,10 @@ class BikeForegroundService : LifecycleService() {
         )
 
         caloriesCalculationJob?.cancel()
+        startOrRestartCalorieCalculation(isFormalRideActive = false)
 
         stopForeground(STOP_FOREGROUND_REMOVE)
+        Log.d("BikeForegroundService", "Service reset complete. New continuous session started.")
     }
 
     private fun startForegroundService() {
