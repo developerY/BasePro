@@ -106,7 +106,8 @@ class BikeForegroundService : LifecycleService() {
             val weightKg = weightString.toFloatOrNull() ?: 70f
             UserStats(heightCm = 0f, weightKg = weightKg)
         }
-        startLocationUpdates()
+        // Start with non-recording frequency
+        startLocationUpdates(intervalMillis = 5000L, minUpdateIntervalMillis = 2500L)
         startOrRestartCalorieCalculation(isFormalRideActive = false)
         Log.d("BikeForegroundService", "Service created. Continuous tracking and calorie calculation initiated.")
     }
@@ -132,16 +133,21 @@ class BikeForegroundService : LifecycleService() {
     }
 
     @SuppressLint("MissingPermission")
-    private fun startLocationUpdates() {
-        val locationRequest = GmsLocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 2000)
+    private fun startLocationUpdates(intervalMillis: Long, minUpdateIntervalMillis: Long) {
+        Log.d("BikeForegroundService", "Attempting to start location updates with interval: $intervalMillis ms, minInterval: $minUpdateIntervalMillis ms")
+        // Always remove previous updates before starting new ones
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+
+        val locationRequest = GmsLocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, intervalMillis)
             .setWaitForAccurateLocation(false)
-            .setMinUpdateIntervalMillis(1000)
-            .setMaxUpdateDelayMillis(2000)
+            .setMinUpdateIntervalMillis(minUpdateIntervalMillis)
+            .setMaxUpdateDelayMillis(intervalMillis + 2000) // Allow a bit of delay, related to the main interval
             .build()
         try {
             fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+            Log.d("BikeForegroundService", "Successfully requested location updates.")
         } catch (e: SecurityException) {
-            Log.e("BikeForegroundService", "Missing location permissions.", e)
+            Log.e("BikeForegroundService", "Missing location permissions. Cannot start location updates.", e)
         }
     }
 
@@ -305,6 +311,9 @@ class BikeForegroundService : LifecycleService() {
         }
         Log.d("BikeForegroundService", "Starting formal ride. UI will reset for this segment.")
 
+        // Switch to high-frequency updates for active ride
+        startLocationUpdates(intervalMillis = 2000L, minUpdateIntervalMillis = 1000L)
+
         currentFormalRideId = UUID.randomUUID().toString()
         formalRideSegmentStartTimeMillis = System.currentTimeMillis()
         formalRideSegmentUiResetTimeMillis = System.currentTimeMillis()
@@ -339,6 +348,9 @@ class BikeForegroundService : LifecycleService() {
             return
         }
         Log.d("BikeForegroundService", "Stopping and finalizing formal ride: $rideIdToFinalize")
+
+        // Switch back to low-frequency updates
+        startLocationUpdates(intervalMillis = 5000L, minUpdateIntervalMillis = 2500L)
 
         // caloriesCalculationJob?.cancel() // Consider if still needed, as new calc starts for continuous
 
@@ -386,7 +398,7 @@ class BikeForegroundService : LifecycleService() {
                 Log.d("BikeForegroundService", "Formal ride $rideIdToFinalize saved.")
             }
 
-            // --- CORRECTED: Update state and restart calculations after saving ---
+            // --- CORRECTED: Update state and restart calculations after saving ---\
             _rideInfo.value = _rideInfo.value.copy(
                 rideState = RideState.Ended,
                 currentTripDistance = continuousDistanceMeters / 1000f,
@@ -410,6 +422,9 @@ class BikeForegroundService : LifecycleService() {
 
     private fun resetServiceStateAndStopForeground() {
         Log.d("BikeForegroundService", "Full service reset: continuous and formal states.")
+
+        // Reset to non-recording frequency if a reset is called
+        startLocationUpdates(intervalMillis = 5000L, minUpdateIntervalMillis = 2500L)
 
         continuousSessionStartTimeMillis = System.currentTimeMillis()
         continuousDistanceMeters = 0f
@@ -454,8 +469,8 @@ class BikeForegroundService : LifecycleService() {
         val rideState = _rideInfo.value
         val currentSpeedFormatted = String.format("%.1f", rideState.currentSpeed)
         val currentDistanceFormatted = String.format("%.1f", rideState.currentTripDistance)
-        val currentDurationFormatted = rideState.rideDuration
-        val currentCaloriesFormatted = rideState.caloriesBurned
+        // val currentDurationFormatted = rideState.rideDuration // Not used in simplified text
+        // val currentCaloriesFormatted = rideState.caloriesBurned // Not used in simplified text
         val currentElevationGainFormatted = String.format("%.0f", rideState.elevationGain)
 
 
