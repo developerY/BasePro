@@ -12,11 +12,11 @@ import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.health.connect.client.units.Energy.Companion.calories
 import com.ylabz.basepro.applications.bike.features.main.R // Ensure this is your correct R file
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent // Assuming onEvent is of this type
@@ -28,7 +28,7 @@ import com.ylabz.basepro.core.ui.theme.AshBikeTheme
 import com.ylabz.basepro.core.ui.theme.iconColorBikeActive // Example, adjust as needed
 import com.ylabz.basepro.core.ui.theme.iconColorCalories // Example, adjust as needed
 import com.ylabz.basepro.core.ui.theme.iconColorHeartRate // Example, adjust as needed
-import com.ylabz.basepro.core.ui.theme.iconColorSpeed
+// import com.ylabz.basepro.core.ui.theme.iconColorSpeed // Not used in this version
 import java.util.Locale
 
 enum class StatsSectionType {
@@ -48,72 +48,56 @@ fun StatsSection(
     val isBikeComputerOn = bikeData.rideState == RideState.Riding
     val currentCardColor = if (isBikeComputerOn) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
     val currentContentColor = if (isBikeComputerOn) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+    //val unavailableText = stringResource(R.string.feature_main_text_unavailable_compact)
 
     val currentStats: List<StatItem> = when (sectionType) {
-        StatsSectionType.HEALTH -> listOfNotNull(
-            bikeData.heartbeat?.takeIf { it > 0 }?.let { hr ->
-                StatItem(
-                    icon = Icons.Filled.Favorite,
-                    label = stringResource(R.string.feature_main_label_heart_rate), // Replace with actual R.string ID
-                    value = if (bikeData.heartbeat != null) "$bikeData.heartbeat bpm" else "-- bpm",
-                    //value = String.format(Locale.getDefault(), stringResource(R.string.feature_main_label_heart_rate), hr.toDouble()), // e.g. "%.0f bpm"
-                    activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorHeartRate else null // Or your specific theme color
-                )
-            },
-            bikeData.caloriesBurned.takeIf { it > 0 }?.let { calories ->
-                StatItem(
-                    icon = Icons.Filled.LocalFireDepartment,
-                    label = stringResource(R.string.feature_main_label_calories), // Replace with actual R.string ID
-                    value = calories.toString(),
-                    activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorCalories else null // Or your specific theme color
-                )
-            }
-        )
-        StatsSectionType.EBIKE -> listOfNotNull(
-            bikeData.batteryLevel?.let { battery ->
-                StatItem(
-                    icon = Icons.AutoMirrored.Filled.BatteryUnknown,
-                    label = stringResource(R.string.feature_main_label_battery), // Replace with actual R.string ID
-                    value = if (bikeData.isBikeConnected && bikeData.batteryLevel != null) "$bikeData.batteryLevel%" else "--%",
-                    // value = String.format(Locale.getDefault(), stringResource(R.string.feature_main_value_percentage_format), battery), // e.g., "%d %%"
-                    activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.primary else null // Or your specific theme color
-                )
-            },
-            bikeData.motorPower?.takeIf { it > 0f }?.let { power ->
-                StatItem(
-                    icon = Icons.Filled.ElectricBike,
-                    label = stringResource(R.string.feature_main_label_motor), // Replace with actual R.string ID
-                    value = if (bikeData.isBikeConnected && bikeData.motorPower != null) "$bikeData.motorPower W" else "-- W",
-                    //value = String.format(Locale.getDefault(), stringResource(R.string.feature_main_value_watts_format), power), // e.g. "%.0f W"
-                    activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorBikeActive else null // Or your specific theme color
-                )
-            }
-            // Add other eBike specific stats here if any
-        )
-    }
+        StatsSectionType.HEALTH -> listOf(
+            StatItem(
+                icon = Icons.Filled.Favorite,
+                label = stringResource(R.string.feature_main_label_heart_rate),
+                value = if (bikeData.heartbeat != null) "$bikeData.heartbeat bpm" else "-- bpm",
 
-    if (currentStats.isEmpty()) {
-        StatItem(
-            icon = Icons.AutoMirrored.Filled.BatteryUnknown,
-            label = stringResource(R.string.feature_main_label_battery), // Replace with actual R.string ID
-            value = if (bikeData.isBikeConnected && bikeData.batteryLevel != null) "$bikeData.batteryLevel%" else "--%",
-            // value = String.format(Locale.getDefault(), stringResource(R.string.feature_main_value_percentage_format), battery), // e.g., "%d %%"
-            activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.primary else null // Or your specific theme color
+                /*value = bikeData.heartbeat?.takeIf { it > 0 }?.let { hr ->
+                    String.format(Locale.getDefault(), stringResource(R.string.feature_main_value_bpm_format), hr)
+                } ?: unavailableText,*/
+                activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorHeartRate else null
+            ),
+            StatItem(
+                icon = Icons.Filled.LocalFireDepartment,
+                label = stringResource(R.string.feature_main_label_calories),
+                value = bikeData.caloriesBurned.toString(),
+                /*value = bikeData.caloriesBurned.takeIf { it > 0 }?.let { calories ->
+                    String.format(Locale.getDefault(), stringResource(R.string.feature_main_value_kcal_format), calories)
+                } ?: unavailableText,*/
+                activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorCalories else null
+            )
         )
-        StatItem(
-            icon = Icons.Filled.ElectricBike,
-            label = stringResource(R.string.feature_main_label_motor), // Replace with actual R.string ID
-            value = if (bikeData.isBikeConnected && bikeData.motorPower != null) "$bikeData.motorPower W" else "-- W",
-            //value = String.format(Locale.getDefault(), stringResource(R.string.feature_main_value_watts_format), power), // e.g. "%.0f W"
-            activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorBikeActive else null // Or your specific theme color
+        StatsSectionType.EBIKE -> listOf(
+            StatItem(
+                icon = Icons.AutoMirrored.Filled.BatteryUnknown,
+                label = stringResource(R.string.feature_main_label_battery),
+                value = if (bikeData.isBikeConnected && bikeData.batteryLevel != null) "$bikeData.batteryLevel%" else "--%",
+                /*value = if (bikeData.isBikeConnected && bikeData.batteryLevel != null) {
+                    String.format(Locale.getDefault(), stringResource(R.string.feature_main_value_percentage_format), bikeData.batteryLevel)
+                } else unavailableText,*/
+                activeColor = if (isBikeComputerOn && bikeData.isBikeConnected) MaterialTheme.colorScheme.primary else null
+            ),
+            StatItem(
+                icon = Icons.Filled.ElectricBike,
+                label = stringResource(R.string.feature_main_label_motor),
+                value = if (bikeData.isBikeConnected && bikeData.motorPower != null) "$bikeData.motorPower W" else "-- W",
+                /*value = if (bikeData.isBikeConnected && bikeData.motorPower != null && bikeData.motorPower > 0f) {
+                    String.format(Locale.getDefault(), stringResource(R.string.feature_main_value_watts_format), bikeData.motorPower)
+                } else unavailableText,*/
+                activeColor = if (isBikeComputerOn && bikeData.isBikeConnected) MaterialTheme.colorScheme.iconColorBikeActive else null
+            )
         )
-
     }
 
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp), // Add some vertical padding for the section itself
+            .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         currentStats.forEach { stat ->
