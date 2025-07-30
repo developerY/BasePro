@@ -2,7 +2,6 @@ package com.ylabz.basepro.applications.bike.features.main.usecase
 
 import android.location.Location
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.core.model.bike.CombinedSensorData
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.shareIn

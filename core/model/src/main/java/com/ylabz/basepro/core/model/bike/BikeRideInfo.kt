@@ -23,29 +23,6 @@ data class BikeMotorData(
     val motorPower: Float?     // Null if unavailable
 )
 
-// Define a data class to hold the combined sensor data
-data class CombinedSensorDataOld(
-    val location: Location,
-    val speedKmh: Float,
-    val traveledDistance: Float,
-    val totalDistance: Float?,
-    val remainingDistance: Float?,
-    val elevation: Float,
-    val heading: Float,
-)
-
-data class CombinedSensorData(
-    val location: Location,
-    val speedKmh: Float,
-    val traveledDistance: Float,
-    val averageSpeed: Double,
-    val maxSpeed: Float,
-    val elevationGain: Float,
-    val elevationLoss: Float,
-    val caloriesBurned: Int,
-    val heading: Float
-)
-
 
 data class BikeRideInfo(
     val location: LatLng?,
