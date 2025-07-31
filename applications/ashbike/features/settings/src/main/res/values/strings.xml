@@ -85,5 +85,11 @@
 
     <string name="settings_app_preferences_cd_icon">Application preferences</string>
 
+    <!-- Location Energy Level Settings -->
+    <string name="settings_location_energy_level_label">Location Update Frequency</string>
+    <string name="settings_energy_level_power_saver">Power Saver</string>
+    <string name="settings_energy_level_balanced">Balanced</string>
+    <string name="settings_energy_level_high_accuracy">High Accuracy</string>
+
 
 </resources>

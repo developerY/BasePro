@@ -39,7 +39,7 @@ import androidx.compose.material.icons.filled.UnfoldLess
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+// import androidx.compose.material3.Divider // Replaced with HorizontalDivider where appropriate
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -56,6 +56,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateSetOf
@@ -77,6 +78,7 @@ import com.ylabz.basepro.applications.bike.features.settings.ui.components.Profi
 // Add import for ThemeSettingsCard
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.ThemeSettingsCard
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.health.HealthExpandableEx
+import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import com.ylabz.basepro.core.ui.theme.AshBikeTheme
 import com.ylabz.basepro.feature.ble.ui.BluetoothLeEvent
 import com.ylabz.basepro.feature.ble.ui.BluetoothLeRoute
@@ -314,7 +316,8 @@ fun SettingsScreenExPreview() {
             AppPreferenceKeys.KEY_UNITS to AppPreferenceKeys.VALUE_UNITS_METRIC
         ),
         profile = dummyProfile,
-        isProfileIncomplete = false // Added for preview consistency
+        isProfileIncomplete = false, // Added for preview consistency
+        currentEnergyLevel = LocationEnergyLevel.BALANCED // Added for preview
     )
     AshBikeTheme {
         SettingsScreenEx(
@@ -426,7 +429,7 @@ fun QrExpandableEx(
 
             // Expanded content
             if (expanded) {
-                Divider()
+                HorizontalDivider() // Changed from Divider
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(text = stringResource(R.string.settings_qr_scanner_placeholder_text))
                     Spacer(modifier = Modifier.height(8.dp))
@@ -528,7 +531,7 @@ fun BikeConfigurationEx(
 
             // Expanded content
             if (expanded) {
-                Divider()
+                HorizontalDivider() // Changed from Divider
                 Column(modifier = Modifier.padding(16.dp)) {
                     var motorAssistance by remember { mutableStateOf(true) }
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -563,7 +566,7 @@ fun BikeConfigurationEx(
 }
 
 // --------------------------------------------
-// APP PREFERENCES EXPANDABLE
+// APP PREFERENCES EXPANDABLE (UPDATED)
 // --------------------------------------------
 @Composable
 fun AppPreferencesExpandable(
@@ -572,6 +575,13 @@ fun AppPreferencesExpandable(
     uiState: SettingsUiState.Success,
     onEvent: (SettingsEvent) -> Unit
 ) {
+    // Helper map to convert the enum to a float for the slider and a label for the UI.
+    val energyLevelMap = mapOf(
+        LocationEnergyLevel.POWER_SAVER to Pair(0f, stringResource(R.string.settings_energy_level_power_saver)),
+        LocationEnergyLevel.BALANCED to Pair(1f, stringResource(R.string.settings_energy_level_balanced)),
+        LocationEnergyLevel.HIGH_ACCURACY to Pair(2f, stringResource(R.string.settings_energy_level_high_accuracy))
+    )
+
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
@@ -605,10 +615,48 @@ fun AppPreferencesExpandable(
 
             // Expanded content
             if (expanded) {
-                Divider()
+                HorizontalDivider() // Changed from Divider
                 Column(modifier = Modifier.padding(16.dp)) {
+
+                    // --- Location Energy Level Setting ---
+                    val currentEnergyLevel = uiState.currentEnergyLevel
+                    val currentPair = energyLevelMap[currentEnergyLevel] ?: energyLevelMap[LocationEnergyLevel.BALANCED]!!
+                    var sliderValue by remember(currentEnergyLevel) { mutableFloatStateOf(currentPair.first) }
+                    val levelLabel = currentPair.second
+
+                    Text(
+                        text = stringResource(R.string.settings_location_energy_level_label),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(
+                        text = levelLabel,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    )
+                    Slider(
+                        value = sliderValue,
+                        onValueChange = { newValue ->
+                            sliderValue = newValue
+                        },
+                        onValueChangeFinished = {
+                            val newLevel = energyLevelMap.entries.find { it.value.first == sliderValue }?.key
+                            newLevel?.let {
+                                //onEvent(SettingsEvent.UpdateEnergyLevel(it))
+                            }
+                        },
+                        steps = 1,
+                        valueRange = 0f..2f,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    // --- End of Location Energy Level Setting ---
+
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) // Separator
+
                     // Dark Mode Setting
-                    var darkModeEnabled by rememberSaveable { mutableStateOf(uiState.selections[AppPreferenceKeys.KEY_THEME] == AppPreferenceKeys.VALUE_THEME_DARK) }
+                    var darkModeEnabled by rememberSaveable(uiState.selections[AppPreferenceKeys.KEY_THEME]) { 
+                        mutableStateOf(uiState.selections[AppPreferenceKeys.KEY_THEME] == AppPreferenceKeys.VALUE_THEME_DARK) 
+                    }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(stringResource(id = R.string.settings_dark_mode_label))
                         Spacer(modifier = Modifier.weight(1f))
@@ -624,7 +672,9 @@ fun AppPreferencesExpandable(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Notifications Setting
-                    var notificationsEnabled by rememberSaveable { mutableStateOf(uiState.selections[AppPreferenceKeys.KEY_NOTIFICATIONS] == AppPreferenceKeys.VALUE_NOTIFICATIONS_ENABLED) }
+                    var notificationsEnabled by rememberSaveable(uiState.selections[AppPreferenceKeys.KEY_NOTIFICATIONS]) { 
+                        mutableStateOf(uiState.selections[AppPreferenceKeys.KEY_NOTIFICATIONS] == AppPreferenceKeys.VALUE_NOTIFICATIONS_ENABLED) 
+                    }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(stringResource(id = R.string.settings_notifications_label))
                         Spacer(modifier = Modifier.weight(1f))
@@ -640,10 +690,11 @@ fun AppPreferencesExpandable(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Units Setting
+                    val isMetric = uiState.selections[AppPreferenceKeys.KEY_UNITS] == AppPreferenceKeys.VALUE_UNITS_METRIC
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(stringResource(id = R.string.settings_units_label) + ":   ")
                         Text(
-                            text = if (uiState.selections[AppPreferenceKeys.KEY_UNITS] == AppPreferenceKeys.VALUE_UNITS_METRIC) {
+                            text = if (isMetric) {
                                 stringResource(id = R.string.settings_units_metric)
                             } else {
                                 stringResource(id = R.string.settings_units_imperial)
@@ -652,9 +703,9 @@ fun AppPreferencesExpandable(
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Switch(
-                            checked = uiState.selections[AppPreferenceKeys.KEY_UNITS] == AppPreferenceKeys.VALUE_UNITS_METRIC,
-                            onCheckedChange = { isMetric ->
-                                val newUnit = if (isMetric) AppPreferenceKeys.VALUE_UNITS_METRIC else AppPreferenceKeys.VALUE_UNITS_IMPERIAL
+                            checked = isMetric,
+                            onCheckedChange = { newIsMetric ->
+                                val newUnit = if (newIsMetric) AppPreferenceKeys.VALUE_UNITS_METRIC else AppPreferenceKeys.VALUE_UNITS_IMPERIAL
                                 onEvent(SettingsEvent.UpdateSetting(AppPreferenceKeys.KEY_UNITS, newUnit))
                             },
                             enabled = true
@@ -705,7 +756,7 @@ fun BLEExpandableCard(
 
             // Expanded content
             if (expanded) {
-                Divider()
+                HorizontalDivider() // Changed from Divider
                 Column(
                     modifier = Modifier
                         .height(400.dp)

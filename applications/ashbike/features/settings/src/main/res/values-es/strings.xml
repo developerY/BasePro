@@ -82,4 +82,10 @@
 
     <string name="settings_app_preferences_cd_icon">Preferencias de la aplicación</string>
 
+    <!-- Ajustes de Nivel de Energía de Ubicación -->
+    <string name="settings_location_energy_level_label">Frecuencia de Actualización de Ubicación</string>
+    <string name="settings_energy_level_power_saver">Ahorro de Energía</string>
+    <string name="settings_energy_level_balanced">Equilibrado</string>
+    <string name="settings_energy_level_high_accuracy">Alta Precisión</string>
+
 </resources>
