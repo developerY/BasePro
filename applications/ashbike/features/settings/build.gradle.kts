@@ -43,6 +43,7 @@ dependencies {
     implementation(project(":applications:ashbike:database"))
 
     implementation(project("::core:ui"))
+    implementation(project("::core:model"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

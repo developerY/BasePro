@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.database.ProfileData
 import com.ylabz.basepro.applications.bike.database.repository.AppSettingsRepository
 import com.ylabz.basepro.applications.bike.database.repository.UserProfileRepository
+import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -95,6 +96,22 @@ class SettingsViewModel @Inject constructor(
                 started = SharingStarted.Eagerly,
                 initialValue = SettingsUiState.Loading
             )
+
+    // --- New additions for Location Energy Level ---
+    val currentLocationEnergyLevel: StateFlow<LocationEnergyLevel> =
+        profileRepo.locationEnergyLevelFlow
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = LocationEnergyLevel.BALANCED
+            )
+
+    fun setLocationEnergyLevel(level: LocationEnergyLevel) {
+        viewModelScope.launch {
+            profileRepo.setLocationEnergyLevel(level)
+        }
+    }
+    // --- End of new additions ---
 
     // 5) Handle both settings and profile updates
     fun onEvent(event: SettingsEvent) {
