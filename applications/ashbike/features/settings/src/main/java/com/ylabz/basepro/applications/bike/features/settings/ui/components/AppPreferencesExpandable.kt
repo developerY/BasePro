@@ -32,14 +32,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.settings.R
-import com.ylabz.basepro.applications.bike.features.settings.ui.AppPreferenceKeys
+import com.ylabz.basepro.applications.bike.features.settings.ui.AppPreferenceKeys // Internal
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsEvent
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsUiState
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 
-// --------------------------------------------
-// APP PREFERENCES EXPANDABLE (UPDATED)
-// --------------------------------------------
 @Composable
 fun AppPreferencesExpandable(
     expanded: Boolean,
@@ -47,7 +44,6 @@ fun AppPreferencesExpandable(
     uiState: SettingsUiState.Success,
     onEvent: (SettingsEvent) -> Unit
 ) {
-    // Helper map to convert the enum to a float for the slider and a label for the UI.
     val energyLevelMap = mapOf(
         LocationEnergyLevel.POWER_SAVER to Pair(0f, stringResource(R.string.settings_energy_level_power_saver)),
         LocationEnergyLevel.BALANCED to Pair(1f, stringResource(R.string.settings_energy_level_balanced)),
@@ -61,7 +57,6 @@ fun AppPreferencesExpandable(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column {
-            // Header row
             Row(
                 modifier = Modifier
                     .clickable { onExpandToggle() }
@@ -85,12 +80,9 @@ fun AppPreferencesExpandable(
                 )
             }
 
-            // Expanded content
             if (expanded) {
-                HorizontalDivider() // Changed from Divider
+                HorizontalDivider()
                 Column(modifier = Modifier.padding(16.dp)) {
-
-                    // --- Location Energy Level Setting ---
                     val currentEnergyLevel = uiState.currentEnergyLevel
                     val currentPair = energyLevelMap[currentEnergyLevel] ?: energyLevelMap[LocationEnergyLevel.BALANCED]!!
                     var sliderValue by remember(currentEnergyLevel) { mutableFloatStateOf(currentPair.first) }
@@ -108,24 +100,19 @@ fun AppPreferencesExpandable(
                     )
                     Slider(
                         value = sliderValue,
-                        onValueChange = { newValue ->
-                            sliderValue = newValue
-                        },
+                        onValueChange = { newValue -> sliderValue = newValue },
                         onValueChangeFinished = {
                             val newLevel = energyLevelMap.entries.find { it.value.first == sliderValue }?.key
                             newLevel?.let {
-                                //onEvent(SettingsEvent.UpdateEnergyLevel(it)) // TODO: Uncomment when event is ready
+                                //onEvent(SettingsEvent.UpdateEnergyLevel(it)) // Assuming UpdateEnergyLevel event exists
                             }
                         },
                         steps = 1,
                         valueRange = 0f..2f,
                         modifier = Modifier.fillMaxWidth()
                     )
-                    // --- End of Location Energy Level Setting ---
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) // Separator
-
-                    // Dark Mode Setting
                     var darkModeEnabled by rememberSaveable(uiState.selections[AppPreferenceKeys.KEY_THEME]) {
                         mutableStateOf(uiState.selections[AppPreferenceKeys.KEY_THEME] == AppPreferenceKeys.VALUE_THEME_DARK)
                     }
@@ -136,14 +123,13 @@ fun AppPreferencesExpandable(
                             checked = darkModeEnabled,
                             onCheckedChange = {
                                 darkModeEnabled = it
-                                val newTheme = if (it) AppPreferenceKeys.VALUE_THEME_DARK else AppPreferenceKeys.VALUE_THEME_LIGHT
+                                val newTheme = if (it) AppPreferenceKeys.VALUE_THEME_DARK else AppPreferenceKeys.VALUE_THEME_LIGHT // Or system default
                                 onEvent(SettingsEvent.UpdateSetting(AppPreferenceKeys.KEY_THEME, newTheme))
                             }
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Notifications Setting
                     var notificationsEnabled by rememberSaveable(uiState.selections[AppPreferenceKeys.KEY_NOTIFICATIONS]) {
                         mutableStateOf(uiState.selections[AppPreferenceKeys.KEY_NOTIFICATIONS] == AppPreferenceKeys.VALUE_NOTIFICATIONS_ENABLED)
                     }
@@ -156,21 +142,16 @@ fun AppPreferencesExpandable(
                                 notificationsEnabled = it
                                 onEvent(SettingsEvent.UpdateSetting(AppPreferenceKeys.KEY_NOTIFICATIONS, if (it) AppPreferenceKeys.VALUE_NOTIFICATIONS_ENABLED else AppPreferenceKeys.VALUE_NOTIFICATIONS_DISABLED))
                             },
-                            enabled = false // Assuming this is intentional
+                            enabled = false // As per original code
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Units Setting
                     val isMetric = uiState.selections[AppPreferenceKeys.KEY_UNITS] == AppPreferenceKeys.VALUE_UNITS_METRIC
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(stringResource(id = R.string.settings_units_label) + ":   ")
                         Text(
-                            text = if (isMetric) {
-                                stringResource(id = R.string.settings_units_metric)
-                            } else {
-                                stringResource(id = R.string.settings_units_imperial)
-                            },
+                            text = if (isMetric) stringResource(id = R.string.settings_units_metric) else stringResource(id = R.string.settings_units_imperial),
                             style = MaterialTheme.typography.titleSmall
                         )
                         Spacer(modifier = Modifier.weight(1f))
@@ -180,7 +161,7 @@ fun AppPreferencesExpandable(
                                 val newUnit = if (newIsMetric) AppPreferenceKeys.VALUE_UNITS_METRIC else AppPreferenceKeys.VALUE_UNITS_IMPERIAL
                                 onEvent(SettingsEvent.UpdateSetting(AppPreferenceKeys.KEY_UNITS, newUnit))
                             },
-                            enabled = true // Assuming this is intentional
+                            enabled = true
                         )
                     }
                 }
