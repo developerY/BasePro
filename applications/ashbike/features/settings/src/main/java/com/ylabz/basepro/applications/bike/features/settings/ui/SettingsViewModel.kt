@@ -65,25 +65,23 @@ class SettingsViewModel @Inject constructor(
         combine(
             settingsSelections,
             profileData,
-            profileRepo.profileReviewedOrSavedFlow // Collect the new flow
-        ) { selections: Map<String, String>, profile: ProfileData, profileHasBeenReviewedOrSaved: Boolean -> // New parameter from the flow
+            profileRepo.profileReviewedOrSavedFlow,
+            profileRepo.locationEnergyLevelFlow // Added LocationEnergyLevel flow
+        ) { selections, profile, profileHasBeenReviewedOrSaved, energyLevel -> // Added energyLevel parameter
 
             Log.d("ViewModelCombine", "Profile in combine: Name='${profile.name}', H='${profile.heightCm}', W='${profile.weightKg}'")
             Log.d("ViewModelCombine", "Profile reviewed or saved by user: $profileHasBeenReviewedOrSaved")
+            Log.d("ViewModelCombine", "Energy Level in combine: $energyLevel") // Log energy level
 
-            // Badge is ON until the first save, then it's OFF permanently.
-            val actuallyIncomplete = if (!profileHasBeenReviewedOrSaved) {
-                true // Profile hasn't been explicitly saved/reviewed by user yet
-            } else {
-                false // User has saved at least once, badge turns off and stays off
-            }
+            val actuallyIncomplete = !profileHasBeenReviewedOrSaved
             Log.d("ViewModelCombine", "Calculated actuallyIncomplete (isProfileIncomplete): $actuallyIncomplete")
 
             SettingsUiState.Success(
                 options = staticOptions,
                 selections = selections,
                 profile = profile,
-                isProfileIncomplete = actuallyIncomplete
+                isProfileIncomplete = actuallyIncomplete,
+                currentEnergyLevel = energyLevel // Pass energyLevel to Success state
             )
         }
             .map { successState -> successState as SettingsUiState } // Upcast to allow Error emission in catch
@@ -97,15 +95,7 @@ class SettingsViewModel @Inject constructor(
                 initialValue = SettingsUiState.Loading
             )
 
-    // --- New additions for Location Energy Level ---
-    val currentLocationEnergyLevel: StateFlow<LocationEnergyLevel> =
-        profileRepo.locationEnergyLevelFlow
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = LocationEnergyLevel.BALANCED
-            )
-
+    // This function remains to handle the action of setting the energy level
     fun setLocationEnergyLevel(level: LocationEnergyLevel) {
         viewModelScope.launch {
             profileRepo.setLocationEnergyLevel(level)
