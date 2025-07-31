@@ -1,36 +1,35 @@
 <resources>
-    <string name="settings_build_number_label">Build Number: %1$s</string>
+    <string name="app_name">Settings</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- SETTINGS SCREEN -->
+    <string name="settings_title_text">Settings</string>
+    <string name="settings_dark_mode_label">Dark Mode</string>
+    <string name="settings_notifications_label">Notifications</string>
+    <string name="settings_units_label">Units</string>
+    <string name="settings_units_metric">Metric</string>
+    <string name="settings_units_imperial">Imperial</string>
+    <string name="settings_language_label">Language</string>
     <string name="settings_app_version_label">App Version: %1$s</string>
-    <string name="settings_section_title_app">App Settings</string>
-    <string name="settings_card_title_theme">Theme</string>
-    <string name="settings_profile_data_unavailable">Profile data is not available or still loading.</string>
-    <string name="settings_section_title_connectivity">Connectivity</string>
-    <string name="settings_section_title_bike">Bike Settings</string>
+    <string name="settings_app_version_value_text">1.0.1</string>
+    <string name="settings_build_number_label">Build Number: %1$s</string>
+    <string name="settings_build_number_value_text">20240321</string>
+    <string name="settings_about_info_visit_text">For more information, visit:</string>
+    <string name="settings_about_website_url">www.ashbike.com</string>
+    <string name="settings_theme_selection_title">Theme</string>
+    <string name="settings_theme_light_text">Light</string>
+    <string name="settings_theme_dark_text">Dark</string>
+    <string name="settings_theme_system_default_text">System Default</string>
+    <string name="settings_profile_incomplete_warning">Profile Incomplete</string>
+    <string name="settings_profile_incomplete_message">Please complete your profile to enable personalized features and calorie calculations.</string>
+    <string name="settings_profile_edit_button">Edit</string>
+    <string name="settings_profile_save_button">Save</string>
+    <string name="settings_profile_name_label">Name</string>
+    <string name="settings_profile_height_label">Height (cm)</string>
+    <string name="settings_profile_weight_label">Weight (kg)</string>
 
 
-        <!-- ... other strings ... -->
-        <string name="settings_app_preferences_title">App Preferences</string>
-        <string name="settings_dark_mode_label">Dark Mode</string>
-        <string name="settings_notifications_label">Notifications</string>
-        <string name="settings_units_label">Units</string>
-        <string name="settings_units_metric">Metric (SI)</string>
-        <string name="settings_units_imperial">Imperial (English)</string>
-        <!-- You might also need string resources for "Light", "Dark", "Enabled", "Disabled"
-             if these are also displayed and come from your uiState, though often these
-             are handled by the state itself rather than being separate displayed labels for the state.
-             For this example, I'll focus on the primary labels. -->
-
-    <string name="settings_value_theme_dark">Dark</string>
-    <string name="settings_value_theme_light">Light</string>
-    <string name="settings_value_theme_system">System</string>
-    <string name="settings_value_notifications_enabled">Enabled</string>
-    <string name="settings_value_notifications_disabled">Disabled</string>
-    <string name="settings_value_units_metric">Metric (SI)</string>
-    <string name="settings_value_units_imperial">Imperial (English)</string>
-
-    <!-- ... existing strings ... -->
-
-    <string name="profile_incomplete_warning">Please update your height &amp; weight.</string>
+    <string name="profile_incomplete_warning">Please update your height and weight.</string>
     <string name="profile_person_icon_cd">Profile</string>
     <string name="profile_details_format" formatted="true">Height: %1$s cm | Weight: %2$s kg</string>
     <string name="profile_edit_icon_cd">Edit Profile</string>
@@ -39,57 +38,60 @@
     <string name="profile_label_weight_kg">Weight (kg)</string>
     <string name="profile_button_save">Save</string>
 
-    <!-- ... existing strings ... -->
-    <string name="theme_system_display">System</string>
-    <string name="theme_light_display">Light</string>
-    <string name="theme_dark_display">Dark</string>
-    <string name="settings_action_collapse">Collapse</string>
-    <string name="settings_action_expand">Expand</string>
-    <string name="theme_settings_card_title">Theme Settings</string> <!-- For the preview -->
-    <string name="theme_icon_cd">Theme selection icon</string>
+    <string name="settings_app_preferences_title">App Preferences</string>
+    <string name="settings_app_preferences_cd_icon">App Preferences Icon</string>
 
-    <!-- For NfcExpandableEx -->
-    <string name="settings_nfc_cd">NFC Icon</string>
-    <string name="settings_nfc_title">NFC</string>
-
-    <!-- For QrExpandableEx -->
-    <string name="settings_qr_scanner_cd">QR Scanner Icon</string>
-    <string name="settings_qr_scanner_title">QR Scanner</string>
-    <string name="settings_qr_scanner_placeholder_text">QR Code Scanner: (Point camera to scan)</string>
-
-    <!-- For ProfileBikeInfoCardEx -->
-    <string name="settings_user_profile_cd">User Profile Icon</string>
-    <string name="settings_profile_bike_info_details" formatted="true">Battery: %1$s | Last Ride: %2$s</string>
-
-    <!-- For BikeConfigurationEx -->
-    <string name="settings_bike_config_cd">Bike Configuration Icon</string>
-    <string name="settings_bike_config_title">Bike Configuration</string>
-    <string name="settings_motor_assistance_label">Motor Assistance</string>
-    <string name="settings_gearing_level_label" formatted="true">Gearing Level: %1$d</string>
-    <string name="settings_advanced_bike_settings_button">Advanced Bike Settings</string>
-
-    <!-- For BLEExpandableCard -->
-    <string name="settings_ble_cd">Bluetooth Icon</string>
-    <string name="settings_ble_title">Bluetooth (BLE)</string>
-
-    <!-- For AboutExpandable -->
-    <string name="settings_about_cd">About Icon</string>
-    <string name="settings_about_title">About</string>
-    <string name="settings_app_version_value_text">Alpha 0.9.7</string> <!-- Consider making this dynamic via BuildConfig -->
-    <string name="settings_build_number_value_text">43</string> <!-- Consider making this dynamic via BuildConfig -->
-    <string name="settings_about_info_visit_text">For licenses, support, or more info, visit:</string>
-    <string name="settings_about_website_url">https://www.ashbike.com</string>
-
-    <!-- ... other existing strings ... -->
-
-
-    <string name="settings_app_preferences_cd_icon">Application preferences</string>
-
-    <!-- Location Energy Level Settings -->
     <string name="settings_location_energy_level_label">Location Update Frequency</string>
     <string name="settings_energy_level_power_saver">Power Saver</string>
     <string name="settings_energy_level_balanced">Balanced</string>
     <string name="settings_energy_level_high_accuracy">High Accuracy</string>
+    <string name="settings_energy_level_auto">Auto (Speed-based)</string>
+
+    <!-- SECTION & CARD TITLES -->
+    <string name="settings_section_title_app">Application</string>
+    <string name="settings_section_title_connectivity">Connectivity &amp; Health</string>
+    <string name="settings_section_title_bike">Bike</string>
+    <string name="settings_card_title_theme">Theme</string>
+    <string name="settings_about_cd">About CD</string>
+    <string name="settings_about_title">About</string>
+    <string name="settings_health_connect_title">Health Connect</string>
+    <string name="settings_nfc_title">NFC</string>
+    <string name="settings_qr_scanner_title">QR Scanner</string>
+    <string name="settings_ble_title">Bluetooth LE</string>
+    <string name="settings_bike_config_title">Bike Configuration</string>
 
 
+    <!-- GENERIC ACTIONS -->
+    <string name="settings_action_expand">Expand</string>
+    <string name="settings_action_collapse">Collapse</string>
+    <string name="settings_profile_data_unavailable">Profile data is not available.</string>
+
+    <!-- HEALTH CONNECT -->
+    <string name="settings_health_connect_availability_text">Health Connect Availability: %1$s</string>
+    <string name="settings_health_connect_check_button">Check Availability</string>
+    <string name="settings_health_connect_install_button">Install Health Connect</string>
+    <string name="settings_health_connect_permissions_rationale">This app requires permissions to read and write health data for accurate tracking.</string>
+    <string name="settings_health_connect_permissions_button">Manage Permissions</string>
+    <string name="settings_health_connect_sync_button">Sync Now</string>
+    <string name="settings_health_connect_cd">Health Connect Icon</string>
+
+    <!-- NFC -->
+    <string name="settings_nfc_cd">NFC Icon</string>
+
+    <!-- QR SCANNER -->
+    <string name="settings_qr_scanner_cd">QR Scanner Icon</string>
+    <string name="settings_qr_scanner_placeholder_text">Scan a QR code for quick setup.</string>
+
+    <!-- BLE -->
+    <string name="settings_ble_cd">Bluetooth LE Icon</string>
+
+    <!-- BIKE CONFIGURATION -->
+    <string name="settings_bike_config_cd">Bike Configuration Icon</string>
+    <string name="settings_motor_assistance_label">Motor Assistance</string>
+    <string name="settings_gearing_level_label">Gearing Level: %1$d</string>
+    <string name="settings_advanced_bike_settings_button">Advanced Bike Settings</string>
+
+    <!-- PROFILE/BIKE INFO CARD (Potentially for another screen) -->
+    <string name="settings_user_profile_cd">User Profile</string>
+    <string name="settings_profile_bike_info_details">Battery: %1$s | Last Ride: %2$s</string>
 </resources>

@@ -1,0 +1,305 @@
+package com.ylabz.basepro.applications.bike.features.main.service
+
+import android.app.Notification
+import android.app.Service
+import android.content.Intent
+import android.location.Location
+import android.os.Binder
+import android.os.IBinder
+import android.os.Looper
+import android.util.Log
+import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.location.*
+import com.ylabz.basepro.applications.bike.database.repository.UserProfileRepository
+import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
+import com.ylabz.basepro.core.model.bike.RideState
+import com.ylabz.basepro.core.model.bike.BikeRideInfo
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import java.time.Duration
+import java.time.Instant
+import javax.inject.Inject
+import kotlin.math.max
+import com.ylabz.basepro.applications.bike.features.main.R
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.persistentMapOf
+
+@AndroidEntryPoint
+class `BikeForegroundServiceAuto.txt` : LifecycleService() {
+
+    companion object {
+        private const val TAG = "BikeForegroundService"
+        var isRunning = false
+
+        // --- Auto Mode Constants ---
+        // Pairs of (speedKph, Pair(intervalMillis, minIntervalMillis))
+        private val AUTO_INTERVALS_PASSIVE = listOf(
+            5.0 to Pair(120000L, 60000L),  // Under 5 kph: 120s interval, 60s min
+            15.0 to Pair(60000L, 30000L),  // Under 15 kph: 60s interval, 30s min
+            Double.MAX_VALUE to Pair(30000L, 15000L) // Faster: 30s interval, 15s min
+        )
+        private val AUTO_INTERVALS_ACTIVE_RIDE = listOf(
+            5.0 to Pair(30000L, 15000L),  // Under 5 kph: 30s interval, 15s min
+            15.0 to Pair(10000L, 5000L),   // Under 15 kph: 10s interval, 5s min
+            Double.MAX_VALUE to Pair(5000L, 2500L)  // Faster: 5s interval, 2.5s min
+        )
+    }
+
+    private val binder = LocalBinder()
+    @Inject lateinit var fusedLocationClient: FusedLocationProviderClient
+    @Inject lateinit var notificationHelper: BikeNotificationHelper
+    @Inject lateinit var profileRepo: UserProfileRepository
+
+    private val _rideInfo = MutableStateFlow(getInitialRideInfo())
+    val rideInfo = _rideInfo.asStateFlow()
+
+    private var rideTimerJob: Job? = null
+    private lateinit var locationCallback: LocationCallback
+    private val _currentEnergyLevelState = MutableStateFlow(LocationEnergyLevel.BALANCED)
+
+    // --- Auto Mode State ---
+    private var currentlyActiveAutoInterval: Long = 0L
+    private var currentlyActiveAutoMinInterval: Long = 0L
+
+    override fun onCreate() {
+        super.onCreate()
+        Log.d(TAG, "onCreate")
+        isRunning = true
+        setupLocationCallback()
+
+        lifecycleScope.launch {
+            profileRepo.locationEnergyLevelFlow.collect { level ->
+                Log.d(TAG, "Energy level changed to: $level")
+                val oldLevel = _currentEnergyLevelState.value
+                _currentEnergyLevelState.value = level
+
+                val isFormalRide = _rideInfo.value.rideState == RideState.Riding
+                if (oldLevel != level || !isLocationRequestActive()) {
+                     // If not in a formal ride, apply passive intervals
+                    if (!isFormalRide) {
+                        if (level.isAutoMode) {
+                            Log.d(TAG, "AUTO MODE: Setting initial passive intervals.")
+                            val (initialInterval, initialMinInterval) = getIntervalsForSpeed(0.0, false)
+                            startLocationUpdates(initialInterval, initialMinInterval)
+                        } else {
+                            Log.d(TAG, "FIXED MODE: Setting passive intervals.")
+                            startLocationUpdates(level.passiveTrackingIntervalMillis, level.passiveTrackingMinUpdateIntervalMillis)
+                        }
+                    }
+                     // If in a formal ride, startFormalRide() handles the update,
+                     // but this ensures settings changes are respected mid-ride.
+                     else {
+                         startFormalRide()
+                     }
+                }
+            }
+        }
+    }
+
+    private fun isLocationRequestActive(): Boolean {
+        // A simple way to check. A more robust way might involve a boolean flag.
+        return currentlyActiveAutoInterval > 0L || _currentEnergyLevelState.value != LocationEnergyLevel.AUTO
+    }
+
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
+        Log.d(TAG, "onStartCommand")
+        startForeground(BikeNotificationHelper.NOTIFICATION_ID, notificationHelper.createNotification(rideInfo.value))
+        return START_STICKY
+    }
+
+    private fun setupLocationCallback() {
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                locationResult.lastLocation?.let { location ->
+                    Log.d(TAG, "New location: ${location.latitude}, ${location.longitude}, Speed: ${location.speed}")
+
+                    val currentRideState = _rideInfo.value.rideState
+                    if (currentRideState == RideState.Paused) return@let
+
+                    val currentSpeedKph = location.speed * 3.6
+                    val newPoint = Pair(location.latitude, location.longitude)
+                    val lastPoint = _rideInfo.value.currentPath.lastOrNull()
+                    val distanceChange = if (lastPoint != null) {
+                        val results = FloatArray(1)
+                        Location.distanceBetween(lastPoint.first, lastPoint.second, newPoint.first, newPoint.second, results)
+                        results[0] / 1000.0 // meters to km
+                    } else {
+                        0.0
+                    }
+
+                    _rideInfo.value = _rideInfo.value.copy(
+                        currentSpeedKph = currentSpeedKph,
+                        totalDistanceKm = _rideInfo.value.totalDistanceKm + distanceChange,
+                        currentPath = _rideInfo.value.currentPath + newPoint
+                    )
+
+                    // --- AUTO MODE LOGIC ---
+                    if (_currentEnergyLevelState.value.isAutoMode && currentRideState != RideState.Paused) {
+                        val isFormalRide = currentRideState == RideState.Riding
+                        val (desiredInterval, desiredMinInterval) = getIntervalsForSpeed(currentSpeedKph, isFormalRide)
+
+                        if (desiredInterval != currentlyActiveAutoInterval) {
+                            Log.d(TAG, "AUTO MODE: Speed change triggered interval update. Speed: $currentSpeedKph kph -> New Interval: $desiredInterval ms")
+                            startLocationUpdates(desiredInterval, desiredMinInterval)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    fun startFormalRide() {
+        if (_rideInfo.value.rideState == RideState.Riding) return
+        Log.d(TAG, "Starting formal ride")
+
+        val rideStartTime = Instant.now()
+        _rideInfo.value = RideInfo(rideState = RideState.Riding, startTime = rideStartTime)
+
+        rideTimerJob?.cancel()
+        rideTimerJob = lifecycleScope.launch {
+            while (true) {
+                val duration = Duration.between(rideStartTime, Instant.now())
+                _rideInfo.value = _rideInfo.value.copy(duration = duration)
+                NotificationManagerCompat.from(this@`BikeForegroundServiceAuto.txt`).notify(
+                    BikeNotificationHelper.NOTIFICATION_ID,
+                    notificationHelper.createNotification(_rideInfo.value)
+                )
+                delay(1000)
+            }
+        }
+
+        val currentLevel = _currentEnergyLevelState.value
+        if (currentLevel.isAutoMode) {
+             Log.d(TAG, "AUTO MODE: Setting initial ACTIVE ride intervals.")
+             val (initialInterval, initialMinInterval) = getIntervalsForSpeed(0.0, true)
+             startLocationUpdates(initialInterval, initialMinInterval)
+        } else {
+             Log.d(TAG, "FIXED MODE: Setting ACTIVE ride intervals.")
+             startLocationUpdates(currentLevel.activeRideIntervalMillis, currentLevel.activeRideMinUpdateIntervalMillis)
+        }
+    }
+
+    fun pauseRide() {
+        if (_rideInfo.value.rideState != RideState.Riding) return
+        Log.d(TAG, "Pausing ride")
+        rideTimerJob?.cancel()
+        _rideInfo.value = _rideInfo.value.copy(rideState = RideState.Paused)
+        // Optionally, significantly reduce location update frequency or stop them
+    }
+
+    fun resumeRide() {
+        if (_rideInfo.value.rideState != RideState.Paused) return
+        Log.d(TAG, "Resuming ride")
+        // Recalculate duration based on paused time and restart timer
+        val pausedDuration = Duration.between(_rideInfo.value.startTime, Instant.now())
+        val newStartTime = Instant.now().minus(pausedDuration)
+        _rideInfo.value = _rideInfo.value.copy(rideState = RideState.Riding, startTime = newStartTime)
+        startFormalRide() // This will restart the timer and location updates appropriately
+    }
+
+    fun stopAndFinalizeFormalRide() {
+        Log.d(TAG, "Stopping formal ride")
+        rideTimerJob?.cancel()
+        // Here you would save the final ride data to a repository
+        _rideInfo.value = RideInfo() // Reset to default state
+
+        // Revert to passive tracking intervals after ride is stopped
+        val currentLevel = _currentEnergyLevelState.value
+        if (currentLevel.isAutoMode) {
+            Log.d(TAG, "AUTO MODE: Reverting to initial PASSIVE intervals after ride.")
+            val (initialInterval, initialMinInterval) = getIntervalsForSpeed(0.0, false)
+            startLocationUpdates(initialInterval, initialMinInterval)
+        } else {
+            Log.d(TAG, "FIXED MODE: Reverting to PASSIVE intervals after ride.")
+            startLocationUpdates(currentLevel.passiveTrackingIntervalMillis, currentLevel.passiveTrackingMinUpdateIntervalMillis)
+        }
+    }
+
+    private fun startLocationUpdates(intervalMillis: Long, minUpdateIntervalMillis: Long) {
+        if (intervalMillis <= 0 || minUpdateIntervalMillis <= 0) {
+            Log.w(TAG, "Invalid location update intervals: $intervalMillis, $minUpdateIntervalMillis. Skipping.")
+            return
+        }
+
+        // --- Update Auto Mode State ---
+        if (_currentEnergyLevelState.value.isAutoMode) {
+             Log.d(TAG, "AUTO MODE: Location request updating to -> Interval: $intervalMillis, MinInterval: $minUpdateIntervalMillis")
+             currentlyActiveAutoInterval = intervalMillis
+             currentlyActiveAutoMinInterval = minUpdateIntervalMillis
+        } else {
+             Log.d(TAG, "FIXED MODE: Location request updating to -> Interval: $intervalMillis, MinInterval: $minUpdateIntervalMillis")
+        }
+
+        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, intervalMillis)
+            .setMinUpdateIntervalMillis(minUpdateIntervalMillis)
+            .build()
+
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+        try {
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+        } catch (e: SecurityException) {
+            Log.e(TAG, "Location permission not granted.", e)
+        }
+    }
+
+    // --- Helper function for Auto Mode ---
+    private fun getIntervalsForSpeed(speedKph: Double, isFormalRide: Boolean): Pair<Long, Long> {
+        val thresholds = if (isFormalRide) AUTO_INTERVALS_ACTIVE_RIDE else AUTO_INTERVALS_PASSIVE
+        return thresholds.first { speedKph < it.first }.second
+    }
+
+
+    override fun onBind(intent: Intent): IBinder {
+        super.onBind(intent)
+        Log.d(TAG, "onBind")
+        return binder
+    }
+
+    inner class LocalBinder : Binder() {
+        fun getService(): `BikeForegroundServiceAuto.txt` = this@`BikeForegroundServiceAuto.txt`
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy")
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+        rideTimerJob?.cancel()
+        isRunning = false
+    }
+
+    fun getInitialRideInfo(): BikeRideInfo = BikeRideInfo(
+        location = null,
+        currentSpeed = 0.0,
+        averageSpeed = 0.0,
+        maxSpeed = 0.0,
+        currentTripDistance = 0f,
+        totalTripDistance = null,
+        remainingDistance = null,
+        elevationGain = 0.0,
+        elevationLoss = 0.0,
+        caloriesBurned = 0,
+        rideDuration = "00:00",
+        settings = persistentMapOf(),
+        heading = 0f,
+        elevation = 0.0,
+        isBikeConnected = false,
+        batteryLevel = null,
+        motorPower = null,
+        rideState = RideState.NotStarted,
+        bikeWeatherInfo = null,
+        heartbeat = null,
+    )
+}

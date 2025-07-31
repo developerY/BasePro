@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.settings.R
-import com.ylabz.basepro.applications.bike.features.settings.ui.AppPreferenceKeys // Internal
+import com.ylabz.basepro.applications.bike.features.settings.ui.AppPreferenceKeys
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsEvent
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsUiState
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
@@ -44,10 +44,12 @@ fun AppPreferencesExpandable(
     uiState: SettingsUiState.Success,
     onEvent: (SettingsEvent) -> Unit
 ) {
+    // Helper map to convert the enum to a float for the slider and a label for the UI.
     val energyLevelMap = mapOf(
         LocationEnergyLevel.POWER_SAVER to Pair(0f, stringResource(R.string.settings_energy_level_power_saver)),
         LocationEnergyLevel.BALANCED to Pair(1f, stringResource(R.string.settings_energy_level_balanced)),
-        LocationEnergyLevel.HIGH_ACCURACY to Pair(2f, stringResource(R.string.settings_energy_level_high_accuracy))
+        LocationEnergyLevel.HIGH_ACCURACY to Pair(2f, stringResource(R.string.settings_energy_level_high_accuracy)),
+        LocationEnergyLevel.AUTO to Pair(3f, stringResource(R.string.settings_energy_level_auto)) // Added Auto
     )
 
     Card(
@@ -57,6 +59,7 @@ fun AppPreferencesExpandable(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column {
+            // Header row
             Row(
                 modifier = Modifier
                     .clickable { onExpandToggle() }
@@ -80,13 +83,16 @@ fun AppPreferencesExpandable(
                 )
             }
 
+            // Expanded content
             if (expanded) {
                 HorizontalDivider()
                 Column(modifier = Modifier.padding(16.dp)) {
+
+                    // --- Location Energy Level Setting ---
                     val currentEnergyLevel = uiState.currentEnergyLevel
                     val currentPair = energyLevelMap[currentEnergyLevel] ?: energyLevelMap[LocationEnergyLevel.BALANCED]!!
                     var sliderValue by remember(currentEnergyLevel) { mutableFloatStateOf(currentPair.first) }
-                    val levelLabel = currentPair.second
+                    val levelLabel = energyLevelMap.values.find { it.first == sliderValue }?.second ?: currentPair.second
 
                     Text(
                         text = stringResource(R.string.settings_location_energy_level_label),
@@ -100,21 +106,29 @@ fun AppPreferencesExpandable(
                     )
                     Slider(
                         value = sliderValue,
-                        onValueChange = { newValue -> sliderValue = newValue },
+                        onValueChange = { newValue ->
+                            sliderValue = newValue
+                        },
                         onValueChangeFinished = {
+                            // Find the corresponding enum key for the final slider value
                             val newLevel = energyLevelMap.entries.find { it.value.first == sliderValue }?.key
                             newLevel?.let {
-                                //onEvent(SettingsEvent.UpdateEnergyLevel(it)) // Assuming UpdateEnergyLevel event exists
+                                onEvent(SettingsEvent.UpdateEnergyLevel(it))
                             }
                         },
-                        steps = 1,
-                        valueRange = 0f..2f,
+                        steps = 2, // 4 positions (0,1,2,3), so 2 steps in between
+                        valueRange = 0f..3f,
                         modifier = Modifier.fillMaxWidth()
                     )
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    // --- End of Location Energy Level Setting ---
 
-                    var darkModeEnabled by rememberSaveable(uiState.selections[AppPreferenceKeys.KEY_THEME]) {
-                        mutableStateOf(uiState.selections[AppPreferenceKeys.KEY_THEME] == AppPreferenceKeys.VALUE_THEME_DARK)
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) // Separator
+
+                    // Dark Mode Setting (Assuming this is handled via Theme settings card now, but keeping logic if needed)
+                    // This is slightly redundant if ThemeSettingsCard is used, but harmless.
+                    val isDarkMode = uiState.selections[AppPreferenceKeys.KEY_THEME] == AppPreferenceKeys.VALUE_THEME_DARK
+                    var darkModeEnabled by rememberSaveable(isDarkMode) {
+                        mutableStateOf(isDarkMode)
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(stringResource(id = R.string.settings_dark_mode_label))
@@ -123,13 +137,15 @@ fun AppPreferencesExpandable(
                             checked = darkModeEnabled,
                             onCheckedChange = {
                                 darkModeEnabled = it
-                                val newTheme = if (it) AppPreferenceKeys.VALUE_THEME_DARK else AppPreferenceKeys.VALUE_THEME_LIGHT // Or system default
+                                // This might conflict with the ThemeSettingsCard, system setting should be default
+                                val newTheme = if (it) AppPreferenceKeys.VALUE_THEME_DARK else AppPreferenceKeys.VALUE_THEME_LIGHT
                                 onEvent(SettingsEvent.UpdateSetting(AppPreferenceKeys.KEY_THEME, newTheme))
                             }
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // Notifications Setting
                     var notificationsEnabled by rememberSaveable(uiState.selections[AppPreferenceKeys.KEY_NOTIFICATIONS]) {
                         mutableStateOf(uiState.selections[AppPreferenceKeys.KEY_NOTIFICATIONS] == AppPreferenceKeys.VALUE_NOTIFICATIONS_ENABLED)
                     }
@@ -142,16 +158,21 @@ fun AppPreferencesExpandable(
                                 notificationsEnabled = it
                                 onEvent(SettingsEvent.UpdateSetting(AppPreferenceKeys.KEY_NOTIFICATIONS, if (it) AppPreferenceKeys.VALUE_NOTIFICATIONS_ENABLED else AppPreferenceKeys.VALUE_NOTIFICATIONS_DISABLED))
                             },
-                            enabled = false // As per original code
+                            enabled = false // Assuming this is still disabled
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // Units Setting
                     val isMetric = uiState.selections[AppPreferenceKeys.KEY_UNITS] == AppPreferenceKeys.VALUE_UNITS_METRIC
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(stringResource(id = R.string.settings_units_label) + ":   ")
                         Text(
-                            text = if (isMetric) stringResource(id = R.string.settings_units_metric) else stringResource(id = R.string.settings_units_imperial),
+                            text = if (isMetric) {
+                                stringResource(id = R.string.settings_units_metric)
+                            } else {
+                                stringResource(id = R.string.settings_units_imperial)
+                            },
                             style = MaterialTheme.typography.titleSmall
                         )
                         Spacer(modifier = Modifier.weight(1f))

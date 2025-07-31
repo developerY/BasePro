@@ -140,6 +140,12 @@ class SettingsViewModel @Inject constructor(
                     }
                 }
             }
+
+            is SettingsEvent.UpdateEnergyLevel -> {
+                viewModelScope.launch {
+                    profileRepo.setLocationEnergyLevel(event.level)
+                }
+            }
         }
     }
 }

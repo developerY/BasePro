@@ -68,11 +68,15 @@ class DataStoreUserProfileRepository @Inject constructor(
             prefs[UserPrefsKeys.PROFILE_REVIEWED_OR_SAVED] ?: UserPrefsDefaults.PROFILE_REVIEWED_OR_SAVED_DEFAULT
         }
 
-    // --- Implementation for Location Energy Level ---
+    /* --- Implementation for Location Energy Level ---
     override val locationEnergyLevelFlow: Flow<LocationEnergyLevel> = dataStore.data
         .map { prefs ->
             val ordinal = prefs[UserPrefsKeys.LOCATION_ENERGY_LEVEL] ?: UserPrefsDefaults.LOCATION_ENERGY_LEVEL_DEFAULT
             LocationEnergyLevel.fromOrdinal(ordinal)
+        }*/
+    override val locationEnergyLevelFlow: Flow<LocationEnergyLevel> = dataStore.data
+        .map { prefs ->
+            LocationEnergyLevel.BALANCED
         }
 
     override suspend fun setLocationEnergyLevel(level: LocationEnergyLevel) {
