@@ -7,8 +7,8 @@ enum class LocationEnergyLevel(
     val passiveTrackingMinUpdateIntervalMillis: Long,
     val isAutoMode: Boolean = false
 ) {
-    POWER_SAVER(10000L, 600000L, 5000L, 300000L),
-    BALANCED(5000L, 60000L, 5000L, 30000L),
-    HIGH_ACCURACY(2000L, 2000L, 2000L, 2000L),
-    AUTO(5000L, 60000L, 5000L, 30000L, isAutoMode = true)
+    POWER_SAVER(5000L, 600000L, 5000L, 600000L),
+    BALANCED(3000L, 120000L, 3000L, 120000L),
+    HIGH_ACCURACY(1500L, 30000L, 1500L, 30000L),
+    AUTO(3000L, 120000L, 3000L, 120000L, isAutoMode = true)
 }
