@@ -1,6 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.settings.ui
 
-import android.util.Log // Added for robust logging
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.database.ProfileData
@@ -12,66 +12,59 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-// 3c) The ViewModel
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val appRepo: AppSettingsRepository,
     private val profileRepo: UserProfileRepository
 ) : ViewModel() {
 
-    // Expose a dedicated, hot StateFlow for the theme, compliant with MAD principles
     val theme: StateFlow<String> = appRepo.themeFlow
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = "System" // Default value
+            initialValue = "System"
         )
 
-    // 1) Static option lists
     private val staticOptions = mapOf(
         "Theme" to listOf("Light", "Dark", "System Default"),
         "Language" to listOf("English", "Spanish", "French"),
         "Notifications" to listOf("Enabled", "Disabled"),
-        "Units" to listOf("Imperial (English)", "Metric (SI)") // Added Units
+        "Units" to listOf("Imperial (English)", "Metric (SI)")
     )
 
-    // 2) Build a flow of Map<settingKey,selectedValue>
     private val settingsSelections = combine(
         appRepo.themeFlow,
         appRepo.languageFlow,
         appRepo.notificationsFlow,
-        appRepo.unitsFlow // Added Units Flow
-    ) { theme: String, lang: String, notif: String, units: String ->
+        appRepo.unitsFlow
+    ) { theme, lang, notif, units ->
         mapOf(
             "Theme" to theme,
             "Language" to lang,
             "Notifications" to notif,
-            "Units" to units // Added Units
+            "Units" to units
         )
     }
 
-    // 3) Build a flow of ProfileData
     private val profileData = combine(
-        profileRepo.nameFlow, // Flow<String>
-        profileRepo.heightFlow, // Flow<String> from UserProfileRepository
-        profileRepo.weightFlow  // Flow<String> from UserProfileRepository
-    ) { name: String, heightStr: String, weightStr: String ->
-        // Pass String values directly as expected by ProfileData constructor
+        profileRepo.nameFlow,
+        profileRepo.heightFlow,
+        profileRepo.weightFlow
+    ) { name, heightStr, weightStr ->
         ProfileData(name = name, heightCm = heightStr, weightKg = weightStr)
     }
 
-    // 4) Combine everything into one UiState
     val uiState: StateFlow<SettingsUiState> =
         combine(
             settingsSelections,
             profileData,
             profileRepo.profileReviewedOrSavedFlow,
-            profileRepo.locationEnergyLevelFlow // Added LocationEnergyLevel flow
-        ) { selections, profile, profileHasBeenReviewedOrSaved, energyLevel -> // Added energyLevel parameter
+            profileRepo.locationEnergyLevelFlow
+        ) { selections, profile, profileHasBeenReviewedOrSaved, energyLevel ->
 
             Log.d("ViewModelCombine", "Profile in combine: Name='${profile.name}', H='${profile.heightCm}', W='${profile.weightKg}'")
             Log.d("ViewModelCombine", "Profile reviewed or saved by user: $profileHasBeenReviewedOrSaved")
-            Log.d("ViewModelCombine", "Energy Level in combine: $energyLevel") // Log energy level
+            Log.d("ViewModelCombine", "Energy Level in combine: $energyLevel")
 
             val actuallyIncomplete = !profileHasBeenReviewedOrSaved
             Log.d("ViewModelCombine", "Calculated actuallyIncomplete (isProfileIncomplete): $actuallyIncomplete")
@@ -81,10 +74,10 @@ class SettingsViewModel @Inject constructor(
                 selections = selections,
                 profile = profile,
                 isProfileIncomplete = actuallyIncomplete,
-                currentEnergyLevel = energyLevel // Pass energyLevel to Success state
+                currentEnergyLevel = energyLevel
             )
         }
-            .map { successState -> successState as SettingsUiState } // Upcast to allow Error emission in catch
+            .map { successState -> successState as SettingsUiState }
             .catch { e ->
                 Log.e("ViewModelCombine", "Error in uiState combine: ${e.message}", e)
                 emit(SettingsUiState.Error("Failed to combine UI state: ${e.message}"))
@@ -95,21 +88,10 @@ class SettingsViewModel @Inject constructor(
                 initialValue = SettingsUiState.Loading
             )
 
-    // This function remains to handle the action of setting the energy level
-    fun setLocationEnergyLevel(level: LocationEnergyLevel) {
-        viewModelScope.launch {
-            profileRepo.setLocationEnergyLevel(level)
-        }
-    }
-    // --- End of new additions ---
-
-    // 5) Handle both settings and profile updates
     fun onEvent(event: SettingsEvent) {
         when (event) {
             is SettingsEvent.LoadSettings -> {
-                // no-op: Flows are already hot and uiState is actively combining them.
-                // If there's a need to force a refresh from repository (e.g., if repo doesn't use hot flows),
-                // you would trigger that here. But with DataStore flows, it's usually not needed.
+                // This is a no-op as the flows are hot and actively combined.
             }
             is SettingsEvent.UpdateSetting -> {
                 viewModelScope.launch {
@@ -117,8 +99,7 @@ class SettingsViewModel @Inject constructor(
                         "Theme"         -> appRepo.setTheme(event.value)
                         "Language"      -> appRepo.setLanguage(event.value)
                         "Notifications" -> appRepo.setNotifications(event.value)
-                        "Units"         -> appRepo.setUnits(event.value) // Added Units
-                        // Add other settings handling here if necessary
+                        "Units"         -> appRepo.setUnits(event.value)
                         else -> Log.w("SettingsViewModel", "Unhandled setting key: ${event.key}")
                     }
                 }
@@ -129,21 +110,20 @@ class SettingsViewModel @Inject constructor(
                     try {
                         profileRepo.saveProfile(event.profile)
                         Log.d("SettingsViewModel", "Profile save initiated for ${event.profile.name}")
-                        // The uiState flow will automatically update due to DataStore's reactive nature
-                        // if profileRepo.saveProfile successfully updates the DataStore values that
-                        // nameFlow, heightFlow, and weightFlow are observing.
                     } catch (e: Exception) {
                         Log.e("SettingsViewModel", "Failed to save profile for ${event.profile.name}", e)
-                        // Optionally update UI to show error, though the state itself might not change
-                        // if the save fails silently in the repo or if the flows don't reflect the error.
-                        // Consider emitting a temporary error event or using a separate error StateFlow.
                     }
                 }
             }
-
             is SettingsEvent.UpdateEnergyLevel -> {
                 viewModelScope.launch {
-                    profileRepo.setLocationEnergyLevel(event.level)
+                    Log.d("SettingsViewModel", "Updating Energy Level to: ${event.level}")
+                    try {
+                        profileRepo.setLocationEnergyLevel(event.level)
+                        Log.d("SettingsViewModel", "Successfully called repo to set energy level.")
+                    } catch (e: Exception) {
+                        Log.e("SettingsViewModel", "Failed to set energy level.", e)
+                    }
                 }
             }
         }

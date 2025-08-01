@@ -43,6 +43,7 @@ import com.ylabz.basepro.applications.bike.features.main.R
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
@@ -116,28 +117,18 @@ class BikeForegroundService : LifecycleService() {
                 initialValue = LocationEnergyLevel.BALANCED // Default
             )
 
-        lifecycleScope.launch {
-            currentEnergyLevelState.collect { level ->
-                Log.d("BikeForegroundService", "Energy level set to: ${level.name}. Ride State: ${_rideInfo.value.rideState}")
-                if (_rideInfo.value.rideState == RideState.Riding) {
-                    // Ride is active, apply active intervals
-                    startLocationUpdates(
-                        intervalMillis = level.activeRideIntervalMillis,
-                        minUpdateIntervalMillis = level.activeRideMinUpdateIntervalMillis
-                    )
-                } else {
-                    // Ride is not active, apply passive intervals
-                    startLocationUpdates(
-                        intervalMillis = level.passiveTrackingIntervalMillis,
-                        minUpdateIntervalMillis = level.passiveTrackingMinUpdateIntervalMillis
-                    )
-                }
-            }
-        }
-
         userStatsFlow = userProfileRepository.weightFlow.map { weightString ->
             val weightKg = weightString.toFloatOrNull() ?: 70f
             UserStats(heightCm = 0f, weightKg = weightKg)
+        }
+
+        // Set the initial passive location updates
+        lifecycleScope.launch {
+            val initialLevel = currentEnergyLevelState.first()
+            startLocationUpdates(
+                intervalMillis = initialLevel.passiveTrackingIntervalMillis,
+                minUpdateIntervalMillis = initialLevel.passiveTrackingMinUpdateIntervalMillis
+            )
         }
 
         // Initial location updates will be set by the collector of currentEnergyLevelState
@@ -337,7 +328,17 @@ class BikeForegroundService : LifecycleService() {
             Log.d("BikeForegroundService", "Formal ride already in progress.")
             return
         }
+        Log.d("BikeForegroundService", ">>> FORCING IMMEDIATE ACTIVE UPDATES - CHANGE SUCCESSFUL")
         Log.d("BikeForegroundService", "Starting formal ride. UI will reset for this segment.")
+
+        // Immediately switch to active location updates
+        lifecycleScope.launch {
+            val currentLevel = currentEnergyLevelState.first()
+            startLocationUpdates(
+                intervalMillis = currentLevel.activeRideIntervalMillis,
+                minUpdateIntervalMillis = currentLevel.activeRideMinUpdateIntervalMillis
+            )
+        }
 
         currentFormalRideId = UUID.randomUUID().toString()
         formalRideSegmentStartTimeMillis = System.currentTimeMillis()
@@ -373,8 +374,14 @@ class BikeForegroundService : LifecycleService() {
         }
         Log.d("BikeForegroundService", "Stopping and finalizing formal ride: $rideIdToFinalize")
 
-        // No need to explicitly call startLocationUpdates here for passive,
-        // as the collector in onCreate will handle it when rideState changes.
+        // Immediately switch back to passive location updates
+        lifecycleScope.launch {
+            val currentLevel = currentEnergyLevelState.first()
+            startLocationUpdates(
+                intervalMillis = currentLevel.passiveTrackingIntervalMillis,
+                minUpdateIntervalMillis = currentLevel.passiveTrackingMinUpdateIntervalMillis
+            )
+        }
 
         val segmentDistanceMeters = continuousDistanceMeters - formalRideSegmentStartOffsetDistanceMeters
         val segmentCalories = _rideInfo.value.caloriesBurned
