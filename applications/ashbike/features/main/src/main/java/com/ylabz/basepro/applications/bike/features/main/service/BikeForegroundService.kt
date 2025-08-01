@@ -118,9 +118,15 @@ class BikeForegroundService : LifecycleService() {
 
         lifecycleScope.launch {
             currentEnergyLevelState.collect { level ->
-                Log.d("BikeForegroundService", "LocationEnergyLevel changed to: ${level.name}")
-                // If not in a formal ride, update location request with new passive intervals
-                if (_rideInfo.value.rideState != RideState.Riding) {
+                Log.d("BikeForegroundService", "Energy level set to: ${level.name}. Ride State: ${_rideInfo.value.rideState}")
+                if (_rideInfo.value.rideState == RideState.Riding) {
+                    // Ride is active, apply active intervals
+                    startLocationUpdates(
+                        intervalMillis = level.activeRideIntervalMillis,
+                        minUpdateIntervalMillis = level.activeRideMinUpdateIntervalMillis
+                    )
+                } else {
+                    // Ride is not active, apply passive intervals
                     startLocationUpdates(
                         intervalMillis = level.passiveTrackingIntervalMillis,
                         minUpdateIntervalMillis = level.passiveTrackingMinUpdateIntervalMillis
@@ -167,7 +173,7 @@ class BikeForegroundService : LifecycleService() {
         val locationRequest = GmsLocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, intervalMillis)
             .setWaitForAccurateLocation(false)
             .setMinUpdateIntervalMillis(minUpdateIntervalMillis)
-            .setMaxUpdateDelayMillis(intervalMillis + 2000)
+            .setMaxUpdateDelayMillis(intervalMillis)
             .build()
         try {
             fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
@@ -332,12 +338,6 @@ class BikeForegroundService : LifecycleService() {
             return
         }
         Log.d("BikeForegroundService", "Starting formal ride. UI will reset for this segment.")
-
-        val currentLevel = currentEnergyLevelState.value // Get current energy level
-        startLocationUpdates(
-            intervalMillis = currentLevel.activeRideIntervalMillis,
-            minUpdateIntervalMillis = currentLevel.activeRideMinUpdateIntervalMillis
-        )
 
         currentFormalRideId = UUID.randomUUID().toString()
         formalRideSegmentStartTimeMillis = System.currentTimeMillis()
