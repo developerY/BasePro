@@ -49,7 +49,7 @@ fun AppPreferencesExpandable(
         LocationEnergyLevel.POWER_SAVER to Pair(0f, stringResource(R.string.settings_energy_level_power_saver)),
         LocationEnergyLevel.BALANCED to Pair(1f, stringResource(R.string.settings_energy_level_balanced)),
         LocationEnergyLevel.HIGH_ACCURACY to Pair(2f, stringResource(R.string.settings_energy_level_high_accuracy)),
-        LocationEnergyLevel.AUTO to Pair(3f, stringResource(R.string.settings_energy_level_auto)) // Added Auto
+        //LocationEnergyLevel.AUTO to Pair(3f, stringResource(R.string.settings_energy_level_auto)) // Added Auto
     )
 
     Card(
@@ -116,8 +116,8 @@ fun AppPreferencesExpandable(
                                 onEvent(SettingsEvent.UpdateEnergyLevel(it))
                             }
                         },
-                        steps = 2, // 4 positions (0,1,2,3), so 2 steps in between
-                        valueRange = 0f..3f,
+                        steps = 1, // 4 positions (0,1,2,3), so 2 steps in between
+                        valueRange = 0f..2f,
                         modifier = Modifier.fillMaxWidth()
                     )
                     // --- End of Location Energy Level Setting ---
