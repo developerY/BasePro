@@ -18,6 +18,9 @@ class SettingsViewModel @Inject constructor(
     private val profileRepo: UserProfileRepository
 ) : ViewModel() {
 
+    // MINIMAL CHANGE 1 of 2: Add a temporary holder for the UI's selection.
+    private val _locallySelectedEnergyLevel = MutableStateFlow<LocationEnergyLevel?>(null)
+
     val theme: StateFlow<String> = appRepo.themeFlow
         .stateIn(
             scope = viewModelScope,
@@ -56,11 +59,16 @@ class SettingsViewModel @Inject constructor(
 
     val uiState: StateFlow<SettingsUiState> =
         combine(
+            _locallySelectedEnergyLevel, // Add the temporary holder to the combine function
             settingsSelections,
             profileData,
             profileRepo.profileReviewedOrSavedFlow,
             profileRepo.locationEnergyLevelFlow
-        ) { selections, profile, profileHasBeenReviewedOrSaved, energyLevel ->
+        ) { localOverride, selections, profile, profileHasBeenReviewedOrSaved, savedEnergyLevel ->
+
+            // This is the key change: Use the local selection if it exists, otherwise use the saved one.
+            // This prevents the UI from "snapping back" while the save is in progress.
+            val energyLevel = localOverride ?: savedEnergyLevel
 
             Log.d("ViewModelCombine", "Profile in combine: Name='${profile.name}', H='${profile.heightCm}', W='${profile.weightKg}'")
             Log.d("ViewModelCombine", "Profile reviewed or saved by user: $profileHasBeenReviewedOrSaved")
@@ -116,6 +124,8 @@ class SettingsViewModel @Inject constructor(
                 }
             }
             is SettingsEvent.UpdateEnergyLevel -> {
+                // MINIMAL CHANGE 2 of 2: Update the temporary holder instantly for the UI.
+                _locallySelectedEnergyLevel.value = event.level
                 viewModelScope.launch {
                     Log.d("SettingsViewModel", "Updating Energy Level to: ${event.level}")
                     try {

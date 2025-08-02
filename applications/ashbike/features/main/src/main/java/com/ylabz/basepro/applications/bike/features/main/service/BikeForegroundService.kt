@@ -23,31 +23,22 @@ import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import com.ylabz.basepro.applications.bike.database.RideLocationEntity
 import com.ylabz.basepro.applications.bike.database.repository.UserProfileRepository
+import com.ylabz.basepro.applications.bike.features.main.R
 import com.ylabz.basepro.applications.bike.features.main.usecase.CalculateCaloriesUseCase
 import com.ylabz.basepro.applications.bike.features.main.usecase.UserStats
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
+import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import com.ylabz.basepro.core.model.bike.RideState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.UUID
+import java.util.*
 import javax.inject.Inject
 import kotlin.math.max
-import com.ylabz.basepro.applications.bike.features.main.R
-import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.collections.immutable.ImmutableMap
-import kotlinx.collections.immutable.persistentMapOf
 
 @AndroidEntryPoint
 class BikeForegroundService : LifecycleService() {
@@ -112,7 +103,7 @@ class BikeForegroundService : LifecycleService() {
         currentEnergyLevelState = userProfileRepository.locationEnergyLevelFlow
             .stateIn(
                 scope = lifecycleScope,
-                started = SharingStarted.WhileSubscribed(5000),
+                started = SharingStarted.Eagerly,//WhileSubscribed(5000),
                 initialValue = LocationEnergyLevel.BALANCED
             )
 
@@ -121,10 +112,12 @@ class BikeForegroundService : LifecycleService() {
             UserStats(heightCm = 0f, weightKg = weightKg)
         }
 
-        // *** THIS IS THE FIX ***
+        // *** THIS IS THE FIX WITH THE DEBUGGER LOG ***
         // This listener reacts to settings changes in real-time.
         lifecycleScope.launch {
             currentEnergyLevelState.collect { level ->
+                // <<< --- DIAGNOSTIC LOG --- >>>
+                Log.d("BikeServiceDebugger", ">>> SETTING CHANGE RECEIVED IN SERVICE: New level is ${level.name}")
                 // Only update the interval if a formal ride is NOT active.
                 // The start/stop ride functions are responsible for their own interval changes.
                 if (_rideInfo.value.rideState != RideState.Riding) {
@@ -161,6 +154,9 @@ class BikeForegroundService : LifecycleService() {
 
     @SuppressLint("MissingPermission")
     private fun startLocationUpdates(intervalMillis: Long, minUpdateIntervalMillis: Long) {
+        // This is our proof that the timing is being set correctly
+        Log.d("GPS_TIMING_DEBUG", "Applying new GPS interval: $intervalMillis ms")
+
         Log.d("BikeForegroundService", "Attempting to start location updates with interval: $intervalMillis ms, minInterval: $minUpdateIntervalMillis ms")
         fusedLocationClient.removeLocationUpdates(locationCallback)
 
@@ -371,7 +367,7 @@ class BikeForegroundService : LifecycleService() {
             Log.d("BikeForegroundService", "No active formal ride to stop.")
             return
         }
-        Log.d("BikeForegroundService", "Stopping formal ride. Switching to PASSIVE interval.")
+        Log.d("BikeForegroundService", "Stopping formal ride. RideState will trigger passive interval via collector.")
 
         // The collector in onCreate will automatically handle switching back to passive.
         _rideInfo.value = _rideInfo.value.copy(rideState = RideState.NotStarted)
