@@ -114,18 +114,29 @@ class BikeForegroundService : LifecycleService() {
 
         // *** THIS IS THE FIX WITH THE DEBUGGER LOG ***
         // This listener reacts to settings changes in real-time.
+        // In onCreate()
+
+        // --- NEW, CORRECTED CODE ---
         lifecycleScope.launch {
-            currentEnergyLevelState.collect { level ->
-                // <<< --- DIAGNOSTIC LOG --- >>>
-                Log.d("BikeServiceDebugger", ">>> SETTING CHANGE RECEIVED IN SERVICE: New level is ${level.name}")
-                // Only update the interval if a formal ride is NOT active.
-                // The start/stop ride functions are responsible for their own interval changes.
-                if (_rideInfo.value.rideState != RideState.Riding) {
-                    Log.d("BikeForegroundService", "Energy level changed to ${level.name} while passive. Updating interval.")
-                    startLocationUpdates(
-                        intervalMillis = level.passiveTrackingIntervalMillis,
-                        minUpdateIntervalMillis = level.passiveTrackingMinUpdateIntervalMillis
-                    )
+            currentEnergyLevelState.collect { newLevel ->
+                Log.d("BikeServiceDebugger", ">>> SETTING CHANGE RECEIVED IN SERVICE: New level is ${newLevel.name}")
+
+                // Check the current ride state and apply the correct interval
+                when (_rideInfo.value.rideState) {
+                    RideState.Riding -> {
+                        Log.d("BikeForegroundService", "Energy level changed to ${newLevel.name} MID-RIDE. Updating to ACTIVE interval.")
+                        startLocationUpdates(
+                            intervalMillis = newLevel.activeRideIntervalMillis,
+                            minUpdateIntervalMillis = newLevel.activeRideMinUpdateIntervalMillis
+                        )
+                    }
+                    else -> { // Covers NotStarted and any other future states
+                        Log.d("BikeForegroundService", "Energy level changed to ${newLevel.name} while PASSIVE. Updating to passive interval.")
+                        startLocationUpdates(
+                            intervalMillis = newLevel.passiveTrackingIntervalMillis,
+                            minUpdateIntervalMillis = newLevel.passiveTrackingMinUpdateIntervalMillis
+                        )
+                    }
                 }
             }
         }
