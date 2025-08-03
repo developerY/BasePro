@@ -281,7 +281,8 @@ class BikeForegroundService : LifecycleService() {
             elevationGain = displayElevationGain,
             elevationLoss = displayElevationLoss,
             heading = if (location.hasBearing()) location.bearing else _rideInfo.value.heading,
-            rideState = _rideInfo.value.rideState
+            rideState = _rideInfo.value.rideState,
+            lastGpsUpdateTime = System.currentTimeMillis() // <-- ADD THIS LINE
         )
 
         if (isFormalRideActive) {

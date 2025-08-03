@@ -44,7 +44,8 @@ data class BikeRideInfo(
     val batteryLevel: Int?,
     val motorPower: Float?,
     val rideState: RideState = RideState.NotStarted,
-    val bikeWeatherInfo: BikeWeatherInfo? = null
+    val bikeWeatherInfo: BikeWeatherInfo? = null,
+    val lastGpsUpdateTime: Long = 0L
 )
 
 

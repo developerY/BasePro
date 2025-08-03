@@ -47,7 +47,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun BigBikeProgressIndicator(
-    // 1. SIGNATURE CHANGED TO ACCEPT UI STATE
+    // SIGNATURE REMAINS THE SAME
     uiState: BikeUiState.Success,
     modifier: Modifier = Modifier,
     trackHeight: Dp = 8.dp,
@@ -57,16 +57,18 @@ fun BigBikeProgressIndicator(
     onBikeClick: () -> Unit
 ) {
 
-    // 2. EXTRACT DATA FROM THE STATE OBJECT
+    // EXTRACT DATA FROM THE STATE OBJECT
     val bikeData = uiState.bikeData
     val currentDistance = bikeData.currentTripDistance
     val totalDistance = bikeData.totalTripDistance
-    val location = bikeData.location
+    val lastUpdateTime = bikeData.lastGpsUpdateTime // USE THE RELIABLE TIMESTAMP
 
-    // 3. ANIMATION LOGIC TO PULSE THE ICON
+    // ANIMATION LOGIC TO PULSE THE ICON
     var animatedTint by remember { mutableStateOf(iconTint) }
-    LaunchedEffect(location) {
-        if (location != null) {
+    // USE lastUpdateTime AS THE TRIGGER
+    LaunchedEffect(lastUpdateTime) {
+        // Don't flash on the initial composition (when timestamp is 0)
+        if (lastUpdateTime > 0L) {
             animatedTint = Color.Blue // Flash to Blue
             delay(250) // Hold the flash
             animatedTint = iconTint // Return to the original color
@@ -198,7 +200,8 @@ private fun Float.displayKm() = if (this % 1 == 0f) {
 private fun createFakeSuccessState(
     currentDistance: Float,
     totalDistance: Float?,
-    location: LatLng? = null
+    location: LatLng? = null,
+    lastGpsUpdateTime: Long = 0L // ADD TIMESTAMP TO PREVIEW HELPER
 ): BikeUiState.Success {
     return BikeUiState.Success(
         bikeData = BikeRideInfo(
@@ -221,7 +224,8 @@ private fun createFakeSuccessState(
             batteryLevel = null,
             motorPower = null,
             rideState = RideState.NotStarted,
-            bikeWeatherInfo = null
+            bikeWeatherInfo = null,
+            lastGpsUpdateTime = lastGpsUpdateTime // PASS TIMESTAMP
         )
     )
 }
@@ -248,7 +252,8 @@ fun BigBikeProgressIndicatorPreview() {
             uiState = createFakeSuccessState(
                 currentDistance = 2.5f, // Assuming distance in km
                 totalDistance = 10f,
-                location = LatLng(0.0, 0.0)
+                location = LatLng(0.0, 0.0),
+                lastGpsUpdateTime = 1L // Provide a non-zero timestamp for preview
             ),
             iconTint = Color(0xFF4CAF50),
             onBikeClick = { }
