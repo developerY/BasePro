@@ -122,9 +122,7 @@ fun SpeedAndProgressCard(
                 contentAlignment = Alignment.Center
             ) {
                 BikePathWithControls(
-                    getRideState = { bikeData.rideState }, // Updated
-                    getCurrentTripDistance = { bikeData.currentTripDistance }, // Updated
-                    getTotalTripDistance = { bikeData.totalTripDistance }, // Updated
+                    uiState = uiState, // Just pass the state object
                     onBikeEvent = onBikeEvent,
                     //navTo = navTo
                 )

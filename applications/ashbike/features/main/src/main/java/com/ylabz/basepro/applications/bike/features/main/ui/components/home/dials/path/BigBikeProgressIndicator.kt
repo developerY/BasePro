@@ -35,13 +35,15 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.*
 import kotlin.math.roundToInt
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
 import com.ylabz.basepro.core.model.bike.RideState
 
 @Composable
 fun BigBikeProgressIndicator(
-    currentDistance: Float,
-    totalDistance: Float?,
+    // 1. SIGNATURE CHANGED TO ACCEPT UI STATE
+    uiState: BikeUiState.Success,
     modifier: Modifier = Modifier,
     trackHeight: Dp = 8.dp,
     iconSize: Dp = 48.dp,
@@ -49,6 +51,11 @@ fun BigBikeProgressIndicator(
     containerHeight: Dp = 70.dp,
     onBikeClick: () -> Unit
 ) {
+
+    val bikeData = uiState.bikeData // Access bikeData from uiState
+    val currentDistance = bikeData.currentTripDistance // Updated
+    val totalDistance = bikeData.totalTripDistance // Updated
+
     // 1) Compute raw fraction if we have a totalDistance
     val rawFraction: Float? = totalDistance
         ?.takeIf { it > 0f }
@@ -163,57 +170,3 @@ private fun Float.displayKm() = if (this % 1 == 0f) {
 }
 
 
-
-
-@Preview(showBackground = true)
-@Composable
-fun BigBikeProgressIndicatorPreview() {
-    Column(
-        Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // 1) initial: no totalDistance → only centered bike
-        BigBikeProgressIndicator(
-            currentDistance = 0f,
-            totalDistance   = null,
-            iconTint        = Color.DarkGray,
-            onBikeClick     = { /* opens dialog */ }
-        )
-        Spacer(Modifier.height(24.dp))
-
-        // 2) with a 10 km plan, at 2.5 km ridden
-        BigBikeProgressIndicator(
-            currentDistance = 2_500f,
-            totalDistance   = 10_000f,
-            iconTint        = Color(0xFF4CAF50),
-            onBikeClick     = { /* edit distance */ }
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun BigBikeProgressIndicatorPreviewOld() {
-    var total by remember { mutableStateOf<Float?>(null) }
-    var current by remember { mutableStateOf(0f) }
-
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        BigBikeProgressIndicator(
-            currentDistance = current,
-            totalDistance   = total,
-            iconTint        = Color.DarkGray,
-            onBikeClick     = { total = 10000f }
-        )
-        Spacer(Modifier.height(16.dp))
-        current = 5000f
-        total   = 10000f
-        BigBikeProgressIndicator(
-            currentDistance = current,
-            totalDistance   = total,
-            iconTint        = Color.Green,
-            onBikeClick     = { /* edit */ }
-        )
-    }
-}

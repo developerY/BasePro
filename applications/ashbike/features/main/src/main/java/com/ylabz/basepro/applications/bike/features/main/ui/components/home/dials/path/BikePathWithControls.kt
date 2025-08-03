@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path
 
+import android.R.attr.iconTint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.features.main.R // Assuming this is your R file
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
 import kotlinx.collections.immutable.persistentMapOf
@@ -45,15 +47,18 @@ import com.ylabz.basepro.core.ui.R as CoreUiR // Added import
 @Composable
 fun BikePathWithControls(
     modifier: Modifier = Modifier,
-    getRideState: () -> RideState,
-    getCurrentTripDistance: () -> Float,
-    getTotalTripDistance: () -> Float?,
+    uiState: BikeUiState.Success, // Just pass the state object
     onBikeEvent: (BikeEvent) -> Unit,
     iconSize: Dp = 48.dp,
     trackHeight: Dp = 8.dp,
     buttonSize: Dp = 60.dp
 ) {
     var showDistanceDialog by remember { mutableStateOf(false) }
+
+    val bikeData = uiState.bikeData // Access bikeData from uiState
+    val getRideState = { bikeData.rideState } // Updated
+    val getCurrentTripDistance = { bikeData.currentTripDistance } // Updated
+    val getTotalTripDistance = { bikeData.totalTripDistance } // Updated
 
     val rideState = getRideState()
 
@@ -94,8 +99,8 @@ fun BikePathWithControls(
             contentAlignment = Alignment.Center
         ) {
             BigBikeProgressIndicator(
-                currentDistance = currentDistance,
-                totalDistance = totalDistance,
+                // 1. SIGNATURE CHANGED TO ACCEPT UI STATE
+                uiState = uiState, //bi: BikeUiState.Success,uiState: BikeUiState.Success,
                 trackHeight = trackHeight,
                 iconSize = iconSize,
                 iconTint = if (rideState == RideState.Riding) Color(0xFF4CAF50) else Color.LightGray,
@@ -153,79 +158,31 @@ fun BikePathWithControls(
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun BikePathWithControlsPreview() {
     val demoInfo = BikeRideInfo(
-        location = LatLng(37.42, -122.08),
+        location = LatLng(37.4219999, -122.0862462),
         currentSpeed = 0.0,
         averageSpeed = 0.0,
         maxSpeed = 0.0,
-        currentTripDistance = 10.0f, // Example value
-        totalTripDistance = 25.0f,   // Example value
-        remainingDistance = null,
+        currentTripDistance = 0.0f,
+        totalTripDistance = 10.0f, // Example total distance
+        remainingDistance = 10.0f,
         elevationGain = 0.0,
         elevationLoss = 0.0,
         caloriesBurned = 0,
         rideDuration = "00:00",
-        settings = persistentMapOf(),
+        settings = persistentMapOf(), // Empty map for simplicity
         heading = 0f,
         elevation = 0.0,
         isBikeConnected = false,
         batteryLevel = null,
         motorPower = null,
-        rideState = RideState.Riding, // Example state
-        bikeWeatherInfo = null,
-        heartbeat = null
+        rideState = RideState.NotStarted,
+        heartbeat = null,// Example initial state
     )
-    BikePathWithControls(
-        getRideState = { demoInfo.rideState },
-        getCurrentTripDistance = { demoInfo.currentTripDistance },
-        getTotalTripDistance = { demoInfo.totalTripDistance },
-        onBikeEvent = {}
-    )
+    val uiState = BikeUiState.Success(bikeData = demoInfo)
+    BikePathWithControls(uiState = uiState, onBikeEvent = {})
 }
 
-
-/*fun BikePathWithControlsPreview() {
-    val demoInfo = BikeRideInfo(
-        // Core location & speeds
-        location            = LatLng(37.4219999, -122.0862462),
-        currentSpeed        = 0.0,
-        averageSpeed        = 0.0,
-        maxSpeed            = 0.0,
-
-        // Distances (km)
-        currentTripDistance = 0.0f,
-        totalTripDistance   = null,
-        remainingDistance   = null,
-
-        // Elevation (m)
-        elevationGain       = 0.0,
-        elevationLoss       = 0.0,
-
-        // Calories
-        caloriesBurned      = 0,
-
-        // UI state
-        rideDuration        = "00:00",
-        settings            = mapOf(
-            "Theme" to listOf("Light", "Dark", "System Default"),
-            "Language" to listOf("English", "Spanish", "French"),
-            "Notifications" to listOf("Enabled", "Disabled")
-        ),
-        heading             = 0f,
-        elevation           = 0.0,
-
-        // Bike connectivity
-        isBikeConnected     = false,
-        batteryLevel        = null,
-        motorPower          = null,
-
-        // rideState & weatherInfo use their defaults
-    )
-    BikePathWithControls(
-        bikeRideInfo = demoInfo,
-        onBikeEvent = {},
-    )
-}*/
