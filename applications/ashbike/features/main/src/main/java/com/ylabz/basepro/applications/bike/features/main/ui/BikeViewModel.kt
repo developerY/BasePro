@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import android.util.Log
+import androidx.compose.animation.core.copy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.features.main.service.BikeForegroundService
@@ -45,6 +46,9 @@ class BikeViewModel @Inject constructor(
     // 2) One‐shot weather at ride start (null until we fetch it)
     private val _weatherInfo = MutableStateFlow<BikeWeatherInfo?>(null)
 
+    // 1. ADD THIS NEW STATE FLOW FOR THE DIALOG
+    private val _showSetDistanceDialog = MutableStateFlow(false)
+
 
     // --- Service Connection ---
     private val serviceConnection = object : ServiceConnection {
@@ -66,34 +70,51 @@ class BikeViewModel @Inject constructor(
         }
     }
 
+
+    // A temporary data holder class to make the logic cleaner
+    data class CombinedData(
+        val rideInfo: com.ylabz.basepro.core.model.bike.BikeRideInfo,
+        val totalDistance: Float?,
+        val weather: com.ylabz.basepro.core.model.weather.BikeWeatherInfo?,
+        val showDialog: Boolean
+    )
+
     private fun observeServiceData() {
         Log.d("BikeViewModel", "observeServiceData called.")
         viewModelScope.launch {
             bikeService?.let { service ->
                 Log.d("BikeViewModel", "Starting to collect from service.rideInfo.")
-                // --- CORRECTED COMBINE FUNCTION ---
-                // We now combine all three sources of truth for the UI
+
+                // 1. COMBINE: This block's only job is to gather the latest data from all sources.
                 combine(
-                    service.rideInfo.sample(1000L), // <<< MODIFICATION HERE
+                    service.rideInfo.sample(1000L),
                     _uiPathDistance,
-                    _weatherInfo // <-- ADDED
-                ) { serviceInfo, uiTotalKm, weather ->
-                    Log.d("BikeViewModel", "Combining data. Location: ${serviceInfo.location}, Weather: ${weather?.conditionDescription}")
-                    // Create the final UI object, now including weather
-                    serviceInfo.copy(
-                        totalTripDistance = uiTotalKm,
-                        bikeWeatherInfo = weather // <-- ADDED
-                    )
-                }.map<BikeRideInfo, BikeUiState> { info ->
-                    Log.d("BikeViewModel", "Mapping to BikeUiState.Success. Location: ${info.location}")
-                    BikeUiState.Success(info)
-                }.catch { e ->
-                    Log.e("BikeViewModel", "Error in service.rideInfo flow: ${e.message}", e)
-                    emit(BikeUiState.Error(e.localizedMessage ?: "Service error"))
-                }.collect { state ->
-                    Log.d("BikeViewModel", "Collecting new UI state: $state")
-                    _uiState.value = state
+                    _weatherInfo,
+                    _showSetDistanceDialog // <-- The new source is included here
+                ) { rideInfo, totalDistance, weather, showDialog ->
+                    // It returns a simple data holder object.
+                    CombinedData(rideInfo, totalDistance, weather, showDialog)
                 }
+                    // 2. MAP: This block's job is to transform the raw data into the final UI State.
+                    //    Crucially, its return type is declared as the supertype, 'BikeUiState'.
+                    .map<CombinedData, BikeUiState> { data ->
+                        BikeUiState.Success(
+                            bikeData = data.rideInfo.copy(
+                                totalTripDistance = data.totalDistance,
+                                bikeWeatherInfo = data.weather
+                            ),
+                            showSetDistanceDialog = data.showDialog
+                        )
+                    }
+                    // 3. CATCH: This now works perfectly, because the flow is of type Flow<BikeUiState>.
+                    .catch { e ->
+                        Log.e("BikeViewModel", "Error in flow: ${e.message}", e)
+                        emit(BikeUiState.Error(e.localizedMessage ?: "Service error"))
+                    }
+                    .collect { state ->
+                        Log.d("BikeViewModel", "Collecting new UI state: $state")
+                        _uiState.value = state
+                    }
             } ?: run {
                 Log.w("BikeViewModel", "observeServiceData: bikeService is null, cannot collect.")
             }
@@ -122,12 +143,33 @@ class BikeViewModel @Inject constructor(
 
     // The context parameter is now gone!
     fun onEvent(event: BikeEvent) {
+        // This function's only job is to update the raw "source of truth" StateFlows.
+        // The `combine` block in `observeServiceData` will automatically react to these
+        // changes and produce the new, correct UI state.
         when (event) {
-            is BikeEvent.SetTotalDistance -> _uiPathDistance.value = event.distanceKm
-            BikeEvent.StartRide -> sendCommandToService(BikeForegroundService.ACTION_START_RIDE) // This will now correctly refer to the class
+            is BikeEvent.SetTotalDistance -> {
+                _uiPathDistance.value = event.distanceKm
+                // Hide the dialog when the user confirms a new distance
+                _showSetDistanceDialog.value = false
+            }
+
+            BikeEvent.StartRide -> {
+                sendCommandToService(BikeForegroundService.ACTION_START_RIDE)
+            }
+
             BikeEvent.StopRide -> {
-                sendCommandToService(BikeForegroundService.ACTION_STOP_RIDE) // This will now correctly refer to the class
+                sendCommandToService(BikeForegroundService.ACTION_STOP_RIDE)
                 _uiPathDistance.value = null // Resetting the UI path distance
+            }
+
+            BikeEvent.OnBikeClick -> {
+                // The user clicked the bike icon, so we need to show the dialog.
+                _showSetDistanceDialog.value = true
+            }
+
+            BikeEvent.DismissSetDistanceDialog -> {
+                // The user dismissed the dialog, so we need to hide it.
+                _showSetDistanceDialog.value = false
             }
         }
     }

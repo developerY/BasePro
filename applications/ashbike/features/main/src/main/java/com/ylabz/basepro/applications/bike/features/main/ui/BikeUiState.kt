@@ -7,7 +7,10 @@ sealed class BikeUiState {
     object WaitingForGps : BikeUiState()
     object Loading : BikeUiState()
     object Idle    : BikeUiState()
-    data class Success(val bikeData: BikeRideInfo) : BikeUiState()
+    data class Success(
+        val bikeData: BikeRideInfo,
+        val showSetDistanceDialog: Boolean = false
+    ) : BikeUiState()
     data class Error(val message: String)             : BikeUiState()
 }
 

@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
@@ -49,12 +50,12 @@ import kotlin.math.roundToInt
 fun BigBikeProgressIndicator(
     // SIGNATURE REMAINS THE SAME
     uiState: BikeUiState.Success,
+    onEvent: (BikeEvent) -> Unit,
     modifier: Modifier = Modifier,
     trackHeight: Dp = 8.dp,
     iconSize: Dp = 48.dp,
     iconTint: Color = Color.Gray,
-    containerHeight: Dp = 70.dp,
-    onBikeClick: () -> Unit
+    containerHeight: Dp = 70.dp
 ) {
 
     // EXTRACT DATA FROM THE STATE OBJECT
@@ -109,7 +110,7 @@ fun BigBikeProgressIndicator(
                 tint = finalTint, // USE ANIMATED TINT
                 modifier = Modifier
                     .size(iconSize)
-                    .clickable { onBikeClick() }
+                    .clickable { onEvent(BikeEvent.OnBikeClick) } // UPDATED
             )
         }
         return
@@ -185,7 +186,7 @@ fun BigBikeProgressIndicator(
                     )
                 }
                 .size(iconSize)
-                .clickable { onBikeClick() }
+                .clickable { onEvent(BikeEvent.OnBikeClick) } // UPDATED
         )
     }
 }
@@ -243,20 +244,20 @@ fun BigBikeProgressIndicatorPreview() {
         BigBikeProgressIndicator(
             uiState = createFakeSuccessState(currentDistance = 0f, totalDistance = null),
             iconTint = Color.DarkGray,
-            onBikeClick = { }
+            onEvent = { } // UPDATED
         )
         Spacer(Modifier.height(24.dp))
 
         // 2) with a 10 km plan, at 2.5 km ridden
         BigBikeProgressIndicator(
             uiState = createFakeSuccessState(
-                currentDistance = 2.5f, // Assuming distance in km
+                currentDistance = 2.5f,
                 totalDistance = 10f,
                 location = LatLng(0.0, 0.0),
-                lastGpsUpdateTime = 1L // Provide a non-zero timestamp for preview
+                lastGpsUpdateTime = 1L
             ),
             iconTint = Color(0xFF4CAF50),
-            onBikeClick = { }
+            onEvent = { } // UPDATED
         )
     }
 }

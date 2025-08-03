@@ -1,6 +1,5 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path
 
-import android.R.attr.iconTint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-// import androidx.compose.material.icons.filled.Pause // Not directly used after string resources
 import androidx.compose.material.icons.filled.PedalBike
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
@@ -27,22 +25,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
-import com.ylabz.basepro.applications.bike.features.main.R // Assuming this is your R file
+import com.ylabz.basepro.applications.bike.features.main.R
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
+import com.ylabz.basepro.core.ui.R as CoreUiR
 import kotlinx.collections.immutable.persistentMapOf
-import com.ylabz.basepro.core.ui.R as CoreUiR // Added import
-
 
 @Composable
 fun BikePathWithControls(
@@ -53,14 +50,11 @@ fun BikePathWithControls(
     trackHeight: Dp = 8.dp,
     buttonSize: Dp = 60.dp
 ) {
-    var showDistanceDialog by remember { mutableStateOf(false) }
 
     val bikeData = uiState.bikeData // Access bikeData from uiState
-    val getRideState = { bikeData.rideState } // Updated
-    val getCurrentTripDistance = { bikeData.currentTripDistance } // Updated
-    val getTotalTripDistance = { bikeData.totalTripDistance } // Updated
-
-    val rideState = getRideState()
+    val rideState = bikeData.rideState
+    val totalDistance = bikeData.totalTripDistance
+    val showDistanceDialog = uiState.showSetDistanceDialog
 
     // Determine the FAB icon & description based on rideState
     val fabIcon = when (rideState) {
@@ -73,9 +67,6 @@ fun BikePathWithControls(
         RideState.NotStarted,
         RideState.Ended -> stringResource(CoreUiR.string.action_start)
     }
-
-    val currentDistance = getCurrentTripDistance()
-    val totalDistance = getTotalTripDistance()
 
     Row(
         modifier = modifier
@@ -99,13 +90,12 @@ fun BikePathWithControls(
             contentAlignment = Alignment.Center
         ) {
             BigBikeProgressIndicator(
-                // 1. SIGNATURE CHANGED TO ACCEPT UI STATE
-                uiState = uiState, //bi: BikeUiState.Success,uiState: BikeUiState.Success,
+                uiState = uiState,
+                onEvent = onBikeEvent,
                 trackHeight = trackHeight,
                 iconSize = iconSize,
                 iconTint = if (rideState == RideState.Riding) Color(0xFF4CAF50) else Color.LightGray,
                 containerHeight = buttonSize,
-                onBikeClick = { showDistanceDialog = true }
             )
         }
         FloatingActionButton(
@@ -120,12 +110,12 @@ fun BikePathWithControls(
 
     if (showDistanceDialog) {
         var text by remember { mutableStateOf("") }
-        LaunchedEffect(getTotalTripDistance()) { // Keyed to the result of the lambda
-            text = getTotalTripDistance()?.toString() ?: ""
+        LaunchedEffect(totalDistance) { // Keyed to the result of the lambda
+            text = totalDistance?.toString() ?: ""
         }
 
         AlertDialog(
-            onDismissRequest = { showDistanceDialog = false },
+            onDismissRequest = { onBikeEvent(BikeEvent.DismissSetDistanceDialog) },
             title = { Text(stringResource(R.string.bike_dialog_set_distance_title)) },
             text = {
                 OutlinedTextField(
@@ -142,14 +132,13 @@ fun BikePathWithControls(
                     text.toFloatOrNull()?.let { entered ->
                         onBikeEvent(BikeEvent.SetTotalDistance(entered))
                     }
-                    showDistanceDialog = false
                 }) {
                     Text(stringResource(CoreUiR.string.action_save))
                 }
             },
             dismissButton = {
                 TextButton(onClick = {
-                    showDistanceDialog = false
+                    onBikeEvent(BikeEvent.DismissSetDistanceDialog)
                 }) {
                     Text(stringResource(CoreUiR.string.action_cancel))
                 }
@@ -181,8 +170,12 @@ fun BikePathWithControlsPreview() {
         motorPower = null,
         rideState = RideState.NotStarted,
         heartbeat = null,// Example initial state
+        lastGpsUpdateTime = 0L
     )
-    val uiState = BikeUiState.Success(bikeData = demoInfo)
+    val uiState = BikeUiState.Success(
+        bikeData = demoInfo,
+        showSetDistanceDialog = true // Also needed for the preview to work
+    )
     BikePathWithControls(uiState = uiState, onBikeEvent = {})
 }
 
