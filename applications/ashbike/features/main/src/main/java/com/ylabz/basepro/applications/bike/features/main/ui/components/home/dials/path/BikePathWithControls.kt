@@ -51,6 +51,14 @@ fun BikePathWithControls(
     buttonSize: Dp = 60.dp
 ) {
 
+    // --- Stable Lambda Creation ---
+    // Create a stable, remembered version of the event handler.
+    // This `remember` guarantees that BigBikeProgressIndicator always
+    // receives the exact same instance for its onEvent parameter.
+    val onBikeEventStable = remember { { event: BikeEvent -> onBikeEvent(event) } }
+    val onStartRide = remember { { onBikeEvent(BikeEvent.StartRide) } }
+    val onStopRide = remember { { onBikeEvent(BikeEvent.StopRide) } }
+
     val bikeData = uiState.bikeData // Access bikeData from uiState
     val rideState = bikeData.rideState
     val totalDistance = bikeData.totalTripDistance
@@ -76,7 +84,7 @@ fun BikePathWithControls(
         verticalAlignment = Alignment.CenterVertically
     ) {
         FloatingActionButton(
-            onClick = { onBikeEvent(BikeEvent.StartRide) },
+            onClick = onStartRide,
             containerColor = if (rideState == RideState.Riding) Color.Gray else Color.White,
             contentColor = Color.Black,
             modifier = Modifier.size(buttonSize)
@@ -91,7 +99,7 @@ fun BikePathWithControls(
         ) {
             BigBikeProgressIndicator(
                 uiState = uiState,
-                onEvent = onBikeEvent,
+                onEvent = onBikeEventStable,
                 trackHeight = trackHeight,
                 iconSize = iconSize,
                 iconTint = if (rideState == RideState.Riding) Color(0xFF4CAF50) else Color.LightGray,
@@ -99,7 +107,7 @@ fun BikePathWithControls(
             )
         }
         FloatingActionButton(
-            onClick = { onBikeEvent(BikeEvent.StopRide) },
+            onClick = onStopRide,
             containerColor = if (rideState == RideState.Riding) Color.White else Color.LightGray,
             contentColor = Color.Red,
             modifier = Modifier.size(buttonSize)
@@ -109,13 +117,20 @@ fun BikePathWithControls(
     }
 
     if (showDistanceDialog) {
+
+        // This 'text' state is ephemeral and local to the dialog, which is fine.
         var text by remember { mutableStateOf("") }
-        LaunchedEffect(totalDistance) { // Keyed to the result of the lambda
+
+        // When the dialog appears, initialize its text field with the current total distance.
+        LaunchedEffect(totalDistance) {
             text = totalDistance?.toString() ?: ""
         }
 
+        // Create stable lambdas for the dialog events
+        val onDismissRequest = remember { { onBikeEvent(BikeEvent.DismissSetDistanceDialog) } }
+
         AlertDialog(
-            onDismissRequest = { onBikeEvent(BikeEvent.DismissSetDistanceDialog) },
+            onDismissRequest = onDismissRequest,
             title = { Text(stringResource(R.string.bike_dialog_set_distance_title)) },
             text = {
                 OutlinedTextField(
@@ -137,9 +152,7 @@ fun BikePathWithControls(
                 }
             },
             dismissButton = {
-                TextButton(onClick = {
-                    onBikeEvent(BikeEvent.DismissSetDistanceDialog)
-                }) {
+                TextButton(onClick = onDismissRequest) {
                     Text(stringResource(CoreUiR.string.action_cancel))
                 }
             }
