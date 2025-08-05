@@ -1,6 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path
 
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -25,9 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -43,12 +41,12 @@ import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
 import kotlinx.collections.immutable.persistentMapOf
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.util.Locale
 import kotlin.math.roundToInt
 
 @Composable
 fun BigBikeProgressIndicator(
-    // SIGNATURE REMAINS THE SAME
     uiState: BikeUiState.Success,
     onEvent: (BikeEvent) -> Unit,
     modifier: Modifier = Modifier,
@@ -58,45 +56,48 @@ fun BigBikeProgressIndicator(
     containerHeight: Dp = 70.dp
 ) {
 
-    // EXTRACT DATA FROM THE STATE OBJECT
+    // --- EXTRACT DATA ---
     val bikeData = uiState.bikeData
     val currentDistance = bikeData.currentTripDistance
     val totalDistance = bikeData.totalTripDistance
-    val lastUpdateTime = bikeData.lastGpsUpdateTime // USE THE RELIABLE TIMESTAMP
+    val lastUpdateTime = bikeData.lastGpsUpdateTime
 
-    // ANIMATION LOGIC TO PULSE THE ICON
-    var animatedTint by remember { mutableStateOf(iconTint) }
-    // USE lastUpdateTime AS THE TRIGGER
+    // --- STABLE LAMBDA CREATION ---
+    val onBikeClick = remember { { onEvent(BikeEvent.OnBikeClick) } }
+
+
+    // --- FIXED ANIMATION LOGIC ---
+    // FIX: Animatable for Color requires a Color.VectorConverter.
+    val animatedColor = remember { Animatable(iconTint, Color.VectorConverter) }
+
     LaunchedEffect(lastUpdateTime) {
-        // Don't flash on the initial composition (when timestamp is 0)
         if (lastUpdateTime > 0L) {
-            animatedTint = Color.Blue // Flash to Blue
-            delay(250) // Hold the flash
-            animatedTint = iconTint // Return to the original color
+            launch {
+                animatedColor.animateTo(Color.Blue, animationSpec = tween(durationMillis = 250))
+                animatedColor.animateTo(iconTint, animationSpec = tween(durationMillis = 500))
+            }
         }
     }
-    val finalTint by animateColorAsState(
-        targetValue = animatedTint,
-        animationSpec = tween(durationMillis = 500),
-        label = "IconPulse"
-    )
 
-    // Compute raw fraction if we have a totalDistance
+    LaunchedEffect(iconTint) {
+        animatedColor.snapTo(iconTint)
+    }
+
+
+    // --- PROGRESS FRACTION ANIMATION ---
     val rawFraction: Float? = totalDistance
         ?.takeIf { it > 0f }
         ?.let { (currentDistance / it).coerceIn(0f, 1f) }
 
-    // Decide target fraction: center (0.5) before set, else rawFraction
     val targetFraction = rawFraction ?: 0.5f
 
-    // Animate any change in fraction
     val fraction by animateFloatAsState(
         targetValue = targetFraction,
         animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing),
         label = "ProgressFraction"
     )
 
-    // Before user sets a distance, just show a centered tappable bike — no track
+    // --- UI DRAWING ---
     if (rawFraction == null) {
         Box(
             modifier = modifier
@@ -107,16 +108,15 @@ fun BigBikeProgressIndicator(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.DirectionsBike,
                 contentDescription = "Set total distance",
-                tint = finalTint, // USE ANIMATED TINT
+                tint = animatedColor.value,
                 modifier = Modifier
                     .size(iconSize)
-                    .clickable { onEvent(BikeEvent.OnBikeClick) } // UPDATED
+                    .clickable(onClick = onBikeClick)
             )
         }
         return
     }
 
-    // Once totalDistance is non-null, draw track, markers, progress, and bike
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
@@ -138,16 +138,13 @@ fun BigBikeProgressIndicator(
         val bikeCenterX = leftX + trackWidthPx * fraction
         val bikeTopY = lineY - iconSizePx / 2f
 
-        // Draw the background track + progress
         Canvas(Modifier.matchParentSize()) {
-            // full gray track
             drawLine(
                 color = Color.LightGray,
                 start = Offset(leftX, lineY),
                 end = Offset(rightX, lineY),
                 strokeWidth = trackHeightPx
             )
-            // colored progress bar
             drawLine(
                 color = Color(0xFF90CAF9),
                 start = Offset(leftX, lineY),
@@ -156,7 +153,6 @@ fun BigBikeProgressIndicator(
             )
         }
 
-        // Distance markers: 0 / mid / full
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -166,17 +162,17 @@ fun BigBikeProgressIndicator(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("0 km", style = MaterialTheme.typography.bodySmall)
-            totalDistance?.let {
+            // FIX: Removed unnecessary safe call on totalDistance
+            totalDistance.let {
                 Text((it / 2).displayKm(), style = MaterialTheme.typography.bodySmall)
                 Text(it.displayKm(), style = MaterialTheme.typography.bodySmall)
             }
         }
 
-        // The bike icon, positioned along (and clickable)
         Icon(
             imageVector = Icons.AutoMirrored.Filled.DirectionsBike,
             contentDescription = "Trip Progress",
-            tint = finalTint, // USE ANIMATED TINT
+            tint = animatedColor.value,
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .offset {
@@ -186,23 +182,24 @@ fun BigBikeProgressIndicator(
                     )
                 }
                 .size(iconSize)
-                .clickable { onEvent(BikeEvent.OnBikeClick) } // UPDATED
+                .clickable(onClick = onBikeClick)
         )
     }
 }
 
+// FIX: Added Locale to String.format to resolve lint warning.
 private fun Float.displayKm() = if (this % 1 == 0f) {
     "${this.toInt()} km"
 } else {
-    String.format("%.1f km", this)
+    String.format(Locale.getDefault(), "%.1f km", this)
 }
 
-// --- Previews Updated to build a sample UiState ---
+// FIX: Updated to match the new BikeUiState.Success constructor
 private fun createFakeSuccessState(
     currentDistance: Float,
     totalDistance: Float?,
     location: LatLng? = null,
-    lastGpsUpdateTime: Long = 0L // ADD TIMESTAMP TO PREVIEW HELPER
+    lastGpsUpdateTime: Long = 0L
 ): BikeUiState.Success {
     return BikeUiState.Success(
         bikeData = BikeRideInfo(
@@ -226,8 +223,9 @@ private fun createFakeSuccessState(
             motorPower = null,
             rideState = RideState.NotStarted,
             bikeWeatherInfo = null,
-            lastGpsUpdateTime = lastGpsUpdateTime // PASS TIMESTAMP
-        )
+            lastGpsUpdateTime = lastGpsUpdateTime
+        ),
+        showSetDistanceDialog = false // Added required parameter
     )
 }
 
@@ -240,15 +238,12 @@ fun BigBikeProgressIndicatorPreview() {
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 1) initial state
         BigBikeProgressIndicator(
             uiState = createFakeSuccessState(currentDistance = 0f, totalDistance = null),
             iconTint = Color.DarkGray,
-            onEvent = { } // UPDATED
+            onEvent = { }
         )
         Spacer(Modifier.height(24.dp))
-
-        // 2) with a 10 km plan, at 2.5 km ridden
         BigBikeProgressIndicator(
             uiState = createFakeSuccessState(
                 currentDistance = 2.5f,
@@ -257,7 +252,7 @@ fun BigBikeProgressIndicatorPreview() {
                 lastGpsUpdateTime = 1L
             ),
             iconTint = Color(0xFF4CAF50),
-            onEvent = { } // UPDATED
+            onEvent = { }
         )
     }
 }
