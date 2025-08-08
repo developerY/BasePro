@@ -49,6 +49,18 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 import kotlin.math.roundToInt
 
+// WORKAROUND: Manually define the Color VectorConverter because it cannot be found
+// with the current Compose BOM version.
+private val ColorToVectorConverter =
+    TwoWayConverter<Color, AnimationVector4D> (
+        convertToVector = { color ->
+            AnimationVector4D(color.red, color.green, color.blue, color.alpha)
+        },
+        convertFromVector = { vector ->
+            Color(vector.v1, vector.v2, vector.v3, vector.v4)
+        }
+    )
+
 @Composable
 fun BigBikeProgressIndicator(
     uiState: BikeUiState.Success,
@@ -71,8 +83,8 @@ fun BigBikeProgressIndicator(
 
 
     // --- FIXED ANIMATION LOGIC ---
-    // FIX: Animatable for Color requires a Color.VectorConverter.
-    val animatedColor: Animatable<Color, AnimationVector4D> = remember { Animatable(iconTint, Color.VectorConverter) }
+    // FIX: Use the manually defined converter to resolve the build error.
+    val animatedColor = remember { Animatable(iconTint, ColorToVectorConverter) }
 
     LaunchedEffect(lastUpdateTime) {
         if (lastUpdateTime > 0L) {
