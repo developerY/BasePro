@@ -1,7 +1,11 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path
 
+
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector4D
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.TwoWayConverter
+import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -68,7 +72,7 @@ fun BigBikeProgressIndicator(
 
     // --- FIXED ANIMATION LOGIC ---
     // FIX: Animatable for Color requires a Color.VectorConverter.
-    val animatedColor = remember { Animatable(iconTint, Color.VectorConverter) }
+    val animatedColor: Animatable<Color, AnimationVector4D> = remember { Animatable(iconTint, Color.VectorConverter) }
 
     LaunchedEffect(lastUpdateTime) {
         if (lastUpdateTime > 0L) {
@@ -248,7 +252,7 @@ fun BigBikeProgressIndicatorPreview() {
             uiState = createFakeSuccessState(
                 currentDistance = 2.5f,
                 totalDistance = 10f,
-                location = LatLng(0.0, 0.0),
+                location = LatLng(0.0, .0),
                 lastGpsUpdateTime = 1L
             ),
             iconTint = Color(0xFF4CAF50),
