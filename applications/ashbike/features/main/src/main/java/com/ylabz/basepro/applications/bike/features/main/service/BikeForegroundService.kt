@@ -387,12 +387,22 @@ class BikeForegroundService : LifecycleService() {
             Log.d("BikeForegroundService", "No active formal ride to stop.")
             return
         }
-        Log.d("BikeForegroundService", "Stopping formal ride. RideState will trigger passive interval via collector.")
+        Log.d("BikeForegroundService", "Stopping formal ride. Reverting to PASSIVE GPS interval.")
 
-        // The collector in onCreate will automatically handle switching back to passive.
+        // 1. Set the state to NotStarted
         _rideInfo.value = _rideInfo.value.copy(rideState = RideState.NotStarted)
 
+        // 2. Immediately restart location updates.
+        // The collector in onCreate will see the new RideState and apply the passive interval.
+        lifecycleScope.launch {
+            val currentLevel = currentEnergyLevelState.first()
+            startLocationUpdates(
+                intervalMillis = currentLevel.passiveTrackingIntervalMillis,
+                minUpdateIntervalMillis = currentLevel.passiveTrackingMinUpdateIntervalMillis
+            )
+        }
 
+        // 3. Save the ride data
         val segmentDistanceMeters = continuousDistanceMeters - formalRideSegmentStartOffsetDistanceMeters
         val segmentCalories = _rideInfo.value.caloriesBurned
         val segmentDurationMillis = System.currentTimeMillis() - formalRideSegmentStartTimeMillis
