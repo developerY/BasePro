@@ -4,8 +4,8 @@ package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dia
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector4D
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.TwoWayConverter
-import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -52,7 +53,7 @@ import kotlin.math.roundToInt
 // WORKAROUND: Manually define the Color VectorConverter because it cannot be found
 // with the current Compose BOM version.
 private val ColorToVectorConverter =
-    TwoWayConverter<Color, AnimationVector4D> (
+    TwoWayConverter<Color, AnimationVector4D>(
         convertToVector = { color ->
             AnimationVector4D(color.red, color.green, color.blue, color.alpha)
         },
@@ -60,6 +61,43 @@ private val ColorToVectorConverter =
             Color(vector.v1, vector.v2, vector.v3, vector.v4)
         }
     )
+
+@Composable
+fun GpsCountdownIndicator(
+    lastGpsUpdateTime: Long,
+    gpsUpdateIntervalMillis: Long,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.primary,
+    strokeWidth: Dp = 3.dp
+) {
+    val progress = remember { Animatable(0f) }
+
+    LaunchedEffect(lastGpsUpdateTime) {
+        if (gpsUpdateIntervalMillis > 0L) {
+            progress.snapTo(1f) // Start from a full circle
+            progress.animateTo(
+                targetValue = 0f,
+                animationSpec = tween(
+                    durationMillis = gpsUpdateIntervalMillis.toInt(),
+                    easing = LinearEasing
+                )
+            )
+        }
+    }
+
+    val sweepAngle = 360 * progress.value
+
+    Canvas(modifier) {
+        drawArc(
+            color = color,
+            startAngle = -90f, // Start from the top
+            sweepAngle = sweepAngle,
+            useCenter = false,
+            style = Stroke(width = strokeWidth.toPx())
+        )
+    }
+}
+
 
 @Composable
 fun BigBikeProgressIndicator(
@@ -77,13 +115,12 @@ fun BigBikeProgressIndicator(
     val currentDistance = bikeData.currentTripDistance
     val totalDistance = bikeData.totalTripDistance
     val lastUpdateTime = bikeData.lastGpsUpdateTime
+    val gpsUpdateInterval = bikeData.gpsUpdateIntervalMillis
 
     // --- STABLE LAMBDA CREATION ---
     val onBikeClick = remember { { onEvent(BikeEvent.OnBikeClick) } }
 
-
     // --- FIXED ANIMATION LOGIC ---
-    // FIX: Use the manually defined converter to resolve the build error.
     val animatedColor = remember { Animatable(iconTint, ColorToVectorConverter) }
 
     LaunchedEffect(lastUpdateTime) {
@@ -98,7 +135,6 @@ fun BigBikeProgressIndicator(
     LaunchedEffect(iconTint) {
         animatedColor.snapTo(iconTint)
     }
-
 
     // --- PROGRESS FRACTION ANIMATION ---
     val rawFraction: Float? = totalDistance
@@ -121,14 +157,28 @@ fun BigBikeProgressIndicator(
                 .height(containerHeight),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.DirectionsBike,
-                contentDescription = "Set total distance",
-                tint = animatedColor.value,
+            val indicatorContainerSize = iconSize + 8.dp
+            Box(
                 modifier = Modifier
-                    .size(iconSize)
-                    .clickable(onClick = onBikeClick)
-            )
+                    .size(indicatorContainerSize)
+                    .clickable(onClick = onBikeClick),
+                contentAlignment = Alignment.Center
+            ) {
+                if (lastUpdateTime > 0L && gpsUpdateInterval != null && gpsUpdateInterval > 0) {
+                    GpsCountdownIndicator(
+                        lastGpsUpdateTime = lastUpdateTime,
+                        gpsUpdateIntervalMillis = gpsUpdateInterval,
+                        modifier = Modifier.matchParentSize(),
+                        color = animatedColor.value.copy(alpha = 0.8f)
+                    )
+                }
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.DirectionsBike,
+                    contentDescription = "Set total distance",
+                    tint = animatedColor.value,
+                    modifier = Modifier.size(iconSize)
+                )
+            }
         }
         return
     }
@@ -150,9 +200,6 @@ fun BigBikeProgressIndicator(
         val leftX = paddingX
         val rightX = widthPx - paddingX
         val trackWidthPx = rightX - leftX
-
-        val bikeCenterX = leftX + trackWidthPx * fraction
-        val bikeTopY = lineY - iconSizePx / 2f
 
         Canvas(Modifier.matchParentSize()) {
             drawLine(
@@ -178,44 +225,58 @@ fun BigBikeProgressIndicator(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("0 km", style = MaterialTheme.typography.bodySmall)
-            // FIX: Removed unnecessary safe call on totalDistance
             totalDistance.let {
                 Text((it / 2).displayKm(), style = MaterialTheme.typography.bodySmall)
                 Text(it.displayKm(), style = MaterialTheme.typography.bodySmall)
             }
         }
 
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.DirectionsBike,
-            contentDescription = "Trip Progress",
-            tint = animatedColor.value,
+        // --- Icon with Countdown Timer ---
+        val indicatorContainerSize = iconSize + 8.dp
+        val indicatorContainerSizePx = with(dens) { indicatorContainerSize.toPx() }
+        val bikeCenterX = leftX + trackWidthPx * fraction
+        val bikeCenterY = lineY
+        val containerOffsetX = bikeCenterX - indicatorContainerSizePx / 2f
+        val containerOffsetY = bikeCenterY - indicatorContainerSizePx / 2f
+
+        Box(
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .offset {
-                    IntOffset(
-                        x = (bikeCenterX - iconSizePx / 2f).roundToInt(),
-                        y = bikeTopY.roundToInt()
-                    )
-                }
-                .size(iconSize)
-                .clickable(onClick = onBikeClick)
-        )
+                .offset { IntOffset(containerOffsetX.roundToInt(), containerOffsetY.roundToInt()) }
+                .size(indicatorContainerSize)
+                .clickable(onClick = onBikeClick),
+            contentAlignment = Alignment.Center
+        ) {
+            if (lastUpdateTime > 0L && gpsUpdateInterval != null && gpsUpdateInterval > 0) {
+                GpsCountdownIndicator(
+                    lastGpsUpdateTime = lastUpdateTime,
+                    gpsUpdateIntervalMillis = gpsUpdateInterval,
+                    modifier = Modifier.matchParentSize(),
+                    color = animatedColor.value.copy(alpha = 0.8f)
+                )
+            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.DirectionsBike,
+                contentDescription = "Trip Progress",
+                tint = animatedColor.value,
+                modifier = Modifier.size(iconSize)
+            )
+        }
     }
 }
 
-// FIX: Added Locale to String.format to resolve lint warning.
 private fun Float.displayKm() = if (this % 1 == 0f) {
     "${this.toInt()} km"
 } else {
     String.format(Locale.getDefault(), "%.1f km", this)
 }
 
-// FIX: Updated to match the new BikeUiState.Success constructor
 private fun createFakeSuccessState(
     currentDistance: Float,
     totalDistance: Float?,
     location: LatLng? = null,
-    lastGpsUpdateTime: Long = 0L
+    lastGpsUpdateTime: Long = 0L,
+    gpsUpdateIntervalMillis: Long? = null
 ): BikeUiState.Success {
     return BikeUiState.Success(
         bikeData = BikeRideInfo(
@@ -239,9 +300,10 @@ private fun createFakeSuccessState(
             motorPower = null,
             rideState = RideState.NotStarted,
             bikeWeatherInfo = null,
-            lastGpsUpdateTime = lastGpsUpdateTime
+            lastGpsUpdateTime = lastGpsUpdateTime,
+            gpsUpdateIntervalMillis = gpsUpdateIntervalMillis ?: 0L
         ),
-        showSetDistanceDialog = false // Added required parameter
+        showSetDistanceDialog = false
     )
 }
 
@@ -268,6 +330,18 @@ fun BigBikeProgressIndicatorPreview() {
                 lastGpsUpdateTime = 1L
             ),
             iconTint = Color(0xFF4CAF50),
+            onEvent = { }
+        )
+        Spacer(Modifier.height(24.dp))
+        BigBikeProgressIndicator(
+            uiState = createFakeSuccessState(
+                currentDistance = 5f,
+                totalDistance = 10f,
+                location = LatLng(0.0, .0),
+                lastGpsUpdateTime = System.currentTimeMillis(),
+                gpsUpdateIntervalMillis = 5000L
+            ),
+            iconTint = Color.Magenta,
             onEvent = { }
         )
     }

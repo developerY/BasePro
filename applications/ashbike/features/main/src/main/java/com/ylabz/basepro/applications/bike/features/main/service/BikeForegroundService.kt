@@ -269,6 +269,13 @@ class BikeForegroundService : LifecycleService() {
             displayElevationLoss = continuousElevationLossMeters
         }
 
+        val energyLevel = currentEnergyLevelState.value
+        val gpsUpdateInterval = if (isFormalRideActive) {
+            energyLevel.activeRideIntervalMillis
+        } else {
+            energyLevel.passiveTrackingIntervalMillis
+        }
+
         _rideInfo.value = _rideInfo.value.copy(
             location = LatLng(location.latitude, location.longitude),
             currentSpeed = speedKph,
@@ -282,7 +289,8 @@ class BikeForegroundService : LifecycleService() {
             elevationLoss = displayElevationLoss,
             heading = if (location.hasBearing()) location.bearing else _rideInfo.value.heading,
             rideState = _rideInfo.value.rideState,
-            lastGpsUpdateTime = System.currentTimeMillis() // <-- ADD THIS LINE
+            lastGpsUpdateTime = System.currentTimeMillis(),
+            gpsUpdateIntervalMillis = gpsUpdateInterval
         )
 
         if (isFormalRideActive) {
@@ -539,6 +547,7 @@ class BikeForegroundService : LifecycleService() {
             rideState = RideState.NotStarted,
             bikeWeatherInfo = null,
             heartbeat = null,
+            gpsUpdateIntervalMillis = 0L
         )
     }
 }
