@@ -2,6 +2,7 @@ package com.ylabz.basepro.applications.bike.features.settings.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -22,28 +23,29 @@ fun SettingsUiRoute(
     viewModel: SettingsViewModel = hiltViewModel(),
     nfcViewModel: NfcViewModel = hiltViewModel(),
     bleViewModel: BluetoothLeViewModel = hiltViewModel()
-    ) {
+) {
     val uiState = viewModel.uiState.collectAsState().value
     val nfcUiState = nfcViewModel.uiState.collectAsState().value
     val bleUiState = bleViewModel.uiState.collectAsState().value
-    when (uiState) {
+    val showGpsCountdown by viewModel.showGpsCountdown.collectAsState() // Collect the new state
+
+    when (val state = uiState) {
         is SettingsUiState.Loading -> {
             LoadingScreen()
         }
         is SettingsUiState.Error -> {
-            /*ErrorScreen(errorMessage = uiState.message) {
-                viewModel.onEvent(SettingsEvent.LoadSettings)
-            }*/
+            // ErrorScreen(errorMessage = state.message)
         }
         is SettingsUiState.Success -> {
             SettingsScreenEx(
-                modifier = Modifier,
-                uiState = uiState,
-                onEvent = { event -> viewModel.onEvent(event) },
+                modifier = modifier,
+                uiState = state,
+                showGpsCountdown = showGpsCountdown, // Pass the state
+                onEvent = viewModel::onEvent,
                 nfcUiState = nfcUiState,
-                nfcEvent = { event -> nfcViewModel.onEvent(event) },
+                nfcEvent = nfcViewModel::onEvent,
                 bleUiState = bleUiState,
-                bleEvent = { event -> bleViewModel.onEvent(event) },
+                bleEvent = bleViewModel::onEvent,
                 navTo = navTo
             )
         }

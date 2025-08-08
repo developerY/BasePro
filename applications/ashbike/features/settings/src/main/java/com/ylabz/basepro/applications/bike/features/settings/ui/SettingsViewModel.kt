@@ -57,6 +57,14 @@ class SettingsViewModel @Inject constructor(
         ProfileData(name = name, heightCm = heightStr, weightKg = weightStr)
     }
 
+    // Expose the showGpsCountdownFlow
+    val showGpsCountdown: StateFlow<Boolean> = profileRepo.showGpsCountdownFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = true
+        )
+
     val uiState: StateFlow<SettingsUiState> =
         combine(
             _locallySelectedEnergyLevel, // Add the temporary holder to the combine function
@@ -134,6 +142,12 @@ class SettingsViewModel @Inject constructor(
                     } catch (e: Exception) {
                         Log.e("SettingsViewModel", "Failed to set energy level.", e)
                     }
+                }
+            }
+            // Handle the new event
+            is SettingsEvent.OnShowGpsCountdownChanged -> {
+                viewModelScope.launch {
+                    profileRepo.setShowGpsCountdown(event.show)
                 }
             }
         }

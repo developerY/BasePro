@@ -10,6 +10,7 @@ import android.util.Log
 import androidx.compose.animation.core.copy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ylabz.basepro.applications.bike.database.repository.UserProfileRepository
 import com.ylabz.basepro.applications.bike.features.main.service.BikeForegroundService
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
@@ -29,8 +30,9 @@ import kotlin.jvm.java
 @HiltViewModel
 class BikeViewModel @Inject constructor(
     private val application: Application, // <-- Inject Application here
-    private val weatherUseCase: WeatherUseCase // Inject WeatherUseCase here
-    ) : ViewModel() {
+    private val weatherUseCase: WeatherUseCase, // Inject WeatherUseCase here
+    private val userProfileRepository: UserProfileRepository // Inject the repository
+) : ViewModel() {
 
     // --- State for the Service Connection ---
     private val _bound = MutableStateFlow(false)
@@ -76,7 +78,8 @@ class BikeViewModel @Inject constructor(
         val rideInfo: com.ylabz.basepro.core.model.bike.BikeRideInfo,
         val totalDistance: Float?,
         val weather: com.ylabz.basepro.core.model.weather.BikeWeatherInfo?,
-        val showDialog: Boolean
+        val showDialog: Boolean,
+        val showGpsCountdown: Boolean // New field
     )
 
     private fun observeServiceData() {
@@ -90,10 +93,10 @@ class BikeViewModel @Inject constructor(
                     service.rideInfo.sample(1000L),
                     _uiPathDistance,
                     _weatherInfo,
-                    _showSetDistanceDialog // <-- The new source is included here
-                ) { rideInfo, totalDistance, weather, showDialog ->
-                    // It returns a simple data holder object.
-                    CombinedData(rideInfo, totalDistance, weather, showDialog)
+                    _showSetDistanceDialog,
+                    userProfileRepository.showGpsCountdownFlow // Combine the new flow
+                ) { rideInfo, totalDistance, weather, showDialog, showCountdown ->
+                    CombinedData(rideInfo, totalDistance, weather, showDialog, showCountdown)
                 }
                     // 2. MAP: This block's job is to transform the raw data into the final UI State.
                     //    Crucially, its return type is declared as the supertype, 'BikeUiState'.
@@ -103,7 +106,8 @@ class BikeViewModel @Inject constructor(
                                 totalTripDistance = data.totalDistance,
                                 bikeWeatherInfo = data.weather
                             ),
-                            showSetDistanceDialog = data.showDialog
+                            showSetDistanceDialog = data.showDialog,
+                            showGpsCountdown = data.showGpsCountdown // Pass to the state
                         )
                     }
                     // 3. CATCH: This now works perfectly, because the flow is of type Flow<BikeUiState>.
@@ -171,6 +175,8 @@ class BikeViewModel @Inject constructor(
                 // The user dismissed the dialog, so we need to hide it.
                 _showSetDistanceDialog.value = false
             }
+            BikeEvent.OnBikeClick -> _showSetDistanceDialog.value = true
+            BikeEvent.DismissSetDistanceDialog -> _showSetDistanceDialog.value = false
         }
     }
 

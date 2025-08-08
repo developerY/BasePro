@@ -74,6 +74,7 @@ private enum class CardKey { Theme, About, Health, Nfc, Qr, Ble, BikeConfig, App
 fun SettingsScreenEx(
     modifier: Modifier = Modifier,
     uiState: SettingsUiState.Success,
+    showGpsCountdown: Boolean, // Add this parameter
     onEvent: (SettingsEvent) -> Unit,
     nfcUiState: NfcUiState,
     nfcEvent: (NfcRwEvent) -> Unit,
@@ -102,7 +103,8 @@ fun SettingsScreenEx(
                     isEditing = isEditing,
                     onToggleEdit = { isEditing = !isEditing },
                     onEvent = onEvent,
-                    isProfileIncomplete = uiState.isProfileIncomplete
+                    isProfileIncomplete = uiState.isProfileIncomplete,
+                    showGpsCountdown = showGpsCountdown // Pass the value
                 )
             } ?: run {
                 Text(
@@ -230,7 +232,8 @@ fun SettingsScreenExPreview() {
         SettingsScreenEx(
             uiState = dummyUiState, onEvent = { }, navTo = { },
             nfcUiState = NfcUiState.Stopped, nfcEvent = { },
-            bleUiState = BluetoothLeUiState.Loading, bleEvent = { }
+            bleUiState = BluetoothLeUiState.Loading, bleEvent = { },
+            showGpsCountdown = true // false // Set to false for the preview
         )
     }
 }

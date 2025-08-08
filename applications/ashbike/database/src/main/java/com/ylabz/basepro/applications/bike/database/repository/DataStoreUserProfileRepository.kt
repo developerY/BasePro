@@ -24,6 +24,7 @@ private object UserPrefsDefaults {
     const val PROFILE_REVIEWED_OR_SAVED_DEFAULT = false // Default for the new flag
     // --- New default for Location Energy Level ---
     val LOCATION_ENERGY_LEVEL_DEFAULT = LocationEnergyLevel.BALANCED.ordinal
+    const val SHOW_GPS_COUNTDOWN_DEFAULT = true // Default to show the timer
 }
 
 // Keys for your preferences
@@ -35,6 +36,7 @@ private object UserPrefsKeys {
     val PROFILE_REVIEWED_OR_SAVED = booleanPreferencesKey("profile_reviewed_or_saved_by_user")
     // --- New key for Location Energy Level (stores the ordinal as an Int) ---
     val LOCATION_ENERGY_LEVEL = intPreferencesKey("location_energy_level")
+    val SHOW_GPS_COUNTDOWN = booleanPreferencesKey("show_gps_countdown") // New key
 }
 
 // 2) DataStore implementation
@@ -74,6 +76,19 @@ class DataStoreUserProfileRepository @Inject constructor(
             val ordinal = prefs[UserPrefsKeys.LOCATION_ENERGY_LEVEL] ?: UserPrefsDefaults.LOCATION_ENERGY_LEVEL_DEFAULT
             LocationEnergyLevel.values()[ordinal]
         }
+
+    // --- Implementation for GPS Countdown Timer ---
+    override val showGpsCountdownFlow: Flow<Boolean> = dataStore.data
+        .map { prefs ->
+            prefs[UserPrefsKeys.SHOW_GPS_COUNTDOWN] ?: UserPrefsDefaults.SHOW_GPS_COUNTDOWN_DEFAULT
+        }
+
+    override suspend fun setShowGpsCountdown(show: Boolean) {
+        dataStore.edit { prefs ->
+            prefs[UserPrefsKeys.SHOW_GPS_COUNTDOWN] = show
+        }
+    }
+    // --- End of implementation ---
 
     override suspend fun setLocationEnergyLevel(level: LocationEnergyLevel) {
         dataStore.edit { prefs ->

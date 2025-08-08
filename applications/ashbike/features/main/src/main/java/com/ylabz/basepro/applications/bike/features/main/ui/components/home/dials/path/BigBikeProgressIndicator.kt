@@ -116,6 +116,7 @@ fun BigBikeProgressIndicator(
     val totalDistance = bikeData.totalTripDistance
     val lastUpdateTime = bikeData.lastGpsUpdateTime
     val gpsUpdateInterval = bikeData.gpsUpdateIntervalMillis
+    val showCountdown = uiState.showGpsCountdown // Get the flag
 
     // --- STABLE LAMBDA CREATION ---
     val onBikeClick = remember { { onEvent(BikeEvent.OnBikeClick) } }
@@ -164,7 +165,7 @@ fun BigBikeProgressIndicator(
                     .clickable(onClick = onBikeClick),
                 contentAlignment = Alignment.Center
             ) {
-                if (lastUpdateTime > 0L && gpsUpdateInterval != null && gpsUpdateInterval > 0) {
+                if (showCountdown && lastUpdateTime > 0L && gpsUpdateInterval > 0) { // Check the flag
                     GpsCountdownIndicator(
                         lastGpsUpdateTime = lastUpdateTime,
                         gpsUpdateIntervalMillis = gpsUpdateInterval,
@@ -247,7 +248,7 @@ fun BigBikeProgressIndicator(
                 .clickable(onClick = onBikeClick),
             contentAlignment = Alignment.Center
         ) {
-            if (lastUpdateTime > 0L && gpsUpdateInterval != null && gpsUpdateInterval > 0) {
+            if (showCountdown && lastUpdateTime > 0L && gpsUpdateInterval > 0) { // Check the flag
                 GpsCountdownIndicator(
                     lastGpsUpdateTime = lastUpdateTime,
                     gpsUpdateIntervalMillis = gpsUpdateInterval,
@@ -274,6 +275,7 @@ private fun Float.displayKm() = if (this % 1 == 0f) {
 private fun createFakeSuccessState(
     currentDistance: Float,
     totalDistance: Float?,
+    showGpsCountdown: Boolean = true, // Add to fake state creator
     location: LatLng? = null,
     lastGpsUpdateTime: Long = 0L,
     gpsUpdateIntervalMillis: Long? = null
@@ -303,7 +305,8 @@ private fun createFakeSuccessState(
             lastGpsUpdateTime = lastGpsUpdateTime,
             gpsUpdateIntervalMillis = gpsUpdateIntervalMillis ?: 0L
         ),
-        showSetDistanceDialog = false
+        showSetDistanceDialog = false,
+        showGpsCountdown = showGpsCountdown // Pass to fake state
     )
 }
 

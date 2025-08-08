@@ -9,7 +9,8 @@ sealed class BikeUiState {
     object Idle    : BikeUiState()
     data class Success(
         val bikeData: BikeRideInfo,
-        val showSetDistanceDialog: Boolean = false
+        val showSetDistanceDialog: Boolean = false,
+        val showGpsCountdown: Boolean = true // Add the new property
     ) : BikeUiState()
     data class Error(val message: String)             : BikeUiState()
 }
