@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng // Needed for BikeRideInfo in preview
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState // Added import
+import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.GpsLevelIndicator
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.SpeedometerWithCompassOverlay
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path.BikePathWithControls
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.weather.WeatherBadgeWithDetails
@@ -82,6 +83,13 @@ fun SpeedAndProgressCard(
                     .padding(top = 8.dp)
                     .size(24.dp)
                     .clickable { weatherIconsVisible = !weatherIconsVisible }
+            )
+
+            GpsLevelIndicator(
+                uiState = uiState,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 8.dp, end = 16.dp)
             )
 
             cardScope.AnimatedVisibility(
