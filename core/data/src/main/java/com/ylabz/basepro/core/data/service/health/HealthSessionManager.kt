@@ -261,7 +261,7 @@ class HealthSessionManager(private val context: Context) {
     ): InsertRecordsResponse {
         Log.d("HealthSessionManager", "Writing exercise session")
         return healthConnectClient.insertRecords(
-            listOf(
+            listOf<Record>(
                    StepsRecord(
                        startTime = start.toInstant(),
                        startZoneOffset = start.offset,
@@ -314,7 +314,7 @@ class HealthSessionManager(private val context: Context) {
         Log.d("HealthSessionManager", "Writing exercise session START")
 
         healthConnectClient.insertRecords(
-            listOf(
+            listOf<Record>(
                 ExerciseSessionRecord(
                     metadata = Metadata.manualEntry(),
                     startTime = start.toInstant(),
@@ -429,7 +429,7 @@ class HealthSessionManager(private val context: Context) {
 
         // 4) Insert them all in one batch
         return healthConnectClient.insertRecords(
-            listOf(session, steps, distance, calories, heartRate)
+            listOf<Record>(session, steps, distance, calories, heartRate)
         )
     }
 

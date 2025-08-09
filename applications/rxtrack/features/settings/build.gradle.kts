@@ -30,9 +30,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
-    kotlinOptions {
-        jvmTarget = "21"
-    }
+}
+
+kotlin {
+    jvmToolchain(21)
 }
 
 dependencies {

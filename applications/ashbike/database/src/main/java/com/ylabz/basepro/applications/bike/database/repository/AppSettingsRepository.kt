@@ -15,6 +15,7 @@ private object SettingsPrefsKeys {
     val LANGUAGE      = stringPreferencesKey("settings_language")
     val NOTIFICATIONS = stringPreferencesKey("settings_notifications")
     val UNITS         = stringPreferencesKey("settings_units") // Added Units Key
+    val GPS_ACCURACY  = stringPreferencesKey("settings_gps_accuracy")
 }
 
 // 2b) Repository contract – your ViewModel only talks to this
@@ -23,11 +24,13 @@ interface AppSettingsRepository {
     val languageFlow: Flow<String>
     val notificationsFlow: Flow<String>
     val unitsFlow: Flow<String> // Added Units Flow
+    val gpsAccuracyFlow: Flow<String>
 
     suspend fun setTheme(theme: String)
     suspend fun setLanguage(language: String)
     suspend fun setNotifications(option: String)
     suspend fun setUnits(units: String) // Added setUnits function
+    suspend fun setGpsAccuracy(accuracy: String)
 }
 
 // 2c) DataStore-backed impl
@@ -48,6 +51,9 @@ class DataStoreAppSettingsRepository @Inject constructor(
     override val unitsFlow: Flow<String> = dataStore.data // Added Units Flow implementation
         .map { it[SettingsPrefsKeys.UNITS] ?: "Metric (SI)" } // Defaulting to Metric
 
+    override val gpsAccuracyFlow: Flow<String> = dataStore.data
+        .map { it[SettingsPrefsKeys.GPS_ACCURACY] ?: "Balanced" }
+
     override suspend fun setTheme(theme: String) {
         dataStore.edit { prefs -> prefs[SettingsPrefsKeys.THEME] = theme }
     }
@@ -59,5 +65,8 @@ class DataStoreAppSettingsRepository @Inject constructor(
     }
     override suspend fun setUnits(units: String) { // Added setUnits implementation
         dataStore.edit { prefs -> prefs[SettingsPrefsKeys.UNITS] = units }
+    }
+    override suspend fun setGpsAccuracy(accuracy: String) {
+        dataStore.edit { prefs -> prefs[SettingsPrefsKeys.GPS_ACCURACY] = accuracy }
     }
 }

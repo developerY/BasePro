@@ -10,7 +10,8 @@ sealed class BikeUiState {
     data class Success(
         val bikeData: BikeRideInfo,
         val showSetDistanceDialog: Boolean = false,
-        val showGpsCountdown: Boolean = true // Add the new property
+        val showGpsCountdown: Boolean = true, // Add the new property
+        val gpsAccuracy: String = "Balanced"
     ) : BikeUiState()
     data class Error(val message: String)             : BikeUiState()
 }

@@ -10,8 +10,10 @@ import android.util.Log
 import androidx.compose.animation.core.copy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ylabz.basepro.applications.bike.database.repository.AppSettingsRepository
 import com.ylabz.basepro.applications.bike.database.repository.UserProfileRepository
 import com.ylabz.basepro.applications.bike.features.main.service.BikeForegroundService
+import com.ylabz.basepro.applications.bike.features.main.util.combine
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +21,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.sample // <<< IMPORT ADDED HERE
@@ -31,7 +32,7 @@ import kotlin.jvm.java
 class BikeViewModel @Inject constructor(
     private val application: Application, // <-- Inject Application here
     private val weatherUseCase: WeatherUseCase, // Inject WeatherUseCase here
-    private val userProfileRepository: UserProfileRepository // Inject the repository
+    private val appSettingsRepository: AppSettingsRepository
 ) : ViewModel() {
 
     // --- State for the Service Connection ---
@@ -78,11 +79,12 @@ class BikeViewModel @Inject constructor(
 
     // A temporary data holder class to make the logic cleaner
     data class CombinedData(
-        val rideInfo: com.ylabz.basepro.core.model.bike.BikeRideInfo,
+        val rideInfo: BikeRideInfo,
         val totalDistance: Float?,
-        val weather: com.ylabz.basepro.core.model.weather.BikeWeatherInfo?,
+        val weather: BikeWeatherInfo?,
         val showDialog: Boolean,
-        val showGpsCountdown: Boolean // New field
+        val showGpsCountdown: Boolean,
+        val gpsAccuracy: String
     )
 
     private fun observeServiceData() {
@@ -97,9 +99,10 @@ class BikeViewModel @Inject constructor(
                     _uiPathDistance,
                     _weatherInfo,
                     _showSetDistanceDialog,
-                    _showGpsCountdownFlow // Combine the new flow
-                ) { rideInfo, totalDistance, weather, showDialog, showCountdown ->
-                    CombinedData(rideInfo, totalDistance, weather, showDialog, showCountdown)
+                    _showGpsCountdownFlow,
+                    appSettingsRepository.gpsAccuracyFlow
+                ) { rideInfo, totalDistance, weather, showDialog, showCountdown, gpsAccuracy ->
+                    CombinedData(rideInfo, totalDistance, weather, showDialog, showCountdown, gpsAccuracy)
                 }
                     // 2. MAP: This block's job is to transform the raw data into the final UI State.
                     //    Crucially, its return type is declared as the supertype, 'BikeUiState'.

@@ -32,20 +32,23 @@ class SettingsViewModel @Inject constructor(
         "Theme" to listOf("Light", "Dark", "System Default"),
         "Language" to listOf("English", "Spanish", "French"),
         "Notifications" to listOf("Enabled", "Disabled"),
-        "Units" to listOf("Imperial (English)", "Metric (SI)")
+        "Units" to listOf("Imperial (English)", "Metric (SI)"),
+        "GPS Accuracy" to listOf("Low Power", "Balanced", "High Accuracy")
     )
 
     private val settingsSelections = combine(
         appRepo.themeFlow,
         appRepo.languageFlow,
         appRepo.notificationsFlow,
-        appRepo.unitsFlow
-    ) { theme, lang, notif, units ->
+        appRepo.unitsFlow,
+        appRepo.gpsAccuracyFlow
+    ) { theme, lang, notif, units, gpsAccuracy ->
         mapOf(
             "Theme" to theme,
             "Language" to lang,
             "Notifications" to notif,
-            "Units" to units
+            "Units" to units,
+            "GPS Accuracy" to gpsAccuracy
         )
     }
 
@@ -116,6 +119,7 @@ class SettingsViewModel @Inject constructor(
                         "Language"      -> appRepo.setLanguage(event.value)
                         "Notifications" -> appRepo.setNotifications(event.value)
                         "Units"         -> appRepo.setUnits(event.value)
+                        "GPS Accuracy"  -> appRepo.setGpsAccuracy(event.value)
                         else -> Log.w("SettingsViewModel", "Unhandled setting key: ${event.key}")
                     }
                 }
