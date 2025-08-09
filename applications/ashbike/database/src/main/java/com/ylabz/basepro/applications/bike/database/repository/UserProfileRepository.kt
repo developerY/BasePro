@@ -18,10 +18,10 @@ interface UserProfileRepository {
     val weightFlow: Flow<String>
     val profileReviewedOrSavedFlow: Flow<Boolean>
 
-    // --- New additions for Location Energy Level ---
+    /* --- New additions for Location Energy Level ---
     val locationEnergyLevelFlow: Flow<LocationEnergyLevel>
     suspend fun setLocationEnergyLevel(level: LocationEnergyLevel)
-    // --- End of new additions ---
+    // --- End of new additions --- */
 
     /* --- New additions for GPS Countdown Timer ---
     val showGpsCountdownFlow: Flow<Boolean>

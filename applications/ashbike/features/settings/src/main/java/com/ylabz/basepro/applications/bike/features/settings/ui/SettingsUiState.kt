@@ -14,8 +14,7 @@ sealed interface SettingsUiState {
         val selections: Map<String, String>,
         val profile: ProfileData? = null, // Make nullable and provide default
         val isProfileIncomplete: Boolean = true, // Add this field
-        val currentEnergyLevel: LocationEnergyLevel = LocationEnergyLevel.BALANCED, // Added field
-        val gpsAccuracy: String = "Balanced"
+        val currentEnergyLevel: LocationEnergyLevel = LocationEnergyLevel.BALANCED // Added field
     ) : SettingsUiState
     data class Error(val message: String) : SettingsUiState
 }

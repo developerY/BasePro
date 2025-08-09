@@ -70,13 +70,6 @@ class DataStoreUserProfileRepository @Inject constructor(
             prefs[UserPrefsKeys.PROFILE_REVIEWED_OR_SAVED] ?: UserPrefsDefaults.PROFILE_REVIEWED_OR_SAVED_DEFAULT
         }
 
-    // --- Implementation for Location Energy Level ---
-    override val locationEnergyLevelFlow: Flow<LocationEnergyLevel> = dataStore.data
-        .map { prefs ->
-            val ordinal = prefs[UserPrefsKeys.LOCATION_ENERGY_LEVEL] ?: UserPrefsDefaults.LOCATION_ENERGY_LEVEL_DEFAULT
-            LocationEnergyLevel.values()[ordinal]
-        }
-
     /* --- Implementation for GPS Countdown Timer ---
     override val showGpsCountdownFlow: Flow<Boolean> = dataStore.data
         .map { prefs ->
@@ -90,12 +83,19 @@ class DataStoreUserProfileRepository @Inject constructor(
     }
     // --- End of implementation --- */
 
+    /* --- Implementation for Location Energy Level ---
+    override val locationEnergyLevelFlow: Flow<LocationEnergyLevel> = dataStore.data
+        .map { prefs ->
+            val ordinal = prefs[UserPrefsKeys.LOCATION_ENERGY_LEVEL] ?: UserPrefsDefaults.LOCATION_ENERGY_LEVEL_DEFAULT
+            LocationEnergyLevel.values()[ordinal]
+        }
+
     override suspend fun setLocationEnergyLevel(level: LocationEnergyLevel) {
         dataStore.edit { prefs ->
             prefs[UserPrefsKeys.LOCATION_ENERGY_LEVEL] = level.ordinal
         }
     }
-    // --- End of implementation for Location Energy Level ---
+    // --- End of implementation for Location Energy Level --- */
 
     override suspend fun setName(newName: String) {
         dataStore.edit { prefs -> prefs[UserPrefsKeys.NAME] = newName }
