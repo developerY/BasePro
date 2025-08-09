@@ -42,19 +42,22 @@ import com.ylabz.basepro.core.model.bike.RideState
 
 @Composable
 fun BigBikeProgressIndicator(
+    modifier: Modifier = Modifier,
     // 1. SIGNATURE CHANGED TO ACCEPT UI STATE
     uiState: BikeUiState.Success,
-    modifier: Modifier = Modifier,
+    onEvent: (BikeEvent) -> Unit,
     trackHeight: Dp = 8.dp,
     iconSize: Dp = 48.dp,
     iconTint: Color = Color.Gray,
     containerHeight: Dp = 70.dp,
-    onBikeClick: () -> Unit
 ) {
 
     val bikeData = uiState.bikeData // Access bikeData from uiState
     val currentDistance = bikeData.currentTripDistance // Updated
     val totalDistance = bikeData.totalTripDistance // Updated
+
+    // --- STABLE LAMBDA CREATION ---
+    val onBikeClick = remember { { onEvent(BikeEvent.OnBikeClick) } }
 
     // 1) Compute raw fraction if we have a totalDistance
     val rawFraction: Float? = totalDistance
@@ -84,7 +87,7 @@ fun BigBikeProgressIndicator(
                 tint               = iconTint,
                 modifier           = Modifier
                     .size(iconSize)
-                    .clickable { onBikeClick() }
+                    .clickable { onBikeClick }
             )
         }
         return
@@ -158,7 +161,7 @@ fun BigBikeProgressIndicator(
                     )
                 }
                 .size(iconSize)
-                .clickable { onBikeClick() }
+                .clickable { onBikeClick }
         )
     }
 }

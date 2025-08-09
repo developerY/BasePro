@@ -7,7 +7,7 @@ junitVersion = "1.2.1"         # AndroidX JUnit extension, provides compatibilit
 espressoCore = "3.6.1"         # Espresso, a library for Android UI testing
 # lifecycleRuntimeKtx = "2.8.4"  # AndroidX Lifecycle runtime KTX, provides Kotlin extensions for lifecycle management
 activityCompose = "1.9.1"      # Activity Compose, allows using Jetpack Compose in Activities
-composeBom = "2025.06.01"      # Compose BOM (Bill of Materials), ensures consistent Compose library versions
+composeBom = "2025.07.00"      # Compose BOM (Bill of Materials), ensures consistent Compose library versions
 
 # Additional Libraries
 hilt = "2.56.2"                  # Hilt, a dependency injection library for Android

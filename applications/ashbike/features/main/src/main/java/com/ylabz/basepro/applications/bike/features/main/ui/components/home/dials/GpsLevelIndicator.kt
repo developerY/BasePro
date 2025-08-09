@@ -1,7 +1,9 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector4D
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.TwoWayConverter
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
@@ -20,8 +22,19 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path.ColorToVectorConverter
 import kotlinx.coroutines.launch
+
+// WORKAROUND: Manually define the Color VectorConverter because it cannot be found
+// with the current Compose BOM version.
+private val ColorToVectorConverter =
+    TwoWayConverter<Color, AnimationVector4D>(
+        convertToVector = { color ->
+            AnimationVector4D(color.red, color.green, color.blue, color.alpha)
+        },
+        convertFromVector = { vector ->
+            Color(vector.v1, vector.v2, vector.v3, vector.v4)
+        }
+    )
 
 @Composable
 fun GpsLevelIndicator(
@@ -33,15 +46,16 @@ fun GpsLevelIndicator(
     val gpsUpdateInterval = bikeData.gpsUpdateIntervalMillis
     val showCountdown = uiState.showGpsCountdown
 
-    val animatedColor = remember { Animatable(MaterialTheme.colorScheme.onSurface, ColorToVectorConverter) }
+    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
+    val animatedColor = remember { Animatable(onSurfaceColor, ColorToVectorConverter) }
 
     LaunchedEffect(lastUpdateTime) {
         if (lastUpdateTime > 0L) {
             launch {
-                animatedColor.animateTo(Color.Blue, animationSpec = tween(durationMillis = 250))
+                animatedColor.snapTo(Color.Blue)
                 animatedColor.animateTo(
-                    MaterialTheme.colorScheme.onSurface,
-                    animationSpec = tween(durationMillis = 500)
+                    targetValue = onSurfaceColor,
+                    animationSpec = tween(durationMillis = 1000, easing = LinearEasing)
                 )
             }
         }
@@ -80,10 +94,11 @@ fun GpsCountdownIndicator(
     lastGpsUpdateTime: Long,
     gpsUpdateIntervalMillis: Long,
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.primary,
+    color: Color? = null,
     strokeWidth: Dp = 3.dp
 ) {
     val progress = remember { Animatable(0f) }
+    val countdownColor = color ?: MaterialTheme.colorScheme.primary
 
     LaunchedEffect(lastGpsUpdateTime) {
         if (gpsUpdateIntervalMillis > 0L) {
@@ -102,7 +117,7 @@ fun GpsCountdownIndicator(
 
     Canvas(modifier) {
         drawArc(
-            color = color,
+            color = countdownColor,
             startAngle = -90f, // Start from the top
             sweepAngle = sweepAngle,
             useCenter = false,
