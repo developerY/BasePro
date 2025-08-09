@@ -187,7 +187,7 @@ fun BikePathWithControlsPreview() {
     )
     val uiState = BikeUiState.Success(
         bikeData = demoInfo,
-        showSetDistanceDialog = true // Also needed for the preview to work
+        showSetDistanceDialog = false // Also needed for the preview to work
     )
     BikePathWithControls(uiState = uiState, onBikeEvent = {})
 }

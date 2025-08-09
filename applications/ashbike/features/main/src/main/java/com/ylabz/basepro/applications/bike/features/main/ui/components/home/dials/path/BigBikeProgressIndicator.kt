@@ -87,7 +87,7 @@ fun BigBikeProgressIndicator(
                 tint               = iconTint,
                 modifier           = Modifier
                     .size(iconSize)
-                    .clickable { onBikeClick }
+                    .clickable { onBikeClick() }
             )
         }
         return
@@ -161,7 +161,7 @@ fun BigBikeProgressIndicator(
                     )
                 }
                 .size(iconSize)
-                .clickable { onBikeClick }
+                .clickable { onBikeClick() }
         )
     }
 }
