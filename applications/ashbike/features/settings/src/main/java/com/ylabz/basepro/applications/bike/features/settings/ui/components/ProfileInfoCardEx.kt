@@ -50,7 +50,6 @@ fun ProfileInfoCardEx(
     profile: ProfileData,
     isEditing: Boolean,
     isProfileIncomplete: Boolean,
-    showGpsCountdown: Boolean, // New parameter
     onToggleEdit: () -> Unit,
     onEvent: (SettingsEvent) -> Unit
 ) {
@@ -105,23 +104,6 @@ fun ProfileInfoCardEx(
                                 contentDescription = stringResource(R.string.profile_edit_icon_cd)
                             )
                         }
-                    }
-                    // --- GPS Countdown Switch ---
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = "Show GPS Countdown",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Switch(
-                            checked = showGpsCountdown,
-                            onCheckedChange = { onEvent(SettingsEvent.OnShowGpsCountdownChanged(it)) }
-                        )
                     }
                 }
             } else {
@@ -191,7 +173,7 @@ fun ProfileInfoCardEx(
 fun ProfileInfoCardExPreviewViewModeIncomplete() {
     val profile = ProfileData(name = "John Doe", heightCm = "0", weightKg = "0")
     AshBikeTheme {
-        ProfileInfoCardEx(profile = profile, isEditing = false, isProfileIncomplete = true, onToggleEdit = {}, onEvent = {}, showGpsCountdown = true)
+        ProfileInfoCardEx(profile = profile, isEditing = false, isProfileIncomplete = true, onToggleEdit = {}, onEvent = {})
     }
 }
 
@@ -200,7 +182,7 @@ fun ProfileInfoCardExPreviewViewModeIncomplete() {
 fun ProfileInfoCardExPreviewViewModeComplete() {
     val profile = ProfileData(name = "John Doe", heightCm = "180", weightKg = "75")
     AshBikeTheme {
-        ProfileInfoCardEx(profile = profile, isEditing = false, isProfileIncomplete = false, onToggleEdit = {}, onEvent = {}, showGpsCountdown = true)
+        ProfileInfoCardEx(profile = profile, isEditing = false, isProfileIncomplete = false, onToggleEdit = {}, onEvent = {})
     }
 }
 
@@ -209,7 +191,7 @@ fun ProfileInfoCardExPreviewViewModeComplete() {
 fun ProfileInfoCardExPreviewEditMode() {
     val profile = ProfileData(name = "John Doe", heightCm = "180", weightKg = "75")
     AshBikeTheme {
-        ProfileInfoCardEx(profile = profile, isEditing = true, isProfileIncomplete = false, onToggleEdit = {}, onEvent = {}, showGpsCountdown = true)
+        ProfileInfoCardEx(profile = profile, isEditing = true, isProfileIncomplete = false, onToggleEdit = {}, onEvent = {})
     }
 }
 
@@ -218,7 +200,7 @@ fun ProfileInfoCardExPreviewEditMode() {
 fun ProfileInfoCardExPreviewViewModeDarkIncomplete() {
     val profile = ProfileData(name = "John Doe", heightCm = "", weightKg = "") 
     AshBikeTheme {
-        ProfileInfoCardEx(profile = profile, isEditing = false, isProfileIncomplete = true, onToggleEdit = {}, onEvent = {}, showGpsCountdown = true)
+        ProfileInfoCardEx(profile = profile, isEditing = false, isProfileIncomplete = true, onToggleEdit = {}, onEvent = {})
     }
 }
 
@@ -227,7 +209,7 @@ fun ProfileInfoCardExPreviewViewModeDarkIncomplete() {
 fun ProfileInfoCardExPreviewViewModeDarkComplete() {
     val profile = ProfileData(name = "John Doe", heightCm = "180", weightKg = "75")
     AshBikeTheme {
-        ProfileInfoCardEx(profile = profile, isEditing = false, isProfileIncomplete = false, onToggleEdit = {}, onEvent = {}, showGpsCountdown = true)
+        ProfileInfoCardEx(profile = profile, isEditing = false, isProfileIncomplete = false, onToggleEdit = {}, onEvent = {})
     }
 }
 
@@ -237,6 +219,6 @@ fun ProfileInfoCardExPreviewViewModeDarkComplete() {
 fun ProfileInfoCardExPreviewEditModeDark() {
     val profile = ProfileData(name = "John Doe", heightCm = "180", weightKg = "75")
     AshBikeTheme {
-        ProfileInfoCardEx(profile = profile, isEditing = true, isProfileIncomplete = false, onToggleEdit = {}, onEvent = {}, showGpsCountdown = true)
+        ProfileInfoCardEx(profile = profile, isEditing = true, isProfileIncomplete = false, onToggleEdit = {}, onEvent = {})
     }
 }

@@ -23,10 +23,10 @@ interface UserProfileRepository {
     suspend fun setLocationEnergyLevel(level: LocationEnergyLevel)
     // --- End of new additions ---
 
-    // --- New additions for GPS Countdown Timer ---
+    /* --- New additions for GPS Countdown Timer ---
     val showGpsCountdownFlow: Flow<Boolean>
     suspend fun setShowGpsCountdown(show: Boolean)
-    // --- End of new additions ---
+    // --- End of new additions --- */
 
     suspend fun setName(newName: String)
     suspend fun setHeight(cm: String)

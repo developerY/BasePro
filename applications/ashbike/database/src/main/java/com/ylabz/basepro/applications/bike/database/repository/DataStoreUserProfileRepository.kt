@@ -77,7 +77,7 @@ class DataStoreUserProfileRepository @Inject constructor(
             LocationEnergyLevel.values()[ordinal]
         }
 
-    // --- Implementation for GPS Countdown Timer ---
+    /* --- Implementation for GPS Countdown Timer ---
     override val showGpsCountdownFlow: Flow<Boolean> = dataStore.data
         .map { prefs ->
             prefs[UserPrefsKeys.SHOW_GPS_COUNTDOWN] ?: UserPrefsDefaults.SHOW_GPS_COUNTDOWN_DEFAULT
@@ -88,7 +88,7 @@ class DataStoreUserProfileRepository @Inject constructor(
             prefs[UserPrefsKeys.SHOW_GPS_COUNTDOWN] = show
         }
     }
-    // --- End of implementation ---
+    // --- End of implementation --- */
 
     override suspend fun setLocationEnergyLevel(level: LocationEnergyLevel) {
         dataStore.edit { prefs ->

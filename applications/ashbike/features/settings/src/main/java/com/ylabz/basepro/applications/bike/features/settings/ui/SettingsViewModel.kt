@@ -57,13 +57,13 @@ class SettingsViewModel @Inject constructor(
         ProfileData(name = name, heightCm = heightStr, weightKg = weightStr)
     }
 
-    // Expose the showGpsCountdownFlow
+    /* Expose the showGpsCountdownFlow
     val showGpsCountdown: StateFlow<Boolean> = profileRepo.showGpsCountdownFlow
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = true
-        )
+        )*/
 
     val uiState: StateFlow<SettingsUiState> =
         combine(
@@ -144,12 +144,12 @@ class SettingsViewModel @Inject constructor(
                     }
                 }
             }
-            // Handle the new event
+            /* Handle the new event
             is SettingsEvent.OnShowGpsCountdownChanged -> {
                 viewModelScope.launch {
                     profileRepo.setShowGpsCountdown(event.show)
                 }
-            }
+            }*/
         }
     }
 }

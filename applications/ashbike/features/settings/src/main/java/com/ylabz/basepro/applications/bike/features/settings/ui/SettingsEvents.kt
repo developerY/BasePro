@@ -12,5 +12,5 @@ sealed class SettingsEvent {
     data class UpdateSetting(val key: String, val value: String) : SettingsEvent()
     data class SaveProfile(val profile: ProfileData) : SettingsEvent()
     data class UpdateEnergyLevel(val level: LocationEnergyLevel) : SettingsEvent()
-    data class OnShowGpsCountdownChanged(val show: Boolean) : SettingsEvent() // New event
+    // data class OnShowGpsCountdownChanged(val show: Boolean) : SettingsEvent() // New event
 }

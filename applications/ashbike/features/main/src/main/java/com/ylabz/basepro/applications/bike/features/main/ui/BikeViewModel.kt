@@ -51,6 +51,9 @@ class BikeViewModel @Inject constructor(
     // 1. ADD THIS NEW STATE FLOW FOR THE DIALOG
     private val _showSetDistanceDialog = MutableStateFlow(false)
 
+    // 1. ADD THIS NEW STATE FLOW FOR THE DIALOG
+    private val _showGpsCountdownFlow = MutableStateFlow(true)
+
 
     // --- Service Connection ---
     private val serviceConnection = object : ServiceConnection {
@@ -94,7 +97,7 @@ class BikeViewModel @Inject constructor(
                     _uiPathDistance,
                     _weatherInfo,
                     _showSetDistanceDialog,
-                    userProfileRepository.showGpsCountdownFlow // Combine the new flow
+                    _showGpsCountdownFlow // Combine the new flow
                 ) { rideInfo, totalDistance, weather, showDialog, showCountdown ->
                     CombinedData(rideInfo, totalDistance, weather, showDialog, showCountdown)
                 }

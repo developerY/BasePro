@@ -27,7 +27,7 @@ fun SettingsUiRoute(
     val uiState = viewModel.uiState.collectAsState().value
     val nfcUiState = nfcViewModel.uiState.collectAsState().value
     val bleUiState = bleViewModel.uiState.collectAsState().value
-    val showGpsCountdown by viewModel.showGpsCountdown.collectAsState() // Collect the new state
+    // val showGpsCountdown by viewModel.showGpsCountdown.collectAsState() // Collect the new state
 
     when (val state = uiState) {
         is SettingsUiState.Loading -> {
@@ -40,7 +40,6 @@ fun SettingsUiRoute(
             SettingsScreenEx(
                 modifier = modifier,
                 uiState = state,
-                showGpsCountdown = showGpsCountdown, // Pass the state
                 onEvent = viewModel::onEvent,
                 nfcUiState = nfcUiState,
                 nfcEvent = nfcViewModel::onEvent,
