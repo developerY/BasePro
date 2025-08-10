@@ -18,13 +18,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource // Added for localization
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 // Import the R class from your 'ashbike' module.
 // The exact package will depend on your module's namespace defined in its build.gradle.kts
 import com.ylabz.basepro.applications.bike.R
@@ -44,59 +48,76 @@ private data class TabInfo(
 @Composable
 fun HomeBottomBar(
     navController: NavHostController,
-    unsyncedRidesCount: Int, // Accept the count as a parameter
-    showSettingsProfileAlert: Boolean // New parameter
+    unsyncedRidesCount: Int,
+    showSettingsProfileAlert: Boolean
 ) {
-    // Define the tabs using the TabInfo data class
     val tabs = listOf(
         TabInfo(
-            navigationKey = "Home", // This key is used by navigateTo
-            titleResId = CoreUiR.string.navigation_home, // Localized display title - UPDATED
+            navigationKey = "Home",
+            titleResId = CoreUiR.string.navigation_home,
             selectedIcon = Icons.TwoTone.Home,
             unselectedIcon = Icons.Outlined.Home,
             hasNews = false
         ),
         TabInfo(
             navigationKey = "Ride",
-            titleResId = R.string.bike_bottom_nav_ride, // This one is ashbike specific, leave as is
+            titleResId = R.string.bike_bottom_nav_ride,
             selectedIcon = Icons.AutoMirrored.TwoTone.List,
             unselectedIcon = Icons.AutoMirrored.Outlined.List,
             hasNews = false,
-            badgeCount = unsyncedRidesCount // Use the passed-in count
+            badgeCount = unsyncedRidesCount
         ),
         TabInfo(
             navigationKey = "Settings",
-            titleResId = CoreUiR.string.action_settings, // UPDATED
+            titleResId = CoreUiR.string.action_settings,
             selectedIcon = Icons.TwoTone.Settings,
             unselectedIcon = Icons.Outlined.Settings,
             hasNews = showSettingsProfileAlert
         )
     )
-    var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
 
-    // Consider making initial selection more robust by checking current route
-    // against navController, if needed. For now, it defaults to the first item.
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    val selectedItemIndex = remember(currentRoute, tabs) { // Ensure tabs is a key if it could change
+        tabs.indexOfFirst { tabInfo ->
+            // Helper to get the base route for a navigation key
+            val tabBaseRoute = when (tabInfo.navigationKey) {
+                "Home" -> BikeScreen.HomeBikeScreen.route
+                "Ride" -> BikeScreen.TripBikeScreen.route
+                "Settings" -> BikeScreen.SettingsBikeScreen.route
+                else -> null
+            }
+
+            if (tabBaseRoute == null) return@indexOfFirst false
+
+            // For settings, check if the current route starts with the settings base route
+            // to account for arguments. For others, an exact match is fine.
+            if (tabInfo.navigationKey == "Settings") {
+                currentRoute?.startsWith(tabBaseRoute) == true
+            } else {
+                currentRoute == tabBaseRoute
+            }
+        }.let { if (it != -1) it else 0 } // Default to the first tab (Home) if no match or currentRoute is null
+    }
 
     NavigationBar(
-        contentColor = MaterialTheme.colorScheme.primary // Consider using MaterialTheme.colorScheme for theming
+        contentColor = MaterialTheme.colorScheme.primary
     ) {
         tabs.forEachIndexed { index, tabInfo ->
-            // Get the localized display title using the resource ID
             val displayTitle = stringResource(id = tabInfo.titleResId)
 
             NavigationBarItem(
-                //colors = NavigationBarItemColors(),
                 selected = selectedItemIndex == index,
                 onClick = {
-                    selectedItemIndex = index
-                    // Use the non-localized navigationKey for routing
+                    // Navigate to the tab's route
+                    // The selection will update reactively due to currentRoute changes
                     navigateTo(tabInfo.navigationKey, navController = navController)
                 },
                 label = {
-                    // Display the localized title
                     Text(text = displayTitle)
                 },
-                alwaysShowLabel = false, // Or true, based on your design preference
+                alwaysShowLabel = false,
                 icon = {
                     BadgedBox(
                         badge = {
@@ -110,10 +131,9 @@ fun HomeBottomBar(
                         }
                     ) {
                         Icon(
-                            imageVector = if (index == selectedItemIndex) {
+                            imageVector = if (selectedItemIndex == index) { // Use derived selectedItemIndex
                                 tabInfo.selectedIcon
                             } else tabInfo.unselectedIcon,
-                            // Use the localized title for accessibility
                             contentDescription = displayTitle
                         )
                     }
@@ -123,23 +143,30 @@ fun HomeBottomBar(
     }
 }
 
-// This function remains UNCHANGED as it relies on the non-localized keys.
-private fun navigateTo(tabTitle: String, navController: NavHostController) {
-    val route = when (tabTitle) { // tabTitle will be "Home", "Ride", or "Settings"
+private fun navigateTo(navigationKey: String, navController: NavHostController) {
+    val route = when (navigationKey) {
         "Home"-> BikeScreen.HomeBikeScreen.route
         "Ride" -> BikeScreen.TripBikeScreen.route
-        "Settings" -> BikeScreen.SettingsBikeScreen.route
-        else -> BikeScreen.HomeBikeScreen.route // Default route
+        "Settings" -> BikeScreen.SettingsBikeScreen.route // Navigates to base settings route
+        else -> BikeScreen.HomeBikeScreen.route
     }
 
     navController.navigate(route) {
-        // Avoid multiple copies of the same destination
         popUpTo(navController.graph.findStartDestination().id) {
             saveState = true
         }
-        // Avoid reloading the same destination if already on it
         launchSingleTop = true
-        // Restore state when reselecting a previously selected tab
         restoreState = true
     }
+}
+
+@Preview
+@Composable
+fun BikeHomeBottomBarPreview() {
+    val navController = rememberNavController()
+    HomeBottomBar(
+        navController = navController,
+        unsyncedRidesCount = 3,
+        showSettingsProfileAlert = true
+    )
 }
