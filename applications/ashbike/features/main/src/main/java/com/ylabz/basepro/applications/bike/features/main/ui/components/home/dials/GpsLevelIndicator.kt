@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials
 
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector4D
@@ -50,6 +51,7 @@ val HighEnergyColor = Color(0xFFF44336) // Red
 fun GpsLevelIndicator(
     uiState: BikeUiState.Success,
     onEvent: (BikeEvent) -> Unit, // Modified signature
+    navTo: (String) -> Unit, // MODIFIED: Changed from onEvent to navTo
     modifier: Modifier = Modifier,
 ) {
     val bikeData = uiState.bikeData
@@ -92,7 +94,10 @@ fun GpsLevelIndicator(
     }
 
     Box(
-        modifier = modifier.clickable { onEvent(BikeEvent.RequestGpsSettingsNavigation) }, // Made clickable
+        modifier = modifier.clickable {
+            Log.d("GpsLevelIndicator", "Clicked. Navigating to settings_ui_route?cardToExpandArg=AppPrefs")
+            navTo("settings_ui_route?cardToExpandArg=AppPrefs") // MODIFIED: Call navTo directly
+        },
         contentAlignment = Alignment.Center
     ) {
         val indicatorContainerSize = 24.dp + 8.dp

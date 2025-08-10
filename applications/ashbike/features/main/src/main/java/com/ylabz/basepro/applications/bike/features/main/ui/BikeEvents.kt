@@ -5,8 +5,5 @@ sealed class BikeEvent {
     object StopRide                 : BikeEvent()
     object OnBikeClick              : BikeEvent()
     data class SetTotalDistance(val distanceKm: Float) : BikeEvent()
-
     object DismissSetDistanceDialog : BikeEvent()
-    object RequestGpsSettingsNavigation : BikeEvent() // Added this line
-
 }

@@ -200,9 +200,7 @@ class BikeViewModel @Inject constructor(
                 // The user dismissed the dialog, so we need to hide it.
                 _showSetDistanceDialog.value = false
             }
-            BikeEvent.RequestGpsSettingsNavigation -> { // Added this case
-                onNavigateToGpsSettingsRequested()
-            }
+//            BikeEvent.RequestGpsSettingsNavigation -> { onNavigateToGpsSettingsRequested() }
 //            BikeEvent.OnBikeClick -> _showSetDistanceDialog.value = true Commented out duplicate
 //            BikeEvent.DismissSetDistanceDialog -> _showSetDistanceDialog.value = false Commented out duplicate
         }
@@ -213,15 +211,6 @@ class BikeViewModel @Inject constructor(
         Log.d("BikeViewModel", "sendCommandToService: $action")
         val intent = Intent(application, BikeForegroundService::class.java).apply { this.action = action }
         application.startService(intent) // Ensures service is running if not already
-    }
-
-    // New function to handle navigation to GPS settings
-    fun onNavigateToGpsSettingsRequested() {
-        viewModelScope.launch {
-            val route = "settings_ui_route?cardToExpandArg=AppPrefs"
-            _navigateTo.emit(route)
-            Log.d("BikeViewModel", "Navigation requested to: $route")
-        }
     }
 
     // --- Service Lifecycle Management ---

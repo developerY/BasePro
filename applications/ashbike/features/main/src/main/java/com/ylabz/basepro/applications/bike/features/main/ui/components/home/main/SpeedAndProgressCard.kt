@@ -88,6 +88,7 @@ fun SpeedAndProgressCard(
             GpsLevelIndicator(
                 uiState = uiState,
                 onEvent = onBikeEvent, // <<< MODIFIED HERE
+                navTo = navTo, // MODIFIED: Pass navTo instead of onEvent
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = 8.dp, end = 16.dp)
@@ -133,7 +134,7 @@ fun SpeedAndProgressCard(
                 BikePathWithControls(
                     uiState = uiState, // Just pass the state object
                     onBikeEvent = onBikeEvent,
-                    //navTo = navTo
+                    //navTo = navTo // BikePathWithControls might need its own navTo if it navigates
                 )
             }
         }
