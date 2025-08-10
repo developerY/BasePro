@@ -48,6 +48,7 @@ import com.ylabz.basepro.core.ui.theme.iconColorCalories
 // import com.ylabz.basepro.core.ui.theme.iconColorElevation // Not used directly here
 // import com.ylabz.basepro.core.ui.theme.iconColorSpeed // Not used directly here
 import androidx.compose.ui.res.stringResource
+import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import kotlinx.collections.immutable.persistentMapOf
 
 @Composable
@@ -193,7 +194,9 @@ fun BikeDashboardContentPreviewConnected() {
         bikeWeatherInfo = null, // Placeholder, can be filled if needed
         heartbeat = 78 // Added for preview consistency
     )
-    val uiState = BikeUiState.Success(dummyBikeRideInfo) // Wrap in Success state
+    val uiState = BikeUiState.Success(
+        dummyBikeRideInfo
+    ) // Wrap in Success state
 
     AshBikeTheme {
         BikeDashboardContent(

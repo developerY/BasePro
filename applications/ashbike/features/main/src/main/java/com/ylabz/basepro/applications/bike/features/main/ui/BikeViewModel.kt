@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.sample // <<< IMPORT ADDED HERE
+import kotlinx.coroutines.flow.onEach // Required for logging
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.jvm.java
@@ -94,36 +95,46 @@ class BikeViewModel @Inject constructor(
             bikeService?.let { service ->
                 Log.d("BikeViewModel", "Starting to collect from service.rideInfo.")
 
-                // 1. COMBINE: This block's only job is to gather the latest data from all sources.
                 combine(
-                    service.rideInfo.sample(1000L),
+                    service.rideInfo.sample(1000L).onEach { rideInfo ->
+                    },
                     _uiPathDistance,
                     _weatherInfo,
                     _showSetDistanceDialog,
                     _showGpsCountdownFlow,
-                    appSettingsRepository.gpsAccuracyFlow
+                    appSettingsRepository.gpsAccuracyFlow.onEach { newLevel ->
+                        Log.d("BikeViewModel_DEBUG", "gpsAccuracyFlow from repo emitted: $newLevel")
+                    }
                 ) { rideInfo, totalDistance, weather, showDialog, showCountdown, gpsAccuracy ->
+                    // Log inside the combine lambda
+                    Log.d("BikeViewModel_DEBUG", "Combine lambda. rideInfo.location: ${rideInfo.location}, gpsAccuracy (from settings): $gpsAccuracy, showGpsCountdown: $showCountdown")
                     CombinedData(rideInfo, totalDistance, weather, showDialog, showCountdown, gpsAccuracy)
                 }
                     // 2. MAP: This block's job is to transform the raw data into the final UI State.
                     //    Crucially, its return type is declared as the supertype, 'BikeUiState'.
                     .map<CombinedData, BikeUiState> { data ->
-                        BikeUiState.Success(
+                        // Log inside the map lambda
+                        Log.d("BikeViewModel_DEBUG", "Map lambda. Input CombinedData: $data.")
+                        val stateToEmit = BikeUiState.Success(
                             bikeData = data.rideInfo.copy(
                                 totalTripDistance = data.totalDistance,
                                 bikeWeatherInfo = data.weather
                             ),
                             showSetDistanceDialog = data.showDialog,
-                            showGpsCountdown = data.showGpsCountdown // Pass to the state
+                            showGpsCountdown = data.showGpsCountdown,
+                            locationEnergyLevel = data.gpsAccuracy // <<< USE data.gpsAccuracy HERE
                         )
+                        // Log the state being emitted and the key gpsAccuracy value from CombinedData
+                        Log.d("BikeViewModel_DEBUG", "Map lambda. Emitting BikeUiState.Success: $stateToEmit. data.gpsAccuracy (energy level from settings) was: ${data.gpsAccuracy}")
+                        stateToEmit
                     }
                     // 3. CATCH: This now works perfectly, because the flow is of type Flow<BikeUiState>.
                     .catch { e ->
-                        Log.e("BikeViewModel", "Error in flow: ${e.message}", e)
+                        Log.e("BikeViewModel_DEBUG", "Error in UI state flow: ${e.message}", e) // Added _DEBUG to tag
                         emit(BikeUiState.Error(e.localizedMessage ?: "Service error"))
                     }
                     .collect { state ->
-                        Log.d("BikeViewModel", "Collecting new UI state: $state")
+                        Log.d("BikeViewModel_DEBUG", "Collected final UI state: $state") // Added _DEBUG to tag
                         _uiState.value = state
                     }
             } ?: run {
@@ -182,8 +193,8 @@ class BikeViewModel @Inject constructor(
                 // The user dismissed the dialog, so we need to hide it.
                 _showSetDistanceDialog.value = false
             }
-            BikeEvent.OnBikeClick -> _showSetDistanceDialog.value = true
-            BikeEvent.DismissSetDistanceDialog -> _showSetDistanceDialog.value = false
+//            BikeEvent.OnBikeClick -> _showSetDistanceDialog.value = true Commented out duplicate
+//            BikeEvent.DismissSetDistanceDialog -> _showSetDistanceDialog.value = false Commented out duplicate
         }
     }
 

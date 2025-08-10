@@ -1,6 +1,7 @@
 package com.ylabz.basepro.applications.bike.features.main.ui
 
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
+import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 
 sealed class BikeUiState {
     /** we haven't yet gotten our first fix */
@@ -11,7 +12,7 @@ sealed class BikeUiState {
         val bikeData: BikeRideInfo,
         val showSetDistanceDialog: Boolean = false,
         val showGpsCountdown: Boolean = true, // Add the new property
-        val gpsAccuracy: String = "Balanced"
+        val locationEnergyLevel: LocationEnergyLevel = LocationEnergyLevel.BALANCED // <<< ADD THIS LINE
     ) : BikeUiState()
     data class Error(val message: String)             : BikeUiState()
 }

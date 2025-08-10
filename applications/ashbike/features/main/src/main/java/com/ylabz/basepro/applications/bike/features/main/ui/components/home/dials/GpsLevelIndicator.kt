@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
+import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import kotlinx.coroutines.launch
 
 // WORKAROUND: Manually define the Color VectorConverter because it cannot be found
@@ -39,6 +40,10 @@ private val ColorToVectorConverter =
         }
     )
 
+val LowEnergyColor = Color(0xFF4CAF50) // Green
+val MidEnergyColor = Color(0xFFFFC107) // Amber
+val HighEnergyColor = Color(0xFFF44336) // Red
+
 @Composable
 fun GpsLevelIndicator(
     uiState: BikeUiState.Success,
@@ -48,13 +53,14 @@ fun GpsLevelIndicator(
     val lastUpdateTime = bikeData.lastGpsUpdateTime
     val gpsUpdateInterval = bikeData.gpsUpdateIntervalMillis
     val showCountdown = uiState.showGpsCountdown
-    val gpsAccuracy = uiState.gpsAccuracy
+    val currentEnergyLevel = uiState.locationEnergyLevel
 
     val iconColor by animateColorAsState(
-        targetValue = when (gpsAccuracy) {
-            "Low Power" -> Color.Yellow
-            "Balanced" -> Color.Green
-            "High Accuracy" -> Color.Red
+        targetValue = when (currentEnergyLevel) {
+            LocationEnergyLevel.POWER_SAVER -> LowEnergyColor
+            LocationEnergyLevel.BALANCED -> MidEnergyColor
+            LocationEnergyLevel.HIGH_ACCURACY -> HighEnergyColor
+            LocationEnergyLevel.AUTO -> MidEnergyColor // Defaulting AUTO to MidEnergyColor
             else -> MaterialTheme.colorScheme.onSurface
         },
         animationSpec = tween(durationMillis = 500),
@@ -64,16 +70,17 @@ fun GpsLevelIndicator(
     val animatedColor = remember { Animatable(iconColor, ColorToVectorConverter) }
     val initialColor = MaterialTheme.colorScheme.onSurface
 
-    LaunchedEffect(lastUpdateTime, gpsAccuracy) {
+    LaunchedEffect(lastUpdateTime, currentEnergyLevel) {
         if (lastUpdateTime > 0L) {
             launch {
                 animatedColor.snapTo(Color.Blue)
                 animatedColor.animateTo(
-                    targetValue = when (gpsAccuracy) {
-                        "Low Power" -> Color.Yellow
-                        "Balanced" -> Color.Green
-                        "High Accuracy" -> Color.Red
-                        else -> initialColor
+                    targetValue = when (currentEnergyLevel) {
+                        LocationEnergyLevel.POWER_SAVER -> LowEnergyColor
+                        LocationEnergyLevel.BALANCED -> MidEnergyColor
+                        LocationEnergyLevel.HIGH_ACCURACY -> HighEnergyColor
+                        LocationEnergyLevel.AUTO -> MidEnergyColor // Defaulting AUTO to MidEnergyColor
+                        //else -> MaterialTheme.colorScheme.onSurface
                     },
                     animationSpec = tween(durationMillis = 1000, easing = LinearEasing)
                 )
