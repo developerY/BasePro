@@ -15,6 +15,7 @@ import com.ylabz.basepro.applications.bike.database.repository.UserProfileReposi
 import com.ylabz.basepro.applications.bike.features.main.service.BikeForegroundService
 import com.ylabz.basepro.applications.bike.features.main.util.combine
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
+import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -84,7 +85,7 @@ class BikeViewModel @Inject constructor(
         val weather: BikeWeatherInfo?,
         val showDialog: Boolean,
         val showGpsCountdown: Boolean,
-        val gpsAccuracy: String
+        val gpsAccuracy: LocationEnergyLevel
     )
 
     private fun observeServiceData() {

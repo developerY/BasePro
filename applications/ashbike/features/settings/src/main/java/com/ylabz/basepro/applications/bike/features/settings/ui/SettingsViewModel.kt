@@ -42,13 +42,13 @@ class SettingsViewModel @Inject constructor(
         appRepo.notificationsFlow,
         appRepo.unitsFlow,
         appRepo.gpsAccuracyFlow
-    ) { theme, lang, notif, units, gpsAccuracy ->
+    ) { theme, lang, notif, units, gpsAccuracyEnum ->
         mapOf(
             "Theme" to theme,
             "Language" to lang,
             "Notifications" to notif,
             "Units" to units,
-            "GPS Accuracy" to gpsAccuracy
+            "GPS Accuracy" to gpsAccuracyEnum.name
         )
     }
 
@@ -70,11 +70,11 @@ class SettingsViewModel @Inject constructor(
 
     val uiState: StateFlow<SettingsUiState> =
         combine(
-            _locallySelectedEnergyLevel, // Add the temporary holder to the combine function
+            _locallySelectedEnergyLevel,
             settingsSelections,
             profileData,
             profileRepo.profileReviewedOrSavedFlow,
-            profileRepo.locationEnergyLevelFlow
+            appRepo.gpsAccuracyFlow
         ) { localOverride, selections, profile, profileHasBeenReviewedOrSaved, savedEnergyLevel ->
 
             // This is the key change: Use the local selection if it exists, otherwise use the saved one.
@@ -139,9 +139,9 @@ class SettingsViewModel @Inject constructor(
                 // MINIMAL CHANGE 2 of 2: Update the temporary holder instantly for the UI.
                 _locallySelectedEnergyLevel.value = event.level
                 viewModelScope.launch {
-                    Log.d("SettingsViewModel", "Updating Energy Level to: ${event.level}")
+                    Log.d("SettingsViewModel", "Updating Energy Level to: ${event.level.name}")
                     try {
-                        profileRepo.setLocationEnergyLevel(event.level)
+                        appRepo.setGpsAccuracy(event.level.name)
                         Log.d("SettingsViewModel", "Successfully called repo to set energy level.")
                     } catch (e: Exception) {
                         Log.e("SettingsViewModel", "Failed to set energy level.", e)

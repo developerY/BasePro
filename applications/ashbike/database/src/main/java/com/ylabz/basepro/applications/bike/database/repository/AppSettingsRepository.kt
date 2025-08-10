@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -24,7 +25,7 @@ interface AppSettingsRepository {
     val languageFlow: Flow<String>
     val notificationsFlow: Flow<String>
     val unitsFlow: Flow<String> // Added Units Flow
-    val gpsAccuracyFlow: Flow<String>
+    val gpsAccuracyFlow: Flow<LocationEnergyLevel>
 
     suspend fun setTheme(theme: String)
     suspend fun setLanguage(language: String)
@@ -51,8 +52,17 @@ class DataStoreAppSettingsRepository @Inject constructor(
     override val unitsFlow: Flow<String> = dataStore.data // Added Units Flow implementation
         .map { it[SettingsPrefsKeys.UNITS] ?: "Metric (SI)" } // Defaulting to Metric
 
-    override val gpsAccuracyFlow: Flow<String> = dataStore.data
-        .map { it[SettingsPrefsKeys.GPS_ACCURACY] ?: "Balanced" }
+    override val gpsAccuracyFlow: Flow<LocationEnergyLevel> = dataStore.data
+        .map { preferences ->
+            val accuracyString = preferences[SettingsPrefsKeys.GPS_ACCURACY] ?: LocationEnergyLevel.BALANCED.name
+            try {
+                LocationEnergyLevel.valueOf(accuracyString)
+            } catch (e: IllegalArgumentException) {
+                // If the stored string is not a valid enum member, default to BALANCED.
+                // This handles potential data corruption or older invalid values.
+                LocationEnergyLevel.BALANCED
+            }
+        }
 
     override suspend fun setTheme(theme: String) {
         dataStore.edit { prefs -> prefs[SettingsPrefsKeys.THEME] = theme }

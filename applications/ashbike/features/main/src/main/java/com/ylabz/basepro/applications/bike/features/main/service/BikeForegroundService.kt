@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import com.ylabz.basepro.applications.bike.database.RideLocationEntity
+import com.ylabz.basepro.applications.bike.database.repository.AppSettingsRepository
 import com.ylabz.basepro.applications.bike.database.repository.UserProfileRepository
 import com.ylabz.basepro.applications.bike.features.main.R
 import com.ylabz.basepro.applications.bike.features.main.usecase.CalculateCaloriesUseCase
@@ -51,6 +52,9 @@ class BikeForegroundService : LifecycleService() {
 
     @Inject
     lateinit var userProfileRepository: UserProfileRepository
+
+    @Inject // <<< --- ADDED @Inject HERE ---
+    lateinit var appSettingsRepository: AppSettingsRepository
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -100,7 +104,7 @@ class BikeForegroundService : LifecycleService() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         continuousSessionStartTimeMillis = System.currentTimeMillis()
 
-        currentEnergyLevelState = userProfileRepository.locationEnergyLevelFlow
+        currentEnergyLevelState = appSettingsRepository.gpsAccuracyFlow
             .stateIn(
                 scope = lifecycleScope,
                 started = SharingStarted.Eagerly,//WhileSubscribed(5000),

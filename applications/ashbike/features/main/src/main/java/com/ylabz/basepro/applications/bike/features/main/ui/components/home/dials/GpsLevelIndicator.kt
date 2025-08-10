@@ -10,6 +10,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Satellite
 import androidx.compose.material.icons.filled.SatelliteAlt
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -56,18 +57,24 @@ fun GpsLevelIndicator(
             "High Accuracy" -> Color.Red
             else -> MaterialTheme.colorScheme.onSurface
         },
-        animationSpec = tween(durationMillis = 500)
+        animationSpec = tween(durationMillis = 500),
+        label = "GPS Icon Color"
     )
 
     val animatedColor = remember { Animatable(iconColor, ColorToVectorConverter) }
+    val initialColor = MaterialTheme.colorScheme.onSurface
 
-
-    LaunchedEffect(lastUpdateTime) {
+    LaunchedEffect(lastUpdateTime, gpsAccuracy) {
         if (lastUpdateTime > 0L) {
             launch {
                 animatedColor.snapTo(Color.Blue)
                 animatedColor.animateTo(
-                    targetValue = iconColor,
+                    targetValue = when (gpsAccuracy) {
+                        "Low Power" -> Color.Yellow
+                        "Balanced" -> Color.Green
+                        "High Accuracy" -> Color.Red
+                        else -> initialColor
+                    },
                     animationSpec = tween(durationMillis = 1000, easing = LinearEasing)
                 )
             }
@@ -92,8 +99,9 @@ fun GpsLevelIndicator(
                     color = animatedColor.value.copy(alpha = 0.8f)
                 )
             }
+            val icon = if (showCountdown) Icons.Default.SatelliteAlt else Icons.Default.Satellite
             Icon(
-                imageVector = Icons.Default.SatelliteAlt,
+                imageVector = icon,
                 contentDescription = "GPS Status",
                 tint = animatedColor.value,
                 modifier = Modifier.size(24.dp)
