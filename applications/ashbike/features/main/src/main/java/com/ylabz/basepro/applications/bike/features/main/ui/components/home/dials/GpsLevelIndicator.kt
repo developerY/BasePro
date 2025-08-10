@@ -30,6 +30,7 @@ import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent // Added i
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import com.ylabz.basepro.core.ui.BikeScreen
+// import com.ylabz.basepro.applications.bike.ui.navigation.BikeScreen // No longer needed directly by GpsLevelIndicator
 import kotlinx.coroutines.launch
 
 // WORKAROUND: Manually define the Color VectorConverter because it cannot be found
@@ -96,9 +97,10 @@ fun GpsLevelIndicator(
 
     Box(
         modifier = modifier.clickable {
-            val route = "${BikeScreen.SettingsBikeScreen.route}?cardToExpandArg=AppPrefs" // <<< MODIFIED NAVIGATION CALL
-            Log.d("GpsLevelIndicator", "Satellite icon clicked. Navigating to: $route")
-            navTo(route)
+            // val route = "${BikeScreen.SettingsBikeScreen.route}?cardToExpandArg=AppPrefs" // <<< MODIFIED NAVIGATION CALL
+            // navTo(route)
+            Log.d("GpsLevelIndicator", "Satellite icon clicked. Sending NavigateToSettingsRequested event.")
+            onEvent(BikeEvent.NavigateToSettingsRequested(cardKey = "AppPrefs"))
         },
         contentAlignment = Alignment.Center
     ) {

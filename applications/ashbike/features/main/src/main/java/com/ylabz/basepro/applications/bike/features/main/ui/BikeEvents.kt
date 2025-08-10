@@ -6,4 +6,7 @@ sealed class BikeEvent {
     object OnBikeClick              : BikeEvent()
     data class SetTotalDistance(val distanceKm: Float) : BikeEvent()
     object DismissSetDistanceDialog : BikeEvent()
+
+    // Added for Option 2: Semantic Event for navigation
+    data class NavigateToSettingsRequested(val cardKey: String?) : BikeEvent()
 }

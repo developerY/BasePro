@@ -37,7 +37,7 @@ fun SpeedAndProgressCard(
     modifier: Modifier = Modifier.fillMaxSize(),
     uiState: BikeUiState.Success, // Changed parameter
     onBikeEvent: (BikeEvent) -> Unit,
-    navTo: (String) -> Unit,
+    navTo: (String) -> Unit, // This navTo is for SpeedAndProgressCard itself, if needed directly
     containerColor: Color,
     contentColor: Color,
 ) {
@@ -87,7 +87,7 @@ fun SpeedAndProgressCard(
 
             GpsLevelIndicator(
                 uiState = uiState,
-                onEvent = onBikeEvent, // <<< MODIFIED HERE
+                onEvent = onBikeEvent, // Correctly passing onBikeEvent
                 navTo = navTo, // MODIFIED: Pass navTo instead of onEvent
                 modifier = Modifier
                     .align(Alignment.TopEnd)

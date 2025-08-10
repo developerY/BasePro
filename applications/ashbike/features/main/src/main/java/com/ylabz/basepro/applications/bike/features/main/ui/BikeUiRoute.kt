@@ -18,6 +18,7 @@ import com.ylabz.basepro.applications.bike.features.main.ui.components.ErrorScre
 import com.ylabz.basepro.applications.bike.features.main.ui.components.LoadingScreen
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.BikeDashboardContent
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.WaitingForGpsScreen
+import com.ylabz.basepro.core.ui.BikeScreen
 import com.ylabz.basepro.feature.heatlh.ui.HealthViewModel
 import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
 
@@ -53,6 +54,20 @@ fun BikeUiRoute(
         Manifest.permission.ACCESS_FINE_LOCATION
     )
 
+    val eventHandler = { event: BikeEvent ->
+        when (event) {
+            is BikeEvent.NavigateToSettingsRequested -> {
+                val route = BikeScreen.SettingsBikeScreen.createRoute(event.cardKey)
+                Log.d("BikeUiRoute", "Handling NavigateToSettingsRequested. Navigating to: $route")
+                navTo(route)
+            }
+            else -> {
+                // For all other events, pass them to the ViewModel
+                viewModel.onEvent(event)
+            }
+        }
+    }
+
     when (val currentBikeUiState = bikeUiState) {
         is BikeUiState.WaitingForGps -> {
             WaitingForGpsScreen(
@@ -72,8 +87,8 @@ fun BikeUiRoute(
                 BikeDashboardContent(
                     modifier = modifier.fillMaxSize(),
                     uiState = currentBikeUiState, // Pass the whole UiState.Success object
-                    onBikeEvent = viewModel::onEvent, 
-                    navTo = navTo
+                    onBikeEvent = eventHandler, // Use the new eventHandler
+                    navTo = navTo // navTo is still passed for other direct navigations if any from BikeDashboardContent
                 )
             } else {
                 WaitingForGpsScreen(
