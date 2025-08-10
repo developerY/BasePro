@@ -7,6 +7,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.TwoWayConverter
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable // Added import
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -24,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent // Added import
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import kotlinx.coroutines.launch
@@ -47,6 +49,7 @@ val HighEnergyColor = Color(0xFFF44336) // Red
 @Composable
 fun GpsLevelIndicator(
     uiState: BikeUiState.Success,
+    onEvent: (BikeEvent) -> Unit, // Modified signature
     modifier: Modifier = Modifier,
 ) {
     val bikeData = uiState.bikeData
@@ -89,7 +92,7 @@ fun GpsLevelIndicator(
     }
 
     Box(
-        modifier = modifier,
+        modifier = modifier.clickable { onEvent(BikeEvent.RequestGpsSettingsNavigation) }, // Made clickable
         contentAlignment = Alignment.Center
     ) {
         val indicatorContainerSize = 24.dp + 8.dp

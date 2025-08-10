@@ -13,6 +13,8 @@ import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
 import com.ylabz.basepro.feature.nfc.ui.components.screens.ErrorScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.LoadingScreen
 
+internal const val ROUTE_NAME = "settings_ui_route" // Assuming this was intended to be here or is defined elsewhere for navigation
+internal const val ARG_CARD_TO_EXPAND = "cardToExpandArg" // Added argument name
 
 @Composable
 fun SettingsUiRoute(
@@ -22,7 +24,8 @@ fun SettingsUiRoute(
     //nfcEvent : (NfcRwEvent) -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
     nfcViewModel: NfcViewModel = hiltViewModel(),
-    bleViewModel: BluetoothLeViewModel = hiltViewModel()
+    bleViewModel: BluetoothLeViewModel = hiltViewModel(),
+    initialCardKeyToExpand: String? // Added parameter
 ) {
     val uiState = viewModel.uiState.collectAsState().value
     val nfcUiState = nfcViewModel.uiState.collectAsState().value
@@ -45,7 +48,8 @@ fun SettingsUiRoute(
                 nfcEvent = nfcViewModel::onEvent,
                 bleUiState = bleUiState,
                 bleEvent = bleViewModel::onEvent,
-                navTo = navTo
+                navTo = navTo,
+                initialCardKeyToExpand = initialCardKeyToExpand // Passed to SettingsScreenEx
             )
         }
     }

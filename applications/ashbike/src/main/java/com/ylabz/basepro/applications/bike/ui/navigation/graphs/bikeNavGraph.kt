@@ -57,10 +57,24 @@ fun NavGraphBuilder.bikeNavGraph(
         )
     }
     // 3) Settings Tab
-    composable(BikeScreen.SettingsBikeScreen.route) {
+    val settingsRouteBase = BikeScreen.SettingsBikeScreen.route // Assuming this is "settings_ui_route"
+    val cardToExpandArgName = "cardToExpandArg" // Argument name used in BikeViewModel and SettingsUiRoute
+
+    composable(
+        route = "$settingsRouteBase?$cardToExpandArgName={$cardToExpandArgName}", // e.g., "settings_ui_route?cardToExpandArg={cardToExpandArg}"
+        arguments = listOf(
+            navArgument(cardToExpandArgName) {
+                type = NavType.StringType
+                nullable = true
+                defaultValue = null // Explicitly set default for optional argument
+            }
+        )
+    ) { backStackEntry ->
+        val cardToExpand = backStackEntry.arguments?.getString(cardToExpandArgName)
         SettingsUiRoute(
             modifier = modifier,
-            navTo    = { path -> navHostController.navigate(path) }
+            navTo    = { path -> navHostController.navigate(path) },
+            initialCardKeyToExpand = cardToExpand // Pass the extracted argument
         )
     }
 

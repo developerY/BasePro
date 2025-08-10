@@ -87,6 +87,7 @@ fun SpeedAndProgressCard(
 
             GpsLevelIndicator(
                 uiState = uiState,
+                onEvent = onBikeEvent, // <<< MODIFIED HERE
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = 8.dp, end = 16.dp)

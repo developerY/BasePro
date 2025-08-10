@@ -18,8 +18,11 @@ import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow // Added import
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow // Added import
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow // Added import
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -36,6 +39,10 @@ class BikeViewModel @Inject constructor(
     private val weatherUseCase: WeatherUseCase, // Inject WeatherUseCase here
     private val appSettingsRepository: AppSettingsRepository
 ) : ViewModel() {
+
+    // --- Navigation Channel ---
+    private val _navigateTo = MutableSharedFlow<String>()
+    val navigateTo: SharedFlow<String> = _navigateTo.asSharedFlow()
 
     // --- State for the Service Connection ---
     private val _bound = MutableStateFlow(false)
@@ -193,6 +200,9 @@ class BikeViewModel @Inject constructor(
                 // The user dismissed the dialog, so we need to hide it.
                 _showSetDistanceDialog.value = false
             }
+            BikeEvent.RequestGpsSettingsNavigation -> { // Added this case
+                onNavigateToGpsSettingsRequested()
+            }
 //            BikeEvent.OnBikeClick -> _showSetDistanceDialog.value = true Commented out duplicate
 //            BikeEvent.DismissSetDistanceDialog -> _showSetDistanceDialog.value = false Commented out duplicate
         }
@@ -203,6 +213,15 @@ class BikeViewModel @Inject constructor(
         Log.d("BikeViewModel", "sendCommandToService: $action")
         val intent = Intent(application, BikeForegroundService::class.java).apply { this.action = action }
         application.startService(intent) // Ensures service is running if not already
+    }
+
+    // New function to handle navigation to GPS settings
+    fun onNavigateToGpsSettingsRequested() {
+        viewModelScope.launch {
+            val route = "settings_ui_route?cardToExpandArg=AppPrefs"
+            _navigateTo.emit(route)
+            Log.d("BikeViewModel", "Navigation requested to: $route")
+        }
     }
 
     // --- Service Lifecycle Management ---

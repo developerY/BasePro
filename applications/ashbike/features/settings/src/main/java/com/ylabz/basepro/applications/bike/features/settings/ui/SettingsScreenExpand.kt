@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect // Added import
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateSetOf
@@ -79,11 +80,20 @@ fun SettingsScreenEx(
     nfcEvent: (NfcRwEvent) -> Unit,
     bleUiState: BluetoothLeUiState,
     bleEvent: (BluetoothLeEvent) -> Unit,
-    navTo: (String) -> Unit
+    navTo: (String) -> Unit,
+    initialCardKeyToExpand: String? = null // Added parameter
 ) {
     val expandedSections = remember { mutableStateSetOf<SectionKey>() }
     val expandedCards = remember { mutableStateSetOf<CardKey>() }
     var isEditing by remember { mutableStateOf(false) }
+
+    // Effect to expand the card specified by the navigation argument
+    LaunchedEffect(initialCardKeyToExpand) {
+        if (initialCardKeyToExpand == CardKey.AppPrefs.name) {
+            expandedSections.add(SectionKey.App) // Expand the parent section
+            expandedCards.add(CardKey.AppPrefs)  // Expand the AppPrefs card
+        }
+    }
 
     fun <T> toggle(set: MutableSet<T>, key: T) {
         if (set.contains(key)) set.remove(key) else set.add(key)
@@ -231,6 +241,7 @@ fun SettingsScreenExPreview() {
             uiState = dummyUiState, onEvent = { }, navTo = { },
             nfcUiState = NfcUiState.Stopped, nfcEvent = { },
             bleUiState = BluetoothLeUiState.Loading, bleEvent = { },
+            initialCardKeyToExpand = null // Updated preview call
         )
     }
 }
