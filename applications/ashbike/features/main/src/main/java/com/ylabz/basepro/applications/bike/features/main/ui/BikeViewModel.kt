@@ -175,6 +175,8 @@ class BikeViewModel @Inject constructor(
         // This function's only job is to update the raw "source of truth" StateFlows.
         // The `combine` block in `observeServiceData` will automatically react to these
         // changes and produce the new, correct UI state.
+        // Ensure this when statement is exhaustive by covering all event types
+        // defined in the BikeEvent sealed class.
         when (event) {
             is BikeEvent.SetTotalDistance -> {
                 _uiPathDistance.value = event.distanceKm
@@ -200,9 +202,12 @@ class BikeViewModel @Inject constructor(
                 // The user dismissed the dialog, so we need to hide it.
                 _showSetDistanceDialog.value = false
             }
-//            BikeEvent.RequestGpsSettingsNavigation -> { onNavigateToGpsSettingsRequested() }
-//            BikeEvent.OnBikeClick -> _showSetDistanceDialog.value = true Commented out duplicate
-//            BikeEvent.DismissSetDistanceDialog -> _showSetDistanceDialog.value = false Commented out duplicate
+            is BikeEvent.NavigateToSettingsRequested -> {
+                // Primarily handled by BikeUiRoute for navigation.
+                // ViewModel can perform other actions if needed (e.g., logging, analytics).
+                Log.d("BikeViewModel", "NavigateToSettingsRequested event received. CardKey: ${event.cardKey}")
+                // TODO: Add any ViewModel-specific logic for this event if required in the future.
+            }
         }
     }
 
