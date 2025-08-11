@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.settings.R
 import com.ylabz.basepro.applications.bike.features.settings.ui.AppPreferenceKeys
@@ -82,7 +84,7 @@ fun AppPreferencesExpandable(
                     contentDescription = stringResource(if (expanded) R.string.settings_action_collapse else R.string.settings_action_expand)
                 )
             }
-
+            var checked by remember { mutableStateOf(true) }
             // Expanded content
             if (expanded) {
                 HorizontalDivider()
@@ -98,12 +100,24 @@ fun AppPreferencesExpandable(
                         text = stringResource(R.string.settings_location_energy_level_label),
                         style = MaterialTheme.typography.bodyLarge
                     )
-                    Text(
-                        text = levelLabel,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(bottom = 4.dp)
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = levelLabel,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Text(
+                            text = stringResource(R.string.settings_location_short_ride_label),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Checkbox(
+                            checked = checked,
+                            onCheckedChange = { checked = it }
+                        )
+                    }
                     Slider(
                         value = sliderValue,
                         onValueChange = { newValue ->
@@ -123,8 +137,7 @@ fun AppPreferencesExpandable(
                     // --- End of Location Energy Level Setting ---
 
                     HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) // Separator
-
-                    // Dark Mode Setting (Assuming this is handled via Theme settings card now, but keeping logic if needed)
+                    /* Dark Mode Setting (Assuming this is handled via Theme settings card now, but keeping logic if needed)
                     // This is slightly redundant if ThemeSettingsCard is used, but harmless.
                     val isDarkMode = uiState.selections[AppPreferenceKeys.KEY_THEME] == AppPreferenceKeys.VALUE_THEME_DARK
                     var darkModeEnabled by rememberSaveable(isDarkMode) {
@@ -142,7 +155,7 @@ fun AppPreferencesExpandable(
                                 onEvent(SettingsEvent.UpdateSetting(AppPreferenceKeys.KEY_THEME, newTheme))
                             }
                         )
-                    }
+                    }*/
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Notifications Setting
@@ -182,11 +195,39 @@ fun AppPreferencesExpandable(
                                 val newUnit = if (newIsMetric) AppPreferenceKeys.VALUE_UNITS_METRIC else AppPreferenceKeys.VALUE_UNITS_IMPERIAL
                                 onEvent(SettingsEvent.UpdateSetting(AppPreferenceKeys.KEY_UNITS, newUnit))
                             },
-                            enabled = true
+                            enabled = false // work in progress
                         )
                     }
                 }
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun AppPreferencesExpandablePreview() {
+    val uiState = SettingsUiState.Success(
+        options = mapOf(
+            AppPreferenceKeys.KEY_THEME to listOf(
+                AppPreferenceKeys.VALUE_THEME_LIGHT,
+                AppPreferenceKeys.VALUE_THEME_DARK,
+                AppPreferenceKeys.VALUE_THEME_SYSTEM
+            ),
+            AppPreferenceKeys.KEY_NOTIFICATIONS to listOf(
+                AppPreferenceKeys.VALUE_NOTIFICATIONS_ENABLED,
+                AppPreferenceKeys.VALUE_NOTIFICATIONS_DISABLED
+            ),
+            AppPreferenceKeys.KEY_UNITS to listOf(
+                AppPreferenceKeys.VALUE_UNITS_METRIC,
+                AppPreferenceKeys.VALUE_UNITS_IMPERIAL
+            )
+        ),
+        selections = mapOf(
+            AppPreferenceKeys.KEY_THEME to AppPreferenceKeys.VALUE_THEME_LIGHT,
+            AppPreferenceKeys.KEY_NOTIFICATIONS to AppPreferenceKeys.VALUE_NOTIFICATIONS_ENABLED,
+            AppPreferenceKeys.KEY_UNITS to AppPreferenceKeys.VALUE_UNITS_METRIC
+        )
+    )
+    AppPreferencesExpandable(expanded = true, onExpandToggle = {}, uiState = uiState, onEvent = {})
 }
