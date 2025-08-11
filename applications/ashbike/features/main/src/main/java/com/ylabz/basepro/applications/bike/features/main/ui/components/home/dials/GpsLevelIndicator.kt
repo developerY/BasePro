@@ -30,6 +30,7 @@ import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent // Added i
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import com.ylabz.basepro.core.ui.BikeScreen
+import com.ylabz.basepro.core.ui.NavigationCommand
 // import com.ylabz.basepro.applications.bike.ui.navigation.BikeScreen // No longer needed directly by GpsLevelIndicator
 import kotlinx.coroutines.launch
 
@@ -53,7 +54,7 @@ val HighEnergyColor = Color(0xFFF44336) // Red
 fun GpsLevelIndicator(
     uiState: BikeUiState.Success,
     onEvent: (BikeEvent) -> Unit, // Modified signature
-    navTo: (String) -> Unit, // MODIFIED: Changed from onEvent to navTo
+    navTo: (NavigationCommand) -> Unit, // MODIFIED: Changed from onEvent to navTo
     modifier: Modifier = Modifier,
 ) {
     val bikeData = uiState.bikeData

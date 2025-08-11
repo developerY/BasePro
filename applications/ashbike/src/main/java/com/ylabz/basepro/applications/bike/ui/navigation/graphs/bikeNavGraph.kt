@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -20,6 +21,7 @@ import com.ylabz.basepro.applications.bike.features.trips.ui.TripsUIRoute
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailScreen
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailViewModel
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.haversineMeters
+import com.ylabz.basepro.core.ui.NavigationCommand
 import com.ylabz.basepro.core.util.Logging
 import com.ylabz.basepro.feature.places.ui.CoffeeShopEvent
 import com.ylabz.basepro.feature.places.ui.CoffeeShopUIState
@@ -39,7 +41,21 @@ fun NavGraphBuilder.bikeNavGraph(
     composable(BikeScreen.HomeBikeScreen.route) {
         BikeUiRoute(
             modifier = modifier,
-            navHostController = navHostController,
+            // Create a navTo lambda that handles our new NavigationCommand
+            navTo = { command ->
+                when (command) {
+                    is NavigationCommand.To -> navHostController.navigate(command.route)
+                    is NavigationCommand.ToTab -> {
+                        navHostController.navigate(command.route) {
+                            popUpTo(navHostController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                }
+            },
             viewModel = bikeViewModel // <<< MODIFIED LINE: Pass the bikeViewModel instance
         )
     }
@@ -50,6 +66,7 @@ fun NavGraphBuilder.bikeNavGraph(
         TripsUIRoute(
             modifier = modifier,
             navTo    = { rideId ->
+                // This is a simple "To" navigation
                 navHostController.navigate(
                     BikeScreen.RideDetailScreen.createRoute(rideId)
                 )

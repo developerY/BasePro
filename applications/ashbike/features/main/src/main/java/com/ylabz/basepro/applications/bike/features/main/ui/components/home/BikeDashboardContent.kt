@@ -49,6 +49,7 @@ import com.ylabz.basepro.core.ui.theme.iconColorCalories
 // import com.ylabz.basepro.core.ui.theme.iconColorSpeed // Not used directly here
 import androidx.compose.ui.res.stringResource
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
+import com.ylabz.basepro.core.ui.NavigationCommand
 import kotlinx.collections.immutable.persistentMapOf
 
 @Composable
@@ -56,7 +57,7 @@ fun BikeDashboardContent(
     modifier: Modifier = Modifier,
     uiState: BikeUiState.Success, // Changed parameter
     onBikeEvent: (BikeEvent) -> Unit,
-    navTo: (String) -> Unit,
+    navTo: (NavigationCommand) -> Unit, // <<< MODIFIED LINE
 ) {
     val bikeRideInfo = uiState.bikeData // Access bikeData from uiState
     val view = LocalView.current
@@ -88,7 +89,7 @@ fun BikeDashboardContent(
         SpeedAndProgressCard(
             uiState = uiState, // Pass the full uiState
             onBikeEvent = onBikeEvent,
-            navTo = navTo,
+            navTo = navTo, // Pass down the updated navTo
             containerColor = containerColor,
             contentColor = contentColor
         )

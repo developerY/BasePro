@@ -29,6 +29,7 @@ import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dial
 import com.ylabz.basepro.core.model.bike.BikeRideInfo // Added import
 import com.ylabz.basepro.core.model.bike.RideState
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
+import com.ylabz.basepro.core.ui.NavigationCommand
 import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDialWithSpeed
 import kotlinx.collections.immutable.persistentMapOf // Needed for BikeRideInfo in preview
 
@@ -37,7 +38,7 @@ fun SpeedAndProgressCard(
     modifier: Modifier = Modifier.fillMaxSize(),
     uiState: BikeUiState.Success, // Changed parameter
     onBikeEvent: (BikeEvent) -> Unit,
-    navTo: (String) -> Unit, // This navTo is for SpeedAndProgressCard itself, if needed directly
+    navTo: (NavigationCommand) -> Unit, // <<< MODIFIED LINE
     containerColor: Color,
     contentColor: Color,
 ) {
@@ -85,6 +86,7 @@ fun SpeedAndProgressCard(
                     .clickable { weatherIconsVisible = !weatherIconsVisible }
             )
 
+            // GpsLevelIndicator now only needs uiState and onEvent
             GpsLevelIndicator(
                 uiState = uiState,
                 onEvent = onBikeEvent, // Correctly passing onBikeEvent
