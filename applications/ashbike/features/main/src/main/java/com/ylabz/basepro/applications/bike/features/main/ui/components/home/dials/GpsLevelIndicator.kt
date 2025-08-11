@@ -25,12 +25,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent // Added import
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
+import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import com.ylabz.basepro.core.ui.BikeScreen
 import com.ylabz.basepro.core.ui.NavigationCommand
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 // import com.ylabz.basepro.applications.bike.ui.navigation.BikeScreen // No longer needed directly by GpsLevelIndicator
 import kotlinx.coroutines.launch
 
@@ -166,3 +170,53 @@ fun GpsCountdownIndicator(
         )
     }
 }
+
+@Preview
+@Composable
+fun GpsLevelIndicatorPreview() {
+    val bikeData = BikeRideInfo(
+        location = null,
+        currentSpeed = 0.0,
+        averageSpeed = 0.0,
+        maxSpeed = 0.0,
+        currentTripDistance = 0f,
+        totalTripDistance = null,
+        remainingDistance = null,
+        elevationGain = 0.0,
+        elevationLoss = 0.0,
+        caloriesBurned = 0,
+        rideDuration = "0h 0m",
+        settings = persistentMapOf(),
+        heading = 0f,
+        elevation = 0.0,
+        isBikeConnected = false,
+        heartbeat = null,
+        batteryLevel = null,
+        motorPower = null,
+        lastGpsUpdateTime = System.currentTimeMillis(),
+        gpsUpdateIntervalMillis = 5000L
+    )
+    val uiState = BikeUiState.Success(
+        bikeData = bikeData,
+        showGpsCountdown = true,
+        locationEnergyLevel = LocationEnergyLevel.BALANCED
+    )
+    GpsLevelIndicator(
+        uiState = uiState,
+        onEvent = {},
+        navTo = {}
+    )
+}
+
+@Preview
+@Composable
+fun GpsCountdownIndicatorPreview() {
+    GpsCountdownIndicator(
+        lastGpsUpdateTime = System.currentTimeMillis(),
+        gpsUpdateIntervalMillis = 5000L,
+        modifier = Modifier.size(100.dp),
+        color = Color.Green,
+        strokeWidth = 4.dp
+    )
+}
+
