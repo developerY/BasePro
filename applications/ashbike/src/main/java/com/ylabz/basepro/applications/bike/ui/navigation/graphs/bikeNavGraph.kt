@@ -39,7 +39,7 @@ fun NavGraphBuilder.bikeNavGraph(
     composable(BikeScreen.HomeBikeScreen.route) {
         BikeUiRoute(
             modifier = modifier,
-            navTo = { path -> navHostController.navigate(path) },
+            navHostController = navHostController,
             viewModel = bikeViewModel // <<< MODIFIED LINE: Pass the bikeViewModel instance
         )
     }

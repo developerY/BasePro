@@ -12,6 +12,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.ylabz.basepro.applications.bike.features.main.ui.components.ErrorScreen
@@ -27,7 +29,7 @@ import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
 @Composable
 fun BikeUiRoute(
     modifier: Modifier = Modifier,
-    navTo: (String) -> Unit,
+    navHostController: NavHostController,
     viewModel: BikeViewModel // <<< MODIFIED LINE: Accept BikeViewModel as a parameter
 ) {
     // DO NOT call hiltViewModel() for BikeViewModel here. Use the passed-in 'viewModel'.
@@ -58,8 +60,15 @@ fun BikeUiRoute(
         when (event) {
             is BikeEvent.NavigateToSettingsRequested -> {
                 val route = BikeScreen.SettingsBikeScreen.createRoute(event.cardKey)
-                Log.d("BikeUiRoute", "Handling NavigateToSettingsRequested. Navigating to: $route")
-                navTo(route)
+                Log.d("BikeUiRoute", "Handling NavigateToSettingsRequested with TAB logic. Navigating to: $route")
+                navHostController.navigate(route) {
+                    // Use the same logic as the bottom bar for navigating to a top-level destination
+                    popUpTo(navHostController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
             }
             else -> {
                 // For all other events, pass them to the ViewModel
@@ -88,7 +97,7 @@ fun BikeUiRoute(
                     modifier = modifier.fillMaxSize(),
                     uiState = currentBikeUiState, // Pass the whole UiState.Success object
                     onBikeEvent = eventHandler, // Use the new eventHandler
-                    navTo = navTo // navTo is still passed for other direct navigations if any from BikeDashboardContent
+                    navTo = navHostController::navigate // Pass a simple navigate lambda for any deeper, non-tab navigations
                 )
             } else {
                 WaitingForGpsScreen(
