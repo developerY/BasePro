@@ -11,6 +11,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.ylabz.basepro.core.util.combine
+
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
@@ -41,14 +43,16 @@ class SettingsViewModel @Inject constructor(
         appRepo.languageFlow,
         appRepo.notificationsFlow,
         appRepo.unitsFlow,
-        appRepo.gpsAccuracyFlow
-    ) { theme, lang, notif, units, gpsAccuracyEnum ->
+        appRepo.gpsAccuracyFlow,
+        appRepo.shortRideEnabledFlow // Added for isShortRideEnabled
+    ) { theme, lang, notif, units, gpsAccuracyEnum, isShortRideEnabled -> // Added isShortRideEnabled
         mapOf(
             "Theme" to theme,
             "Language" to lang,
             "Notifications" to notif,
             "Units" to units,
-            "GPS Accuracy" to gpsAccuracyEnum.name
+            "GPS Accuracy" to gpsAccuracyEnum.name,
+            AppPreferenceKeys.KEY_SHORT_RIDE_ENABLED to isShortRideEnabled.toString() // Added for isShortRideEnabled
         )
     }
 
@@ -74,8 +78,9 @@ class SettingsViewModel @Inject constructor(
             settingsSelections,
             profileData,
             profileRepo.profileReviewedOrSavedFlow,
-            appRepo.gpsAccuracyFlow
-        ) { localOverride, selections, profile, profileHasBeenReviewedOrSaved, savedEnergyLevel ->
+            appRepo.gpsAccuracyFlow,
+            appRepo.shortRideEnabledFlow // Added for isShortRideEnabled
+        ) { localOverride, selections, profile, profileHasBeenReviewedOrSaved, savedEnergyLevel, isShortRideEnabled -> // Added isShortRideEnabled
 
             // This is the key change: Use the local selection if it exists, otherwise use the saved one.
             // This prevents the UI from "snapping back" while the save is in progress.
@@ -84,6 +89,7 @@ class SettingsViewModel @Inject constructor(
             Log.d("ViewModelCombine", "Profile in combine: Name='${profile.name}', H='${profile.heightCm}', W='${profile.weightKg}'")
             Log.d("ViewModelCombine", "Profile reviewed or saved by user: $profileHasBeenReviewedOrSaved")
             Log.d("ViewModelCombine", "Energy Level in combine: $energyLevel")
+            Log.d("ViewModelCombine", "Short Ride Enabled in combine: $isShortRideEnabled") // Added for logging
 
             val actuallyIncomplete = !profileHasBeenReviewedOrSaved
             Log.d("ViewModelCombine", "Calculated actuallyIncomplete (isProfileIncomplete): $actuallyIncomplete")
@@ -93,7 +99,8 @@ class SettingsViewModel @Inject constructor(
                 selections = selections,
                 profile = profile,
                 isProfileIncomplete = actuallyIncomplete,
-                currentEnergyLevel = energyLevel
+                currentEnergyLevel = energyLevel,
+                isShortRideEnabled = isShortRideEnabled // Added for isShortRideEnabled
             )
         }
             .map { successState -> successState as SettingsUiState }
@@ -145,6 +152,17 @@ class SettingsViewModel @Inject constructor(
                         Log.d("SettingsViewModel", "Successfully called repo to set energy level.")
                     } catch (e: Exception) {
                         Log.e("SettingsViewModel", "Failed to set energy level.", e)
+                    }
+                }
+            }
+            is SettingsEvent.UpdateShortRideEnabled -> { // Added handler for UpdateShortRideEnabled
+                viewModelScope.launch {
+                    Log.d("SettingsViewModel", "Updating Short Ride Enabled to: ${event.enabled}")
+                    try {
+                        appRepo.setShortRideEnabled(event.enabled)
+                        Log.d("SettingsViewModel", "Successfully called repo to set short ride enabled.")
+                    } catch (e: Exception) {
+                        Log.e("SettingsViewModel", "Failed to set short ride enabled.", e)
                     }
                 }
             }

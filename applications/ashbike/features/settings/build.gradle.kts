@@ -44,6 +44,7 @@ dependencies {
 
     implementation(project("::core:ui"))
     implementation(project("::core:model"))
+    implementation(project("::core:util"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

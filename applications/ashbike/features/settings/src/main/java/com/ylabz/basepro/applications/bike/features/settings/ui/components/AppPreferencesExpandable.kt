@@ -28,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember // Required for sliderValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -84,7 +85,7 @@ fun AppPreferencesExpandable(
                     contentDescription = stringResource(if (expanded) R.string.settings_action_collapse else R.string.settings_action_expand)
                 )
             }
-            var checked by remember { mutableStateOf(true) }
+            // var checked by remember { mutableStateOf(true) } // Removed local state for 'checked'
             // Expanded content
             if (expanded) {
                 HorizontalDivider()
@@ -114,8 +115,10 @@ fun AppPreferencesExpandable(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Checkbox(
-                            checked = checked,
-                            onCheckedChange = { checked = it }
+                            checked = uiState.isShortRideEnabled, // Use uiState for checked status
+                            onCheckedChange = { newCheckedState -> // Send event on change
+                                onEvent(SettingsEvent.UpdateShortRideEnabled(newCheckedState))
+                            }
                         )
                     }
                     Slider(
@@ -227,7 +230,8 @@ fun AppPreferencesExpandablePreview() {
             AppPreferenceKeys.KEY_THEME to AppPreferenceKeys.VALUE_THEME_LIGHT,
             AppPreferenceKeys.KEY_NOTIFICATIONS to AppPreferenceKeys.VALUE_NOTIFICATIONS_ENABLED,
             AppPreferenceKeys.KEY_UNITS to AppPreferenceKeys.VALUE_UNITS_METRIC
-        )
+        ),
+        isShortRideEnabled = true // Added for preview
     )
     AppPreferencesExpandable(expanded = true, onExpandToggle = {}, uiState = uiState, onEvent = {})
 }
