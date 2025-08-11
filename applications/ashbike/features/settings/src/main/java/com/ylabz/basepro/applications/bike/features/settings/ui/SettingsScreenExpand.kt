@@ -57,6 +57,7 @@ internal object AppPreferenceKeys {
     const val KEY_THEME = "Theme"
     const val KEY_NOTIFICATIONS = "Notifications"
     const val KEY_UNITS = "Units"
+    const val KEY_SHORT_RIDE_ENABLED = "ShortRideEnabled" // Added new key
 
     const val VALUE_THEME_DARK = "Dark"
     const val VALUE_THEME_LIGHT = "Light"
