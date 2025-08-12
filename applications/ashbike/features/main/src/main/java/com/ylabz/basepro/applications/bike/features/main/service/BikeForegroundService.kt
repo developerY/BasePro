@@ -95,7 +95,7 @@ class BikeForegroundService : LifecycleService() {
     val rideInfo = _rideInfo.asStateFlow()
 
     private var currentActualGpsIntervalMillis: Long = 0L // Stores the actual interval used
-    private var lastNotificationUpdateTimeMillis: Long = 0L
+
 
 
     inner class LocalBinder : Binder() {
@@ -318,11 +318,7 @@ class BikeForegroundService : LifecycleService() {
         )
 
         if (isFormalRideActive) {
-            val currentTime = System.currentTimeMillis()
-            if (currentTime - lastNotificationUpdateTimeMillis > NOTIFICATION_UPDATE_INTERVAL_MS) {
-                startForegroundService()
-                lastNotificationUpdateTimeMillis = currentTime
-            }
+            startForegroundService()
         }
     }
 
@@ -395,7 +391,6 @@ class BikeForegroundService : LifecycleService() {
 
         formalRideSegmentStartOffsetDistanceMeters = continuousDistanceMeters
         formalRideSegmentMaxSpeedKph = 0.0
-        lastNotificationUpdateTimeMillis = 0L // Reset for the new ride
 
         _rideInfo.value = _rideInfo.value.copy(
             rideState = RideState.Riding,
@@ -497,7 +492,6 @@ class BikeForegroundService : LifecycleService() {
         currentFormalRideHighestCalories = 0
         formalRideElevationGainMeters = 0.0
         formalRideElevationLossMeters = 0.0
-        lastNotificationUpdateTimeMillis = 0L
 
         _rideInfo.value = getInitialRideInfo().copy(
             location = _rideInfo.value.location, // Preserve last known location
@@ -567,7 +561,6 @@ class BikeForegroundService : LifecycleService() {
         private const val MAX_ACCURACY_THRESHOLD_METERS = 30f
         private const val MIN_DISTANCE_THRESHOLD_METERS = 5f
         private const val MIN_ALLOWED_GPS_INTERVAL_MS = 500L
-        private const val NOTIFICATION_UPDATE_INTERVAL_MS = 5000L // 5 seconds
 
         fun getInitialRideInfo(): BikeRideInfo = BikeRideInfo(
             location = null,
