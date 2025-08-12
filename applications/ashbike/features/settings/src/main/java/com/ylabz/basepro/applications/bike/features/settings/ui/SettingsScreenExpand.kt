@@ -5,8 +5,6 @@ import androidx.compose.foundation.background
 import com.ylabz.basepro.applications.bike.database.ProfileData
 // import androidx.compose.foundation.clickable // Not directly used after removing ProfileBikeInfoCardEx
 // import androidx.compose.foundation.layout.Box // Not directly used after removing ProfileBikeInfoCardEx
-import androidx.compose.foundation.layout.Column // Still used by SettingsScreenExPreview
-import androidx.compose.foundation.layout.Row // Still used by SettingsScreenExPreview (indirectly if ProfileInfoCardEx uses it)
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 // import androidx.compose.foundation.layout.fillMaxWidth // Not directly used after removing ProfileBikeInfoCardEx
@@ -29,7 +27,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment // Still used by SettingsScreenExPreview (indirectly)
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 // import androidx.compose.ui.text.font.FontWeight // Not directly used after removing ProfileBikeInfoCardEx
@@ -57,7 +54,7 @@ internal object AppPreferenceKeys {
     const val KEY_THEME = "Theme"
     const val KEY_NOTIFICATIONS = "Notifications"
     const val KEY_UNITS = "Units"
-    const val KEY_SHORT_RIDE_ENABLED = "ShortRideEnabled" // Added new key
+    const val KEY_LONG_RIDE_ENABLED = "LongRideEnabled" // Added new key
 
     const val VALUE_THEME_DARK = "Dark"
     const val VALUE_THEME_LIGHT = "Light"

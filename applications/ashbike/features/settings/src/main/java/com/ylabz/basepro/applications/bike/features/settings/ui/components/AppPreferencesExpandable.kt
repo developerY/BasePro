@@ -28,7 +28,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.remember // Required for sliderValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -110,14 +109,14 @@ fun AppPreferencesExpandable(
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Text(
-                            text = stringResource(R.string.settings_location_short_ride_label),
+                            text = stringResource(R.string.settings_location_long_ride_label),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Checkbox(
-                            checked = uiState.isShortRideEnabled, // Use uiState for checked status
+                            checked = uiState.isLongRideEnabled, // Use uiState for checked status
                             onCheckedChange = { newCheckedState -> // Send event on change
-                                onEvent(SettingsEvent.UpdateShortRideEnabled(newCheckedState))
+                                onEvent(SettingsEvent.UpdateLongRideEnabled(newCheckedState))
                             }
                         )
                     }
@@ -231,7 +230,7 @@ fun AppPreferencesExpandablePreview() {
             AppPreferenceKeys.KEY_NOTIFICATIONS to AppPreferenceKeys.VALUE_NOTIFICATIONS_ENABLED,
             AppPreferenceKeys.KEY_UNITS to AppPreferenceKeys.VALUE_UNITS_METRIC
         ),
-        isShortRideEnabled = true // Added for preview
+        isLongRideEnabled = true // Added for preview
     )
     AppPreferencesExpandable(expanded = true, onExpandToggle = {}, uiState = uiState, onEvent = {})
 }

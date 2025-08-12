@@ -124,10 +124,10 @@ class BikeForegroundService : LifecycleService() {
 
         // --- NEW, CORRECTED CODE ---
         lifecycleScope.launch {
-            combine(currentEnergyLevelState, appSettingsRepository.shortRideEnabledFlow) { energyLevel, isShortRide ->
-                Pair(energyLevel, isShortRide)
-            }.collect { (newLevel, isShortRide) ->
-                Log.d("BikeServiceDebugger", ">>> SETTING CHANGE RECEIVED: Level: ${newLevel.name}, ShortRide: $isShortRide")
+            combine(currentEnergyLevelState, appSettingsRepository.longRideEnabledFlow) { energyLevel, isLongRide ->
+                Pair(energyLevel, isLongRide)
+            }.collect { (newLevel, isLongRide) ->
+                Log.d("BikeServiceDebugger", ">>> SETTING CHANGE RECEIVED: Level: ${newLevel.name}, LongRide: $isLongRide")
 
                 val interval: Long
                 val minInterval: Long
@@ -135,17 +135,17 @@ class BikeForegroundService : LifecycleService() {
                 // Check the current ride state and apply the correct interval
                 when (_rideInfo.value.rideState) {
                     RideState.Riding -> {
-                        Log.d("BikeForegroundService", "Energy/ShortRide changed to ${newLevel.name}/$isShortRide MID-RIDE. Updating to ACTIVE interval.")
+                        Log.d("BikeForegroundService", "Energy/LongRide changed to ${newLevel.name}/$isLongRide MID-RIDE. Updating to ACTIVE interval.")
                         interval = newLevel.activeRideIntervalMillis
                         minInterval = newLevel.activeRideMinUpdateIntervalMillis
                     }
                     else -> { // Covers NotStarted and any other future states
-                        Log.d("BikeForegroundService", "Energy/ShortRide changed to ${newLevel.name}/$isShortRide while PASSIVE. Updating to passive interval.")
+                        Log.d("BikeForegroundService", "Energy/LongRide changed to ${newLevel.name}/$isLongRide while PASSIVE. Updating to passive interval.")
                         interval = newLevel.passiveTrackingIntervalMillis
                         minInterval = newLevel.passiveTrackingMinUpdateIntervalMillis
                     }
                 }
-                startLocationUpdates(interval, minInterval, isShortRide)
+                startLocationUpdates(interval, minInterval, isLongRide)
             }
         }
 
@@ -172,11 +172,11 @@ class BikeForegroundService : LifecycleService() {
     }
 
     @SuppressLint("MissingPermission")
-    private fun startLocationUpdates(intervalMillis: Long, minUpdateIntervalMillis: Long, isShortRide: Boolean) {
+    private fun startLocationUpdates(intervalMillis: Long, minUpdateIntervalMillis: Long, isLongRide: Boolean) {
         var actualIntervalMillis = intervalMillis
         var actualMinUpdateIntervalMillis = minUpdateIntervalMillis
 
-        if (isShortRide) {
+        if (isLongRide) {
             actualIntervalMillis /= 2
             actualMinUpdateIntervalMillis /= 2
         }
@@ -186,7 +186,7 @@ class BikeForegroundService : LifecycleService() {
 
         currentActualGpsIntervalMillis = actualIntervalMillis // Store the actual interval
 
-        Log.d("GPS_TIMING_DEBUG", "Applying new GPS interval: $actualIntervalMillis ms (ShortRide: $isShortRide)")
+        Log.d("GPS_TIMING_DEBUG", "Applying new GPS interval: $actualIntervalMillis ms (LongRide: $isLongRide)")
         Log.d("BikeForegroundService", "Attempting to start location updates with interval: $actualIntervalMillis ms, minInterval: $actualMinUpdateIntervalMillis ms")
 
         fusedLocationClient.removeLocationUpdates(locationCallback)
@@ -362,11 +362,11 @@ class BikeForegroundService : LifecycleService() {
 
         lifecycleScope.launch {
             val currentLevel = currentEnergyLevelState.first()
-            val isShortRide = appSettingsRepository.shortRideEnabledFlow.first()
+            val isLongRide = appSettingsRepository.longRideEnabledFlow.first()
             startLocationUpdates(
                 intervalMillis = currentLevel.activeRideIntervalMillis,
                 minUpdateIntervalMillis = currentLevel.activeRideMinUpdateIntervalMillis,
-                isShortRide = isShortRide
+                isLongRide = isLongRide
             )
         }
 
@@ -411,11 +411,11 @@ class BikeForegroundService : LifecycleService() {
         // The collector in onCreate will see the new RideState and apply the passive interval.
         lifecycleScope.launch {
             val currentLevel = currentEnergyLevelState.first()
-            val isShortRide = appSettingsRepository.shortRideEnabledFlow.first()
+            val isLongRide = appSettingsRepository.longRideEnabledFlow.first()
             startLocationUpdates(
                 intervalMillis = currentLevel.passiveTrackingIntervalMillis,
                 minUpdateIntervalMillis = currentLevel.passiveTrackingMinUpdateIntervalMillis,
-                isShortRide = isShortRide
+                isLongRide = isLongRide
             )
         }
 

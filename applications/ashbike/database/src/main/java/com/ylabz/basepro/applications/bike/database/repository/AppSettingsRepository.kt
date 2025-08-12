@@ -18,7 +18,7 @@ private object SettingsPrefsKeys {
     val NOTIFICATIONS       = stringPreferencesKey("settings_notifications")
     val UNITS               = stringPreferencesKey("settings_units") // Added Units Key
     val GPS_ACCURACY        = stringPreferencesKey("settings_gps_accuracy")
-    val SHORT_RIDE_ENABLED  = booleanPreferencesKey("settings_short_ride_enabled") // Added Short Ride Key
+    val LONG_RIDE_ENABLED  = booleanPreferencesKey("settings_long_ride_enabled") // Added Long Ride Key
 }
 
 // 2b) Repository contract – your ViewModel only talks to this
@@ -28,14 +28,14 @@ interface AppSettingsRepository {
     val notificationsFlow: Flow<String>
     val unitsFlow: Flow<String> // Added Units Flow
     val gpsAccuracyFlow: Flow<LocationEnergyLevel>
-    val shortRideEnabledFlow: Flow<Boolean> // Added Short Ride Flow
+    val longRideEnabledFlow: Flow<Boolean> // Added Long Ride Flow
 
     suspend fun setTheme(theme: String)
     suspend fun setLanguage(language: String)
     suspend fun setNotifications(option: String)
     suspend fun setUnits(units: String) // Added setUnits function
     suspend fun setGpsAccuracy(accuracy: String)
-    suspend fun setShortRideEnabled(enabled: Boolean) // Added setShortRideEnabled function
+    suspend fun setLongRideEnabled(enabled: Boolean) // Added setLongRideEnabled function
 }
 
 // 2c) DataStore-backed impl
@@ -68,8 +68,8 @@ class DataStoreAppSettingsRepository @Inject constructor(
             }
         }
 
-    override val shortRideEnabledFlow: Flow<Boolean> = dataStore.data // Added Short Ride Flow implementation
-        .map { it[SettingsPrefsKeys.SHORT_RIDE_ENABLED] ?: false } // Defaulting to false
+    override val longRideEnabledFlow: Flow<Boolean> = dataStore.data // Added Long Ride Flow implementation
+        .map { it[SettingsPrefsKeys.LONG_RIDE_ENABLED] ?: false } // Defaulting to false
 
     override suspend fun setTheme(theme: String) {
         dataStore.edit { prefs -> prefs[SettingsPrefsKeys.THEME] = theme }
@@ -86,7 +86,7 @@ class DataStoreAppSettingsRepository @Inject constructor(
     override suspend fun setGpsAccuracy(accuracy: String) {
         dataStore.edit { prefs -> prefs[SettingsPrefsKeys.GPS_ACCURACY] = accuracy }
     }
-    override suspend fun setShortRideEnabled(enabled: Boolean) { // Added setShortRideEnabled implementation
-        dataStore.edit { prefs -> prefs[SettingsPrefsKeys.SHORT_RIDE_ENABLED] = enabled }
+    override suspend fun setLongRideEnabled(enabled: Boolean) { // Added setLongRideEnabled implementation
+        dataStore.edit { prefs -> prefs[SettingsPrefsKeys.LONG_RIDE_ENABLED] = enabled }
     }
 }

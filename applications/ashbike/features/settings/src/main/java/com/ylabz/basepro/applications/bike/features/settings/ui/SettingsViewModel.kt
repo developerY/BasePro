@@ -44,15 +44,15 @@ class SettingsViewModel @Inject constructor(
         appRepo.notificationsFlow,
         appRepo.unitsFlow,
         appRepo.gpsAccuracyFlow,
-        appRepo.shortRideEnabledFlow // Added for isShortRideEnabled
-    ) { theme, lang, notif, units, gpsAccuracyEnum, isShortRideEnabled -> // Added isShortRideEnabled
+        appRepo.longRideEnabledFlow // Added for isLongRideEnabled
+    ) { theme, lang, notif, units, gpsAccuracyEnum, isLongRideEnabled -> // Added isLongRideEnabled
         mapOf(
             "Theme" to theme,
             "Language" to lang,
             "Notifications" to notif,
             "Units" to units,
             "GPS Accuracy" to gpsAccuracyEnum.name,
-            AppPreferenceKeys.KEY_SHORT_RIDE_ENABLED to isShortRideEnabled.toString() // Added for isShortRideEnabled
+            AppPreferenceKeys.KEY_LONG_RIDE_ENABLED to isLongRideEnabled.toString() // Added for isLongRideEnabled
         )
     }
 
@@ -79,8 +79,8 @@ class SettingsViewModel @Inject constructor(
             profileData,
             profileRepo.profileReviewedOrSavedFlow,
             appRepo.gpsAccuracyFlow,
-            appRepo.shortRideEnabledFlow // Added for isShortRideEnabled
-        ) { localOverride, selections, profile, profileHasBeenReviewedOrSaved, savedEnergyLevel, isShortRideEnabled -> // Added isShortRideEnabled
+            appRepo.longRideEnabledFlow // Added for isLongRideEnabled
+        ) { localOverride, selections, profile, profileHasBeenReviewedOrSaved, savedEnergyLevel, isLongRideEnabled -> // Added isLongRideEnabled
 
             // This is the key change: Use the local selection if it exists, otherwise use the saved one.
             // This prevents the UI from "snapping back" while the save is in progress.
@@ -89,7 +89,7 @@ class SettingsViewModel @Inject constructor(
             Log.d("ViewModelCombine", "Profile in combine: Name='${profile.name}', H='${profile.heightCm}', W='${profile.weightKg}'")
             Log.d("ViewModelCombine", "Profile reviewed or saved by user: $profileHasBeenReviewedOrSaved")
             Log.d("ViewModelCombine", "Energy Level in combine: $energyLevel")
-            Log.d("ViewModelCombine", "Short Ride Enabled in combine: $isShortRideEnabled") // Added for logging
+            Log.d("ViewModelCombine", "Long Ride Enabled in combine: $isLongRideEnabled") // Added for logging
 
             val actuallyIncomplete = !profileHasBeenReviewedOrSaved
             Log.d("ViewModelCombine", "Calculated actuallyIncomplete (isProfileIncomplete): $actuallyIncomplete")
@@ -100,7 +100,7 @@ class SettingsViewModel @Inject constructor(
                 profile = profile,
                 isProfileIncomplete = actuallyIncomplete,
                 currentEnergyLevel = energyLevel,
-                isShortRideEnabled = isShortRideEnabled // Added for isShortRideEnabled
+                isLongRideEnabled = isLongRideEnabled // Added for isLongRideEnabled
             )
         }
             .map { successState -> successState as SettingsUiState }
@@ -155,14 +155,14 @@ class SettingsViewModel @Inject constructor(
                     }
                 }
             }
-            is SettingsEvent.UpdateShortRideEnabled -> { // Added handler for UpdateShortRideEnabled
+            is SettingsEvent.UpdateLongRideEnabled -> { // Added handler for UpdateLongRideEnabled
                 viewModelScope.launch {
-                    Log.d("SettingsViewModel", "Updating Short Ride Enabled to: ${event.enabled}")
+                    Log.d("SettingsViewModel", "Updating Long Ride Enabled to: ${event.enabled}")
                     try {
-                        appRepo.setShortRideEnabled(event.enabled)
-                        Log.d("SettingsViewModel", "Successfully called repo to set short ride enabled.")
+                        appRepo.setLongRideEnabled(event.enabled)
+                        Log.d("SettingsViewModel", "Successfully called repo to set long ride enabled.")
                     } catch (e: Exception) {
-                        Log.e("SettingsViewModel", "Failed to set short ride enabled.", e)
+                        Log.e("SettingsViewModel", "Failed to set long ride enabled.", e)
                     }
                 }
             }
