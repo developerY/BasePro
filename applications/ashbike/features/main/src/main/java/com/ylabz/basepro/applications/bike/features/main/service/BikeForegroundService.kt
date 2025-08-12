@@ -177,8 +177,8 @@ class BikeForegroundService : LifecycleService() {
         var actualMinUpdateIntervalMillis = minUpdateIntervalMillis
 
         if (isLongRide) {
-            actualIntervalMillis /= 2
-            actualMinUpdateIntervalMillis /= 2
+            actualIntervalMillis *= 2 // Short is /=
+            actualMinUpdateIntervalMillis *= 2 // Short is /=
         }
         // Ensure intervals are not below a minimum threshold
         actualIntervalMillis = max(actualIntervalMillis, MIN_ALLOWED_GPS_INTERVAL_MS)
