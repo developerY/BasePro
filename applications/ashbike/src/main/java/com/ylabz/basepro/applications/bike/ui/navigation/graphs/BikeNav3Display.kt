@@ -1,10 +1,10 @@
 package com.ylabz.basepro.applications.bike.ui.navigation.graphs
 
-import androidx.compose.material.Text // Placeholder
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import com.ylabz.basepro.applications.bike.features.main.BikeViewModel
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeViewModel
 
 // IMPORTANT: You need to import the actual NavDisplay and NavEntry from your library
 // import com.yourlibrary.NavDisplay
