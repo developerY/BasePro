@@ -45,8 +45,7 @@ fun Nav3Main(modifier: Modifier = Modifier) {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(NavDestinations.Home.route) {
-                // Your Home screen composable here
-                Text("Home Screen")
+              LeanNav()
             }
             composable(NavDestinations.Feed.route) {
                 // Your Feed screen composable here
