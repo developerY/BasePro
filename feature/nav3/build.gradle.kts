@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
+    // Optional, provides the @Serialize annotation for autogeneration of Serializers.
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -11,7 +13,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        minSdk = 32
+        minSdk = 31
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -41,6 +43,12 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
     implementation(project(":core:util"))
+
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+    implementation(libs.androidx.material3.adaptive.navigation3)
+    implementation(libs.kotlinx.serialization.core)
 
     // androidx-lifecycle-viewmodel-compose
     implementation(libs.lifecycle.viewmodel.compose)
