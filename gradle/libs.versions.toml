@@ -68,8 +68,7 @@ googleFirebaseCrashlytics = "3.0.4"
 
 # Nav 3
 nav3Core = "1.0.0-alpha07"
-lifecycleViewmodelNav3 = "1.0.0-alpha04"
-kotlinSerialization = "2.1.21"
+lifecycleViewmodelNav3 = "1.0.0-SNAPSHOT" # This is the latest version for this artifact
 kotlinxSerializationCore = "1.9.0"
 material3AdaptiveNav3 = "1.0.0-SNAPSHOT"
 
@@ -90,8 +89,6 @@ kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 # only available in snapshot builds. Follow the instructions at androidx.dev to
 # add the snapshot builds repository to your project.
 androidx-material3-adaptive-navigation3 = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "material3AdaptiveNav3" }
-
-
 
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }  # Core KTX library
 junit = { module = "junit:junit", version.ref = "junit" }  # JUnit testing library

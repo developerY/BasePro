@@ -25,39 +25,27 @@ data class ErrorKey(val message: String) : NavKey
 @Composable
 fun HomeScreen(navEntry: NavEntry<HomeKey>) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Home Screen. Key: ${navEntry.key}")
+        Text("Home Screen")
     }
 }
 
 @Composable
-fun FeedScreen(navEntry: NavEntry<FeedKey>) {
+fun FeedScreen() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Feed Screen. Key: ${navEntry.key}")
+        Text("Feed Screen")
     }
 }
 
 @Composable
-fun ProfileScreen(navEntry: NavEntry<ProfileKey>) {
+fun ProfileScreen() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Profile Screen. Key: ${navEntry.key}")
+        Text("Profile Screen")
     }
 }
 
 @Composable
-fun ErrorScreen(navEntry: NavEntry<ErrorKey>) {
+fun ErrorScreen(message: String?) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Error: ${navEntry.key.message}")
-    }
-}
-
-val nav3EntryProvider: (NavKey) -> NavEntry<out NavKey> = { key ->
-    when (key) {
-        is HomeKey -> NavEntry(key) { HomeScreen(it) }
-        is FeedKey -> NavEntry(key) { FeedScreen(it) }
-        is ProfileKey -> NavEntry(key) { ProfileScreen(it) }
-        is ErrorKey -> NavEntry(key) { ErrorScreen(it) }
-        else -> NavEntry(ErrorKey("Unknown key type: ${key::class.simpleName}")) {
-            ErrorScreen(it)
-        }
+        Text("Error: ${message ?: "Unknown error"}")
     }
 }
