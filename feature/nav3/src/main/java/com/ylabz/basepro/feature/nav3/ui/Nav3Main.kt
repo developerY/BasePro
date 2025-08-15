@@ -11,81 +11,104 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.compose.navigation
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.NavBackStack // Typealias for SnapshotStateList<NavKey>
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay // The NavDisplay composable
 
-// Assuming this is defined elsewhere
-sealed class NavDestinations(val route: String, val title: String, val icon: ImageVector) {
-    data object Home : NavDestinations("home_route", "Home", Icons.Filled.Home)
-    data object Feed : NavDestinations("feed_route", "Feed", Icons.Filled.Favorite)
-    data object Profile : NavDestinations("profile_route", "Profile", Icons.Filled.Person)
+// AppBottomNavItem sealed class remains the same
+sealed class AppBottomNavItem(
+    val title: String,
+    val icon: ImageVector,
+    val navKey: NavKey
+) {
+    data object Home : AppBottomNavItem("Home", Icons.Filled.Home, HomeKey)
+    data object Feed : AppBottomNavItem("Feed", Icons.Filled.Favorite, FeedKey)
+    data object Profile : AppBottomNavItem("Profile", Icons.Filled.Person, ProfileKey)
 }
 
 @Composable
 fun Nav3Main(modifier: Modifier = Modifier) {
-    val navController = rememberNavController()
+    // NavBackStack is a SnapshotStateList<NavKey>
+    val backStack: NavBackStack = rememberNavBackStack(HomeKey)
+
     Scaffold(
         modifier = modifier,
         bottomBar = {
-            BottomNavigationBar(navController = navController)
+            val currentKey = backStack.lastOrNull()
+
+            AppBottomBar(
+                currentKey = currentKey,
+                onNavigate = { newNavKey ->
+                    // Logic for bottom navigation - directly manipulates the backStack
+                    if (newNavKey == currentKey) return@AppBottomBar // Already on this key
+
+                    if (newNavKey == HomeKey) {
+                        backStack.clear()
+                        backStack.add(HomeKey)
+                    } else {
+                        // Ensure HomeKey is root, remove newKey if it exists elsewhere, then add to top
+                        if (backStack.isEmpty() || backStack.first() != HomeKey) {
+                            backStack.clear()
+                            backStack.add(HomeKey)
+                        }
+                        backStack.remove(newNavKey) // Remove if it exists to bring to top
+                        backStack.add(newNavKey)
+                    }
+                }
+            )
         }
     ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = NavDestinations.Home.route,
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            composable(NavDestinations.Home.route) {
-              LeanNav()
+        // Call NavDisplay with the correct parameter names from its signature
+        NavDisplay(
+            backStack = backStack, // Pass our NavBackStack here (it's a List<NavKey>)
+            modifier = Modifier.padding(innerPadding),
+            entryProvider = appEntryProvider, // Pass our entryProvider
+            onBack = { count -> // Handle back requests from NavDisplay
+                // Pop 'count' items from our backStack.
+                // Ensure we don't pop the last item if it's HomeKey, unless count makes it necessary.
+                repeat(count) {
+                    if (backStack.size > 1) { // Always allow popping if more than one item
+                        backStack.removeAt(backStack.lastIndex)
+                    } else if (backStack.size == 1 && backStack.first() != HomeKey) {
+                        // If only one item and it's not Home, allow popping it (stack becomes empty)
+                        backStack.removeAt(backStack.lastIndex)
+                    }
+                    // If stack becomes empty after popping (e.g., non-Home single item popped),
+                    // reset to HomeKey to ensure NavDisplay doesn't get an empty backstack,
+                    // as NavDisplay requires backStack.isNotEmpty().
+                    if (backStack.isEmpty()) {
+                        backStack.add(HomeKey)
+                    }
+                }
             }
-            composable(NavDestinations.Feed.route) {
-                // Your Feed screen composable here
-                Text("Feed Screen")
-            }
-            composable(NavDestinations.Profile.route) {
-                // Your Profile screen composable here
-                Text("Profile Screen")
-            }
-        }
+            // Other NavDisplay parameters like contentAlignment, transitions, etc.,
+            // will use their default values as defined in the NavDisplay signature.
+        )
     }
 }
 
 @Composable
-private fun BottomNavigationBar(navController: NavController) {
-    val navItems = listOf(
-        NavDestinations.Home,
-        NavDestinations.Feed,
-        NavDestinations.Profile
+private fun AppBottomBar(
+    currentKey: NavKey?,
+    onNavigate: (NavKey) -> Unit
+) {
+    val items = listOf(
+        AppBottomNavItem.Home,
+        AppBottomNavItem.Feed,
+        AppBottomNavItem.Profile
     )
-    NavigationBar {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
 
-        navItems.forEach { item ->
+    NavigationBar {
+        items.forEach { item ->
             NavigationBarItem(
                 icon = { Icon(item.icon, contentDescription = item.title) },
                 label = { Text(item.title) },
-                selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                selected = currentKey == item.navKey,
                 onClick = {
-                    navController.navigate(item.route) {
-                        // Pop up to the start destination of the graph to avoid a large back stack
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        // Avoid multiple copies of the same destination when re-selecting the same item
-                        launchSingleTop = true
-                        // Restore state when reselecting a previously selected item
-                        restoreState = true
-                    }
+                    onNavigate(item.navKey)
                 }
             )
         }

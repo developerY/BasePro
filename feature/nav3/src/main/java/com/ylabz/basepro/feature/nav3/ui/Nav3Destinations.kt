@@ -6,10 +6,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.navigation3.runtime.NavEntry // Correct import
-import androidx.navigation3.runtime.NavKey    // Correct import
+import androidx.navigation3.runtime.NavEntry // For the NavEntry type if needed by screens
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entry // Function to create NavEntry
+import androidx.navigation3.runtime.entryProvider // Function to create EntryProvider
 import kotlinx.serialization.Serializable
 
+// Define your NavKeys for the bottom bar destinations
 @Serializable
 data object HomeKey : NavKey
 
@@ -19,33 +22,35 @@ data object FeedKey : NavKey
 @Serializable
 data object ProfileKey : NavKey
 
-@Serializable
-data class ErrorKey(val message: String) : NavKey
-
+// Simple screen composables
 @Composable
-fun HomeScreen(navEntry: NavEntry<HomeKey>) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Home Screen")
+fun HomeScreen(modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text("Home Screen (Nav3)")
     }
 }
 
 @Composable
-fun FeedScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Feed Screen")
+fun FeedScreen(modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text("Feed Screen (Nav3)")
     }
 }
 
 @Composable
-fun ProfileScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Profile Screen")
+fun ProfileScreen(modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text("Profile Screen (Nav3)")
     }
 }
 
-@Composable
-fun ErrorScreen(message: String?) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Error: ${message ?: "Unknown error"}")
-    }
+// Create the EntryProvider
+// This maps each NavKey to its Composable content using the 'entry' function.
+val appEntryProvider = entryProvider {
+    // NavKey.serializer() can be used if your keys have arguments,
+    // but for simple data objects, direct mapping is fine.
+    entry(HomeKey) { HomeScreen() }
+    entry(FeedKey) { FeedScreen() }
+    entry(ProfileKey) { ProfileScreen() }
+    // Add other entries as needed
 }
