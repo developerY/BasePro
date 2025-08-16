@@ -56,10 +56,27 @@ val HighEnergyColor = Color(0xFFF44336) // Red
 
 @Composable
 fun GpsLevelIndicator(
+    modifier: Modifier = Modifier,
+    uiState: BikeUiState.Success,
+    onEvent: (BikeEvent) -> Unit, // Modified signature
+    navTo: (NavigationCommand) -> Unit, // MODIFIED: Changed from onEvent to navTomodifier: Modifier = Modifier
+) {
+    val icon = Icons.Default.SatelliteAlt //  Icons.Default.Satellite
+    Icon(
+        imageVector = icon,
+        contentDescription = "GPS Status",
+        // tint = animatedColor.value,
+        modifier = Modifier.size(24.dp)
+    )
+}
+
+
+@Composable
+fun GpsLevelIndicatorFull(
+    modifier: Modifier = Modifier,
     uiState: BikeUiState.Success,
     onEvent: (BikeEvent) -> Unit, // Modified signature
     navTo: (NavigationCommand) -> Unit, // MODIFIED: Changed from onEvent to navTo
-    modifier: Modifier = Modifier,
 ) {
     val bikeData = uiState.bikeData
     val lastUpdateTime = bikeData.lastGpsUpdateTime
