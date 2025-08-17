@@ -126,15 +126,6 @@ fun WaitingForGpsScreen(
         )
     )
 
-    val tintTrack by infinite.animateColor(
-        initialValue = Color(0xFF009688),//MaterialTheme.colorScheme.primary,
-        targetValue  = Color(0xFF673AB7),//MaterialTheme.colorScheme.secondary,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1200, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        )
-    )
-
     val tintIn by infinite.animateColor(
         initialValue = Color(0xFFF44336),//MaterialTheme.colorScheme.primary,
         targetValue  = Color(0xFFFFC107),//MaterialTheme.colorScheme.secondary,
