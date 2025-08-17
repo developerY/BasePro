@@ -61,13 +61,21 @@ fun GpsLevelIndicator(
     onEvent: (BikeEvent) -> Unit, // Modified signature
     navTo: (NavigationCommand) -> Unit, // MODIFIED: Changed from onEvent to navTomodifier: Modifier = Modifier
 ) {
-    val icon = Icons.Default.SatelliteAlt //  Icons.Default.Satellite
+
+    GpsLevelIndicatorFull (
+        modifier = modifier,
+        uiState = uiState,
+        onEvent = onEvent,
+        navTo = navTo
+    )
+
+    /*val icon = Icons.Default.SatelliteAlt //  Icons.Default.Satellite
     Icon(
         imageVector = icon,
         contentDescription = "GPS Status",
         // tint = animatedColor.value,
         modifier = Modifier.size(24.dp)
-    )
+    )*/
 }
 
 
