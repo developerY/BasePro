@@ -92,43 +92,54 @@ fun GpsLevelIndicatorFull(
     val showCountdown = uiState.showGpsCountdown
     val currentEnergyLevel = uiState.locationEnergyLevel
 
-    val iconColor by animateColorAsState(
-        targetValue = when (currentEnergyLevel) {
+    // Determine initial color based on currentEnergyLevel
+    val initialAnimatedColor = when (currentEnergyLevel) {
+        LocationEnergyLevel.POWER_SAVER -> LowEnergyColor
+        LocationEnergyLevel.BALANCED -> MidEnergyColor
+        LocationEnergyLevel.HIGH_ACCURACY -> HighEnergyColor
+        LocationEnergyLevel.AUTO -> MidEnergyColor // Defaulting AUTO to MidEnergyColor
+        else -> MaterialTheme.colorScheme.onSurface // Fallback for any other state
+    }
+    val animatedColor = remember { Animatable(initialAnimatedColor, ColorToVectorConverter) }
+
+    LaunchedEffect(lastUpdateTime, currentEnergyLevel) {
+        val targetColor = when (currentEnergyLevel) {
             LocationEnergyLevel.POWER_SAVER -> LowEnergyColor
             LocationEnergyLevel.BALANCED -> MidEnergyColor
             LocationEnergyLevel.HIGH_ACCURACY -> HighEnergyColor
             LocationEnergyLevel.AUTO -> MidEnergyColor // Defaulting AUTO to MidEnergyColor
-            else -> MaterialTheme.colorScheme.onSurface
-        },
-        animationSpec = tween(durationMillis = 500),
-        label = "GPS Icon Color"
-    )
+            //else -> MaterialTheme.colorScheme.onSurface
+        }
 
-    val animatedColor = remember { Animatable(iconColor, ColorToVectorConverter) }
-    val initialColor = MaterialTheme.colorScheme.onSurface
-
-    LaunchedEffect(lastUpdateTime, currentEnergyLevel) {
         if (lastUpdateTime > 0L) {
             launch {
+                // Only snap to blue if the color is actually changing,
+                // or if it's a new GPS update triggering the blue flash.
+                // This avoids snapping if only currentEnergyLevel changed but GPS wasn't just called.
+                // However, the current logic keys on lastUpdateTime, so this launch block
+                // will run on each new lastUpdateTime if > 0.
                 animatedColor.snapTo(Color.Blue)
                 animatedColor.animateTo(
-                    targetValue = when (currentEnergyLevel) {
-                        LocationEnergyLevel.POWER_SAVER -> LowEnergyColor
-                        LocationEnergyLevel.BALANCED -> MidEnergyColor
-                        LocationEnergyLevel.HIGH_ACCURACY -> HighEnergyColor
-                        LocationEnergyLevel.AUTO -> MidEnergyColor // Defaulting AUTO to MidEnergyColor
-                        //else -> MaterialTheme.colorScheme.onSurface
-                    },
+                    targetValue = targetColor,
                     animationSpec = tween(durationMillis = 1000, easing = LinearEasing)
                 )
+            }
+        } else {
+            // If GPS is not active (lastUpdateTime <= 0L),
+            // still ensure the icon color reflects the currentEnergyLevel, but without the blue flash.
+            launch {
+                if (animatedColor.value != targetColor) {
+                    animatedColor.animateTo(
+                        targetValue = targetColor,
+                        animationSpec = tween(durationMillis = 500, easing = LinearEasing) // Faster animation if no blue flash
+                    )
+                }
             }
         }
     }
 
     Box(
         modifier = modifier.clickable {
-            // val route = "${BikeScreen.SettingsBikeScreen.route}?cardToExpandArg=AppPrefs" // <<< MODIFIED NAVIGATION CALL
-            // navTo(route)
             Log.d("GpsLevelIndicator", "Satellite icon clicked. Sending NavigateToSettingsRequested event.")
             onEvent(BikeEvent.NavigateToSettingsRequested(cardKey = "AppPrefs"))
         },
