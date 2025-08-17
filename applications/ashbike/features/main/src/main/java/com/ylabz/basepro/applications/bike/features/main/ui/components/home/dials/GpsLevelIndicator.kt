@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,6 +54,8 @@ private val ColorToVectorConverter =
 val LowEnergyColor = Color(0xFF4CAF50) // Green
 val MidEnergyColor = Color(0xFFFFC107) // Amber
 val HighEnergyColor = Color(0xFFF44336) // Red
+
+private val DefaultCountdownStrokeWidth = 3.dp
 
 @Composable
 fun GpsLevelIndicator(
@@ -175,11 +178,18 @@ fun GpsCountdownIndicator(
     lastGpsUpdateTime: Long,
     gpsUpdateIntervalMillis: Long,
     modifier: Modifier = Modifier,
-    color: Color? = null,
-    strokeWidth: Dp = 3.dp
+    color: Color? = null
 ) {
     val progress = remember { Animatable(0f) }
     val countdownColor = color ?: MaterialTheme.colorScheme.primary
+
+    // Create the Stroke style. Since DefaultCountdownStrokeWidth is a constant Dp,
+    // and Density is locally constant within a composition, this effectively remembers
+    // the Stroke style unless the density changes.
+    val strokeWidthInPx = LocalDensity.current.run { DefaultCountdownStrokeWidth.toPx() }
+    val countdownStrokeStyle = remember(strokeWidthInPx) {
+        Stroke(width = strokeWidthInPx)
+    }
 
     LaunchedEffect(lastGpsUpdateTime) {
         if (gpsUpdateIntervalMillis > 0L) {
@@ -202,7 +212,7 @@ fun GpsCountdownIndicator(
             startAngle = -90f, // Start from the top
             sweepAngle = sweepAngle,
             useCenter = false,
-            style = Stroke(width = strokeWidth.toPx())
+            style = countdownStrokeStyle // Use the remembered Stroke style
         )
     }
 }
@@ -251,8 +261,7 @@ fun GpsCountdownIndicatorPreview() {
         lastGpsUpdateTime = System.currentTimeMillis(),
         gpsUpdateIntervalMillis = 5000L,
         modifier = Modifier.size(100.dp),
-        color = Color.Green,
-        strokeWidth = 4.dp
+        color = Color.Green
     )
 }
 
