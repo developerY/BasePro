@@ -1,7 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home
 
 import android.Manifest
-import android.R.attr.animation
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -9,7 +8,6 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import androidx.annotation.RequiresPermission
-import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -28,7 +26,6 @@ import androidx.compose.material.icons.rounded.LocationSearching
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -40,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp // Added for color interpolation
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -126,23 +124,25 @@ fun WaitingForGpsScreen(
         )
     )
 
-    val tintIn by infinite.animateColor(
-        initialValue = Color(0xFFF44336),//MaterialTheme.colorScheme.primary,
-        targetValue  = Color(0xFFFFC107),//MaterialTheme.colorScheme.secondary,
+    val colorProgress by infinite.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1200, easing = LinearEasing),
+            animation = tween(durationMillis = 1200, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         )
     )
 
-    val tintOut by infinite.animateColor(
-        initialValue = Color(0xFFFFC107),//MaterialTheme.colorScheme.primary,
-        targetValue  = Color(0xFFFFEB3B),//MaterialTheme.colorScheme.secondary,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1200, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        )
-    )
+    // Define start and end colors for tintIn and tintOut
+    val tintInStart = Color(0xFFF44336)
+    val tintInEnd = Color(0xFFFFC107)
+    val tintOutStart = Color(0xFFFFC107)
+    val tintOutEnd = Color(0xFFFFEB3B)
+
+    // Calculate actual tints using lerp
+    val actualTintIn = lerp(tintInStart, tintInEnd, colorProgress)
+    val actualTintOut = lerp(tintOutStart, tintOutEnd, colorProgress)
+
 
     Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -154,7 +154,7 @@ fun WaitingForGpsScreen(
                 Icon(
                     imageVector = Icons.Rounded.LocationSearching,
                     contentDescription = stringResource(R.string.waiting_for_GPS_content_desc),
-                    tint = tintIn,
+                    tint = actualTintIn, // Use lerped color
                     modifier = Modifier
                         .size(90.dp)
                         .graphicsLayer {
@@ -163,12 +163,10 @@ fun WaitingForGpsScreen(
                             scaleY = scale
                         }
                 )
-                // finally: permission granted & GPS on
                 CircularProgressIndicator(
                     strokeWidth = 12.dp,
-                    color = tintOut,//MaterialTheme.colorScheme.primary,
-                    //tint = tintIn,
-                    trackColor = tintIn,//MaterialTheme.colorScheme.secondary,
+                    color = actualTintOut, // Use lerped color
+                    trackColor = actualTintIn, // Use lerped color
                     modifier = Modifier.size(171.dp)
                 )
             }
@@ -204,4 +202,3 @@ fun WaitingForGpsScreen(
 fun WaitingForGpsScreenPreview() {
     WaitingForGpsScreen(onRequestPermission = {}, onEnableGpsSettings = {})
 }
-
