@@ -64,24 +64,21 @@ fun WaitingForGpsScreen(
     // helper boolean
     val hasPermission = permissionState.status == PermissionStatus.Granted
 
-    // get the LocationManager once
+    // get the LocationManager once and remember it
     val lm = remember {
         context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     }
 
-    // track GPS toggle state
-    //  Track GPS on/off
-    var gpsEnabled by remember {
+    // track GPS toggle state, using the remembered lm
+    var gpsEnabled by remember(lm) { // Key on lm's identity if needed, though getSystemService usually returns same instance for same context
         mutableStateOf(
-            (context.getSystemService(Context.LOCATION_SERVICE) as LocationManager)
-                .isProviderEnabled(LocationManager.GPS_PROVIDER)
+            lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
         )
     }
 
     // only register for updates *if* we really have the permission
-    //  Only request updates if we have the permission
-    DisposableEffect(hasPermission) {
-        val lm = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    // Use the remembered lm from the outer scope
+    DisposableEffect(hasPermission, lm) { // Add lm to keys as it's used in the effect
         val listener = object : LocationListener {
             override fun onLocationChanged(loc: Location) { /*…*/ }
             override fun onProviderEnabled(name: String)  { gpsEnabled = true }
@@ -91,10 +88,11 @@ fun WaitingForGpsScreen(
 
         if (hasPermission &&
             ContextCompat.checkSelfPermission(
-                context,
+                context, // context is stable within this Composable scope
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
+            // Use the lm from the outer scope
             lm.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
                 0L, 0f, listener
@@ -102,6 +100,7 @@ fun WaitingForGpsScreen(
         }
 
         onDispose {
+            // Use the lm from the outer scope
             lm.removeUpdates(listener)
         }
     }
