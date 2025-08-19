@@ -135,9 +135,9 @@ Optimizing your code with R8 is critical for size reduction and performance.
 - [ ] **Object Pooling:** For frequently created, short-lived objects, consider object pooling if profiling shows significant GC pressure.
 - [ ] **Caching Strategy:** Implement sensible caching for data and resources, but also ensure caches are properly managed to avoid excessive memory use.
 
-<strike>
-## 6. UI Performance & Rendering
-</strike>
+
+## 6. ~~UI Performance & Rendering, Layout Optimization~~
+
 **Note for Compose-Only Project:** As this project primarily uses Jetpack Compose, the points below related to XML Views (Overdraw, Efficient Layouts, RecyclerView) are largely historical context. They serve as a good reminder of the UI challenges Compose helps address. However, **Jank Detection** remains a critical aspect for all UI development, including Compose.
 
 - [ ] **Overdraw (XML Views):** Use "Debug GPU Overdraw" developer option to identify and reduce overdraw.
