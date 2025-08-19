@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/applications" />
             <option value="$PROJECT_DIR$/applications/ashbike" />
+            <option value="$PROJECT_DIR$/applications/ashbike/benchmark" />
             <option value="$PROJECT_DIR$/applications/ashbike/database" />
             <option value="$PROJECT_DIR$/applications/ashbike/features" />
             <option value="$PROJECT_DIR$/applications/ashbike/features/main" />
