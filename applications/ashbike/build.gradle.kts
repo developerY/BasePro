@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.mapsplatform.secrets)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
+    alias(libs.plugins.androidx.baselineprofile) // Added this line
 }
 
 android {
@@ -132,5 +133,5 @@ dependencies {
     //implementation(libs.androidx.appcompat)
     //implementation(libs.material)
 
-
+    implementation(libs.androidx.profileinstaller) // Added this line
 }
