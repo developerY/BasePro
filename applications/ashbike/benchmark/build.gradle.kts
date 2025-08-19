@@ -9,7 +9,7 @@ android {
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 24 // Or your preferred minSdk for benchmarks (API 28+ for generation)
+        minSdk = 32 // Or your preferred minSdk for benchmarks (API 28+ for generation)
         testInstrumentationRunner = "androidx.benchmark.junit4.AndroidBenchmarkRunner"
     }
 
@@ -29,6 +29,7 @@ dependencies {
     implementation(libs.androidx.junit) // Assuming this points to androidx.test.ext:junit or :junit-ktx
     implementation(libs.androidx.uiautomator)
     implementation(libs.androidx.benchmark.macro.junit4)
+    implementation(libs.androidx.runner)
     // implementation(libs.androidx.espresso.core) // Optional, if needed
 }
 
