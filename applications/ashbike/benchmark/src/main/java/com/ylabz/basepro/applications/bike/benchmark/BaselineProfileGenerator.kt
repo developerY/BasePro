@@ -29,7 +29,8 @@ class BaselineProfileGenerator {
         // Replace "com.ylabz.basepro.applications.bike" with the actual applicationId
         // of your ashbike application module. You can find this in your
         // applications/ashbike/build.gradle.kts file (look for `applicationId`).
-        packageName = "com.ylabz.basepro.applications.bike", // <<< --- !!! UPDATE THIS !!!
+        // namespace = "com.ylabz.basepro.applications.bike"
+        packageName = "com.ylabz.basepro.applications.bike", // <<< --- Correct!!!
 
         // Keep default modes for Baseline Profile generation.
         // BaselineProfileMode.Require ensures the profile is written to a txt file in the output.
