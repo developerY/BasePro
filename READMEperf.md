@@ -1,182 +1,202 @@
-# Comprehensive Android App Release Checklist
+# Comprehensive Performance Release Checklist
 
-This document outlines the key steps and considerations to ensure optimal performance, stability, and efficiency for a release build of your Android application. Follow this checklist before every major release.
-
----
+This document outlines key steps and considerations to ensure optimal performance, stability, and efficiency for a release build of your Android application.
 
 ## 0. Foundational Setup
-
-- [ ] **Version Control:** Ensure all changes are committed, the working directory is clean, and you are on the correct release branch.
-- [ ] **Target SDK Updated:** Verify the `targetSdkVersion` in `build.gradle.kts` is set to the latest stable API level to leverage modern platform security and performance features.
-- [ ] **Dependencies Updated:** Review and update critical dependencies. Use a tool like the `gradle-versions-plugin` to identify outdated libraries and test thoroughly for regressions after updating.
-
----
+- [ ] **Version Control:** Ensure all changes are committed and the repository is clean before starting the release process.
+- [ ] **Target SDK Updated:** Verify the `targetSdk` is set to a recent API level.
+- [ ] **Dependencies Updated:** Review and update critical dependencies, testing thoroughly for regressions.
+- [ ] **Build Signing & Keystore Security:**
+    - [ ] Ensure release builds are signed with your official upload key.
+    - [ ] **Keystore Security:** Store your keystore file and its credentials securely. **Never** commit them to version control.
+    - [ ] For teams, use a shared, secure vault or a CI/CD system with secure credential management for keystores.
 
 ## 1. Baseline Profile Generation & Application
 
-Baseline Profiles guide the Android Runtime (ART) to Ahead-Of-Time (AOT) compile critical user journeys (CUJs), significantly improving app startup, reducing jank, and enhancing runtime performance. This is **especially effective** when code shrinking is enabled (`isMinifyEnabled = true`).
+Baseline Profiles guide ART (Android Runtime) to optimize critical user journeys (CUJs) ahead of time, significantly improving app startup and runtime performance, especially when `isMinifyEnabled = true`.
 
-### A. Initial Setup (One-time or when dependencies change)
+**For each application module (e.g., `:applications:ashbike`):**
 
-- [ ] **Benchmark Module:** Ensure a dedicated `:benchmark` module exists that uses the `com.android.test` plugin and targets your app module (`targetProjectPath = ":app"`).
-- [ ] **App Module (`:app`):**
-    - [ ] Apply the `androidx.baselineprofile` plugin.
-    - [ ] Add the `androidx.profileinstaller` dependency to ensure profiles are correctly installed on user devices (especially for Android 9+).
-- [ ] **Compose UI Tooling (If applicable):**
-    - [ ] Ensure any library/feature module using `@Preview` includes `debugImplementation(libs.androidx.compose.ui.tooling)`. This prevents tooling from being bundled in the release APK.
+### A. Initial Setup (One-time or when dependencies change):
+- [ ] **Benchmark Module Configuration:**
+    - [ ] Ensure a dedicated benchmark module exists (e.g., `:applications:ashbike:benchmark`).
+    - [ ] `build.gradle.kts` for benchmark module:
+        - [ ] Uses `com.android.test` plugin.
+        - [ ] Defines `android.defaultConfig.targetProjectPath = ":your-app-module"`.
+        - [ ] Includes dependencies: `androidx.benchmark.macro.junit4`, `androidx.test.uiautomator`, `androidx.test.ext:junit`, `androidx.test:runner`.
+        - [ ] Has a `benchmark` build type (e.g., `create("benchmark") { isDebuggable = false; signingConfig = debug.signingConfig; matchingFallbacks += "release"; enableAndroidTestCoverage = false; }`).
+- [ ] **Application Module Configuration (`:your-app-module`):**
+    - [ ] `build.gradle.kts` for the app module:
+        - [ ] Applies the `androidx.baselineprofile` plugin (e.g., `alias(libs.plugins.androidx.baselineprofile)`).
+        - [ ] Includes `implementation(libs.androidx.profileinstaller)` dependency.
+- [ ] **Project Root `build.gradle.kts`:**
+    - [ ] Applies the `androidx.baselineprofile` plugin (e.g., `alias(libs.plugins.androidx.baselineprofile) apply false`).
+- [ ] **Compose UI Tooling Dependencies (for modules using `@Preview`):**
+    - [ ] Ensure any library/feature module that uses `@Preview` and is a dependency of the app includes:
+        
+```kotlin
+        // In the feature/library module's build.gradle.kts
+        dependencies {
+            // ...
+            debugImplementation(libs.androidx.compose.ui.tooling)
+            debugImplementation(libs.androidx.compose.ui.tooling.preview)
+        }
+        
+```
+        - [ ] This ensures the app build (especially `benchmark` type) can resolve these symbols.
 
-### B. Generation & Verification
+### B. Generating/Updating the Profile:
+- [ ] **Create/Update Baseline Profile Generator Test:**
+    - [ ] Located in the benchmark module (e.g., `benchmark_module/src/androidTest/java/com/your/package/BaselineProfileGenerator.kt`).
+    - [ ] **Crucial:** Set `packageName = "your.app.applicationId"` correctly in the `collect()` method.
+    - [ ] **Crucial:** Define comprehensive Critical User Journeys (CUJs) in the `profileBlock{}`. This should cover common startup flows and interactions (scrolling, navigation, etc.).
+- [ ] **Prepare for Generation:**
+    - [ ] Use a **rooted physical device** or an **emulator with a userdebug/eng AOSP image** (API 28+).
+- [ ] **Run the Generator:**
+    - [ ] From IDE: Right-click `BaselineProfileGenerator.kt` -> Run.
+    - [ ] From Terminal: `./gradlew :your-app-module:benchmark:generateBaselineProfile` (or similar).
+- [ ] **Verify Output:**
+    - [ ] Check run logs for the path to `baseline-prof.txt`. Location: `your-app-module/benchmark/build/outputs/baseline_profile/benchmark/baseline-prof.txt` (path may vary).
 
-- [ ] **Write/Update Profile Generator Test:** In your `:benchmark` module, create or update a test class (e.g., `BaselineProfileGenerator.kt`) that defines the critical user journeys. This test should navigate through the most common and important flows of your app.
+### C. Applying the Profile to the App:
+- [ ] **Copy `baseline-prof.txt`:**
+    - [ ] From the benchmark module's output to `your-app-module/src/main/baseline-prof.txt`.
+    - [ ] Commit this file to version control.
+- [ ] **Profile Regeneration Cadence:** Regenerate profiles when:
+    - [ ] Significant UI or navigation changes occur in critical user journeys.
+    - [ ] Major library versions are updated (especially UI libraries like Compose, Navigation).
+    - [ ] Periodically (e.g., quarterly or before major releases) to catch regressions or incorporate benefits from toolchain updates.
+- [ ] **Verify Profile Installation (Development):**
+    - [ ] For `profileinstaller` to work during development, ensure your app's `AndroidManifest.xml` (for `debug` or custom profileable builds) has `<profileable android:shell="true" tools:targetApi="q" />`.
 
-  ```kotlin
-  // Example: benchmark/src/main/java/com/example/BaselineProfileGenerator.kt
-  @RunWith(AndroidJUnit4::class)
-  class BaselineProfileGenerator {
-      @get:Rule
-      val baselineProfileRule = BaselineProfileRule()
+## 2. Release Build Configuration (R8/ProGuard)
 
-      @Test
-      fun startupAndHomeScreen() {
-          baselineProfileRule.collect(
-              packageName = "com.your.package.name",
-              // Launch the app and perform critical actions
-              profileBlock = {
-                  startActivityAndWait()
-                  // TODO: Add interactions here to cover CUJs like scrolling,
-                  // navigating to another screen, etc.
-                  // device.findObject(By.text("My List")).click()
-              }
-          )
-      }
-  }```
+Optimizing your code with R8 is critical for size reduction and performance.
 
-- [ ] **Generate the Profile:** Run the Gradle task from your project's root directory. This task builds a release version of your app, runs the UI tests from the generator, and outputs the profile rules.
+- [ ] **Enable Minification and Shrinking:**
+    - [ ] In your app module's `build.gradle.kts` under `buildTypes.release`:
+        
+```kotlin
+        isMinifyEnabled = true  // Enables R8 for code shrinking, obfuscation, and optimization
+        isShrinkResources = true // Removes unused resources after code shrinking
+        proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        
+```
+        - [ ] **`isMinifyEnabled = true` is ESSENTIAL.** Do not set to `false` for release. Baseline Profiles are most effective with minification.
+- [ ] **ProGuard Rules (`proguard-rules.pro`):**
+    - [ ] **Thoroughly Test:** After any code change or library update, test extensively to ensure ProGuard rules are correct. Missing rules are a common source of release build crashes.
+    - [ ] **Keep Necessary Code:** Ensure rules preserve classes/members accessed via reflection, JNI, or that are entry points (Activities, Services, etc. are usually handled by `proguard-android-optimize.txt`).
+    - [ ] **Specificity:** Be as specific as possible with ProGuard keep rules to maximize shrinking and avoid unintended side effects. For example, prefer keeping specific class members over entire classes if possible.
+    - [ ] **Library Rules:** Include ProGuard rules provided by third-party libraries.
+    - [ ] **Data Classes/Serialization:** Pay special attention to rules for data classes used with serialization libraries (e.g., Gson, Moshi, KotlinX Serialization).
+    - [ ] **Rule Validation:** Use tools to validate ProGuard rules:
+        - [ ] Android Studio's "Analyze APK" feature: Inspect the resulting DEX files to ensure expected classes/methods are present and that shrinking is effective.
+        - [ ] Consider R8's mapping output file (`mapping.txt`) to understand renaming and removal decisions.
+    - [ ] **Remove Unused Rules:** Periodically review and remove outdated or unnecessary ProGuard rules.
+- [ ] **R8 Full Mode (Consider for Advanced Optimization):**
+    - [ ] If not enabled by `proguard-android-optimize.txt`, consider adding `android.enableR8.fullMode=true` in `gradle.properties` for potentially better optimizations, but test even more rigorously.
+- [ ] **Disable Debugging:**
+    - [ ] Ensure `android.buildTypes.release.isDebuggable = false`.
 
-  ```shell
-  # Run this command from the project root
-  ./gradlew :app:generateReleaseBaselineProfile
-  ```
+## 3. Jetpack Compose Performance
 
-- [ ] **Verify and Commit:** Check that a new file, `app/src/main/baseline-prof.txt`, has been created or updated. This file contains the method and class rules for ART. **Commit this file to version control.**
+- [ ] **Stability (`@Stable` / `@Immutable`):**
+    - [ ] Ensure Compose compiler can infer stability for your classes or explicitly annotate them with `@Stable` or `@Immutable` where applicable. Unstable classes can lead to excessive recompositions.
+        - [ ] `@Immutable`: Guarantees that all public properties are `val` and of immutable types. Once constructed, the object's state will not change.
+        - [ ] `@Stable`: A weaker guarantee. It implies that if any public property of the type changes, recomposition will be triggered for composables observing it. The type must also ensure that all public methods produce consistent results if their parameters are the same.
+    - [ ] Use immutable collections (e.g., `kotlinx.collections.immutable`) for collections passed to Composables.
+    - [ ] Primitives, functional types, and certain Compose types are inherently stable.
+    - [ ] **Lambda Stability:** Be mindful of lambda stability. Non-capturing lambdas are generally stable. Lambdas that capture unstable variables can make a composable unstable or prevent it from being skippable. Use `remember` for lambdas that capture changing variables if the lambda itself should not cause recomposition when those variables change.
+- [ ] **Minimize Recompositions:**
+    - [ ] Use `remember` wisely for expensive calculations or object allocations.
+    - [ ] Defer reading `State` objects as late as possible in your Composables. Pass lambdas that read state rather than passing state directly if it can prevent recomposition of parent Composables.
+    - [ ] Use derived states like `derivedStateOf` for values that change only when their inputs change.
+    - [ ] Profile recompositions using Layout Inspector in Android Studio ("Recomposition Counts").
+- [ ] **Lazy Layouts (`LazyColumn`, `LazyRow`, etc.):**
+    - [ ] Provide `key`s for items, especially if the list can change dynamically, to help Compose optimize item handling and preserve state.
+    - [ ] Use `contentType` if you have different types of items for better recycling and performance.
+- [ ] **Custom Layouts:** Profile and optimize custom `Layout` Composables if they are complex.
+- [ ] **Avoid Unnecessary Allocations:** Be mindful of allocations (e.g., new Modifiers, lambdas without `remember`) within Composable functions that are frequently recomposed.
 
------
+## 4. App Startup Optimization
+- [ ] **App Startup Library:** Use the `androidx.startup` library to initialize components at app startup more efficiently and explicitly.
+- [ ] **Defer Non-Critical Initialization:** Move any initialization not essential for the first frame off the main thread or delay it.
+- [ ] **Cold Start Time:** Profile and optimize cold start time (Time To Initial Display - TTID, Time To Full Display - TTFD).
 
-## 2\. Code Shrinking & Optimization (R8) ⚙️
+## 5. Memory Management
+- [ ] **Leak Detection:**
+    - [ ] Use LeakCanary in debug builds to detect memory leaks.
+    - [ ] **Staging/Internal Builds:** For final internal testing, consider creating a "staging" or "internal release" build type that is release-like (minified) but might still include LeakCanary. This must be handled with extreme care and never be used for the actual Play Store release.
+    - [ ] Profile memory usage with Android Studio's Memory Profiler, looking for unexpected growth or retained objects.
+- [ ] **Bitmap Optimization:**
+    - [ ] Load bitmaps at the correct size for the display area.
+    - [ ] Use efficient image loading libraries (e.g., Coil, Glide) that handle caching and bitmap pooling.
+    - [ ] Choose appropriate bitmap configurations (e.g., `RGB_565` if opacity is not needed and color fidelity allows).
+- [ ] **Object Pooling:** For frequently created, short-lived objects, consider object pooling if profiling shows significant GC pressure.
+- [ ] **Caching Strategy:** Implement sensible caching for data and resources, but also ensure caches are properly managed to avoid excessive memory use.
 
-R8 is the default compiler for Android that shrinks, obfuscates, and optimizes your code. It's crucial for reducing app size and protecting your intellectual property.
+## 6. UI Performance & Rendering
+- [ ] **Overdraw (XML Views):** Use "Debug GPU Overdraw" developer option to identify and reduce overdraw.
+- [ ] **Jank Detection:**
+    - [ ] Use Android Studio Profilers (CPU, JankStats, System Trace/Perfetto).
+    - [ ] Aim for smooth frame rates (typically 60 FPS or higher depending on device capabilities).
+- [ ] **Efficient Layouts (XML):**
+    - [ ] Use `ConstraintLayout` for flat view hierarchies.
+    - [ ] Avoid deep or nested layouts.
+    - [ ] Use `<merge>` and `<include>` tags effectively.
+- [ ] **RecyclerView (XML):**
+    - [ ] Ensure `ViewHolder` pattern is correctly implemented.
+    - [ ] Use `DiffUtil` or `AsyncListDiffer` for efficient list updates.
+    - [ ] Optimize item view layouts.
 
-- [ ] **Enable R8 for Release:** In your app's `build.gradle.kts` file, ensure the `release` build type is properly configured.
+## 7. Network Performance
+- [ ] **Efficient Data Formats:** Use efficient data formats like Protocol Buffers (protobuf) or FlatBuffers over JSON where applicable, especially for large or frequent requests.
+- [ ] **Caching:** Implement HTTP caching (e.g., ETag, Cache-Control headers) and local caching of network responses.
+- [ ] **Request Batching/Collapsing:** Batch multiple small requests or collapse redundant requests.
+- [ ] **Minimize Data Transferred:** Only request the data you need. Use pagination.
+- [ ] **Connection Pooling:** Ensure your HTTP client is configured for efficient connection pooling.
+- [ ] **Background Sync Strategy:** Use WorkManager for deferrable background syncs, respecting battery-saving modes.
 
-  ```kotlin
-  buildTypes {
-      getByName("release") {
-          isMinifyEnabled = true // Enables code shrinking, obfuscation, and optimization
-          isShrinkResources = true // Removes unused resources (requires isMinifyEnabled)
-          proguardFiles(
-              getDefaultProguardFile("proguard-android-optimize.txt"),
-              "proguard-rules.pro"
-          )
-      }
-  }
-  ```
+## 8. Concurrency & Threading
+- [ ] **Main Thread Protection:** Never perform blocking operations (network, disk I/O, heavy computation) on the main thread.
+- [ ] **Coroutines/RxJava:** Use structured concurrency with Kotlin Coroutines or manage subscriptions carefully with RxJava.
+- [ ] **Thread Pools:** Use appropriate `Dispatchers` (Coroutines) or Schedulers (RxJava) for different types of work. Avoid creating raw threads.
 
-- [ ] **Configure ProGuard Rules:** R8 can sometimes remove code it *thinks* is unused, like code accessed via reflection.
+## 9. APK Size Reduction
+- [ ] **Analyze APK:** Use Android Studio's "Analyze APK" feature regularly.
+- [ ] **App Bundles (.aab):** Publish using Android App Bundles to leverage Google Play's Dynamic Delivery.
+- [ ] **Remove Unused Code/Resources:** `isMinifyEnabled = true` and `isShrinkResources = true` are the primary tools.
+- [ ] **Optimize Images:** Use WebP format for images. Compress PNGs and JPEGs.
+- [ ] **Vector Graphics:** Use VectorDrawables for simple icons instead of multiple PNGs.
+- [ ] **Modularization:** Consider dynamic feature modules for features not needed by all users at install time.
+- [ ] **Library Review:** Periodically review dependencies for unused or overly large libraries.
 
-    - [ ] **Add Keep Rules:** In `app/proguard-rules.pro`, add `@Keep` annotations or raw ProGuard rules for classes that are serialized (e.g., with Moshi/Gson), used in native code (JNI), or are part of dependency injection frameworks.
-    - [ ] **Check Library Rules:** Ensure that any included third-party libraries have their necessary ProGuard rules automatically bundled or add them manually.
+## 10. Pre-Release Testing & Verification
+- [ ] **Static Analysis:**
+    - [ ] Run Android Lint on the release variant: `./gradlew :your-app-module:lintRelease`.
+    - [ ] For larger projects, consider establishing a lint baseline (`lintOptions { baseline = file("lint-baseline.xml") }`) to manage existing warnings while preventing new ones.
+- [ ] **Test on Diverse Devices:** Test on a range of devices (different API levels, screen sizes, manufacturers).
+- [ ] **Test on Release Builds:** Install the release-configured build (minified, profiled) on target devices.
+- [ ] **Manual CUJ Testing:** Manually go through all Critical User Journeys.
+- [ ] **Automated Testing:** Ensure UI tests (Espresso, UI Automator) and unit tests pass on release-like configurations.
+- [ ] **Macrobenchmarks (Beyond Baseline Profile):**
+    - [ ] Use `androidx.benchmark.macro` for measuring app startup, scrolling, and other interactions on release builds to track performance regressions or improvements.
+- [ ] **Performance Profiling & Monitoring Tools:**
+    - [ ] Android Studio Profilers (CPU, Memory, Network, Energy). Focus on:
+        - [ ] App startup (cold, warm, hot).
+        - [ ] Scrolling performance in complex lists or views.
+        - [ ] Screen transitions and animations.
+    - [ ] Perfetto / Systrace for in-depth system-level tracing.
+- [ ] **Firebase Performance Monitoring (or similar):** Integrate SDKs to monitor performance in the wild.
+- [ ] **Google Play Console Pre-Launch Report:**
+    - [ ] Thoroughly review for crashes, performance issues, and display problems.
+    - [ ] **Device Variety:** Pay close attention to results across different Android versions, form factors (phones, tablets, foldables), and manufacturers.
+- [ ] **Review ANR & Crash Reports:** Check for any new ANRs or crashes introduced, using Play Console or other crash reporting tools.
 
-- [ ] **Test Thoroughly:** After enabling R8, perform a full regression test of the release build. R8 issues often manifest as `ClassNotFoundException` or `NoSuchMethodError` at runtime.
+## 11. Post-Release Monitoring
+- [ ] **Monitor Vitals:** Keep a close eye on Android Vitals in the Google Play Console (ANRs, crashes, stuck wake-locks, excessive wakeups).
+- [ ] **User Feedback:** Monitor user feedback channels for performance-related complaints.
+- [ ] **Performance Regression Tracking:** Continuously track key performance metrics release over release.
 
------
-
-## 3\. Jetpack Compose Optimization 🚀
-
-The Compose compiler optimizes your UI by "skipping" recomposition of composables whose inputs have not changed. This relies on the **stability** of the parameters passed to them.
-
-- [ ] **Enable Compose Compiler Metrics:** Add the following to your root `build.gradle.kts` to generate reports that detail stability and skippability issues.
-
-  ```kotlin
-  // In build.gradle.kts
-  tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-      kotlinOptions {
-          freeCompilerArgs += "-P"
-          freeCompilerArgs += "plugin:androidx.compose.compiler.reports.dest=${project.buildDir}/compose_metrics"
-      }
-  }
-  ```
-
-- [ ] **Analyze the Reports:** After a build (`./gradlew assembleRelease`), check the generated files in each module's `build/compose_metrics/` directory.
-
-    - `*_composables.txt`: Shows whether each composable is `skippable` and `restartable`.
-    - `*_classes.txt`: Shows the stability of classes used in your composables (`Stable` or `Unstable`).
-
-- [ ] **Fix Stability Issues:** An unstable parameter forces a composable to recompose every time, even if the data hasn't changed.
-
-    - **Common Cause:** Using standard `List`, `Map`, or `Set` in a data class.
-    - **Solution:** Use immutable collections from `kotlinx.collections.immutable` (e.g., `ImmutableList`) or annotate your classes with `@Immutable` or `@Stable` if you can guarantee their stability.
-
-  <!-- end list -->
-
-  ```kotlin
-  // Unstable ❌
-  data class MyViewModelState(val items: List<String>)
-
-  // Stable ✅
-  import kotlinx.collections.immutable.ImmutableList
-  import androidx.compose.runtime.Immutable
-
-  @Immutable // Explicitly mark as immutable
-  data class MyViewModelState(val items: ImmutableList<String>)
-  ```
-
------
-
-## 4\. Build Configuration & App Bundles
-
-- [ ] **Use Android App Bundles (.aab):** Always publish your app as an Android App Bundle. Google Play will use the `.aab` to generate and serve optimized APKs for each user's device configuration (screen density, CPU architecture, language).
-
-- [ ] **Configure Signing:** Set up a secure signing configuration for your release build in `build.gradle.kts` and store your keystore file securely. **Never** commit your keystore or its passwords to version control. Use environment variables or a secure properties file.
-
-  ```kotlin
-  // In app/build.gradle.kts
-  signingConfigs {
-      create("release") {
-          // Load from secure properties file or environment variables
-          storeFile = file(System.getenv("KEYSTORE_FILE") ?: "my-keystore.jks")
-          storePassword = System.getenv("KEYSTORE_PASSWORD")
-          keyAlias = System.getenv("KEY_ALIAS")
-          keyPassword = System.getenv("KEY_PASSWORD")
-      }
-  }
-  // ... then assign it to your release build type
-  buildTypes {
-      getByName("release") {
-          signingConfig = signingConfigs.getByName("release")
-      }
-  }
-  ```
-
------
-
-## 5\. Analysis & Final Checks ✅
-
-- [ ] **Static Analysis:** Run the Android Lint checker on the release variant to catch potential bugs, performance issues, and security vulnerabilities.
-
-  ```shell
-  ./gradlew :app:lintRelease
-  ```
-
-- [ ] **Profile Release Build:** Use the Android Studio Profiler (CPU, Memory, Energy) on a release build to catch any final performance bottlenecks.
-
-> **Tip:** For easier profiling, you can create a non-obfuscated but otherwise release-like build variant.
-
-- [ ] **Memory Leak Detection:** Ensure that leak detection libraries like **LeakCanary** are configured as `debugImplementation` only and are not included in the release build.
-
-- [ ] **Disable Debugging:** Verify that `android:debuggable="false"` is set in the `AndroidManifest.xml` for the release build. The build system handles this automatically for the `release` build type.
-
-- [ ] **Update Versioning:** Increment the `versionCode` and update the `versionName` in `build.gradle.kts` according to your versioning scheme.
-
-- [ ] **Google Play Pre-Launch Report:** Upload your app bundle to an internal testing track in the Google Play Console. Thoroughly review the pre-launch report for crashes, performance issues, and display problems on a wide range of real devices before promoting the build to production.
-
-<!-- end list -->
+---
+Remember to update this document as your performance strategies, tools, and application evolve.
