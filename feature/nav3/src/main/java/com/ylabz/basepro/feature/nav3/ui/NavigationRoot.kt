@@ -4,19 +4,20 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entry
+import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
-import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.example.nav3recipes.content.ContentBlue
 import com.example.nav3recipes.content.ContentGreen
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object NoteListScreen: NavKey
+data object NoteListScreen : NavKey
+
 @Serializable
-data class NoteDetailDetailScreen(val id:Int): NavKey
+data class NoteDetailDetailScreen(val id: Int) : NavKey
 
 @Composable
 fun NavigationRoot(modifier: Modifier = Modifier) {
@@ -25,25 +26,21 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
     NavDisplay(
         backStack = backStack,
         onBack = { backStack.removeLastOrNull() },
-        entryProvider = { key ->
-            when (key) {
-                is NoteListScreen -> NavEntry(key) {
-                    ContentGreen("Welcome to Nav3") {
-                        Button(onClick = {
-                            backStack.add(NoteDetailDetailScreen(123))
-                        }) {
-                            Text("Click to navigate")
-                        }
+        entryProvider = entryProvider {
+
+            entry<NoteListScreen> {
+
+                ContentGreen("Welcome to Nav3") {
+                    Button(onClick = {
+                        backStack.add(NoteDetailDetailScreen(123))
+                    }) {
+                        Text("Click to navigate")
                     }
                 }
+            }
 
-                is NoteDetailDetailScreen -> NavEntry(key) {
-                    ContentBlue("Route id: ${key.id} ")
-                }
-
-                else -> {
-                    error("Unknown route: $key")
-                }
+            entry<NoteDetailDetailScreen> { key ->
+                ContentBlue("Route id: ${key.id} ")
             }
         }
     )
