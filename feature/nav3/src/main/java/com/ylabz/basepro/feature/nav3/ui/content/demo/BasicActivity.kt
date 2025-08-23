@@ -6,7 +6,9 @@ import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -65,7 +67,8 @@ fun LeanNav(modifier: Modifier = Modifier) {
     var globalPopEnabled by remember { mutableStateOf(false) }
     var globalPredictivePopEnabled by remember { mutableStateOf(false) }
 
-    // TODO: Add state and toggles for ScreenC's specific transitions if needed
+    // New state to control Screen D's animation
+    var screenDEnabled by remember { mutableStateOf(false) }
 
     val slideRightSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
         slideInHorizontally(initialOffsetX = { it }) togetherWith
@@ -75,6 +78,12 @@ fun LeanNav(modifier: Modifier = Modifier) {
     val slideLeftSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
         slideInHorizontally(initialOffsetX = { -it }) togetherWith
                 slideOutHorizontally(targetOffsetX = { it })
+    }
+
+    // New animation spec for sliding vertically
+    val slideUpSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
+        slideInVertically(initialOffsetY = { it }) togetherWith
+                slideOutVertically(targetOffsetY = { it })
     }
 
     val noAnimationSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
@@ -112,6 +121,20 @@ fun LeanNav(modifier: Modifier = Modifier) {
             Text("Predictive Back Slide (Left):")
             Button(onClick = { globalPredictivePopEnabled = !globalPredictivePopEnabled }) {
                 Text(if (globalPredictivePopEnabled) "ON" else "OFF")
+            }
+        }
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+        // New UI for Screen D's specific transition
+        Text("Screen D Specific Transition:", modifier = Modifier.padding(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Vertical Slide (Bottom):")
+            Button(onClick = { screenDEnabled = !screenDEnabled }) {
+                Text(if (screenDEnabled) "ON" else "OFF")
             }
         }
         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
@@ -169,7 +192,17 @@ fun LeanNav(modifier: Modifier = Modifier) {
                         }
                     }
                 }
-                entry<ScreenD> {
+                entry<ScreenD>(
+                    // Conditionally apply the vertical slide animation
+                    metadata = if (screenDEnabled) {
+                        NavDisplay.transitionSpec(slideUpSpec) +
+                                NavDisplay.popTransitionSpec(slideUpSpec)
+                    } else {
+                        // Use default animations if the toggle is off
+                        NavDisplay.transitionSpec(noAnimationSpec) +
+                                NavDisplay.popTransitionSpec(noAnimationSpec)
+                    }
+                ) {
                     // Using ContentOrange as placeholder for ScreenD's content.
                     // Replace with ContentYellow or another if available/preferred.
                     ContentOrange("This is Screen D (Predictive Pop Demo)") {
