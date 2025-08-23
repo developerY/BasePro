@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.nav3.ui
+package com.ylabz.basepro.feature.nav3.ui.content.demo
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.navigation3.runtime.NavKey
+import com.ylabz.basepro.feature.nav3.ui.HomeKey
 
 class TopLevelBackStack<T : NavKey>(private val startKey: T) {
 
@@ -33,7 +34,9 @@ class TopLevelBackStack<T : NavKey>(private val startKey: T) {
             // If not on the startKey tab, NavDisplay's stack includes the startKey's root
             // followed by the current active tab's full stack.
             // Ensure startKey's stack always has at least startKey itself.
-            val startKeyStack = topLevelBackStacks[startKey]?.takeIf { it.isNotEmpty() } ?: mutableStateListOf(startKey)
+            val startKeyStack = topLevelBackStacks[startKey]?.takeIf { it.isNotEmpty() } ?: mutableStateListOf(
+                startKey
+            )
             if (startKeyStack.firstOrNull() != startKey && startKey == HomeKey) { // A bit of a safeguard for HomeKey as root
                  backStack.add(startKey) // Add startKey if not already the first in its own stack representation for combining
             } else if (!startKeyStack.contains(startKey) && startKey == HomeKey) {
