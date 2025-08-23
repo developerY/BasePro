@@ -1,8 +1,5 @@
 package com.ylabz.basepro.feature.nav3.ui
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
@@ -23,7 +20,6 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.nav3recipes.content.ContentGreen
 import com.example.nav3recipes.content.ContentMauve
 import com.example.nav3recipes.content.ContentOrange
-import com.example.nav3recipes.content.setEdgeToEdgeConfig
 import kotlinx.serialization.Serializable
 
 /**
