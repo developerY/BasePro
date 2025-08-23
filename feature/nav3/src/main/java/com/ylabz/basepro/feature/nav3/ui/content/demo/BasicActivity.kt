@@ -61,7 +61,7 @@ fun LeanNav(modifier: Modifier = Modifier) {
                         }
                     }
                     entry<ScreenC>(
-                        metadata = NavDisplay.transitionSpec {
+                       /* metadata = NavDisplay.transitionSpec {
                             // Slide new content up, keeping the old content in place underneath
                             slideInVertically(
                                 initialOffsetY = { it },
@@ -81,12 +81,12 @@ fun LeanNav(modifier: Modifier = Modifier) {
                                         targetOffsetY = { it },
                                         animationSpec = tween(1000)
                                     )
-                        }
+                        }*/
                     ) {
                         ContentGreen("This is Screen C")
                     }
                 },
-                transitionSpec = {
+                /*transitionSpec = {
                     // Slide in from right when navigating forward
                     slideInHorizontally(initialOffsetX = { it }) togetherWith
                             slideOutHorizontally(targetOffsetX = { -it })
@@ -100,7 +100,7 @@ fun LeanNav(modifier: Modifier = Modifier) {
                     // Slide in from left when navigating back
                     slideInHorizontally(initialOffsetX = { -it }) togetherWith
                             slideOutHorizontally(targetOffsetX = { it })
-                }
+                }*/
             )
         }
 

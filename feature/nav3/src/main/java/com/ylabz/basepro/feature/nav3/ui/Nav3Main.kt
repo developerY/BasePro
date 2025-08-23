@@ -6,5 +6,5 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun Nav3Main(modifier: Modifier = Modifier) {
-    Text("Hello Nav3!")
+    LeanNav(modifier)
 }
