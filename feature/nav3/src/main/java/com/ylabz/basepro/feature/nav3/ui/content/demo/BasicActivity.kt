@@ -125,20 +125,6 @@ fun LeanNav(modifier: Modifier = Modifier) {
         }
         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-        // New UI for Screen D's specific transition
-        Text("Screen D Specific Transition:", modifier = Modifier.padding(8.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text("Vertical Slide (Bottom):")
-            Button(onClick = { screenDEnabled = !screenDEnabled }) {
-                Text(if (screenDEnabled) "ON" else "OFF")
-            }
-        }
-        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
         // Handle system back press if there's something to pop
         if (backStack.size > 1) {
             BackHandler(enabled = true) {
@@ -207,6 +193,12 @@ fun LeanNav(modifier: Modifier = Modifier) {
                     // Replace with ContentYellow or another if available/preferred.
                     ContentOrange("This is Screen D (Predictive Pop Demo)") {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            // New UI for Screen D's specific transition
+                            Text("Vertical Slide (Bottom):")
+                            Button(onClick = { screenDEnabled = !screenDEnabled }) {
+                                Text(if (screenDEnabled) "ON" else "OFF")
+                            }
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                             Button(onClick = { backStack.removeLastOrNull() }) {
                                 Text("Go Back to C (Button)")
                             }
@@ -220,6 +212,7 @@ fun LeanNav(modifier: Modifier = Modifier) {
         )
     }
 }
+
 
 // TODO: Define ContentYellow or ensure ContentOrange, ContentMauve, ContentGreen
 // are correctly imported and available in the scope.
