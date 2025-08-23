@@ -44,7 +44,7 @@ fun NavGraphBuilder.nav3NavGraph(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Nav3Main()
+                    Nav3Main(modifier = Modifier)
                 }
             }
         }
