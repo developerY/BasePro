@@ -38,12 +38,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
 // TODO: Ensure these Content composables are correctly referenced or moved/redefined in LeanNav.kt
 // For now, these imports will cause errors until LeanNav is set up.
 // If your Content composables (ContentOrange etc.) are in the feature.nav3.ui.content package,
@@ -204,6 +207,14 @@ fun Nav3Main(modifier: Modifier = Modifier) {
             onBack = { backStack.removeLastOrNull() },
             // Add the adaptive scene strategy to enable list-detail layouts.
             sceneStrategy = listDetailStrategy,
+            entryDecorators = listOf(
+                // This decorator sets up the scene for a composable.
+                rememberSceneSetupNavEntryDecorator(),
+                // This decorator saves the state of the ViewModel.
+                rememberSavedStateNavEntryDecorator(),
+                // This decorator scopes the ViewModel to the NavEntry's lifecycle.
+                rememberViewModelStoreNavEntryDecorator()
+            ),
             entryProvider = entryProvider {
                 // MainScreensA is now the list pane.
                 entry<NavMainScreens.MainScreensA>(
