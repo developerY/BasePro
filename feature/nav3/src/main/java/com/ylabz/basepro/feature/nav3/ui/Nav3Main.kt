@@ -2,14 +2,17 @@ package com.ylabz.basepro.feature.nav3.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,8 +20,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
@@ -35,6 +43,8 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 // TODO: Ensure these Content composables are correctly referenced or moved/redefined in LeanNav.kt
 // For now, these imports will cause errors until LeanNav is set up.
+// If your Content composables (ContentOrange etc.) are in the feature.nav3.ui.content package,
+// the import should be: import com.ylabz.basepro.feature.nav3.ui.content.*
 import com.example.nav3recipes.content.ContentGreen
 import com.example.nav3recipes.content.ContentMauve
 import com.example.nav3recipes.content.ContentOrange
@@ -64,6 +74,8 @@ fun Nav3Main(modifier: Modifier = Modifier) {
     var globalEnterExitEnabled by remember { mutableStateOf(false) }
     var globalPopEnabled by remember { mutableStateOf(false) }
     var globalPredictivePopEnabled by remember { mutableStateOf(false) }
+    var transitionsExpanded by remember { mutableStateOf(false) } // Or true to be open by default
+
 
     // New state to control Screen D's animation
     var screenDVerticalSlideEnabled by remember { mutableStateOf(false) } // Renamed for clarity
@@ -102,35 +114,52 @@ fun Nav3Main(modifier: Modifier = Modifier) {
     }
 
     Column(modifier = modifier) {
-        Text("Global NavDisplay Transitions:", modifier = Modifier.padding(8.dp))
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { transitionsExpanded = !transitionsExpanded }
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Forward Slide (Right):")
-            Button(onClick = { globalEnterExitEnabled = !globalEnterExitEnabled }) {
-                Text(if (globalEnterExitEnabled) "ON" else "OFF")
-            }
+            Text("Global NavDisplay Transitions:")
+            Icon(
+                imageVector = if (transitionsExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown,
+                contentDescription = if (transitionsExpanded) "Collapse" else "Expand"
+            )
         }
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text("Backward Slide (Left):")
-            Button(onClick = { globalPopEnabled = !globalPopEnabled }) {
-                Text(if (globalPopEnabled) "ON" else "OFF")
-            }
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text("Predictive Back Slide (Left):")
-            Button(onClick = { globalPredictivePopEnabled = !globalPredictivePopEnabled }) {
-                Text(if (globalPredictivePopEnabled) "ON" else "OFF")
+        AnimatedVisibility(visible = transitionsExpanded) {
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Forward Slide (Right):")
+                    Button(onClick = { globalEnterExitEnabled = !globalEnterExitEnabled }) {
+                        Text(if (globalEnterExitEnabled) "ON" else "OFF")
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Backward Slide (Left):")
+                    Button(onClick = { globalPopEnabled = !globalPopEnabled }) {
+                        Text(if (globalPopEnabled) "ON" else "OFF")
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Predictive Back Slide (Left):")
+                    Button(onClick = { globalPredictivePopEnabled = !globalPredictivePopEnabled }) {
+                        Text(if (globalPredictivePopEnabled) "ON" else "OFF")
+                    }
+                }
             }
         }
         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
@@ -197,6 +226,9 @@ fun Nav3Main(modifier: Modifier = Modifier) {
                         NavDisplay.transitionSpec(noAnimationSpec) +
                                 NavDisplay.popTransitionSpec(noAnimationSpec)
                     }
+                    // You could also add custom pop and predictive pop for ScreenD here:
+                    // + NavDisplay.popTransitionSpec { ... }
+                    // + NavDisplay.predictivePopTransitionSpec { ... }
                 ) {
                     // Using ContentOrange as placeholder for ScreenD's content.
                     // Replace with ContentYellow or another if available/preferred.
