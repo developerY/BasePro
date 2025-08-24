@@ -27,6 +27,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
+import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,13 +54,24 @@ import com.example.nav3recipes.content.ContentOrange
 import com.example.nav3recipes.content.ContentYellow
 import kotlinx.serialization.Serializable
 
+
+/**
+ * This code demonstrates an adaptive list-detail layout using Nav3.
+ *
+ * In portrait mode, navigating from Screen A to Screen B will show Screen B
+ * as a full-screen view.
+ *
+ * In landscape mode, Nav3 will automatically display both Screen A (the list pane)
+ * and Screen B (the detail pane) side-by-side.
+ */
+
 @Serializable
 sealed class NavMainScreens(val title: String) : NavKey {
     @Serializable
-    data object MainScreensA : NavMainScreens("Screen A (Orange)")
+    data object MainScreensA : NavMainScreens("Screen A (List Pane)")
 
     @Serializable
-    data object MainScreensB : NavMainScreens("Screen B (Mauve)")
+    data object MainScreensB : NavMainScreens("Screen B (Detail Pane)")
 
     @Serializable
     data object MainScreensC : NavMainScreens("Screen C (Green)")
@@ -67,9 +81,11 @@ sealed class NavMainScreens(val title: String) : NavKey {
     // Add other screen-specific properties here if needed in the future
 }
 
+@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun Nav3Main(modifier: Modifier = Modifier) {
 
+    // Initialize the back stack with ScreenA as the starting destination.
     val backStack = rememberNavBackStack(NavMainScreens.MainScreensA)
 
     var globalEnterExitEnabled by remember { mutableStateOf(false) }
@@ -77,44 +93,37 @@ fun Nav3Main(modifier: Modifier = Modifier) {
     var globalPredictivePopEnabled by remember { mutableStateOf(false) }
     var transitionsExpanded by remember { mutableStateOf(false) } // Or true to be open by default
 
-
     // New state to control Screen D's animation
     var screenDVerticalSlideEnabled by remember { mutableStateOf(false) } // Renamed for clarity
 
+    // Standard horizontal slide animation for global navigation.
     val slideRightSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
         slideInHorizontally(initialOffsetX = { it }) togetherWith
                 slideOutHorizontally(targetOffsetX = { -it })
     }
 
+    // Standard horizontal slide animation for global pop navigation.
     val slideLeftSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
         slideInHorizontally(initialOffsetX = { -it }) togetherWith
                 slideOutHorizontally(targetOffsetX = { it })
     }
 
-    // New animation spec for sliding vertically
+    // Animation for a vertical pop-up.
     val slideUpSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
         slideInVertically(initialOffsetY = { it }) togetherWith
                 slideOutVertically(targetOffsetY = { it })
     }
 
-    /*val slideUpSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
-        // Screen D slides in from the bottom
-        slideInVertically(initialOffsetY = { fullHeight -> fullHeight }) togetherWith
-        // Exiting screen stays in place
-        ExitTransition.KeepUntilTransitionsFinished
-    }*/
-
-    val slideDownSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
-        // Screen D slides out to the bottom
-        EnterTransition.None togetherWith // Entering screen (revealed) has no animation
-        slideOutVertically(targetOffsetY = { fullHeight -> fullHeight })
-    }
-    
+    // An animation spec that does nothing. Used to disable transitions.
     val noAnimationSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
         EnterTransition.None togetherWith ExitTransition.None
     }
 
+    // This is the core of the adaptive layout. It manages the list-detail pattern.
+    val listDetailStrategy = rememberListDetailSceneStrategy<Any>()
+
     Column(modifier = modifier) {
+        // Collapsible section for global navigation toggles.
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -129,6 +138,8 @@ fun Nav3Main(modifier: Modifier = Modifier) {
                 contentDescription = if (transitionsExpanded) "Collapse" else "Expand"
             )
         }
+
+        // The global transition toggles are only visible when the user expands the section.
         AnimatedVisibility(visible = transitionsExpanded) {
             Column {
                 Row(
@@ -165,25 +176,50 @@ fun Nav3Main(modifier: Modifier = Modifier) {
         }
         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-        if (backStack.size > 1) { // Corrected from backStack.size
+        // Handle the system back button.
+        if (backStack.size > 1) {
             BackHandler(enabled = true) {
                 backStack.removeLastOrNull()
             }
         }
 
+        // This button controls Screen D's specific transition, and is placed at the top level
+        /* to always be visible.
+        Text("Screen D Vertical Slide Transition:", modifier = Modifier.padding(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Vertical Slide (Bottom):")
+            Button(onClick = { screenDVerticalSlideEnabled = !screenDVerticalSlideEnabled }) {
+                Text(if (screenDVerticalSlideEnabled) "ON" else "OFF")
+            }
+        }
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) */
+
+        // This is the core navigation composable.
         NavDisplay(
             backStack = backStack,
             onBack = { backStack.removeLastOrNull() },
+            // Add the adaptive scene strategy to enable list-detail layouts.
+            sceneStrategy = listDetailStrategy,
             entryProvider = entryProvider {
-                entry<NavMainScreens.MainScreensA> {
-                    ContentOrange("This is Screen A") {
+                // MainScreensA is now the list pane.
+                entry<NavMainScreens.MainScreensA>(
+                    metadata = ListDetailSceneStrategy.listPane()
+                ) {
+                    ContentOrange("This is Screen A (List Pane)") {
                         Button(onClick = { backStack.add(NavMainScreens.MainScreensB) }) {
                             Text("Go to Screen B")
                         }
                     }
                 }
-                entry<NavMainScreens.MainScreensB> {
-                    ContentMauve("This is Screen B") {
+                // MainScreensB is now the detail pane.
+                entry<NavMainScreens.MainScreensB>(
+                    metadata = ListDetailSceneStrategy.detailPane()
+                ) {
+                    ContentMauve("This is Screen B (Detail Pane)") {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Button(onClick = { backStack.add(NavMainScreens.MainScreensC) }) {
                                 Text("Go to Screen C")
@@ -195,6 +231,8 @@ fun Nav3Main(modifier: Modifier = Modifier) {
                         }
                     }
                 }
+                // Screen C and D demonstrate a standard push-pull navigation,
+                // and D still has its custom slide-up animation.
                 entry<NavMainScreens.MainScreensC>(
                     // TODO: Make ScreenC metadata transitions also toggleable
                     /* metadata = NavDisplay.transitionSpec {
@@ -248,6 +286,7 @@ fun Nav3Main(modifier: Modifier = Modifier) {
                     }
                 }
             },
+            // Global animations that will be overridden by screen-specific metadata.
             transitionSpec = if (globalEnterExitEnabled) slideRightSpec else noAnimationSpec,
             popTransitionSpec = if (globalPopEnabled) slideLeftSpec else noAnimationSpec,
             predictivePopTransitionSpec = if (globalPredictivePopEnabled) slideLeftSpec else noAnimationSpec
