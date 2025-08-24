@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.nav3.ui.content.demo
+package com.ylabz.basepro.feature.nav3.ui.content
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -59,7 +59,7 @@ private data object ScreenD : NavKey
 
 
 @Composable
-fun LeanNav(modifier: Modifier = Modifier) {
+fun BasicActivity(modifier: Modifier = Modifier) {
 
     val backStack = rememberNavBackStack(ScreenA)
 
