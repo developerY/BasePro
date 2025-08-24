@@ -40,28 +40,26 @@ import com.example.nav3recipes.content.ContentMauve
 import com.example.nav3recipes.content.ContentOrange
 import kotlinx.serialization.Serializable
 
-// Screen Identifiers (NavKey implementations)
 @Serializable
-internal data object ScreenA : NavKey
+sealed class NavMainScreens(val title: String) : NavKey {
+    @Serializable
+    data object MainScreensA : NavMainScreens("Screen A (Orange)")
 
-@Serializable
-internal data object ScreenB : NavKey
+    @Serializable
+    data object MainScreensB : NavMainScreens("Screen B (Mauve)")
 
-@Serializable
-internal data object ScreenC : NavKey
+    @Serializable
+    data object MainScreensC : NavMainScreens("Screen C (Green)")
 
-@Serializable
-internal data object ScreenD : NavKey
-
-// Enum to pass to LeanNav for identifying screen content
-internal enum class ScreenType {
-    A, B, C, D
+    @Serializable
+    data object MainScreensD : NavMainScreens("Screen D (Predictive Pop - Orange)")
+    // Add other screen-specific properties here if needed in the future
 }
 
 @Composable
 fun Nav3Main(modifier: Modifier = Modifier) {
 
-    val backStack = rememberNavBackStack(ScreenA)
+    val backStack = rememberNavBackStack(NavMainScreens.MainScreensA)
 
     var globalEnterExitEnabled by remember { mutableStateOf(false) }
     var globalPopEnabled by remember { mutableStateOf(false) }
@@ -147,17 +145,17 @@ fun Nav3Main(modifier: Modifier = Modifier) {
             backStack = backStack,
             onBack = { backStack.removeLastOrNull() },
             entryProvider = entryProvider {
-                entry<ScreenA> {
+                entry<NavMainScreens.MainScreensA> {
                     ContentOrange("This is Screen A") {
-                        Button(onClick = { backStack.add(ScreenB) }) {
+                        Button(onClick = { backStack.add(NavMainScreens.MainScreensB) }) {
                             Text("Go to Screen B")
                         }
                     }
                 }
-                entry<ScreenB> {
+                entry<NavMainScreens.MainScreensB> {
                     ContentMauve("This is Screen B") {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Button(onClick = { backStack.add(ScreenC) }) {
+                            Button(onClick = { backStack.add(NavMainScreens.MainScreensC) }) {
                                 Text("Go to Screen C")
                             }
                             Spacer(modifier = Modifier.height(8.dp))
@@ -167,7 +165,7 @@ fun Nav3Main(modifier: Modifier = Modifier) {
                         }
                     }
                 }
-                entry<ScreenC>(
+                entry<NavMainScreens.MainScreensC>(
                     // TODO: Make ScreenC metadata transitions also toggleable
                     /* metadata = NavDisplay.transitionSpec {
                         // ...
@@ -179,7 +177,7 @@ fun Nav3Main(modifier: Modifier = Modifier) {
                 ) {
                     ContentGreen("This is Screen C") {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Button(onClick = { backStack.add(ScreenD) }) {
+                            Button(onClick = { backStack.add(NavMainScreens.MainScreensD) }) {
                                 Text("Go to Screen D")
                             }
                             Spacer(modifier = Modifier.height(8.dp))
@@ -189,7 +187,7 @@ fun Nav3Main(modifier: Modifier = Modifier) {
                         }
                     }
                 }
-                entry<ScreenD>(
+                entry<NavMainScreens.MainScreensD>(
                     // Conditionally apply the vertical slide animation
                     metadata = if (screenDVerticalSlideEnabled) {
                         NavDisplay.transitionSpec(slideUpSpec) +
