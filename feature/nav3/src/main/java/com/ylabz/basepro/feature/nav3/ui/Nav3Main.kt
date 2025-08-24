@@ -48,6 +48,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.nav3recipes.content.ContentGreen
 import com.example.nav3recipes.content.ContentMauve
 import com.example.nav3recipes.content.ContentOrange
+import com.example.nav3recipes.content.ContentYellow
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -232,7 +233,7 @@ fun Nav3Main(modifier: Modifier = Modifier) {
                 ) {
                     // Using ContentOrange as placeholder for ScreenD's content.
                     // Replace with ContentYellow or another if available/preferred.
-                    ContentOrange("This is Screen D (Predictive Pop Demo)") {
+                    ContentYellow("This is Screen D (Predictive Pop Demo)") {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             // New UI for Screen D's specific transition
                             Text("Vertical Slide (Bottom):")
