@@ -47,6 +47,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import androidx.navigation3.ui.NavDisplay.transitionSpec
 import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
 // TODO: Ensure these Content composables are correctly referenced or moved/redefined in LeanNav.kt
 // For now, these imports will cause errors until LeanNav is set up.
@@ -56,6 +57,7 @@ import com.example.nav3recipes.content.ContentGreen
 import com.example.nav3recipes.content.ContentMauve
 import com.example.nav3recipes.content.ContentOrange
 import com.example.nav3recipes.content.ContentYellow
+import com.ylabz.basepro.feature.nav3.ui.content.AdaptiveContactsApp
 import kotlinx.serialization.Serializable
 
 
@@ -85,9 +87,15 @@ sealed class NavMainScreens(val title: String) : NavKey {
     // Add other screen-specific properties here if needed in the future
 }
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun Nav3Main(modifier: Modifier = Modifier) {
+    AdaptiveContactsApp()
+}
+
+
+@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3AdaptiveApi::class)
+@Composable
+fun Nav3MainExample(modifier: Modifier = Modifier) {
 
     // Initialize the back stack with ScreenA as the starting destination.
     val backStack = rememberNavBackStack(NavMainScreens.MainScreensA)
@@ -99,6 +107,19 @@ fun Nav3Main(modifier: Modifier = Modifier) {
 
     // New state to control Screen D's animation
     var screenDVerticalSlideEnabled by remember { mutableStateOf(false) } // Renamed for clarity
+
+    // Example
+    /**
+     * slideInHorizontally starts the new screen off-screen to the right (initialOffsetX = { it }
+     * where it is the full width of the screen) and moves it to the center. At the same time,
+     * slideOutHorizontally moves the old screen from the center off-screen to the left (targetOffsetX = { -it }).
+     * This creates the standard "push" effect that you see when navigating forward in many apps.
+     */
+    val slideInHorizontallytransitionSpec = {
+        // forward and backward
+        slideInHorizontally(initialOffsetX = { it }) togetherWith
+                slideOutHorizontally(targetOffsetX = { -it })
+    }
 
     // Standard horizontal slide animation for global navigation.
     val slideRightSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
@@ -279,11 +300,11 @@ fun Nav3Main(modifier: Modifier = Modifier) {
                 entry<NavMainScreens.MainScreensD>(
                     // Conditionally apply the vertical slide animation
                     metadata = if (screenDVerticalSlideEnabled) {
-                        NavDisplay.transitionSpec(slideUpSpec) +
+                        transitionSpec(slideUpSpec) +
                                 NavDisplay.popTransitionSpec(slideUpSpec)
                     } else {
                         // Use default animations if the toggle is off
-                        NavDisplay.transitionSpec(noAnimationSpec) +
+                        transitionSpec(noAnimationSpec) +
                                 NavDisplay.popTransitionSpec(noAnimationSpec)
                     }
                     // You could also add custom pop and predictive pop for ScreenD here:
