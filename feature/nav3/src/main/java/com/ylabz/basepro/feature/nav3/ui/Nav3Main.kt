@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation3.runtime.NavKey
@@ -220,9 +221,18 @@ fun Nav3Main(modifier: Modifier = Modifier) {
                 entry<NavMainScreens.MainScreensA>(
                     metadata = ListDetailSceneStrategy.listPane()
                 ) {
+                    // The viewModel() function automatically uses the decorator to
+                    // scope this ViewModel to the current NavEntry.
+                    val viewModel: ScreenAViewModel = viewModel()
+
                     ContentOrange("This is Screen A (List Pane)") {
                         Button(onClick = { backStack.add(NavMainScreens.MainScreensB) }) {
                             Text("Go to Screen B")
+                        }
+                        Spacer(modifier = Modifier.height(18.dp))
+                        Text("Count: ${viewModel.count}")
+                        Button(onClick = { viewModel.count++ }) {
+                            Text("Increment (wrong)")
                         }
                     }
                 }
