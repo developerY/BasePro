@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.nav3.ui.content
+package com.ylabz.basepro.feature.nav3.ui.content.strategy
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,7 +41,7 @@ fun ContactListScreen(
         Contact(5, "Clark Kent", "clark@example.com")
     )
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = modifier.fillMaxSize()) {
         Text(
             text = "Contacts",
             fontSize = 24.sp,
