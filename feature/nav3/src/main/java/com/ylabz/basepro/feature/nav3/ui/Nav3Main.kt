@@ -87,7 +87,8 @@ sealed class NavMainScreens(val title: String) : NavKey {
 
 @Composable
 fun Nav3Main(modifier: Modifier = Modifier) {
-    AdaptiveContactsApp()
+    Nav3MainExample(modifier = modifier)
+    //AdaptiveContactsApp(modifier = modifier)
 }
 
 
@@ -298,10 +299,12 @@ fun Nav3MainExample(modifier: Modifier = Modifier) {
                 entry<NavMainScreens.MainScreensD>(
                     // Conditionally apply the vertical slide animation
                     metadata = if (screenDVerticalSlideEnabled) {
+                        // ListDetailSceneStrategy.extraPane() + // Ensure extraPane is added if intended for full screen override
                         transitionSpec(slideUpSpec) +
                                 NavDisplay.popTransitionSpec(slideUpSpec)
                     } else {
                         // Use default animations if the toggle is off
+                        // ListDetailSceneStrategy.extraPane() + // Ensure extraPane is added if intended for full screen override
                         transitionSpec(noAnimationSpec) +
                                 NavDisplay.popTransitionSpec(noAnimationSpec)
                     }
