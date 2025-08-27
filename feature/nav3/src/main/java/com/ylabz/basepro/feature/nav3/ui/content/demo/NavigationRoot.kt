@@ -18,8 +18,8 @@ import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.example.nav3recipes.content.ContentBlue
-import com.example.nav3recipes.content.ContentGreen
+import com.ylabz.basepro.feature.nav3.ui.content.ContentBlue
+import com.ylabz.basepro.feature.nav3.ui.content.ContentGreen
 import kotlinx.serialization.Serializable
 
 @Serializable

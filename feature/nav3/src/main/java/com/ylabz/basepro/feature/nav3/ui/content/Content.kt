@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.nav3recipes.content
+package com.ylabz.basepro.feature.nav3.ui.content
 
 import android.os.Build
 import androidx.activity.ComponentActivity
@@ -39,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.ui.theme.PastelBlue
 import com.ylabz.basepro.core.ui.theme.PastelGreen

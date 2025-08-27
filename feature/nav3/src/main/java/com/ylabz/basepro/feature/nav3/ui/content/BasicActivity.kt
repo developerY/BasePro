@@ -35,9 +35,6 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 // It seems the Content composables are in com.example.nav3recipes.content
 // Adjust this if your project structure for these is different.
-import com.example.nav3recipes.content.ContentGreen
-import com.example.nav3recipes.content.ContentMauve
-import com.example.nav3recipes.content.ContentOrange
 import kotlinx.serialization.Serializable
 
 /**

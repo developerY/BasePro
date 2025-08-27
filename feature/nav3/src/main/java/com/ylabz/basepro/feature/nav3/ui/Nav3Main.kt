@@ -6,9 +6,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
@@ -54,11 +51,12 @@ import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
 // For now, these imports will cause errors until LeanNav is set up.
 // If your Content composables (ContentOrange etc.) are in the feature.nav3.ui.content package,
 // the import should be: import com.ylabz.basepro.feature.nav3.ui.content.*
-import com.example.nav3recipes.content.ContentGreen
-import com.example.nav3recipes.content.ContentMauve
-import com.example.nav3recipes.content.ContentOrange
-import com.example.nav3recipes.content.ContentYellow
+import com.ylabz.basepro.feature.nav3.ui.content.ContentGreen
+import com.ylabz.basepro.feature.nav3.ui.content.ContentMauve
+import com.ylabz.basepro.feature.nav3.ui.content.ContentOrange
+import com.ylabz.basepro.feature.nav3.ui.content.ContentYellow
 import com.ylabz.basepro.feature.nav3.ui.content.strategy.AdaptiveContactsApp
+import com.ylabz.basepro.feature.nav3.ui.content.strategy.AdaptiveLayoutDemo
 import kotlinx.serialization.Serializable
 
 
@@ -90,8 +88,12 @@ sealed class NavMainScreens(val title: String) : NavKey {
 
 @Composable
 fun Nav3Main(modifier: Modifier = Modifier) {
-    Nav3MainExample(modifier = modifier)
+    //Nav3MainExample(modifier = modifier)
     //AdaptiveContactsApp(modifier = modifier)
+    Column(modifier = modifier) {
+        Text("One")
+        AdaptiveLayoutDemo(modifier = modifier)
+    }
 }
 
 
@@ -281,7 +283,7 @@ fun Nav3MainExample(modifier: Modifier = Modifier) {
                         Spacer(modifier = Modifier.height(18.dp))
                         Text("Count: ${viewModel.count}")
                         Button(onClick = { viewModel.count++ }) {
-                            Text("Increment (wrong)")
+                            Text("Increment")
                         }
                     }
                 }
