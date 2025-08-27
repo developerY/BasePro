@@ -20,3 +20,8 @@ clip = (VideoFileClip(input_path)
 clip.write_gif(output_path, fps=gif_fps)
 
 print(f"✅ Successfully created fast GIF: {output_path}")
+
+"""
+Code in colab
+https://colab.research.google.com/drive/1TxRoOKX6PSTFnD5G3XpoAjAqY_rI_qC3?usp=sharing
+"""
