@@ -6,6 +6,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
@@ -240,6 +243,32 @@ fun Nav3MainExample(modifier: Modifier = Modifier) {
                 // MainScreensA is now the list pane.
                 entry<NavMainScreens.MainScreensA>(
                     metadata = ListDetailSceneStrategy.listPane()
+                    // Or make it super complex by ...
+                    /* metadata = ListDetailSceneStrategy.listPane() + NavDisplay.transitionSpec {
+                        // New screen slides up from the bottom
+                        slideInVertically(
+                            initialOffsetY = { fullHeight -> fullHeight },
+                            animationSpec = tween(400)
+                        ) togetherWith
+                                // Keep the old screen in place, visible until the new screen's transition finishes
+                                ExitTransition.KeepUntilTransitionsFinished
+                    } + NavDisplay.popTransitionSpec {
+                        // The screen being revealed (underneath) has no special enter animation
+                        EnterTransition.None togetherWith
+                                // The screen being popped (RouteB) slides out downwards
+                                slideOutVertically(
+                                    targetOffsetY = { fullHeight -> fullHeight },
+                                    animationSpec = tween(400)
+                                )
+                    } + NavDisplay.predictivePopTransitionSpec {
+                        // Define predictive back pop animation if needed, similar to popTransitionSpec
+                        EnterTransition.None togetherWith
+                                slideOutVertically(
+                                    targetOffsetY = { fullHeight -> fullHeight },
+                                    animationSpec = tween(400)
+                                )
+                    }*/
+
                 ) {
                     // The viewModel() function automatically uses the decorator to
                     // scope this ViewModel to the current NavEntry.
@@ -333,6 +362,27 @@ fun Nav3MainExample(modifier: Modifier = Modifier) {
             transitionSpec = if (globalEnterExitEnabled) slideRightSpec else noAnimationSpec,
             popTransitionSpec = if (globalPopEnabled) slideLeftSpec else noAnimationSpec,
             predictivePopTransitionSpec = if (globalPredictivePopEnabled) slideLeftSpec else noAnimationSpec
+
+            // FYI ... normal looks like this without the if statements
+            // Animation for forward / back navigation (e.g., backStack.add)
+            /*
+            transitionSpec = {
+                fadeIn(animationSpec = tween(300)) togetherWith
+                        fadeOut(animationSpec = tween(300))
+            },
+
+            // Animation for remove with pop navigation (e.g., backStack.removeLastOrNull)
+            popTransitionSpec = {
+                fadeIn(animationSpec = tween(300)) togetherWith
+                        fadeOut(animationSpec = tween(300))
+            },
+
+            // Animation for back button transition
+            predictivePopTransitionSpec = {
+                fadeIn(animationSpec = tween(300)) togetherWith
+                        fadeOut(animationSpec = tween(300))
+            }
+            */
         )
     }
 }
