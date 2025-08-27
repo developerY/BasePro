@@ -127,6 +127,10 @@ fun AdaptiveLayoutDemo(modifier: Modifier = Modifier) {
                 val product = remember { Json.decodeFromString<Product>(key.productJson) }
                 ProductDetailScreen(product = product) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Button(onClick = { backStack.removeLastOrNull() }) {
+                            Text("Go Back")
+                        }
+                        Spacer(Modifier.height(16.dp))
                         Button(onClick = {
                             backStack.add(Profile)
                         }) {
@@ -140,7 +144,11 @@ fun AdaptiveLayoutDemo(modifier: Modifier = Modifier) {
                 metadata = ListDetailSceneStrategy.extraPane()
             ) {
                 // 'it' is the NavKey (Profile)
-                ContentGreen("Profile")
+                ContentGreen("Profile") {
+                    Button(onClick = { backStack.removeLastOrNull() }) {
+                        Text("Go Back")
+                    }
+                }
             }
         }
     )

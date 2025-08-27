@@ -89,11 +89,7 @@ sealed class NavMainScreens(val title: String) : NavKey {
 @Composable
 fun Nav3Main(modifier: Modifier = Modifier) {
     //Nav3MainExample(modifier = modifier)
-    //AdaptiveContactsApp(modifier = modifier)
-    Column(modifier = modifier) {
-        Text("One")
-        AdaptiveLayoutDemo(modifier = modifier)
-    }
+    AdaptiveLayoutDemo(modifier = modifier)
 }
 
 
