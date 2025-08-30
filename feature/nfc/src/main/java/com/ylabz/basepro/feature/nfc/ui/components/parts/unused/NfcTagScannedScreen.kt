@@ -10,7 +10,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.tooling.preview.Preview
+////import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
@@ -32,9 +32,10 @@ fun NfcTagScannedScreen(tagInfo: String, onDone: () -> Unit) {
         }
     }
 }
-
+/*
 @Preview
 @Composable
 fun NfcTagScannedScreenPreview() {
     NfcTagScannedScreen(tagInfo = "Sample Tag Info", onDone = {})
 }
+*/

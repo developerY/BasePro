@@ -8,7 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+////import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
@@ -86,9 +86,10 @@ fun SnowBackgroundAnimation(
         }
     }
 }
-
+/*
 @Preview
 @Composable
 fun SnowBackgroundAnimationPreview() {
     SnowBackgroundAnimation()
 }
+*/

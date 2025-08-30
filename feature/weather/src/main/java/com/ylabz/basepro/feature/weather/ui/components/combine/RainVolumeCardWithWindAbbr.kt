@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.tooling.preview.Preview
+////import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import com.ylabz.basepro.feature.weather.ui.components.rain.randomInRange
@@ -236,8 +236,9 @@ fun WindDirectionDialOne(
     }
 }
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun RainVolumeCardWithWindAbbrPreview() {
     RainVolumeCardWithWindAbbr(volume = 15.0, windDegree = 45)
 }
+*/

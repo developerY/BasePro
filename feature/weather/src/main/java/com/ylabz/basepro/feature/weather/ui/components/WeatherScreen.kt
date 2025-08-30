@@ -14,7 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+// //import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.core.model.weather.Clouds
@@ -29,7 +29,7 @@ import com.ylabz.basepro.core.model.weather.Wind
 import com.ylabz.basepro.feature.weather.ui.WeatherEvent
 import com.ylabz.basepro.feature.weather.ui.components.combine.UnifiedWeatherCard
 import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionUnif
-
+/*
 @Preview
 @Composable
 fun WeatherScreenPreview() {
@@ -40,7 +40,7 @@ fun WeatherScreenPreview() {
         onEvent = {}, navTo = {}
     )
 }
-
+*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherScreen(

@@ -7,7 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+////import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.feature.nfc.R
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
@@ -47,11 +47,12 @@ fun NfcStatusBar(uiState: NfcUiState) {
     }
 }
 
-
+/*
 @Preview
 @Composable
 fun NfcStatusBarPreview() {
     val uiState = NfcUiState.Stopped
     NfcStatusBar(uiState = uiState)
 }
+*/
 

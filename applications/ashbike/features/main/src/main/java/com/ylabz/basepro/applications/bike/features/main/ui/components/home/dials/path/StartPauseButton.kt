@@ -18,7 +18,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.model.bike.RideState
@@ -59,7 +59,7 @@ fun StartPauseButton(
 }
 
 
-
+/*
 @Preview
 @Composable
 fun StartPauseButtonPreviewNotStarted() {
@@ -78,7 +78,7 @@ fun StartPauseButtonPreviewRiding() {
         onToggle = { /* Do nothing for preview */ }
     )
 }
-
+*/
 
 
 

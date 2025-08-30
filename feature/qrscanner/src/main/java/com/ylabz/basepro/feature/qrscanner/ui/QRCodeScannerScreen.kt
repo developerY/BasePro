@@ -17,7 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
@@ -61,8 +61,10 @@ fun QRCodeScannerScreen() {
     }
 }
 
+/*
 @Preview
 @Composable
 fun QRCodeScannerScreenPreview() {
     QRCodeScannerScreen()
 }
+*/

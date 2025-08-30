@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.model.health.SleepSegment
@@ -97,7 +97,7 @@ fun DrawScope.drawClockHands(hourFraction: Float, radius: Float, center: Offset)
         )
     }
 }
-
+/*
 @Composable
 @Preview(showBackground = true, backgroundColor = 0xFF000000)
 fun SleepClockFacePreview() {
@@ -113,3 +113,5 @@ fun SleepClockFacePreview() {
         segments = sampleSegments,
     )
 }
+
+ */

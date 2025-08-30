@@ -39,7 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -293,6 +293,7 @@ fun MedicationDoseListItem(
 /**
  * Preview function for the MedicationSummaryScreen.
  */
+/*
 @Preview(showBackground = true, widthDp = 360, heightDp = 780)
 @Composable
 fun MedicationSumListScreenPreview() {
@@ -302,3 +303,5 @@ fun MedicationSumListScreenPreview() {
         }
     }
 }
+
+ */

@@ -24,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import kotlin.math.roundToInt
 
 
@@ -306,7 +306,7 @@ fun directionAbbreviation(deg: Float): String {
 }
 
 
-
+/*
 @Preview
 @Composable
 fun RideHomeScreenPreview() {
@@ -383,6 +383,8 @@ fun ExpandableCardDisabledPreview() {
         Text("Not available")
     }
 }
+
+ */
 
 // UserStats data class
 data class UserStats(val heightCm: Float, val weightKg: Float)

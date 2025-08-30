@@ -6,7 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
@@ -28,7 +28,7 @@ fun ExpandedWeatherBadge(weatherInfo: BikeWeatherInfo) {
         Text(text = "Wind: ${weatherInfo.windSpeed} km/h from ${weatherInfo.windDegree}°")
     }
 }
-
+/*
 @Preview
 @Composable
 fun ExpandedWeatherBadgePreview() {
@@ -43,3 +43,4 @@ fun ExpandedWeatherBadgePreview() {
         humidity = 60)
     ExpandedWeatherBadge(weatherInfo)
 }
+*/

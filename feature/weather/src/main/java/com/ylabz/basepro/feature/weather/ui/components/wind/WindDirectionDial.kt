@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import kotlin.math.cos
@@ -100,9 +100,10 @@ fun WindDirectionDial(degree: Float, modifier: Modifier = Modifier.size(150.dp))
         }
     }
 }
-
+/*
 @Preview
 @Composable
 fun WindDirectionDialPreview() {
     WindDirectionDial(degree = 45f)
 }
+*/

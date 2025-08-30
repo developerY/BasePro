@@ -26,7 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.roundToLong
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun TemperatureCardAI(temp: Double) {
@@ -173,10 +173,11 @@ fun Thermometer(temperature: Float) {
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun TemperatureCardPreview() {
     MaterialTheme {
         TemperatureCardAI(temp = 22.0)
     }
-}
+}*/

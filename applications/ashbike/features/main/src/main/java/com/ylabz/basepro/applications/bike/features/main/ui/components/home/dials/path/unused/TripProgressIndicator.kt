@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -83,10 +83,11 @@ fun TripProgressIndicator(
 
 
 
-
+/*
 @Preview
 @Composable
 fun TripProgressIndicatorPreview() {
     val currentDistance = 5.0 // Current distance traveled
     TripProgressIndicator(currentDistance = currentDistance, totalDistance = 10.0)
 }
+*/

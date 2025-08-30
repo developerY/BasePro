@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.feature.weather.ui.components.backgrounds.Raindrop
 import kotlinx.coroutines.delay
 import kotlin.random.Random
@@ -125,6 +125,7 @@ fun ClosedFloatingPointRange<Float>.randomInRange(): Float {
     return Random.nextFloat() * (endInclusive - start) + start
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun rainVolumeCardPreview() {
@@ -132,3 +133,4 @@ fun rainVolumeCardPreview() {
         RainVolumeCard(volume = 15.0)
     }
 }
+*/

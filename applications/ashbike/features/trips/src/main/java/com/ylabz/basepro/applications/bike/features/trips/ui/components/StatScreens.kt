@@ -8,7 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
 import com.ylabz.basepro.applications.bike.features.trips.R
@@ -17,13 +17,13 @@ import com.ylabz.basepro.applications.bike.features.trips.R
 fun LoadingScreen() {
     Text(text = stringResource(R.string.state_loading), modifier = Modifier.fillMaxSize())
 }
-
+/*
 @Preview
 @Composable
 fun LoadingScreenPreview() {
     LoadingScreen()
 }
-
+*/
 
 @Composable
 fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
@@ -45,9 +45,10 @@ fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
         )
     }
 }
-
+/*
 @Preview
 @Composable
 fun ErrorScreenPreview() {
     ErrorScreen(errorMessage = stringResource(R.string.preview_error_something_went_wrong), onRetry = {})
 }
+*/

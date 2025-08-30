@@ -33,7 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+// //import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
 import com.ylabz.basepro.core.model.ble.DeviceCharacteristic
@@ -196,7 +196,7 @@ fun ExpandableGattServiceCardOrig(service: DeviceService) {
         }
     }
 }
-
+/*
 @Preview(showBackground = true, name = "List")
 @Composable
 fun GattServicesListPreview() {
@@ -258,7 +258,7 @@ fun GattServicesListPreview() {
     )
 }
 
-
+/*
 @Preview(showBackground = true, name = "Card")
 @Composable
 fun ExpandableGattServiceCardPreview() {
@@ -282,7 +282,7 @@ fun ExpandableGattServiceCardPreview() {
     )
 }
 
-
+/*
 @Preview(showBackground = true, name = "Gatt Services Preview List", showSystemUi = true)
 @Composable
 fun GattServicesCombinedPreview() {
@@ -302,7 +302,7 @@ fun GattServicesCombinedPreview() {
     }
 }
 
-
+/*
 @Preview(group = "GattServicesList")
 @Composable
 fun GattServicesListPreview2() {
@@ -326,6 +326,7 @@ fun GattServicesListPreview2() {
     )
 }
 
+/*
 @Preview(group = "GattServicesList")
 @Composable
 fun ExpandableGattServiceCardPreview2() {
@@ -347,7 +348,7 @@ fun ExpandableGattServiceCardPreview2() {
     )
 }
 
-/*@Preview(group = "GattServicesList")
+@Preview(group = "GattServicesList")
 @Composable
 fun BluetoothLeSuccessScreenPreview2() {
     BluetoothLeSuccessScreen(
@@ -380,4 +381,5 @@ fun BluetoothLeSuccessScreenPreview2() {
             )
         )
     )
-}*/
+}
+*/

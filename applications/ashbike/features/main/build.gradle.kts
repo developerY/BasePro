@@ -90,6 +90,9 @@ dependencies {
 
     implementation(libs.kotlinx.collections.immutable)
 
+    // Compose Profile
+    implementation("androidx.compose.runtime:runtime-tracing")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

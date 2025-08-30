@@ -13,7 +13,7 @@ import androidx.compose.material.icons.filled.Terrain
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.gms.maps.model.LatLng // Keep for Preview's dummy data
 import com.ylabz.basepro.core.model.bike.BikeRideInfo // Keep for Preview's dummy data
 import com.ylabz.basepro.core.ui.theme.iconColorAvgSpeed
@@ -43,7 +43,7 @@ data class StatItem(
 fun StatsRow(
     modifier: Modifier = Modifier,
     uiState: BikeUiState.Success, // Changed from StatsRowUiState
-    onEvent: (BikeDashboardEvent) -> Unit // Changed to BikeDashboardEvent, or a more general event type if needed
+    //onEvent: (BikeDashboardEvent) -> Unit // Changed to BikeDashboardEvent, or a more general event type if needed
 ) {
     val bikeData = uiState.bikeData
     val isBikeComputerOn = bikeData.rideState == RideState.Riding
@@ -108,6 +108,7 @@ fun StatsRow(
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun StatsRowPreview() {
@@ -140,7 +141,9 @@ fun StatsRowPreview() {
         onEvent = {}
     )
 }
+*/
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun StatsRowPreviewOff() {
@@ -177,3 +180,4 @@ fun StatsRowPreviewOff() {
 sealed interface BikeDashboardEvent {
     // Define actual events if needed by StatsRow or its children for the preview
 }
+*/

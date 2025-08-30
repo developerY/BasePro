@@ -30,8 +30,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
+////import androidx.compose.ui.tooling.preview.Preview
+//
+// //import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.HealthConnectClient
 import com.ylabz.basepro.core.model.health.HealthScreenState
@@ -129,8 +130,8 @@ fun HealthHeader(
     }
 }
 
-
-@Preview(showBackground = true)
+/*
+/*@Preview(showBackground = true)
 @Composable
 fun HealthHeaderPreview(
 ) {
@@ -146,7 +147,7 @@ fun HealthHeaderPreview(
     HealthHeaderPreviewComponent(healthScreenState)
 
 }
-
+/*
 @Composable
 fun HealthHeaderPreviewComponent(healthPermState: HealthScreenState) {
     HealthHeader(
@@ -156,8 +157,4 @@ fun HealthHeaderPreviewComponent(healthPermState: HealthScreenState) {
         activity = null
     )
 }
-
-
-
-
-
+*/

@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -110,7 +110,7 @@ fun batteryColor(batteryLevel: Int): Color {
     val fraction = clamped / 100f
     return lerp(Color.Red, Color.Green, fraction)
 }
-
+/*
 @Preview
 @Composable
 fun BikeBatteryLevelsPreview() {
@@ -120,3 +120,4 @@ fun BikeBatteryLevelsPreview() {
         onConnectClick = {}
     )
 }
+*/

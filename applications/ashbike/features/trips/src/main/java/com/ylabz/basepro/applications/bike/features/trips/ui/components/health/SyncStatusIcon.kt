@@ -9,7 +9,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 enum class SyncHealthConnectState {
@@ -46,7 +46,7 @@ fun SyncStatusIcon(state: SyncHealthConnectState, modifier: Modifier = Modifier)
         modifier = modifier.size(24.dp)
     )
 }
-
+/*
 @Preview
 @Composable
 fun SyncStatusIconPreviewHealthUnavailable() {
@@ -70,3 +70,4 @@ fun SyncStatusIconPreviewAllSynced() {
 fun SyncStatusIconPreviewWithModifier() {
     SyncStatusIcon(state = SyncHealthConnectState.ALL_SYNCED, modifier = Modifier.size(48.dp))
 }
+*/

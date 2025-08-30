@@ -24,7 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource // Added for localization
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -159,7 +159,7 @@ private fun navigateTo(navigationKey: String, navController: NavHostController) 
         restoreState = true
     }
 }
-
+/*
 @Preview
 @Composable
 fun BikeHomeBottomBarPreview() {
@@ -170,3 +170,4 @@ fun BikeHomeBottomBarPreview() {
         showSettingsProfileAlert = true
     )
 }
+*/

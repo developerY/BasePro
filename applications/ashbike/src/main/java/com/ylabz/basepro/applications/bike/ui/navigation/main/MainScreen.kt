@@ -22,7 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat // Required for ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -145,7 +145,7 @@ data class BottomNavigationItem(
     val hasNews: Boolean,
     val badgeCount: Int? = null
 )
-
+/*
 @Preview
 @Composable
 fun MainScreenPreview() {
@@ -161,3 +161,5 @@ fun HomeBottomBarPreview() {
         showSettingsProfileAlert = true // Add default for preview
     )
 }
+
+ */

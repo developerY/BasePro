@@ -23,7 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
 
@@ -330,6 +330,7 @@ fun FlipCard(
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun PreviewRoutePlanningScreen() {
@@ -348,7 +349,7 @@ fun PreviewRoutePlanningScreen() {
         )
     }
 }
-
+*/
 
 
 

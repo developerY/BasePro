@@ -9,7 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
@@ -128,7 +128,7 @@ fun BikeRideCardMap(
         }
     }
 }
-
+/*
 @Preview
 @Composable
 fun BikeRideCardMapPreview() {
@@ -159,3 +159,4 @@ fun BikeRideCardMapPreview() {
     )
     BikeRideCardMap(ride = ride, onEvent = {}, navTo = {})
 }
+*/

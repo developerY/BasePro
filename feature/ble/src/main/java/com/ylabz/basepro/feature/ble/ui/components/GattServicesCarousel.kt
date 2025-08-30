@@ -11,7 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+////import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import com.ylabz.basepro.core.model.ble.DeviceCharacteristic
@@ -130,7 +130,8 @@ fun BackOfCard(service: DeviceService) {
     }
 }
 
-@Preview(showBackground = true)
+/*
+/*@Preview(showBackground = true)
 @Composable
 fun GattServicesPreview() {
     val sampleServices = listOf(
@@ -155,3 +156,4 @@ fun GattServicesPreview() {
         readBat = { /* Placeholder for reading battery */ }
     )
 }
+*/

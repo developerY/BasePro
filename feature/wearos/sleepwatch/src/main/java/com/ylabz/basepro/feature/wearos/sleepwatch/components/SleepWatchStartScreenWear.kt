@@ -24,7 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.records.SleepSessionRecord
 import androidx.navigation.NavController
@@ -241,7 +241,7 @@ val samplePieChartInput = listOf(
     SleePieChartInput(color = Color(0xFF708090), value = 3, description = "N1 Sleep"),
     SleePieChartInput(color = Color.LightGray, value = 1, description = "Wake")
 )
-
+/*
 @Preview(showBackground = true, backgroundColor = 0xFF000000, device = "id:wearos_large_round")
 @Composable
 fun PreviewSleepWatchStartScreenWear() {
@@ -302,3 +302,6 @@ fun SleepWatchStartScreenWearPreview() {
         )
     //}
 }
+
+
+ */

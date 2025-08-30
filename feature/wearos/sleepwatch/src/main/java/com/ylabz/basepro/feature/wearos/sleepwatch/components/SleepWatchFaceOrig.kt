@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.dp
@@ -272,7 +272,7 @@ fun calculateSweepAngle(segment: SleepSegment): Float {
         (360f - startAngleDegrees) + endAngleDegrees
     }
 }
-
+/*
 @Preview(showBackground = true, backgroundColor = 0xFF000000, device = "id:wearos_large_round")
 @Composable
 fun SleepClockFaceOrigPreview() {
@@ -292,3 +292,5 @@ fun SleepClockFaceOrigPreview() {
     )
 }
 
+
+ */

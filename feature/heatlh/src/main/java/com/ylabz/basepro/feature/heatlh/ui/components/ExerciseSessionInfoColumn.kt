@@ -6,7 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+////import androidx.compose.ui.tooling.preview.Preview
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -33,6 +33,7 @@ fun ExerciseSessionInfoColumn(
     }
 }
 
+/*
 @Preview
 @Composable
 fun ExerciseSessionInfoColumnPreview() {
@@ -45,3 +46,4 @@ fun ExerciseSessionInfoColumnPreview() {
         )
     }
 }
+*/

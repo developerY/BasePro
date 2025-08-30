@@ -19,7 +19,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 /**
@@ -117,6 +117,7 @@ fun SettingsScreen(
 /**
  * Preview function for the SettingsScreen.
  */
+/*
 @Preview(showBackground = true, widthDp = 375, heightDp = 812)
 @Composable
 fun SettingsScreenPreview() {
@@ -126,3 +127,6 @@ fun SettingsScreenPreview() {
         }
     }
 }
+
+
+ */

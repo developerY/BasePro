@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import kotlin.math.cos
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import kotlin.math.sin
 
 /**
@@ -123,7 +123,7 @@ fun WindDirectionDialWithSpeed(
     }
 }
 
-
+/*
 @Preview
 @Composable
 fun WindDirectionDialWithSpeedPreview() {
@@ -131,3 +131,4 @@ fun WindDirectionDialWithSpeedPreview() {
     val speed = 10.2
     WindDirectionDialWithSpeed(degree = degree, speed = speed)
 }
+*/

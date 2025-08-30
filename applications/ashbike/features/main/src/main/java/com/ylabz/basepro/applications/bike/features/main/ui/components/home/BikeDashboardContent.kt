@@ -28,7 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.features.main.R
@@ -96,7 +96,7 @@ fun BikeDashboardContent(
 
         StatsRow(
             uiState = uiState,
-            onEvent = { /* No events from StatsRow to handle for now */ }
+            // onEvent = { /* No events from StatsRow to handle for now */ }
         )
 
         // Health Stats Section - uses uiState directly
@@ -169,7 +169,7 @@ fun BikeDashboardContent(
         }
     }
 }
-
+/*
 @Preview(showBackground = true, name = "Bike Dashboard Content - Connected")
 @Composable
 fun BikeDashboardContentPreviewConnected() {
@@ -243,3 +243,4 @@ fun BikeDashboardContentPreviewDisconnected() {
         )
     }
 }
+*/

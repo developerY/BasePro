@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.feature.weather.ui.components.rain.RainVolumeCard
 import com.ylabz.basepro.feature.weather.ui.components.snow.BetterSnowVolumeCardAI
 import com.ylabz.basepro.feature.weather.ui.components.sun.TemperatureCardAI
@@ -80,6 +80,7 @@ fun WeatherScreenCard(
     )
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun WeatherScreenCardPreview() {
@@ -94,3 +95,4 @@ fun WeatherScreenCardPreview() {
         )
     }
 }
+*/

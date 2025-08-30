@@ -34,7 +34,7 @@ This ensures:
 
 ## 💡 Tip: Want Preview Annotations in Release Too?
 
-If you use `@Preview(showBackground = true)` but also want **design-time rendering (only)** without errors in both debug/release (but no runtime impact), do this:
+If you use `/*` but also want **design-time rendering (only)** without errors in both debug/release (but no runtime impact), do this:
 
 ```kotlin
 implementation(libs.androidx.ui.toolingPreview) // lightweight stub

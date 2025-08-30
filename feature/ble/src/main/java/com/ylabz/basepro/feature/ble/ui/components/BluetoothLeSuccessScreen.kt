@@ -29,7 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+////import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
 import com.ylabz.basepro.core.model.ble.DeviceCharacteristic
@@ -271,6 +271,7 @@ fun DiscoveredDeviceItem(
     }
 }
 
+/*
 // Preview functions remain unchanged as per previous agreement
 @Preview(showBackground = true, name = "Screen Preview - Devices Found")
 @Composable
@@ -355,3 +356,4 @@ fun BluetoothLeSuccessScreenPreview_ActiveDeviceConnected() {
         )
     }
 }
+*/

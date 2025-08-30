@@ -6,7 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.model.yelp.BusinessInfo
 
@@ -44,9 +44,11 @@ fun CoffeeShopList(coffeeShops: List<BusinessInfo>) {
     }
 }
 
+/*
 @Preview
 @Composable
 private fun CoffeeShopItemPreview() {
     Text(text = "Hello, Coffee Shop!")
     
 }
+*/

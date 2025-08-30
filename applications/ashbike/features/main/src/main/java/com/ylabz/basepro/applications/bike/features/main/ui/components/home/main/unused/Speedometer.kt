@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import kotlin.math.*
 
@@ -141,8 +141,12 @@ fun Speedometer(
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun SpeedometerPreview() {
     Speedometer(currentSpeed = 30f, maxSpeed = 100f)
 }
+
+
+ */

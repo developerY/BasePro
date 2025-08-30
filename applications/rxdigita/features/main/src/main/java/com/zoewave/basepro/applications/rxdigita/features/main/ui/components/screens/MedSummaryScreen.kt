@@ -60,7 +60,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import java.text.SimpleDateFormat
@@ -667,7 +667,7 @@ fun HealthStatItem(icon: ImageVector, label: String, value: String, unit: String
 }
 
 // PREVIEW FUNCTION //
-
+/*
 @Preview(showBackground = true, widthDp = 375, heightDp = 812)
 @Composable
 fun MedicationSummaryScreenPreview() {
@@ -677,3 +677,5 @@ fun MedicationSummaryScreenPreview() {
         }
     }
 }
+
+ */

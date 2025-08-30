@@ -8,7 +8,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.TextButton
@@ -55,7 +55,7 @@ fun WeatherDetailDialog(
         }
     )
 }
-
+/*
 @Preview
 @Composable
 fun WeatherDetailDialogPreview() {
@@ -67,3 +67,4 @@ fun WeatherDetailDialogPreview() {
         conditionIcon = "sunny", temperature = 25.0, feelsLike = 26.0, humidity = 50)
     WeatherDetailDialog(weatherInfo = weatherInfo, onDismiss = {})
 }
+*/

@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.feature.weather.ui.components.main.WeatherCondition
 import com.ylabz.basepro.feature.weather.ui.components.rain.RainVolumeCard
 import com.ylabz.basepro.feature.weather.ui.components.snow.BetterSnowVolumeCardAI
@@ -97,7 +97,7 @@ fun WeatherScreenWithWind(
     )
 }
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun WeatherScreenWithWindPreview() {
     MaterialTheme {
@@ -110,3 +110,4 @@ fun WeatherScreenWithWindPreview() {
         )
     }
 }
+*/

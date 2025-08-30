@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.ui.theme.AshBikeTheme
 import com.ylabz.basepro.core.ui.theme.CustomColors
@@ -188,7 +188,7 @@ fun BigSpeedometer(
     }
 }
 
-
+/*
 @Preview(showBackground = true, widthDp = 300, heightDp = 300)
 @Composable
 fun BigSpeedometerPreview() {
@@ -214,3 +214,4 @@ fun BigSpeedometerDarkPreview() {
         }
     }
 }
+ */

@@ -31,7 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Modifier
 // import androidx.compose.ui.graphics.Brush // No longer used
 import androidx.compose.ui.graphics.Color // Keep if used elsewhere, but not for Color.Red
@@ -167,7 +167,7 @@ fun ProfileInfoCardEx(
     }
 }
 
-
+/*
 @Preview(name = "View Mode Light - Incomplete", showBackground = true)
 @Composable
 fun ProfileInfoCardExPreviewViewModeIncomplete() {
@@ -222,3 +222,4 @@ fun ProfileInfoCardExPreviewEditModeDark() {
         ProfileInfoCardEx(profile = profile, isEditing = true, isProfileIncomplete = false, onToggleEdit = {}, onEvent = {})
     }
 }
+*/

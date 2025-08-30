@@ -34,7 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 /**
@@ -180,6 +180,7 @@ fun MedicationInfoCard(medication: Medication) {
  * Preview function for the MedicationSummaryScreen.
  * This allows you to see the UI in Android Studio's preview panel.
  */
+/*
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
 fun MedicationSummaryScreenPreview() {
@@ -191,3 +192,5 @@ fun MedicationSummaryScreenPreview() {
         }
     }
 }
+
+ */

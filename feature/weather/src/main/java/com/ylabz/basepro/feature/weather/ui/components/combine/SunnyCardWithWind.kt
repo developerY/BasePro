@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.cos
 import kotlin.math.roundToLong
-import androidx.compose.ui.tooling.preview.Preview
+////import androidx.compose.ui.tooling.preview.Preview
 
 import kotlin.math.sin
 
@@ -235,7 +235,7 @@ fun WindDirectionDial(
         }
     }
 }
-
+/*
 @Preview
 @Composable
 fun SunnyCardWithWindPreview() {
@@ -243,4 +243,5 @@ fun SunnyCardWithWindPreview() {
     val windDegree = 180
     SunnyCardWithWind(temperatureCelsius, windDegree)
 }
+*/
 

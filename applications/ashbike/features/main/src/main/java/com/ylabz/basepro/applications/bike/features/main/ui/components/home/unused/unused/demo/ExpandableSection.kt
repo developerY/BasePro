@@ -22,7 +22,7 @@ import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun ExpandableSection(
@@ -67,7 +67,7 @@ fun ExpandableSection(
         }
     }
 }
-
+/*
 @Preview
 @Composable
 fun ExpandableSectionPreview() {
@@ -84,3 +84,6 @@ fun ExpandableSectionPreview() {
             ) {}
         })
 }
+
+
+ */

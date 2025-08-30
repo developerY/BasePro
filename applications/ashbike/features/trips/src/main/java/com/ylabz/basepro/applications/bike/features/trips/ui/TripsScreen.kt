@@ -6,7 +6,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+////import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.BikeTripsCompose
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.ErrorScreen
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.LoadingScreen
@@ -63,7 +63,7 @@ fun TripsScreen(
         }
     }
 }
-
+/*
 @Preview
 @Composable
 fun TripsScreenPreview() {
@@ -82,3 +82,4 @@ fun TripsScreenPreview() {
         onRetry = {},
         navTo = {})
 }
+*/

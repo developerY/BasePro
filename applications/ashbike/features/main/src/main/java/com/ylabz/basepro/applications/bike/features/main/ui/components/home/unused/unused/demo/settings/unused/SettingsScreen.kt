@@ -8,7 +8,7 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
@@ -115,8 +115,12 @@ fun BikeConfigurationScreen(navController: NavController) {
 
 
 // Preview
+/*
 @Preview
 @Composable
 fun GearingScreenPreview() {
     SettingsScreen(navTo = {})
 }
+
+
+ */

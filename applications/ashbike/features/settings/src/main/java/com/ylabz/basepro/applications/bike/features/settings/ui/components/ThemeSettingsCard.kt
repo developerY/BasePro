@@ -27,7 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.settings.R // Adjust if your R file is elsewhere
 import com.ylabz.basepro.core.ui.theme.ThemeIdentifiers // Import your constants
@@ -123,7 +123,7 @@ fun ThemeSettingsCard(
         }
     }
 }
-
+/*
 @Preview
 @Composable
 fun ThemeSettingsCardPreview() {
@@ -141,3 +141,4 @@ fun ThemeSettingsCardPreview() {
         }
     )
 }
+*/

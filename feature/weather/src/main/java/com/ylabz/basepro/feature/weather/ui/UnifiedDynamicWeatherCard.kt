@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+// //import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.roundToLong
@@ -116,7 +116,7 @@ fun UnifiedDynamicWeatherCard(
     }
 }
 
-
+/*
 @Preview
 @Composable
 fun UnifiedDynamicWeatherCardPreview() {
@@ -156,7 +156,7 @@ fun UnifiedDynamicWeatherCardPreview() {
 }
 
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun UnifiedDynamicWeatherCardRainyPreview() {
     val openWeatherResponse = OpenWeatherResponse(
@@ -194,3 +194,4 @@ fun UnifiedDynamicWeatherCardRainyPreview() {
     // This unified card will choose the rainy layout (rain effect, etc.)
     UnifiedDynamicWeatherCard(response = openWeatherResponse)
 }
+*/

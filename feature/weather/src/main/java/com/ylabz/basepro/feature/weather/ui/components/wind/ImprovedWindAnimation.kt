@@ -7,7 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import kotlin.math.cos
@@ -149,9 +149,11 @@ class WindArrow(
     }
 }
 
+/*
 @Preview(showBackground = true, showSystemUi = false)
 @Composable
 fun ImprovedWindAnimationPreview() {
     // Provide a sample value for windDegree
     ImprovedWindAnimation(windDegree = 45f)
 }
+*/

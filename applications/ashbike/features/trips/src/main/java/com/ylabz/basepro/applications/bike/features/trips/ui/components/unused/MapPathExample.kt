@@ -20,10 +20,12 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.features.trips.ui.components.GpsFix
+import com.ylabz.basepro.applications.bike.features.trips.ui.components.haversineMeters
 import com.ylabz.basepro.core.model.yelp.BusinessInfo
 import com.ylabz.basepro.core.model.yelp.Category
 import com.ylabz.basepro.core.model.yelp.Coordinates
@@ -217,7 +219,7 @@ fun MapPathScreen(
     }
 }
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun MapPathScreenPreview() {
     val fixes = listOf(
@@ -265,3 +267,5 @@ fun haversineMeters(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Dou
     val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
     return R * c
 }
+
+ */

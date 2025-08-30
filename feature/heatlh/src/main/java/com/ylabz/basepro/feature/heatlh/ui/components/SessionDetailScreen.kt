@@ -8,7 +8,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.units.Energy
 import androidx.health.connect.client.units.Length
@@ -121,8 +120,8 @@ private fun formatDuration(duration: Duration?): String {
         append("${s}s")
     }
 }
-
-@Preview(showBackground = true)
+/*
+/*@Preview(showBackground = true)
 @Composable
 fun SessionDetailScreenPreview() {
     // Fake data for preview:
@@ -138,3 +137,4 @@ fun SessionDetailScreenPreview() {
     )
     SessionDetailContent(data = fake)
 }
+*/

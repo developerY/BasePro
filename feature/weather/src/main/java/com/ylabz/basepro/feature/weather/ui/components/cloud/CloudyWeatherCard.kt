@@ -28,7 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.roundToLong
-import androidx.compose.ui.tooling.preview.Preview
+////import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDialWithSpeed
 
 @Composable
@@ -155,8 +155,8 @@ fun CloudyWeatherCardWithMotionAndWind(
     }
 }
 
-
-@Preview(showBackground = true)
+/*
+/*@Preview(showBackground = true)
 @Composable
 fun CloudyWeatherCardWithMotionAndWindPreview() {
     MaterialTheme {
@@ -168,3 +168,4 @@ fun CloudyWeatherCardWithMotionAndWindPreview() {
         )
     }
 }
+*/

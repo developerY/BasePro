@@ -21,7 +21,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.feature.home.data.AndFrameworks
 import com.ylabz.basepro.feature.home.ui.HomeEvent
 
@@ -63,7 +63,7 @@ fun HomeMainScreen(
     }
 }
 
-@Preview(showBackground = true)
+/*
 @Composable
 fun HomeMainScreenPreview() {
     HomeMainScreen(
@@ -73,3 +73,5 @@ fun HomeMainScreenPreview() {
     )
 }
 
+
+ */

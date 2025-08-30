@@ -17,7 +17,7 @@ import androidx.compose.material.icons.filled.Nfc
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.ui.tooling.preview.Preview
+////import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 
@@ -143,7 +143,7 @@ fun NfcAppScreen(
     )
 }
 
-
+/*
 @Preview
 @Composable
 fun NfcAppScreenPreview() {
@@ -161,4 +161,4 @@ fun NfcAppScreenPreview() {
         NfcAppScreen(uiState = sampleUiState, navTo = sampleNavTo, onEvent = sampleOnEvent)
     }
 }
-
+*/

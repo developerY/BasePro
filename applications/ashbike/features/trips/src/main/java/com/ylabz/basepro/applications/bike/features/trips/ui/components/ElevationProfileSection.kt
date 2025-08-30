@@ -19,7 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+// //import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.maps.ElevationProfile
@@ -79,7 +79,7 @@ fun ElevationProfileSection(
         }
     }
 }
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun ElevationProfileSectionPreview() {
@@ -93,3 +93,4 @@ fun ElevationProfileSectionPreview() {
 
     ElevationProfileSection(points = points)
 }
+*/

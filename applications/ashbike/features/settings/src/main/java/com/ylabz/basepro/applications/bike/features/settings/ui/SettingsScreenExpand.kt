@@ -30,7 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 // import androidx.compose.ui.text.font.FontWeight // Not directly used after removing ProfileBikeInfoCardEx
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.settings.R
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.AboutExpandable
@@ -213,6 +213,7 @@ fun SettingsScreenEx(
 
 // ProfileBikeInfoCardEx has been removed.
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun SettingsScreenExPreview() {
@@ -243,3 +244,4 @@ fun SettingsScreenExPreview() {
         )
     }
 }
+*/

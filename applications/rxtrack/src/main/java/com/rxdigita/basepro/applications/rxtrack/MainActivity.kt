@@ -12,7 +12,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.rxdigita.basepro.applications.rxtrack.ui.navigation.root.RootNavGraph
 import com.rxdigita.basepro.applications.rxtrack.ui.theme.BaseProTheme
@@ -48,10 +48,12 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 }
 
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     BaseProTheme {
         Greeting("Android")
     }
 }
+
+ */

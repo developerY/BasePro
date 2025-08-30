@@ -1,7 +1,7 @@
 package com.ylabz.basepro.feature.wearos.home.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material3.TimeText
 import androidx.wear.compose.material.Vignette
@@ -72,9 +72,11 @@ fun WearHomeNavGraphOirg() {
     }
 }
 
-
+/*
 @Preview
 @Composable
 private fun PreviewWearHomeNavGraph() {
      WearNavGraph()
 }
+
+ */

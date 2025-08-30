@@ -40,7 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.tooling.preview.Preview
+////import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.CameraPosition
@@ -253,7 +253,7 @@ fun RideDetailScreen(
         }
     }
 }
-
+/*
 @Preview
 @Composable
 fun RideDetailScreenPreview() {
@@ -326,7 +326,7 @@ fun StatCardPreview() {
         value = "10.5 km"
     )
 }
-
+*/
 @Composable
 private fun StatCard(
     label: String,

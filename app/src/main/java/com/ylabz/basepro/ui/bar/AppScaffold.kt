@@ -15,7 +15,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ylabz.basepro.core.ui.Screen
@@ -67,7 +67,7 @@ fun AppScaffold(
     }
 }
 
-@Preview(showBackground = true)
+/*
 @Composable
 fun AppScaffoldPreview() {
     // Mock dependencies for preview
@@ -90,3 +90,6 @@ fun AppScaffoldPreview() {
         )
     }
 }
+
+
+ */

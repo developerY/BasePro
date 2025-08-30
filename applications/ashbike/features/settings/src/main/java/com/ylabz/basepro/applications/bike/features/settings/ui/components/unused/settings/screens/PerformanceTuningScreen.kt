@@ -7,7 +7,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.unused.settings.BrakesScreen
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.unused.settings.GearingScreen
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.unused.settings.SuspensionScreen
@@ -58,9 +58,10 @@ fun PerformanceTuningScreen(
 
 
 // Preview
+/*
 @Preview
 @Composable
 fun PerformanceTuningScreenPreview() {
     PerformanceTuningScreen()
 }
-
+*/

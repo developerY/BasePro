@@ -50,7 +50,7 @@ import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.tooling.preview.Preview
+////import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -449,7 +449,7 @@ private fun niceDistance(meters: Double): Double {
 
 // Dummy data for preview
 //data class GpsFix(val lat: Double, val lng: Double, val elevation: Float, val timeMs: Long, val speedMps: Float)
-
+/*
 @Preview(showBackground = true)
 @Composable
 private fun MapPathScreenPreview() {
@@ -471,3 +471,4 @@ private fun MapPathScreenPreview() {
         placeName = stringResource(R.string.feature_trips_preview_ride_around_plaza)
     )
 }
+*/

@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+////import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 // Example implementation for a cloudy background animation:
@@ -60,9 +60,10 @@ fun CloudyBackgroundAnimation(modifier: Modifier = Modifier) {
         }
     }
 }
-
+/*
 @Preview
 @Composable
 fun CloudyBackgroundAnimationPreview() {
     CloudyBackgroundAnimation()
 }
+*/

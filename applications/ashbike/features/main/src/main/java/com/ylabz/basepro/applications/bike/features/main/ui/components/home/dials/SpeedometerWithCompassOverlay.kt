@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path.unused.DigitalCompassCard
 
@@ -44,7 +44,7 @@ fun SpeedometerWithCompassOverlay(
         }
     }
 }
-
+/*
 @Preview
 @Composable
 fun SpeedometerWithCompassOverlayPreview() {
@@ -55,3 +55,4 @@ fun SpeedometerWithCompassOverlayPreview() {
         contentColor = MaterialTheme.colorScheme.onSurface
     )
 }
+*/

@@ -14,7 +14,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -52,7 +52,7 @@ fun AppTopBar(
     )
 }
 
-@Preview(showBackground = true)
+/*
 @Composable
 fun AppTopBarPreview() {
     // Mock DrawerState and CoroutineScope for the preview
@@ -71,3 +71,6 @@ fun AppTopBarPreview() {
         }
     )
 }
+
+
+ */

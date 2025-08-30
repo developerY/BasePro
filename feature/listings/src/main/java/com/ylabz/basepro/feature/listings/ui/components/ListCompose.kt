@@ -43,7 +43,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.net.toUri
 
 
@@ -231,7 +231,8 @@ fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
     }
 }
 
-@Preview(showBackground = true)
+/*
+/*@Preview(showBackground = true)
 @Composable
 fun PreviewCamCompose() {
     val sampleData = listOf(
@@ -246,3 +247,4 @@ fun PreviewCamCompose() {
         navTo = {}
     )
 }
+*/

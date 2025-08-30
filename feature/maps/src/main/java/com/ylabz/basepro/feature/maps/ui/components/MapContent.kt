@@ -7,7 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -71,7 +71,8 @@ fun MapContent(
     }
 }
 
-@Preview(showBackground = true)
+/*
+/*@Preview(showBackground = true)
 @Composable
 fun MapContentPreview() {
     MapContent(
@@ -83,3 +84,4 @@ fun MapContentPreview() {
         modifier = Modifier.fillMaxSize()
     )
 }
+*/

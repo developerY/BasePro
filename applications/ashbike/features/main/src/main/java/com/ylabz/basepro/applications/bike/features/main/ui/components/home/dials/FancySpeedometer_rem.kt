@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.ui.theme.AshBikeTheme
 import com.ylabz.basepro.core.ui.theme.SpeedometerGreen
@@ -243,7 +243,7 @@ fun FancySpeedometer_rem(
         }
     }
 }
-
+/*
 @Preview(showBackground = true, widthDp = 300, heightDp = 300)
 @Composable
 fun FancySpeedometer_rem_Preview() {
@@ -277,3 +277,4 @@ fun FFancySpeedometer_rem_DarkPreview() {
         }
     }
 }
+*/

@@ -11,7 +11,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.unused.settings.BrakesScreen
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.unused.settings.GearingScreen
-import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.unused.settings.SuspensionScreen
 
 @Composable
@@ -32,8 +32,10 @@ fun CombinedSingleScreen() {
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun CombinedSingleScreenPreview() {
     CombinedSingleScreen()
 }
+*/
