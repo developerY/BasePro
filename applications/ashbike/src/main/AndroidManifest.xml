@@ -89,7 +89,7 @@
 
         <!-- CORRECTED: Service Declaration -->
         <service
-            android:name=".features.main.service.BikeForegroundService"
+            android:name="com.ylabz.basepro.applications.bike.features.main.service.BikeForegroundService"
             android:exported="false"
             android:foregroundServiceType="location" />
 
