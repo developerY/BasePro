@@ -1,27 +1,28 @@
 package com.ylabz.basepro.applications.bike.features.settings.ui
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import com.ylabz.basepro.applications.bike.database.ProfileData
 // import androidx.compose.foundation.clickable // Not directly used after removing ProfileBikeInfoCardEx
 // import androidx.compose.foundation.layout.Box // Not directly used after removing ProfileBikeInfoCardEx
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 // import androidx.compose.foundation.layout.fillMaxWidth // Not directly used after removing ProfileBikeInfoCardEx
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 // import androidx.compose.foundation.layout.size // Not directly used after removing ProfileBikeInfoCardEx
 // import androidx.compose.foundation.layout.width // Not directly used after removing ProfileBikeInfoCardEx
-import androidx.compose.foundation.lazy.LazyColumn
 // import androidx.compose.material.icons.Icons // Not directly used after removing ProfileBikeInfoCardEx
 // import androidx.compose.material.icons.filled.Person // Not directly used after removing ProfileBikeInfoCardEx
 // import androidx.compose.material3.Card // Not directly used after removing ProfileBikeInfoCardEx
 // import androidx.compose.material3.CardDefaults // Not directly used after removing ProfileBikeInfoCardEx
 // import androidx.compose.material3.Icon // Not directly used after removing ProfileBikeInfoCardEx
+// import androidx.compose.ui.text.font.FontWeight // Not directly used after removing ProfileBikeInfoCardEx
+//import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect // Added import
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateSetOf
@@ -29,8 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-// import androidx.compose.ui.text.font.FontWeight // Not directly used after removing ProfileBikeInfoCardEx
-//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.settings.R
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.AboutExpandable
@@ -38,13 +37,11 @@ import com.ylabz.basepro.applications.bike.features.settings.ui.components.AppPr
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.BLEExpandableCard
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.BikeConfigurationEx
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.NfcExpandableEx
-import com.ylabz.basepro.applications.bike.features.settings.ui.components.ProfileInfoCardEx // Assuming this is the correct one
+import com.ylabz.basepro.applications.bike.features.settings.ui.components.ProfileInfoCardEx
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.QrExpandableEx
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.SectionHeader
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.ThemeSettingsCard
 import com.ylabz.basepro.applications.bike.features.settings.ui.components.health.HealthExpandableEx
-import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
-import com.ylabz.basepro.core.ui.theme.AshBikeTheme
 import com.ylabz.basepro.feature.ble.ui.BluetoothLeEvent
 import com.ylabz.basepro.feature.ble.ui.BluetoothLeUiState
 import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent

@@ -12,7 +12,6 @@ import androidx.health.connect.client.records.metadata.Device
 import androidx.health.connect.client.records.metadata.Metadata
 import androidx.health.connect.client.units.Energy
 import androidx.health.connect.client.units.Length
-import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.core.model.bike.BikeRide
 import java.time.Instant
 import java.time.ZoneOffset

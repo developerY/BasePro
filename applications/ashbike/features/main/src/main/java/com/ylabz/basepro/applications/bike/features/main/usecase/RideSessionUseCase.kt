@@ -1,13 +1,20 @@
 package com.ylabz.basepro.applications.bike.features.main.usecase
 
 import com.ylabz.basepro.applications.bike.database.repository.UserProfileRepository
-import com.ylabz.basepro.core.data.repository.travel.compass.CompassRepository
 import com.ylabz.basepro.core.data.di.LowPower
 import com.ylabz.basepro.core.data.repository.travel.UnifiedLocationRepository
+import com.ylabz.basepro.core.data.repository.travel.compass.CompassRepository
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

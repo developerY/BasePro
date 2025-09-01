@@ -1,17 +1,17 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.unused.unused
 
+//import androidx.compose.ui.tooling.preview.Preview
+// Assume these imports bring in your unified weather card and related data classes:
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -19,16 +19,15 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.rememberCameraPositionState
-// Assume these imports bring in your unified weather card and related data classes:
-import com.ylabz.basepro.core.model.weather.OpenWeatherResponse
-import com.ylabz.basepro.core.model.weather.Coord
-import com.ylabz.basepro.core.model.weather.WeatherOne
-import com.ylabz.basepro.core.model.weather.Main
-import com.ylabz.basepro.core.model.weather.Wind
 import com.ylabz.basepro.core.model.weather.Clouds
+import com.ylabz.basepro.core.model.weather.Coord
+import com.ylabz.basepro.core.model.weather.Main
+import com.ylabz.basepro.core.model.weather.OpenWeatherResponse
 import com.ylabz.basepro.core.model.weather.Rain
 import com.ylabz.basepro.core.model.weather.Snow
 import com.ylabz.basepro.core.model.weather.Sys
+import com.ylabz.basepro.core.model.weather.WeatherOne
+import com.ylabz.basepro.core.model.weather.Wind
 import com.ylabz.basepro.feature.weather.ui.UnifiedDynamicWeatherCard
 
 @OptIn(ExperimentalMaterial3Api::class)

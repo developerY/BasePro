@@ -1,21 +1,17 @@
 package com.ylabz.basepro.applications.bike.database.repository
 
-import android.content.Context
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
-import javax.inject.Singleton
-
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.core.intPreferencesKey // Added import
-import androidx.datastore.preferences.preferencesDataStore
 import com.ylabz.basepro.applications.bike.database.ProfileData
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
 private object UserPrefsDefaults {
     const val NAME_DEFAULT   = "Ash Monster"

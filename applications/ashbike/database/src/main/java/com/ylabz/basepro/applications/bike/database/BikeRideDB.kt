@@ -6,7 +6,6 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.ylabz.basepro.applications.bike.database.converter.Converters
-import kotlin.jvm.java
 
 @Database(
     entities = [ BikeRideEntity::class, RideLocationEntity::class ],

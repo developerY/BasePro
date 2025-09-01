@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.zoewave.basepro.applications.rxdigita.features.main.ui.components.ErrorScreen
 import com.zoewave.basepro.applications.rxdigita.features.main.ui.components.LoadingScreen
 import com.zoewave.basepro.applications.rxdigita.features.main.ui.components.home.MedDashboardContent

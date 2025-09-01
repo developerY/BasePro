@@ -1,56 +1,53 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home
 
+//import androidx.compose.ui.tooling.preview.Preview
+// StatItem no longer needed here as StatsSection builds its own
+// import com.ylabz.basepro.core.ui.theme.iconColorElevation // Not used directly here
+// import com.ylabz.basepro.core.ui.theme.iconColorSpeed // Not used directly here
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.BatteryUnknown
-import androidx.compose.material.icons.filled.ElectricBike
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.LocalFireDepartment
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
-//import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.features.main.R
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
-import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState // Added import
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.StatsSection
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.StatsSectionType // Import for the enum
+import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.StatsSectionType
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.bike.BikeBatteryLevels
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.SpeedAndProgressCard
-// StatItem no longer needed here as StatsSection builds its own
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatsRow
-import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
-import com.ylabz.basepro.core.ui.theme.AshBikeTheme
-import com.ylabz.basepro.core.ui.theme.iconColorBikeActive
-import com.ylabz.basepro.core.ui.theme.iconColorCalories
-// import com.ylabz.basepro.core.ui.theme.iconColorElevation // Not used directly here
-// import com.ylabz.basepro.core.ui.theme.iconColorSpeed // Not used directly here
-import androidx.compose.ui.res.stringResource
-import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import com.ylabz.basepro.core.ui.NavigationCommand
-import kotlinx.collections.immutable.persistentMapOf
 
 @Composable
 fun BikeDashboardContent(

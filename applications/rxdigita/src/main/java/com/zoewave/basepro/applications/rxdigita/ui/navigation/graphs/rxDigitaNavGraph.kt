@@ -1,14 +1,10 @@
 package com.zoewave.basepro.applications.rxdigita.ui.navigation.graphs
 
-import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.ylabz.basepro.core.ui.BikeScreen
-import com.ylabz.basepro.core.ui.RxDigitaScreen // Import the correct Screen definitions
+import com.ylabz.basepro.core.ui.RxDigitaScreen
 import com.ylabz.basepro.core.util.Logging
 import com.zoewave.basepro.applications.rxdigita.features.main.ui.MedUiRoute
 import com.zoewave.basepro.applications.rxdigita.features.medlist.ui.MedListUiRoute

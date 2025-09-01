@@ -1,20 +1,19 @@
 package com.ylabz.basepro.applications.bike.database.di
 
-import com.ylabz.basepro.applications.bike.database.repository.DataStoreUserProfileRepository
-import com.ylabz.basepro.applications.bike.database.repository.UserProfileRepository
-import dagger.Binds
-
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.ylabz.basepro.applications.bike.database.repository.AppSettingsRepository
 import com.ylabz.basepro.applications.bike.database.repository.DataStoreAppSettingsRepository
+import com.ylabz.basepro.applications.bike.database.repository.DataStoreUserProfileRepository
+import com.ylabz.basepro.applications.bike.database.repository.UserProfileRepository
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 // TOP-LEVEL: the actual file-backed DataStore<Preferences>

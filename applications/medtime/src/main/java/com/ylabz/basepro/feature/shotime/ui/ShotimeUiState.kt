@@ -1,8 +1,5 @@
 package com.ylabz.basepro.feature.shotime.ui
 
-import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
-import com.ylabz.basepro.core.model.ble.DeviceCharacteristic
-import com.ylabz.basepro.core.model.ble.DeviceService
 import com.ylabz.basepro.core.model.shotime.ShotimeSessionData
 
 

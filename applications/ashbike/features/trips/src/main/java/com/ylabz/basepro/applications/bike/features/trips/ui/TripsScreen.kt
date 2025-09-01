@@ -1,16 +1,15 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui
 
+////import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-////import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.BikeTripsCompose
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.ErrorScreen
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.LoadingScreen
-import com.ylabz.basepro.applications.bike.features.trips.ui.model.BikeRideUiModel
 
 
 /**

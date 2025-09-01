@@ -1,6 +1,7 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials
 
-import android.system.Os.stat
+//import androidx.compose.ui.tooling.preview.Preview
+// import com.ylabz.basepro.core.ui.theme.iconColorSpeed // Not used in this version
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,27 +14,18 @@ import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.health.connect.client.units.Energy.Companion.calories
-import com.ylabz.basepro.applications.bike.features.main.R // Ensure this is your correct R file
+import com.ylabz.basepro.applications.bike.features.main.R
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
-import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent // Assuming onEvent is of this type
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatCard
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatItem
-import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
-import com.ylabz.basepro.core.ui.theme.AshBikeTheme
-import com.ylabz.basepro.core.ui.theme.iconColorBikeActive // Example, adjust as needed
-import com.ylabz.basepro.core.ui.theme.iconColorCalories // Example, adjust as needed
-import com.ylabz.basepro.core.ui.theme.iconColorHeartRate // Example, adjust as needed
-// import com.ylabz.basepro.core.ui.theme.iconColorSpeed // Not used in this version
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.persistentMapOf
-import java.util.Locale
+import com.ylabz.basepro.core.ui.theme.iconColorBikeActive
+import com.ylabz.basepro.core.ui.theme.iconColorCalories
+import com.ylabz.basepro.core.ui.theme.iconColorHeartRate
 
 enum class StatsSectionType {
     HEALTH, EBIKE

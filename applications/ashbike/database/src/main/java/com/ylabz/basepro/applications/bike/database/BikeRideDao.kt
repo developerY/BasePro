@@ -1,7 +1,6 @@
 package com.ylabz.basepro.applications.bike.database
 
 import androidx.room.Dao
-import androidx.room.Delete // Not used in the provided snippet, but good to keep if used elsewhere
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query

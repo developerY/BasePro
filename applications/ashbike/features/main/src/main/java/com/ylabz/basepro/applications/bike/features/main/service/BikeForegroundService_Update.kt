@@ -1,29 +1,34 @@
 package com.ylabz.basepro.applications.bike.features.main.service
 
+// TODO: Uncomment and verify R import
+// import com.ylabz.basepro.applications.bike.features.main.R
+// TODO: Uncomment and verify MainActivity import (or your UI target for notification)
+// import com.ylabz.basepro.applications.bike.features.main.ui.MainActivity
+// TODO: Define RideLocationEntity and its mapping
 import android.R
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Binder
 import android.os.Build
+import android.os.HandlerThread
 import android.os.IBinder
 import android.os.Looper
-import android.os.HandlerThread
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-// TODO: Uncomment and verify R import
-// import com.ylabz.basepro.applications.bike.features.main.R
-// TODO: Uncomment and verify MainActivity import (or your UI target for notification)
-// import com.ylabz.basepro.applications.bike.features.main.ui.MainActivity
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
-// TODO: Define RideLocationEntity and its mapping
 import com.ylabz.basepro.applications.bike.database.RideLocationEntity
 import com.ylabz.basepro.applications.bike.database.repository.AppSettingsRepository
 import com.ylabz.basepro.applications.bike.database.repository.UserProfileRepository
@@ -32,25 +37,28 @@ import com.ylabz.basepro.applications.bike.features.main.usecase.UserStats
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import com.ylabz.basepro.core.model.bike.RideState
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest as GmsLocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
-import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Locale
+import java.util.UUID
 import javax.inject.Inject
 import kotlin.math.max
+import com.google.android.gms.location.LocationRequest as GmsLocationRequest
 
 @AndroidEntryPoint
 class BikeForegroundService_Update : LifecycleService() {

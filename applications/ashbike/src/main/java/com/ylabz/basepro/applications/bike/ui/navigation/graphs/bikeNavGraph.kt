@@ -14,13 +14,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiRoute
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeViewModel
-import com.ylabz.basepro.core.ui.BikeScreen
-
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsUiRoute
 import com.ylabz.basepro.applications.bike.features.trips.ui.TripsUIRoute
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailScreen
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailViewModel
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.haversineMeters
+import com.ylabz.basepro.core.ui.BikeScreen
 import com.ylabz.basepro.core.ui.NavigationCommand
 import com.ylabz.basepro.core.util.Logging
 import com.ylabz.basepro.feature.places.ui.CoffeeShopEvent

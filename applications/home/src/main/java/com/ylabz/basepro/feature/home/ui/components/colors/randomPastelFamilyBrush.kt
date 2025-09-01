@@ -1,10 +1,9 @@
 package com.ylabz.basepro.feature.home.ui.components.colors
 
 import androidx.compose.ui.graphics.Brush
-import kotlin.random.Random
-
 import androidx.compose.ui.graphics.Color
 import kotlin.math.abs
+import kotlin.random.Random
 
 /**
  * Convert an HSL color (0..360 for hue, 0..1 for saturation/lightness) to a Compose [Color].

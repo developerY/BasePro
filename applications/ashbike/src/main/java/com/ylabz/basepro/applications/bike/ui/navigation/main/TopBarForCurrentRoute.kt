@@ -1,8 +1,8 @@
 package com.ylabz.basepro.applications.bike.ui.navigation.main
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack // Recommended for LTR/RTL automatic mirroring
 // import androidx.compose.material.icons.filled.ArrowBack // Keep one, automirrored is usually better
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -10,12 +10,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.res.stringResource // Import for string resources
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.ylabz.basepro.applications.bike.R
 import com.ylabz.basepro.core.ui.BikeScreen
-import com.ylabz.basepro.applications.bike.R // Import R class from your ashbike module
-import com.ylabz.basepro.core.ui.R as CoreUiR // Added import
+import com.ylabz.basepro.core.ui.R as CoreUiR
 
 @Composable
 fun TopBarForCurrentRoute(navController: NavHostController) {

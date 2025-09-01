@@ -2,20 +2,20 @@ package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dia
 
 
 
+//import androidx.compose.ui.tooling.preview.Preview
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-//import androidx.compose.ui.tooling.preview.Preview
-
-import androidx.compose.ui.unit.dp
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
+import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.main.R
+import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 
 // 4) Detail dialog with extra stats
 @OptIn(ExperimentalMaterial3Api::class)

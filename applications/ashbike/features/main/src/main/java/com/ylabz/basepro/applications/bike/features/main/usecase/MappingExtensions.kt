@@ -1,11 +1,10 @@
 package com.ylabz.basepro.applications.bike.features.main.usecase
 
 // in RideSession.kt or MappingExtensions.kt
+import android.location.Location
+import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.database.BikeRideEntity
 import com.ylabz.basepro.applications.bike.database.RideLocationEntity
-import android.location.Location
-import androidx.core.util.TimeUtils.formatDuration
-import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo

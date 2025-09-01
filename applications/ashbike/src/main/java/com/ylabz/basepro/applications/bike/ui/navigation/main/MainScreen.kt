@@ -1,6 +1,7 @@
 package com.ylabz.basepro.applications.bike.ui.navigation.main
 
-import android.Manifest // Required for permission strings
+//import androidx.compose.ui.tooling.preview.Preview
+import android.Manifest
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,14 +23,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-//import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.content.ContextCompat // Required for ContextCompat
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeViewModel
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsUiState
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsViewModel

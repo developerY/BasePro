@@ -1,18 +1,16 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials
 
+//import androidx.compose.ui.tooling.preview.Preview
 import android.graphics.Paint
 import android.graphics.Typeface
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -22,9 +20,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-//import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.core.ui.theme.AshBikeTheme
 import com.ylabz.basepro.core.ui.theme.CustomColors
 import com.ylabz.basepro.core.ui.theme.LocalCustomColors
 import kotlin.math.cos

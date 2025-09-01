@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.trips.ui.components
 
+////import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,14 +13,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-////import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.features.trips.R
 import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
 import com.ylabz.basepro.applications.bike.features.trips.ui.model.BikeRideUiModel
 import com.ylabz.basepro.feature.heatlh.ui.HealthEvent
 import com.ylabz.basepro.feature.heatlh.ui.HealthUiState
-import androidx.compose.ui.res.stringResource
-import com.ylabz.basepro.applications.bike.features.trips.R
 
 @Composable
 fun BikeTripsCompose(

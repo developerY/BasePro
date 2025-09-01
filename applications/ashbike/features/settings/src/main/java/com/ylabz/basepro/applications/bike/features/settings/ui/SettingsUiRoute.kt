@@ -2,15 +2,10 @@ package com.ylabz.basepro.applications.bike.features.settings.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ylabz.basepro.feature.ble.ui.BluetoothLeViewModel
-import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
-import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
-import com.ylabz.basepro.feature.nfc.ui.components.screens.ErrorScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.LoadingScreen
 
 internal const val ROUTE_NAME = "settings_ui_route" // Assuming this was intended to be here or is defined elsewhere for navigation

@@ -1,16 +1,9 @@
 package com.ylabz.basepro.applications.bike.features.main.ui
 
 // import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
-import android.location.Location
 import com.ylabz.basepro.core.data.repository.weather.WeatherRepo
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import com.ylabz.basepro.core.model.weather.OpenWeatherResponse
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.take
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -1,30 +1,32 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.main
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+//import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Straight
 import androidx.compose.material.icons.filled.Terrain
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-//import androidx.compose.ui.tooling.preview.Preview
-import com.google.android.gms.maps.model.LatLng // Keep for Preview's dummy data
-import com.ylabz.basepro.core.model.bike.BikeRideInfo // Keep for Preview's dummy data
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.features.main.R
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
+import com.ylabz.basepro.core.model.bike.RideState
 import com.ylabz.basepro.core.ui.theme.iconColorAvgSpeed
 import com.ylabz.basepro.core.ui.theme.iconColorDistance
 import com.ylabz.basepro.core.ui.theme.iconColorDuration
 import com.ylabz.basepro.core.ui.theme.iconColorElevation
-import androidx.compose.ui.res.stringResource
-import com.ylabz.basepro.applications.bike.features.main.R
-import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
-import com.ylabz.basepro.core.model.bike.RideState
-import kotlinx.collections.immutable.persistentMapOf
 
 // StatItem data class remains the same
 data class StatItem(

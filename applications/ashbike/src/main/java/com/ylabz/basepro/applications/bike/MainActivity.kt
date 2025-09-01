@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike
 
+//import androidx.compose.ui.tooling.preview.Preview
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -32,19 +33,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
-//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsViewModel
 import com.ylabz.basepro.applications.bike.ui.navigation.root.RootNavGraph
 import com.ylabz.basepro.core.ui.theme.AshBikeTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

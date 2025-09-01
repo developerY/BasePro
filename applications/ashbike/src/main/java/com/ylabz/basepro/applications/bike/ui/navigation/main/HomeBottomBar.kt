@@ -1,6 +1,8 @@
 package com.ylabz.basepro.applications.bike.ui.navigation.main
 
-import android.R.id.tabs
+//import androidx.compose.ui.tooling.preview.Preview
+// Import the R class from your 'ashbike' module.
+// The exact package will depend on your module's namespace defined in its build.gradle.kts
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.automirrored.twotone.List
@@ -17,23 +19,15 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource // Added for localization
-//import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-// Import the R class from your 'ashbike' module.
-// The exact package will depend on your module's namespace defined in its build.gradle.kts
 import com.ylabz.basepro.applications.bike.R
 import com.ylabz.basepro.core.ui.BikeScreen
-import com.ylabz.basepro.core.ui.R as CoreUiR // Added import
+import com.ylabz.basepro.core.ui.R as CoreUiR
 
 // Local data class to hold tab information, including the navigation key and title resource ID
 private data class TabInfo(
