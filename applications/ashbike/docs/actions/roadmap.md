@@ -116,10 +116,11 @@ Yes—every bit of ride orchestration and state mutation lives in your ViewModel
 
 ### Example wiring
 
-kotlin
+
 @Composable
 fun RideScreen(viewModel: BikeViewModel = hiltViewModel()) {
-    BikePathWithControls(
+    BikePathWithControls( )
+}
         
 class BikeViewModel @Inject constructor(
 ) : ViewModel() {

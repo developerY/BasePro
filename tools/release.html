@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AshBike App Release Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm & Neutral -->
+    <!-- Application Structure Plan: The static markdown checklist has been transformed into an interactive dashboard. The information architecture is designed for active use by a development team. A sticky header provides an at-a-glance overview of the total release progress, a critical KPI. The main content is organized into a responsive grid of cards, where each card represents a major stage of the release process from the source document (e.g., Code Review, Testing). This chunking of information prevents cognitive overload. Within each card, tasks are interactive checkboxes that update both the section's progress and the main progress bar, providing immediate feedback. A sticky navigation sidebar allows users to instantly jump to any stage, which is far more efficient than scrolling through a long document. This task-oriented, interactive structure turns a passive checklist into a functional project management tool, improving usability and clarity for the release team. -->
+    <!-- Visualization & Content Choices: Report Info: Overall release status -> Goal: Inform -> Viz/Presentation Method: Main Progress Bar -> Interaction: Dynamically updates based on task completion -> Justification: Provides immediate, high-level feedback on release readiness. | Report Info: Checklist Sections (e.g., 'Testing') -> Goal: Organize/Navigate -> Viz/Presentation Method: Styled Cards & Sticky Navigation -> Interaction: Clicking nav links smoothly scrolls to the relevant card -> Justification: Breaks down the complex process into manageable sections and improves navigation. | Report Info: Individual checklist items -> Goal: Track Status -> Viz/Presentation Method: Interactive Checkbox List -> Interaction: Clicking a checkbox toggles its state, applies a line-through style, and updates all progress bars -> Justification: This is the core interactive element, allowing users to actively manage and track the completion of specific tasks, turning the static list into a dynamic tool. Method: All elements are built with structured HTML/CSS via Tailwind. All interactivity is powered by Vanilla JavaScript. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .progress-bar-fill {
+            transition: width 0.5s ease-in-out;
+        }
+        .task-item input:checked + label {
+            text-decoration: line-through;
+            color: #9CA3AF;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+<div id="app" class="flex">
+    <nav id="desktop-nav" class="hidden lg:block sticky top-0 h-screen bg-white w-64 p-6 shadow-lg">
+        <h2 class="text-xl font-bold text-gray-800 mb-6">Release Stages</h2>
+        <ul class="space-y-3" id="nav-links-container">
+        </ul>
+    </nav>
+
+    <main class="flex-1 p-4 sm:p-6 md:p-10">
+        <header class="bg-white p-6 rounded-xl shadow-md mb-8 sticky top-4 z-10">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">AshBike App Release Dashboard</h1>
+                    <p class="text-gray-600 mt-1">Interactive checklist to track progress towards production release.</p>
+                </div>
+                <div id="completion-badge" class="mt-4 sm:mt-0 text-lg font-semibold bg-indigo-100 text-indigo-700 px-4 py-2 rounded-full">
+                    0/0 Tasks Completed
+                </div>
+            </div>
+            <div class="mt-6">
+                <p class="text-sm font-medium text-gray-700 mb-1">Overall Progress</p>
+                <div class="w-full bg-gray-200 rounded-full h-4">
+                    <div id="main-progress-bar" class="bg-green-500 h-4 rounded-full progress-bar-fill" style="width: 0%"></div>
+                </div>
+                <p id="main-progress-text" class="text-center text-sm font-medium text-gray-600 mt-1">0% Complete</p>
+            </div>
+        </header>
+
+        <div id="checklist-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+        </div>
+    </main>
+</div>
+
+<script>
+    const checklistData = {
+        sections: [
+            { id: 'code_review', title: '1. Code Review and Finalization', icon: '📝' },
+            { id: 'config_build', title: '2. Configuration and Build Settings', icon: '⚙️' },
+            { id: 'localization', title: '3. Localization and Resources', icon: '🌍' },
+            { id: 'testing', title: '4. Testing', icon: '🧪' },
+            { id: 'signing_generation', title: '5. App Signing and Bundle Generation', icon: '✍️' },
+            { id: 'store_listing', title: '6. Store Listing and Metadata', icon: '🛒' },
+            { id: 'rollout', title: '7. Rollout', icon: '🚀' },
+        ],
+        tasks: [
+            { id: 'task1', section: 'code_review', text: 'All `@Preview` annotations have been removed from the UI Composables.', completed: true },
+            { id: 'task2', section: 'code_review', text: 'All `@VisibleForTesting` annotations have been removed from non-testing classes.', completed: false },
+            { id: 'task3', section: 'code_review', text: '`BikeForegroundService.kt` logging updated; `Log.d` calls are conditional.', completed: false },
+            { id: 'task4', section: 'code_review', text: 'All TODO comments have been resolved or re-evaluated.', completed: false },
+            { id: 'task5', section: 'code_review', text: 'Final code review conducted by at least one other developer.', completed: false },
+
+            { id: 'task6', section: 'config_build', text: 'In `build.gradle.kts`, the `versionCode` has been incremented.', completed: false },
+            { id: 'task7', section: 'config_build', text: 'In `build.gradle.kts`, the `versionName` has been updated.', completed: false },
+            { id: 'task8', section: 'config_build', text: '`proguard-rules.pro` file reviewed for proper obfuscation.', completed: false },
+            { id: 'task9', section: 'config_build', text: '`AndroidManifest.xml` reviewed for debug flags (set to `false`).', completed: false },
+
+            { id: 'task10', section: 'localization', text: 'All strings in `strings.xml` have been reviewed for correctness.', completed: false },
+            { id: 'task11', section: 'localization', text: 'All necessary translations for supported languages provided.', completed: false },
+            { id: 'task12', section: 'localization', text: 'All drawable resources are optimized and correctly sized.', completed: false },
+
+            { id: 'task13', section: 'testing', text: 'Thoroughly tested on a range of physical devices.', completed: false },
+            { id: 'task14', section: 'testing', text: 'Core functionalities (start/stop, data reset) work as expected.', completed: false },
+            { id: 'task15', section: 'testing', text: 'Foreground service notification appears and functions correctly.', completed: false },
+            { id: 'task16', section: 'testing', text: 'App handles location permission changes gracefully.', completed: false },
+            { id: 'task17', section: 'testing', text: 'Battery usage profiled and is within acceptable limits.', completed: false },
+
+            { id: 'task18', section: 'signing_generation', text: 'App is signed with the official release keystore.', completed: false },
+            { id: 'task19', section: 'signing_generation', text: 'A final Release AAB file has been generated for the AshBike module.', completed: false },
+            { id: 'task20', section: 'signing_generation', text: 'AAB analyzed to confirm package name is correct.', completed: false },
+            { id: 'task21', section: 'signing_generation', text: 'AAB analyzed to confirm `classes.dex` files are correct.', completed: false },
+            { id: 'task22', section: 'signing_generation', text: 'AAB analyzed to confirm `AndroidManifest.xml` is correct.', completed: false },
+
+            { id: 'task23', section: 'store_listing', text: 'App screenshots and a promotional video have been prepared.', completed: false },
+            { id: 'task24', section: 'store_listing', text: 'App description, title, and keywords are finalized.', completed: false },
+            { id: 'task25', section: 'store_listing', text: 'The privacy policy URL is updated and accessible.', completed: false },
+            { id: 'task26', section: 'store_listing', text: 'Content ratings and target audience are correctly configured.', completed: false },
+
+            { id: 'task27', section: 'rollout', text: 'The AAB file is uploaded to the Google Play Console.', completed: false },
+            { id: 'task28', section: 'rollout', text: 'A phased rollout is configured (e.g., 5% rollout).', completed: false },
+            { id: 'task29', section: 'rollout', text: 'App vitals and crash reports are actively monitored.', completed: false },
+        ]
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const checklistContainer = document.getElementById('checklist-container');
+        const navLinksContainer = document.getElementById('nav-links-container');
+
+        checklistData.sections.forEach(section => {
+            const sectionTasks = checklistData.tasks.filter(task => task.section === section.id);
+
+            const navLink = document.createElement('li');
+            navLink.innerHTML = `<a href="#${section.id}" class="text-gray-600 hover:text-indigo-600 font-medium">${section.title}</a>`;
+            navLinksContainer.appendChild(navLink);
+
+            const sectionCard = document.createElement('div');
+            sectionCard.id = section.id;
+            sectionCard.className = 'bg-white p-6 rounded-xl shadow-md flex flex-col';
+
+            let tasksHtml = sectionTasks.map(task => `
+                <div class="task-item flex items-center mb-3">
+                    <input type="checkbox" id="${task.id}" data-task-id="${task.id}" class="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" ${task.completed ? 'checked' : ''}>
+                    <label for="${task.id}" class="ml-3 text-gray-700">${task.text}</label>
+                </div>
+            `).join('');
+
+            sectionCard.innerHTML = `
+                <div class="flex items-center mb-4">
+                    <span class="text-2xl mr-3">${section.icon}</span>
+                    <h3 class="text-lg font-semibold text-gray-800">${section.title}</h3>
+                </div>
+                <div class="flex-1">
+                    ${tasksHtml}
+                </div>
+                <div class="mt-auto pt-4">
+                     <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div id="progress-${section.id}" class="bg-indigo-600 h-2.5 rounded-full progress-bar-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+            `;
+            checklistContainer.appendChild(sectionCard);
+        });
+
+        checklistContainer.addEventListener('change', (e) => {
+            if (e.target.type === 'checkbox') {
+                const taskId = e.target.dataset.taskId;
+                const task = checklistData.tasks.find(t => t.id === taskId);
+                if (task) {
+                    task.completed = e.target.checked;
+                    updateAllProgress();
+                }
+            }
+        });
+
+        function updateAllProgress() {
+            const totalTasks = checklistData.tasks.length;
+            const completedTasks = checklistData.tasks.filter(t => t.completed).length;
+            const overallPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+
+            document.getElementById('main-progress-bar').style.width = `${overallPercentage}%`;
+            document.getElementById('main-progress-text').textContent = `${Math.round(overallPercentage)}% Complete`;
+            document.getElementById('completion-badge').textContent = `${completedTasks}/${totalTasks} Tasks Completed`;
+
+            checklistData.sections.forEach(section => {
+                const sectionTasks = checklistData.tasks.filter(t => t.section === section.id);
+                const completedSectionTasks = sectionTasks.filter(t => t.completed).length;
+                const sectionPercentage = sectionTasks.length > 0 ? (completedSectionTasks / sectionTasks.length) * 100 : 0;
+                document.getElementById(`progress-${section.id}`).style.width = `${sectionPercentage}%`;
+            });
+        }
+
+        updateAllProgress();
+    });
+</script>
+</body>
+</html>
