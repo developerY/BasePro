@@ -153,7 +153,7 @@ class HealthViewModel @Inject constructor(
     private suspend fun readSessionInputs(): List<ExerciseSessionRecord> {
         val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
         val now = Instant.now()
-        val endofWeek = startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
+        startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
         val sessionInputs = healthSessionManager.readExerciseSessions(startOfDay.toInstant(), now)
         print("weightInputs: $sessionInputs")
         Log.d("TAG","${healthSessionManager.readWeightInputs(startOfDay.toInstant(), now)}")
@@ -164,7 +164,7 @@ class HealthViewModel @Inject constructor(
     private suspend fun readWeightInputs(): List<WeightRecord> {
         val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
         val now = Instant.now()
-        val endofWeek = startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
+        startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
         val weightInputs = healthSessionManager.readWeightInputs(startOfDay.toInstant(), now)
         print("weightInputs: $weightInputs")
          Log.d("TAG","${healthSessionManager.readWeightInputs(startOfDay.toInstant(), now)}")
@@ -214,7 +214,7 @@ class HealthViewModel @Inject constructor(
                 val startOfSession = startOfDay.plusSeconds(
                     (Duration.between(startOfDay, latestStartOfSession).seconds * offset).toLong()
                 )
-                val endOfSession = startOfSession.plusMinutes(30)
+                startOfSession.plusMinutes(30)
 
                 //healthSessionManager.writeExerciseSession(startOfSession, endOfSession)
             }

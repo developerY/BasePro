@@ -308,7 +308,7 @@ class HealthSessionManager(private val context: Context) {
         val start = ZonedDateTime.now()
         val sessionStartTime = Instant.now()
         val sessionDuration = Duration.ofMinutes(20)
-        val sessionEndTime = sessionStartTime.plus(sessionDuration)
+        sessionStartTime.plus(sessionDuration)
         val end = start.plus(sessionDuration)
 
         Log.d("HealthSessionManager", "Writing exercise session START")
@@ -577,7 +577,7 @@ class HealthSessionManager(private val context: Context) {
             try {
                 // 1️⃣ Read existing records in the time range
                 Log.d(TAG, "⏳ Reading ${recordType.simpleName} before $now…")
-                val readRequest = ReadRecordsRequest(
+                ReadRecordsRequest(
                     recordType = recordType,
                     timeRangeFilter = sessionRange,
                     ascendingOrder = false
@@ -592,12 +592,12 @@ class HealthSessionManager(private val context: Context) {
                     // 2️⃣ Collect both system IDs and client IDs
                     // force‐cast each item into the public class
                     val recordIds = existing.map { record ->
-                        val typed = recordType.java.cast(record)   // -> T
+                        recordType.java.cast(record)   // -> T
                         (recordType.java.cast(record) as Record).metadata.id
                     }
 
                     val clientIds = existing.mapNotNull { record ->
-                        val typed = recordType.java.cast(record)   // -> T
+                        recordType.java.cast(record)   // -> T
                         (recordType.java.cast(record) as Record).metadata.clientRecordId
                     }
 

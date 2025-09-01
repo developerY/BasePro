@@ -38,7 +38,7 @@ fun Speedometer(
     // That’s a typical “half circle + some” gauge shape. You can adjust to taste.
     val startAngle = 135f
     val sweepAngle = 270f
-    val endAngle = startAngle + sweepAngle
+    startAngle + sweepAngle
     val speedFraction = (currentSpeed / maxSpeed).coerceIn(0f, 1f)
     val needleAngle = startAngle + (sweepAngle * speedFraction)
 

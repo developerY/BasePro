@@ -17,7 +17,7 @@ import com.ylabz.basepro.feature.wearos.sleepwatch.SleepWatchRoute
 
 @Composable
 fun WearNavGraph() {
-    val navController = rememberSwipeDismissableNavController()
+    rememberSwipeDismissableNavController()
 
     // Wear scaffolding (TimeText, Vignette, etc.)
     AppScaffold {

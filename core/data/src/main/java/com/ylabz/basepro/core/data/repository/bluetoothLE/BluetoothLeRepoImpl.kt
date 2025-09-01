@@ -262,9 +262,9 @@ class BluetoothLeRepImpl @Inject constructor(
             ) {
                 if (status == BluetoothGatt.GATT_SUCCESS && characteristic != null) {
                     val description = getHumanReadableName(characteristic.uuid.toString())
-                    val rawValue = characteristic.value ?: ByteArray(0)  
+                    val rawValue = characteristic.value ?: ByteArray(0)
 
-                    val serviceUUID = characteristic.service.uuid.toString()
+                    characteristic.service.uuid.toString()
                     val charUUID = characteristic.uuid.toString()
                     val parsedValue = characteristicParsers[charUUID]?.invoke(rawValue) ?: "Unknown Value"
 

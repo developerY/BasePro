@@ -110,7 +110,7 @@ fun MapPathScreen(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-            val bc = this
+            this
             val wPx = constraints.maxWidth.toFloat()
             val hPx = constraints.maxHeight.toFloat()
             val insetPx = with(LocalDensity.current) { inset.toPx() }

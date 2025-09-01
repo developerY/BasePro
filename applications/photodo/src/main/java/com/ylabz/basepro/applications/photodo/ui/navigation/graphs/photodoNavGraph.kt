@@ -18,7 +18,7 @@ fun NavGraphBuilder.photodoNavGraph(
     //bikeViewModel: BikeViewModel // <<< MODIFIED LINE: Added bikeViewModel parameter
 ) {
 
-    val TAG = Logging.getTag(this::class.java)
+    Logging.getTag(this::class.java)
 
     // 1) Home Tab
     composable(RxDigitaScreen.HomeRxDigitaScreen.route) { // Use RxDigitaScreen

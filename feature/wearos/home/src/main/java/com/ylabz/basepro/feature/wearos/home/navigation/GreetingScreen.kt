@@ -33,7 +33,7 @@ fun GreetingScreen(
     navController: NavController,
     greetingName: String
 ) {
-    val listState = rememberScalingLazyListState()
+    rememberScalingLazyListState()
 
     AppScaffold {
         // TODO: Swap to ScalingLazyColumnState
@@ -48,8 +48,8 @@ fun GreetingScreen(
             ),
         )
         // Modifiers used by our Wear composables.
-        val contentModifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-        val iconModifier = Modifier.size(24.dp).wrapContentSize(align = Alignment.Center)
+        Modifier.fillMaxWidth().padding(bottom = 8.dp)
+        Modifier.size(24.dp).wrapContentSize(align = Alignment.Center)
 
         /* *************************** Part 4: Wear OS Scaffold *************************** */
         // TODO (Start): Create a ScreenScaffold (Wear Version)

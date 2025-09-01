@@ -15,7 +15,7 @@ fun BikeNav3Display(
     bikeViewModel: BikeViewModel // Pass your ViewModel
 ) {
     // This backStack will hold instances of your NavKey objects
-    val backStack = remember { mutableStateListOf<Any>(BikeHomeKey) } // Start with Home
+    remember { mutableStateListOf<Any>(BikeHomeKey) } // Start with Home
 
     // TODO: Replace with actual NavDisplay from your library
     /*

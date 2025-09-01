@@ -35,7 +35,7 @@ fun BikeBatteryLevels(
     val disconnectedColor = Color(0xFF2196F3)
     val connectedColor = Color(0xFF4CAF50)
 
-    val backgroundColor = if (isConnected) connectedColor else disconnectedColor
+    if (isConnected) connectedColor else disconnectedColor
     val displayText = if (isConnected) {
         "Battery: ${batteryLevel ?: 0}%"
     } else {

@@ -70,7 +70,7 @@ fun MapPathScreen(
             val wPx = with(LocalDensity.current) { bc.maxWidth.toPx() }
             val hPx = with(LocalDensity.current) { bc.maxHeight.toPx() }
             val insetPx = with(LocalDensity.current) { inset.toPx() }
-            val density = LocalDensity.current
+            LocalDensity.current
 
             // 1) background + grid
             Canvas(Modifier.fillMaxSize()) {
@@ -129,9 +129,9 @@ fun MapPathScreen(
                 // project lat/lng → screen
                 val lats = fixes.map { it.lat }
                 val lngs = fixes.map { it.lng }
-                val minLat = lats.minOrNull()!!;
+                val minLat = lats.minOrNull()!!
                 val maxLat = lats.maxOrNull()!!
-                val minLng = lngs.minOrNull()!!;
+                val minLng = lngs.minOrNull()!!
                 val maxLng = lngs.maxOrNull()!!
                 val latRange = (maxLat - minLat).takeIf { it > 0 } ?: 1.0
                 val lngRange = (maxLng - minLng).takeIf { it > 0 } ?: 1.0

@@ -41,7 +41,7 @@ fun Greeting(
         color = MaterialTheme.colors.primary,
         text = stringResource(R.string.hello_world, greetingName)
     )
-    Column() {
+    Column {
         Button(
             onClick = {
                 navController.navigate(WearScreen.Health.route)

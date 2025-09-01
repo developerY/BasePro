@@ -76,9 +76,6 @@ fun WeatherBadgeContent(
         }
     }
     val transition = updateTransition(targetState = expanded, label = "")
-    val cardWidth by transition.animateDp(label = "") { isExpanded ->
-        if (isExpanded) 160.dp else 56.dp
-    }
 
     ElevatedCard(
         modifier = Modifier

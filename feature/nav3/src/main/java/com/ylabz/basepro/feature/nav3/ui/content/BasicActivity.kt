@@ -153,16 +153,7 @@ fun BasicActivity(modifier: Modifier = Modifier) {
                         }
                     }
                 }
-                entry<ScreenC>(
-                    // TODO: Make ScreenC metadata transitions also toggleable
-                    /* metadata = NavDisplay.transitionSpec {
-                        // ...
-                    } + NavDisplay.popTransitionSpec {
-                        // ...
-                    } + NavDisplay.predictivePopTransitionSpec {
-                        // ...
-                    }*/
-                ) {
+                entry<ScreenC> {
                     ContentGreen("This is Screen C") {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Button(onClick = { backStack.add(ScreenD) }) {

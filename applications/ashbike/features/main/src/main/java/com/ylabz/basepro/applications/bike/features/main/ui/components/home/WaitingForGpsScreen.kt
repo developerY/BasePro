@@ -50,7 +50,7 @@ import com.ylabz.basepro.applications.bike.features.main.R
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-@RequiresPermission(anyOf = [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION])
+@RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
 fun WaitingForGpsScreen(
     modifier: Modifier = Modifier,
     onRequestPermission: () -> Unit,

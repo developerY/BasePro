@@ -239,7 +239,7 @@ val samplePieChartInput = listOf(
     SleePieChartInput(color = Color(0xFF7B68EE), value = 4, description = "REM"),
     SleePieChartInput(color = Color(0xFF483D8B), value = 3, description = "Deep Sleep"),
     SleePieChartInput(color = Color(0xFF708090), value = 3, description = "N1 Sleep"),
-    SleePieChartInput(color = Color.LightGray, value = 1, description = "Wake")
+    SleePieChartInput(color = LightGray, value = 1, description = "Wake")
 )
 /*
 @Preview(showBackground = true, backgroundColor = 0xFF000000, device = "id:wearos_large_round")

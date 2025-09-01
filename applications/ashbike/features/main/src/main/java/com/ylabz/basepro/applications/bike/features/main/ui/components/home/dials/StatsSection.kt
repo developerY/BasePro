@@ -39,7 +39,7 @@ fun StatsSection(
     modifier: Modifier = Modifier
 ) {
     val bikeData = uiState.bikeData
-    val context = LocalContext.current // For string resources with formatting
+    LocalContext.current // For string resources with formatting
 
     val isBikeComputerOn = bikeData.rideState == RideState.Riding
     val currentCardColor = if (isBikeComputerOn) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant

@@ -97,7 +97,7 @@ fun BikePathScreen(
             ) == PackageManager.PERMISSION_GRANTED
     }
 
-    val isLocationEnabled = fineLocationGranted.value || coarseLocationGranted.value
+    fineLocationGranted.value || coarseLocationGranted.value
 
     // Background gradient
     val backgroundGradient = Brush.verticalGradient(

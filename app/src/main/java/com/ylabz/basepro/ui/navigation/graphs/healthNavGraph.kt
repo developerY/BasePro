@@ -60,8 +60,6 @@ fun NavGraphBuilder.healthNavGraph(
             // pull out the uid
             val uid = backStackEntry.arguments?.getString("uid")
                 ?: return@composable
-            val healthVM: HealthViewModel = hiltViewModel(backStackEntry)
-
             SessionDetailScreen(
                 uid           = uid,
                 navController = navController,

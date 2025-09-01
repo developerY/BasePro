@@ -65,14 +65,14 @@ fun BikeDashboardContent(
 
     val isBikeConnected = bikeRideInfo.isBikeConnected
     val batteryLevel = bikeRideInfo.batteryLevel
-    val motorPower = bikeRideInfo.motorPower
+    bikeRideInfo.motorPower
     // heartRate and calories are now handled within StatsSection based on uiState
     val rideState = bikeRideInfo.rideState
     val currRiding = rideState == RideState.Riding
 
     val containerColor = if (currRiding) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
     val contentColor = if (currRiding) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
-    val cardColor = if (currRiding) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
+    if (currRiding) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
 
 
     Column(

@@ -22,9 +22,9 @@ fun ShotimeRoute(
     paddingValues: PaddingValues,
     viewModel: ShotimeViewModel = hiltViewModel()
 ) {
-    val TAG = "ShotimeRoute"
+    "ShotimeRoute"
     val uiState = viewModel.uiState.collectAsState().value
-    val context = LocalContext.current
+    LocalContext.current
     // Render the UI based on the current state
     Column(
         modifier = Modifier

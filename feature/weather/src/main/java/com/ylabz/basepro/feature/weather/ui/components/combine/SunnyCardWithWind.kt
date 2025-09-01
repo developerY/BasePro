@@ -208,7 +208,7 @@ fun WindDirectionDial(
             // Red arrow for wind direction
             val arrowLength = radius * 0.6f
             val arrowAngleRad = Math.toRadians((degree - 90).toDouble())
-            val arrowEnd = Offset(
+            Offset(
                 center.x + (arrowLength * cos(arrowAngleRad)).toFloat(),
                 center.y + (arrowLength * sin(arrowAngleRad)).toFloat()
             )

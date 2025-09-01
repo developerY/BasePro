@@ -101,7 +101,7 @@ private fun PermissionsNotGrantedScreen(onEnableClick: () -> Unit) {
 @Composable
 private fun PermissionsGrantedScreen() {
     // 1. Get the current context and create a launcher for the settings Intent
-    val context = LocalContext.current
+    LocalContext.current
     val settingsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
         onResult = { } // No action needed on result

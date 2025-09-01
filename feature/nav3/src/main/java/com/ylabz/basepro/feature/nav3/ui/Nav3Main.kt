@@ -55,7 +55,6 @@ import com.ylabz.basepro.feature.nav3.ui.content.ContentGreen
 import com.ylabz.basepro.feature.nav3.ui.content.ContentMauve
 import com.ylabz.basepro.feature.nav3.ui.content.ContentOrange
 import com.ylabz.basepro.feature.nav3.ui.content.ContentYellow
-import com.ylabz.basepro.feature.nav3.ui.content.strategy.AdaptiveContactsApp
 import com.ylabz.basepro.feature.nav3.ui.content.strategy.AdaptiveLayoutDemo
 import kotlinx.serialization.Serializable
 
@@ -114,12 +113,12 @@ fun Nav3MainExample(modifier: Modifier = Modifier) {
      * where it is the full width of the screen) and moves it to the center. At the same time,
      * slideOutHorizontally moves the old screen from the center off-screen to the left (targetOffsetX = { -it }).
      * This creates the standard "push" effect that you see when navigating forward in many apps.
-     */
+     *
     val slideInHorizontallytransitionSpec = {
         // forward and backward
         slideInHorizontally(initialOffsetX = { it }) togetherWith
                 slideOutHorizontally(targetOffsetX = { -it })
-    }
+    }*/
 
     // Standard horizontal slide animation for global navigation.
     val slideRightSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
@@ -301,16 +300,7 @@ fun Nav3MainExample(modifier: Modifier = Modifier) {
                 }
                 // Screen C and D demonstrate a standard push-pull navigation,
                 // and D still has its custom slide-up animation.
-                entry<NavMainScreens.MainScreensC>(
-                    // TODO: Make ScreenC metadata transitions also toggleable
-                    /* metadata = NavDisplay.transitionSpec {
-                        // ...
-                    } + NavDisplay.popTransitionSpec {
-                        // ...
-                    } + NavDisplay.predictivePopTransitionSpec {
-                        // ...
-                    }*/
-                ) {
+                entry<NavMainScreens.MainScreensC> {
                     ContentGreen("This is Screen C") {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Button(onClick = { backStack.add(NavMainScreens.MainScreensD) }) {

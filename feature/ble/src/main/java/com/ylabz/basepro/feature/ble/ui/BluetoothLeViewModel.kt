@@ -35,7 +35,7 @@ class BluetoothLeViewModel @Inject constructor(
     private val _isStartButtonEnabled = MutableStateFlow(true)
     val isStartButtonEnabled = _isStartButtonEnabled.asStateFlow()
 
-    private val _uiState = MutableStateFlow<BluetoothLeUiState>(BluetoothLeUiState.PermissionsRequired)
+    private val _uiState = MutableStateFlow<BluetoothLeUiState>(PermissionsRequired)
     val uiState: StateFlow<BluetoothLeUiState> = _uiState
 
     private var isBluetoothDialogAlreadyShown = false
@@ -139,7 +139,7 @@ class BluetoothLeViewModel @Inject constructor(
             try {
                 bleRepository.stopScan()
             } catch (e: Exception) {
-                _uiState.value = BluetoothLeUiState.Error("Failed to stop scan: ${e.message}")
+                _uiState.value = Error("Failed to stop scan: ${e.message}")
             }
         }
     }

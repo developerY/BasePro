@@ -28,7 +28,7 @@ fun SessionDetailScreen(
     healthVM: HealthViewModel = hiltViewModel(), // pulled in via Hilt
     modifier: Modifier = Modifier
 ) {
-    val scope = rememberCoroutineScope()
+    rememberCoroutineScope()
     var detail by remember { mutableStateOf<ExerciseSessionData?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }

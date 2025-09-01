@@ -41,8 +41,6 @@ fun BikeUiRoute(
     val nfcViewModel = hiltViewModel<NfcViewModel>()
 
     val bikeUiState by viewModel.uiState.collectAsState() // <<< MODIFIED LINE: Use the passed-in viewModel
-    val healthUiState by healthViewModel.uiState.collectAsState() // Assuming HealthUiState is the correct type
-    val nfcUiState by nfcViewModel.uiState.collectAsState()       // Assuming NfcUiState is the correct type
 
     // Log the instance hash code for confirmation (can be removed after verifying)
     Log.d("BikeUiRoute_InstanceTest", "BikeUiRoute using BikeViewModel instance: ${viewModel.hashCode()}")

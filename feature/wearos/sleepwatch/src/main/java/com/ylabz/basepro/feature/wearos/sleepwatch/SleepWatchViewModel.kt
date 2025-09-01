@@ -63,7 +63,6 @@ class SleepWatchViewModel @Inject constructor(
 
 
     fun initialLoad() {
-        val sleepData: List<SleepSessionData> = emptyList()
         Log.d("HealthViewModel", "initialLoad() called") // Debug statement
         viewModelScope.launch {
             Log.d("HealthViewModel", "viewModelScope.launch called") // Debug statement
@@ -93,7 +92,7 @@ class SleepWatchViewModel @Inject constructor(
     private suspend fun readSessionInputs(): List<SleepSessionData> {
         val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
         val now = Instant.now()
-        val endofWeek = startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
+        startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
         val sessionInputs = healthSessionManager.readSleepSessions()
         print("weightInputs: $sessionInputs")
         Log.d("TAG","${healthSessionManager.readWeightInputs(startOfDay.toInstant(), now)}")
@@ -104,7 +103,7 @@ class SleepWatchViewModel @Inject constructor(
     private suspend fun readWeightInputs(): List<WeightRecord> {
         val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
         val now = Instant.now()
-        val endofWeek = startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
+        startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
         val weightInputs = healthSessionManager.readWeightInputs(startOfDay.toInstant(), now)
         print("weightInputs: $weightInputs")
          Log.d("TAG","${healthSessionManager.readWeightInputs(startOfDay.toInstant(), now)}")
