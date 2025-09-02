@@ -17,7 +17,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = providers.gradleProperty("isMinifyForRelease").get().toBoolean()
+            isMinifyEnabled = false // providers.gradleProperty("isMinifyForRelease").get().toBoolean()
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

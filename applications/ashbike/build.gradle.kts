@@ -26,13 +26,18 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = providers.gradleProperty("isMinifyForRelease").get().toBoolean()
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
+        // This debug block ensures a fast development cycle
+        debug {
+            isMinifyEnabled = false
+        }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
@@ -52,6 +57,11 @@ android {
 
     secrets {
         defaultPropertiesFileName = "secrets.defaults.properties"
+    }
+
+    // remove as soon as Google fixes the bug
+    lint {
+        baseline = file("lint-baseline.xml")
     }
 }
 
