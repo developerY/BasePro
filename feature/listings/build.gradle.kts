@@ -26,14 +26,18 @@ android {
     }
 
     buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
+    release {
+        isMinifyEnabled = providers.gradleProperty("isMinifyForRelease").get().toBoolean()
+        proguardFiles(
+            getDefaultProguardFile("proguard-android-optimize.txt"),
+            "proguard-rules.pro"
+        )
     }
+    // This debug block ensures a fast development cycle
+    debug {
+        isMinifyEnabled = false
+    }
+}
 }
 
 dependencies {
