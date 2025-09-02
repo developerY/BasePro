@@ -3,8 +3,6 @@ package com.ylabz.basepro.feature.weather.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.Navigator
-import com.ylabz.basepro.core.data.repository.bikeConnectivity.BikeConnectivityRepository
 import com.ylabz.basepro.core.data.repository.travel.LocationRepository
 import com.ylabz.basepro.core.data.repository.weather.WeatherRepo
 import com.ylabz.basepro.core.database.BaseProRepo
@@ -14,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Named
 
 @HiltViewModel
 class WeatherViewModel @Inject constructor(

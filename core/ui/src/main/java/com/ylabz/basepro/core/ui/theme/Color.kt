@@ -111,7 +111,6 @@ val colors = listOf(
 fun List<Color>.random() = this[Math.random().toInt() % this.size]
 
 
-
 val Blue10 = Color(0xFF000F5E)
 val Blue20 = Color(0xFF001E92)
 val Blue30 = Color(0xFF002ECC)
@@ -158,7 +157,6 @@ val BlueGrey90 = Color(0xFFE2E1EC)
 
 // On but not used
 val IconGlayBlue = Color(0xFF769AB2)
-
 
 
 // Your exact color stops for the light theme speedometer.

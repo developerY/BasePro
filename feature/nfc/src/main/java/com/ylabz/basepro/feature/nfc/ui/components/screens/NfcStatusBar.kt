@@ -30,7 +30,11 @@ fun NfcStatusBar(uiState: NfcUiState) {
         is NfcUiState.Loading -> stringResource(R.string.nfc_status_loading)
         is NfcUiState.Error -> stringResource(R.string.nfc_status_error, uiState.message)
         is NfcUiState.WriteError -> stringResource(R.string.nfc_status_write_error, uiState.error)
-        is NfcUiState.WriteSuccess -> stringResource(R.string.nfc_status_write_success, uiState.message)
+        is NfcUiState.WriteSuccess -> stringResource(
+            R.string.nfc_status_write_success,
+            uiState.message
+        )
+
         NfcUiState.Writing -> stringResource(R.string.nfc_status_writing_to_tag)
     }
 

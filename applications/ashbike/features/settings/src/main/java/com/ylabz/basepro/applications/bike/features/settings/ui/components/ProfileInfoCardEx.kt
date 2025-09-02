@@ -88,7 +88,11 @@ fun ProfileInfoCardEx(
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                             )
                             Text(
-                                stringResource(R.string.profile_details_format, profile.heightCm, profile.weightKg),
+                                stringResource(
+                                    R.string.profile_details_format,
+                                    profile.heightCm,
+                                    profile.weightKg
+                                ),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
@@ -116,7 +120,10 @@ fun ProfileInfoCardEx(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         OutlinedTextField(
                             value = localHeight,
                             onValueChange = { localHeight = it },

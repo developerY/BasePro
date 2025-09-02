@@ -1,24 +1,42 @@
-<p>Below are <strong>conceptual designs</strong> for a <strong>Glucose Monitoring</strong> app that includes most of the features we discussed. While I can’t embed real images in this text-based format, I’ll provide <strong>screen-by-screen descriptions</strong> that convey how each screen might look, along with <strong>key UI elements</strong>. You can think of these as <strong>wireframes or mockup descriptions</strong> that a designer could turn into actual visuals.</p>
+<p>Below are <strong>conceptual designs</strong> for a <strong>Glucose Monitoring</strong> app that
+    includes most of the features we discussed. While I can’t embed real images in this text-based
+    format, I’ll provide <strong>screen-by-screen descriptions</strong> that convey how each screen
+    might look, along with <strong>key UI elements</strong>. You can think of these as <strong>wireframes
+        or mockup descriptions</strong> that a designer could turn into actual visuals.</p>
 <hr>
 <h2 id="1-home-dashboard-screen-">1. <strong>Home / Dashboard Screen</strong></h2>
-<p><strong>Purpose</strong>: A quick overview of the user’s current glucose status, time in range, upcoming reminders, and navigation to other sections.</p>
+<p><strong>Purpose</strong>: A quick overview of the user’s current glucose status, time in range,
+    upcoming reminders, and navigation to other sections.</p>
 <p><strong>Visual Concept</strong>:</p>
 <ul>
-    <li><strong>Top Section</strong>: <ul>
-        <li>Large, bold text showing the <strong>current glucose value</strong> (e.g., “5.8 mmol/L”) with a small arrow indicating trend (up/down/flat).  </li>
-        <li>A subtle ring or gauge showing time in range (e.g., 70% in range).  </li>
-    </ul>
+    <li><strong>Top Section</strong>:
+        <ul>
+            <li>Large, bold text showing the <strong>current glucose value</strong> (e.g., “5.8
+                mmol/L”) with a small arrow indicating trend (up/down/flat).
+            </li>
+            <li>A subtle ring or gauge showing time in range (e.g., 70% in range).</li>
+        </ul>
     </li>
-    <li><strong>Alerts/Warnings</strong>: If the glucose is high or low, a red or orange banner appears at the top (“High Glucose Alert!”).</li>
-    <li><strong>Key Stats Row</strong>:  <ul>
-        <li><strong>Time in Range</strong> tile (e.g., “72% in range last 24h”).  </li>
-        <li><strong>Active Insulin</strong> tile (e.g., “+0.15 U on board”).  </li>
-        <li><strong>Carbs on Board</strong> tile (e.g., “20 g COB”).  </li>
-    </ul>
+    <li><strong>Alerts/Warnings</strong>: If the glucose is high or low, a red or orange banner
+        appears at the top (“High Glucose Alert!”).
     </li>
-    <li><strong>Recent Trends Widget</strong>: A small line chart or sparkline of the last 3-6 hours.  </li>
-    <li><strong>Buttons or Tabs</strong> for quick actions: e.g., “Log BG,” “Add Meal,” “Insulin Dose,” or “See History.”  </li>
-    <li><strong>Navigation Bar</strong>: Possibly a tab bar at the bottom with icons: <strong>Home</strong>, <strong>History</strong>, <strong>Meals</strong>, <strong>Settings</strong>.  </li>
+    <li><strong>Key Stats Row</strong>:
+        <ul>
+            <li><strong>Time in Range</strong> tile (e.g., “72% in range last 24h”).</li>
+            <li><strong>Active Insulin</strong> tile (e.g., “+0.15 U on board”).</li>
+            <li><strong>Carbs on Board</strong> tile (e.g., “20 g COB”).</li>
+        </ul>
+    </li>
+    <li><strong>Recent Trends Widget</strong>: A small line chart or sparkline of the last 3-6
+        hours.
+    </li>
+    <li><strong>Buttons or Tabs</strong> for quick actions: e.g., “Log BG,” “Add Meal,” “Insulin
+        Dose,” or “See History.”
+    </li>
+    <li><strong>Navigation Bar</strong>: Possibly a tab bar at the bottom with icons:
+        <strong>Home</strong>, <strong>History</strong>, <strong>Meals</strong>,
+        <strong>Settings</strong>.
+    </li>
 </ul>
 <p><strong>Mockup</strong> (text-based approximation):</p>
 <pre><code> ---------------------------------------------------------
@@ -27,27 +45,39 @@
 |<span class="hljs-string">                                                         </span>|
 |<span class="hljs-string">  [Gauge or ring indicating time in range               ]</span>|
 |<span class="hljs-string">                                                         </span>|
-|<span class="hljs-string">  Time in Range   </span>|<span class="hljs-string">   Active Insulin   </span>|<span class="hljs-string">   Carbs On Board</span>|
-|<span class="hljs-string">       72%        </span>|<span class="hljs-string">        0.15 U      </span>|<span class="hljs-string">       20 g      </span>|
+|<span class="hljs-string">  Time in Range   </span>|<span
+            class="hljs-string">   Active Insulin   </span>|<span class="hljs-string">   Carbs On Board</span>|
+|<span class="hljs-string">       72%        </span>|<span
+            class="hljs-string">        0.15 U      </span>|<span
+            class="hljs-string">       20 g      </span>|
 |<span class="hljs-string"> ------------------------------------------------------- </span>|
 |<span class="hljs-string">  [Recent 6h Trend Chart (mini sparkline)               ]</span>|
 |<span class="hljs-string"> ------------------------------------------------------- </span>|
 |<span class="hljs-string">   [Log BG]    [Add Meal]    [History]   [Settings]      </span>|
  ---------------------------------------------------------
-</code></pre><hr>
+</code></pre>
+<hr>
 <h2 id="2-glucose-detail-history-screen-">2. <strong>Glucose Detail / History Screen</strong></h2>
-<p><strong>Purpose</strong>: Show <strong>historical readings</strong> over time, a more detailed chart, plus filters and analysis.</p>
+<p><strong>Purpose</strong>: Show <strong>historical readings</strong> over time, a more detailed
+    chart, plus filters and analysis.</p>
 <p><strong>Visual Concept</strong>:</p>
 <ul>
-    <li><strong>Line Chart</strong> spanning days, weeks, or months. Possibly multiple lines:  <ul>
-        <li><strong>Current CGM trace</strong>.  </li>
-        <li><strong>Predicted glucose</strong>.  </li>
-        <li><strong>Target range shading</strong> (e.g., 4–10 mmol/L).  </li>
-    </ul>
+    <li><strong>Line Chart</strong> spanning days, weeks, or months. Possibly multiple lines:
+        <ul>
+            <li><strong>Current CGM trace</strong>.</li>
+            <li><strong>Predicted glucose</strong>.</li>
+            <li><strong>Target range shading</strong> (e.g., 4–10 mmol/L).</li>
+        </ul>
     </li>
-    <li><strong>Date Range Picker</strong>: Buttons or tabs for “Day / Week / Month / Custom” at the top or in a segmented control.  </li>
-    <li><strong>Stats / Summary</strong>: Under the chart, textual stats: average BG, time in range, standard deviation, etc.  </li>
-    <li><strong>List of Readings</strong>: A chronological list of daily readings or events below the chart. Tapping an entry shows notes, tags, or editing options.  </li>
+    <li><strong>Date Range Picker</strong>: Buttons or tabs for “Day / Week / Month / Custom” at the
+        top or in a segmented control.
+    </li>
+    <li><strong>Stats / Summary</strong>: Under the chart, textual stats: average BG, time in range,
+        standard deviation, etc.
+    </li>
+    <li><strong>List of Readings</strong>: A chronological list of daily readings or events below
+        the chart. Tapping an entry shows notes, tags, or editing options.
+    </li>
     <li><strong>Export / Share Icon</strong>: Allows CSV export or PDF report creation.</li>
 </ul>
 <p><strong>Mockup</strong>:</p>
@@ -60,7 +90,8 @@
 |<span class="hljs-string">   - Possibly area shading for “normal range”           </span>|
 |<span class="hljs-string">                                                       </span>|
 |<span class="hljs-string"> ------------------------------------------------------ </span>|
-|<span class="hljs-string">  Stats:  Avg BG: 6.2   </span>|<span class="hljs-string">  Time in Range: 74%  </span>|<span class="hljs-string">  SD: 1.2</span>|
+|<span class="hljs-string">  Stats:  Avg BG: 6.2   </span>|<span class="hljs-string">  Time in Range: 74%  </span>|<span
+            class="hljs-string">  SD: 1.2</span>|
 |<span class="hljs-string"> ------------------------------------------------------ </span>|
 |<span class="hljs-string">  [12:00 - 6.1 mmol/L, notes: "Breakfast" ]            </span>|
 |<span class="hljs-string">  [08:00 - 5.4 mmol/L, notes: "Fasting"   ]            </span>|
@@ -68,16 +99,23 @@
 |<span class="hljs-string"> ------------------------------------------------------ </span>|
 |<span class="hljs-string">        [ Share/Export ]                               </span>|
  ---------------------------------------------------------
-</code></pre><hr>
-<h2 id="3-logging-screen-manual-entry-quick-log-">3. <strong>Logging Screen (Manual Entry / Quick Log)</strong></h2>
-<p><strong>Purpose</strong>: Quickly <strong>record</strong> a new blood glucose reading, meal, or insulin dose.</p>
+</code></pre>
+<hr>
+<h2 id="3-logging-screen-manual-entry-quick-log-">3. <strong>Logging Screen (Manual Entry / Quick
+    Log)</strong></h2>
+<p><strong>Purpose</strong>: Quickly <strong>record</strong> a new blood glucose reading, meal, or
+    insulin dose.</p>
 <p><strong>Visual Concept</strong>:</p>
 <ul>
-    <li><strong>Numeric Input</strong> for BG (if not using CGM) with a keypad or dial.  </li>
-    <li><strong>Time Picker</strong>: Defaults to “Now” or allows backdating.  </li>
-    <li><strong>Tags/Notes</strong>: Text field for “Fasting,” “Before lunch,” or custom notes.  </li>
-    <li><strong>Meal/Carbs</strong>: If logging a meal, a field to input carbs or pick from a food database.  </li>
-    <li><strong>Insulin Dose</strong>: If needed, a small calculator or numeric field for units of insulin.  </li>
+    <li><strong>Numeric Input</strong> for BG (if not using CGM) with a keypad or dial.</li>
+    <li><strong>Time Picker</strong>: Defaults to “Now” or allows backdating.</li>
+    <li><strong>Tags/Notes</strong>: Text field for “Fasting,” “Before lunch,” or custom notes.</li>
+    <li><strong>Meal/Carbs</strong>: If logging a meal, a field to input carbs or pick from a food
+        database.
+    </li>
+    <li><strong>Insulin Dose</strong>: If needed, a small calculator or numeric field for units of
+        insulin.
+    </li>
     <li><strong>Save Button</strong> at the bottom.</li>
 </ul>
 <p><strong>Mockup</strong>:</p>
@@ -96,15 +134,19 @@
 |<span class="hljs-string">                                                       </span>|
 |<span class="hljs-string">  [ Save ]                                             </span>|
  ---------------------------------------------------------
-</code></pre><hr>
+</code></pre>
+<hr>
 <h2 id="4-meal-carbs-tracking-screen-">4. <strong>Meal / Carbs Tracking Screen</strong></h2>
-<p><strong>Purpose</strong>: Let the user <strong>search or pick</strong> from a food database, add quick carb amounts, or see recently logged meals.</p>
+<p><strong>Purpose</strong>: Let the user <strong>search or pick</strong> from a food database, add
+    quick carb amounts, or see recently logged meals.</p>
 <p><strong>Visual Concept</strong>:</p>
 <ul>
-    <li><strong>Search Bar</strong> at the top to type “Apple,” “Sandwich,” etc.  </li>
-    <li><strong>List of Foods</strong> with carb values. Tapping an item increments or opens detail (food macros).  </li>
-    <li><strong>Recently Logged Meals</strong> or Favorite Foods pinned at top.  </li>
-    <li><strong>Add Custom Food</strong> to define your own carb values.  </li>
+    <li><strong>Search Bar</strong> at the top to type “Apple,” “Sandwich,” etc.</li>
+    <li><strong>List of Foods</strong> with carb values. Tapping an item increments or opens detail
+        (food macros).
+    </li>
+    <li><strong>Recently Logged Meals</strong> or Favorite Foods pinned at top.</li>
+    <li><strong>Add Custom Food</strong> to define your own carb values.</li>
     <li><strong>Total Carbs</strong> at the bottom, “Log Meal” button finalizes the entry.</li>
 </ul>
 <p><strong>Mockup</strong>:</p>
@@ -120,14 +162,22 @@
 |<span class="hljs-string"> ------------------------------------------------------ </span>|
 |<span class="hljs-string"> [Add Custom Food]        [Total Carbs: 42g] [Log Meal]  </span>|
  ---------------------------------------------------------
-</code></pre><hr>
+</code></pre>
+<hr>
 <h2 id="5-insulin-medication-screen-">5. <strong>Insulin &amp; Medication Screen</strong></h2>
-<p><strong>Purpose</strong>: Track insulin doses (bolus or basal), plus any oral medications or injectables. Possibly integrate pump controls.</p>
+<p><strong>Purpose</strong>: Track insulin doses (bolus or basal), plus any oral medications or
+    injectables. Possibly integrate pump controls.</p>
 <p><strong>Visual Concept</strong>:</p>
 <ul>
-    <li><strong>List of Active Insulin</strong>: Show “Active Insulin: 0.12 U” or “4 hours remaining.”  </li>
-    <li><strong>Bolus Calculator</strong>: Fields for current BG, carbs, ratio, correction factor, plus a “Calculate” button.  </li>
-    <li><strong>Pump Status</strong> (if integrated): Display reservoir volume, pump battery, site change countdown.  </li>
+    <li><strong>List of Active Insulin</strong>: Show “Active Insulin: 0.12 U” or “4 hours
+        remaining.”
+    </li>
+    <li><strong>Bolus Calculator</strong>: Fields for current BG, carbs, ratio, correction factor,
+        plus a “Calculate” button.
+    </li>
+    <li><strong>Pump Status</strong> (if integrated): Display reservoir volume, pump battery, site
+        change countdown.
+    </li>
     <li><strong>Medication Reminders</strong>: e.g., “Take Metformin 2pm.”</li>
 </ul>
 <p><strong>Mockup</strong>:</p>
@@ -145,15 +195,23 @@
 |<span class="hljs-string">    - Metformin: 500 mg / 2 pm [ Edit / Mark taken ]    </span>|
 |<span class="hljs-string">    - Lipitor: 10 mg / bedtime  [ Edit / Mark taken ]   </span>|
  ---------------------------------------------------------
-</code></pre><hr>
+</code></pre>
+<hr>
 <h2 id="6-alerts-notifications-screen-">6. <strong>Alerts &amp; Notifications Screen</strong></h2>
-<p><strong>Purpose</strong>: Customize <strong>thresholds</strong> for hypo/hyper, reminders for site changes, missed calibrations, or upcoming meal events.</p>
+<p><strong>Purpose</strong>: Customize <strong>thresholds</strong> for hypo/hyper, reminders for
+    site changes, missed calibrations, or upcoming meal events.</p>
 <p><strong>Visual Concept</strong>:</p>
 <ul>
-    <li><strong>Switches/Toggles</strong> for Low BG Alerts, High BG Alerts, Predicted Lows, etc.  </li>
-    <li><strong>Threshold Fields</strong>: e.g. “Low Alert below 4.0 mmol/L,” “High Alert above 9.0 mmol/L.”  </li>
-    <li><strong>Notification Settings</strong>: On/Off for push notifications, sound or vibration, “Do Not Disturb” times.  </li>
-    <li><strong>Site Change Reminder</strong>: e.g. “Every 3 days,” next reminder in 1 day, 5 hours.</li>
+    <li><strong>Switches/Toggles</strong> for Low BG Alerts, High BG Alerts, Predicted Lows, etc.
+    </li>
+    <li><strong>Threshold Fields</strong>: e.g. “Low Alert below 4.0 mmol/L,” “High Alert above 9.0
+        mmol/L.”
+    </li>
+    <li><strong>Notification Settings</strong>: On/Off for push notifications, sound or vibration,
+        “Do Not Disturb” times.
+    </li>
+    <li><strong>Site Change Reminder</strong>: e.g. “Every 3 days,” next reminder in 1 day, 5 hours.
+    </li>
 </ul>
 <p><strong>Mockup</strong>:</p>
 <pre><code> ---------------------------------------------------------
@@ -170,16 +228,18 @@
 |<span class="hljs-string"> Notification Style:  [ Banner / Sound / Vibrate ]      </span>|
 |<span class="hljs-string"> Do Not Disturb:  [ 11 pm - 7 am ]                       </span>|
  ---------------------------------------------------------
-</code></pre><hr>
+</code></pre>
+<hr>
 <h2 id="7-settings-profile-screen-">7. <strong>Settings &amp; Profile Screen</strong></h2>
-<p><strong>Purpose</strong>: Manage personal info, target ranges, unit preferences, data sync (HealthKit/Google Fit), etc.</p>
+<p><strong>Purpose</strong>: Manage personal info, target ranges, unit preferences, data sync
+    (HealthKit/Google Fit), etc.</p>
 <p><strong>Visual Concept</strong>:</p>
 <ul>
-    <li><strong>Profile Info</strong>: Name, photo, email.  </li>
-    <li><strong>Unit Preference</strong>: mg/dL vs. mmol/L.  </li>
-    <li><strong>Target Range</strong>: e.g., 4.0–10.0 mmol/L.  </li>
-    <li><strong>Integrations</strong>: Apple Health, Dexcom account, pump brand.  </li>
-    <li><strong>Data Backup</strong>: iCloud or other cloud sync toggles.  </li>
+    <li><strong>Profile Info</strong>: Name, photo, email.</li>
+    <li><strong>Unit Preference</strong>: mg/dL vs. mmol/L.</li>
+    <li><strong>Target Range</strong>: e.g., 4.0–10.0 mmol/L.</li>
+    <li><strong>Integrations</strong>: Apple Health, Dexcom account, pump brand.</li>
+    <li><strong>Data Backup</strong>: iCloud or other cloud sync toggles.</li>
     <li><strong>Privacy / Security</strong>: PIN lock, Face ID, consent for data sharing.</li>
 </ul>
 <p><strong>Mockup</strong>:</p>
@@ -197,13 +257,15 @@
 |<span class="hljs-string"> Data Backup:   iCloud (On)                             </span>|
 |<span class="hljs-string"> Security:      [ Face ID (On) ] [ Export/Import Data ] </span>|
  ---------------------------------------------------------
-</code></pre><hr>
+</code></pre>
+<hr>
 <h2 id="8-reports-sharing-screen-">8. <strong>Reports &amp; Sharing Screen</strong></h2>
-<p><strong>Purpose</strong>: Generate a <strong>PDF</strong>, CSV, or share data with a healthcare provider or caretaker.</p>
+<p><strong>Purpose</strong>: Generate a <strong>PDF</strong>, CSV, or share data with a healthcare
+    provider or caretaker.</p>
 <p><strong>Visual Concept</strong>:</p>
 <ul>
-    <li><strong>Report Types</strong>: PDF summary, CSV logs, data range selection.  </li>
-    <li><strong>Share</strong> or <strong>Email</strong> options.  </li>
+    <li><strong>Report Types</strong>: PDF summary, CSV logs, data range selection.</li>
+    <li><strong>Share</strong> or <strong>Email</strong> options.</li>
     <li>Possibly direct “Send to Doctor” if integrated with a medical portal.</li>
 </ul>
 <p><strong>Mockup</strong>:</p>
@@ -217,7 +279,17 @@
 |<span class="hljs-string">                                                       </span>|
 |<span class="hljs-string">   Share Options:  [ Email ] [ Messages ] [ Save Files ]</span>|
  ---------------------------------------------------------
-</code></pre><hr>
+</code></pre>
+<hr>
 <h1 id="putting-it-all-together">Putting It All Together</h1>
-<p>A <strong>fully featured</strong> Glucose Monitor app could have these <strong>eight</strong> primary screens (or combine some). The actual design might unify certain flows or adopt <strong>tab-based</strong> navigation (e.g., <strong>Home</strong>, <strong>History</strong>, <strong>Log</strong>, <strong>Meals</strong>, <strong>Settings</strong>). The above mockups illustrate <strong>key functionalities</strong>, from <strong>real-time dashboards</strong> to <strong>detailed logs</strong>, <strong>meal trackers</strong>, <strong>alerts</strong>, and <strong>reporting</strong>.</p>
-<p>Though I’ve provided textual <strong>wireframe descriptions</strong> here, a designer or developer could easily turn them into <strong>fully polished UIs</strong> with color themes, icons (e.g., SF Symbols), and consistent spacing. The idea is to show how each major <strong>feature</strong> could be structured in a user-friendly interface.</p>
+<p>A <strong>fully featured</strong> Glucose Monitor app could have these <strong>eight</strong>
+    primary screens (or combine some). The actual design might unify certain flows or adopt <strong>tab-based</strong>
+    navigation (e.g., <strong>Home</strong>, <strong>History</strong>, <strong>Log</strong>,
+    <strong>Meals</strong>, <strong>Settings</strong>). The above mockups illustrate <strong>key
+        functionalities</strong>, from <strong>real-time dashboards</strong> to <strong>detailed
+        logs</strong>, <strong>meal trackers</strong>, <strong>alerts</strong>, and <strong>reporting</strong>.
+</p>
+<p>Though I’ve provided textual <strong>wireframe descriptions</strong> here, a designer or
+    developer could easily turn them into <strong>fully polished UIs</strong> with color themes,
+    icons (e.g., SF Symbols), and consistent spacing. The idea is to show how each major <strong>feature</strong>
+    could be structured in a user-friendly interface.</p>

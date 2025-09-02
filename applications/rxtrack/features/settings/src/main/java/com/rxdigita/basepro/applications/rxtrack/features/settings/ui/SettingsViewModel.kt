@@ -26,7 +26,8 @@ class SettingsViewModel @Inject constructor(
     // Inject dependencies here if needed
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<SettingsUiState>(SettingsUiState.Success("Default Settings Data")) // Or SettingsUiState.Loading
+    private val _uiState =
+        MutableStateFlow<SettingsUiState>(SettingsUiState.Success("Default Settings Data")) // Or SettingsUiState.Loading
     val uiState: StateFlow<SettingsUiState> = _uiState
 
     fun onEvent(event: SettingsEvent) {

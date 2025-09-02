@@ -1,7 +1,5 @@
 package com.ylabz.basepro.core.model.ble.tools
 
-import java.util.*
-
 object AllGattCharacteristics {
     private val attributes = HashMap<String?, String>()
 

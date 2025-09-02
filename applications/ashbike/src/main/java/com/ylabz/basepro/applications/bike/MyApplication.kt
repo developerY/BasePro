@@ -20,7 +20,7 @@ class MyApplication : Application() {
             // Channel for Bike Ride Service
             val bikeServiceChannelName = "Bike Ride Updates"
             val bikeServiceChannelDescription = "Notifications for active bike rides"
-            val bikeServiceChannelImportance = NotificationManager.IMPORTANCE_LOW 
+            val bikeServiceChannelImportance = NotificationManager.IMPORTANCE_LOW
             val bikeServiceChannel = NotificationChannel(
                 BikeForegroundService.NOTIFICATION_CHANNEL_ID, // Using the constant from your service
                 bikeServiceChannelName,

@@ -1,8 +1,9 @@
 package com.ylabz.basepro.feature.wearos.sleepwatch.components
 
 
-import android.R.attr.fontWeight
-import android.util.Log
+//import androidx.compose.ui.tooling.preview.Preview
+
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,52 +16,30 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-
-//import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.health.connect.client.records.SleepSessionRecord
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import androidx.wear.compose.material.Text
-import com.ylabz.basepro.core.data.fake.sleep.FakeHealthRepository
-import com.ylabz.basepro.core.model.health.SleepSessionData
-import com.ylabz.basepro.feature.wearos.sleepwatch.SleepWatchEvent
-import java.time.Duration
-import java.time.Instant
-import java.time.ZoneOffset
-
-
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.LightGray
-import androidx.compose.ui.input.key.Key.Companion.Sleep
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.Navigation
+import androidx.navigation.NavController
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Scaffold
+import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.Vignette
 import androidx.wear.compose.material.VignettePosition
-import com.ylabz.basepro.core.model.Purple200
-import com.ylabz.basepro.core.model.Purple500
-import com.ylabz.basepro.core.model.Purple80
 import com.ylabz.basepro.core.model.health.SleepSegment
-import kotlinx.coroutines.coroutineScope
+import com.ylabz.basepro.core.model.health.SleepSessionData
+import com.ylabz.basepro.feature.wearos.sleepwatch.SleepWatchEvent
 import kotlinx.coroutines.launch
 
 @Composable
@@ -97,6 +76,7 @@ fun SleepWatchStartScreenWear(
                         clockSize = 200.dp,
                         modifier = Modifier.align(Alignment.Center)
                     )
+
                     1 -> SleePieChart(input = samplePieChartInput)
                 }
             }
@@ -223,7 +203,7 @@ fun TestScreen(
             }
         }
     }
-    
+
 }
 
 val sampleSleepSegments = listOf(

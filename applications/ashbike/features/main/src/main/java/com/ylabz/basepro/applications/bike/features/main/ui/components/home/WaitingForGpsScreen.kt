@@ -80,9 +80,17 @@ fun WaitingForGpsScreen(
     // Use the remembered lm from the outer scope
     DisposableEffect(hasPermission, lm) { // Add lm to keys as it's used in the effect
         val listener = object : LocationListener {
-            override fun onLocationChanged(loc: Location) { /*…*/ }
-            override fun onProviderEnabled(name: String)  { gpsEnabled = true }
-            override fun onProviderDisabled(name: String) { gpsEnabled = false }
+            override fun onLocationChanged(loc: Location) { /*…*/
+            }
+
+            override fun onProviderEnabled(name: String) {
+                gpsEnabled = true
+            }
+
+            override fun onProviderDisabled(name: String) {
+                gpsEnabled = false
+            }
+
             override fun onStatusChanged(p: String?, s: Int, e: Bundle?) {}
         }
 
@@ -108,7 +116,7 @@ fun WaitingForGpsScreen(
     val infinite = rememberInfiniteTransition()
     val rotation by infinite.animateFloat(
         initialValue = 0f,
-        targetValue  = 360f,
+        targetValue = 360f,
         animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 2000, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
@@ -116,7 +124,7 @@ fun WaitingForGpsScreen(
     )
     val scale by infinite.animateFloat(
         initialValue = 0.8f,
-        targetValue  = 1.2f,
+        targetValue = 1.2f,
         animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 800, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
@@ -149,7 +157,7 @@ fun WaitingForGpsScreen(
 
             Text(stringResource(R.string.waiting_for_GPS_content_desc))
             // Animated icon
-            Box (modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = Icons.Rounded.LocationSearching,
                     contentDescription = stringResource(R.string.waiting_for_GPS_content_desc),

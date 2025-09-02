@@ -1,5 +1,6 @@
 package com.ylabz.basepro.feature.nfc.ui.components.screens
 
+////import androidx.compose.ui.tooling.preview.Preview
 import android.app.Activity
 import android.app.PendingIntent
 import android.content.Intent
@@ -16,11 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-////import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
-import androidx.compose.ui.Modifier
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 
 @Composable
@@ -81,7 +81,10 @@ fun Activity.enableForegroundDispatch(nfcAdapter: NfcAdapter?) {
         PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
     )
     nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null)
-    Log.d("NFC", "enableForegroundDispatch: Enabled NFC foreground dispatch for ${this.localClassName}")
+    Log.d(
+        "NFC",
+        "enableForegroundDispatch: Enabled NFC foreground dispatch for ${this.localClassName}"
+    )
 }
 
 fun Activity.disableForegroundDispatch(nfcAdapter: NfcAdapter?) {
@@ -90,5 +93,8 @@ fun Activity.disableForegroundDispatch(nfcAdapter: NfcAdapter?) {
         return
     }
     nfcAdapter.disableForegroundDispatch(this)
-    Log.d("NFC", "disableForegroundDispatch: Disabled NFC foreground dispatch for ${this.localClassName}")
+    Log.d(
+        "NFC",
+        "disableForegroundDispatch: Disabled NFC foreground dispatch for ${this.localClassName}"
+    )
 }

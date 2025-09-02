@@ -48,7 +48,8 @@ fun TripsUIRoute(
 
     // 4. Handle side effects from BOTH ViewModels
 
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current // Get the lifecycle owner for the check
+    val lifecycleOwner =
+        androidx.lifecycle.compose.LocalLifecycleOwner.current // Get the lifecycle owner for the check
 
     // Effect handler for HealthViewModel
     LaunchedEffect(Unit) { // Changed key from (healthUiState, snackbarHostState) to Unit for consistency if only collecting side effects
@@ -72,14 +73,24 @@ fun TripsUIRoute(
                     // foreground screen's attempt to launch the same permissions dialog,
                     // causing the dialog to not appear or behave unpredictably.
                     if (lifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
-                        Log.d("TripsUIRoute", "LaunchPermissions side effect received IN TRIPS UI (RESUMED). Launching its own permissionsLauncher.")
+                        Log.d(
+                            "TripsUIRoute",
+                            "LaunchPermissions side effect received IN TRIPS UI (RESUMED). Launching its own permissionsLauncher."
+                        )
                         permissionsLauncher.launch(effect.permissions)
                     } else {
-                        Log.d("TripsUIRoute", "LaunchPermissions side effect received IN TRIPS UI (NOT RESUMED - Current state: ${lifecycleOwner.lifecycle.currentState}). Ignoring.")
+                        Log.d(
+                            "TripsUIRoute",
+                            "LaunchPermissions side effect received IN TRIPS UI (NOT RESUMED - Current state: ${lifecycleOwner.lifecycle.currentState}). Ignoring."
+                        )
                     }
                 }
+
                 is HealthSideEffect.BikeRideSyncedToHealth -> {
-                    Log.d("TripsUIRoute", "BikeRideSyncedToHealth side effect received. Marking ride ${effect.rideId} as synced.")
+                    Log.d(
+                        "TripsUIRoute",
+                        "BikeRideSyncedToHealth side effect received. Marking ride ${effect.rideId} as synced."
+                    )
                     tripsViewModel.markRideAsSyncedInLocalDb(
                         rideId = effect.rideId,
                         healthConnectId = effect.healthConnectId
@@ -94,7 +105,10 @@ fun TripsUIRoute(
         tripsViewModel.sideEffect.collect { effect ->
             when (effect) {
                 is TripsSideEffect.RequestHealthConnectSync -> {
-                    Log.d("TripsUIRoute", "Sync requested for rideId: ${effect.rideId}. Sending HealthEvent.Insert to HealthViewModel.")
+                    Log.d(
+                        "TripsUIRoute",
+                        "Sync requested for rideId: ${effect.rideId}. Sending HealthEvent.Insert to HealthViewModel."
+                    )
                     healthViewModel.onEvent(
                         HealthEvent.Insert(
                             rideId = effect.rideId,
@@ -112,17 +126,17 @@ fun TripsUIRoute(
 
         is TripsUIState.Error -> ErrorScreen(
             errorMessage = state.message,
-            onRetry      = { tripsViewModel.onEvent(TripsEvent.OnRetry) }
+            onRetry = { tripsViewModel.onEvent(TripsEvent.OnRetry) }
         )
 
         is TripsUIState.Success -> {
             // Note the simplified parameters passed to BikeTripsCompose
             BikeTripsCompose(
-                modifier      = modifier,
-                bikeRides     = state.rides, // This is now List<BikeRideUiModel>
-                bikeEvent     = tripsViewModel::onEvent,
-                syncedIds     = syncedIds,
-                healthEvent   = healthViewModel::onEvent,
+                modifier = modifier,
+                bikeRides = state.rides, // This is now List<BikeRideUiModel>
+                bikeEvent = tripsViewModel::onEvent,
+                syncedIds = syncedIds,
+                healthEvent = healthViewModel::onEvent,
                 onDeleteClick = { rideId ->
                     tripsViewModel.onEvent(TripsEvent.DeleteItem(rideId))
                 },
@@ -131,7 +145,7 @@ fun TripsUIRoute(
                     tripsViewModel.onEvent(TripsEvent.SyncRide(rideId))
                 },
                 healthUiState = healthUiState,
-                navTo         = navTo
+                navTo = navTo
             )
         }
     }

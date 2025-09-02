@@ -180,7 +180,12 @@ fun FancySpeedometer_rem(
                 contentColor.copy(alpha = 0.7f).toArgb()
             }
             baseTickPaint.color = labelColor // Update color on the remembered paint
-            drawContext.canvas.nativeCanvas.drawText(tickSpeed.toString(), lx, ly + 10f, baseTickPaint)
+            drawContext.canvas.nativeCanvas.drawText(
+                tickSpeed.toString(),
+                lx,
+                ly + 10f,
+                baseTickPaint
+            )
         }
 
         // 4) Needle
@@ -211,10 +216,12 @@ fun FancySpeedometer_rem(
 
         drawContext.canvas.nativeCanvas.apply {
             val numberTextWidth = numberTextPaint.measureText(speedNumberText)
-            val totalTextWidth = numberTextWidth // Assuming unit text is positioned relative to number
+            val totalTextWidth =
+                numberTextWidth // Assuming unit text is positioned relative to number
 
             val startX = center.x - (totalTextWidth / 2f)
-            val textY = center.y + (numberTextPaint.textSize / 4f) // Minor adjustment for vertical centering
+            val textY =
+                center.y + (numberTextPaint.textSize / 4f) // Minor adjustment for vertical centering
 
             drawText(
                 speedNumberText,

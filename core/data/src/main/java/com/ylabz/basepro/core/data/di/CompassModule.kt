@@ -2,7 +2,6 @@ package com.ylabz.basepro.core.data.di
 
 import com.ylabz.basepro.core.data.repository.travel.compass.CompassRepository
 import com.ylabz.basepro.core.data.repository.travel.compass.CompassRepositoryAccMagImpl
-import com.ylabz.basepro.core.data.repository.travel.compass.CompassRepositoryRotVecImpl
 import com.ylabz.basepro.core.data.repository.travel.compass.DemoCompassRepositoryImpl
 import dagger.Binds
 import dagger.Module

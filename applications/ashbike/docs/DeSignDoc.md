@@ -1,8 +1,9 @@
-AshBike is the best bike computer money can’t buy—because it’s free (and ad-free) forever. 
-Built for daily commuters, it strips away everything you don’t need— maps, no clutter—just the 
-live metrics you care about. Your ride data seamlessly flows into Google Health Connect when you’re done, 
-and if you ever delete the app (or an individual ride), it leaves absolutely no trace behind. 
-By harnessing every on-device sensor and feature, AshBike turns your phone into the ultimate, 
+AshBike is the best bike computer money can’t buy—because it’s free (and ad-free) forever.
+Built for daily commuters, it strips away everything you don’t need— maps, no clutter—just the
+live metrics you care about. Your ride data seamlessly flows into Google Health Connect when you’re
+done,
+and if you ever delete the app (or an individual ride), it leaves absolutely no trace behind.
+By harnessing every on-device sensor and feature, AshBike turns your phone into the ultimate,
 high-precision cycling companion.
 
 
@@ -14,15 +15,20 @@ high-precision cycling companion.
 **Why you’ll love it:**
 
 * **Live Speedometer & Compass**
-  Instantaneous speed in km/h (or m/s), plus a dynamic compass overlay so you always know your heading.
+  Instantaneous speed in km/h (or m/s), plus a dynamic compass overlay so you always know your
+  heading.
 * **One-Shot Weather Fetch**
-  Automatic weather conditions (temperature, humidity, wind speed & direction) recorded at ride start—no constant API calls, 1 000 calls/day stays in the bank.
+  Automatic weather conditions (temperature, humidity, wind speed & direction) recorded at ride
+  start—no constant API calls, 1 000 calls/day stays in the bank.
 * **Health Connect Integration**
-  Sync your ride straight into Google Health Connect as a “Biking” activity, including heart-rate if you wear a monitor.
+  Sync your ride straight into Google Health Connect as a “Biking” activity, including heart-rate if
+  you wear a monitor.
 * **Real-Time Ride Metrics**
-  Track distance, duration, average & max speeds, elevation gain/loss, and calories burned—all updating live in your dashboard.
+  Track distance, duration, average & max speeds, elevation gain/loss, and calories burned—all
+  updating live in your dashboard.
 * **Custom Progress Indicator**
-  Set an arbitrary “total trip” goal and watch the bike icon glide along a progress bar—perfect for planning your route home.
+  Set an arbitrary “total trip” goal and watch the bike icon glide along a progress bar—perfect for
+  planning your route home.
 * **Smart Trip Map**
   No Google Maps required—every ride’s path is drawn on a subtle grid with:
 
@@ -33,18 +39,19 @@ high-precision cycling companion.
 * **Clean, Offline-First Design**
   No hidden trackers or data “droppings”—uninstall anytime and your phone is back to factory clean.
 * **Sync & Delete Safeguard**
-  One-tap sync button on each saved trip; protected “trash” icon warns you if you try to delete before syncing.
+  One-tap sync button on each saved trip; protected “trash” icon warns you if you try to delete
+  before syncing.
 * **Extendable Platform**
-  NFC pairing, e-bike battery & motor stats, haptic interval alerts, shareable summaries, homescreen widget… and more features planned.
+  NFC pairing, e-bike battery & motor stats, haptic interval alerts, shareable summaries, homescreen
+  widget… and more features planned.
 * **Free Forever, No Ads**
   We believe the best bike computer is the one you never have to pay for.
 
-**Get AshBike today** and turn your Android phone into the best bike computer money can’t buy—because it’s free. 🚴‍♂️⏱️🌤️📈
+**Get AshBike today** and turn your Android phone into the best bike computer money can’t
+buy—because it’s free. 🚴‍♂️⏱️🌤️📈
 
-
-
-
-Absolutely—I think it nails the vision. It’s clear, punchy, and highlights everything that sets AshBike apart:
+Absolutely—I think it nails the vision. It’s clear, punchy, and highlights everything that sets
+AshBike apart:
 
 * **Free & forever ad-free** (the best bike computer you didn’t have to pay for)
 * **Stripped-down for commuters** (no unnecessary maps or bloat)
@@ -54,7 +61,8 @@ Absolutely—I think it nails the vision. It’s clear, punchy, and highlights e
 
 It reads like a perfect elevator pitch for a commuter-focused cycling app. Well done!
 
-Overall, I’d say your code is very solid—here are the high-points and a few places you might tighten it further:
+Overall, I’d say your code is very solid—here are the high-points and a few places you might tighten
+it further:
 
 ---
 
@@ -68,7 +76,8 @@ Overall, I’d say your code is very solid—here are the high-points and a few 
 
 2. **Reactive Streams Everywhere**
 
-    * You use `Flow` & `StateFlow` throughout, so UI automatically stays in sync with GPS, speed, weather, etc.
+    * You use `Flow` & `StateFlow` throughout, so UI automatically stays in sync with GPS, speed,
+      weather, etc.
     * `combine` + `map` + `.stateIn(…)` is idiomatic and testable
 
 3. **One-Shot vs. Continuous Data**
@@ -79,7 +88,8 @@ Overall, I’d say your code is very solid—here are the high-points and a few 
 4. **Stateless Composables**
 
     * Every card/composable takes only immutable DTOs (`BikeRideInfo`, `GpsFix`)
-    * All UI interactions go back via `BikeEvent`, so you could swap out Compose for another UI and keep the same logic
+    * All UI interactions go back via `BikeEvent`, so you could swap out Compose for another UI and
+      keep the same logic
 
 5. **Custom “Map” Renderer**
 
@@ -97,11 +107,13 @@ Overall, I’d say your code is very solid—here are the high-points and a few 
 1. **Handle Empty & Edge Cases**
 
     * Guard `fixes.size < 2` earlier to avoid crashes
-    * In `toBikeRideInfo` avoid calling `.last()` on an empty list—always use `firstOrNull()` / `lastOrNull()` with a fallback
+    * In `toBikeRideInfo` avoid calling `.last()` on an empty list—always use `firstOrNull()` /
+      `lastOrNull()` with a fallback
 
 2. **Decompose Large Functions**
 
-    * Breaking out the scale-bar, legend, grid, and compass into small private composables or helper functions makes the main Canvas code easier to scan
+    * Breaking out the scale-bar, legend, grid, and compass into small private composables or helper
+      functions makes the main Canvas code easier to scan
 
 3. **Unit & UI Testing**
 
@@ -110,7 +122,8 @@ Overall, I’d say your code is very solid—here are the high-points and a few 
 
 4. **Resource Extraction**
 
-    * Strings like `"N"`, `"Start"`, `"End"`, compass icons, dimensions could live in resources for easier localization and theming
+    * Strings like `"N"`, `"Start"`, `"End"`, compass icons, dimensions could live in resources for
+      easier localization and theming
 
 5. **Performance Tweaks**
 
@@ -119,12 +132,15 @@ Overall, I’d say your code is very solid—here are the high-points and a few 
 
 ---
 
-But these are really just polish on top of an already excellent codebase.  You’ve got a rock-solid, maintainable architecture that should scale well as you add more features.  Great job!
+But these are really just polish on top of an already excellent codebase. You’ve got a rock-solid,
+maintainable architecture that should scale well as you add more features. Great job!
 
 ----
+
 # AshBike Data Architecture Overview
 
-This document outlines how the various layers of the AshBike app interact—from raw data sources (repositories) through use‑cases and ViewModel, down to the Composables that render the UI.
+This document outlines how the various layers of the AshBike app interact—from raw data sources (
+repositories) through use‑cases and ViewModel, down to the Composables that render the UI.
 
 ---
 
@@ -136,7 +152,8 @@ This document outlines how the various layers of the AshBike app interact—from
 
     * `locationFlow: Flow<Location>` – raw GPS fixes
     * `speedFlow: Flow<Float>` – instantaneous speed (m/s or converted to km/h)
-* Implementation detail: wraps Android `LocationManager` or fused provider, handles permissions & error cases.
+* Implementation detail: wraps Android `LocationManager` or fused provider, handles permissions &
+  error cases.
 
 ### WeatherRepo
 
@@ -171,7 +188,8 @@ This document outlines how the various layers of the AshBike app interact—from
     * `elevationGainFlow(reset, locationFlow)`
     * `elevationLossFlow(reset, locationFlow)`
     * `caloriesFlow(...)` – via injected `CalculateCaloriesUseCase`
-    * `sessionFlow(reset, locationFlow, speedFlow, headingFlow, userStatsFlow)` produces a `StateFlow<RideSession>` snapshot carrying all stats + path.
+    * `sessionFlow(reset, locationFlow, speedFlow, headingFlow, userStatsFlow)` produces a
+      `StateFlow<RideSession>` snapshot carrying all stats + path.
 
 ### RideSessionUseCase / RideTracker
 
@@ -217,7 +235,8 @@ This document outlines how the various layers of the AshBike app interact—from
 * `onEvent(event: BikeEvent)` handles:
 
     * `StartRide`: launch tracker.start(), update state
-    * `StopRide`: stop tracker, persist session → `BikeRideRepo.insertRideWithLocations()`, reset state
+    * `StopRide`: stop tracker, persist session → `BikeRideRepo.insertRideWithLocations()`, reset
+      state
     * `SetTotalDistance`: update `_uiPathDistance` to reflect in UI only (no DB)
 
 ---
@@ -287,9 +306,11 @@ graph LR
 1. Raw GPS & speed → **tracker** → `sessionFlow` & `distanceFlow`.
 2. First GPS fix → **weatherUC** → one‑shot fetch.
 3. Combine flows → **ViewModel** transforms to UI model.
-4. UI events (`StartRide`, `StopRide`, `SetTotalDistance`) → **ViewModel** → modify flows or persist.
+4. UI events (`StartRide`, `StopRide`, `SetTotalDistance`) → **ViewModel** → modify flows or
+   persist.
 5. **ViewModel** exposes `uiState` → **Composable** renders.
 
 ---
 
-With this layered separation, each piece is testable in isolation and the Compose UI remains entirely declarative, driven only by the `BikeUiState` and `BikeEvent` streams.
+With this layered separation, each piece is testable in isolation and the Compose UI remains
+entirely declarative, driven only by the `BikeUiState` and `BikeEvent` streams.

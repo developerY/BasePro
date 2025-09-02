@@ -3,7 +3,6 @@ package com.ylabz.basepro.core.data.service.health
 /**
  * Manager for accessing and aggregating health data from Health Connect.
  */
-import android.R.attr.end
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -18,8 +17,6 @@ import androidx.health.connect.client.HealthConnectFeatures
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.changes.Change
 import androidx.health.connect.client.records.DistanceRecord
-import androidx.health.connect.client.records.ExerciseRoute
-import androidx.health.connect.client.records.ExerciseRouteResult
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.Record
@@ -42,7 +39,6 @@ import com.example.healthconnectsample.data.ExerciseSessionData
 import com.example.healthconnectsample.data.HealthConnectAppInfo
 import com.example.healthconnectsample.data.randomSleepStage
 import com.ylabz.basepro.core.model.health.SleepSessionData
-import com.ylabz.basepro.core.network.R
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -51,7 +47,6 @@ import java.io.IOException
 import java.io.InvalidObjectException
 import java.time.Duration
 import java.time.Instant
-import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import kotlin.random.Random
@@ -155,7 +150,10 @@ class HealthSessionManager(private val context: Context) {
     suspend fun insertRecords(records: List<Record>): InsertRecordsResponse {
         //val res = healthConnectClient.insertRecords(records)
 
-        Log.d("DebugSync", "HealthSessionManager.insertRecords → ${records.map { it::class.simpleName }}")
+        Log.d(
+            "DebugSync",
+            "HealthSessionManager.insertRecords → ${records.map { it::class.simpleName }}"
+        )
         val res = healthConnectClient.insertRecords(records)
         Log.d("DebugSync", "HealthSessionManager.insertRecords ← ${res.recordIdsList}")
         // Build a detailed mapping of record type -> (clientId? -> serverId)
@@ -178,10 +176,16 @@ class HealthSessionManager(private val context: Context) {
     }
 
     suspend fun insertBikeRideWithAssociatedData(rideId: String, records: List<Record>): String {
-        Log.d(TAG, "Attempting to insert bike ride data for rideId: $rideId consisting of ${records.map { it::class.simpleName }}")
+        Log.d(
+            TAG,
+            "Attempting to insert bike ride data for rideId: $rideId consisting of ${records.map { it::class.simpleName }}"
+        )
         try {
             val response = healthConnectClient.insertRecords(records)
-            Log.d(TAG, "Successfully inserted ${response.recordIdsList.size} records for rideId $rideId. HC IDs: ${response.recordIdsList}")
+            Log.d(
+                TAG,
+                "Successfully inserted ${response.recordIdsList.size} records for rideId $rideId. HC IDs: ${response.recordIdsList}"
+            )
             // We return the original rideId. It's assumed to be the clientRecordId for the main session,
             // or at least the identifier the ViewModel layer needs to update the local database.
             // If you need the specific Health Connect generated ID for the ExerciseSessionRecord,
@@ -204,16 +208,19 @@ class HealthSessionManager(private val context: Context) {
 
         // 1) Exercise sessions
         val sessionRequest = ReadRecordsRequest(
-            recordType      = ExerciseSessionRecord::class,
+            recordType = ExerciseSessionRecord::class,
             timeRangeFilter = TimeRangeFilter.before(now)
         )
         val sessionResponse = healthConnectClient.readRecords(sessionRequest)
-        Log.d("HealthSessionManager", "ExerciseSessionRecord: ${sessionResponse.records.size} record(s)")
+        Log.d(
+            "HealthSessionManager",
+            "ExerciseSessionRecord: ${sessionResponse.records.size} record(s)"
+        )
         sessionResponse.records.forEach { Log.d("HealthSessionManager", it.toString()) }
 
         // 2) Steps
         val stepsRequest = ReadRecordsRequest(
-            recordType      = StepsRecord::class,
+            recordType = StepsRecord::class,
             timeRangeFilter = TimeRangeFilter.before(now)
         )
         val stepsResponse = healthConnectClient.readRecords(stepsRequest)
@@ -222,7 +229,7 @@ class HealthSessionManager(private val context: Context) {
 
         // 3) Distance
         val distanceRequest = ReadRecordsRequest(
-            recordType      = DistanceRecord::class,
+            recordType = DistanceRecord::class,
             timeRangeFilter = TimeRangeFilter.before(now)
         )
         val distanceResponse = healthConnectClient.readRecords(distanceRequest)
@@ -231,24 +238,25 @@ class HealthSessionManager(private val context: Context) {
 
         // 4) Calories
         val caloriesRequest = ReadRecordsRequest(
-            recordType      = TotalCaloriesBurnedRecord::class,
+            recordType = TotalCaloriesBurnedRecord::class,
             timeRangeFilter = TimeRangeFilter.before(now)
         )
         val caloriesResponse = healthConnectClient.readRecords(caloriesRequest)
-        Log.d("HealthSessionManager", "TotalCaloriesBurnedRecord: ${caloriesResponse.records.size} record(s)")
+        Log.d(
+            "HealthSessionManager",
+            "TotalCaloriesBurnedRecord: ${caloriesResponse.records.size} record(s)"
+        )
         caloriesResponse.records.forEach { Log.d("HealthSessionManager", it.toString()) }
 
         // 5) Heart rate
         val hrRequest = ReadRecordsRequest(
-            recordType      = HeartRateRecord::class,
+            recordType = HeartRateRecord::class,
             timeRangeFilter = TimeRangeFilter.before(now)
         )
         val hrResponse = healthConnectClient.readRecords(hrRequest)
         Log.d("HealthSessionManager", "HeartRateRecord: ${hrResponse.records.size} record(s)")
         hrResponse.records.forEach { Log.d("HealthSessionManager", it.toString()) }
     }
-
-
 
 
     /**
@@ -262,49 +270,47 @@ class HealthSessionManager(private val context: Context) {
         Log.d("HealthSessionManager", "Writing exercise session")
         return healthConnectClient.insertRecords(
             listOf<Record>(
-                   StepsRecord(
-                       startTime = start.toInstant(),
-                       startZoneOffset = start.offset,
-                       endTime = end.toInstant(),
-                       endZoneOffset = end.offset,
-                       count = (1000 + 1000 * Random.nextInt(3)).toLong(),
-                       metadata = Metadata.autoRecorded(
-                           device = Device(type = Device.TYPE_WATCH)
-                       )
+                StepsRecord(
+                    startTime = start.toInstant(),
+                    startZoneOffset = start.offset,
+                    endTime = end.toInstant(),
+                    endZoneOffset = end.offset,
+                    count = (1000 + 1000 * Random.nextInt(3)).toLong(),
+                    metadata = Metadata.autoRecorded(
+                        device = Device(type = Device.TYPE_WATCH)
+                    )
 
-                   ),
-                   DistanceRecord(
-                       startTime = start.toInstant(),
-                       startZoneOffset = start.offset,
-                       endTime = end.toInstant(),
-                       endZoneOffset = end.offset,
-                       distance = Length.meters((1000 + 100 * Random.nextInt(20)).toDouble()),
-                       metadata = Metadata.autoRecorded(
-                           device = Device(type = Device.TYPE_WATCH)
-                       )
-                   ),
-                   TotalCaloriesBurnedRecord(
-                       startTime = start.toInstant(),
-                       startZoneOffset = start.offset,
-                       endTime = end.toInstant(),
-                       endZoneOffset = end.offset,
-                       energy = Energy.calories(140 + (Random.nextInt(20)) * 0.01),
-                       metadata = Metadata.autoRecorded(
-                           device = Device(type = Device.TYPE_WATCH)
-                       )
-                   )
-               ) + buildHeartRateSeries(start, end)
+                ),
+                DistanceRecord(
+                    startTime = start.toInstant(),
+                    startZoneOffset = start.offset,
+                    endTime = end.toInstant(),
+                    endZoneOffset = end.offset,
+                    distance = Length.meters((1000 + 100 * Random.nextInt(20)).toDouble()),
+                    metadata = Metadata.autoRecorded(
+                        device = Device(type = Device.TYPE_WATCH)
+                    )
+                ),
+                TotalCaloriesBurnedRecord(
+                    startTime = start.toInstant(),
+                    startZoneOffset = start.offset,
+                    endTime = end.toInstant(),
+                    endZoneOffset = end.offset,
+                    energy = Energy.calories(140 + (Random.nextInt(20)) * 0.01),
+                    metadata = Metadata.autoRecorded(
+                        device = Device(type = Device.TYPE_WATCH)
+                    )
+                )
+            ) + buildHeartRateSeries(start, end)
         )
     }
-
-
 
 
     /**
      * TODO: Writes an [ExerciseSessionRecord] to Health Connect.
      */
     @SuppressLint("RestrictedApi")
-    suspend fun writeExerciseSessionTest(){//start: ZonedDateTime, end: ZonedDateTime) {
+    suspend fun writeExerciseSessionTest() {//start: ZonedDateTime, end: ZonedDateTime) {
         val start = ZonedDateTime.now()
         val sessionStartTime = Instant.now()
         val sessionDuration = Duration.ofMinutes(20)
@@ -355,14 +361,14 @@ class HealthSessionManager(private val context: Context) {
     ): InsertRecordsResponse {
         // 1) Build the ExerciseSessionRecord for BIKING
         val session = ExerciseSessionRecord(
-            metadata       = Metadata.manualEntry(),
-            startTime      = start.toInstant(),
+            metadata = Metadata.manualEntry(),
+            startTime = start.toInstant(),
             startZoneOffset = start.offset,
-            endTime        = end.toInstant(),
-            endZoneOffset   = end.offset,
-            exerciseType   = ExerciseSessionRecord.EXERCISE_TYPE_BIKING,
-            title          = title,
-            notes          = notes
+            endTime = end.toInstant(),
+            endZoneOffset = end.offset,
+            exerciseType = ExerciseSessionRecord.EXERCISE_TYPE_BIKING,
+            title = title,
+            notes = notes
         )
 
         // 2) Insert it into Health Connect
@@ -383,45 +389,45 @@ class HealthSessionManager(private val context: Context) {
 
         // 1) Build the ExerciseSessionRecord itself
         val session = ExerciseSessionRecord(
-            startTime        = start.toInstant(),
-            startZoneOffset  = start.offset,
-            endTime          = end.toInstant(),
-            endZoneOffset    = end.offset,
-            exerciseType     = ExerciseSessionRecord.EXERCISE_TYPE_BIKING,
-            title            = title,
-            notes            = notes,
+            startTime = start.toInstant(),
+            startZoneOffset = start.offset,
+            endTime = end.toInstant(),
+            endZoneOffset = end.offset,
+            exerciseType = ExerciseSessionRecord.EXERCISE_TYPE_BIKING,
+            title = title,
+            notes = notes,
             // metadata tags it as auto-recorded by this app
-            metadata         = Metadata.autoRecorded(
+            metadata = Metadata.autoRecorded(
                 device = Device(type = Device.TYPE_PHONE)
             )
         )
 
         // 2) Underlying raw and aggregate records
         val steps = StepsRecord(
-            startTime       = start.toInstant(),
+            startTime = start.toInstant(),
             startZoneOffset = start.offset,
-            endTime         = end.toInstant(),
-            endZoneOffset   = end.offset,
-            count           = /* your total step count, e.g. tracker.steps() */ 1L,
-            metadata        = Metadata.autoRecorded(device = Device(type = Device.TYPE_PHONE))
+            endTime = end.toInstant(),
+            endZoneOffset = end.offset,
+            count = /* your total step count, e.g. tracker.steps() */ 1L,
+            metadata = Metadata.autoRecorded(device = Device(type = Device.TYPE_PHONE))
         )
 
         val distance = DistanceRecord(
-            startTime       = start.toInstant(),
+            startTime = start.toInstant(),
             startZoneOffset = start.offset,
-            endTime         = end.toInstant(),
-            endZoneOffset   = end.offset,
-            distance        = Length.meters(/* your total meters */ 0.0),
-            metadata        = Metadata.autoRecorded(device = Device(type = Device.TYPE_PHONE))
+            endTime = end.toInstant(),
+            endZoneOffset = end.offset,
+            distance = Length.meters(/* your total meters */ 0.0),
+            metadata = Metadata.autoRecorded(device = Device(type = Device.TYPE_PHONE))
         )
 
         val calories = TotalCaloriesBurnedRecord(
-            startTime       = start.toInstant(),
+            startTime = start.toInstant(),
             startZoneOffset = start.offset,
-            endTime         = end.toInstant(),
-            endZoneOffset   = end.offset,
-            energy          = Energy.calories(/* your calories */ 0.0),
-            metadata        = Metadata.autoRecorded(device = Device(type = Device.TYPE_PHONE))
+            endTime = end.toInstant(),
+            endZoneOffset = end.offset,
+            energy = Energy.calories(/* your calories */ 0.0),
+            metadata = Metadata.autoRecorded(device = Device(type = Device.TYPE_PHONE))
         )
 
         // 3) Heart-rate series—use your existing builder
@@ -488,7 +494,8 @@ class HealthSessionManager(private val context: Context) {
         val aggregateRequest = AggregateRequest(
             metrics = aggregateDataTypes,
             timeRangeFilter = timeRangeFilter,
-            dataOriginFilter = dataOriginFilter)
+            dataOriginFilter = dataOriginFilter
+        )
         val aggregateData = healthConnectClient.aggregate(aggregateRequest)
 
 
@@ -527,13 +534,13 @@ class HealthSessionManager(private val context: Context) {
         Log.d(TAG, "Found ${existing.size} ${type.simpleName} to delete")
 
         if (existing.isNotEmpty()) {
-            val recordIds     = existing.map { it.metadata.id }
-            val clientIds     = existing.mapNotNull { it.metadata.clientRecordId }
+            val recordIds = existing.map { it.metadata.id }
+            val clientIds = existing.mapNotNull { it.metadata.clientRecordId }
 
             Log.d(TAG, "Deleting ${type.simpleName}: recordIds=$recordIds, clientIds=$clientIds")
             healthConnectClient.deleteRecords(
-                recordType          = type,
-                recordIdsList       = recordIds,
+                recordType = type,
+                recordIdsList = recordIds,
                 clientRecordIdsList = clientIds
             )
             Log.d(TAG, "✅ Deleted all ${type.simpleName}")
@@ -542,14 +549,14 @@ class HealthSessionManager(private val context: Context) {
 
 
     suspend fun deleteAllSessionData() {
-        val now          = Instant.now()
+        val now = Instant.now()
         val sessionRange = TimeRangeFilter.before(now)
 
         deleteRecordsOfType(ExerciseSessionRecord::class, sessionRange)
-        deleteRecordsOfType(StepsRecord::class,          sessionRange)
-        deleteRecordsOfType(DistanceRecord::class,       sessionRange)
+        deleteRecordsOfType(StepsRecord::class, sessionRange)
+        deleteRecordsOfType(DistanceRecord::class, sessionRange)
         deleteRecordsOfType(TotalCaloriesBurnedRecord::class, sessionRange)
-        deleteRecordsOfType(HeartRateRecord::class,      sessionRange)
+        deleteRecordsOfType(HeartRateRecord::class, sessionRange)
 
         deleteAllHealthData()
     }
@@ -603,11 +610,14 @@ class HealthSessionManager(private val context: Context) {
 
 
                     // 3️⃣ Delete by IDs
-                    Log.d(TAG, "🗑 Deleting ${recordType.simpleName} (records=${recordIds.size}, clientIds=${clientIds.size})…")
+                    Log.d(
+                        TAG,
+                        "🗑 Deleting ${recordType.simpleName} (records=${recordIds.size}, clientIds=${clientIds.size})…"
+                    )
                     healthConnectClient.deleteRecords(
-                        recordType           = recordType,
-                        recordIdsList        = recordIds,
-                        clientRecordIdsList  = clientIds
+                        recordType = recordType,
+                        recordIdsList = recordIds,
+                        clientRecordIdsList = clientIds
                     )
                     Log.d(TAG, "✅ Deleted ${recordType.simpleName} records successfully")
                 } else {
@@ -681,9 +691,9 @@ class HealthSessionManager(private val context: Context) {
                 Log.d(TAG, "📖 Reading all ${type.simpleName} records before $now…")
                 val response = healthConnectClient.readRecords(
                     ReadRecordsRequest(
-                        recordType      = type,
+                        recordType = type,
                         timeRangeFilter = filter,
-                        ascendingOrder  = true
+                        ascendingOrder = true
                     )
                 )
                 Log.d(TAG, "🗂 ${type.simpleName}: found ${response.records.size} record(s)")
@@ -697,8 +707,6 @@ class HealthSessionManager(private val context: Context) {
 
         Log.d(TAG, "🏁 logAllHealthData() complete")
     }
-
-
 
 
     /**
@@ -718,7 +726,15 @@ class HealthSessionManager(private val context: Context) {
         val records = mutableListOf<Record>()
         // Make yesterday the last day of the sleep data
         val lastDay = ZonedDateTime.now().minusDays(1).truncatedTo(ChronoUnit.DAYS)
-        val notes = arrayOf("good", "bad", "ok", "good", "bad", "ok", "good")//NOTE: context.resources.getStringArray(R.array.sleep_notes_array)
+        val notes = arrayOf(
+            "good",
+            "bad",
+            "ok",
+            "good",
+            "bad",
+            "ok",
+            "good"
+        )//NOTE: context.resources.getStringArray(R.array.sleep_notes_array)
         // Create 7 days-worth of sleep data
         for (i in 0..7) {
             val wakeUp = lastDay.minusDays(i.toLong())
@@ -735,7 +751,7 @@ class HealthSessionManager(private val context: Context) {
                 endZoneOffset = wakeUp.offset,
                 stages = generateSleepStages(bedtime, wakeUp),
                 metadata = Metadata.autoRecorded(
-                        device = Device(type = Device.TYPE_WATCH)
+                    device = Device(type = Device.TYPE_WATCH)
                 )
             )
             records.add(sleepSession)
@@ -820,7 +836,7 @@ class HealthSessionManager(private val context: Context) {
 
         val recs = healthConnectClient.readRecords(
             ReadRecordsRequest(
-                recordType      = ExerciseSessionRecord::class,
+                recordType = ExerciseSessionRecord::class,
                 timeRangeFilter = allTime
             )
         ).records
@@ -897,7 +913,9 @@ class HealthSessionManager(private val context: Context) {
                 SleepSessionRecord.Stage(
                     stage = randomSleepStage(),
                     startTime = stageStart.toInstant(),
-                    endTime = checkedEnd.toInstant()))
+                    endTime = checkedEnd.toInstant()
+                )
+            )
             stageStart = checkedEnd
         }
         return sleepStages
@@ -908,7 +926,11 @@ class HealthSessionManager(private val context: Context) {
      * Record types compatible with this function must be declared in the
      * [com.example.healthconnectsample.presentation.screen.recordlist.RecordType] enum.
      */
-    suspend fun fetchSeriesRecordsFromUid(recordType: KClass<out Record>, uid: String, seriesRecordsType: KClass<out Record>): List<Record> {
+    suspend fun fetchSeriesRecordsFromUid(
+        recordType: KClass<out Record>,
+        uid: String,
+        seriesRecordsType: KClass<out Record>
+    ): List<Record> {
         val recordResponse = healthConnectClient.readRecord(recordType, uid)
         // Use the start time and end time from the session, for reading raw and aggregate data.
         val timeRangeFilter =
@@ -918,10 +940,12 @@ class HealthSessionManager(private val context: Context) {
                     val record = recordResponse.record as ExerciseSessionRecord
                     TimeRangeFilter.between(startTime = record.startTime, endTime = record.endTime)
                 }
+
                 is SleepSessionRecord -> {
                     val record = recordResponse.record as SleepSessionRecord
                     TimeRangeFilter.between(startTime = record.startTime, endTime = record.endTime)
                 }
+
                 else -> {
                     throw InvalidObjectException("Record with unregistered data type returned")
                 }
@@ -935,7 +959,8 @@ class HealthSessionManager(private val context: Context) {
             ReadRecordsRequest(
                 recordType = seriesRecordsType,
                 dataOriginFilter = dataOriginFilter,
-                timeRangeFilter = timeRangeFilter)
+                timeRangeFilter = timeRangeFilter
+            )
         return healthConnectClient.readRecords(request).records
     }
 
@@ -945,10 +970,10 @@ class HealthSessionManager(private val context: Context) {
     suspend fun readLatestHeartRateSample(): HeartRateRecord.Sample? {
         // 1) Read the latest record (we only need the most recent record)
         val request = ReadRecordsRequest(
-            recordType       = HeartRateRecord::class,
-            timeRangeFilter  = TimeRangeFilter.before(Instant.now()),
-            ascendingOrder   = false,     // get newest first
-            pageSize         = 1          // only need one record
+            recordType = HeartRateRecord::class,
+            timeRangeFilter = TimeRangeFilter.before(Instant.now()),
+            ascendingOrder = false,     // get newest first
+            pageSize = 1          // only need one record
         )
         val response = healthConnectClient.readRecords(request)
         val record = response.records.firstOrNull() ?: return null
@@ -966,7 +991,9 @@ class HealthSessionManager(private val context: Context) {
         while (time.isBefore(sessionEndTime)) {
             samples.add(
                 HeartRateRecord.Sample(
-                    time = time.toInstant(), beatsPerMinute = (80 + Random.nextInt(80)).toLong()))
+                    time = time.toInstant(), beatsPerMinute = (80 + Random.nextInt(80)).toLong()
+                )
+            )
             time = time.plusSeconds(30)
         }
         return HeartRateRecord(
@@ -981,7 +1008,7 @@ class HealthSessionManager(private val context: Context) {
         )
     }
 
-    fun isFeatureAvailable(feature: Int): Boolean{
+    fun isFeatureAvailable(feature: Int): Boolean {
         return healthConnectClient
             .features
             .getFeatureStatus(feature) == HealthConnectFeatures.FEATURE_STATUS_AVAILABLE

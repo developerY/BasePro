@@ -19,7 +19,10 @@ import com.ylabz.basepro.feature.ble.R // Added import
 import com.ylabz.basepro.core.ui.R as CoreUiR // Added import
 
 @Composable
-fun PermissionsDenied(modifier: Modifier = Modifier, onOpenSettingsClick: () -> Unit) { // Renamed onPermissionsDenied to onOpenSettingsClick for clarity
+fun PermissionsDenied(
+    modifier: Modifier = Modifier,
+    onOpenSettingsClick: () -> Unit
+) { // Renamed onPermissionsDenied to onOpenSettingsClick for clarity
     Column(
         modifier = modifier // Used modifier parameter
             .fillMaxSize()

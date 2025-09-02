@@ -108,7 +108,8 @@ class BikeForegroundService_Update : LifecycleService() {
     private var formalRideSegmentUiResetTimeMillis: Long = 0L // For UI duration display reset
     private var formalRideSegmentStartOffsetDistanceMeters: Float = 0f
     private var formalRideSegmentMaxSpeedKph: Double = 0.0
-    private var currentFormalRideHighestCalories: Float = 0f // Tracks highest calories for the *current formal ride*
+    private var currentFormalRideHighestCalories: Float =
+        0f // Tracks highest calories for the *current formal ride*
     private var formalRideElevationGainMeters: Double = 0.0
     private var formalRideElevationLossMeters: Double = 0.0
     private var lastLocationForFormalElevation: Location? = null
@@ -164,7 +165,10 @@ class BikeForegroundService_Update : LifecycleService() {
             combine(currentEnergyLevelState, isLongRideActiveState) { energyLevel, isLongRide ->
                 Pair(energyLevel, isLongRide)
             }.collect { (newLevel, currentIsLongRide) ->
-                Log.d(TAG, ">>> SETTING CHANGE RECEIVED: Level: ${newLevel.name}, LongRide: $currentIsLongRide")
+                Log.d(
+                    TAG,
+                    ">>> SETTING CHANGE RECEIVED: Level: ${newLevel.name}, LongRide: $currentIsLongRide"
+                )
                 updateLocationTrackingBasedOnState()
             }
         }
@@ -183,12 +187,19 @@ class BikeForegroundService_Update : LifecycleService() {
 
         when (rideState) {
             RideState.Riding -> {
-                Log.d(TAG, "Energy/LongRide changed to ${energyLevel.name}/$isLongRide MID-RIDE. Updating to ACTIVE interval.")
+                Log.d(
+                    TAG,
+                    "Energy/LongRide changed to ${energyLevel.name}/$isLongRide MID-RIDE. Updating to ACTIVE interval."
+                )
                 interval = energyLevel.activeRideIntervalMillis
                 minInterval = energyLevel.activeRideMinUpdateIntervalMillis
             }
+
             else -> { // NotStarted, Paused, Stopped
-                Log.d(TAG, "Energy/LongRide changed to ${energyLevel.name}/$isLongRide while PASSIVE. Updating to passive interval.")
+                Log.d(
+                    TAG,
+                    "Energy/LongRide changed to ${energyLevel.name}/$isLongRide while PASSIVE. Updating to passive interval."
+                )
                 interval = energyLevel.passiveTrackingIntervalMillis
                 minInterval = energyLevel.passiveTrackingMinUpdateIntervalMillis
             }
@@ -253,37 +264,58 @@ class BikeForegroundService_Update : LifecycleService() {
     }
 
     @SuppressLint("MissingPermission")
-    private fun startLocationUpdates(intervalMillis: Long, minUpdateIntervalMillis: Long, isLongRide: Boolean) {
+    private fun startLocationUpdates(
+        intervalMillis: Long,
+        minUpdateIntervalMillis: Long,
+        isLongRide: Boolean
+    ) {
         var actualIntervalMillis = intervalMillis
         var actualMinUpdateIntervalMillis = minUpdateIntervalMillis
 
         if (isLongRide) {
             actualIntervalMillis = (actualIntervalMillis * LONG_RIDE_INTERVAL_MULTIPLIER).toLong()
-            actualMinUpdateIntervalMillis = (actualMinUpdateIntervalMillis * LONG_RIDE_INTERVAL_MULTIPLIER).toLong()
+            actualMinUpdateIntervalMillis =
+                (actualMinUpdateIntervalMillis * LONG_RIDE_INTERVAL_MULTIPLIER).toLong()
         }
         actualIntervalMillis = max(actualIntervalMillis, MIN_ALLOWED_GPS_INTERVAL_MS)
-        actualMinUpdateIntervalMillis = max(actualMinUpdateIntervalMillis, MIN_ALLOWED_GPS_INTERVAL_MS)
+        actualMinUpdateIntervalMillis =
+            max(actualMinUpdateIntervalMillis, MIN_ALLOWED_GPS_INTERVAL_MS)
 
         if (actualIntervalMillis == currentActualGpsIntervalMillis && fusedLocationClient.lastLocation.isSuccessful) {
-            Log.d(GPS_TIMING_DEBUG_TAG, "GPS interval unchanged: $actualIntervalMillis ms. Skipping re-request.")
+            Log.d(
+                GPS_TIMING_DEBUG_TAG,
+                "GPS interval unchanged: $actualIntervalMillis ms. Skipping re-request."
+            )
             // return // Be cautious with this
         }
 
         currentActualGpsIntervalMillis = actualIntervalMillis
-        _rideInfo.value = _rideInfo.value.copy(gpsUpdateIntervalMillis = currentActualGpsIntervalMillis)
+        _rideInfo.value =
+            _rideInfo.value.copy(gpsUpdateIntervalMillis = currentActualGpsIntervalMillis)
 
-        Log.d(GPS_TIMING_DEBUG_TAG, "Applying new GPS interval: $actualIntervalMillis ms (LongRide: $isLongRide)")
-        Log.d(TAG, "Attempting to start location updates with interval: $actualIntervalMillis ms, minInterval: $actualMinUpdateIntervalMillis ms on looper: ${backgroundLooper.thread.name}")
+        Log.d(
+            GPS_TIMING_DEBUG_TAG,
+            "Applying new GPS interval: $actualIntervalMillis ms (LongRide: $isLongRide)"
+        )
+        Log.d(
+            TAG,
+            "Attempting to start location updates with interval: $actualIntervalMillis ms, minInterval: $actualMinUpdateIntervalMillis ms on looper: ${backgroundLooper.thread.name}"
+        )
 
         fusedLocationClient.removeLocationUpdates(locationCallback)
 
-        val locationRequest = GmsLocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, actualIntervalMillis)
-            .setWaitForAccurateLocation(false)
-            .setMinUpdateIntervalMillis(actualMinUpdateIntervalMillis)
-            .setMaxUpdateDelayMillis(actualIntervalMillis * 2)
-            .build()
+        val locationRequest =
+            GmsLocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, actualIntervalMillis)
+                .setWaitForAccurateLocation(false)
+                .setMinUpdateIntervalMillis(actualMinUpdateIntervalMillis)
+                .setMaxUpdateDelayMillis(actualIntervalMillis * 2)
+                .build()
         try {
-            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, backgroundLooper)
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                backgroundLooper
+            )
             Log.d(TAG, "Successfully requested location updates.")
         } catch (e: SecurityException) {
             Log.e(TAG, "Missing location permissions. Cannot start location updates.", e)
@@ -322,7 +354,7 @@ class BikeForegroundService_Update : LifecycleService() {
 
                 if (location.hasAltitude()) {
                     lastLocationForContinuousElevation?.let { prevAltLoc ->
-                         if (prevAltLoc.hasAltitude()) {
+                        if (prevAltLoc.hasAltitude()) {
                             val altitudeChange = location.altitude - prevAltLoc.altitude
                             if (altitudeChange > 0) continuousElevationGainMeters += altitudeChange
                             else if (altitudeChange < 0) continuousElevationLossMeters += -altitudeChange
@@ -342,7 +374,7 @@ class BikeForegroundService_Update : LifecycleService() {
             formalRideSegmentMaxSpeedKph = max(formalRideSegmentMaxSpeedKph, speedKph)
             if (location.hasAltitude()) {
                 lastLocationForFormalElevation?.let { prevFormalLoc ->
-                     if (prevFormalLoc.hasAltitude()) {
+                    if (prevFormalLoc.hasAltitude()) {
                         val altitudeChange = location.altitude - prevFormalLoc.altitude
                         if (altitudeChange > 0) formalRideElevationGainMeters += altitudeChange
                         else if (altitudeChange < 0) formalRideElevationLossMeters += -altitudeChange
@@ -360,7 +392,8 @@ class BikeForegroundService_Update : LifecycleService() {
         val displayElevationLoss: Double
 
         if (isFormalRideActive) {
-            val segmentDistanceMeters = continuousDistanceMeters - formalRideSegmentStartOffsetDistanceMeters
+            val segmentDistanceMeters =
+                continuousDistanceMeters - formalRideSegmentStartOffsetDistanceMeters
             val segmentDurationMillis = currentTime - formalRideSegmentStartTimeMillis
             val segmentDurationUiMillis = currentTime - formalRideSegmentUiResetTimeMillis
             val segmentDurationSeconds = segmentDurationMillis / MILLIS_TO_SECONDS_FACTOR
@@ -370,7 +403,9 @@ class BikeForegroundService_Update : LifecycleService() {
             displayMaxSpeed = formalRideSegmentMaxSpeedKph
             displayAverageSpeed = if (segmentDurationSeconds > 0 && segmentDistanceMeters > 0) {
                 (segmentDistanceMeters / segmentDurationSeconds) * MPS_TO_KPH_CONVERSION_FACTOR
-            } else { 0.0 }
+            } else {
+                0.0
+            }
             displayElevationGain = formalRideElevationGainMeters
             displayElevationLoss = formalRideElevationLossMeters
             startForegroundServiceNotification()
@@ -381,9 +416,12 @@ class BikeForegroundService_Update : LifecycleService() {
             displayDistanceKm = continuousDistanceMeters / METERS_TO_KILOMETERS_FACTOR
             displayDuration = formatDuration(continuousDurationMillis)
             displayMaxSpeed = continuousMaxSpeedKph
-            displayAverageSpeed = if (continuousDurationSeconds > 0 && continuousDistanceMeters > 0) {
-                (continuousDistanceMeters / continuousDurationSeconds) * MPS_TO_KPH_CONVERSION_FACTOR
-            } else { 0.0 }
+            displayAverageSpeed =
+                if (continuousDurationSeconds > 0 && continuousDistanceMeters > 0) {
+                    (continuousDistanceMeters / continuousDurationSeconds) * MPS_TO_KPH_CONVERSION_FACTOR
+                } else {
+                    0.0
+                }
             displayElevationGain = continuousElevationGainMeters
             displayElevationLoss = continuousElevationLossMeters
         }
@@ -419,15 +457,21 @@ class BikeForegroundService_Update : LifecycleService() {
                 .collect { calculatedTotalCalories -> // This should be the total for the current context
                     if (isFormalRideActive) {
                         if (calculatedTotalCalories >= currentFormalRideHighestCalories.toInt()) {
-                            _rideInfo.value = _rideInfo.value.copy(caloriesBurned = calculatedTotalCalories.toInt())
+                            _rideInfo.value =
+                                _rideInfo.value.copy(caloriesBurned = calculatedTotalCalories.toInt())
                             currentFormalRideHighestCalories = calculatedTotalCalories
                         } else {
-                            _rideInfo.value = _rideInfo.value.copy(caloriesBurned = currentFormalRideHighestCalories.toInt())
+                            _rideInfo.value =
+                                _rideInfo.value.copy(caloriesBurned = currentFormalRideHighestCalories.toInt())
                         }
-                        Log.d(TAG, "Formal ride calories updated: ${_rideInfo.value.caloriesBurned}")
+                        Log.d(
+                            TAG,
+                            "Formal ride calories updated: ${_rideInfo.value.caloriesBurned}"
+                        )
                     } else {
                         continuousCaloriesBurned = calculatedTotalCalories
-                        _rideInfo.value = _rideInfo.value.copy(caloriesBurned = continuousCaloriesBurned.toInt())
+                        _rideInfo.value =
+                            _rideInfo.value.copy(caloriesBurned = continuousCaloriesBurned.toInt())
                         Log.d(TAG, "Continuous calories updated: $continuousCaloriesBurned")
                     }
                 }
@@ -480,7 +524,8 @@ class BikeForegroundService_Update : LifecycleService() {
 
         val endTimeMillis = System.currentTimeMillis()
         val durationMillis = endTimeMillis - formalRideSegmentStartTimeMillis
-        val segmentDistanceMeters = continuousDistanceMeters - formalRideSegmentStartOffsetDistanceMeters
+        val segmentDistanceMeters =
+            continuousDistanceMeters - formalRideSegmentStartOffsetDistanceMeters
 
         val rideEntity = BikeRideEntity(
             rideId = rideIdToSave,
@@ -533,7 +578,9 @@ class BikeForegroundService_Update : LifecycleService() {
     private fun startForegroundServiceNotification() {
         val channelId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel(NOTIFICATION_CHANNEL_ID, "Bike Ride Tracking")
-        } else { "" }
+        } else {
+            ""
+        }
 
         // TODO: Replace 'this::class.java' with your actual UI target e.g., MainActivity::class.java
         // TODO: Ensure MainActivity (or your target) import is uncommented and correct
@@ -543,11 +590,17 @@ class BikeForegroundService_Update : LifecycleService() {
         } else {
             PendingIntent.FLAG_UPDATE_CURRENT
         }
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, pendingIntentFlags)
+        val pendingIntent =
+            PendingIntent.getActivity(this, 0, notificationIntent, pendingIntentFlags)
 
         val rideData = _rideInfo.value
         val contentText = if (rideData.rideState == RideState.Riding) {
-            "Time: ${rideData.rideDuration}, Dist: ${String.format("%.2f", rideData.totalTripDistance ?: 0f)} km, Speed: ${String.format("%.1f", rideData.currentSpeed)} kph"
+            "Time: ${rideData.rideDuration}, Dist: ${
+                String.format(
+                    "%.2f",
+                    rideData.totalTripDistance ?: 0f
+                )
+            } km, Speed: ${String.format("%.1f", rideData.currentSpeed)} kph"
         } else {
             "Tracking active. Tap to open."
         }
@@ -574,7 +627,8 @@ class BikeForegroundService_Update : LifecycleService() {
 
     private fun createNotificationChannel(channelId: String, channelName: String): String {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val chan = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
+            val chan =
+                NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
             chan.lockscreenVisibility = NotificationCompat.VISIBILITY_PRIVATE
             val service = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             service.createNotificationChannel(chan)

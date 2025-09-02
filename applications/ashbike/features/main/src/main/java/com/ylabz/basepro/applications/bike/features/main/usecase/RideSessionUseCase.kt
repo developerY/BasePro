@@ -41,7 +41,7 @@ class RideSessionUseCase @Inject constructor(
     private val userProfileRepo: UserProfileRepository             // to build UserStats
 ) {
     // 1) Reset & pause signals
-    private val resetSignal  = MutableSharedFlow<Unit>(replay = 1)
+    private val resetSignal = MutableSharedFlow<Unit>(replay = 1)
     private val pausedSignal = MutableStateFlow(false)
 
     // 2) Build a Flow<UserStats> from your DataStore repo
@@ -59,11 +59,11 @@ class RideSessionUseCase @Inject constructor(
     /** One single, resettable session of EVERYTHING (distance, elevation, calories, path, heading) */
     val sessionFlow: StateFlow<RideSession> = statsUseCase.sessionFlow(
         //pausedSignal   = pausedSignal,
-        resetSignal    = resetSignal,
-        locationFlow   = lowPowerRepo.locationFlow,
-        speedFlow      = lowPowerRepo.speedFlow,
-        headingFlow    = compassRepo.headingFlow,
-        userStatsFlow  = userStatsFlow
+        resetSignal = resetSignal,
+        locationFlow = lowPowerRepo.locationFlow,
+        speedFlow = lowPowerRepo.speedFlow,
+        headingFlow = compassRepo.headingFlow,
+        userStatsFlow = userStatsFlow
     )
 
     /** Convenience flow for just the distance. */

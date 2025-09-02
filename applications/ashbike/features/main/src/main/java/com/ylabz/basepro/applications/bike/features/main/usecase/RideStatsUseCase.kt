@@ -51,7 +51,7 @@ class RideStatsUseCase @Inject constructor(
      * Raw path of GPS points, resettable on [resetSignal].
      */
     fun pathFlow(
-        resetSignal:  Flow<Unit>,
+        resetSignal: Flow<Unit>,
         locationFlow: Flow<Location>
     ): Flow<List<Location>> =
         resetSignal
@@ -67,7 +67,7 @@ class RideStatsUseCase @Inject constructor(
      * Total distance in kilometers, resettable on [resetSignal].
      */
     fun distanceKmFlow(
-        resetSignal:  Flow<Unit>,
+        resetSignal: Flow<Unit>,
         locationFlow: Flow<Location>
     ): Flow<Float> =
         resetSignal
@@ -88,7 +88,7 @@ class RideStatsUseCase @Inject constructor(
     /** Maximum instantaneous speed (km/h), resettable. */
     fun maxSpeedFlow(
         resetSignal: Flow<Unit>,
-        speedFlow:   Flow<Float>
+        speedFlow: Flow<Float>
     ): Flow<Float> =
         resetSignal
             .onStart { emit(Unit) }
@@ -103,7 +103,7 @@ class RideStatsUseCase @Inject constructor(
     /** Average speed (km/h) as running mean, resettable. */
     fun averageSpeedFlow(
         resetSignal: Flow<Unit>,
-        speedFlow:   Flow<Float>
+        speedFlow: Flow<Float>
     ): Flow<Double> =
         resetSignal
             .onStart { emit(Unit) }
@@ -121,7 +121,7 @@ class RideStatsUseCase @Inject constructor(
 
     /** Elevation gain in meters, resettable. */
     fun elevationGainFlow(
-        resetSignal:  Flow<Unit>,
+        resetSignal: Flow<Unit>,
         locationFlow: Flow<Location>
     ): Flow<Float> =
         resetSignal
@@ -144,7 +144,7 @@ class RideStatsUseCase @Inject constructor(
 
     /** Elevation loss in meters, resettable. */
     fun elevationLossFlow(
-        resetSignal:  Flow<Unit>,
+        resetSignal: Flow<Unit>,
         locationFlow: Flow<Location>
     ): Flow<Float> =
         resetSignal
@@ -170,12 +170,12 @@ class RideStatsUseCase @Inject constructor(
      * elevation, calories, heading, and elapsed time.
      */
     fun sessionFlow(
-        resetSignal:      Flow<Unit>,
-        locationFlow:     Flow<Location>,
-        speedFlow:        Flow<Float>,
-        headingFlow:      Flow<Float>,
-        userStatsFlow:    Flow<UserStats>,
-        clockMs:          () -> Long = { System.currentTimeMillis() }
+        resetSignal: Flow<Unit>,
+        locationFlow: Flow<Location>,
+        speedFlow: Flow<Float>,
+        headingFlow: Flow<Float>,
+        userStatsFlow: Flow<UserStats>,
+        clockMs: () -> Long = { System.currentTimeMillis() }
     ): StateFlow<RideSession> {
         val upstream: Flow<RideSession> = resetSignal
             .onStart { emit(Unit) }
@@ -194,44 +194,52 @@ class RideStatsUseCase @Inject constructor(
                     .map { it.toInt() }
 
                 // first combine path + dist + max + avg + gain
-                data class Five(val path: List<Location>, val dist: Float, val max: Float, val avg: Double, val gain: Float)
-                val five: Flow<Five> = combine(pFlow, dFlow, mFlow, aFlow, gFlow) { path, dist, max, avg, gain ->
-                    Five(path, dist, max, avg, gain)
-                }
+                data class Five(
+                    val path: List<Location>,
+                    val dist: Float,
+                    val max: Float,
+                    val avg: Double,
+                    val gain: Float
+                )
+
+                val five: Flow<Five> =
+                    combine(pFlow, dFlow, mFlow, aFlow, gFlow) { path, dist, max, avg, gain ->
+                        Five(path, dist, max, avg, gain)
+                    }
 
                 // then combine those five with loss, calories, and heading into RideSession
                 combine(five, lFlow, cFlow, headingFlow) { fiveStats, loss, calories, heading ->
                     val elapsed = clockMs() - startMs
                     RideSession(
-                        startTimeMs     = startMs,
-                        path            = fiveStats.path,
-                        elapsedMs       = elapsed,
+                        startTimeMs = startMs,
+                        path = fiveStats.path,
+                        elapsedMs = elapsed,
                         totalDistanceKm = fiveStats.dist,
                         averageSpeedKmh = fiveStats.avg,
-                        maxSpeedKmh     = fiveStats.max,
-                        elevationGainM  = fiveStats.gain,
-                        elevationLossM  = loss,
-                        caloriesBurned  = calories,
-                        heading         = heading
+                        maxSpeedKmh = fiveStats.max,
+                        elevationGainM = fiveStats.gain,
+                        elevationLossM = loss,
+                        caloriesBurned = calories,
+                        heading = heading
                     )
                 }
             }
 
         return upstream
             .stateIn(
-                scope        = CoroutineScope(Dispatchers.Default),
-                started      = SharingStarted.WhileSubscribed(5_000),
+                scope = CoroutineScope(Dispatchers.Default),
+                started = SharingStarted.WhileSubscribed(5_000),
                 initialValue = RideSession(
-                    startTimeMs     = 0L,
-                    path            = emptyList(),
-                    elapsedMs       = 0L,
+                    startTimeMs = 0L,
+                    path = emptyList(),
+                    elapsedMs = 0L,
                     totalDistanceKm = 0f,
                     averageSpeedKmh = 0.0,
-                    maxSpeedKmh     = 0f,
-                    elevationGainM  = 0f,
-                    elevationLossM  = 0f,
-                    caloriesBurned  = 0,
-                    heading         = 0f
+                    maxSpeedKmh = 0f,
+                    elevationGainM = 0f,
+                    elevationLossM = 0f,
+                    caloriesBurned = 0,
+                    heading = 0f
                 )
             )
     }

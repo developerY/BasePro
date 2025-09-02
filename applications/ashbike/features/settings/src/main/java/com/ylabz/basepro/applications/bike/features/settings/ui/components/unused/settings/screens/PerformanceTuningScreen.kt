@@ -38,7 +38,7 @@ fun PerformanceTuningScreen(
             TopAppBar(
                 title = { Text("Performance Tuning") },
                 navigationIcon = {
-                    IconButton(onClick = { } ) {
+                    IconButton(onClick = { }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"

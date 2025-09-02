@@ -2,11 +2,7 @@ package com.ylabz.basepro.core.data.repository.nfc
 
 
 import android.nfc.Tag
-import android.nfc.tech.Ndef
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import javax.inject.Inject
-import javax.inject.Singleton
 
 interface NfcRepository {
     /**

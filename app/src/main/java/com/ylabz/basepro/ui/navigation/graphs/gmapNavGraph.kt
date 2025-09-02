@@ -1,6 +1,5 @@
 package com.ylabz.basepro.ui.navigation.graphs
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.DrawerState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -14,7 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 
 
 fun NavGraphBuilder.gmapNavGraph(
-    drawerState: DrawerState, navController: NavHostController,scope: CoroutineScope
+    drawerState: DrawerState, navController: NavHostController, scope: CoroutineScope
 ) {
     navigation(
         startDestination = Screen.MapScreen.route,
@@ -29,7 +28,8 @@ fun NavGraphBuilder.gmapNavGraph(
                 drawerState = drawerState,
                 navController = navController
             ) { innerPadding ->
-                MapUIRoute(paddingValues = innerPadding,
+                MapUIRoute(
+                    paddingValues = innerPadding,
                     navTo = { path -> navController.navigate(path) },
                 )
             }

@@ -20,10 +20,15 @@ data class Snowflake(
     val speedRange: ClosedFloatingPointRange<Float>
 ) {
     private val random = Random(System.nanoTime())
+
     // Determine the snowflake's size randomly within the range.
-    val size: Float = random.nextFloat() * (sizeRange.endInclusive - sizeRange.start) + sizeRange.start
+    val size: Float =
+        random.nextFloat() * (sizeRange.endInclusive - sizeRange.start) + sizeRange.start
+
     // Determine the fall speed randomly within the range.
-    var speed: Float = random.nextFloat() * (speedRange.endInclusive - speedRange.start) + speedRange.start
+    var speed: Float =
+        random.nextFloat() * (speedRange.endInclusive - speedRange.start) + speedRange.start
+
     // Initial random position for the snowflake.
     var x: Float = random.nextFloat() * screenWidth
     var y: Float = random.nextFloat() * screenHeight

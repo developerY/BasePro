@@ -92,13 +92,25 @@ class SettingsViewModel @Inject constructor(
             // This prevents the UI from "snapping back" while the save is in progress.
             val energyLevel = localOverride ?: savedEnergyLevel
 
-            Log.d("ViewModelCombine", "Profile in combine: Name='${profile.name}', H='${profile.heightCm}', W='${profile.weightKg}'")
-            Log.d("ViewModelCombine", "Profile reviewed or saved by user: $profileHasBeenReviewedOrSaved")
+            Log.d(
+                "ViewModelCombine",
+                "Profile in combine: Name='${profile.name}', H='${profile.heightCm}', W='${profile.weightKg}'"
+            )
+            Log.d(
+                "ViewModelCombine",
+                "Profile reviewed or saved by user: $profileHasBeenReviewedOrSaved"
+            )
             Log.d("ViewModelCombine", "Energy Level in combine: $energyLevel")
-            Log.d("ViewModelCombine", "Long Ride Enabled in combine: $isLongRideEnabled") // Added for logging
+            Log.d(
+                "ViewModelCombine",
+                "Long Ride Enabled in combine: $isLongRideEnabled"
+            ) // Added for logging
 
             val actuallyIncomplete = !profileHasBeenReviewedOrSaved
-            Log.d("ViewModelCombine", "Calculated actuallyIncomplete (isProfileIncomplete): $actuallyIncomplete")
+            Log.d(
+                "ViewModelCombine",
+                "Calculated actuallyIncomplete (isProfileIncomplete): $actuallyIncomplete"
+            )
 
             SettingsUiState.Success(
                 options = staticOptions,
@@ -125,29 +137,42 @@ class SettingsViewModel @Inject constructor(
             is SettingsEvent.LoadSettings -> {
                 // This is a no-op as the flows are hot and actively combined.
             }
+
             is SettingsEvent.UpdateSetting -> {
                 viewModelScope.launch {
                     when (event.key) {
-                        "Theme"         -> appRepo.setTheme(event.value)
-                        "Language"      -> appRepo.setLanguage(event.value)
+                        "Theme" -> appRepo.setTheme(event.value)
+                        "Language" -> appRepo.setLanguage(event.value)
                         "Notifications" -> appRepo.setNotifications(event.value)
-                        "Units"         -> appRepo.setUnits(event.value)
-                        "GPS Accuracy"  -> appRepo.setGpsAccuracy(event.value)
+                        "Units" -> appRepo.setUnits(event.value)
+                        "GPS Accuracy" -> appRepo.setGpsAccuracy(event.value)
                         else -> Log.w("SettingsViewModel", "Unhandled setting key: ${event.key}")
                     }
                 }
             }
+
             is SettingsEvent.SaveProfile -> {
                 viewModelScope.launch {
-                    Log.d("SettingsViewModel", "Saving profile: Name=${event.profile.name}, H=${event.profile.heightCm}, W=${event.profile.weightKg}")
+                    Log.d(
+                        "SettingsViewModel",
+                        "Saving profile: Name=${event.profile.name}, H=${event.profile.heightCm}, W=${event.profile.weightKg}"
+                    )
                     try {
                         profileRepo.saveProfile(event.profile)
-                        Log.d("SettingsViewModel", "Profile save initiated for ${event.profile.name}")
+                        Log.d(
+                            "SettingsViewModel",
+                            "Profile save initiated for ${event.profile.name}"
+                        )
                     } catch (e: Exception) {
-                        Log.e("SettingsViewModel", "Failed to save profile for ${event.profile.name}", e)
+                        Log.e(
+                            "SettingsViewModel",
+                            "Failed to save profile for ${event.profile.name}",
+                            e
+                        )
                     }
                 }
             }
+
             is SettingsEvent.UpdateEnergyLevel -> {
                 // MINIMAL CHANGE 2 of 2: Update the temporary holder instantly for the UI.
                 _locallySelectedEnergyLevel.value = event.level
@@ -161,12 +186,16 @@ class SettingsViewModel @Inject constructor(
                     }
                 }
             }
+
             is SettingsEvent.UpdateLongRideEnabled -> { // Added handler for UpdateLongRideEnabled
                 viewModelScope.launch {
                     Log.d("SettingsViewModel", "Updating Long Ride Enabled to: ${event.enabled}")
                     try {
                         appRepo.setLongRideEnabled(event.enabled)
-                        Log.d("SettingsViewModel", "Successfully called repo to set long ride enabled.")
+                        Log.d(
+                            "SettingsViewModel",
+                            "Successfully called repo to set long ride enabled."
+                        )
                     } catch (e: Exception) {
                         Log.e("SettingsViewModel", "Failed to set long ride enabled.", e)
                     }

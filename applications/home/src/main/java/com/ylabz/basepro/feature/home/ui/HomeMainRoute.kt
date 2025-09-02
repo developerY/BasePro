@@ -24,11 +24,13 @@ fun HomeMainRoute(
         is HomeUiState.Loading -> {
             LoadingScreen()
         }
+
         is HomeUiState.Error -> {
             ErrorScreen(errorMessage = uiState.message) {
                 viewModel.onEvent(HomeEvent.Retry)
             }
         }
+
         is HomeUiState.Success -> {
             HomeMainScreen(
                 modifier = modifier,
@@ -48,7 +50,9 @@ fun LoadingScreen() {
 
 @Composable
 fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
         Text(
             text = "Error: $errorMessage",
             style = MaterialTheme.typography.bodyLarge,

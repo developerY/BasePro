@@ -11,9 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.NavEntry // Ensured import
-import androidx.navigation3.runtime.entry // Ensured import for the builder
+import androidx.navigation3.runtime.entry
 import kotlinx.serialization.Serializable
 
 // --- Navigation Keys ---

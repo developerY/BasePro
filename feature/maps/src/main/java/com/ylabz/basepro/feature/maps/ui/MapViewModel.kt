@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
-    private val drivingPtsRepository : DrivingPtsRepository
+    private val drivingPtsRepository: DrivingPtsRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<MapUIState>(MapUIState.Loading)
     val uiState = _uiState.asStateFlow()
@@ -19,16 +19,22 @@ class MapViewModel @Inject constructor(
     fun onEvent(event: MapEvent) {
         when (event) {
             is MapEvent.LoadData -> {
-                val start = "origin=${(37.7749 + Math.random() / 100)},${-122.4194 + Math.random() / 100}"
-                val end = "destination=${(37.7749 + Math.random() / 100)},${-122.4194 + Math.random() / 100}"
+                val start =
+                    "origin=${(37.7749 + Math.random() / 100)},${-122.4194 + Math.random() / 100}"
+                val end =
+                    "destination=${(37.7749 + Math.random() / 100)},${-122.4194 + Math.random() / 100}"
                 fetchDirections(start, end)
             }
+
             is MapEvent.OnRetry -> {
                 _uiState.value = MapUIState.Loading
-                val start = "origin=${(37.7749 + Math.random() / 100)},${-122.4194 + Math.random() / 100}"
-                val end = "destination=${(37.7749 + Math.random() / 100)},${-122.4194 + Math.random() / 100}"
+                val start =
+                    "origin=${(37.7749 + Math.random() / 100)},${-122.4194 + Math.random() / 100}"
+                val end =
+                    "destination=${(37.7749 + Math.random() / 100)},${-122.4194 + Math.random() / 100}"
                 fetchDirections(start, end)
             }
+
             is MapEvent.UpdateDirections -> {
                 fetchDirections(event.org, event.des)
             }

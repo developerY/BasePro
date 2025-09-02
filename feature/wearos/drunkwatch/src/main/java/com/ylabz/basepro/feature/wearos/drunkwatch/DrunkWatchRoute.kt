@@ -1,15 +1,19 @@
 package com.ylabz.basepro.feature.wearos.drunkwatch
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.Vignette
 import androidx.wear.compose.material.VignettePosition
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.ylabz.basepro.feature.wearos.drunkwatch.components.ErrorScreenWear
 import com.ylabz.basepro.feature.wearos.drunkwatch.components.DrunkWatchStartScreenWear
+import com.ylabz.basepro.feature.wearos.drunkwatch.components.ErrorScreenWear
 import com.ylabz.basepro.feature.wearos.drunkwatch.components.LoadingScreenWear
 import java.util.UUID
 

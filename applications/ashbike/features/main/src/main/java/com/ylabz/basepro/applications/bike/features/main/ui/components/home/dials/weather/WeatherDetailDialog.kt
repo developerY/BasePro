@@ -1,7 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.weather
 
 
-
 //import androidx.compose.ui.tooling.preview.Preview
 
 import androidx.compose.foundation.layout.Arrangement
@@ -29,23 +28,31 @@ fun WeatherDetailDialog(
         title = { Text(text = stringResource(R.string.weather_details_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(stringResource(
-                    R.string.temperature_format,
-                    weatherInfo.temperature?.toInt() ?: 0
-                ))
-                Text(stringResource(
-                    R.string.feels_like_format,
-                    weatherInfo.feelsLike?.toInt() ?: 0
-                ))
-                Text(stringResource(
-                    R.string.humidity_format,
-                    weatherInfo.humidity ?: 0
-                ))
-                Text(stringResource(
-                    R.string.wind_format,
-                    (weatherInfo.windSpeed).toInt(),
-                    weatherInfo.windDegree.toInt()
-                ))
+                Text(
+                    stringResource(
+                        R.string.temperature_format,
+                        weatherInfo.temperature?.toInt() ?: 0
+                    )
+                )
+                Text(
+                    stringResource(
+                        R.string.feels_like_format,
+                        weatherInfo.feelsLike?.toInt() ?: 0
+                    )
+                )
+                Text(
+                    stringResource(
+                        R.string.humidity_format,
+                        weatherInfo.humidity ?: 0
+                    )
+                )
+                Text(
+                    stringResource(
+                        R.string.wind_format,
+                        (weatherInfo.windSpeed).toInt(),
+                        weatherInfo.windDegree.toInt()
+                    )
+                )
             }
         },
         confirmButton = {

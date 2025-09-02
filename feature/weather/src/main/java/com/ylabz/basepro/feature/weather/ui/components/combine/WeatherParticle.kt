@@ -12,8 +12,10 @@ data class WeatherParticle(
     val speedRange: ClosedFloatingPointRange<Float>
 ) {
     private val random = Random(System.nanoTime())
-    val size: Float = random.nextFloat() * (sizeRange.endInclusive - sizeRange.start) + sizeRange.start
-    var speed: Float = random.nextFloat() * (speedRange.endInclusive - speedRange.start) + speedRange.start
+    val size: Float =
+        random.nextFloat() * (sizeRange.endInclusive - sizeRange.start) + sizeRange.start
+    var speed: Float =
+        random.nextFloat() * (speedRange.endInclusive - speedRange.start) + speedRange.start
     var x: Float = random.nextFloat() * screenWidth
     var y: Float = random.nextFloat() * screenHeight
 

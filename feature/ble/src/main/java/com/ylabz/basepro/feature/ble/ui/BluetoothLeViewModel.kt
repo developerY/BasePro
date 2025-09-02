@@ -1,15 +1,18 @@
 package com.ylabz.basepro.feature.ble.ui
 
-import android.bluetooth.BluetoothAdapter
 // import android.bluetooth.BluetoothDevice // No longer directly used here
+import android.bluetooth.BluetoothAdapter
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothLeRepository
-import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
 import com.ylabz.basepro.core.model.ble.ScanState
 import com.ylabz.basepro.core.util.Logging
-import com.ylabz.basepro.feature.ble.ui.BluetoothLeUiState.*
+import com.ylabz.basepro.feature.ble.ui.BluetoothLeUiState.DataLoaded
+import com.ylabz.basepro.feature.ble.ui.BluetoothLeUiState.Error
+import com.ylabz.basepro.feature.ble.ui.BluetoothLeUiState.PermissionsDenied
+import com.ylabz.basepro.feature.ble.ui.BluetoothLeUiState.PermissionsRequired
+import com.ylabz.basepro.feature.ble.ui.BluetoothLeUiState.ShowBluetoothDialog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -63,6 +66,7 @@ class BluetoothLeViewModel @Inject constructor(
                 }
                 fetchBleDevices() // Start collecting device updates
             }
+
             is BluetoothLeEvent.PermissionsDenied -> _uiState.value = PermissionsDenied
             is BluetoothLeEvent.FetchDevices -> fetchBleDevices()
             is BluetoothLeEvent.ConnectToSensorTag -> connectToActiveDevice() // "ConnectToSensorTag" is now a misnomer, consider renaming event if it's generic connect
@@ -179,33 +183,37 @@ class BluetoothLeViewModel @Inject constructor(
     private fun fetchBleDevices() {
         viewModelScope.launch {
             Logging.d(TAG, "Starting to collect devices from repository")
-            bleRepository.fetchBluetoothDevice().collect { deviceFromRepo -> // deviceFromRepo is BluetoothDeviceInfo?
-                Logging.d(TAG, "Device from repo: ${deviceFromRepo?.address ?: "null"}")
-                _uiState.update { currentUiState ->
-                    if (currentUiState is DataLoaded) {
-                        // The scanAllDevices flag in currentUiState should now reliably be true
-                        // if a scan was started via scanning()
-                        if (deviceFromRepo == null) {
-                            // If scanning all and repo emits null, it might mean end of a specific device emission,
-                            // or simply no new device. If scanAllDevices is true, we usually accumulate.
-                            // The original logic for specific device (scanAllDevices=false) is less relevant now.
-                            if (!currentUiState.scanAllDevices) { // This branch becomes less likely if scanAllDevices is always true
-                                currentUiState.copy(activeDevice = null)
+            bleRepository.fetchBluetoothDevice()
+                .collect { deviceFromRepo -> // deviceFromRepo is BluetoothDeviceInfo?
+                    Logging.d(TAG, "Device from repo: ${deviceFromRepo?.address ?: "null"}")
+                    _uiState.update { currentUiState ->
+                        if (currentUiState is DataLoaded) {
+                            // The scanAllDevices flag in currentUiState should now reliably be true
+                            // if a scan was started via scanning()
+                            if (deviceFromRepo == null) {
+                                // If scanning all and repo emits null, it might mean end of a specific device emission,
+                                // or simply no new device. If scanAllDevices is true, we usually accumulate.
+                                // The original logic for specific device (scanAllDevices=false) is less relevant now.
+                                if (!currentUiState.scanAllDevices) { // This branch becomes less likely if scanAllDevices is always true
+                                    currentUiState.copy(activeDevice = null)
+                                } else {
+                                    currentUiState // No change if scanning for all and a null comes through
+                                }
                             } else {
-                                currentUiState // No change if scanning for all and a null comes through
+                                // Always accumulate if scanAllDevices is true (which should be the case now for scans)
+                                val updatedDiscoveredDevices = currentUiState.discoveredDevices
+                                    .filterNot { it.address == deviceFromRepo.address } + deviceFromRepo
+                                Logging.d(
+                                    TAG,
+                                    "Updating discovered devices. New count: ${updatedDiscoveredDevices.size}"
+                                )
+                                currentUiState.copy(discoveredDevices = updatedDiscoveredDevices)
                             }
                         } else {
-                            // Always accumulate if scanAllDevices is true (which should be the case now for scans)
-                            val updatedDiscoveredDevices = currentUiState.discoveredDevices
-                                .filterNot { it.address == deviceFromRepo.address } + deviceFromRepo
-                            Logging.d(TAG, "Updating discovered devices. New count: ${updatedDiscoveredDevices.size}")
-                            currentUiState.copy(discoveredDevices = updatedDiscoveredDevices)
+                            currentUiState
                         }
-                    } else {
-                        currentUiState
                     }
                 }
-            }
         }
     }
 }

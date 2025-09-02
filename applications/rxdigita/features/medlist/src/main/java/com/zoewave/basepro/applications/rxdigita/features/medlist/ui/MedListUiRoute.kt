@@ -19,9 +19,11 @@ fun MedListUiRoute(
         is MedListUiState.Loading -> {
             Text(modifier = modifier, text = "Loading MedList Feature...")
         }
+
         is MedListUiState.Error -> {
             Text(modifier = modifier, text = "Error: ${uiState.message}")
         }
+
         is MedListUiState.Success -> {
             MedListContent(
                 modifier = modifier,

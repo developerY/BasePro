@@ -1,23 +1,31 @@
 package com.ylabz.basepro.feature.nfc.ui.components.screens
 
-import androidx.compose.foundation.background
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+////import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Nfc
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.ui.graphics.Color
 import androidx.compose.material.icons.filled.Settings
-////import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.feature.nfc.ui.NfcRwEvent
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 
@@ -78,37 +86,44 @@ fun NfcAppScreen(
                                     onRetry = { onEvent(NfcRwEvent.Retry) }
                                 )
                             }
+
                             is NfcUiState.NfcDisabled -> {
                                 NfcDisabledScreen(
                                     onEnableNfc = { onEvent(NfcRwEvent.EnableNfc) }
                                 )
                             }
+
                             is NfcUiState.Stopped -> {
                                 NfcStoppedScreen(
                                     onEvent = { onEvent(NfcRwEvent.StartScan) }
                                 )
                             }
+
                             is NfcUiState.WaitingForTag -> {
                                 NfcScanScreen(
                                     state = uiState as NfcUiState.WaitingForTag,
                                     onEvent = { event -> onEvent(event) }
                                 )
                             }
+
                             is NfcUiState.TagScanned -> {
                                 TagScanned(
                                     uiState = uiState,
                                     onEvent = onEvent
                                 )
                             }
+
                             is NfcUiState.Loading -> {
                                 LoadingScreen()
                             }
+
                             is NfcUiState.Error -> {
                                 ErrorScreen(
                                     message = uiState.message,
                                     onRetry = { onEvent(NfcRwEvent.Retry) }
                                 )
                             }
+
                             is NfcUiState.Writing,
                             is NfcUiState.WriteSuccess,
                             is NfcUiState.WriteError -> {
@@ -118,15 +133,18 @@ fun NfcAppScreen(
                             }
                         }
                     }
+
                     "write" -> {
                         NfcWriteScreen(
                             state = uiState,
                             onEvent = { event -> onEvent(event) }
                         )
                     }
+
                     "settings" -> {
                         NfcSettingsScreen(modifier = Modifier.padding(innerPadding))
                     }
+
                     else -> {
                         Box(
                             modifier = Modifier

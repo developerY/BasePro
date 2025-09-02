@@ -1,13 +1,13 @@
-package com.ylabz.basepro.settings.ui
+package com.ylabz.basepro.feature.settings.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ylabz.basepro.feature.settings.ui.SettingsViewModel
-import com.ylabz.basepro.settings.ui.components.ErrorScreen
-import com.ylabz.basepro.settings.ui.components.LoadingScreen
-import com.ylabz.basepro.settings.ui.components.SettingsCompose
+import com.ylabz.basepro.feature.settings.ui.components.ErrorScreen
+import com.ylabz.basepro.feature.settings.ui.components.LoadingScreen
+import com.ylabz.basepro.feature.settings.ui.components.SettingsCompose
+
 
 @Composable
 fun SettingsUiRoute(
@@ -21,11 +21,13 @@ fun SettingsUiRoute(
         is SettingsUiState.Loading -> {
             LoadingScreen()
         }
+
         is SettingsUiState.Error -> {
             ErrorScreen(errorMessage = uiState.message) {
                 viewModel.onEvent(SettingsEvent.LoadSettings)
             }
         }
+
         is SettingsUiState.Success -> {
             SettingsCompose(
                 modifier = modifier,

@@ -1,5 +1,6 @@
 package com.ylabz.basepro.feature.ble.ui.components
 
+// //import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -19,14 +19,8 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.PlayArrow
-import androidx.compose.material.icons.twotone.AddCircle
-import androidx.compose.material.icons.twotone.Close
-import androidx.compose.material.icons.twotone.PlayArrow
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,18 +34,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-// //import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.ylabz.basepro.core.model.ble.ScanState
-import androidx.compose.ui.res.stringResource // Added import
-import com.ylabz.basepro.feature.ble.R // Added import
-import com.ylabz.basepro.core.ui.R as CoreUiR // Ensured this import
+import com.ylabz.basepro.feature.ble.R
+import com.ylabz.basepro.core.ui.R as CoreUiR
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -129,7 +120,9 @@ fun StatusBar(
                 ) {
                     Icon(
                         imageVector = if (isExpanded) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
-                        contentDescription = if (isExpanded) stringResource(id = CoreUiR.string.action_collapse) else stringResource(id = CoreUiR.string.action_expand),                        tint = MaterialTheme.colorScheme.primary
+                        contentDescription = if (isExpanded) stringResource(id = CoreUiR.string.action_collapse) else stringResource(
+                            id = CoreUiR.string.action_expand
+                        ), tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -207,19 +200,43 @@ fun Legend() {
             modifier = Modifier.padding(bottom = 4.dp)
         )
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color.Green, modifier = Modifier.size(16.dp))
+            Icon(
+                Icons.Default.CheckCircle,
+                contentDescription = null,
+                tint = Color.Green,
+                modifier = Modifier.size(16.dp)
+            )
             Spacer(modifier = Modifier.width(4.dp))
-            Text(stringResource(id = R.string.ble_status_bar_legend_granted), style = MaterialTheme.typography.bodySmall) // Changed
+            Text(
+                stringResource(id = R.string.ble_status_bar_legend_granted),
+                style = MaterialTheme.typography.bodySmall
+            ) // Changed
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Default.Warning, contentDescription = null, tint = Color.Red, modifier = Modifier.size(16.dp))
+            Icon(
+                Icons.Default.Warning,
+                contentDescription = null,
+                tint = Color.Red,
+                modifier = Modifier.size(16.dp)
+            )
             Spacer(modifier = Modifier.width(4.dp))
-            Text(stringResource(id = R.string.ble_status_bar_legend_denied), style = MaterialTheme.typography.bodySmall) // Changed
+            Text(
+                stringResource(id = R.string.ble_status_bar_legend_denied),
+                style = MaterialTheme.typography.bodySmall
+            ) // Changed
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Default.Info, contentDescription = null, tint = Color.Yellow, modifier = Modifier.size(16.dp))
+            Icon(
+                Icons.Default.Info,
+                contentDescription = null,
+                tint = Color.Yellow,
+                modifier = Modifier.size(16.dp)
+            )
             Spacer(modifier = Modifier.width(4.dp))
-            Text(stringResource(id = R.string.ble_status_bar_legend_not_requested), style = MaterialTheme.typography.bodySmall) // Changed
+            Text(
+                stringResource(id = R.string.ble_status_bar_legend_not_requested),
+                style = MaterialTheme.typography.bodySmall
+            ) // Changed
         }
     }
 }
@@ -228,7 +245,7 @@ fun Legend() {
 private fun getFriendlyName(permission: String): String {
     return when (permission) {
         android.Manifest.permission.BLUETOOTH_SCAN -> stringResource(id = R.string.ble_status_bar_perm_scan_nearby) // Changed
-        android.Manifest.permission.BLUETOOTH_CONNECT -> stringResource(id = CoreUiR.string.action_connect)        
+        android.Manifest.permission.BLUETOOTH_CONNECT -> stringResource(id = CoreUiR.string.action_connect)
         android.Manifest.permission.BLUETOOTH_ADVERTISE -> stringResource(id = R.string.ble_status_bar_perm_advertise) // Changed
         android.Manifest.permission.ACCESS_COARSE_LOCATION -> stringResource(id = R.string.ble_status_bar_perm_coarse_location) // Changed
         android.Manifest.permission.ACCESS_FINE_LOCATION -> stringResource(id = R.string.ble_status_bar_perm_fine_location) // Changed

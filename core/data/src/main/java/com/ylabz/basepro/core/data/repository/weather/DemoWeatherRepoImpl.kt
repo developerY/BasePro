@@ -21,13 +21,16 @@ class DemoWeatherRepoImpl @Inject constructor() : WeatherRepo {
         return demoResponse(lat = 0.0, lon = 0.0, name = location)
     }
 
-    override suspend fun openCurrentWeatherByCoords(lat: Double, lon: Double): OpenWeatherResponse? {
+    override suspend fun openCurrentWeatherByCoords(
+        lat: Double,
+        lon: Double
+    ): OpenWeatherResponse? {
         // Return a demo response for the given coords
         return demoResponse(lat = lat, lon = lon, name = "Demoville")
     }
 
     private fun demoResponse(lat: Double, lon: Double, name: String) = OpenWeatherResponse(
-        coord    = Coord(lon = lon, lat = lat),
+        coord = Coord(lon = lon, lat = lat),
         weather = listOf(
             WeatherOne(
                 id = 501,
@@ -36,8 +39,8 @@ class DemoWeatherRepoImpl @Inject constructor() : WeatherRepo {
                 icon = "10d"
             )
         ),
-        base      = "stations",
-        main      = Main(
+        base = "stations",
+        main = Main(
             temp = 18.5,
             feels_like = 17.0,
             temp_min = 17.0,
@@ -46,26 +49,26 @@ class DemoWeatherRepoImpl @Inject constructor() : WeatherRepo {
             humidity = 82
         ),
         visibility = 10000,
-        wind      = Wind(
+        wind = Wind(
             speed = 5.5,   // m/s
             deg = 120,
             gust = 7.0
         ),
-        clouds    = Clouds(all = 75),
-        rain      = Rain(`1h` = 0.5, `3h` = 1.2),
-        snow      = Snow(`1h` = null, `3h` = null),
-        dt        = System.currentTimeMillis() / 1000,
-        sys       = Sys(
+        clouds = Clouds(all = 75),
+        rain = Rain(`1h` = 0.5, `3h` = 1.2),
+        snow = Snow(`1h` = null, `3h` = null),
+        dt = System.currentTimeMillis() / 1000,
+        sys = Sys(
             type = 1,
             id = 1234,
             country = "US",
             sunrise = 1_688_000_000,
             sunset = 1_688_036_000
         ),
-        timezone  = 0,
-        id        = 999_999,
-        name      = name,
-        cod       = 200
+        timezone = 0,
+        id = 999_999,
+        name = name,
+        cod = 200
     )
 
 }

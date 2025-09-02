@@ -58,7 +58,11 @@ fun ShotimeSuccessScreen(
             onClick = {
                 // Add a sample alarm for demo
                 val currentTime = System.currentTimeMillis() + 100 // 1 sec later
-                val proAlarm = ProAlarm(id = Random.nextInt(), timeInMillis = currentTime, message = "Test Alarm")
+                val proAlarm = ProAlarm(
+                    id = Random.nextInt(),
+                    timeInMillis = currentTime,
+                    message = "Test Alarm"
+                )
                 setAlarm(proAlarm)
             },
             modifier = Modifier.padding(16.dp)

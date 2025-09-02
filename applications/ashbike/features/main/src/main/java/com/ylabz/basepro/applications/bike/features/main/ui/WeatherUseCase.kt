@@ -40,12 +40,12 @@ class WeatherUseCase @Inject constructor(
 // Reuse your existing mapper:
 private fun OpenWeatherResponse.toBikeWeatherInfo(): BikeWeatherInfo =
     BikeWeatherInfo(
-        windDegree           = wind.deg,
-        windSpeed            = (wind.speed * 3.6f),
-        conditionText        = weather.firstOrNull()?.main.orEmpty(),
+        windDegree = wind.deg,
+        windSpeed = (wind.speed * 3.6f),
+        conditionText = weather.firstOrNull()?.main.orEmpty(),
         conditionDescription = weather.firstOrNull()?.description.orEmpty(),
-        conditionIcon        = weather.firstOrNull()?.icon.orEmpty(),
-        temperature          = main.temp,
-        feelsLike            = main.feels_like,
-        humidity             = main.humidity
+        conditionIcon = weather.firstOrNull()?.icon.orEmpty(),
+        temperature = main.temp,
+        feelsLike = main.feels_like,
+        humidity = main.humidity
     )

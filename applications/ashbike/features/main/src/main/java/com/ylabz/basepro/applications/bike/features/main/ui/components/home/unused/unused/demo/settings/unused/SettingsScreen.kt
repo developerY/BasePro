@@ -23,7 +23,7 @@ import androidx.navigation.NavController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    navTo : (String) -> Unit,
+    navTo: (String) -> Unit,
     // navController: NavController
 ) {
     Scaffold(

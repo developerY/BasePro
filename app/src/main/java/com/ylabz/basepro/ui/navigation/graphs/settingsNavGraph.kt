@@ -1,6 +1,5 @@
 package com.ylabz.basepro.ui.navigation.graphs
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
 import androidx.compose.ui.Modifier
@@ -8,11 +7,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.ylabz.basepro.core.ui.PLACES
 import com.ylabz.basepro.core.ui.SETTINGS
 import com.ylabz.basepro.core.ui.Screen
-import com.ylabz.basepro.feature.places.ui.CoffeeShopUIRoute
-import com.ylabz.basepro.settings.ui.SettingsUiRoute
+import com.ylabz.basepro.feature.settings.ui.SettingsUiRoute
 import com.ylabz.basepro.ui.bar.AppScaffold
 import kotlinx.coroutines.CoroutineScope
 
@@ -35,8 +32,8 @@ fun NavGraphBuilder.settingsNavGraph(
                 navController = navController
             ) { padding ->
                 SettingsUiRoute(
-                modifier = Modifier.padding(padding),
-                navTo = { path -> navController.navigate(path) }
+                    modifier = Modifier.padding(padding),
+                    navTo = { path -> navController.navigate(path) }
                 )
             }
         }

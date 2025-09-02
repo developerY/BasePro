@@ -29,7 +29,7 @@ import com.ylabz.basepro.feature.home.ui.components.colors.randomPastelFamilyBru
 @Composable
 fun GradientApplicationCard(
     appModel: AppModel,
-    navTo : ((String) -> Unit)? = null  // optional launch callback
+    navTo: ((String) -> Unit)? = null  // optional launch callback
 ) {
     // Pick a random gradient once per card, then remember it
     // Only generate once per card instance
@@ -72,8 +72,8 @@ fun GradientApplicationCard(
                     )
                     Spacer(Modifier.height(8.dp))
                     // Only show the button if onLaunch is provided
-                    navTo?.let { safeOnLaunch  ->
-                        Button(onClick = {safeOnLaunch(appModel.path)}) {
+                    navTo?.let { safeOnLaunch ->
+                        Button(onClick = { safeOnLaunch(appModel.path) }) {
                             Text("Launch")
                         }
                     }

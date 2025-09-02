@@ -51,7 +51,7 @@ fun Speedometer(
     BoxWithConstraints(modifier = modifier) {
         val bc = this
         val density = LocalDensity.current
-        val gaugeSize = with(density){min(bc.maxWidth, bc.maxHeight).toPx()}
+        val gaugeSize = with(density) { min(bc.maxWidth, bc.maxHeight).toPx() }
         Canvas(modifier = Modifier.fillMaxSize()) {
             // Center and radius
             val center = Offset(size.width / 2, size.height / 2)

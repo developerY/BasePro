@@ -9,16 +9,16 @@ import android.location.Location
  * The complete snapshot of a ride, including the raw GPS path.
  */
 data class RideSession(
-    val startTimeMs:     Long,
-    val path:            List<Location>,
-    val elapsedMs:       Long,
+    val startTimeMs: Long,
+    val path: List<Location>,
+    val elapsedMs: Long,
     val totalDistanceKm: Float,
     val averageSpeedKmh: Double,
-    val maxSpeedKmh:     Float,
-    val elevationGainM:  Float,
-    val elevationLossM:  Float,
-    val caloriesBurned:  Int,
-    val heading:         Float
+    val maxSpeedKmh: Float,
+    val elevationGainM: Float,
+    val elevationLossM: Float,
+    val caloriesBurned: Int,
+    val heading: Float
 )
 
 data class RideSessionOld(

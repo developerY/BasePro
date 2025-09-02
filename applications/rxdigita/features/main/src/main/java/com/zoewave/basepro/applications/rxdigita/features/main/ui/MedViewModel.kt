@@ -30,7 +30,8 @@ class MedViewModel @Inject constructor(
 
     // Placeholder: Assuming MedUiState.Success is defined elsewhere (e.g., in MainUiRoute.kt)
     // You should replace this with a proper initial state, often MedUiState.Loading
-    private val _uiState = MutableStateFlow<MedUiState>(MedUiState.Success("Default Main Data")) // Or MedUiState.Loading
+    private val _uiState =
+        MutableStateFlow<MedUiState>(MedUiState.Success("Default Main Data")) // Or MedUiState.Loading
     val uiState: StateFlow<MedUiState> = _uiState
 
     fun onEvent(event: MedEvent) {

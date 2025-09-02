@@ -27,11 +27,13 @@ fun SyncStatusIcon(state: SyncHealthConnectState, modifier: Modifier = Modifier)
             MaterialTheme.colorScheme.error,
             "Health Connect off"
         )
+
         SyncHealthConnectState.NO_RECORDS_ADDED -> Triple(
             Icons.Outlined.SyncProblem,
             MaterialTheme.colorScheme.secondary,
             "No sessions synced"
         )
+
         SyncHealthConnectState.ALL_SYNCED -> Triple(
             Icons.Default.Sync,
             MaterialTheme.colorScheme.onSurfaceVariant,

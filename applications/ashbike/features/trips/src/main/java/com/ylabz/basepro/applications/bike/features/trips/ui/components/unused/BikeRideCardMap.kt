@@ -43,19 +43,19 @@ fun BikeRideCardMap(
 ) {
     // 1) parse your JSON‐serialized route into LatLngs
     val pathPoints: List<LatLng> = emptyList()
-        // remember(ride.routeJson) {
-        /*try {
-            // ride.routeJson was produced with Gson().toJson(listOf { "lat"->..., "lng"->... })
-            val list = Gson().fromJson(
-                ride.routeJson,
-                Array<Map<String, Double>>::class.java
-            ).toList()
-            list.map { LatLng(it["lat"]!!, it["lng"]!!) }
-        } catch (t: Throwable) {
-            Log.e("BikeRideCard", "Failed to parse routeJson", t)
-            emptyList()
-        }
-    }*/
+    // remember(ride.routeJson) {
+    /*try {
+        // ride.routeJson was produced with Gson().toJson(listOf { "lat"->..., "lng"->... })
+        val list = Gson().fromJson(
+            ride.routeJson,
+            Array<Map<String, Double>>::class.java
+        ).toList()
+        list.map { LatLng(it["lat"]!!, it["lng"]!!) }
+    } catch (t: Throwable) {
+        Log.e("BikeRideCard", "Failed to parse routeJson", t)
+        emptyList()
+    }
+}*/
 
     // 2) pick a camera that shows the start point (or the midpoint if you like)
     val start = pathPoints.firstOrNull() ?: LatLng(ride.startLat, ride.startLng)
@@ -81,24 +81,43 @@ fun BikeRideCardMap(
     ) {
         Column(Modifier.padding(16.dp)) {
             // Header
-            Text(stringResource(R.string.feature_trips_card_header_format, startFmt, endFmt), style = MaterialTheme.typography.titleMedium)
+            Text(
+                stringResource(R.string.feature_trips_card_header_format, startFmt, endFmt),
+                style = MaterialTheme.typography.titleMedium
+            )
 
             Spacer(Modifier.height(8.dp))
 
             // Metrics
-            Text(stringResource(R.string.feature_trips_card_label_distance) + stringResource(R.string.feature_trips_card_value_km_format, ride.totalDistance / 1000),
-                style = MaterialTheme.typography.bodyMedium)
-            Text(stringResource(R.string.feature_trips_card_label_avg_speed) + stringResource(R.string.feature_trips_card_value_kmh_format, ride.averageSpeed),
-                style = MaterialTheme.typography.bodyMedium)
-            Text(stringResource(R.string.feature_trips_card_label_max_speed) + stringResource(R.string.feature_trips_card_value_kmh_format, ride.maxSpeed),
-                style = MaterialTheme.typography.bodyMedium)
+            Text(
+                stringResource(R.string.feature_trips_card_label_distance) + stringResource(
+                    R.string.feature_trips_card_value_km_format,
+                    ride.totalDistance / 1000
+                ),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                stringResource(R.string.feature_trips_card_label_avg_speed) + stringResource(
+                    R.string.feature_trips_card_value_kmh_format,
+                    ride.averageSpeed
+                ),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                stringResource(R.string.feature_trips_card_label_max_speed) + stringResource(
+                    R.string.feature_trips_card_value_kmh_format,
+                    ride.maxSpeed
+                ),
+                style = MaterialTheme.typography.bodyMedium
+            )
 
             Spacer(Modifier.height(8.dp))
 
             // 3) Map preview
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
             ) {
                 GoogleMap(
                     modifier = Modifier.matchParentSize(),

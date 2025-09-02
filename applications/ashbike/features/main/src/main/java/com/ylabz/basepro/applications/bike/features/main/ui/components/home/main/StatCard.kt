@@ -33,7 +33,7 @@ fun StatCard(
     icon: ImageVector,
     label: String,
     value: String,
-    cardColor : Color = MaterialTheme.colorScheme.surfaceVariant,
+    cardColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     tint: Color = MaterialTheme.colorScheme.onSurfaceVariant, // Default to a theme color
 ) {
     Card(

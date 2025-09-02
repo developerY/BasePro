@@ -6,9 +6,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcAppScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.ErrorScreen
 import com.ylabz.basepro.feature.nfc.ui.components.screens.LoadingScreen
+import com.ylabz.basepro.feature.nfc.ui.components.screens.NfcAppScreen
 
 
 @Composable
@@ -26,6 +26,7 @@ fun NfcUiRoute(
                 onRetry = { viewModel.onEvent(NfcRwEvent.Retry) }
             )
         }
+
         is NfcUiState.Loading -> {
             LoadingScreen()
         }

@@ -1,21 +1,24 @@
 package com.ylabz.basepro.core.data.repository.weather
 
 import android.util.Log
-import com.ylabz.basepro.core.model.weather.OpenWeatherResponse
 import com.ylabz.basepro.core.data.api.interfaces.OpenWeatherService
+import com.ylabz.basepro.core.model.weather.OpenWeatherResponse
+import com.ylabz.basepro.core.network.BuildConfig.OPEN_WEATHER_API_KEY
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import com.ylabz.basepro.core.network.BuildConfig.OPEN_WEATHER_API_KEY
-import retrofit2.HttpException
 
 
-suspend fun openFetchWeatherByCityData(cityName: String) : OpenWeatherResponse? {
-    var call : OpenWeatherResponse? = null
+suspend fun openFetchWeatherByCityData(cityName: String): OpenWeatherResponse? {
+    var call: OpenWeatherResponse? = null
 
     try {
-        call = OpenRetrofitClient.openWeatherService.getCurrentOpenWeatherByCity(cityName, OPEN_WEATHER_API_KEY)
+        call = OpenRetrofitClient.openWeatherService.getCurrentOpenWeatherByCity(
+            cityName,
+            OPEN_WEATHER_API_KEY
+        )
     } catch (e: HttpException) {
         if (e.code() == 404) {
             Log.d("WeatherRepoImpl", "City not found")
@@ -31,11 +34,15 @@ suspend fun openFetchWeatherByCityData(cityName: String) : OpenWeatherResponse? 
 }
 
 
-suspend fun openFetchWeatherByCoords(lat: Double, lon: Double) : OpenWeatherResponse? {
-    var call : OpenWeatherResponse? = null
+suspend fun openFetchWeatherByCoords(lat: Double, lon: Double): OpenWeatherResponse? {
+    var call: OpenWeatherResponse? = null
 
     try {
-        call = OpenRetrofitClient.openWeatherService.getCurrentOpenWeatherByCoords(lat = lat, lon = lon, OPEN_WEATHER_API_KEY)
+        call = OpenRetrofitClient.openWeatherService.getCurrentOpenWeatherByCoords(
+            lat = lat,
+            lon = lon,
+            OPEN_WEATHER_API_KEY
+        )
     } catch (e: HttpException) {
         if (e.code() == 404) {
             Log.d("WeatherRepoImpl", "City not found")
@@ -49,6 +56,7 @@ suspend fun openFetchWeatherByCoords(lat: Double, lon: Double) : OpenWeatherResp
     }
     return call
 }
+
 private object OpenRetrofitClient {
     private const val BASE_URL = "https://api.openweathermap.org/"
 

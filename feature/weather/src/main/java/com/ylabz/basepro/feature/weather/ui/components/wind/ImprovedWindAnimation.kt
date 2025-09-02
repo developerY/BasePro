@@ -1,5 +1,6 @@
 package com.ylabz.basepro.feature.weather.ui.components.wind
 
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -7,13 +8,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import kotlinx.coroutines.delay
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
-import kotlinx.coroutines.delay
 
 @Composable
 fun ImprovedWindAnimation(windDegree: Float) {
@@ -120,8 +120,10 @@ class WindArrow(
     private val windDegree: Float  // in degrees
 ) {
     private val random = Random(System.nanoTime())
-    val size: Float = random.nextFloat() * (sizeRange.endInclusive - sizeRange.start) + sizeRange.start
-    var speed: Float = random.nextFloat() * (speedRange.endInclusive - speedRange.start) + speedRange.start
+    val size: Float =
+        random.nextFloat() * (sizeRange.endInclusive - sizeRange.start) + sizeRange.start
+    var speed: Float =
+        random.nextFloat() * (speedRange.endInclusive - speedRange.start) + speedRange.start
     var x: Float = random.nextFloat() * screenWidth
     var y: Float = random.nextFloat() * screenHeight
 

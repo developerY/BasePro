@@ -115,9 +115,9 @@ fun Nav3MainExample(modifier: Modifier = Modifier) {
      * This creates the standard "push" effect that you see when navigating forward in many apps.
      *
     val slideInHorizontallytransitionSpec = {
-        // forward and backward
-        slideInHorizontally(initialOffsetX = { it }) togetherWith
-                slideOutHorizontally(targetOffsetX = { -it })
+    // forward and backward
+    slideInHorizontally(initialOffsetX = { it }) togetherWith
+    slideOutHorizontally(targetOffsetX = { -it })
     }*/
 
     // Standard horizontal slide animation for global navigation.
@@ -167,7 +167,9 @@ fun Nav3MainExample(modifier: Modifier = Modifier) {
         AnimatedVisibility(visible = transitionsExpanded) {
             Column {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -177,7 +179,9 @@ fun Nav3MainExample(modifier: Modifier = Modifier) {
                     }
                 }
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -187,7 +191,9 @@ fun Nav3MainExample(modifier: Modifier = Modifier) {
                     }
                 }
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -335,7 +341,9 @@ fun Nav3MainExample(modifier: Modifier = Modifier) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             // New UI for Screen D's specific transition
                             Text("Vertical Slide (Bottom):")
-                            Button(onClick = { screenDVerticalSlideEnabled = !screenDVerticalSlideEnabled }) {
+                            Button(onClick = {
+                                screenDVerticalSlideEnabled = !screenDVerticalSlideEnabled
+                            }) {
                                 Text(if (screenDVerticalSlideEnabled) "ON" else "OFF")
                             }
                             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))

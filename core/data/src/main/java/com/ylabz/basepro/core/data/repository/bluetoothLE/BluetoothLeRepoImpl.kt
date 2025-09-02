@@ -1,14 +1,12 @@
 package com.ylabz.basepro.core.data.repository.bluetoothLE
 
 import android.Manifest
-import android.R.attr.data
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattDescriptor
-import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanFilter
@@ -18,7 +16,6 @@ import android.content.Context
 import android.os.Build
 import android.os.ParcelUuid
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
 import com.ylabz.basepro.core.model.ble.DeviceCharacteristic
@@ -29,7 +26,6 @@ import com.ylabz.basepro.core.model.ble.ScanState
 import com.ylabz.basepro.core.model.ble.tools.getHumanReadableName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -56,16 +52,18 @@ periodicAdvertisingInterval=0}
 
 // [Barometer-related UUIDs remain the same...]
 private val BARO_CONFIG_UUID = UUID.fromString("f000aa42-0451-4000-b000-000000000000")
-private val BARO_CALIB_UUID  = UUID.fromString("f000aa43-0451-4000-b000-000000000000")
-private val BARO_DATA_UUID   = UUID.fromString("f000aa41-0451-4000-b000-000000000000")
+private val BARO_CALIB_UUID = UUID.fromString("f000aa43-0451-4000-b000-000000000000")
+private val BARO_DATA_UUID = UUID.fromString("f000aa41-0451-4000-b000-000000000000")
 
 // [ADDED for LUX] - The CC2650 Luxometer (Light) UUIDs:
-private val LUX_DATA_UUID  = UUID.fromString("f000aa71-0451-4000-b000-000000000000")
-private val LUX_CONF_UUID  = UUID.fromString("f000aa72-0451-4000-b000-000000000000") // 0: disable, 1: enable
-private val LUX_PERI_UUID  = UUID.fromString("f000aa73-0451-4000-b000-000000000000") // Period
+private val LUX_DATA_UUID = UUID.fromString("f000aa71-0451-4000-b000-000000000000")
+private val LUX_CONF_UUID =
+    UUID.fromString("f000aa72-0451-4000-b000-000000000000") // 0: disable, 1: enable
+private val LUX_PERI_UUID = UUID.fromString("f000aa73-0451-4000-b000-000000000000") // Period
 
 // Service UUID for TI SensorTags (used for filtering when not scanning all)
-private val TI_SENSOR_TAG_SERVICE_UUID = ParcelUuid.fromString("0000aa80-0000-1000-8000-00805f9b34fb")
+private val TI_SENSOR_TAG_SERVICE_UUID =
+    ParcelUuid.fromString("0000aa80-0000-1000-8000-00805f9b34fb")
 
 class BluetoothLeRepImpl @Inject constructor(
     private val bluetoothAdapter: BluetoothAdapter,
@@ -89,7 +87,8 @@ class BluetoothLeRepImpl @Inject constructor(
 
     private val _gattCharacteristicList =
         MutableStateFlow<List<GattCharacteristicValue>>(emptyList())
-    override val gattCharacteristicList: StateFlow<List<GattCharacteristicValue>> = _gattCharacteristicList
+    override val gattCharacteristicList: StateFlow<List<GattCharacteristicValue>> =
+        _gattCharacteristicList
 
     private val _gattServicesList = MutableStateFlow<List<DeviceService>>(emptyList())
     override val gattServicesList: StateFlow<List<DeviceService>> = _gattServicesList
@@ -126,7 +125,10 @@ class BluetoothLeRepImpl @Inject constructor(
 
                 if (!currentScanAllFlag) { // Only try to auto-stop if we are NOT scanning for all
                     scanStateMutex.withLock {
-                        if (deviceName.contains("SensorTag", ignoreCase = true) && // Broader check for SensorTag
+                        if (deviceName.contains(
+                                "SensorTag",
+                                ignoreCase = true
+                            ) && // Broader check for SensorTag
                             _scanState.value != ScanState.STOPPING
                         ) {
                             _scanState.value = ScanState.STOPPING
@@ -135,19 +137,19 @@ class BluetoothLeRepImpl @Inject constructor(
                         }
                     }
                 } else {
-                     // If scanning for all, always update currentDevice with the latest found one
-                     // and don't set tagSensorFound unless it IS a sensortag (for potential connection)
-                     if (deviceName.contains("SensorTag", ignoreCase = true)) {
-                         tagSensorFound = discoveredDevice
-                     }
+                    // If scanning for all, always update currentDevice with the latest found one
+                    // and don't set tagSensorFound unless it IS a sensortag (for potential connection)
+                    if (deviceName.contains("SensorTag", ignoreCase = true)) {
+                        tagSensorFound = discoveredDevice
+                    }
                 }
 
                 // Emit the device that was just found
-                 _currentDevice.emit(discoveredDevice)
+                _currentDevice.emit(discoveredDevice)
 
                 if (shouldStopScan) {
                     try {
-                        stopScan() 
+                        stopScan()
                         Log.d(TAG, "Stopping scan after detecting SensorTag (scanAll=false).")
                     } catch (e: Exception) {
                         Log.e(TAG, "Error stopping scan: ${e.message}", e)
@@ -163,7 +165,8 @@ class BluetoothLeRepImpl @Inject constructor(
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     override suspend fun connectToDevice() {
-        val deviceToConnect = tagSensorFound ?: _currentDevice.value // Prefer specifically found SensorTag
+        val deviceToConnect =
+            tagSensorFound ?: _currentDevice.value // Prefer specifically found SensorTag
         if (deviceToConnect == null) {
             Log.e(TAG, "No device to connect to.")
             _gattConnectionState.value = GattConnectionState.Disconnected
@@ -236,7 +239,10 @@ class BluetoothLeRepImpl @Inject constructor(
                                 // For CC2650 firmware >= 1.50, there's no manual baro calibration char
                                 Log.d(TAG, "Skipping manual barometer calibration for CC2650.")
                             } else {
-                                Log.d(TAG, "Requesting barometer calibration (writing 0x02 to Barometer Config).")
+                                Log.d(
+                                    TAG,
+                                    "Requesting barometer calibration (writing 0x02 to Barometer Config)."
+                                )
                                 requestBarometerCalibration()
                                 delay(1000)
                             }
@@ -266,11 +272,16 @@ class BluetoothLeRepImpl @Inject constructor(
 
                     characteristic.service.uuid.toString()
                     val charUUID = characteristic.uuid.toString()
-                    val parsedValue = characteristicParsers[charUUID]?.invoke(rawValue) ?: "Unknown Value"
+                    val parsedValue =
+                        characteristicParsers[charUUID]?.invoke(rawValue) ?: "Unknown Value"
 
                     Log.d(TAG, "Characteristic read: $charUUID, Parsed Value: $parsedValue")
 
-                    updateCharacteristicValue(characteristic.service.uuid.toString(), charUUID, parsedValue)
+                    updateCharacteristicValue(
+                        characteristic.service.uuid.toString(),
+                        charUUID,
+                        parsedValue
+                    )
 
                     val stringValue = characteristic.getStringValue(0) ?: "N/A"
                     val intValue = rawValue.getOrNull(0)?.toInt() ?: -1
@@ -306,7 +317,8 @@ class BluetoothLeRepImpl @Inject constructor(
                         rawValueTemp.forEachIndexed { index, byte ->
                             Log.d(TAG, "Byte $index: ${byte.toInt() and 0xFF}")
                         }
-                        val parsedValueTemp = characteristicParsers[charUUID]?.invoke(rawValueTemp) ?: "Unknown Value"
+                        val parsedValueTemp =
+                            characteristicParsers[charUUID]?.invoke(rawValueTemp) ?: "Unknown Value"
                         Log.d(TAG, "Parsed Temperature Value: $parsedValueTemp")
                     } else {
                         Log.d(TAG, "Non-temperature characteristic read: $charUUID")
@@ -315,7 +327,10 @@ class BluetoothLeRepImpl @Inject constructor(
                     // If we just read the barometer calibration characteristic, store it
                     if (characteristic.uuid == BARO_CALIB_UUID) {
                         barometerCalibrationData = rawValue.copyOf()
-                        Log.d(TAG, "Barometer calibration data received (length=${rawValue.size}): $hexValue")
+                        Log.d(
+                            TAG,
+                            "Barometer calibration data received (length=${rawValue.size}): $hexValue"
+                        )
                     }
 
                 } else {
@@ -324,7 +339,10 @@ class BluetoothLeRepImpl @Inject constructor(
             }
 
             // Called when a characteristic has changed (notification/indication)
-            override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
+            override fun onCharacteristicChanged(
+                gatt: BluetoothGatt,
+                characteristic: BluetoothGattCharacteristic
+            ) {
                 val rawValue = characteristic.value ?: ByteArray(0)
                 val charUUID = characteristic.uuid.toString()
 
@@ -333,16 +351,26 @@ class BluetoothLeRepImpl @Inject constructor(
                     val debugHex = rawValue.joinToString(" ") { "%02X".format(it) }
                     Log.d(TAG, "onCharacteristicChanged (Barometer) - raw: $debugHex")
 
-                    val calibratedString = parseBarometerDataWithCalibration(rawValue, barometerCalibrationData!!)
+                    val calibratedString =
+                        parseBarometerDataWithCalibration(rawValue, barometerCalibrationData!!)
                     Log.d(TAG, "Barometer with calibration: $calibratedString")
 
-                    updateCharacteristicValue(characteristic.service.uuid.toString(), charUUID, calibratedString)
+                    updateCharacteristicValue(
+                        characteristic.service.uuid.toString(),
+                        charUUID,
+                        calibratedString
+                    )
                 } else {
                     // Otherwise, use the normal parse logic
-                    val parsedValue = characteristicParsers[charUUID]?.invoke(rawValue) ?: "Unknown Value"
+                    val parsedValue =
+                        characteristicParsers[charUUID]?.invoke(rawValue) ?: "Unknown Value"
                     Log.d(TAG, "onCharacteristicChanged -> $charUUID, Value: $parsedValue")
 
-                    updateCharacteristicValue(characteristic.service.uuid.toString(), charUUID, parsedValue)
+                    updateCharacteristicValue(
+                        characteristic.service.uuid.toString(),
+                        charUUID,
+                        parsedValue
+                    )
                 }
             }
         })
@@ -378,7 +406,9 @@ class BluetoothLeRepImpl @Inject constructor(
                         )
                     }
                     bleScanner.startScan(filters, scanSettings, scanCallback)
-                    Log.d(TAG, "startScan - Scan started (scanAll=$scanAll). Filters: ${filters?.joinToString { it.toString() } ?: "None"}")
+                    Log.d(
+                        TAG,
+                        "startScan - Scan started (scanAll=$scanAll). Filters: ${filters?.joinToString { it.toString() } ?: "None"}")
                 } catch (e: Exception) {
                     _scanState.value = ScanState.NOT_SCANNING
                     Log.e(TAG, "startScan - Error starting scan: ${e.message}", e)
@@ -393,10 +423,10 @@ class BluetoothLeRepImpl @Inject constructor(
     override suspend fun stopScan() {
         synchronized(_scanState) {
             if (_scanState.value == ScanState.NOT_SCANNING && _scanState.value != ScanState.STOPPING) {
-                 Log.d(TAG, "stopScan - No active scan to stop, or already stopping.")
+                Log.d(TAG, "stopScan - No active scan to stop, or already stopping.")
                 return
             }
-             if (_scanState.value == ScanState.SCANNING || _scanState.value == ScanState.STOPPING) {
+            if (_scanState.value == ScanState.SCANNING || _scanState.value == ScanState.STOPPING) {
                 try {
                     bleScanner.stopScan(scanCallback)
                     Log.d(TAG, "stopScan - Scan stopped successfully.")
@@ -418,7 +448,10 @@ class BluetoothLeRepImpl @Inject constructor(
         Log.d(TAG, "Starting to read all characteristics. new ")
         Log.d(TAG, "number of services: ${gatt.services.size}")
         for (service in gatt.services) {
-            Log.d(TAG, "Service: ${getHumanReadableName(service.uuid.toString())} (${service.uuid})")
+            Log.d(
+                TAG,
+                "Service: ${getHumanReadableName(service.uuid.toString())} (${service.uuid})"
+            )
             for (characteristic in service.characteristics) {
                 if (characteristic.properties and BluetoothGattCharacteristic.PROPERTY_READ != 0) {
 
@@ -427,16 +460,25 @@ class BluetoothLeRepImpl @Inject constructor(
                     val result = try {
                         val success = gatt.readCharacteristic(characteristic)
                         if (!success) {
-                            Log.e(TAG, "Failed to initiate read for characteristic: ${characteristic.uuid}")
+                            Log.e(
+                                TAG,
+                                "Failed to initiate read for characteristic: ${characteristic.uuid}"
+                            )
                         } else {
-                            Log.d(TAG, "Read request sent successfully for characteristic: ${characteristic.uuid}")
+                            Log.d(
+                                TAG,
+                                "Read request sent successfully for characteristic: ${characteristic.uuid}"
+                            )
                         }
                     } catch (e: Exception) {
                         "Error: ${e.message}"
                     }
                     Log.d(TAG, "Characteristic read complete: ${characteristic.uuid} = $result \n")
                 } else {
-                    Log.d(TAG, "Characteristic: ${getHumanReadableName(characteristic.uuid.toString())} (${characteristic.uuid}) is not readable.")
+                    Log.d(
+                        TAG,
+                        "Characteristic: ${getHumanReadableName(characteristic.uuid.toString())} (${characteristic.uuid}) is not readable."
+                    )
                 }
             }
         }
@@ -477,9 +519,20 @@ class BluetoothLeRepImpl @Inject constructor(
                 try {
                     if (Build.VERSION.SDK_INT >= 33) {
                         characteristic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-                        val success = gatt.writeCharacteristic(characteristic, value, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+                        val success = gatt.writeCharacteristic(
+                            characteristic,
+                            value,
+                            BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+                        )
                         if (success == BluetoothGatt.GATT_SUCCESS) {
-                            Log.d(TAG, "Activated service: $uuid with value: ${value.joinToString(", ") { "0x%02X".format(it) }}")
+                            Log.d(
+                                TAG,
+                                "Activated service: $uuid with value: ${
+                                    value.joinToString(", ") {
+                                        "0x%02X".format(it)
+                                    }
+                                }"
+                            )
                         } else {
                             Log.e(TAG, "Failed to activate service: $uuid, status: $success")
                         }
@@ -488,7 +541,12 @@ class BluetoothLeRepImpl @Inject constructor(
                         @Suppress("DEPRECATION")
                         val success = gatt.writeCharacteristic(characteristic)
                         if (success) {
-                            Log.d(TAG, "Activated service (deprecated write): $uuid with value: ${value.joinToString(", ") { "0x%02X".format(it) }}")
+                            Log.d(
+                                TAG,
+                                "Activated service (deprecated write): $uuid with value: ${
+                                    value.joinToString(", ") { "0x%02X".format(it) }
+                                }"
+                            )
                         } else {
                             Log.e(TAG, "Failed to activate service (deprecated write): $uuid")
                         }
@@ -510,8 +568,10 @@ class BluetoothLeRepImpl @Inject constructor(
             return
         }
 
-        val temperatureConfigUUID = UUID.fromString("f000aa02-0451-4000-b000-000000000000") // Configuration
-        val temperaturePeriodUUID = UUID.fromString("f000aa03-0451-4000-b000-000000000000") // Period
+        val temperatureConfigUUID =
+            UUID.fromString("f000aa02-0451-4000-b000-000000000000") // Configuration
+        val temperaturePeriodUUID =
+            UUID.fromString("f000aa03-0451-4000-b000-000000000000") // Period
         val temperatureDataUUID = UUID.fromString("f000aa01-0451-4000-b000-000000000000")   // Data
 
         val configCharacteristic = gatt.services
@@ -538,7 +598,10 @@ class BluetoothLeRepImpl @Inject constructor(
             .find { it.uuid == temperaturePeriodUUID }
 
         if (periodCharacteristic != null) {
-            Log.d(TAG, "Temperature Period Characteristic found. Props: ${periodCharacteristic.properties}")
+            Log.d(
+                TAG,
+                "Temperature Period Characteristic found. Props: ${periodCharacteristic.properties}"
+            )
             periodCharacteristic.value = byteArrayOf(0x64) // 100ms
             val successPeriod = gatt.writeCharacteristic(periodCharacteristic)
             if (successPeriod) {
@@ -654,7 +717,8 @@ class BluetoothLeRepImpl @Inject constructor(
         characteristic: BluetoothGattCharacteristic
     ) {
         gatt.setCharacteristicNotification(characteristic, true)
-        val descriptor = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"))
+        val descriptor =
+            characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"))
         if (descriptor != null) {
             descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
             gatt.writeDescriptor(descriptor)
@@ -723,14 +787,24 @@ private val characteristicParsers = mapOf(
     "00002a01-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> parseAppearance(raw) },
     "00002a23-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> parseSystemId(raw) },
     "00002a04-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> parseConnectionParameters(raw) },
-    "00002a19-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> "${raw.getOrNull(0)?.toInt() ?: 0}%" },
+    "00002a19-0000-1000-8000-00805f9b34fb" to { raw: ByteArray ->
+        "${
+            raw.getOrNull(0)?.toInt() ?: 0
+        }%"
+    },
     "00002a24-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> raw.toString(Charsets.UTF_8) },
     "00002a25-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> raw.toString(Charsets.UTF_8) },
     "00002a26-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> raw.toString(Charsets.UTF_8) },
     "00002a27-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> raw.toString(Charsets.UTF_8) },
     "00002a28-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> raw.toString(Charsets.UTF_8) },
     "00002a29-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> raw.toString(Charsets.UTF_8) },
-    "00002a2a-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> "Experimental Certification Data: ${raw.toString(Charsets.UTF_8)}" },
+    "00002a2a-0000-1000-8000-00805f9b34fb" to { raw: ByteArray ->
+        "Experimental Certification Data: ${
+            raw.toString(
+                Charsets.UTF_8
+            )
+        }"
+    },
     "00002a50-0000-1000-8000-00805f9b34fb" to { raw: ByteArray -> parsePnPId(raw) },
 
     // Temperature Data
@@ -900,7 +974,7 @@ private fun parseBarometerDataWithCalibration(raw: ByteArray, calibration: ByteA
                     (raw[0].toInt() and 0xFF)
             )
     val offset = (calibration[0].toInt() and 0xFF) + ((calibration[1].toInt() and 0xFF) shl 8)
-    val gain   = (calibration[2].toInt() and 0xFF) + ((calibration[3].toInt() and 0xFF) shl 8)
+    val gain = (calibration[2].toInt() and 0xFF) + ((calibration[3].toInt() and 0xFF) shl 8)
 
     val corrected = (rawPressure - offset) * (gain / 100.0)
     val finalHpa = corrected / 100.0

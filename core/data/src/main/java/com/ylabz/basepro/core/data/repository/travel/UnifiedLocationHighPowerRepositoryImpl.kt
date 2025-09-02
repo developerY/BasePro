@@ -4,7 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.os.Looper
-import com.google.android.gms.location.*
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,11 +18,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.shareIn
 
 @Singleton
 class UnifiedLocationHighPowerRepositoryImpl @Inject constructor(
@@ -63,9 +67,9 @@ class UnifiedLocationHighPowerRepositoryImpl @Inject constructor(
         }
     }
         .shareIn(
-            scope   = repositoryScope,
+            scope = repositoryScope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000),
-            replay  = 1
+            replay = 1
         )
 
     override val locationFlow: Flow<Location>
@@ -76,9 +80,9 @@ class UnifiedLocationHighPowerRepositoryImpl @Inject constructor(
             .map { (it.speed * 3.6f).coerceAtLeast(0f) }
             .distinctUntilChanged()
             .shareIn(
-                scope   = repositoryScope,
+                scope = repositoryScope,
                 started = SharingStarted.Lazily,
-                replay  = 1
+                replay = 1
             )
 
     override val elevationFlow: Flow<Float> =
@@ -86,9 +90,9 @@ class UnifiedLocationHighPowerRepositoryImpl @Inject constructor(
             .map { it.altitude.toFloat() }
             .distinctUntilChanged()
             .shareIn(
-                scope   = repositoryScope,
+                scope = repositoryScope,
                 started = SharingStarted.Lazily,
-                replay  = 1
+                replay = 1
             )
 }
 

@@ -58,7 +58,7 @@ fun GpsLevelIndicator(
     navTo: (NavigationCommand) -> Unit, // MODIFIED: Changed from onEvent to navTomodifier: Modifier = Modifier
 ) {
 
-    GpsLevelIndicatorFull (
+    GpsLevelIndicatorFull(
         modifier = modifier,
         uiState = uiState,
         onEvent = onEvent,
@@ -127,7 +127,10 @@ fun GpsLevelIndicatorFull(
                 if (animatedColor.value != targetColor) {
                     animatedColor.animateTo(
                         targetValue = targetColor,
-                        animationSpec = tween(durationMillis = 500, easing = LinearEasing) // Faster animation if no blue flash
+                        animationSpec = tween(
+                            durationMillis = 500,
+                            easing = LinearEasing
+                        ) // Faster animation if no blue flash
                     )
                 }
             }
@@ -136,7 +139,10 @@ fun GpsLevelIndicatorFull(
 
     Box(
         modifier = modifier.clickable {
-            Log.d("GpsLevelIndicator", "Satellite icon clicked. Sending NavigateToSettingsRequested event.")
+            Log.d(
+                "GpsLevelIndicator",
+                "Satellite icon clicked. Sending NavigateToSettingsRequested event."
+            )
             onEvent(BikeEvent.NavigateToSettingsRequested(cardKey = "AppPrefs"))
         },
         contentAlignment = Alignment.Center

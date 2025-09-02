@@ -2,11 +2,7 @@ package com.ylabz.basepro.feature.wearos.health.ui
 
 import android.os.RemoteException
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.HealthConnectFeatures
 import androidx.health.connect.client.permission.HealthPermission
@@ -21,10 +17,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.data.service.health.HealthSessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -32,7 +25,6 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
-import java.util.UUID
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -107,7 +99,8 @@ class HealthViewModel @Inject constructor(
             if (permissionsGranted) {
                 loadHealthData()
             } else {
-                _uiState.value = HealthUiState.PermissionsRequired("Health permissions are required.")
+                _uiState.value =
+                    HealthUiState.PermissionsRequired("Health permissions are required.")
             }
         }
     }
@@ -156,7 +149,7 @@ class HealthViewModel @Inject constructor(
         startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
         val sessionInputs = healthSessionManager.readExerciseSessions(startOfDay.toInstant(), now)
         print("weightInputs: $sessionInputs")
-        Log.d("TAG","${healthSessionManager.readWeightInputs(startOfDay.toInstant(), now)}")
+        Log.d("TAG", "${healthSessionManager.readWeightInputs(startOfDay.toInstant(), now)}")
         return sessionInputs
     }
 
@@ -167,7 +160,7 @@ class HealthViewModel @Inject constructor(
         startOfDay.toInstant().plus(7, ChronoUnit.DAYS)
         val weightInputs = healthSessionManager.readWeightInputs(startOfDay.toInstant(), now)
         print("weightInputs: $weightInputs")
-         Log.d("TAG","${healthSessionManager.readWeightInputs(startOfDay.toInstant(), now)}")
+        Log.d("TAG", "${healthSessionManager.readWeightInputs(startOfDay.toInstant(), now)}")
         return weightInputs
     }
 
@@ -176,7 +169,8 @@ class HealthViewModel @Inject constructor(
         backgroundReadAvailable.value = healthSessionManager.isFeatureAvailable(
             HealthConnectFeatures.FEATURE_READ_HEALTH_DATA_IN_BACKGROUND
         )
-        backgroundReadGranted.value = healthSessionManager.hasAllPermissions(backgroundReadPermissions)
+        backgroundReadGranted.value =
+            healthSessionManager.hasAllPermissions(backgroundReadPermissions)
 
         _uiState.value = try {
             if (permissionsGranted.value) {
@@ -195,7 +189,6 @@ class HealthViewModel @Inject constructor(
             HealthUiState.Error(Exception(illegalStateException).message.toString())
         }
     }
-
 
 
     fun updatePermissionsState(grantedPermissions: Set<String>) {

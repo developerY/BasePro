@@ -100,7 +100,7 @@ fun HomeBottomBar(
 
 private fun navigateTo(tabTitle: String, navController: NavHostController) {
     val route = when (tabTitle) {
-        "Home"-> RxDigitaScreen.HomeRxDigitaScreen.route
+        "Home" -> RxDigitaScreen.HomeRxDigitaScreen.route
         "MedList" -> RxDigitaScreen.TripRxDigitaScreen.route
         "Settings" -> RxDigitaScreen.SettingsRxDigitaScreen.route
         else -> RxDigitaScreen.HomeRxDigitaScreen.route // Default fallback

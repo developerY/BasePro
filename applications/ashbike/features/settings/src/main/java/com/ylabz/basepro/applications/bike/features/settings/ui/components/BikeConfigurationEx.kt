@@ -83,7 +83,12 @@ fun BikeConfigurationEx(
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     var gearingLevel by remember { mutableStateOf(5f) }
-                    Text(stringResource(R.string.settings_gearing_level_label, gearingLevel.toInt()))
+                    Text(
+                        stringResource(
+                            R.string.settings_gearing_level_label,
+                            gearingLevel.toInt()
+                        )
+                    )
                     Slider(
                         enabled = false,
                         value = gearingLevel,

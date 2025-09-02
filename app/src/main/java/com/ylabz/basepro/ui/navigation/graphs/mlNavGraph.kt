@@ -10,7 +10,6 @@ import androidx.navigation.navigation
 import com.ylabz.basepro.core.ui.ML
 import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.feature.ml.ui.MLAppScreen
-import com.ylabz.basepro.feature.nfc.ui.NfcUiRoute
 import com.ylabz.basepro.ui.bar.AppScaffold
 import kotlinx.coroutines.CoroutineScope
 
@@ -32,9 +31,9 @@ fun NavGraphBuilder.mlNavGraph(
                 drawerState = drawerState,
                 navController = navController
             ) { paddingVals ->
-               MLAppScreen(
-                   modifier = Modifier.padding(paddingVals)
-               )
+                MLAppScreen(
+                    modifier = Modifier.padding(paddingVals)
+                )
             }
         }
     }

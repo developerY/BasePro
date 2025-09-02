@@ -16,7 +16,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -87,6 +86,7 @@ class AlarmRepositoryImpl @Inject constructor(
         // Cancel the alarm if it exists
         cancelNotification(alarmId)
     }
+
     // Save alarms to DataStore
     override suspend fun saveAlarms(alarms: List<ProAlarm>) {
         val alarmsJson: String = Json.encodeToString(alarms)
@@ -175,7 +175,6 @@ class AlarmRepositoryImpl @Inject constructor(
         )
         return pendingIntent != null
     }
-
 
 
     private fun sendTestNotification(context: Context) {

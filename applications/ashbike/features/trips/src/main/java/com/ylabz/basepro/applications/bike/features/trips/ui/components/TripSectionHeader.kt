@@ -70,7 +70,7 @@ fun TripSectionHeader(
                         tint = Color(0xFF009688)
                     )
                 } else {
-                    Box (
+                    Box(
                         modifier = Modifier.size(24.dp),
                         contentAlignment = Alignment.Center
                     ) {

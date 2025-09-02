@@ -10,10 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.ylabz.basepro.core.ui.Screen
 import androidx.navigation.navigation
 import com.ylabz.basepro.core.ui.NAV3
-import com.ylabz.basepro.core.ui.WEATHER
+import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.feature.nav3.ui.Nav3Main
 import com.ylabz.basepro.ui.bar.AppScaffold
 import kotlinx.coroutines.CoroutineScope

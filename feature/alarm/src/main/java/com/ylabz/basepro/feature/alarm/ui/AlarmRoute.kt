@@ -1,12 +1,10 @@
 package com.ylabz.basepro.feature.alarm.ui
 
-import android.R.attr.data
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -66,27 +64,27 @@ fun AlarmRoute(
 
             is AlarmUiState.Error -> ErrorScreen(uiState.message)
             AlarmUiState.Empty -> AlarmSuccessScreen(
-            data = emptyList(),
-            onAddAlarmClick = {
-                val currentTime = System.currentTimeMillis() + 1000 // 1 second later
-                val id = Random.nextInt()
-                val proAlarm = ProAlarm(
-                    id = id,
-                    timeInMillis = currentTime,
-                    message = "Test Alarm $id"
-                )
-                viewModel.onEvent(AlarmEvent.AddAlarm(proAlarm))
-            },
-            onDeleteAllClick = {
-                viewModel.onEvent(AlarmEvent.DeleteAll)
-            },
-            onToggleAlarm = { alarmId, isEnabled ->
-                viewModel.onEvent(AlarmEvent.ToggleAlarm(alarmId, isEnabled))
-            },
-            onDebugLogClick = {
-                viewModel.logDebugInfo() // Call the ViewModel's debug method
-            }
-        )
+                data = emptyList(),
+                onAddAlarmClick = {
+                    val currentTime = System.currentTimeMillis() + 1000 // 1 second later
+                    val id = Random.nextInt()
+                    val proAlarm = ProAlarm(
+                        id = id,
+                        timeInMillis = currentTime,
+                        message = "Test Alarm $id"
+                    )
+                    viewModel.onEvent(AlarmEvent.AddAlarm(proAlarm))
+                },
+                onDeleteAllClick = {
+                    viewModel.onEvent(AlarmEvent.DeleteAll)
+                },
+                onToggleAlarm = { alarmId, isEnabled ->
+                    viewModel.onEvent(AlarmEvent.ToggleAlarm(alarmId, isEnabled))
+                },
+                onDebugLogClick = {
+                    viewModel.logDebugInfo() // Call the ViewModel's debug method
+                }
+            )
 
 
         }

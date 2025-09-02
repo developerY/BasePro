@@ -90,6 +90,7 @@ fun TestNavigationRoot(modifier: Modifier = Modifier) {
                         }
                     }
                 }
+
                 is RouteB -> NavEntry(
                     key,
                     metadata = NavDisplay.transitionSpec {
@@ -116,7 +117,7 @@ fun TestNavigationRoot(modifier: Modifier = Modifier) {
                                     animationSpec = tween(400)
                                 )
                     }
-                    ) {
+                ) {
                     ContentBlue("Route id: ${key.id} ")
                 }
 

@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <journey name="startStopAndReviewRide">
     <description>Test the full flow of starting a ride, stopping it, and then reviewing its details
-        on the trips screen.</description>
+        on the trips screen.
+    </description>
     <actions>
         <action>Given the user is on the main dashboard and GPS is available</action>
 
         <action>When the user taps the 'Start Ride' button</action>
         <action>Then the ride timer begins counting up from "00:00:00"</action>
         <action>And the UI shows real-time updates for speed and distance</action>
-        <action>And the 'Start Ride' button is disabled and the 'Stop Ride' button is enabled</action>
+        <action>And the 'Start Ride' button is disabled and the 'Stop Ride' button is enabled
+        </action>
 
         <action>And the user waits for 2 minutes</action>
         <action>Wait for 120 seconds</action>
@@ -18,12 +20,15 @@
         <action>And the 'Start Ride' button is enabled again</action>
 
         <action>When the user taps on the 'Trips' tab in the bottom navigation</action>
-        <action>Then the user sees a list of past rides, with the most recent one at the top</action>
+        <action>Then the user sees a list of past rides, with the most recent one at the top
+        </action>
         <action>And the most recent ride has a duration of approximately "00:00:10"</action>
 
         <action>When the user taps on the most recent ride</action>
         <action>Then the user is navigated to the ride detail screen</action>
         <action>And the screen displays a map with the ride path</action>
-        <action>And the screen shows detailed stats for the ride, including distance, duration, and average speed</action>
+        <action>And the screen shows detailed stats for the ride, including distance, duration, and
+            average speed
+        </action>
     </actions>
 </journey>

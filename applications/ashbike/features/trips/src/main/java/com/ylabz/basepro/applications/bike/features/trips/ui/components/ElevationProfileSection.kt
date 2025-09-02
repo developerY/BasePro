@@ -63,7 +63,9 @@ fun ElevationProfileSection(
                 Spacer(Modifier.weight(1f))
                 Icon(
                     imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                    contentDescription = if (expanded) stringResource(R.string.action_hide) else stringResource(R.string.action_show)
+                    contentDescription = if (expanded) stringResource(R.string.action_hide) else stringResource(
+                        R.string.action_show
+                    )
                 )
             }
 

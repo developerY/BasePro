@@ -60,8 +60,8 @@ fun ElevationProfile(
 
     // 2) compute mins/maxes
     val totalDist = distElev.last().first
-    val minElev   = distElev.minOf { it.second }
-    val maxElev   = distElev.maxOf { it.second }
+    val minElev = distElev.minOf { it.second }
+    val maxElev = distElev.maxOf { it.second }
     val elevRange = (maxElev - minElev).takeIf { it > 0f } ?: 1f
 
     Box(modifier = modifier) {
@@ -123,7 +123,10 @@ fun ElevationProfile(
                 .padding(4.dp)
         )
         Text(
-            text = stringResource(R.string.feature_trips_elevation_label_total_distance_km, totalDist / 1000f),
+            text = stringResource(
+                R.string.feature_trips_elevation_label_total_distance_km,
+                totalDist / 1000f
+            ),
             style = MaterialTheme.typography.bodySmall,
             color = Color.Black,
             modifier = Modifier

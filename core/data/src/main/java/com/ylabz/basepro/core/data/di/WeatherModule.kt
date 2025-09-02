@@ -1,13 +1,10 @@
 package com.ylabz.basepro.core.data.di
 
-import com.ylabz.basepro.core.data.repository.travel.compass.CompassRepository
-import com.ylabz.basepro.core.data.repository.travel.compass.DemoCompassRepositoryImpl
 import com.ylabz.basepro.core.data.repository.weather.DemoWeatherRepoImpl
 import com.ylabz.basepro.core.data.repository.weather.WeatherRepo
 import com.ylabz.basepro.core.data.repository.weather.WeatherRepoImpl
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Named

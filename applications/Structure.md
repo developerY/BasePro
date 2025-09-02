@@ -1,6 +1,10 @@
-Yes, this system makes a lot of sense—especially in a multi-module, Compose-based app. Having a **“main applications” screen** (with a beautiful UI showing each app as a “card,” possibly with flip animations) plus a **side drawer** that can quickly launch individual features is a clean, modular way to organize your code and navigation.
+Yes, this system makes a lot of sense—especially in a multi-module, Compose-based app. Having a *
+*“main applications” screen** (with a beautiful UI showing each app as a “card,” possibly with flip
+animations) plus a **side drawer** that can quickly launch individual features is a clean, modular
+way to organize your code and navigation.
 
-Below is a high-level outline of how you might implement a “main applications” screen with flipping cards, Material theming, and navigation hooks to launch each app or feature.
+Below is a high-level outline of how you might implement a “main applications” screen with flipping
+cards, Material theming, and navigation hooks to launch each app or feature.
 
 ---
 
@@ -15,17 +19,21 @@ You’ll likely have something like this:
         - Or, when a feature is selected from the drawer, shows that feature’s composable(s).
         - Or, when an application is launched, shows that application’s composable(s).
 
-Because you’re using Hilt and Compose Navigation, each feature or application can have its own `ViewModel`, UI state, and routes. The main NavHost (or a nested NavHost) can coordinate which screen is currently displayed.
+Because you’re using Hilt and Compose Navigation, each feature or application can have its own
+`ViewModel`, UI state, and routes. The main NavHost (or a nested NavHost) can coordinate which
+screen is currently displayed.
 
 ---
 
 ## 2. The Main “Applications” Screen
 
-Imagine a grid or list of “Application Cards.” Each card can flip to reveal more details, and a button to “Launch” that app.
+Imagine a grid or list of “Application Cards.” Each card can flip to reveal more details, and a
+button to “Launch” that app.
 
 ### 2.1 Flippable Card Concept
 
-You can implement a “flip” animation using Compose’s `animateFloatAsState` (or an `Animatable`) plus `graphicsLayer { rotationY = ... }`.
+You can implement a “flip” animation using Compose’s `animateFloatAsState` (or an `Animatable`) plus
+`graphicsLayer { rotationY = ... }`.
 
 **Example** (simplified):
 
@@ -67,9 +75,11 @@ fun FlippableCard(
 ```
 
 In the above:
+
 - We track `flipped` with a `Boolean`.
 - We animate between `0f` (not flipped) and `180f` (flipped).
-- We use a little trick: when `rotation > 90`, we display the back side (rotated 180 so it looks right-way-around).
+- We use a little trick: when `rotation > 90`, we display the back side (rotated 180 so it looks
+  right-way-around).
 
 ### 2.2 Card Content
 
@@ -132,7 +142,8 @@ fun ApplicationCard(
 
 ### 2.3 Main Screen Layout
 
-You could show a **lazy grid** or a **lazy column** of these cards. For example, using `LazyVerticalGrid`:
+You could show a **lazy grid** or a **lazy column** of these cards. For example, using
+`LazyVerticalGrid`:
 
 ```kotlin
 @OptIn(ExperimentalFoundationApi::class)
@@ -156,13 +167,15 @@ fun ApplicationsScreen(
 }
 ```
 
-When the user taps **“Launch”**, you navigate to that application’s route (or a new Activity, if that’s how your architecture is set up).
+When the user taps **“Launch”**, you navigate to that application’s route (or a new Activity, if
+that’s how your architecture is set up).
 
 ---
 
 ## 3. The Navigation Drawer for Features
 
-If you’re using Material 3, you might use `ModalNavigationDrawer`; in Material 2, it’s `ModalDrawer`. Something like:
+If you’re using Material 3, you might use `ModalNavigationDrawer`; in Material 2, it’s
+`ModalDrawer`. Something like:
 
 ```kotlin
 @OptIn(ExperimentalMaterial3Api::class)
@@ -187,7 +200,9 @@ fun AppDrawerLayout(
 }
 ```
 
-Where `NavigationDrawerItemList` is your composable that lists features, each calling `onFeatureSelected(feature)` on click. Then in your “host” composable, you can navigate to the route that shows that feature’s screen.
+Where `NavigationDrawerItemList` is your composable that lists features, each calling
+`onFeatureSelected(feature)` on click. Then in your “host” composable, you can navigate to the route
+that shows that feature’s screen.
 
 ---
 
@@ -196,8 +211,10 @@ Where `NavigationDrawerItemList` is your composable that lists features, each ca
 You’ll have something like a **single-activity** approach with:
 
 1. **Root NavHost** or a custom “router.”
-2. **Scaffold** with top app bar, `ModalNavigationDrawer` on the left, and the main content area in the center.
-3. **Main content** either shows the “Applications” grid or the selected feature’s composable, depending on user actions.
+2. **Scaffold** with top app bar, `ModalNavigationDrawer` on the left, and the main content area in
+   the center.
+3. **Main content** either shows the “Applications” grid or the selected feature’s composable,
+   depending on user actions.
 
 **Pseudocode**:
 
@@ -245,7 +262,8 @@ fun MainRoot() {
 }
 ```
 
-> Of course, you can do the same logic with the official **Navigation Compose** library, creating routes for each feature/app. This snippet just shows the concept.
+> Of course, you can do the same logic with the official **Navigation Compose** library, creating
+> routes for each feature/app. This snippet just shows the concept.
 
 ---
 
@@ -256,17 +274,23 @@ fun MainRoot() {
 - **Modular**: Each feature has its own code, routes, ViewModel, and UI state.
 - **Single Host**: A single main activity or NavHost can decide which feature or app to show.
 - **Scalable**: You can keep adding features without cluttering the main app logic.
-- **Discoverable**: A side drawer for features is intuitive, and a main screen with flipping app cards is a nice UI flourish.
+- **Discoverable**: A side drawer for features is intuitive, and a main screen with flipping app
+  cards is a nice UI flourish.
 
-In short, it’s a great design for an internal “demo” or “shell” app that showcases multiple features or sub-applications, all under one roof.
+In short, it’s a great design for an internal “demo” or “shell” app that showcases multiple features
+or sub-applications, all under one roof.
 
 ---
 
 ### Final Tips
 
-1. **Keep it consistent**: Ensure you have a standard pattern for each feature module’s composable(s) and ViewModel(s).
+1. **Keep it consistent**: Ensure you have a standard pattern for each feature module’s composable(
+   s) and ViewModel(s).
 2. **Use Hilt**: Each feature can define its own `@Module` or `@Provides` for dependencies.
-3. **Share theming**: Put your `MaterialTheme` definitions (colors, typography, shapes) in a common “core-ui” or “design” module, so everything looks consistent.
-4. **Animations**: If you want more sophisticated flipping or transitions, explore the `animate*` APIs and `rememberInfiniteTransition`.
+3. **Share theming**: Put your `MaterialTheme` definitions (colors, typography, shapes) in a common
+   “core-ui” or “design” module, so everything looks consistent.
+4. **Animations**: If you want more sophisticated flipping or transitions, explore the `animate*`
+   APIs and `rememberInfiniteTransition`.
 
-All in all, it’s a solid, flexible architecture—and it can look great with Compose’s Material design components. Enjoy building it!
+All in all, it’s a solid, flexible architecture—and it can look great with Compose’s Material design
+components. Enjoy building it!

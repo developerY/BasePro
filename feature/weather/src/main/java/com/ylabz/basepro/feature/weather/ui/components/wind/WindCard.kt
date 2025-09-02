@@ -70,7 +70,6 @@ fun WindCard(
 }
 
 
-
 /*
 @Preview(showBackground = true)
 @Composable

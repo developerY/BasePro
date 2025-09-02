@@ -1,18 +1,21 @@
 package com.ylabz.basepro.feature.weather.ui.components.main
 
-import androidx.compose.foundation.layout.*
+//import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-//import androidx.compose.ui.tooling.preview.Preview
 import com.ylabz.basepro.feature.weather.ui.components.rain.RainVolumeCard
 import com.ylabz.basepro.feature.weather.ui.components.snow.BetterSnowVolumeCardAI
 import com.ylabz.basepro.feature.weather.ui.components.sun.TemperatureCardAI
@@ -63,10 +66,12 @@ fun WeatherScreenCard(
                         // Display the Rain card
                         RainVolumeCard(volume = rainVolume)
                     }
+
                     WeatherCondition.SNOWY -> {
                         // Display the Snow card
                         BetterSnowVolumeCardAI(volume = snowVolume)
                     }
+
                     else -> {
                         // For CLEAR or any other condition, display the Temperature card.
                         TemperatureCardAI(temp = temperature)

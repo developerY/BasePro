@@ -86,20 +86,19 @@ fun SimpleShimmer(
     val transition = rememberInfiniteTransition()
     val progress by transition.animateFloat(
         initialValue = 0f,
-        targetValue  = 1f,
+        targetValue = 1f,
         animationSpec = infiniteRepeatable(tween(1000, easing = LinearEasing))
     )
 
     // moving gradient
     val brush = Brush.linearGradient(
         colors = listOf(baseColor, highlightColor, baseColor),
-        start  = Offset(x = progress * 200f, y = 0f),
-        end    = Offset(x = progress * 200f + 200f, y = 200f)
+        start = Offset(x = progress * 200f, y = 0f),
+        end = Offset(x = progress * 200f + 200f, y = 200f)
     )
 
     Box(modifier.background(brush, RoundedCornerShape(16.dp)))
 }
-
 
 
 /*

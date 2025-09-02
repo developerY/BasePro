@@ -1,10 +1,8 @@
 package com.ylabz.basepro.feature.wearos.health.ui.components
 
-import android.R.attr.onClick
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.Text
 
 @Composable

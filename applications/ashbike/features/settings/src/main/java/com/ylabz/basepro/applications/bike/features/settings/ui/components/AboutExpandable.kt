@@ -64,8 +64,18 @@ fun AboutExpandable(
             if (expanded) {
                 HorizontalDivider()
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text(stringResource(R.string.settings_app_version_label, stringResource(R.string.settings_app_version_value_text)))
-                    Text(stringResource(R.string.settings_build_number_label, stringResource(R.string.settings_build_number_value_text)))
+                    Text(
+                        stringResource(
+                            R.string.settings_app_version_label,
+                            stringResource(R.string.settings_app_version_value_text)
+                        )
+                    )
+                    Text(
+                        stringResource(
+                            R.string.settings_build_number_label,
+                            stringResource(R.string.settings_build_number_value_text)
+                        )
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(stringResource(R.string.settings_about_info_visit_text))
                     Text(

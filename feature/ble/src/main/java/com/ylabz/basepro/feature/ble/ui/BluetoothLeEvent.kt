@@ -1,9 +1,6 @@
 package com.ylabz.basepro.feature.ble.ui
 
 import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
-import com.ylabz.basepro.core.model.ble.DeviceCharacteristic
-import com.ylabz.basepro.core.model.ble.DeviceService
-import com.ylabz.basepro.core.model.ble.GattCharacteristicValue
 
 sealed interface BluetoothLeEvent {
     object RequestEnableBluetooth : BluetoothLeEvent
@@ -19,7 +16,8 @@ sealed interface BluetoothLeEvent {
     // Add this new event for battery level reading
     object ReadCharacteristics : BluetoothLeEvent
 
-    data class SetActiveDevice(val device: BluetoothDeviceInfo) : BluetoothLeEvent // Added event for setting the active device
+    data class SetActiveDevice(val device: BluetoothDeviceInfo) :
+        BluetoothLeEvent // Added event for setting the active device
 
 
     //object FetchGattServices : BluetoothLeEvent

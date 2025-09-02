@@ -1,10 +1,13 @@
-🔥 Love the vision — **daily delivery for every app** is a bold and beautiful move. Let’s break it down clearly so you can pick the **best delivery pipeline**.
+🔥 Love the vision — **daily delivery for every app** is a bold and beautiful move. Let’s break it
+down clearly so you can pick the **best delivery pipeline**.
 
 ---
 
-## 🎯 Goal: Ship `bike`, `home`, `medtime`, and `photodo` to the Play Store **daily**, as separate apps with their own icons, app names, and behavior.
+## 🎯 Goal: Ship `bike`, `home`, `medtime`, and `photodo` to the Play Store **daily
+**, as separate apps with their own icons, app names, and behavior.
 
 That means:
+
 - 🛠 4 separate APKs (or AABs) built **automatically**
 - 💎 Each with its **own branding, versioning, and entry point**
 - 🚀 Delivered reliably, e.g., via GitHub Actions, Bitrise, or CI/CD
@@ -14,6 +17,7 @@ That means:
 ## ✅ Best Option: **Product Flavors + CI/CD**
 
 ### 🎛 Product Flavors
+
 Define one **flavor per app**:
 
 ```kotlin
@@ -38,11 +42,13 @@ android {
 ```
 
 Then configure:
+
 - `RootNavGraph()` to route based on flavor
 - Launcher icon via `mipmap-[flavor]/ic_launcher.png`
 - Optional: different themes or features per app
 
 **Per-flavor files**:
+
 ```
 app/
  └── src/
@@ -59,6 +65,7 @@ app/
 ### 🤖 CI/CD: GitHub Actions or Bitrise
 
 Run this daily:
+
 ```bash
 ./gradlew clean assembleBikeRelease
 ./gradlew clean assembleHomeRelease
@@ -67,11 +74,13 @@ Run this daily:
 ```
 
 Or use `bundle*` if you want AABs:
+
 ```bash
 ./gradlew bundleBikeRelease
 ```
 
 CI will:
+
 - Pull the latest code
 - Build each flavor
 - Upload to Play Console via `fastlane` or Play Developer API
@@ -80,23 +89,26 @@ CI will:
 
 ### ✅ Why Flavors Are Better for Daily Multi-App Shipping
 
-| Manual Build | Product Flavors |
-|--------------|-----------------|
+| Manual Build                                      | Product Flavors                      |
+|---------------------------------------------------|--------------------------------------|
 | Change `RootNavGraph`, icon, dependencies by hand | All config handled by Gradle flavors |
-| Only one app can be built per commit | All apps can be built in parallel |
-| Not CI-friendly | CI-native, very scriptable |
-| App switching is manual | Just run `assembleBikeRelease` etc. |
-| Fragile / risky | Clean, automated separation |
+| Only one app can be built per commit              | All apps can be built in parallel    |
+| Not CI-friendly                                   | CI-native, very scriptable           |
+| App switching is manual                           | Just run `assembleBikeRelease` etc.  |
+| Fragile / risky                                   | Clean, automated separation          |
 
 ---
 
 ## 🧠 Conclusion: Go Flavors + CI/CD
 
-You’re already structured for it — your `applications/*` are isolated and modular. Just add flavors, point to the right `applicationId`, launcher, and nav graph per flavor, and let CI do the heavy lifting.
+You’re already structured for it — your `applications/*` are isolated and modular. Just add flavors,
+point to the right `applicationId`, launcher, and nav graph per flavor, and let CI do the heavy
+lifting.
 
 ---
 
 Would you like:
+
 - 🚀 A sample `build.gradle.kts` with the flavor blocks already set up?
 - 🛠️ A GitHub Actions script for daily shipping?
 - 🎨 Launcher icon switching per flavor?

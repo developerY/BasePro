@@ -1,6 +1,5 @@
 package com.ylabz.basepro.core.data.repository.travel.compass
 
-import java.lang.Math.toDegrees
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -9,6 +8,7 @@ import android.hardware.SensorManager
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import java.lang.Math.toDegrees
 import javax.inject.Inject
 import javax.inject.Singleton
 

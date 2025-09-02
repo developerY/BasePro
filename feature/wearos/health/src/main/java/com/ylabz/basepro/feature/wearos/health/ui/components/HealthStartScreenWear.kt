@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.navigation.NavController
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
-import androidx.wear.compose.material.items
 import androidx.wear.compose.material.Text
 import com.ylabz.basepro.feature.wearos.health.ui.HealthEvent
 

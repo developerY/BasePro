@@ -16,18 +16,18 @@ android {
     }
 
     buildTypes {
-    release {
-        isMinifyEnabled = providers.gradleProperty("isMinifyForRelease").get().toBoolean()
-        proguardFiles(
-            getDefaultProguardFile("proguard-android-optimize.txt"),
-            "proguard-rules.pro"
-        )
+        release {
+            isMinifyEnabled = providers.gradleProperty("isMinifyForRelease").get().toBoolean()
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        // This debug block ensures a fast development cycle
+        debug {
+            isMinifyEnabled = false
+        }
     }
-    // This debug block ensures a fast development cycle
-    debug {
-        isMinifyEnabled = false
-    }
-}
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
@@ -51,12 +51,12 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     // optional:
     implementation(libs.androidx.datastore.core)
-    
+
     // Hilt Dependency Injection
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     // kapt(libs.hilt.compiler)
-    
+
     // Room
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)

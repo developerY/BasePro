@@ -48,9 +48,18 @@ fun AppPreferencesExpandable(
 ) {
     // Helper map to convert the enum to a float for the slider and a label for the UI.
     val energyLevelMap = mapOf(
-        LocationEnergyLevel.POWER_SAVER to Pair(0f, stringResource(R.string.settings_energy_level_power_saver)),
-        LocationEnergyLevel.BALANCED to Pair(1f, stringResource(R.string.settings_energy_level_balanced)),
-        LocationEnergyLevel.HIGH_ACCURACY to Pair(2f, stringResource(R.string.settings_energy_level_high_accuracy)),
+        LocationEnergyLevel.POWER_SAVER to Pair(
+            0f,
+            stringResource(R.string.settings_energy_level_power_saver)
+        ),
+        LocationEnergyLevel.BALANCED to Pair(
+            1f,
+            stringResource(R.string.settings_energy_level_balanced)
+        ),
+        LocationEnergyLevel.HIGH_ACCURACY to Pair(
+            2f,
+            stringResource(R.string.settings_energy_level_high_accuracy)
+        ),
         //LocationEnergyLevel.AUTO to Pair(3f, stringResource(R.string.settings_energy_level_auto)) // Added Auto
     )
 
@@ -92,9 +101,15 @@ fun AppPreferencesExpandable(
 
                     // --- Location Energy Level Setting ---
                     val currentEnergyLevel = uiState.currentEnergyLevel
-                    val currentPair = energyLevelMap[currentEnergyLevel] ?: energyLevelMap[LocationEnergyLevel.BALANCED]!!
-                    var sliderValue by remember(currentEnergyLevel) { mutableFloatStateOf(currentPair.first) }
-                    val levelLabel = energyLevelMap.values.find { it.first == sliderValue }?.second ?: currentPair.second
+                    val currentPair = energyLevelMap[currentEnergyLevel]
+                        ?: energyLevelMap[LocationEnergyLevel.BALANCED]!!
+                    var sliderValue by remember(currentEnergyLevel) {
+                        mutableFloatStateOf(
+                            currentPair.first
+                        )
+                    }
+                    val levelLabel = energyLevelMap.values.find { it.first == sliderValue }?.second
+                        ?: currentPair.second
 
                     Text(
                         text = stringResource(R.string.settings_location_energy_level_label),
@@ -127,7 +142,8 @@ fun AppPreferencesExpandable(
                         },
                         onValueChangeFinished = {
                             // Find the corresponding enum key for the final slider value
-                            val newLevel = energyLevelMap.entries.find { it.value.first == sliderValue }?.key
+                            val newLevel =
+                                energyLevelMap.entries.find { it.value.first == sliderValue }?.key
                             newLevel?.let {
                                 onEvent(SettingsEvent.UpdateEnergyLevel(it))
                             }
@@ -171,7 +187,12 @@ fun AppPreferencesExpandable(
                             checked = notificationsEnabled,
                             onCheckedChange = {
                                 notificationsEnabled = it
-                                onEvent(SettingsEvent.UpdateSetting(AppPreferenceKeys.KEY_NOTIFICATIONS, if (it) AppPreferenceKeys.VALUE_NOTIFICATIONS_ENABLED else AppPreferenceKeys.VALUE_NOTIFICATIONS_DISABLED))
+                                onEvent(
+                                    SettingsEvent.UpdateSetting(
+                                        AppPreferenceKeys.KEY_NOTIFICATIONS,
+                                        if (it) AppPreferenceKeys.VALUE_NOTIFICATIONS_ENABLED else AppPreferenceKeys.VALUE_NOTIFICATIONS_DISABLED
+                                    )
+                                )
                             },
                             enabled = false // Assuming this is still disabled
                         )
@@ -179,7 +200,8 @@ fun AppPreferencesExpandable(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Units Setting
-                    val isMetric = uiState.selections[AppPreferenceKeys.KEY_UNITS] == AppPreferenceKeys.VALUE_UNITS_METRIC
+                    val isMetric =
+                        uiState.selections[AppPreferenceKeys.KEY_UNITS] == AppPreferenceKeys.VALUE_UNITS_METRIC
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(stringResource(id = R.string.settings_units_label) + ":   ")
                         Text(
@@ -194,8 +216,14 @@ fun AppPreferencesExpandable(
                         Switch(
                             checked = isMetric,
                             onCheckedChange = { newIsMetric ->
-                                val newUnit = if (newIsMetric) AppPreferenceKeys.VALUE_UNITS_METRIC else AppPreferenceKeys.VALUE_UNITS_IMPERIAL
-                                onEvent(SettingsEvent.UpdateSetting(AppPreferenceKeys.KEY_UNITS, newUnit))
+                                val newUnit =
+                                    if (newIsMetric) AppPreferenceKeys.VALUE_UNITS_METRIC else AppPreferenceKeys.VALUE_UNITS_IMPERIAL
+                                onEvent(
+                                    SettingsEvent.UpdateSetting(
+                                        AppPreferenceKeys.KEY_UNITS,
+                                        newUnit
+                                    )
+                                )
                             },
                             enabled = false // work in progress
                         )

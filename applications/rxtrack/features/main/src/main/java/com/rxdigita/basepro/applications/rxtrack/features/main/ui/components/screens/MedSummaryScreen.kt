@@ -82,7 +82,14 @@ data class MedicationDose(
 data class SymptomLogEntry(val name: String, val severity: Int)
 
 // Other data models remain the same...
-data class HealthStats(val bpSystolic: Int, val bpDiastolic: Int, val heartRate: Int, val hydrationPercent: Float, val lastUpdated: String)
+data class HealthStats(
+    val bpSystolic: Int,
+    val bpDiastolic: Int,
+    val heartRate: Int,
+    val hydrationPercent: Float,
+    val lastUpdated: String
+)
+
 data class SymptomLog(val name: String, val severity: Int, val lastUpdated: String)
 data class GlucoseLog(val value: Int, val unit: String, val status: String, val lastUpdated: String)
 data class ScheduleGroup(val title: String, val doses: List<MedicationDose>)
@@ -95,16 +102,51 @@ val sampleGlucose = GlucoseLog(105, "mg/dL", "Normal", "8:15 AM")
 val commonSymptoms = listOf("Headache", "Nausea", "Back Pain")
 
 val sampleSchedule = listOf(
-    ScheduleGroup("Morning", listOf(
-        MedicationDose(1, "Lisinopril", "10 mg", "8:00 AM", true, knownSideEffects = listOf("Dizziness", "Headache")),
-        MedicationDose(2, "Metformin", "500 mg", "9:00 AM", true, knownSideEffects = listOf("Nausea", "Diarrhea"))
-    )),
-    ScheduleGroup("As Needed", listOf(
-        MedicationDose(4, "Ibuprofen", "200 mg", "PRN", false, isPrn = true, knownSideEffects = listOf("Stomach Pain"))
-    )),
-    ScheduleGroup("Evening", listOf(
-        MedicationDose(5, "Atorvastatin", "20 mg", "8:00 PM", false, knownSideEffects = listOf("Muscle Pain"))
-    ))
+    ScheduleGroup(
+        "Morning", listOf(
+            MedicationDose(
+                1,
+                "Lisinopril",
+                "10 mg",
+                "8:00 AM",
+                true,
+                knownSideEffects = listOf("Dizziness", "Headache")
+            ),
+            MedicationDose(
+                2,
+                "Metformin",
+                "500 mg",
+                "9:00 AM",
+                true,
+                knownSideEffects = listOf("Nausea", "Diarrhea")
+            )
+        )
+    ),
+    ScheduleGroup(
+        "As Needed", listOf(
+            MedicationDose(
+                4,
+                "Ibuprofen",
+                "200 mg",
+                "PRN",
+                false,
+                isPrn = true,
+                knownSideEffects = listOf("Stomach Pain")
+            )
+        )
+    ),
+    ScheduleGroup(
+        "Evening", listOf(
+            MedicationDose(
+                5,
+                "Atorvastatin",
+                "20 mg",
+                "8:00 PM",
+                false,
+                knownSideEffects = listOf("Muscle Pain")
+            )
+        )
+    )
 )
 
 // MAIN SCREEN COMPOSABLE //
@@ -131,7 +173,9 @@ fun MedicationSummaryScreen() {
         containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(paddingValues),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -221,7 +265,11 @@ fun LinkSymptomToDoseDialog(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
-                Text("Which symptom are you treating?", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                Text(
+                    "Which symptom are you treating?",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(modifier = Modifier.height(16.dp))
 
                 commonSymptoms.forEach { symptom ->
@@ -251,15 +299,20 @@ fun LinkSymptomToDoseDialog(
                 TextField(
                     value = customSymptom,
                     onValueChange = { customSymptom = it },
-                    label = { Text("Or add a new one (e.g. Knee Pain)")},
+                    label = { Text("Or add a new one (e.g. Knee Pain)") },
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
                     onClick = {
-                        val symptomToLog = if (customSymptom.isNotBlank()) customSymptom else selectedSymptom
-                        Toast.makeText(context, "Logged ${dose.name} for $symptomToLog", Toast.LENGTH_LONG).show()
+                        val symptomToLog =
+                            if (customSymptom.isNotBlank()) customSymptom else selectedSymptom
+                        Toast.makeText(
+                            context,
+                            "Logged ${dose.name} for $symptomToLog",
+                            Toast.LENGTH_LONG
+                        ).show()
                         onConfirm(symptomToLog)
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -286,7 +339,11 @@ fun LinkMedicationDialog(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
-                Text("Link to Recent Medications?", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                Text(
+                    "Link to Recent Medications?",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text("Did '${symptom.name}' occur after taking any of these?")
                 Spacer(modifier = Modifier.height(16.dp))
@@ -352,7 +409,11 @@ fun LogSymptomDialog(
                 modifier = Modifier.padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Log Symptom", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                Text(
+                    "Log Symptom",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(modifier = Modifier.height(16.dp))
                 TextField(
                     value = symptomName,
@@ -361,7 +422,10 @@ fun LogSymptomDialog(
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("Severity: ${severity.roundToInt()}", style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    "Severity: ${severity.roundToInt()}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
                 Slider(
                     value = severity,
                     onValueChange = { severity = it },
@@ -397,11 +461,23 @@ fun TakeDoseDialog(
                 modifier = Modifier.padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Log Dose", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                Text(
+                    "Log Dose",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(dose.name, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+                Text(
+                    dose.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("What is this dose for?", style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
+                Text(
+                    "What is this dose for?",
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
+                )
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
                     onClick = { onConfirmForSymptom(dose) },
@@ -440,11 +516,24 @@ fun ExpandableCard(
     ) {
         Column {
             Row(
-                modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = onClick)
+                    .padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(imageVector = icon, contentDescription = title, tint = MaterialTheme.colorScheme.primary)
-                Text(text = title, style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f).padding(start = 12.dp))
+                Icon(
+                    imageVector = icon,
+                    contentDescription = title,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 12.dp)
+                )
                 if (action != null) {
                     action()
                 }
@@ -455,7 +544,13 @@ fun ExpandableCard(
                 )
             }
             AnimatedVisibility(visible = isExpanded) {
-                Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) { content() }
+                Column(
+                    modifier = Modifier.padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 16.dp
+                    )
+                ) { content() }
             }
         }
     }
@@ -481,7 +576,11 @@ fun SymptomTrackerCard(
         Text("Last log: ${symptom.lastUpdated}", style = MaterialTheme.typography.bodySmall)
         Spacer(Modifier.height(16.dp))
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(symptom.name, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+            Text(
+                symptom.name,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.weight(1f)
+            )
             Text("Severity: ${symptom.severity}/5", style = MaterialTheme.typography.titleMedium)
         }
     }
@@ -504,11 +603,22 @@ fun ScheduleSectionCard(
     ) {
         Column {
             Row(
-                modifier = Modifier.fillMaxWidth().clickable { isExpanded = !isExpanded }.padding(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { isExpanded = !isExpanded }
+                    .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Today's Schedule", style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
-                Text("$takenDoses of $totalDoses Taken", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
+                Text(
+                    "Today's Schedule",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    "$takenDoses of $totalDoses Taken",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                     contentDescription = "Expand or collapse schedule",
@@ -546,16 +656,31 @@ fun ExpandableScheduleGroup(
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha=0.5f)),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
+                alpha = 0.5f
+            )
+        ),
     ) {
         Column {
             Row(
-                modifier = Modifier.fillMaxWidth().clickable { isExpanded = !isExpanded }.padding(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { isExpanded = !isExpanded }
+                    .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(group.title, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                Text(
+                    group.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f)
+                )
                 if (totalCount > 0) {
-                    Text("$takenCount of $totalCount Taken", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        "$takenCount of $totalCount Taken",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
@@ -589,8 +714,18 @@ fun MedicationDoseItem(
 ) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = dose.name, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            Text(text = "${dose.dosage} at ${dose.time}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                text = dose.name,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = "${dose.dosage} at ${dose.time}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
         Spacer(modifier = Modifier.width(16.dp))
 
@@ -628,28 +763,73 @@ fun TopBar() {
 @Composable
 fun HealthStatsCard(stats: HealthStats) {
     var isExpanded by remember { mutableStateOf(true) }
-    ExpandableCard("Current Health", Icons.Outlined.MonitorHeart, isExpanded, { isExpanded = !isExpanded }) {
+    ExpandableCard(
+        "Current Health",
+        Icons.Outlined.MonitorHeart,
+        isExpanded,
+        { isExpanded = !isExpanded }) {
         Text("Last updated: ${stats.lastUpdated}", style = MaterialTheme.typography.bodySmall)
         Spacer(Modifier.height(16.dp))
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.Top) {
-            HealthStatItem(icon = Icons.Outlined.MonitorHeart, label = "Blood Pressure", value = "${stats.bpSystolic}/${stats.bpDiastolic}", unit = "mmHg")
-            HealthStatItem(icon = Icons.Outlined.FavoriteBorder, label = "Heart Rate", value = "${stats.heartRate}", unit = "bpm")
-            HealthStatItem(icon = Icons.Outlined.WaterDrop, label = "Hydration", value = "${(stats.hydrationPercent * 100).toInt()}%", unit = "Goal")
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.Top
+        ) {
+            HealthStatItem(
+                icon = Icons.Outlined.MonitorHeart,
+                label = "Blood Pressure",
+                value = "${stats.bpSystolic}/${stats.bpDiastolic}",
+                unit = "mmHg"
+            )
+            HealthStatItem(
+                icon = Icons.Outlined.FavoriteBorder,
+                label = "Heart Rate",
+                value = "${stats.heartRate}",
+                unit = "bpm"
+            )
+            HealthStatItem(
+                icon = Icons.Outlined.WaterDrop,
+                label = "Hydration",
+                value = "${(stats.hydrationPercent * 100).toInt()}%",
+                unit = "Goal"
+            )
         }
         Spacer(Modifier.height(16.dp))
-        LinearProgressIndicator(progress = { stats.hydrationPercent }, modifier = Modifier.fillMaxWidth().height(8.dp).clip(MaterialTheme.shapes.small))
+        LinearProgressIndicator(
+            progress = { stats.hydrationPercent },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp)
+                .clip(MaterialTheme.shapes.small)
+        )
     }
 }
 
 @Composable
 fun BloodGlucoseCard(glucose: GlucoseLog) {
     var isExpanded by remember { mutableStateOf(false) }
-    ExpandableCard("Blood Glucose", Icons.Outlined.Bloodtype, isExpanded, { isExpanded = !isExpanded }) {
+    ExpandableCard(
+        "Blood Glucose",
+        Icons.Outlined.Bloodtype,
+        isExpanded,
+        { isExpanded = !isExpanded }) {
         Text("Last reading: ${glucose.lastUpdated}", style = MaterialTheme.typography.bodySmall)
         Spacer(Modifier.height(16.dp))
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text("${glucose.value} ${glucose.unit}", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.weight(1f))
-            Text(glucose.status, style = MaterialTheme.typography.titleMedium, color = when (glucose.status) { "Normal" -> Color(0xFF388E3C) "High" -> Color(0xFFD32F2F) else -> Color(0xFFF57C00) })
+            Text(
+                "${glucose.value} ${glucose.unit}",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                glucose.status,
+                style = MaterialTheme.typography.titleMedium,
+                color = when (glucose.status) {
+                    "Normal" -> Color(0xFF388E3C)
+                    "High" -> Color(0xFFD32F2F)
+                    else -> Color(0xFFF57C00)
+                }
+            )
         }
     }
 }
@@ -657,10 +837,23 @@ fun BloodGlucoseCard(glucose: GlucoseLog) {
 @Composable
 fun HealthStatItem(icon: ImageVector, label: String, value: String, unit: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Icon(imageVector = icon, contentDescription = label, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(28.dp))
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(28.dp)
+        )
         Spacer(Modifier.height(8.dp))
-        Text(text = value, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-        Text(text = unit, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            text = value,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = unit,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
         Text(text = label, style = MaterialTheme.typography.labelMedium)
     }
 }

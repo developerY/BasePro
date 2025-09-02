@@ -2,12 +2,11 @@ package com.ylabz.basepro.core.data.di
 
 import android.content.Context
 import com.apollographql.apollo3.ApolloClient
+import com.ylabz.basepro.core.data.api.apollo.apolloClient
+import com.ylabz.basepro.core.data.api.client.MapsClient
+import com.ylabz.basepro.core.data.api.client.YelpClient
 import com.ylabz.basepro.core.data.api.interfaces.MapsAPI
 import com.ylabz.basepro.core.data.api.interfaces.YelpAPI
-import com.ylabz.basepro.core.data.api.client.MapsClient
-
-import com.ylabz.basepro.core.data.api.apollo.apolloClient
-import com.ylabz.basepro.core.data.api.client.YelpClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

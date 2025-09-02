@@ -38,7 +38,7 @@ data class StatItem(
 
 // StatsRowEvent is no longer needed here if StatsRow takes BikeUiState and doesn't emit its own specific events
 // sealed interface StatsRowEvent {
-    // No events defined for StatsRow yet
+// No events defined for StatsRow yet
 // }
 
 @Composable
@@ -49,8 +49,10 @@ fun StatsRow(
 ) {
     val bikeData = uiState.bikeData
     val isBikeComputerOn = bikeData.rideState == RideState.Riding
-    val cardColor = if (isBikeComputerOn) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
-    val contentColor = if (isBikeComputerOn) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+    val cardColor =
+        if (isBikeComputerOn) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
+    val contentColor =
+        if (isBikeComputerOn) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
 
     val distance = bikeData.currentTripDistance
     val duration = bikeData.rideDuration
@@ -100,7 +102,8 @@ fun StatsRow(
             StatCard(
                 icon = stat.icon,
                 cardColor = cardColor, // Use derived cardColor
-                tint = stat.activeColor ?: contentColor, // Use activeColor or fallback to derived contentColor
+                tint = stat.activeColor
+                    ?: contentColor, // Use activeColor or fallback to derived contentColor
                 label = stat.label,
                 value = stat.value,
                 modifier = Modifier.weight(1f, fill = false)

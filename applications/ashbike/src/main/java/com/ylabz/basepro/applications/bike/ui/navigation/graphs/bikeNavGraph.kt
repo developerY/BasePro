@@ -64,7 +64,7 @@ fun NavGraphBuilder.bikeNavGraph(
 
         TripsUIRoute(
             modifier = modifier,
-            navTo    = { rideId ->
+            navTo = { rideId ->
                 // This is a simple "To" navigation
                 navHostController.navigate(
                     BikeScreen.RideDetailScreen.createRoute(rideId)
@@ -73,8 +73,10 @@ fun NavGraphBuilder.bikeNavGraph(
         )
     }
     // 3) Settings Tab
-    val settingsRouteBase = BikeScreen.SettingsBikeScreen.route // Assuming this is "settings_ui_route"
-    val cardToExpandArgName = "cardToExpandArg" // Argument name used in BikeViewModel and SettingsUiRoute
+    val settingsRouteBase =
+        BikeScreen.SettingsBikeScreen.route // Assuming this is "settings_ui_route"
+    val cardToExpandArgName =
+        "cardToExpandArg" // Argument name used in BikeViewModel and SettingsUiRoute
 
     composable(
         route = "$settingsRouteBase?$cardToExpandArgName={$cardToExpandArgName}", // e.g., "settings_ui_route?cardToExpandArg={cardToExpandArg}"
@@ -89,7 +91,7 @@ fun NavGraphBuilder.bikeNavGraph(
         val cardToExpand = backStackEntry.arguments?.getString(cardToExpandArgName)
         SettingsUiRoute(
             modifier = modifier,
-            navTo    = { path -> navHostController.navigate(path) },
+            navTo = { path -> navHostController.navigate(path) },
             initialCardKeyToExpand = cardToExpand // Pass the extracted argument
         )
     }
@@ -109,34 +111,36 @@ fun NavGraphBuilder.bikeNavGraph(
         Logging.d(TAG, "Recomposing with cafeUiState: ${cafeUiState::class.java.simpleName}")
 
 
+        // The logic to find cafes is now in this lambda.
+        // It is passed down to the UI to be called by the button.
+        val findCafesAction = {
+            val locations = rideWithLocs?.locations
+            if (!locations.isNullOrEmpty()) {
+                val centerLat = locations.map { it.lat }.average()
+                val centerLng = locations.map { it.lng }.average()
 
-    // The logic to find cafes is now in this lambda.
-    // It is passed down to the UI to be called by the button.
-    val findCafesAction = {
-        val locations = rideWithLocs?.locations
-        if (!locations.isNullOrEmpty()) {
-            val centerLat = locations.map { it.lat }.average()
-            val centerLng = locations.map { it.lng }.average()
+                val routeRadius = locations.maxOfOrNull { location ->
+                    haversineMeters(centerLat, centerLng, location.lat, location.lng)
+                } ?: 0.0
 
-            val routeRadius = locations.maxOfOrNull { location ->
-                haversineMeters(centerLat, centerLng, location.lat, location.lng)
-            } ?: 0.0
+                val searchRadius = (routeRadius + 100.0).coerceIn(200.0, 1500.0)
 
-            val searchRadius = (routeRadius + 100.0).coerceIn(200.0, 1500.0)
-
-            Logging.i(TAG, "User requested cafes. Searching with center ($centerLat, $centerLng) and dynamic radius ${searchRadius}m")
-
-            cafeViewModel.onEvent(
-                CoffeeShopEvent.FindCafesInArea(
-                    latitude = centerLat,
-                    longitude = centerLng,
-                    radius = searchRadius
+                Logging.i(
+                    TAG,
+                    "User requested cafes. Searching with center ($centerLat, $centerLng) and dynamic radius ${searchRadius}m"
                 )
-            )
-        } else {
-            Logging.w(TAG, "User requested cafes, but ride location data is not available.")
+
+                cafeViewModel.onEvent(
+                    CoffeeShopEvent.FindCafesInArea(
+                        latitude = centerLat,
+                        longitude = centerLng,
+                        radius = searchRadius
+                    )
+                )
+            } else {
+                Logging.w(TAG, "User requested cafes, but ride location data is not available.")
+            }
         }
-    }
 
         val coffeeShops = when (val state = cafeUiState) {
             is CoffeeShopUIState.Success -> state.coffeeShops

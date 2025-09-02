@@ -1,4 +1,6 @@
-Here’s a self‑contained helper you can drop into your `BikeViewModel`. It takes a `Location`, does the one‑off Retrofit call on `weatherRepo`, maps it into your `BikeWeatherInfo`, and merges it into the existing `_uiState`.
+Here’s a self‑contained helper you can drop into your `BikeViewModel`. It takes a `Location`, does
+the one‑off Retrofit call on `weatherRepo`, maps it into your `BikeWeatherInfo`, and merges it into
+the existing `_uiState`.
 
 ```kotlin
 // inside BikeViewModel…
@@ -58,4 +60,5 @@ viewModelScope.launch {
 // … and separately continue collecting sensorDataFlow as before …
 ```
 
-This is about as simple as it gets: one function, one flag, one coroutine, and it merges cleanly into your existing StateFlow.
+This is about as simple as it gets: one function, one flag, one coroutine, and it merges cleanly
+into your existing StateFlow.

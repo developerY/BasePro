@@ -14,7 +14,8 @@ import javax.inject.Inject
  * methods in the DatabaseModule, Hilt doesn't need to rely on @Inject constructors for those classes.
  * It uses the methods in the module to resolve and inject dependencies.
  */
-class BaseProRepoImpl @Inject constructor (  // NOTE: constructor injection is not needed
+class BaseProRepoImpl @Inject constructor(
+    // NOTE: constructor injection is not needed
     private val BaseProDao: BaseProDao,
 ) : BaseProRepo {
 

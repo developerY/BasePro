@@ -111,7 +111,11 @@ fun ContactDetailScreen(contactId: Int) {
         verticalArrangement = Arrangement.Center
     ) {
         if (contact != null) {
-            Text(text = "Contact Details", fontSize = 24.sp, modifier = Modifier.padding(bottom = 16.dp))
+            Text(
+                text = "Contact Details",
+                fontSize = 24.sp,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
             Text(text = "Name: ${contact.name}", fontSize = 20.sp)
             Text(text = "Email: ${contact.email}", fontSize = 16.sp)
         } else {

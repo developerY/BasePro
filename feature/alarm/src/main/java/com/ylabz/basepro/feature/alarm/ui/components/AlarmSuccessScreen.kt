@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -24,9 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ylabz.basepro.core.model.alarm.ProAlarm
 import com.ylabz.basepro.core.model.shotime.ShotimeSessionData
-import kotlin.random.Random
 
 @Composable
 fun AlarmSuccessScreen(
@@ -89,7 +86,7 @@ fun AlarmSuccessScreen(
             Button(
                 onClick = onDeleteAllClick,
 
-            ) {
+                ) {
                 Text("Delete All")
             }
 

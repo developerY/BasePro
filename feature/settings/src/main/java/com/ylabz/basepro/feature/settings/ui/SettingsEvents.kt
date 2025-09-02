@@ -1,4 +1,4 @@
-package com.ylabz.basepro.settings.ui
+package com.ylabz.basepro.feature.settings.ui
 
 sealed class SettingsEvent {
     object LoadSettings : SettingsEvent()

@@ -33,7 +33,9 @@
         <actions>
             <action>Given the user is on the main dashboard</action>
             <action>When the user taps on the 'Settings' tab in the bottom navigation</action>
-            <action>And the user changes a setting (e.g., toggles a switch or selects a different option)</action>
+            <action>And the user changes a setting (e.g., toggles a switch or selects a different
+                option)
+            </action>
         </actions>
     </journey>
 </journeys>

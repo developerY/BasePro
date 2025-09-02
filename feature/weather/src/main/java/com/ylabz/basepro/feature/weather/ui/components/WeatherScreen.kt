@@ -29,6 +29,7 @@ import com.ylabz.basepro.core.model.weather.Wind
 import com.ylabz.basepro.feature.weather.ui.WeatherEvent
 import com.ylabz.basepro.feature.weather.ui.components.combine.UnifiedWeatherCard
 import com.ylabz.basepro.feature.weather.ui.components.combine.WeatherConditionUnif
+
 /*
 @Preview
 @Composable
@@ -108,9 +109,10 @@ fun generateDummyWeatherResponse(): OpenWeatherResponse {
         visibility = 10000,
         wind = Wind(speed = 2.06, deg = 290, gust = 3.6),
         clouds = Clouds(all = 75),
-        rain = Rain (0.25,  0.25),
+        rain = Rain(0.25, 0.25),
         snow = Snow(.025, 9.25),
         dt = 1603068800,
         sys = Sys(type = 1, id = 5122, country = "US", sunrise = 1603047908, sunset = 1603087667),
-        timezone = -25200, id = 5368361, name = "Los Angeles", cod = 200)
+        timezone = -25200, id = 5368361, name = "Los Angeles", cod = 200
+    )
 }

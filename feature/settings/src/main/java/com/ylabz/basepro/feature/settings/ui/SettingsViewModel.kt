@@ -3,8 +3,6 @@ package com.ylabz.basepro.feature.settings.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.database.BaseProRepo  // Import your repository
-import com.ylabz.basepro.settings.ui.SettingsEvent
-import com.ylabz.basepro.settings.ui.SettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,9 +26,11 @@ class SettingsViewModel @Inject constructor(
             is SettingsEvent.LoadSettings -> {
                 loadSettings()
             }
+
             is SettingsEvent.UpdateSetting -> {
                 updateSetting(event.settingKey, event.settingValue)
             }
+
             is SettingsEvent.DeleteAllEntries -> {
                 deleteAllEntries()
             }
@@ -40,10 +40,11 @@ class SettingsViewModel @Inject constructor(
     private fun loadSettings() {
         viewModelScope.launch {
             // Simulate loading settings data
-            _uiState.value = SettingsUiState.Success( settings = mapOf(
-                "Theme" to listOf("Light", "Dark", "System Default"),
-                "Language" to listOf("English", "Spanish", "French"),
-                "Notifications" to listOf("Enabled", "Disabled")
+            _uiState.value = SettingsUiState.Success(
+                settings = mapOf(
+                    "Theme" to listOf("Light", "Dark", "System Default"),
+                    "Language" to listOf("English", "Spanish", "French"),
+                    "Notifications" to listOf("Enabled", "Disabled")
                 )
             )
         }
@@ -52,7 +53,8 @@ class SettingsViewModel @Inject constructor(
     private fun updateSetting(key: String, value: String) {
         viewModelScope.launch {
             // Handle setting updates
-            val currentSettings = (_uiState.value as? SettingsUiState.Success)?.settings ?: emptyMap()
+            val currentSettings =
+                (_uiState.value as? SettingsUiState.Success)?.settings ?: emptyMap()
             val updatedSettings = currentSettings.toMutableMap().apply {
                 // this[key] = value
             }

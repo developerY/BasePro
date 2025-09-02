@@ -33,6 +33,7 @@ suspend fun lookupPlaceName(
                     override fun onGeocode(results: MutableList<Address>) {
                         cont.resume(results)
                     }
+
                     override fun onError(errorMessage: String?) {
                         cont.resume(emptyList())
                     }

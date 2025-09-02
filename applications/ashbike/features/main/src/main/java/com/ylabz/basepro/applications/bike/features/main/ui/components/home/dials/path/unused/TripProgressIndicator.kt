@@ -82,7 +82,6 @@ fun TripProgressIndicator(
 }
 
 
-
 /*
 @Preview
 @Composable

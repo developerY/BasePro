@@ -1,10 +1,15 @@
 # Design Document: Integrating Google Health Connect into Bike App
 
 ## 1. Introduction
+
 **Objective:**
-Integrate Google Health Connect into our Modern Android Development (MAD) bike application to record bike rides (exercise sessions) and associated metrics (distance, calories, GPS track, speed, heart rate) into the user’s Health Connect database. This enables any Health Connect–aware client (e.g., Google Fit) to display completed rides with Peloton‑style dashboards.
+Integrate Google Health Connect into our Modern Android Development (MAD) bike application to record
+bike rides (exercise sessions) and associated metrics (distance, calories, GPS track, speed, heart
+rate) into the user’s Health Connect database. This enables any Health Connect–aware client (e.g.,
+Google Fit) to display completed rides with Peloton‑style dashboards.
 
 **Scope:**
+
 - Core SDK integration
 - Dependency injection via Hilt
 - HealthConnectClient + permissions management
@@ -13,7 +18,6 @@ Integrate Google Health Connect into our Modern Android Development (MAD) bike a
 - UI container composable for permission flow
 - End‑to‑end data flow
 - Testing & error handling
-
 
 ## 2. Architecture Overview
 
@@ -41,7 +45,6 @@ Integrate Google Health Connect into our Modern Android Development (MAD) bike a
 └────────────────────────────────────────────────────────┘
 ```  
 
-
 ## 3. Module Structure
 
 ```
@@ -62,7 +65,6 @@ Integrate Google Health Connect into our Modern Android Development (MAD) bike a
 
 ```  
 
-
 ## 4. Core Layer: HealthSessionManager & Use‑Case
 
 - **HealthSessionManager**
@@ -78,23 +80,24 @@ Integrate Google Health Connect into our Modern Android Development (MAD) bike a
     - `suspend operator fun invoke()`:
         1. `tracker.stopAndGetSession()` → session data
         2. Persist to Room via `BikeRideRepo`
-        3. If `availability == SDK_AVAILABLE` and permissions granted → call `writeBikeRideWithSeries`
-
+        3. If `availability == SDK_AVAILABLE` and permissions granted → call
+           `writeBikeRideWithSeries`
 
 ## 5. Feature Layer: ViewModels
 
 ### BikeViewModel
+
 - Drives real‑time ride state (start, pause, stop)
 - Delegates final save to `SaveRideUseCase`
 - Emits `BikeUiState`
 
 ### HealthViewModel
+
 - Manages Health Connect permissions & availability
 - Exposes:
     - `uiState: HealthUiState` (Uninitialized, PermissionsRequired, Success, Error)
     - `permissionsLauncher` + `permissions` set
 - On `Insert` event, forwards to `HealthSessionManager.write...`
-
 
 ## 6. UI Layer: Container Composable (`BikeUiRoute`)
 
@@ -105,14 +108,12 @@ Integrate Google Health Connect into our Modern Android Development (MAD) bike a
     - Loading / Error / Success states
     - Pass `bikeData` + optional `healthData` into `BikeDashboardContent`
 
-
 ## 7. Permissions Flow
 
 1. On first load, `HealthUiState` is `Uninitialized` → trigger `initialLoad()`
 2. If `hasAllPermissions == false`, `HealthUiState.PermissionsRequired`
 3. Container composable sees `PermissionsRequired` → fires `permissionsLauncher`
 4. On callback, `HealthViewModel.initialLoad()` re-checks perms
-
 
 ## 8. Data Flow Sequence
 
@@ -126,13 +127,11 @@ Integrate Google Health Connect into our Modern Android Development (MAD) bike a
 5. UI resets to “not started” state
 6. Health Connect client shows ride in Google Fit
 
-
 ## 9. Error Handling & Testing
 
 - **Wrap** Health writes in try/catch → emit `HealthUiState.Error`
 - **Unit‑test** `SaveRideUseCase` with fake `RideTracker` & `HealthSessionManager`
 - **Instrumented tests** for permission flows using Jetpack Compose Test
-
 
 ## 10. Future Enhancements
 
@@ -140,7 +139,6 @@ Integrate Google Health Connect into our Modern Android Development (MAD) bike a
 - Support **WorkoutStatsRecord** (heart‑rate zones)
 - Enable **background sync** via `FEATURE_READ_HEALTH_DATA_IN_BACKGROUND`
 - Expose manual “Log Ride” screen for offline entry
-
 
 ---
 *Prepared by the Mobile Dev Team*

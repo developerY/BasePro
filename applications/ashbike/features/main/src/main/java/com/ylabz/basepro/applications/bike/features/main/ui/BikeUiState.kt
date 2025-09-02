@@ -7,14 +7,15 @@ sealed class BikeUiState {
     /** we haven't yet gotten our first fix */
     object WaitingForGps : BikeUiState()
     object Loading : BikeUiState()
-    object Idle    : BikeUiState()
+    object Idle : BikeUiState()
     data class Success(
         val bikeData: BikeRideInfo,
         val showSetDistanceDialog: Boolean = false,
         val showGpsCountdown: Boolean = true, // Add the new property
         val locationEnergyLevel: LocationEnergyLevel = LocationEnergyLevel.BALANCED // <<< ADD THIS LINE
     ) : BikeUiState()
-    data class Error(val message: String)             : BikeUiState()
+
+    data class Error(val message: String) : BikeUiState()
 }
 
 

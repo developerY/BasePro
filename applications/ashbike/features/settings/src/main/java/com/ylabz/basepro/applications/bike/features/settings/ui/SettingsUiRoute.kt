@@ -8,7 +8,8 @@ import com.ylabz.basepro.feature.ble.ui.BluetoothLeViewModel
 import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
 import com.ylabz.basepro.feature.nfc.ui.components.screens.LoadingScreen
 
-internal const val ROUTE_NAME = "settings_ui_route" // Assuming this was intended to be here or is defined elsewhere for navigation
+internal const val ROUTE_NAME =
+    "settings_ui_route" // Assuming this was intended to be here or is defined elsewhere for navigation
 internal const val ARG_CARD_TO_EXPAND = "cardToExpandArg" // Added argument name
 
 @Composable
@@ -31,9 +32,11 @@ fun SettingsUiRoute(
         is SettingsUiState.Loading -> {
             LoadingScreen()
         }
+
         is SettingsUiState.Error -> {
             // ErrorScreen(errorMessage = state.message)
         }
+
         is SettingsUiState.Success -> {
             SettingsScreenEx(
                 modifier = modifier,

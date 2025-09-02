@@ -96,7 +96,8 @@ fun MainScreen(
     val permissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
         onResult = { permissionsMap ->
-            hasLocationPermissions = permissionsMap.values.reduce { acc, isGranted -> acc && isGranted }
+            hasLocationPermissions =
+                permissionsMap.values.reduce { acc, isGranted -> acc && isGranted }
         }
     )
 

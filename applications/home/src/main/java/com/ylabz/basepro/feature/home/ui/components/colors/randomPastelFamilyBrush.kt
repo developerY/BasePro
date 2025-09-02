@@ -17,12 +17,12 @@ fun hslToColor(h: Float, s: Float, l: Float): Color {
     val m = l - c / 2f
 
     val (rPrime, gPrime, bPrime) = when {
-        h < 60f  -> Triple(c, x, 0f)
+        h < 60f -> Triple(c, x, 0f)
         h < 120f -> Triple(x, c, 0f)
         h < 180f -> Triple(0f, c, x)
         h < 240f -> Triple(0f, x, c)
         h < 300f -> Triple(x, 0f, c)
-        else     -> Triple(c, 0f, x)
+        else -> Triple(c, 0f, x)
     }
 
     val r = rPrime + m

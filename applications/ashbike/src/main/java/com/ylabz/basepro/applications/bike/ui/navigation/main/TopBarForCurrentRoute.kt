@@ -26,12 +26,12 @@ fun TopBarForCurrentRoute(navController: NavHostController) {
     // If no specific title, AppTopBar might render without one or with a default,
     // or you could choose not to render a TopAppBar at all.
     val titleResId: Int? = when (currentRoute) {
-        BikeScreen.HomeBikeScreen.route     -> R.string.app_name // MODIFIED HERE
-        BikeScreen.TripBikeScreen.route     -> R.string.top_bar_title_trips
+        BikeScreen.HomeBikeScreen.route -> R.string.app_name // MODIFIED HERE
+        BikeScreen.TripBikeScreen.route -> R.string.top_bar_title_trips
         BikeScreen.SettingsBikeScreen.route -> CoreUiR.string.action_settings // Updated
         // For RideDetailScreen, the title is handled by DetailTopBar,
         // but if AppTopBar were to handle it, it would be here.
-        else                                -> null // Or a default title resource
+        else -> null // Or a default title resource
     }
 
     when (currentRoute) {
@@ -43,8 +43,10 @@ fun TopBarForCurrentRoute(navController: NavHostController) {
                 AppTopBar(title = stringResource(id = resId))
             }
         }
-        BikeScreen.RideDetailScreen.route   -> DetailTopBar(onBack = navController::popBackStack)
-        else                                -> { /* No TopAppBar or a default one */ }
+
+        BikeScreen.RideDetailScreen.route -> DetailTopBar(onBack = navController::popBackStack)
+        else -> { /* No TopAppBar or a default one */
+        }
     }
 }
 

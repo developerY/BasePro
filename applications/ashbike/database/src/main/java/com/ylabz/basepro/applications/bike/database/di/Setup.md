@@ -1,7 +1,8 @@
 Thought for a second
 
-
-Use **`@Binds`** whenever you have a concrete implementation class that you can inject directly (i.e. it has an `@Inject`‐annotated constructor) and you just need to tell Hilt “whenever you need interface X, use implementation Y.” It’s:
+Use **`@Binds`** whenever you have a concrete implementation class that you can inject directly (
+i.e. it has an `@Inject`‐annotated constructor) and you just need to tell Hilt “whenever you need
+interface X, use implementation Y.” It’s:
 
 * **Abstract**: only one line in an abstract module
 * **Compile-time**: no runtime factory overhead
@@ -46,4 +47,5 @@ object NetworkModule {
 ### TL;DR
 
 * **`@Binds`** = “I already have an `@Inject` constructor—just wire interface → impl.”
-* **`@Provides`** = “Write a factory method (in an `object`) because I can’t or don’t want to use constructor injection.”
+* **`@Provides`** = “Write a factory method (in an `object`) because I can’t or don’t want to use
+  constructor injection.”

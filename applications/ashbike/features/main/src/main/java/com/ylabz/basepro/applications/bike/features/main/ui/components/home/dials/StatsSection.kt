@@ -42,8 +42,10 @@ fun StatsSection(
     LocalContext.current // For string resources with formatting
 
     val isBikeComputerOn = bikeData.rideState == RideState.Riding
-    val currentCardColor = if (isBikeComputerOn) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
-    val currentContentColor = if (isBikeComputerOn) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+    val currentCardColor =
+        if (isBikeComputerOn) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
+    val currentContentColor =
+        if (isBikeComputerOn) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
     //val unavailableText = stringResource(R.string.feature_main_text_unavailable_compact)
 
     val currentStats: List<StatItem> = when (sectionType) {
@@ -67,6 +69,7 @@ fun StatsSection(
                 activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorCalories else null
             )
         )
+
         StatsSectionType.EBIKE -> listOf(
             StatItem(
                 icon = Icons.AutoMirrored.Filled.BatteryUnknown,
@@ -106,7 +109,7 @@ fun StatsSection(
                 label = stat.label,
                 value = stat.value,
                 cardColor = currentCardColor,
-                )
+            )
         }
     }
 }

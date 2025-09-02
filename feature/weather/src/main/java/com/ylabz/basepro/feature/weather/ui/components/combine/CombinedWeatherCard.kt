@@ -1,9 +1,17 @@
 package com.ylabz.basepro.feature.weather.ui.components.combine
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
 ////import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -46,9 +54,11 @@ fun CombinedWeatherCard(
                 WeatherCondition.RAINY -> {
                     RainVolumeCard(volume = rainVolume)
                 }
+
                 WeatherCondition.SNOWY -> {
                     BetterSnowVolumeCardAI(volume = snowVolume)
                 }
+
                 else -> {
                     // CLEAR or default => show Temperature
                     TemperatureCardAI(temp = temperature)

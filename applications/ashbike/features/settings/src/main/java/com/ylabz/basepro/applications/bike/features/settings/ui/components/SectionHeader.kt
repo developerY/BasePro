@@ -49,7 +49,9 @@ fun SectionHeader(
             Spacer(Modifier.weight(1f))
             Icon(
                 imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                contentDescription = if (expanded) stringResource(R.string.settings_action_collapse) else stringResource(R.string.settings_action_expand),
+                contentDescription = if (expanded) stringResource(R.string.settings_action_collapse) else stringResource(
+                    R.string.settings_action_expand
+                ),
             )
         }
     }

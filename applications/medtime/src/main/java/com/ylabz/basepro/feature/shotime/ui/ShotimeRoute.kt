@@ -42,6 +42,7 @@ fun ShotimeRoute(
                     viewModel.setAlarm(alarm)
                 }
             )
+
             is ShotimeUiState.Error -> ErrorScreen(uiState.message)
         }
     }

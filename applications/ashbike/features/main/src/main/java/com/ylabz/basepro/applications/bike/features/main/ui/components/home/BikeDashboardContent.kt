@@ -70,8 +70,10 @@ fun BikeDashboardContent(
     val rideState = bikeRideInfo.rideState
     val currRiding = rideState == RideState.Riding
 
-    val containerColor = if (currRiding) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
-    val contentColor = if (currRiding) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+    val containerColor =
+        if (currRiding) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
+    val contentColor =
+        if (currRiding) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
     if (currRiding) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
 
 
@@ -128,7 +130,9 @@ fun BikeDashboardContent(
                     )
                     Icon(
                         imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
-                        contentDescription = if (expanded) stringResource(R.string.feature_main_action_collapse) else stringResource(R.string.feature_main_action_expand),
+                        contentDescription = if (expanded) stringResource(R.string.feature_main_action_collapse) else stringResource(
+                            R.string.feature_main_action_expand
+                        ),
                         tint = MaterialTheme.colorScheme.onSurface // Ensure icon color is from theme
                     )
                 }
@@ -141,7 +145,10 @@ fun BikeDashboardContent(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp), // Consider padding with StatsSection
+                            .padding(
+                                horizontal = 16.dp,
+                                vertical = 8.dp
+                            ), // Consider padding with StatsSection
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -155,7 +162,7 @@ fun BikeDashboardContent(
                         BikeBatteryLevels(
                             isConnected = isBikeConnected,
                             batteryLevel = batteryLevel,
-                            onConnectClick = { 
+                            onConnectClick = {
                                 // This would typically trigger an event to connect the bike
                                 // For preview, you might toggle a state if this were in a ViewModel
                             }

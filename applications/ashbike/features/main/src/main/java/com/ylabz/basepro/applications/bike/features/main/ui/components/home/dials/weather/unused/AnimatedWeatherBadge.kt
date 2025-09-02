@@ -47,6 +47,7 @@ fun AnimatedWeatherBadge(
                     Color(0xFF01579B),                         // deep rainy blue
                     Color(0xFF81D4FA).copy(alpha = 0.3f)       // light sky blue bg
                 )
+
             weatherInfo.conditionText.contains("clear", true)
                     || weatherInfo.conditionText.contains("sun", true) ->
                 Triple(
@@ -54,12 +55,14 @@ fun AnimatedWeatherBadge(
                     Color(0xFFF57F17),                         // sunny gold
                     Color(0xFFFFF59D).copy(alpha = 0.3f)       // pale yellow bg
                 )
+
             weatherInfo.conditionText.contains("cloud", true) ->
                 Triple(
                     Icons.Default.Cloud,
                     Color(0xFF455A64),                         // slate gray
                     Color(0xFFCFD8DC).copy(alpha = 0.3f)       // pale gray bg
                 )
+
             else ->
                 Triple(
                     Icons.AutoMirrored.Filled.HelpOutline,
@@ -71,30 +74,30 @@ fun AnimatedWeatherBadge(
 
     // 2) animate tint & bg so changes cross‑fade smoothly
     val animatedTint by animateColorAsState(targetValue = rawTint, tween(600))
-    val animatedBg   by animateColorAsState(targetValue = rawBg,  tween(600))
+    val animatedBg by animateColorAsState(targetValue = rawBg, tween(600))
 
     val containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
-    val contentColor   = animatedTint
+    val contentColor = animatedTint
 
     // 3) card on top of your blue dash, always light container so it pops
     ElevatedCard(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
             .background(animatedBg),
-        colors    = CardDefaults.elevatedCardColors(
+        colors = CardDefaults.elevatedCardColors(
             containerColor = containerColor,
-            contentColor   = contentColor
+            contentColor = contentColor
         ),
         elevation = CardDefaults.elevatedCardElevation(4.dp)
     ) {
         Row(
             Modifier
                 .padding(horizontal = 12.dp, vertical = 8.dp),
-            verticalAlignment    = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             // 4) crossfade the icon, tint it with animatedTint
-            Column ( // make the Column fill its parent
+            Column( // make the Column fill its parent
                 verticalArrangement = Arrangement.Center,    // center children top↕bottom
                 horizontalAlignment = Alignment.CenterHorizontally // center children left↔right
             ) {
@@ -121,7 +124,6 @@ fun AnimatedWeatherBadge(
         }
     }
 }
-
 
 
 /*

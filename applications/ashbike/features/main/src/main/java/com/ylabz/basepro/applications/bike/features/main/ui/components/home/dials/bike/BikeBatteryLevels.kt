@@ -68,24 +68,24 @@ fun BikeBatteryLevels(
                 // 10-segment example or an interpolated bar
                 SegmentedBatteryIndicator(batteryLevel = batteryLevel)
             } else {
-                    // Show a centered, Material button to connect
-                    Button(
-                        onClick = onConnectClick,
-                        enabled = false,
-                        modifier = Modifier.fillMaxWidth(),  // full width
-                        shape = RoundedCornerShape(8.dp)     // optional rounding
-                    ) {
-                        Text(
-                            text = displayText,
-                            style = MaterialTheme.typography.titleMedium,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()  // ensures centered text
-                        )
-                    }
+                // Show a centered, Material button to connect
+                Button(
+                    onClick = onConnectClick,
+                    enabled = false,
+                    modifier = Modifier.fillMaxWidth(),  // full width
+                    shape = RoundedCornerShape(8.dp)     // optional rounding
+                ) {
+                    Text(
+                        text = displayText,
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()  // ensures centered text
+                    )
                 }
             }
         }
     }
+}
 
 // Example 10-segment indicator
 @Composable

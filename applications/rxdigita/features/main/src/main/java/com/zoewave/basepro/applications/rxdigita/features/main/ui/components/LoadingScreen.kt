@@ -7,5 +7,8 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun LoadingScreen() {
-    Text(text = "Loading... Not sure what ... how did you get here?", modifier = Modifier.fillMaxSize())
+    Text(
+        text = "Loading... Not sure what ... how did you get here?",
+        modifier = Modifier.fillMaxSize()
+    )
 }

@@ -13,6 +13,7 @@ interface AlarmRepository {
     suspend fun toggleAlarm(alarmId: Int, isEnabled: Boolean)
     fun getAlarms(): Flow<List<ProAlarm>>
     suspend fun removeAlarm(alarmId: Int)
+
     // debug
     fun logAlarms()
 }

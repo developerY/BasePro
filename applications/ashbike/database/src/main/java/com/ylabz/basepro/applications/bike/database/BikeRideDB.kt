@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 import com.ylabz.basepro.applications.bike.database.converter.Converters
 
 @Database(
-    entities = [ BikeRideEntity::class, RideLocationEntity::class ],
+    entities = [BikeRideEntity::class, RideLocationEntity::class],
     version = 1,
     exportSchema = false
 )
@@ -20,7 +20,8 @@ abstract class BikeRideDatabase : RoomDatabase() {
         const val DATABASE_NAME = "bikeride_db"
 
         // volatile keeps INSTANCE visible across threads
-        @Volatile private var INSTANCE: BikeRideDatabase? = null
+        @Volatile
+        private var INSTANCE: BikeRideDatabase? = null
 
         @JvmStatic
         fun getDatabase(context: Context): BikeRideDatabase =

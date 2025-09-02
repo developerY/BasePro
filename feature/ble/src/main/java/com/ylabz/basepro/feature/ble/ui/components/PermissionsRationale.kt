@@ -22,7 +22,8 @@ import com.ylabz.basepro.core.ui.R as CoreUiR // Ensured this import
 @Composable
 fun PermissionsRationale(
     modifier: Modifier = Modifier,
-    onGrantPermissions: () -> Unit) {
+    onGrantPermissions: () -> Unit
+) {
     Column(
         modifier = modifier
             .fillMaxSize()

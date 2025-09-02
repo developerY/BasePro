@@ -102,7 +102,7 @@ androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersi
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }  # Espresso UI testing
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }  # Lifecycle runtime KTX
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
-androidx-lifecycle-process  = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycle" }
+androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycle" }
 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }  # Activity support for Compose
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }  # Compose BOM for consistent versions
@@ -120,8 +120,8 @@ androidx-material-icons-extended = { module = "androidx.compose.material:materia
 
 
 # datastore
-androidx-datastore-preferences = {module = "androidx.datastore:datastore-preferences", version.ref = "datastore"}
-androidx-datastore-core = {module = "androidx.datastore:datastore-core", version.ref = "datastore"}
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+androidx-datastore-core = { module = "androidx.datastore:datastore-core", version.ref = "datastore" }
 
 
 # WearOS
@@ -152,9 +152,9 @@ horologist-compose-material = { module = "com.google.android.horologist:horologi
 
 
 # Jetbrains Libraries
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
-kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "playServicesCoroutines"}
-kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutableColections"}
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "playServicesCoroutines" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutableColections" }
 
 
 
@@ -174,11 +174,11 @@ constraintlayout = { module = "androidx.constraintlayout:constraintlayout", vers
 # Room Libraries
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }  # Room runtime library for database access
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }  # Kotlin extensions for Room
-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room"}  # Room annotation processor
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }  # Room annotation processor
 
-squareup-retrofit = {module = 'com.squareup.retrofit2:retrofit', version ='3.0.0'}
-squareup-retrofit-converter-gson = {module = 'com.squareup.retrofit2:converter-gson', version ='3.0.0'}
-squareup-okhttp3-logging-interceptor = {module ='com.squareup.okhttp3:logging-interceptor', version = '4.12.0'}
+squareup-retrofit = { module = 'com.squareup.retrofit2:retrofit', version = '3.0.0' }
+squareup-retrofit-converter-gson = { module = 'com.squareup.retrofit2:converter-gson', version = '3.0.0' }
+squareup-okhttp3-logging-interceptor = { module = 'com.squareup.okhttp3:logging-interceptor', version = '4.12.0' }
 
 # WorkManager Library
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }  # WorkManager runtime with Kotlin extensions
@@ -258,4 +258,4 @@ google-gms-google-services = { id = "com.google.gms.google-services", version.re
 google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "googleFirebaseCrashlytics" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 
-androidx-baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineProfile"} # Or your desired version
+androidx-baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineProfile" } # Or your desired version

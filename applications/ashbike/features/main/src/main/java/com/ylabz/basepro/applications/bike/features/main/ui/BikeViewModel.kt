@@ -69,7 +69,10 @@ class BikeViewModel @Inject constructor(
             val binder = service as BikeForegroundService.LocalBinder
             bikeService = binder.getService() // Updated usage
             _bound.value = true
-            Log.d("BikeViewModel", "BikeForegroundService instance obtained: $bikeService") // Updated usage
+            Log.d(
+                "BikeViewModel",
+                "BikeForegroundService instance obtained: $bikeService"
+            ) // Updated usage
             // CORRECT PLACE: Start both observers after bikeService is guaranteed to be non-null.
             observeServiceData()
             fetchWeatherForDashboard()
@@ -111,8 +114,18 @@ class BikeViewModel @Inject constructor(
                     }
                 ) { rideInfo, totalDistance, weather, showDialog, showCountdown, gpsAccuracy ->
                     // Log inside the combine lambda
-                    Log.d("BikeViewModel_DEBUG", "Combine lambda. rideInfo.location: ${rideInfo.location}, gpsAccuracy (from settings): $gpsAccuracy, showGpsCountdown: $showCountdown")
-                    CombinedData(rideInfo, totalDistance, weather, showDialog, showCountdown, gpsAccuracy)
+                    Log.d(
+                        "BikeViewModel_DEBUG",
+                        "Combine lambda. rideInfo.location: ${rideInfo.location}, gpsAccuracy (from settings): $gpsAccuracy, showGpsCountdown: $showCountdown"
+                    )
+                    CombinedData(
+                        rideInfo,
+                        totalDistance,
+                        weather,
+                        showDialog,
+                        showCountdown,
+                        gpsAccuracy
+                    )
                 }
                     // 2. MAP: This block's job is to transform the raw data into the final UI State.
                     //    Crucially, its return type is declared as the supertype, 'BikeUiState'.
@@ -129,16 +142,26 @@ class BikeViewModel @Inject constructor(
                             locationEnergyLevel = data.gpsAccuracy // <<< USE data.gpsAccuracy HERE
                         )
                         // Log the state being emitted and the key gpsAccuracy value from CombinedData
-                        Log.d("BikeViewModel_DEBUG", "Map lambda. Emitting BikeUiState.Success: $stateToEmit. data.gpsAccuracy (energy level from settings) was: ${data.gpsAccuracy}")
+                        Log.d(
+                            "BikeViewModel_DEBUG",
+                            "Map lambda. Emitting BikeUiState.Success: $stateToEmit. data.gpsAccuracy (energy level from settings) was: ${data.gpsAccuracy}"
+                        )
                         stateToEmit
                     }
                     // 3. CATCH: This now works perfectly, because the flow is of type Flow<BikeUiState>.
                     .catch { e ->
-                        Log.e("BikeViewModel_DEBUG", "Error in UI state flow: ${e.message}", e) // Added _DEBUG to tag
+                        Log.e(
+                            "BikeViewModel_DEBUG",
+                            "Error in UI state flow: ${e.message}",
+                            e
+                        ) // Added _DEBUG to tag
                         emit(BikeUiState.Error(e.localizedMessage ?: "Service error"))
                     }
                     .collect { state ->
-                        Log.d("BikeViewModel_DEBUG", "Collected final UI state: $state") // Added _DEBUG to tag
+                        Log.d(
+                            "BikeViewModel_DEBUG",
+                            "Collected final UI state: $state"
+                        ) // Added _DEBUG to tag
                         _uiState.value = state
                     }
             } ?: run {
@@ -154,7 +177,8 @@ class BikeViewModel @Inject constructor(
 
         viewModelScope.launch {
             // Now we know bikeService is not null when this is called.
-            val location = bikeService?.rideInfo?.first { it.location != null }?.location ?: return@launch
+            val location =
+                bikeService?.rideInfo?.first { it.location != null }?.location ?: return@launch
 
             try {
                 // CORRECTED: Use the class-level property directly, which Kotlin can now resolve.
@@ -199,10 +223,14 @@ class BikeViewModel @Inject constructor(
                 // The user dismissed the dialog, so we need to hide it.
                 _showSetDistanceDialog.value = false
             }
+
             is BikeEvent.NavigateToSettingsRequested -> {
                 // Primarily handled by BikeUiRoute for navigation.
                 // ViewModel can perform other actions if needed (e.g., logging, analytics).
-                Log.d("BikeViewModel", "NavigateToSettingsRequested event received. CardKey: ${event.cardKey}")
+                Log.d(
+                    "BikeViewModel",
+                    "NavigateToSettingsRequested event received. CardKey: ${event.cardKey}"
+                )
                 // TODO: Add any ViewModel-specific logic for this event if required in the future.
             }
         }
@@ -211,7 +239,8 @@ class BikeViewModel @Inject constructor(
     // This function now uses the injected 'application' context
     private fun sendCommandToService(action: String) {
         Log.d("BikeViewModel", "sendCommandToService: $action")
-        val intent = Intent(application, BikeForegroundService::class.java).apply { this.action = action }
+        val intent =
+            Intent(application, BikeForegroundService::class.java).apply { this.action = action }
         application.startService(intent) // Ensures service is running if not already
     }
 
@@ -226,10 +255,14 @@ class BikeViewModel @Inject constructor(
                     Log.d("BikeViewModel", "Attempting to start service.")
                     context.startService(intent) // Good to ensure it's started, especially if it might not be running
                     Log.d("BikeViewModel", "Attempting to bind service.")
-                    val didBind = context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+                    val didBind =
+                        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
                     Log.d("BikeViewModel", "bindService call returned: $didBind")
                     if (!didBind) {
-                        Log.e("BikeViewModel", "bindService returned false. Service may not be available or manifest declaration missing.")
+                        Log.e(
+                            "BikeViewModel",
+                            "bindService returned false. Service may not be available or manifest declaration missing."
+                        )
                     }
                 } catch (e: Exception) {
                     Log.e("BikeViewModel", "Exception during bindToService: ${e.message}", e)
@@ -241,7 +274,10 @@ class BikeViewModel @Inject constructor(
     }
 
     fun unbindFromService(context: Context) {
-        Log.d("BikeViewModel", "unbindFromService called. Current internal _bound state: ${_bound.value}")
+        Log.d(
+            "BikeViewModel",
+            "unbindFromService called. Current internal _bound state: ${_bound.value}"
+        )
         try {
             // Always attempt to unbind. The Android system tracks the actual binding.
             // If it's not bound, context.unbindService will throw IllegalArgumentException.
@@ -249,7 +285,10 @@ class BikeViewModel @Inject constructor(
             Log.d("BikeViewModel", "context.unbindService() called successfully.")
         } catch (e: IllegalArgumentException) {
             // This is expected if the service was already unbound or was never bound with this connection.
-            Log.w("BikeViewModel", "IllegalArgumentException during unbindService: ${e.message}. Service might have been already unbound or not registered.")
+            Log.w(
+                "BikeViewModel",
+                "IllegalArgumentException during unbindService: ${e.message}. Service might have been already unbound or not registered."
+            )
         } catch (e: Exception) {
             // Catch any other unexpected exceptions during unbinding.
             Log.e("BikeViewModel", "Generic exception during unbindFromService: ${e.message}", e)

@@ -1,12 +1,7 @@
 package com.ylabz.basepro
 
-import android.app.Activity
-import android.app.PendingIntent
-import android.bluetooth.BluetoothAdapter
-import android.content.BroadcastReceiver
-import android.content.Context
+//import androidx.compose.ui.tooling.preview.Preview
 import android.content.Intent
-import android.content.IntentFilter
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Build
@@ -15,7 +10,6 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -27,16 +21,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-//import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.ylabz.basepro.feature.nfc.ui.NfcUiState
 import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
 import com.ylabz.basepro.ui.navigation.root.RootNavGraph
 import com.ylabz.basepro.ui.theme.BaseProTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.serialization.Serializable
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -59,7 +49,10 @@ class MainActivity : ComponentActivity() {
                 @Suppress("DEPRECATION")
                 intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG)
             }
-            Log.d("NFC", "onNewIntent: Tag detected: ${tag?.id?.joinToString("") { "%02x".format(it) }}")
+            Log.d(
+                "NFC",
+                "onNewIntent: Tag detected: ${tag?.id?.joinToString("") { "%02x".format(it) }}"
+            )
             // Check UI state instead of isWritingMode:
             val currentState = nfcViewModel.uiState.value
             Log.d("NFC", "onNewIntent: uiState = $currentState")
@@ -102,9 +95,8 @@ class MainActivity : ComponentActivity() {
 fun AppUI(innerPadding: PaddingValues) {
     val navController = rememberNavController()
     // padding in scaffold.
-    RootNavGraph(navHostController = navController )
+    RootNavGraph(navHostController = navController)
 }
-
 
 
 @Composable

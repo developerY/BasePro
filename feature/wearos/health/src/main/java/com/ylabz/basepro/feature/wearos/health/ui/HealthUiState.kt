@@ -1,7 +1,6 @@
 package com.ylabz.basepro.feature.wearos.health.ui
 
 import androidx.health.connect.client.records.ExerciseSessionRecord
-import androidx.health.connect.client.records.WeightRecord
 import java.util.UUID
 
 sealed class HealthUiState {
@@ -9,10 +8,10 @@ sealed class HealthUiState {
     object Loading : HealthUiState()
     data class PermissionsRequired(val message: String) : HealthUiState()
     data class Success(val healthData: List<ExerciseSessionRecord>) : HealthUiState()
+
     //data class Error(val message: String) : HealthUiState()
     //object GetPermissions : HealthUiState()
     data class Error(val message: String, val uuid: UUID = UUID.randomUUID()) : HealthUiState()
-
 
 
     /*sealed class Error : HealthUiState() {

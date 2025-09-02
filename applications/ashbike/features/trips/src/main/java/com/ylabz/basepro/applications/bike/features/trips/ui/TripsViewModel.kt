@@ -27,7 +27,8 @@ import javax.inject.Inject
 
 // Side-effect definition
 sealed interface TripsSideEffect {
-    data class RequestHealthConnectSync(val rideId: String, val records: List<Record>) : TripsSideEffect
+    data class RequestHealthConnectSync(val rideId: String, val records: List<Record>) :
+        TripsSideEffect
 }
 
 @HiltViewModel
@@ -41,9 +42,11 @@ class TripsViewModel @Inject constructor(
     private val _uiState: StateFlow<TripsUIState> =
         bikeRideRepo.getAllRidesWithLocations()
             .map { rides ->
-                val uiModels = rides.map { it.toUiModel(
-                    resources = application.resources // <-- Use application.resources
-                ) }
+                val uiModels = rides.map {
+                    it.toUiModel(
+                        resources = application.resources // <-- Use application.resources
+                    )
+                }
                 TripsUIState.Success(uiModels) as TripsUIState
             }
             .catch { e -> emit(TripsUIState.Error(e.localizedMessage ?: "Unknown error")) }
@@ -64,14 +67,22 @@ class TripsViewModel @Inject constructor(
 
     fun onEvent(event: TripsEvent) {
         when (event) {
-            is TripsEvent.LoadData -> { /* Data is loaded reactively by the uiState flow */ }
+            is TripsEvent.LoadData -> { /* Data is loaded reactively by the uiState flow */
+            }
+
             is TripsEvent.UpdateRideNotes -> updateRideNotes(event.itemId, event.notes)
             is TripsEvent.DeleteItem -> deleteItem(event.itemId)
             is TripsEvent.DeleteAll -> deleteAll()
-            is TripsEvent.OnRetry -> { /* Handled by reactive flow */ }
-            is TripsEvent.StopSaveRide -> { isTracking = false }
+            is TripsEvent.OnRetry -> { /* Handled by reactive flow */
+            }
+
+            is TripsEvent.StopSaveRide -> {
+                isTracking = false
+            }
+
             is TripsEvent.SyncRide -> handleSyncRide(event.rideId)
-            is TripsEvent.BuildBikeRec -> { /* This event might be obsolete now */ }
+            is TripsEvent.BuildBikeRec -> { /* This event might be obsolete now */
+            }
         }
     }
 

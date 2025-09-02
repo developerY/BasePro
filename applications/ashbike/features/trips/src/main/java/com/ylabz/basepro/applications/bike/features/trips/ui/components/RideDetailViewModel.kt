@@ -42,6 +42,7 @@ class RideDetailViewModel @Inject constructor(
             is TripsEvent.SyncRide -> TODO()
         }
     }
+
     /** Called by the UI when the notes text changes */
     fun updateNotes(newNotes: String) {
         viewModelScope.launch {

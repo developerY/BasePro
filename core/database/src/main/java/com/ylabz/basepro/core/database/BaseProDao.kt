@@ -25,7 +25,6 @@ interface BaseProDao {
     suspend fun insert(todo: BaseProEntity)
 
 
-
     // Deleting a BasePro
     @Delete
     suspend fun delete(todo: BaseProEntity)

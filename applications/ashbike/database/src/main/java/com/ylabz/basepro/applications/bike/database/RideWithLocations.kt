@@ -8,7 +8,7 @@ data class RideWithLocations(
     @Relation(
         parentColumn = "rideId",
         entityColumn = "rideId",//"rideOwnerId"
-        entity        = RideLocationEntity::class
+        entity = RideLocationEntity::class
     )
     val locations: List<RideLocationEntity>
 )

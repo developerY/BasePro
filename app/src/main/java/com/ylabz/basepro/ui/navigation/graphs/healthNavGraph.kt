@@ -1,13 +1,9 @@
 package com.ylabz.basepro.ui.navigation.graphs
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -17,9 +13,7 @@ import androidx.navigation.navigation
 import com.ylabz.basepro.core.ui.HEALTH
 import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.feature.heatlh.ui.HealthRoute
-import com.ylabz.basepro.feature.heatlh.ui.HealthViewModel
 import com.ylabz.basepro.feature.heatlh.ui.components.SessionDetailScreen
-import com.ylabz.basepro.feature.places.ui.CoffeeShopUIRoute
 import com.ylabz.basepro.ui.bar.AppScaffold
 import kotlinx.coroutines.CoroutineScope
 
@@ -61,9 +55,9 @@ fun NavGraphBuilder.healthNavGraph(
             val uid = backStackEntry.arguments?.getString("uid")
                 ?: return@composable
             SessionDetailScreen(
-                uid           = uid,
+                uid = uid,
                 navController = navController,
-                modifier      = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize()
             )
         }
     }

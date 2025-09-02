@@ -43,9 +43,15 @@ fun BikeUiRoute(
     val bikeUiState by viewModel.uiState.collectAsState() // <<< MODIFIED LINE: Use the passed-in viewModel
 
     // Log the instance hash code for confirmation (can be removed after verifying)
-    Log.d("BikeUiRoute_InstanceTest", "BikeUiRoute using BikeViewModel instance: ${viewModel.hashCode()}")
+    Log.d(
+        "BikeUiRoute_InstanceTest",
+        "BikeUiRoute using BikeViewModel instance: ${viewModel.hashCode()}"
+    )
     // General state log for BikeUiRoute recomposition
-    Log.d("BikeUiRoute_StateLog", "BikeUiRoute recomposing with bikeUiState: ${bikeUiState::class.java.simpleName}")
+    Log.d(
+        "BikeUiRoute_StateLog",
+        "BikeUiRoute recomposing with bikeUiState: ${bikeUiState::class.java.simpleName}"
+    )
 
 
     val context = LocalContext.current
@@ -63,6 +69,7 @@ fun BikeUiRoute(
                 // Use the new command system
                 navTo(NavigationCommand.ToTab(route))
             }
+
             else -> {
                 // For all other events, pass them to the ViewModel
                 viewModel.onEvent(event)
@@ -83,6 +90,7 @@ fun BikeUiRoute(
                 }
             )
         }
+
         is BikeUiState.Success -> {
             // val bikeData = currentBikeUiState.bikeData // This line is no longer needed
             if (currentBikeUiState.bikeData.location != null && (currentBikeUiState.bikeData.location?.latitude != 0.0 || currentBikeUiState.bikeData.location?.longitude != 0.0)) {
@@ -105,15 +113,18 @@ fun BikeUiRoute(
                 )
             }
         }
+
         is BikeUiState.Error -> {
             ErrorScreen(
                 errorMessage = currentBikeUiState.message,
-                onRetry = { viewModel.onEvent(BikeEvent.StartRide) } 
+                onRetry = { viewModel.onEvent(BikeEvent.StartRide) }
             )
         }
+
         BikeUiState.Loading -> {
             LoadingScreen()
         }
+
         BikeUiState.Idle -> {
             // Decided to show LoadingScreen for Idle as well, or define a specific IdleScreen
             LoadingScreen()

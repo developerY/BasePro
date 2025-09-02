@@ -26,11 +26,13 @@ fun WeatherUiRoute(
         is WeatherUiState.Loading -> {
             LoadingScreen()
         }
+
         is WeatherUiState.Error -> {
             ErrorScreen(errorMessage = uiState.message) {
                 viewModel.onEvent(WeatherEvent.LoadBike)
             }
         }
+
         is WeatherUiState.Success -> {
 
             /*UnifiedWeatherCard(
@@ -71,7 +73,9 @@ fun LoadingScreen() {
 
 @Composable
 fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
         Text(
             text = "Error: $errorMessage",
             style = MaterialTheme.typography.bodyLarge,

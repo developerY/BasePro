@@ -1,13 +1,7 @@
 package com.ylabz.basepro.core.data.repository.weather
 
 import android.util.Log
-import com.ylabz.basepro.core.data.repository.weather.openFetchWeatherByCoords
-import com.ylabz.basepro.core.model.weather.Clouds
-import com.ylabz.basepro.core.model.weather.Coord
-import com.ylabz.basepro.core.model.weather.Main
 import com.ylabz.basepro.core.model.weather.OpenWeatherResponse
-import com.ylabz.basepro.core.model.weather.Sys
-import com.ylabz.basepro.core.model.weather.Wind
 import javax.inject.Inject
 
 class WeatherRepoImpl @Inject constructor(

@@ -109,7 +109,10 @@ fun BikePathWithControls(
             contentColor = Color.Red,
             modifier = Modifier.size(buttonSize)
         ) {
-            Icon(imageVector = Icons.Default.Stop, contentDescription = stringResource(CoreUiR.string.action_stop))
+            Icon(
+                imageVector = Icons.Default.Stop,
+                contentDescription = stringResource(CoreUiR.string.action_stop)
+            )
         }
     }
 

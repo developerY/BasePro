@@ -10,13 +10,13 @@ import androidx.room.PrimaryKey
     tableName = "ride_locations",
     foreignKeys = [
         ForeignKey(
-            entity        = BikeRideEntity::class,
+            entity = BikeRideEntity::class,
             parentColumns = ["rideId"],
-            childColumns  = ["rideId"],
-            onDelete      = ForeignKey.CASCADE
+            childColumns = ["rideId"],
+            onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [ Index("rideId") ]
+    indices = [Index("rideId")]
 )
 data class RideLocationEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,

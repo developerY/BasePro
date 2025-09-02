@@ -1,16 +1,15 @@
 package com.ylabz.basepro.feature.wearos.sleepwatch.components
 
-import android.R.attr.textSize
+
+//import androidx.compose.ui.tooling.preview.Preview
 import android.graphics.Paint
 import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -19,25 +18,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Color
-
-
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
-//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.center
-import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.Text
 import com.ylabz.basepro.core.model.health.SleepSegment
 import kotlinx.coroutines.delay
 import java.time.LocalTime
-import kotlin.collections.first
-import kotlin.collections.isNotEmpty
-import kotlin.math.PI
 import kotlin.math.atan2
 
 
@@ -72,7 +60,6 @@ fun SleepClockFaceOrig(
             .pointerInput(Unit) {
                 detectTapGestures { tapOffset ->
                     val circleCenter = Offset(size.width / 2f, size.height / 2f)
-
 
 
                     /*val tapAngleDegrees = (-atan2(
@@ -227,7 +214,6 @@ fun SleepClockFaceOrig(
         drawClockHands(currentHourFraction.value, radius, center)
     }
 }
-
 
 
 fun getHourFraction(): Float {

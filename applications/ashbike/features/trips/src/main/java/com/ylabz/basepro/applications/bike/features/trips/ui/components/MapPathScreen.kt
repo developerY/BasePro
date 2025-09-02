@@ -140,7 +140,8 @@ fun MapPathScreen(
                     }
                 }
                 val minSpeed = pathSegments.minOfOrNull { it.speedKmh } ?: 0.0
-                val maxSpeed = pathSegments.maxOfOrNull { it.speedKmh }?.coerceAtLeast(minSpeed + 0.1) ?: 1.0
+                val maxSpeed =
+                    pathSegments.maxOfOrNull { it.speedKmh }?.coerceAtLeast(minSpeed + 0.1) ?: 1.0
 
                 // 2. --- Draw Canvas Content ---
                 Canvas(modifier = Modifier.fillMaxSize()) {
@@ -152,7 +153,14 @@ fun MapPathScreen(
                     }
 
                     if (pathSegments.isNotEmpty()) {
-                        drawRidePath(pathSegments, slowColor, fastColor, pathStrokeWidth.toPx(), minSpeed, maxSpeed)
+                        drawRidePath(
+                            pathSegments,
+                            slowColor,
+                            fastColor,
+                            pathStrokeWidth.toPx(),
+                            minSpeed,
+                            maxSpeed
+                        )
                     }
                 }
 
@@ -163,12 +171,36 @@ fun MapPathScreen(
                 if (pathSegments.isNotEmpty()) {
                     val start = pathSegments.first().startOffset
                     val end = pathSegments.last().endOffset
-                    MapMarker(icon = Icons.Filled.PlayArrow, position = start, size = markerSize, color = slowColor)
-                    MapMarker(icon = Icons.Filled.Stop, position = end, size = markerSize, color = fastColor)
+                    MapMarker(
+                        icon = Icons.Filled.PlayArrow,
+                        position = start,
+                        size = markerSize,
+                        color = slowColor
+                    )
+                    MapMarker(
+                        icon = Icons.Filled.Stop,
+                        position = end,
+                        size = markerSize,
+                        color = fastColor
+                    )
                 }
 
-                DistanceScale(minLat, minLng, maxLat, maxLng, wPx, insetPx, Modifier.align(Alignment.BottomStart))
-                SpeedLegend(minSpeed, maxSpeed, slowColor, fastColor, Modifier.align(Alignment.BottomEnd))
+                DistanceScale(
+                    minLat,
+                    minLng,
+                    maxLat,
+                    maxLng,
+                    wPx,
+                    insetPx,
+                    Modifier.align(Alignment.BottomStart)
+                )
+                SpeedLegend(
+                    minSpeed,
+                    maxSpeed,
+                    slowColor,
+                    fastColor,
+                    Modifier.align(Alignment.BottomEnd)
+                )
 
             } else {
                 // Fallback view if there's no data
@@ -176,7 +208,10 @@ fun MapPathScreen(
                     drawRect(brush = backgroundGradient)
                     drawGrid(gridColor, 10, 10)
                 }
-                Text(stringResource(R.string.feature_trips_map_no_ride_data), modifier = Modifier.align(Alignment.Center))
+                Text(
+                    stringResource(R.string.feature_trips_map_no_ride_data),
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
 
             // Clickable coffee icon
@@ -216,7 +251,10 @@ private fun Compass(size: Dp, modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.padding(8.dp)
     ) {
-        Text(stringResource(R.string.feature_trips_map_compass_n), style = MaterialTheme.typography.labelSmall.copy(color = Color.Black.copy(alpha = 0.7f)))
+        Text(
+            stringResource(R.string.feature_trips_map_compass_n),
+            style = MaterialTheme.typography.labelSmall.copy(color = Color.Black.copy(alpha = 0.7f))
+        )
         Icon(
             imageVector = Icons.Default.North,
             contentDescription = stringResource(R.string.feature_trips_map_compass_content_desc_north),
@@ -255,7 +293,11 @@ private data class PathSegment(
     val speedKmh: Double
 )
 
-private fun createPathSegment(p0: GpsFix, p1: GpsFix, project: (Double, Double) -> Offset): PathSegment {
+private fun createPathSegment(
+    p0: GpsFix,
+    p1: GpsFix,
+    project: (Double, Double) -> Offset
+): PathSegment {
     val distanceMeters = haversineMeters(p0.lat, p0.lng, p1.lat, p1.lng)
     val timeSeconds = (p1.timeMs - p0.timeMs) / 1000.0
 
@@ -276,11 +318,21 @@ private fun DrawScope.drawGrid(color: Color, rows: Int, cols: Int) {
     val stepY = size.height / rows
     repeat(cols - 1) { i ->
         val x = stepX * (i + 1)
-        drawLine(color, Offset(x, 0f), Offset(x, size.height), strokeWidth = if ((i + 1) % 5 == 0) 1.5f else 0.8f)
+        drawLine(
+            color,
+            Offset(x, 0f),
+            Offset(x, size.height),
+            strokeWidth = if ((i + 1) % 5 == 0) 1.5f else 0.8f
+        )
     }
     repeat(rows - 1) { j ->
         val y = stepY * (j + 1)
-        drawLine(color, Offset(0f, y), Offset(size.width, y), strokeWidth = if ((j + 1) % 5 == 0) 1.5f else 0.8f)
+        drawLine(
+            color,
+            Offset(0f, y),
+            Offset(size.width, y),
+            strokeWidth = if ((j + 1) % 5 == 0) 1.5f else 0.8f
+        )
     }
 }
 
@@ -296,6 +348,7 @@ fun generateRandomPastelColor(): Color {
     val blue = Random.nextInt(128) + 128
     return Color(red, green, blue)
 }
+
 private fun DrawScope.drawCafeMarkers(
     cafes: List<BusinessInfo>,
     project: (Double, Double) -> Offset,
@@ -345,14 +398,26 @@ private fun DrawScope.drawRidePath(
     maxSpeed: Double,
 ) {
     segments.forEach { seg ->
-        val speedFraction = ((seg.speedKmh - minSpeed) / (maxSpeed - minSpeed)).toFloat().coerceIn(0f, 1f)
+        val speedFraction =
+            ((seg.speedKmh - minSpeed) / (maxSpeed - minSpeed)).toFloat().coerceIn(0f, 1f)
         val color = lerp(slowColor, fastColor, speedFraction)
-        drawLine(color, seg.startOffset, seg.endOffset, strokeWidth = strokeWidth, cap = StrokeCap.Round)
+        drawLine(
+            color,
+            seg.startOffset,
+            seg.endOffset,
+            strokeWidth = strokeWidth,
+            cap = StrokeCap.Round
+        )
     }
 }
 
 @Composable
-private fun MapMarker(icon: androidx.compose.ui.graphics.vector.ImageVector, position: Offset, size: Dp, color: Color) {
+private fun MapMarker(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    position: Offset,
+    size: Dp,
+    color: Color
+) {
     val sizePx = with(LocalDensity.current) { size.toPx() }
     Icon(
         imageVector = icon,
@@ -370,13 +435,23 @@ private fun MapMarker(icon: androidx.compose.ui.graphics.vector.ImageVector, pos
 }
 
 @Composable
-private fun SpeedLegend(minSpeed: Double, maxSpeed: Double, slowColor: Color, fastColor: Color, modifier: Modifier = Modifier) {
+private fun SpeedLegend(
+    minSpeed: Double,
+    maxSpeed: Double,
+    slowColor: Color,
+    fastColor: Color,
+    modifier: Modifier = Modifier
+) {
     Row(
         modifier = modifier.padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         //Text("${minSpeed.roundToInt()} km/h", style = MaterialTheme.typography.bodySmall, color = Color.Black)
-        Text(stringResource(R.string.feature_trips_map_legend_slow), style = MaterialTheme.typography.bodySmall, color = Color.Black)
+        Text(
+            stringResource(R.string.feature_trips_map_legend_slow),
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.Black
+        )
         Spacer(Modifier.width(4.dp))
         Box(
             Modifier
@@ -387,13 +462,25 @@ private fun SpeedLegend(minSpeed: Double, maxSpeed: Double, slowColor: Color, fa
                 )
         )
         Spacer(Modifier.width(4.dp))
-        Text(stringResource(R.string.feature_trips_map_legend_fast), style = MaterialTheme.typography.bodySmall, color = Color.Black)
+        Text(
+            stringResource(R.string.feature_trips_map_legend_fast),
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.Black
+        )
         //Text("${maxSpeed.roundToInt()} km/h", style = MaterialTheme.typography.bodySmall, color = Color.Black)
     }
 }
 
 @Composable
-private fun DistanceScale(minLat: Double, minLng: Double, maxLat: Double, maxLng: Double, viewWidthPx: Float, insetPx: Float, modifier: Modifier = Modifier) {
+private fun DistanceScale(
+    minLat: Double,
+    minLng: Double,
+    maxLat: Double,
+    maxLng: Double,
+    viewWidthPx: Float,
+    insetPx: Float,
+    modifier: Modifier = Modifier
+) {
     val density = LocalDensity.current
     val midLat = (minLat + maxLat) / 2
     val boxWidthMeters = haversineMeters(midLat, minLng, midLat, maxLng)
@@ -405,16 +492,19 @@ private fun DistanceScale(minLat: Double, minLng: Double, maxLat: Double, maxLng
     val niceMeters = niceDistance(targetMeters)
     val scalePx = (niceMeters / metersPerPixel).toFloat()
     val scaleDp = with(density) { scalePx.toDp() }
-    val scaleLabel = if (niceMeters >= 1000) "%.1f km".format(niceMeters / 1000) else "${niceMeters.toInt()} m"
+    val scaleLabel =
+        if (niceMeters >= 1000) "%.1f km".format(niceMeters / 1000) else "${niceMeters.toInt()} m"
 
     Row(
         modifier = modifier.padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(Modifier
-            .height(2.dp)
-            .width(scaleDp)
-            .background(Color.Black))
+        Box(
+            Modifier
+                .height(2.dp)
+                .width(scaleDp)
+                .background(Color.Black)
+        )
         Spacer(Modifier.width(4.dp))
         Text(scaleLabel, style = MaterialTheme.typography.bodySmall, color = Color.Black)
     }
@@ -427,7 +517,10 @@ fun haversineMeters(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Dou
     val r = 6_371_000.0 // Earth's radius in meters
     val dLat = Math.toRadians(lat2 - lat1)
     val dLng = Math.toRadians(lng2 - lng1)
-    val a = sin(dLat / 2).pow(2) + cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(dLng / 2).pow(2)
+    val a =
+        sin(dLat / 2).pow(2) + cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(dLng / 2).pow(
+            2
+        )
     val c = 2 * atan2(sqrt(a), sqrt(1 - a))
     return r * c
 }

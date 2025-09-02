@@ -24,7 +24,10 @@ interface HealthConnectRepository {
      * @param endTime the inclusive upper bound for session end
      * @return the list of matching ExerciseSessionRecord
      */
-    suspend fun readExerciseSessions(startTime: Instant, endTime: Instant): List<ExerciseSessionRecord>
+    suspend fun readExerciseSessions(
+        startTime: Instant,
+        endTime: Instant
+    ): List<ExerciseSessionRecord>
 
     /**
      * Deletes all ExerciseSessionRecord (and their associated data) ending before [before].

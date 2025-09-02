@@ -36,6 +36,7 @@ class CompassRepositoryAccMagImpl @Inject constructor(
                         gravity[2] = event.values[2]
                         hasGravity = true
                     }
+
                     Sensor.TYPE_MAGNETIC_FIELD -> {
                         geomagnetic[0] = event.values[0]
                         geomagnetic[1] = event.values[1]

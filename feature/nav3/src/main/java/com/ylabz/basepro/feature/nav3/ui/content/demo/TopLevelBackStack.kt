@@ -26,7 +26,8 @@ class TopLevelBackStack<T : NavKey>(private val startKey: T) {
 
     private fun updateBackStack() {
         backStack.clear()
-        val currentActiveStack = topLevelBackStacks[topLevelKey] ?: mutableStateListOf(topLevelKey).also { topLevelBackStacks[topLevelKey] = it }
+        val currentActiveStack = topLevelBackStacks[topLevelKey]
+            ?: mutableStateListOf(topLevelKey).also { topLevelBackStacks[topLevelKey] = it }
 
         if (topLevelKey == startKey) {
             backStack.addAll(currentActiveStack)
@@ -34,15 +35,16 @@ class TopLevelBackStack<T : NavKey>(private val startKey: T) {
             // If not on the startKey tab, NavDisplay's stack includes the startKey's root
             // followed by the current active tab's full stack.
             // Ensure startKey's stack always has at least startKey itself.
-            val startKeyStack = topLevelBackStacks[startKey]?.takeIf { it.isNotEmpty() } ?: mutableStateListOf(
-                startKey
-            )
+            val startKeyStack =
+                topLevelBackStacks[startKey]?.takeIf { it.isNotEmpty() } ?: mutableStateListOf(
+                    startKey
+                )
             if (startKeyStack.firstOrNull() != startKey && startKey == HomeKey) { // A bit of a safeguard for HomeKey as root
-                 backStack.add(startKey) // Add startKey if not already the first in its own stack representation for combining
+                backStack.add(startKey) // Add startKey if not already the first in its own stack representation for combining
             } else if (!startKeyStack.contains(startKey) && startKey == HomeKey) {
-                 backStack.add(startKey)
+                backStack.add(startKey)
             } else {
-                 backStack.addAll(startKeyStack.distinct().take(1)) // Typically just [startKey]
+                backStack.addAll(startKeyStack.distinct().take(1)) // Typically just [startKey]
             }
             backStack.addAll(currentActiveStack.distinct()) // Add current tab's stack, ensuring no double-adds if current is startKey
         }

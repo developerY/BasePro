@@ -1,12 +1,10 @@
 package com.ylabz.basepro.core.ui
 
-import kotlinx.serialization.Serializable
-
 const val BIKE = "bike"  // if you plan to use a nested nav graph, otherwise remove it
 
 sealed class BikeScreen(val route: String) {
-    object HomeBikeScreen     : BikeScreen("home_bike_screen")
-    object TripBikeScreen     : BikeScreen("trip_bike_screen")
+    object HomeBikeScreen : BikeScreen("home_bike_screen")
+    object TripBikeScreen : BikeScreen("trip_bike_screen")
 
     object SettingsBikeScreen : BikeScreen("settings_bike_screen") {
         const val ARG_CARD_TO_EXPAND = "cardToExpandArg" // Argument key as used in nav graph

@@ -1,19 +1,17 @@
 package com.ylabz.basepro.feature.wearos.sleepwatch
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.Vignette
 import androidx.wear.compose.material.VignettePosition
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.ylabz.basepro.feature.wearos.sleepwatch.components.ErrorScreenWear
 import com.ylabz.basepro.feature.wearos.sleepwatch.components.LoadingScreenWear
 import com.ylabz.basepro.feature.wearos.sleepwatch.components.SleepWatchStartScreenWear
-
-import java.util.UUID
 
 @Composable
 fun SleepWatchRoute(

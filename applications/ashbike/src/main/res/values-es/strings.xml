@@ -1,16 +1,14 @@
 <resources>
 
 
-        <string name="bike_bottom_nav_ride">Viaje</string> <!-- Or "Paseo" or whatever fits best -->
-        <!-- other strings specific to ashbike in Spanish -->
+    <string name="bike_bottom_nav_ride">Viaje</string> <!-- Or "Paseo" or whatever fits best -->
+    <!-- other strings specific to ashbike in Spanish -->
 
 
-        <!-- ... other strings ... -->
-        <string name="top_bar_title_ashbike">AshBike</string> <!-- Or "Mi Bici Ash" if you want to translate the brand too -->
-        <string name="top_bar_title_trips">Viajes</string>
-        <string name="top_bar_title_ride_details">Detalles del Viaje</string>
-
-
+    <!-- ... other strings ... -->
+    <string name="top_bar_title_ashbike">AshBike</string> <!-- Or "Mi Bici Ash" if you want to translate the brand too -->
+    <string name="top_bar_title_trips">Viajes</string>
+    <string name="top_bar_title_ride_details">Detalles del Viaje</string>
 
 
     <string name="app_name">AshBike</string>

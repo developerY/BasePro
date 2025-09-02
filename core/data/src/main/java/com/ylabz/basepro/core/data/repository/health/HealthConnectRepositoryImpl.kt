@@ -2,8 +2,8 @@ package com.ylabz.basepro.core.data.repository.health
 
 import android.content.Context
 import androidx.health.connect.client.HealthConnectClient
-import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.records.ExerciseSessionRecord
+import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -29,7 +29,7 @@ class HealthConnectRepositoryImpl @Inject constructor(
         endTime: Instant
     ): List<ExerciseSessionRecord> {
         val request = ReadRecordsRequest(
-            recordType      = ExerciseSessionRecord::class,
+            recordType = ExerciseSessionRecord::class,
             timeRangeFilter = TimeRangeFilter.between(startTime, endTime)
         )
         return client.readRecords(request).records
@@ -37,7 +37,7 @@ class HealthConnectRepositoryImpl @Inject constructor(
 
     override suspend fun deleteAllSessions(before: Instant) {
         client.deleteRecords(
-            recordType      = ExerciseSessionRecord::class,
+            recordType = ExerciseSessionRecord::class,
             timeRangeFilter = TimeRangeFilter.before(before)
         )
     }

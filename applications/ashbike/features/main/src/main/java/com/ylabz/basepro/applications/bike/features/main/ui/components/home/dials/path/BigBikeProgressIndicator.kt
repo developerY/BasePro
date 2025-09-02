@@ -77,10 +77,10 @@ fun BigBikeProgressIndicator(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector        = Icons.AutoMirrored.Filled.DirectionsBike,
+                imageVector = Icons.AutoMirrored.Filled.DirectionsBike,
                 contentDescription = "Set total distance",
-                tint               = iconTint,
-                modifier           = Modifier
+                tint = iconTint,
+                modifier = Modifier
                     .size(iconSize)
                     .clickable { onBikeClick() }
             )
@@ -95,35 +95,35 @@ fun BigBikeProgressIndicator(
             .height(containerHeight)
     ) {
         val bc = this
-        val dens            = LocalDensity.current
-        val widthPx         = with(dens) { bc.maxWidth.toPx() }
-        val heightPx        = with(dens) { bc.maxHeight.toPx() }
-        val trackHeightPx   = with(dens) { trackHeight.toPx() }
-        val iconSizePx      = with(dens) { iconSize.toPx() }
+        val dens = LocalDensity.current
+        val widthPx = with(dens) { bc.maxWidth.toPx() }
+        val heightPx = with(dens) { bc.maxHeight.toPx() }
+        val trackHeightPx = with(dens) { trackHeight.toPx() }
+        val iconSizePx = with(dens) { iconSize.toPx() }
 
-        val lineY           = heightPx / 2f
-        val paddingX        = iconSizePx / 2f
-        val leftX           = paddingX
-        val rightX          = widthPx - paddingX
-        val trackWidthPx    = rightX - leftX
+        val lineY = heightPx / 2f
+        val paddingX = iconSizePx / 2f
+        val leftX = paddingX
+        val rightX = widthPx - paddingX
+        val trackWidthPx = rightX - leftX
 
-        val bikeCenterX     = leftX + trackWidthPx * fraction
-        val bikeTopY        = lineY - iconSizePx / 2f
+        val bikeCenterX = leftX + trackWidthPx * fraction
+        val bikeTopY = lineY - iconSizePx / 2f
 
         // Draw the background track + progress
         Canvas(Modifier.matchParentSize()) {
             // full gray track
             drawLine(
-                color       = Color.LightGray,
-                start       = Offset(leftX, lineY),
-                end         = Offset(rightX, lineY),
+                color = Color.LightGray,
+                start = Offset(leftX, lineY),
+                end = Offset(rightX, lineY),
                 strokeWidth = trackHeightPx
             )
             // colored progress bar
             drawLine(
-                color       = Color(0xFF90CAF9),
-                start       = Offset(leftX, lineY),
-                end         = Offset(leftX + trackWidthPx * fraction, lineY),
+                color = Color(0xFF90CAF9),
+                start = Offset(leftX, lineY),
+                end = Offset(leftX + trackWidthPx * fraction, lineY),
                 strokeWidth = trackHeightPx
             )
         }
@@ -139,15 +139,15 @@ fun BigBikeProgressIndicator(
         ) {
             Text("0 km", style = MaterialTheme.typography.bodySmall)
             Text((totalDistance / 2).displayKm(), style = MaterialTheme.typography.bodySmall)
-            Text(totalDistance.displayKm(),    style = MaterialTheme.typography.bodySmall)
+            Text(totalDistance.displayKm(), style = MaterialTheme.typography.bodySmall)
         }
 
         // The bike icon, positioned along (and clickable)
         Icon(
-            imageVector        = Icons.AutoMirrored.Filled.DirectionsBike,
+            imageVector = Icons.AutoMirrored.Filled.DirectionsBike,
             contentDescription = "Trip Progress",
-            tint               = iconTint,
-            modifier           = Modifier
+            tint = iconTint,
+            modifier = Modifier
                 .align(Alignment.TopStart)
                 .offset {
                     IntOffset(

@@ -14,10 +14,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 private object UserPrefsDefaults {
-    const val NAME_DEFAULT   = "Ash Monster"
+    const val NAME_DEFAULT = "Ash Monster"
     const val HEIGHT_DEFAULT = "171"  // cm
     const val WEIGHT_DEFAULT = "72"   // kg
     const val PROFILE_REVIEWED_OR_SAVED_DEFAULT = false // Default for the new flag
+
     // --- New default for Location Energy Level ---
     val LOCATION_ENERGY_LEVEL_DEFAULT = LocationEnergyLevel.BALANCED.ordinal
     const val SHOW_GPS_COUNTDOWN_DEFAULT = true // Default to show the timer
@@ -25,11 +26,13 @@ private object UserPrefsDefaults {
 
 // Keys for your preferences
 private object UserPrefsKeys {
-    val NAME   = stringPreferencesKey("user_name")
+    val NAME = stringPreferencesKey("user_name")
     val HEIGHT = stringPreferencesKey("user_height_cm")
     val WEIGHT = stringPreferencesKey("user_weight_kg")
+
     // Add the new boolean key
     val PROFILE_REVIEWED_OR_SAVED = booleanPreferencesKey("profile_reviewed_or_saved_by_user")
+
     // --- New key for Location Energy Level (stores the ordinal as an Int) ---
     val LOCATION_ENERGY_LEVEL = intPreferencesKey("location_energy_level")
     val SHOW_GPS_COUNTDOWN = booleanPreferencesKey("show_gps_countdown") // New key
@@ -63,7 +66,8 @@ class DataStoreUserProfileRepository @Inject constructor(
     // Implement the new flow from the interface
     override val profileReviewedOrSavedFlow: Flow<Boolean> = dataStore.data
         .map { prefs ->
-            prefs[UserPrefsKeys.PROFILE_REVIEWED_OR_SAVED] ?: UserPrefsDefaults.PROFILE_REVIEWED_OR_SAVED_DEFAULT
+            prefs[UserPrefsKeys.PROFILE_REVIEWED_OR_SAVED]
+                ?: UserPrefsDefaults.PROFILE_REVIEWED_OR_SAVED_DEFAULT
         }
 
     /* --- Implementation for GPS Countdown Timer ---

@@ -158,7 +158,9 @@ fun SpeedDisplay(
             Text(
                 text = unit,
                 style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.align(Alignment.Bottom).padding(bottom = 8.dp)
+                modifier = Modifier
+                    .align(Alignment.Bottom)
+                    .padding(bottom = 8.dp)
             )
         }
     }
@@ -188,7 +190,9 @@ fun HeartRateDisplay(
             Text(
                 text = "bpm",
                 style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.align(Alignment.Bottom).padding(bottom = 6.dp)
+                modifier = Modifier
+                    .align(Alignment.Bottom)
+                    .padding(bottom = 6.dp)
             )
         }
     }

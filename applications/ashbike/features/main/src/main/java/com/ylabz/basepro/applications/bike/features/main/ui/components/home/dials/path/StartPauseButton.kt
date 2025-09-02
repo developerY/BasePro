@@ -34,7 +34,7 @@ fun StartPauseButton(
     val infiniteTransition = rememberInfiniteTransition()
     val alpha = infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue  = 0.3f,
+        targetValue = 0.3f,
         animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 600, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
@@ -42,15 +42,15 @@ fun StartPauseButton(
     ).value.takeIf { isPaused } ?: 1f
 
     FloatingActionButton(
-        onClick        = onToggle,
+        onClick = onToggle,
         containerColor = Color.White,
-        contentColor   = Color.Black,
-        modifier       = modifier
+        contentColor = Color.Black,
+        modifier = modifier
             .size(60.dp)
             .alpha(alpha)   // apply the flashing alpha only when paused
     ) {
         Icon(
-            imageVector        = if (isPaused) Icons.Default.Pause else Icons.Default.PlayArrow,
+            imageVector = if (isPaused) Icons.Default.Pause else Icons.Default.PlayArrow,
             contentDescription = if (isPaused) "Resume ride" else "Pause ride"
         )
     }

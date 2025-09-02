@@ -16,14 +16,14 @@ import com.ylabz.basepro.core.ui.BikeScreen
 @Composable
 fun TopBarForCurrentRoute(navController: NavHostController) {
     val backStack by navController.currentBackStackEntryAsState()
-    val route     = backStack?.destination?.route
+    val route = backStack?.destination?.route
 
     when (route) {
-        BikeScreen.HomeBikeScreen.route     -> AppTopBar(title = "AshBike")
-        BikeScreen.TripBikeScreen.route     -> AppTopBar(title = "Trips")
+        BikeScreen.HomeBikeScreen.route -> AppTopBar(title = "AshBike")
+        BikeScreen.TripBikeScreen.route -> AppTopBar(title = "Trips")
         BikeScreen.SettingsBikeScreen.route -> AppTopBar(title = "Settings")
-        BikeScreen.RideDetailScreen.route   -> DetailTopBar(onBack = navController::popBackStack)
-        else                                 -> {}
+        BikeScreen.RideDetailScreen.route -> DetailTopBar(onBack = navController::popBackStack)
+        else -> {}
     }
 }
 
@@ -37,7 +37,7 @@ fun AppTopBar(title: String) {
 @Composable
 fun DetailTopBar(onBack: () -> Unit) {
     TopAppBar(
-        title          = { Text("Ride Details") },
+        title = { Text("Ride Details") },
         navigationIcon = {
             IconButton(onClick = onBack) {
                 Icon(Icons.Default.ArrowBack, contentDescription = "Back")

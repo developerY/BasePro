@@ -62,7 +62,7 @@ fun BikePathScreen(
     navTo: (String) -> Unit
 ) {
 
-     val context = LocalContext.current
+    val context = LocalContext.current
     // Create a launcher for requesting permissions.
     val permissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
@@ -185,11 +185,17 @@ fun BikePathScreen(
                                     // Switches with icons
                                     PreferencesCardContent(
                                         avoidHeavyTraffic = avoidHeavyTraffic.value,
-                                        onAvoidHeavyTrafficChange = { avoidHeavyTraffic.value = it },
+                                        onAvoidHeavyTrafficChange = {
+                                            avoidHeavyTraffic.value = it
+                                        },
                                         preferFlatTerrain = preferFlatTerrain.value,
-                                        onPreferFlatTerrainChange = { preferFlatTerrain.value = it },
+                                        onPreferFlatTerrainChange = {
+                                            preferFlatTerrain.value = it
+                                        },
                                         preferScenicRoutes = preferScenicRoutes.value,
-                                        onPreferScenicRoutesChange = { preferScenicRoutes.value = it }
+                                        onPreferScenicRoutesChange = {
+                                            preferScenicRoutes.value = it
+                                        }
                                     )
                                 } else {
                                     Text(

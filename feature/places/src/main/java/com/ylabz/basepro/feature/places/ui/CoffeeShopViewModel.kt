@@ -5,8 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.core.data.api.interfaces.YelpAPI
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,9 +31,11 @@ class CoffeeShopViewModel @Inject constructor(
             is CoffeeShopEvent.FindCafesNear -> {
                 loadCoffeeShops(event.latitude, event.longitude)
             }
+
             is CoffeeShopEvent.OnCoffeeShopClick -> {
                 // Handle click if needed
             }
+
             is CoffeeShopEvent.LoadCoffeeShops -> loadCoffeeShops(37.7749, -122.4194)
             is CoffeeShopEvent.Retry -> loadCoffeeShops(event.latitude, event.longitude)
         }
@@ -53,7 +53,8 @@ class CoffeeShopViewModel @Inject constructor(
                     radius = radius,
                     sort_by = "rating",
                     categories = "coffee"
-                )?.filterNotNull() ?: emptyList()  // Filter out nulls and provide an empty list if null
+                )?.filterNotNull()
+                    ?: emptyList()  // Filter out nulls and provide an empty list if null
                 _uiState.value = CoffeeShopUIState.Success(coffeeShops)
             } catch (e: Exception) {
                 _uiState.value = CoffeeShopUIState.Error("Failed to load coffee shops")

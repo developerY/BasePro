@@ -32,13 +32,13 @@ sealed class SettingsRoute(val route: String) {
 @Composable
 fun SettingsNavHost(
     modifier: Modifier = Modifier,
-    nfcUiState : NfcUiState,
-    nfcEvent : (NfcRwEvent) -> Unit,
+    nfcUiState: NfcUiState,
+    nfcEvent: (NfcRwEvent) -> Unit,
     navTo: (String) -> Unit  // If you need to communicate “go back” to the parent
 ) {
     // Local NavController just for settings
     val navController = rememberNavController()
-    val navToSettings : (String) -> Unit = { route -> navController.navigate(route) }
+    val navToSettings: (String) -> Unit = { route -> navController.navigate(route) }
 
     NavHost(
         navController = navController,

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <journey name="findNearbyCafes_withTimeCheck">
     <description>Test finding nearby cafes from the ride detail screen and verifies the ride
-        duration.</description>
+        duration.
+    </description>
     <actions>
         <action>Given the user is on the main dashboard and the speedometer is colored</action>
         <action>Click the white "play" button on the left side of the screen
-            and the play button turns from white to gray with a bike icon</action>
+            and the play button turns from white to gray with a bike icon
+        </action>
         <action>The bike icon turns green</action>
         <!-- action>The stop button the right turns from gray to white</action-->
         <!--action>Icons and the background turns to color to show the ride is in progress</action-->
@@ -14,8 +16,8 @@
         <action>Make sure the distance popup is showing</action>
         <action>Click on text input field</action>
         <action>input distance 10</action>
-        <action> Make sure 10 is showing in the input field</action>
-        <action> Make sure 10 is showing in the input field as you keep missing this</action>
+        <action>Make sure 10 is showing in the input field</action>
+        <action>Make sure 10 is showing in the input field as you keep missing this</action>
         <action>The green bike icon starts moving along the gray bar</action>
         <!-- action>Click on the weather icon on the top right corner of the screen then the full weather is shown</action>
         <action>Click the stop button to end the ride then the end button turns gray and play button is white</action>

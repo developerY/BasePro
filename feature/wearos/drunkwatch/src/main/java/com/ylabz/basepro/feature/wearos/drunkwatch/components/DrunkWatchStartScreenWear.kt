@@ -2,7 +2,6 @@ package com.ylabz.basepro.feature.wearos.drunkwatch.components
 
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.navigation.NavController
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.material.Text

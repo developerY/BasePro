@@ -4,14 +4,14 @@ import android.content.Context
 import android.nfc.NdefMessage
 import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
+import android.nfc.Tag
 import android.nfc.tech.Ndef
+import android.util.Log
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Inject
 import javax.inject.Singleton
-import android.nfc.Tag
-import android.util.Log
-import dagger.hilt.android.qualifiers.ApplicationContext
 
 
 @Singleton
@@ -54,7 +54,10 @@ class NfcRepositoryImpl @Inject constructor(
             } catch (e: Exception) {
                 _scannedDataFlow.tryEmit("Error reading tag: ${e.message}")
             } finally {
-                try { ndef.close() } catch (ignored: Exception) { }
+                try {
+                    ndef.close()
+                } catch (ignored: Exception) {
+                }
             }
         } else {
             _scannedDataFlow.tryEmit("NDEF not supported on this tag")
@@ -85,9 +88,15 @@ class NfcRepositoryImpl @Inject constructor(
             val message = NdefMessage(arrayOf(record))
             val messageSize = message.toByteArray().size
 
-            Log.d("NFC", "writeTag: NDEF message size: $messageSize bytes. Tag max size: ${ndef.maxSize} bytes.")
+            Log.d(
+                "NFC",
+                "writeTag: NDEF message size: $messageSize bytes. Tag max size: ${ndef.maxSize} bytes."
+            )
             if (ndef.maxSize < messageSize) {
-                Log.e("NFC", "writeTag: Not enough space on tag. Required: $messageSize, available: ${ndef.maxSize}.")
+                Log.e(
+                    "NFC",
+                    "writeTag: Not enough space on tag. Required: $messageSize, available: ${ndef.maxSize}."
+                )
                 return false
             }
 

@@ -89,7 +89,6 @@ val todaysSchedule = listOf(
 )
 
 
-
 /**
  * The main composable for the Medication Summary Screen (Dashboard).
  * It uses a Scaffold to provide a standard Material 3 layout.
@@ -211,8 +210,16 @@ fun SummaryStatsCard(schedule: List<ScheduleGroupList>) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            StatItem(icon = Icons.Default.CheckCircle, label = "Today's Adherence", value = "$adherence%")
-            StatItem(icon = Icons.Default.Medication, label = "Meds Taken", value = "$takenDoses / $totalDoses")
+            StatItem(
+                icon = Icons.Default.CheckCircle,
+                label = "Today's Adherence",
+                value = "$adherence%"
+            )
+            StatItem(
+                icon = Icons.Default.Medication,
+                label = "Meds Taken",
+                value = "$takenDoses / $totalDoses"
+            )
         }
     }
 }
@@ -227,7 +234,11 @@ private fun StatItem(icon: ImageVector, label: String, value: String) {
             modifier = Modifier.size(32.dp)
         )
         Spacer(modifier = Modifier.height(4.dp))
-        Text(text = value, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold
+        )
         Text(text = label, style = MaterialTheme.typography.bodySmall)
     }
 }
@@ -242,7 +253,11 @@ fun ActionButtonsRow() {
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Button(onClick = { /* Navigate to full schedule */ }, modifier = Modifier.weight(1f)) {
-            Icon(Icons.Default.CalendarMonth, contentDescription = null, modifier = Modifier.size(18.dp))
+            Icon(
+                Icons.Default.CalendarMonth,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp)
+            )
             Spacer(modifier = Modifier.width(8.dp))
             Text("Full Schedule")
         }
@@ -276,8 +291,15 @@ fun MedicationDoseListItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = dose.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                Text(text = "${dose.dosage} at ${dose.time}", style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    text = dose.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "${dose.dosage} at ${dose.time}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
             Checkbox(
                 checked = dose.taken,

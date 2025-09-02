@@ -1,15 +1,15 @@
 package com.ylabz.basepro.feature.wearos.home.navigation
 
-import androidx.compose.runtime.Composable
 //import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.Composable
 import androidx.wear.compose.material.Scaffold
-import androidx.wear.compose.material3.TimeText
 import androidx.wear.compose.material.Vignette
 import androidx.wear.compose.material.VignettePosition
 import androidx.wear.compose.material3.AppScaffold
+import androidx.wear.compose.material3.TimeText
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
-import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import androidx.wear.compose.navigation.composable
+import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.ylabz.basepro.feature.wearos.drunkwatch.DrunkWatchRoute
 import com.ylabz.basepro.feature.wearos.health.ui.WearHealthRoute
 import com.ylabz.basepro.feature.wearos.home.presentation.WearHomeRoute

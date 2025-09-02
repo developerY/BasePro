@@ -131,8 +131,16 @@ fun SettingsScreenEx(
                     title = stringResource(R.string.settings_card_title_theme),
                     expanded = expandedCards.contains(CardKey.Theme),
                     onExpandToggle = { toggle(expandedCards, CardKey.Theme) },
-                    currentTheme = uiState.selections[AppPreferenceKeys.KEY_THEME] ?: AppPreferenceKeys.VALUE_THEME_SYSTEM,
-                    onThemeSelected = { theme -> onEvent(SettingsEvent.UpdateSetting(AppPreferenceKeys.KEY_THEME, theme)) }
+                    currentTheme = uiState.selections[AppPreferenceKeys.KEY_THEME]
+                        ?: AppPreferenceKeys.VALUE_THEME_SYSTEM,
+                    onThemeSelected = { theme ->
+                        onEvent(
+                            SettingsEvent.UpdateSetting(
+                                AppPreferenceKeys.KEY_THEME,
+                                theme
+                            )
+                        )
+                    }
                 )
             }
             item {

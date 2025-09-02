@@ -1,7 +1,18 @@
 package com.ylabz.basepro.feature.heatlh.ui.components.notused
 
+////import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -15,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-////import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 /*class MainActivity : ComponentActivity() {
@@ -68,7 +78,10 @@ fun DashboardContent(modifier: Modifier = Modifier) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text(text = "Current BG: 5.8 mmol/L", style = MaterialTheme.typography.headlineLarge)
+                Text(
+                    text = "Current BG: 5.8 mmol/L",
+                    style = MaterialTheme.typography.headlineLarge
+                )
                 Text(text = "Trend: Rising", style = MaterialTheme.typography.bodySmall)
             }
             // Replace with your custom icon/resource if available

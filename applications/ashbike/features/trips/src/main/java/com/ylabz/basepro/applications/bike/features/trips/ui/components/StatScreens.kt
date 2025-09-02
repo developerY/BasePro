@@ -27,9 +27,10 @@ fun LoadingScreenPreview() {
 
 @Composable
 fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
         Text(
             text = stringResource(R.string.state_error_generic_with_message, errorMessage),

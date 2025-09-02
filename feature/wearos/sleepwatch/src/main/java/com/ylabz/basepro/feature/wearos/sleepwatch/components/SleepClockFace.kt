@@ -1,5 +1,6 @@
 package com.ylabz.basepro.feature.wearos.sleepwatch.components
 
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,19 +11,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
-//import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.model.health.SleepSegment
-import java.time.LocalTime
-import kotlin.collections.first
-import kotlin.collections.isNotEmpty
 
 @Composable
 fun SleepClockFace(
@@ -56,7 +50,8 @@ fun SleepClockFace(
             segments.forEach { segment ->
                 val startAngle = hourToAngle(segment.startHour) - 90f
                 val endAngle = hourToAngle(segment.endHour) - 90f
-                val sweepAngle = if (endAngle >= startAngle) endAngle - startAngle else 360f - startAngle + endAngle
+                val sweepAngle =
+                    if (endAngle >= startAngle) endAngle - startAngle else 360f - startAngle + endAngle
 
                 drawArc(
                     color = segment.color,

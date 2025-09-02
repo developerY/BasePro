@@ -1,5 +1,6 @@
 package com.ylabz.basepro.feature.wearos.home.navigation
 
+//import androidx.compose.material.icons.Icons
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,13 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
-//import androidx.compose.material.icons.Icons
-import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
-import androidx.wear.compose.material3.Icon
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.layout.AppScaffold
 import com.google.android.horologist.compose.layout.ScalingLazyColumn
@@ -48,8 +45,12 @@ fun GreetingScreen(
             ),
         )
         // Modifiers used by our Wear composables.
-        Modifier.fillMaxWidth().padding(bottom = 8.dp)
-        Modifier.size(24.dp).wrapContentSize(align = Alignment.Center)
+        Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)
+        Modifier
+            .size(24.dp)
+            .wrapContentSize(align = Alignment.Center)
 
         /* *************************** Part 4: Wear OS Scaffold *************************** */
         // TODO (Start): Create a ScreenScaffold (Wear Version)

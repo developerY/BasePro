@@ -73,27 +73,29 @@ fun HomeBottomBar(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    val selectedItemIndex = remember(currentRoute, tabs) { // Ensure tabs is a key if it could change
-        tabs.indexOfFirst { tabInfo ->
-            // Helper to get the base route for a navigation key
-            val tabBaseRoute = when (tabInfo.navigationKey) {
-                "Home" -> BikeScreen.HomeBikeScreen.route
-                "Ride" -> BikeScreen.TripBikeScreen.route
-                "Settings" -> BikeScreen.SettingsBikeScreen.route
-                else -> null
-            }
+    val selectedItemIndex =
+        remember(currentRoute, tabs) { // Ensure tabs is a key if it could change
+            tabs.indexOfFirst { tabInfo ->
+                // Helper to get the base route for a navigation key
+                val tabBaseRoute = when (tabInfo.navigationKey) {
+                    "Home" -> BikeScreen.HomeBikeScreen.route
+                    "Ride" -> BikeScreen.TripBikeScreen.route
+                    "Settings" -> BikeScreen.SettingsBikeScreen.route
+                    else -> null
+                }
 
-            if (tabBaseRoute == null) return@indexOfFirst false
+                if (tabBaseRoute == null) return@indexOfFirst false
 
-            // For settings, check if the current route starts with the settings base route
-            // to account for arguments. For others, an exact match is fine.
-            if (tabInfo.navigationKey == "Settings") {
-                currentRoute?.startsWith(tabBaseRoute) == true
-            } else {
-                currentRoute == tabBaseRoute
+                // For settings, check if the current route starts with the settings base route
+                // to account for arguments. For others, an exact match is fine.
+                if (tabInfo.navigationKey == "Settings") {
+                    currentRoute?.startsWith(tabBaseRoute) == true
+                } else {
+                    currentRoute == tabBaseRoute
+                }
             }
-        }.let { if (it != -1) it else 0 } // Default to the first tab (Home) if no match or currentRoute is null
-    }
+                .let { if (it != -1) it else 0 } // Default to the first tab (Home) if no match or currentRoute is null
+        }
 
     NavigationBar(
         contentColor = MaterialTheme.colorScheme.primary
@@ -139,7 +141,7 @@ fun HomeBottomBar(
 
 private fun navigateTo(navigationKey: String, navController: NavHostController) {
     val route = when (navigationKey) {
-        "Home"-> BikeScreen.HomeBikeScreen.route
+        "Home" -> BikeScreen.HomeBikeScreen.route
         "Ride" -> BikeScreen.TripBikeScreen.route
         "Settings" -> BikeScreen.SettingsBikeScreen.route // Navigates to base settings route
         else -> BikeScreen.HomeBikeScreen.route

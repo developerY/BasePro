@@ -1,12 +1,15 @@
 AshBike App Release Checklist
-This document outlines the essential steps required to prepare the AshBike app for a production release on the Google Play Store.
+This document outlines the essential steps required to prepare the AshBike app for a production
+release on the Google Play Store.
 
 1. Code Review and Finalization
    [x] All @Preview annotations have been removed from the UI Composables.
 
-[x] All @VisibleForTesting annotations have been removed from classes and methods that are not intended for testing in the release build.
+[x] All @VisibleForTesting annotations have been removed from classes and methods that are not
+intended for testing in the release build.
 
-[ ] The BikeForegroundService.kt logging has been updated. Specifically, all Log.d calls should be conditional to a debug flag.
+[ ] The BikeForegroundService.kt logging has been updated. Specifically, all Log.d calls should be
+conditional to a debug flag.
 
 [ ] All TODO comments have been resolved or re-evaluated for the release.
 
@@ -17,27 +20,32 @@ This document outlines the essential steps required to prepare the AshBike app f
 
 [ ] In build.gradle.kts, the versionName has been updated (e.g., from 1.0.0-beta to 1.0.0).
 
-[ ] The proguard-rules.pro file has been reviewed to ensure proper obfuscation and minification without breaking app functionality.
+[ ] The proguard-rules.pro file has been reviewed to ensure proper obfuscation and minification
+without breaking app functionality.
 
-[ ] The AndroidManifest.xml file has been reviewed for any debug flags (android:debuggable), and these are set to false for the release build type.
+[ ] The AndroidManifest.xml file has been reviewed for any debug flags (android:debuggable), and
+these are set to false for the release build type.
 
 3. Localization and Resources
    [ ] All strings in strings.xml have been reviewed for correctness and clarity.
 
 [ ] All necessary translations for supported languages have been provided.
 
-[ ] All drawable resources (icons, images) are optimized and correctly sized for different screen densities.
+[ ] All drawable resources (icons, images) are optimized and correctly sized for different screen
+densities.
 
 4. Testing
-    [ ] The app has been thoroughly tested on a range of physical devices, including various screen sizes and Android versions.
+   [ ] The app has been thoroughly tested on a range of physical devices, including various screen
+   sizes and Android versions.
 
-    [ ] All core functionalities (start/stop ride, data reset, data saving) work as expected.
+   [ ] All core functionalities (start/stop ride, data reset, data saving) work as expected.
 
-    [ ] The foreground service notification appears and functions correctly during a ride.
+   [ ] The foreground service notification appears and functions correctly during a ride.
 
-    [ ] The app handles location permission changes gracefully.
+   [ ] The app handles location permission changes gracefully.
 
-    [ ] Battery usage has been profiled and is within acceptable limits for both active and passive modes.
+   [ ] Battery usage has been profiled and is within acceptable limits for both active and passive
+   modes.
 
 5. App Signing and Bundle Generation
    [ ] The app is signed with the official release keystore.

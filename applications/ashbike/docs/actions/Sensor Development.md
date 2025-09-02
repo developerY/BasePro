@@ -1,37 +1,39 @@
-Based on the UI of your **bike app screenshot**, which includes speed, compass direction, wind, weather, elevation, distance, heart rate, and calories, here’s a complete list of **phone sensors and data sources** needed to make it all work:
+Based on the UI of your **bike app screenshot**, which includes speed, compass direction, wind,
+weather, elevation, distance, heart rate, and calories, here’s a complete list of **phone sensors
+and data sources** needed to make it all work:
 
 ---
 
 ### 🚴‍♂️ Core Motion & Navigation Sensors
 
-| Feature | Sensor Needed | Notes |
-|--------|----------------|-------|
-| **Speed** (km/h) | 🧭 `GPS` (GNSS) | Use `LocationManager` or `FusedLocationProvider` to get real-time speed from GPS. |
-| **Direction (e.g., 203° SW)** | 🧲 `Magnetometer` + `Accelerometer` | Combine to get compass heading (azimuth) with `SensorManager.getOrientation()`. |
-| **Distance (12.5 km)** | 🛰️ `GPS` | Calculated by tracking location deltas over time. |
-| **Elevation (12.0 m)** | 📡 `GPS` or 🧭 `Barometer` (if available) | Barometer is more accurate for altitude on high-end phones. |
-| **Wind Speed (5.0 m/s)** | 🌐 External API (like OpenWeather) | No phone sensor provides wind speed — must be fetched online. |
-| **Weather (Rainy)** | ☁️ External Weather API | Also requires internet connectivity and GPS location. |
-| **Duration (7m)** | ⏱️ System Clock | Just a timer using `System.currentTimeMillis()` at start/stop. |
+| Feature                       | Sensor Needed                             | Notes                                                                             |
+|-------------------------------|-------------------------------------------|-----------------------------------------------------------------------------------|
+| **Speed** (km/h)              | 🧭 `GPS` (GNSS)                           | Use `LocationManager` or `FusedLocationProvider` to get real-time speed from GPS. |
+| **Direction (e.g., 203° SW)** | 🧲 `Magnetometer` + `Accelerometer`       | Combine to get compass heading (azimuth) with `SensorManager.getOrientation()`.   |
+| **Distance (12.5 km)**        | 🛰️ `GPS`                                 | Calculated by tracking location deltas over time.                                 |
+| **Elevation (12.0 m)**        | 📡 `GPS` or 🧭 `Barometer` (if available) | Barometer is more accurate for altitude on high-end phones.                       |
+| **Wind Speed (5.0 m/s)**      | 🌐 External API (like OpenWeather)        | No phone sensor provides wind speed — must be fetched online.                     |
+| **Weather (Rainy)**           | ☁️ External Weather API                   | Also requires internet connectivity and GPS location.                             |
+| **Duration (7m)**             | ⏱️ System Clock                           | Just a timer using `System.currentTimeMillis()` at start/stop.                    |
 
 ---
 
 ### ❤️‍🔥 Health & Biometrics (Optional, but shown)
 
-| Feature | Sensor Needed | Notes |
-|--------|----------------|-------|
-| **Heart Rate (-- bpm)** | ❤️ `Heart Rate Sensor` (if available) or 💡 Wearable (via Health Connect) | Most phones don’t have built-in heart rate sensors anymore; rely on wearables via Google Health Connect. |
-| **Calories (-- kcal)** | 🔢 Computed from motion + Health profile | Estimate using MET formula based on duration, weight, speed, etc. Can integrate Health Connect to fetch calories. |
+| Feature                 | Sensor Needed                                                             | Notes                                                                                                             |
+|-------------------------|---------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
+| **Heart Rate (-- bpm)** | ❤️ `Heart Rate Sensor` (if available) or 💡 Wearable (via Health Connect) | Most phones don’t have built-in heart rate sensors anymore; rely on wearables via Google Health Connect.          |
+| **Calories (-- kcal)**  | 🔢 Computed from motion + Health profile                                  | Estimate using MET formula based on duration, weight, speed, etc. Can integrate Health Connect to fetch calories. |
 
 ---
 
 ### 📦 Optional Enhancement Sensors
 
-| Feature | Sensor | Purpose |
-|--------|--------|---------|
+| Feature              | Sensor                           | Purpose                                                       |
+|----------------------|----------------------------------|---------------------------------------------------------------|
 | **Tilt/Orientation** | 🧠 `Gyroscope` + `Accelerometer` | For showing bike tilt, auto-orienting map, or detecting bumps |
-| **Light Sensor** | 🔆 `Ambient Light Sensor` | For adaptive UI or detecting day/night conditions |
-| **Proximity Sensor** | 🖐️ `Proximity Sensor` | Could dim display when covered (e.g., during pocket rides) |
+| **Light Sensor**     | 🔆 `Ambient Light Sensor`        | For adaptive UI or detecting day/night conditions             |
+| **Proximity Sensor** | 🖐️ `Proximity Sensor`           | Could dim display when covered (e.g., during pocket rides)    |
 
 ---
 
@@ -47,23 +49,26 @@ Based on the UI of your **bike app screenshot**, which includes speed, compass d
     - Calories burned
     - Syncing health metrics
 
-- 📍 **Location Permissions** – `ACCESS_FINE_LOCATION` and background access if tracking during lock screen
+- 📍 **Location Permissions** – `ACCESS_FINE_LOCATION` and background access if tracking during lock
+  screen
 
-- ⚡ **Battery Optimization Exemption** – Optional but recommended for uninterrupted tracking on some Android versions
+- ⚡ **Battery Optimization Exemption** – Optional but recommended for uninterrupted tracking on some
+  Android versions
 
 ---
 
 ### ✅ Summary Checklist
 
-| Type | Required |
-|------|----------|
-| GPS | ✅ Yes |
-| Magnetometer | ✅ Yes |
-| Accelerometer | ✅ Yes |
-| Barometer | 🔄 Optional |
-| Heart Rate | 🔄 Optional (via Health Connect or hardware) |
-| Internet | ✅ Yes (for weather/wind/calories if cloud-based) |
-| Health Connect | 🔄 Optional |
-| Gyroscope | 🔄 Optional |
+| Type           | Required                                         |
+|----------------|--------------------------------------------------|
+| GPS            | ✅ Yes                                            |
+| Magnetometer   | ✅ Yes                                            |
+| Accelerometer  | ✅ Yes                                            |
+| Barometer      | 🔄 Optional                                      |
+| Heart Rate     | 🔄 Optional (via Health Connect or hardware)     |
+| Internet       | ✅ Yes (for weather/wind/calories if cloud-based) |
+| Health Connect | 🔄 Optional                                      |
+| Gyroscope      | 🔄 Optional                                      |
 
-Let me know if you'd like help writing a `SensorManager` setup or integrating Health Connect for heart rate and calories!
+Let me know if you'd like help writing a `SensorManager` setup or integrating Health Connect for
+heart rate and calories!

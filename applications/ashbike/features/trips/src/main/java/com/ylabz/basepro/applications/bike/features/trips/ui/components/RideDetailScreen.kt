@@ -80,7 +80,7 @@ fun RideDetailScreen(
         }
         return
     }
-    val ctx   = LocalContext.current
+    val ctx = LocalContext.current
     val ride = rideWithLocs.bikeRideEnt
     var notesState by remember { mutableStateOf(ride.notes.orEmpty()) }
     var isDirty by remember { mutableStateOf(false) }
@@ -108,14 +108,40 @@ fun RideDetailScreen(
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            StatCard(label = stringResource(R.string.feature_trips_detail_label_distance), value = stringResource(R.string.feature_trips_distance_km_format, ride.totalDistance / 1000f), modifier = Modifier.weight(1f))
-            StatCard(label = stringResource(R.string.feature_trips_detail_label_avg_speed), value = stringResource(R.string.feature_trips_detail_value_kmh_format, ride.averageSpeed), modifier = Modifier.weight(1f))
-            StatCard(label = stringResource(R.string.feature_trips_detail_label_max_speed), value = stringResource(R.string.feature_trips_detail_value_kmh_format, ride.maxSpeed), modifier = Modifier.weight(1f))
+            StatCard(
+                label = stringResource(R.string.feature_trips_detail_label_distance),
+                value = stringResource(
+                    R.string.feature_trips_distance_km_format,
+                    ride.totalDistance / 1000f
+                ),
+                modifier = Modifier.weight(1f)
+            )
+            StatCard(
+                label = stringResource(R.string.feature_trips_detail_label_avg_speed),
+                value = stringResource(
+                    R.string.feature_trips_detail_value_kmh_format,
+                    ride.averageSpeed
+                ),
+                modifier = Modifier.weight(1f)
+            )
+            StatCard(
+                label = stringResource(R.string.feature_trips_detail_label_max_speed),
+                value = stringResource(
+                    R.string.feature_trips_detail_value_kmh_format,
+                    ride.maxSpeed
+                ),
+                modifier = Modifier.weight(1f)
+            )
         }
 
         // 2) Single-line timestamp + duration
         Text(
-            text = stringResource(R.string.feature_trips_detail_full_timespan_format, startZoned.format(dateTimeFmt), endZoned.format(timeFmt), minutes.toLong()),
+            text = stringResource(
+                R.string.feature_trips_detail_full_timespan_format,
+                startZoned.format(dateTimeFmt),
+                endZoned.format(timeFmt),
+                minutes.toLong()
+            ),
             style = MaterialTheme.typography.bodyMedium
         )
 
@@ -134,19 +160,19 @@ fun RideDetailScreen(
         val elevPoints = remember(rideWithLocs.locations) {
             rideWithLocs.locations.map { locEnt ->
                 LatLngWithElev(
-                    latLng      = LatLng(locEnt.lat, locEnt.lng),
-                    elevation   = locEnt.elevation ?: 0f,
+                    latLng = LatLng(locEnt.lat, locEnt.lng),
+                    elevation = locEnt.elevation ?: 0f,
                 )
             }
         }
 
         val fixes: List<GpsFix> = rideWithLocs.locations.map { ent ->
             GpsFix(
-                lat       = ent.lat,
-                lng       = ent.lng,
+                lat = ent.lat,
+                lng = ent.lng,
                 elevation = ent.elevation ?: 0f,
-                speedMps  = 0f,
-                timeMs    = ent.timestamp
+                speedMps = 0f,
+                timeMs = ent.timestamp
             )
         }
 
@@ -156,20 +182,20 @@ fun RideDetailScreen(
 
         //RidePathCard(path = path)
         Card(
-            modifier  = Modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .height(240.dp),
-            shape     = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(12.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
             MapPathScreen(
                 fixes = fixes,
-                placeName = placeName?: "",
+                placeName = placeName ?: "",
                 coffeeShops = coffeeShops,
                 onFindCafes = onFindCafes
             )
 
-        //locations = path, placeName = placeName?: "")
+            //locations = path, placeName = placeName?: "")
             /*GoogleMap(
                 modifier             = Modifier.fillMaxSize(),//.matchParentSize(),
                 cameraPositionState  = cameraState,
@@ -193,38 +219,52 @@ fun RideDetailScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             StatCard(
-                label    = stringResource(R.string.feature_trips_detail_label_elevation),
-                value    = stringResource(R.string.feature_trips_detail_value_elevation_format, ride.elevationGain.toInt(), ride.elevationLoss.toInt()),
+                label = stringResource(R.string.feature_trips_detail_label_elevation),
+                value = stringResource(
+                    R.string.feature_trips_detail_value_elevation_format,
+                    ride.elevationGain.toInt(),
+                    ride.elevationLoss.toInt()
+                ),
                 modifier = Modifier.weight(1f)
             )
             StatCard(
-                label    = stringResource(R.string.feature_trips_detail_label_duration),
-                value    = stringResource(R.string.feature_trips_detail_value_duration_format, minutes / 60, minutes % 60),
+                label = stringResource(R.string.feature_trips_detail_label_duration),
+                value = stringResource(
+                    R.string.feature_trips_detail_value_duration_format,
+                    minutes / 60,
+                    minutes % 60
+                ),
                 modifier = Modifier.weight(1f)
             )
             StatCard(
-                label    = stringResource(R.string.feature_trips_detail_label_calories),
-                value    = stringResource(R.string.feature_trips_detail_value_calories_format, ride.caloriesBurned),
+                label = stringResource(R.string.feature_trips_detail_label_calories),
+                value = stringResource(
+                    R.string.feature_trips_detail_value_calories_format,
+                    ride.caloriesBurned
+                ),
                 modifier = Modifier.weight(1f)
             )
         }
 
         // 5) Notes field using OutlinedTextField
         OutlinedTextField(
-            value          = notesState,
-            onValueChange  = {
+            value = notesState,
+            onValueChange = {
                 notesState = it
-                isDirty    = it != ride.notes.orEmpty()
+                isDirty = it != ride.notes.orEmpty()
             },
-            label          = { Text(stringResource(R.string.feature_trips_detail_label_notes)) },
-            modifier       = Modifier.fillMaxWidth(),
-            trailingIcon   = {
+            label = { Text(stringResource(R.string.feature_trips_detail_label_notes)) },
+            modifier = Modifier.fillMaxWidth(),
+            trailingIcon = {
                 if (isDirty) {
                     IconButton(onClick = {
                         onEvent(TripsEvent.UpdateRideNotes(ride.rideId, notesState))
                         isDirty = false
                     }) {
-                        Icon(Icons.Default.Save, contentDescription = stringResource(R.string.feature_trips_detail_cd_save_notes))
+                        Icon(
+                            Icons.Default.Save,
+                            contentDescription = stringResource(R.string.feature_trips_detail_cd_save_notes)
+                        )
                     }
                 }
             },
@@ -235,10 +275,14 @@ fun RideDetailScreen(
 
         // 6) Optional weather
         ride.weatherCondition?.let {
-            Text(stringResource(R.string.feature_trips_detail_weather_format, it), style = MaterialTheme.typography.bodyMedium)
+            Text(
+                stringResource(R.string.feature_trips_detail_weather_format, it),
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }
+
 /*
 @Preview
 @Composable

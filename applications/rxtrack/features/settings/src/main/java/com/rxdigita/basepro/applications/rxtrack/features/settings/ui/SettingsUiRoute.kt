@@ -26,9 +26,11 @@ fun SettingsUiRoute(
         is SettingsUiState.Loading -> {
             Text(modifier = modifier, text = "Loading Settings for RxDigita...")
         }
+
         is SettingsUiState.Error -> {
             Text(modifier = modifier, text = "Error in RxDigita Settings: ${uiState.message}")
         }
+
         is SettingsUiState.Success -> {
             SettingsScreen(
                 onNavigateBack = { navTo("rxdigita_main") },

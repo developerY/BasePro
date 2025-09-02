@@ -1,5 +1,6 @@
 package com.ylabz.basepro.feature.ble.ui.components
 
+////import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,17 +29,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-////import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
-import com.ylabz.basepro.core.model.ble.DeviceCharacteristic
 import com.ylabz.basepro.core.model.ble.DeviceService
 import com.ylabz.basepro.core.model.ble.GattConnectionState
 import com.ylabz.basepro.core.model.ble.ScanState
-import androidx.compose.ui.res.stringResource // Added import
-import com.ylabz.basepro.feature.ble.R // Added import
-import com.ylabz.basepro.core.ui.R as CoreUiR // Added import for Core UI resources
+import com.ylabz.basepro.feature.ble.R
+import com.ylabz.basepro.core.ui.R as CoreUiR
 
 @Composable
 fun BluetoothLeSuccessScreen(
@@ -55,7 +54,8 @@ fun BluetoothLeSuccessScreen(
     onDeviceSelected: (BluetoothDeviceInfo) -> Unit,
 ) {
     var isDeviceListExpanded by remember { mutableStateOf(true) }
-    val unknownDeviceName = stringResource(id = CoreUiR.string.text_unknown) // Moved stringResource call here
+    val unknownDeviceName =
+        stringResource(id = CoreUiR.string.text_unknown) // Moved stringResource call here
 
     LazyColumn(
         modifier = Modifier
@@ -96,7 +96,8 @@ fun BluetoothLeSuccessScreen(
                     ) {
                         Text(
                             // Assuming device.name can be null
-                            text = device.name ?: stringResource(id = R.string.ble_text_unnamed_device),
+                            text = device.name
+                                ?: stringResource(id = R.string.ble_text_unnamed_device),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
@@ -123,7 +124,10 @@ fun BluetoothLeSuccessScreen(
                             }
                         }
                         Text(
-                            text = stringResource(id = R.string.ble_text_status_label, gattConnectionState.toString()),
+                            text = stringResource(
+                                id = R.string.ble_text_status_label,
+                                gattConnectionState.toString()
+                            ),
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -144,13 +148,18 @@ fun BluetoothLeSuccessScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(id = R.string.ble_title_discovered_devices, discoveredDevices.size),
+                    text = stringResource(
+                        id = R.string.ble_title_discovered_devices,
+                        discoveredDevices.size
+                    ),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f)
                 )
                 Icon(
                     imageVector = if (isDeviceListExpanded) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
-                    contentDescription = if (isDeviceListExpanded) stringResource(id = CoreUiR.string.action_collapse) else stringResource(id = CoreUiR.string.action_expand)
+                    contentDescription = if (isDeviceListExpanded) stringResource(id = CoreUiR.string.action_collapse) else stringResource(
+                        id = CoreUiR.string.action_expand
+                    )
                 )
             }
             HorizontalDivider()
@@ -168,13 +177,18 @@ fun BluetoothLeSuccessScreen(
                 // If name is String?, then `name != null` is correct.
                 // If name is String (non-nullable), then `name != null` is redundant.
                 // Let's assume name is String? based on typical BluetoothDeviceInfo models.
-                name != null && name.isNotBlank() && !name.equals(unknownDeviceName, ignoreCase = true) // Use the variable
+                name != null && name.isNotBlank() && !name.equals(
+                    unknownDeviceName,
+                    ignoreCase = true
+                ) // Use the variable
             }
 
             if (discoveredDevices.isEmpty()) {
                 item {
                     Text(
-                        text = if (scanState == ScanState.SCANNING) stringResource(id = R.string.ble_text_scanning_for_devices) else stringResource(id = R.string.ble_text_no_devices_found),
+                        text = if (scanState == ScanState.SCANNING) stringResource(id = R.string.ble_text_scanning_for_devices) else stringResource(
+                            id = R.string.ble_text_no_devices_found
+                        ),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(16.dp)
                     )
@@ -182,7 +196,10 @@ fun BluetoothLeSuccessScreen(
             } else if (sortedNamedDevices.isEmpty()) {
                 item {
                     Text(
-                        text = stringResource(id = R.string.ble_text_no_named_devices_found, discoveredDevices.size),
+                        text = stringResource(
+                            id = R.string.ble_text_no_named_devices_found,
+                            discoveredDevices.size
+                        ),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(16.dp)
                     )
@@ -209,13 +226,23 @@ fun BluetoothLeSuccessScreen(
             }
             if (gattServicesList.isNotEmpty()) {
                 items(gattServicesList, key = { it.uuid }) { service ->
-                    Column(modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
-                        Text(stringResource(id = R.string.ble_text_service_uuid, service.uuid), style = MaterialTheme.typography.bodySmall)
+                    Column(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)) {
+                        Text(
+                            stringResource(id = R.string.ble_text_service_uuid, service.uuid),
+                            style = MaterialTheme.typography.bodySmall
+                        )
                         service.characteristics.forEach { characteristic ->
                             // Assuming characteristic.value can be null
-                            val valueDisplay = characteristic.value ?: stringResource(id = CoreUiR.string.text_na)
+                            val valueDisplay =
+                                characteristic.value ?: stringResource(id = CoreUiR.string.text_na)
                             Text(
-                                text = stringResource(id = R.string.ble_text_characteristic_details, characteristic.uuid, valueDisplay),
+                                text = stringResource(
+                                    id = R.string.ble_text_characteristic_details,
+                                    characteristic.uuid,
+                                    valueDisplay
+                                ),
                                 style = MaterialTheme.typography.labelSmall,
                                 modifier = Modifier.padding(start = 8.dp)
                             )
@@ -253,7 +280,8 @@ fun DiscoveredDeviceItem(
             // device.name might be non-nullable in your model. If so, `device.name.takeIf` is fine.
             // If device.name IS nullable, then `device.name?.takeIf` is correct.
             // Let's assume device.name is String?
-            text = device.name?.takeIf { it.isNotBlank() } ?: stringResource(id = CoreUiR.string.text_unknown),
+            text = device.name?.takeIf { it.isNotBlank() }
+                ?: stringResource(id = CoreUiR.string.text_unknown),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold
         )

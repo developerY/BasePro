@@ -6,8 +6,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ylabz.basepro.feature.listings.ui.ListViewModel
-import com.ylabz.basepro.listings.ui.components.ListCompose
 import com.ylabz.basepro.listings.ui.components.ErrorScreen
+import com.ylabz.basepro.listings.ui.components.ListCompose
 import com.ylabz.basepro.listings.ui.components.LoadingScreen
 
 @Composable
@@ -16,16 +16,18 @@ fun ListUIRoute(
     navTo: (String) -> Unit,
     viewModel: ListViewModel = hiltViewModel()
 ) {
-   val uiState = viewModel.uiState.collectAsState().value
+    val uiState = viewModel.uiState.collectAsState().value
     when (uiState) {
         is ListUIState.Loading -> {
             LoadingScreen()
         }
+
         is ListUIState.Error -> {
             ErrorScreen(errorMessage = uiState.message) {
                 viewModel.onEvent(ListEvent.OnRetry)
             }
         }
+
         is ListUIState.Success -> {
             Column(modifier = modifier) {
                 ListCompose(

@@ -86,20 +86,20 @@ fun WeatherBadge(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Icon(
-                imageVector   = icon,
+                imageVector = icon,
                 contentDescription = weatherInfo.conditionText,
-                tint          = tint,
-                modifier      = Modifier.size(24.dp)
+                tint = tint,
+                modifier = Modifier.size(24.dp)
             )
             Column {
                 Text(
-                    text  = weatherInfo.temperature
+                    text = weatherInfo.temperature
                         ?.let { "${it.toInt()}°" }
                         ?: "--°",
                     style = MaterialTheme.typography.titleMedium.copy(color = tint)
                 )
                 Text(
-                    text  = weatherInfo.conditionText,
+                    text = weatherInfo.conditionText,
                     style = MaterialTheme.typography.bodySmall.copy(color = tint)
                 )
             }

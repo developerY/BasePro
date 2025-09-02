@@ -36,6 +36,7 @@ fun TripsScreen(
                 errorMessage = state.message,
                 onRetry = onRetry
             )
+
             is TripsUIState.Success -> {
                 /*
                 modifier      = modifier,

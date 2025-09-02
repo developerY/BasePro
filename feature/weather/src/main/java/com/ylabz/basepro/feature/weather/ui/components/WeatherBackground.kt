@@ -20,22 +20,26 @@ fun WeatherBackground(
                 colors = listOf(Color(0xFFFFF176), Color(0xFFFFD54F)) // Bright yellow/orange
             )
         }
+
         condition.equals("Clouds", ignoreCase = true) ||
                 condition.equals("Cloudy", ignoreCase = true) -> {
             Brush.verticalGradient(
                 colors = listOf(Color(0xFFCFD8DC), Color(0xFFB0BEC5)) // Blue-grey tones
             )
         }
+
         condition.equals("Rain", ignoreCase = true) -> {
             Brush.verticalGradient(
                 colors = listOf(Color(0xFF90CAF9), Color(0xFF64B5F6)) // Cool blues for rain
             )
         }
+
         condition.equals("Snow", ignoreCase = true) -> {
             Brush.verticalGradient(
                 colors = listOf(Color(0xFFE1F5FE), Color(0xFFB3E5FC)) // Light blue for snow
             )
         }
+
         else -> {
             // Fallback gradient
             Brush.verticalGradient(

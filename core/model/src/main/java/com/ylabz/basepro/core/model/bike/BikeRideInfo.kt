@@ -1,6 +1,5 @@
 package com.ylabz.basepro.core.model.bike
 
-import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import kotlinx.collections.immutable.ImmutableList
@@ -9,6 +8,7 @@ import kotlinx.collections.immutable.ImmutableMap
 enum class RideState {
     NotStarted,
     Riding,
+
     //Paused,
     Ended
 }

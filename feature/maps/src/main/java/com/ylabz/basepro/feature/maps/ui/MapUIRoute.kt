@@ -28,12 +28,14 @@ fun MapUIRoute(
         is MapUIState.Loading -> {
             LoadingScreen()
         }
+
         is MapUIState.Error -> {
             ErrorScreen(
                 errorMessage = uiState.message,
                 onRetry = { viewModel.onEvent(MapEvent.OnRetry) }
             )
         }
+
         is MapUIState.Success -> {
             MapContent(
                 directions = uiState.directions,
@@ -41,6 +43,7 @@ fun MapUIRoute(
                 modifier = modifier
             )
         }
+
         is MapUIState.PartialSuccess -> {
             MapContent(
                 directions = "Directions failed to load",

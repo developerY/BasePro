@@ -12,7 +12,6 @@ import androidx.health.connect.client.permission.HealthPermission.Companion.PERM
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.HeartRateRecord
-import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.TotalCaloriesBurnedRecord
 import androidx.health.connect.client.records.WeightRecord
@@ -36,12 +35,13 @@ import java.io.IOException
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
-import javax.inject.Inject 
+import javax.inject.Inject
 
 // Updated HealthSideEffect
 sealed interface HealthSideEffect {
     data class LaunchPermissions(val permissions: Set<String>) : HealthSideEffect
-    data class BikeRideSyncedToHealth(val rideId: String, val healthConnectId: String) : HealthSideEffect // Added this
+    data class BikeRideSyncedToHealth(val rideId: String, val healthConnectId: String) :
+        HealthSideEffect // Added this
 }
 
 @HiltViewModel
@@ -103,23 +103,34 @@ class HealthViewModel @Inject constructor(
         when (event) {
             is HealthEvent.LoadHealthData,
             is HealthEvent.Retry -> initialLoad()
+
             is HealthEvent.RequestPermissions -> requestPermissionsOnClick()
             is HealthEvent.Insert -> insertBikeRideSessionAndEmitEffect(event) // Renamed method
             is HealthEvent.DeleteAll -> delData()
-            is HealthEvent.ReadAll ->  readAllDAta()
+            is HealthEvent.ReadAll -> readAllDAta()
         }
     }
 
     // In HealthViewModel.kt
     private fun requestPermissionsOnClick() {
         viewModelScope.launch {
-            val hasPermissions = healthSessionManager.hasAllPermissions(permissions) // Store the result
-            Log.d("HealthViewModel", "RequestPermissions: healthSessionManager.hasAllPermissions returned: $hasPermissions") // Log the result
+            val hasPermissions =
+                healthSessionManager.hasAllPermissions(permissions) // Store the result
+            Log.d(
+                "HealthViewModel",
+                "RequestPermissions: healthSessionManager.hasAllPermissions returned: $hasPermissions"
+            ) // Log the result
             if (!hasPermissions) {
-                Log.d("HealthViewModel", "RequestPermissions: Permissions NOT granted. Emitting LaunchPermissions side effect.") // Log before emitting
+                Log.d(
+                    "HealthViewModel",
+                    "RequestPermissions: Permissions NOT granted. Emitting LaunchPermissions side effect."
+                ) // Log before emitting
                 _sideEffect.emit(HealthSideEffect.LaunchPermissions(permissions))
             } else {
-                Log.d("HealthViewModel", "RequestPermissions: Permissions ARE already granted. Setting UI to Success.") // Log if already granted
+                Log.d(
+                    "HealthViewModel",
+                    "RequestPermissions: Permissions ARE already granted. Setting UI to Success."
+                ) // Log if already granted
                 // _uiState.value = HealthUiState.Success(readSessionInputs()) // This line might need to be careful if readSessionInputs() is heavy or has side effects itself before UI is ready
                 initialLoad() // Calling initialLoad() here might be better as it handles setting Loading then Success/Error/PermissionsRequired
             }
@@ -130,20 +141,42 @@ class HealthViewModel @Inject constructor(
     private fun insertBikeRideSessionAndEmitEffect(event: HealthEvent.Insert) {
         viewModelScope.launch {
             tryWithPermissionsCheck {
-                Log.d("HealthViewModel", "Attempting to sync rideId: ${event.rideId} with records: ${event.records.map { it::class.simpleName }} to Health Connect.")
+                Log.d(
+                    "HealthViewModel",
+                    "Attempting to sync rideId: ${event.rideId} with records: ${event.records.map { it::class.simpleName }} to Health Connect."
+                )
                 try {
-                    val clientRideId = healthSessionManager.insertBikeRideWithAssociatedData(event.rideId, event.records)
-                    Log.d("HealthViewModel", "Successfully synced ride $clientRideId to Health Connect.")
+                    val clientRideId = healthSessionManager.insertBikeRideWithAssociatedData(
+                        event.rideId,
+                        event.records
+                    )
+                    Log.d(
+                        "HealthViewModel",
+                        "Successfully synced ride $clientRideId to Health Connect."
+                    )
 
                     // Emit a side effect instead of calling repository directly
-                    _sideEffect.emit(HealthSideEffect.BikeRideSyncedToHealth(rideId = clientRideId, healthConnectId = clientRideId))
-                    Log.d("HealthViewModel", "Emitted BikeRideSyncedToHealth side effect for ride $clientRideId.")
+                    _sideEffect.emit(
+                        HealthSideEffect.BikeRideSyncedToHealth(
+                            rideId = clientRideId,
+                            healthConnectId = clientRideId
+                        )
+                    )
+                    Log.d(
+                        "HealthViewModel",
+                        "Emitted BikeRideSyncedToHealth side effect for ride $clientRideId."
+                    )
 
                     initialLoad() // Refresh health data list from Health Connect (optional, consider if needed immediately)
 
                 } catch (hcException: Exception) { // Catching exceptions from Health Connect operation
-                    Log.e("HealthViewModel", "Error during Health Connect sync for rideId ${event.rideId}", hcException)
-                    _uiState.value = HealthUiState.Error("Sync failed for ride ${event.rideId}: ${hcException.message}")
+                    Log.e(
+                        "HealthViewModel",
+                        "Error during Health Connect sync for rideId ${event.rideId}",
+                        hcException
+                    )
+                    _uiState.value =
+                        HealthUiState.Error("Sync failed for ride ${event.rideId}: ${hcException.message}")
                     // Do not emit side effect or call initialLoad() on HC error
                 }
             }
@@ -163,8 +196,9 @@ class HealthViewModel @Inject constructor(
                     _uiState.value = HealthUiState.Success(sessions)
                     observeHealthConnectChanges() // Start observing only after successful load with permissions
                 } else {
-                     Log.d("HealthViewModel", "Permissions required for initial load.")
-                    _uiState.value = HealthUiState.PermissionsRequired("Displaying Health Connect data requires permissions.")
+                    Log.d("HealthViewModel", "Permissions required for initial load.")
+                    _uiState.value =
+                        HealthUiState.PermissionsRequired("Displaying Health Connect data requires permissions.")
                 }
             } catch (e: Exception) {
                 Log.e("HealthViewModel", "Failed to perform initial load", e)
@@ -175,7 +209,8 @@ class HealthViewModel @Inject constructor(
 
     private suspend fun tryWithPermissionsCheck(block: suspend () -> Unit) {
         if (healthSessionManager.availability.value != HealthConnectClient.SDK_AVAILABLE) {
-            _uiState.value = HealthUiState.Error("Health Connect SDK not available. Cannot perform action.")
+            _uiState.value =
+                HealthUiState.Error("Health Connect SDK not available. Cannot perform action.")
             return
         }
         if (healthSessionManager.hasAllPermissions(permissions)) {
@@ -183,19 +218,23 @@ class HealthViewModel @Inject constructor(
                 block()
             } catch (e: RemoteException) {
                 Log.e("HealthViewModel", "Action failed due to Health Connect service error.", e)
-                _uiState.value = HealthUiState.Error("Health Connect communication error: ${e.message}")
+                _uiState.value =
+                    HealthUiState.Error("Health Connect communication error: ${e.message}")
             } catch (e: IOException) {
                 Log.e("HealthViewModel", "Action failed due to I/O error.", e)
                 _uiState.value = HealthUiState.Error("Data operation failed: ${e.message}")
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 Log.e("HealthViewModel", "Action failed with an unexpected error.", e)
                 _uiState.value = HealthUiState.Error("Action failed: ${e.message}")
             }
         } else {
-            Log.d("HealthViewModel", "Permissions check failed. Emitting side effect to request permissions.")
+            Log.d(
+                "HealthViewModel",
+                "Permissions check failed. Emitting side effect to request permissions."
+            )
             _sideEffect.emit(HealthSideEffect.LaunchPermissions(permissions))
-            _uiState.value = HealthUiState.PermissionsRequired("Action requires Health Connect permissions.")
+            _uiState.value =
+                HealthUiState.PermissionsRequired("Action requires Health Connect permissions.")
         }
     }
 
@@ -205,31 +244,37 @@ class HealthViewModel @Inject constructor(
         viewModelScope.launch {
             isObservingChanges = true
             try {
-                val token = healthSessionManager.getChangesToken(setOf(ExerciseSessionRecord::class))
+                val token =
+                    healthSessionManager.getChangesToken(setOf(ExerciseSessionRecord::class))
                 healthSessionManager.getChanges(token)
                     .catch { e ->
                         Log.e("HealthViewModel", "Error in Health Connect changes flow", e)
                         isObservingChanges = false
-                         _uiState.value = HealthUiState.Error("Error observing Health Connect changes: ${e.message}")
+                        _uiState.value =
+                            HealthUiState.Error("Error observing Health Connect changes: ${e.message}")
                     }
                     .filterIsInstance<HealthSessionManager.ChangesMessage.ChangeList>()
                     .collect {
-                        Log.d("HealthViewModel", "Detected changes from Health Connect. Reloading data.")
+                        Log.d(
+                            "HealthViewModel",
+                            "Detected changes from Health Connect. Reloading data."
+                        )
                         initialLoad()
                     }
             } catch (e: Exception) {
-                 Log.e("HealthViewModel", "Failed to start observing Health Connect changes", e)
-                 isObservingChanges = false
-                 _uiState.value = HealthUiState.Error("Could not set up Health Connect change listener: ${e.message}")
+                Log.e("HealthViewModel", "Failed to start observing Health Connect changes", e)
+                isObservingChanges = false
+                _uiState.value =
+                    HealthUiState.Error("Could not set up Health Connect change listener: ${e.message}")
             }
         }
     }
 
     private fun readAllDAta() {
         viewModelScope.launch {
-             tryWithPermissionsCheck {
+            tryWithPermissionsCheck {
                 healthSessionManager.logAllHealthData()
-             }
+            }
         }
     }
 

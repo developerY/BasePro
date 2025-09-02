@@ -95,7 +95,6 @@ class ShotimeViewModel @Inject constructor(
     }
 
 
-
     private fun loadShotimes() {
         _uiState.value = ShotimeUiState.Loading
         viewModelScope.launch {

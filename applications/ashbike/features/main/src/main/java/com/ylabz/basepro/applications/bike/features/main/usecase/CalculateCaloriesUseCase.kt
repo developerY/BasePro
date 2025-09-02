@@ -18,8 +18,8 @@ import javax.inject.Inject
 class CalculateCaloriesUseCase @Inject constructor() {
     operator fun invoke(
         distanceKmFlow: Flow<Float>,
-        speedKmhFlow:    Flow<Float>,
-        userStatsFlow:   Flow<UserStats>
+        speedKmhFlow: Flow<Float>,
+        userStatsFlow: Flow<UserStats>
     ): Flow<Float> = combine(
         distanceKmFlow,
         speedKmhFlow,
@@ -31,7 +31,7 @@ class CalculateCaloriesUseCase @Inject constructor() {
             speedKmh < 19f -> 6f
             speedKmh < 22f -> 8f
             speedKmh < 25f -> 10f
-            else           -> 12f
+            else -> 12f
         }
         met * userStats.weightKg * durationH
     }

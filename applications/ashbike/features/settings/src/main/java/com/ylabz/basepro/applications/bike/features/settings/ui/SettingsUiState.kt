@@ -17,6 +17,7 @@ sealed interface SettingsUiState {
         val currentEnergyLevel: LocationEnergyLevel = LocationEnergyLevel.BALANCED, // Added field
         val isLongRideEnabled: Boolean = false // Added for short ride feature
     ) : SettingsUiState
+
     data class Error(val message: String) : SettingsUiState
 }
 

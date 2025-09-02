@@ -20,13 +20,16 @@ fun WeatherIcon(
         condition.equals("Clear", ignoreCase = true) ||
                 condition.equals("Sunny", ignoreCase = true) ->
             Icons.Filled.WbSunny
+
         condition.equals("Clouds", ignoreCase = true) ||
                 condition.equals("Cloudy", ignoreCase = true) ->
             Icons.Filled.Cloud
+
         condition.equals("Rain", ignoreCase = true) ->
             Icons.Filled.BeachAccess  // Umbrella icon for rain
         condition.equals("Snow", ignoreCase = true) ->
             Icons.Filled.AcUnit
+
         else -> Icons.Filled.WbSunny  // Fallback icon
     }
 

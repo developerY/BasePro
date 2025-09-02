@@ -7,7 +7,9 @@
 ![UI](https://img.shields.io/badge/UI-Jetpack%20Compose-green)
 ![DI](https://img.shields.io/badge/DI-Hilt-yellow)
 
-Welcome to the BasePro Project! This project is a cutting-edge Android framework built with Jetpack Compose, Hilt, Room, and Navigation. It provides a modular, scalable, and maintainable architecture for building modern Android apps.
+Welcome to the BasePro Project! This project is a cutting-edge Android framework built with Jetpack
+Compose, Hilt, Room, and Navigation. It provides a modular, scalable, and maintainable architecture
+for building modern Android apps.
 
 ## Table of Contents
 
@@ -29,26 +31,37 @@ Welcome to the BasePro Project! This project is a cutting-edge Android framework
 - **Room Database Integration**: Provides a robust and easy-to-use abstraction over SQLite.
 - **Kotlin Coroutines & Flow**: For modern, structured concurrency and reactive data streams.
 - **Jetpack Navigation**: Handles in-app navigation in a type-safe, modular way.
-- **Modular Architecture**: Clean separation of concerns into `application`, `feature`, and `core` layers for enhanced scalability and reusability.
-- **Gradle Version Catalog**: Centralizes dependency management via `libs.versions.toml` for consistency.
-- **REST & GraphQL Support**: Integrated network layers using Retrofit and Apollo for flexible data fetching.
+- **Modular Architecture**: Clean separation of concerns into `application`, `feature`, and `core`
+  layers for enhanced scalability and reusability.
+- **Gradle Version Catalog**: Centralizes dependency management via `libs.versions.toml` for
+  consistency.
+- **REST & GraphQL Support**: Integrated network layers using Retrofit and Apollo for flexible data
+  fetching.
 - **Wear OS Integration**: Includes dedicated modules for building companion Wear OS applications.
 
 ---
 
 ## Architectural Vision
 
-The project is built upon a clean, multi-layered architecture that separates concerns into distinct, well-defined layers. This ensures that the codebase is easy to navigate, test, and scale.
+The project is built upon a clean, multi-layered architecture that separates concerns into distinct,
+well-defined layers. This ensures that the codebase is easy to navigate, test, and scale.
 
-- **📦 Applications Layer (`/applications`)**: Contains the final, shippable application products. Each module in this layer is a standalone app (e.g., `ashbike`, `photodo`) that assembles various feature and core modules into a cohesive user experience.
-- **🧩 Features Layer (`/feature`)**: Consists of self-contained feature modules, each encapsulating a specific domain of business logic (e.g., `maps`, `ble`, `health`, `nfc`). These modules are designed to be reusable across different application targets.
-- **🏛️ Core Layer (`/core`)**: Provides the foundational building blocks for the entire project. These shared libraries include common utilities, UI components, data models, and data access abstractions.
+- **📦 Applications Layer (`/applications`)**: Contains the final, shippable application products.
+  Each module in this layer is a standalone app (e.g., `ashbike`, `photodo`) that assembles various
+  feature and core modules into a cohesive user experience.
+- **🧩 Features Layer (`/feature`)**: Consists of self-contained feature modules, each encapsulating
+  a specific domain of business logic (e.g., `maps`, `ble`, `health`, `nfc`). These modules are
+  designed to be reusable across different application targets.
+- **🏛️ Core Layer (`/core`)**: Provides the foundational building blocks for the entire project.
+  These shared libraries include common utilities, UI components, data models, and data access
+  abstractions.
 
 ---
 
 ## Project Structure
 
-Here's a detailed file structure for the app, following Modern Android Development practices with a clean, modularized architecture.
+Here's a detailed file structure for the app, following Modern Android Development practices with a
+clean, modularized architecture.
 
 ```plaintext
 BasePro/
@@ -124,17 +137,23 @@ BasePro/
 
 This project follows a modular, clean architecture pattern with a focus on separation of concerns:
 
-- **UI Layer**: Built with Jetpack Compose, containing stateless composables that render the UI based on `StateFlow` objects exposed by the ViewModel.
-- **ViewModel Layer**: Manages UI state and handles business logic. It processes user-initiated events and updates the UI state accordingly, following a Unidirectional Data Flow (UDF) pattern.
-- **Use Case Layer**: A distinct layer of business logic that orchestrates data from various repositories. This makes the core logic reusable and independent of the ViewModel.
-- **Repository Layer**: Acts as a single source of truth for data, mediating between ViewModels/Use Cases and various data sources (e.g., Room database, network APIs, device sensors).
-- **Data Layer**: Contains the implementations for data sources, such as Room databases and Retrofit/Apollo network services.
+- **UI Layer**: Built with Jetpack Compose, containing stateless composables that render the UI
+  based on `StateFlow` objects exposed by the ViewModel.
+- **ViewModel Layer**: Manages UI state and handles business logic. It processes user-initiated
+  events and updates the UI state accordingly, following a Unidirectional Data Flow (UDF) pattern.
+- **Use Case Layer**: A distinct layer of business logic that orchestrates data from various
+  repositories. This makes the core logic reusable and independent of the ViewModel.
+- **Repository Layer**: Acts as a single source of truth for data, mediating between ViewModels/Use
+  Cases and various data sources (e.g., Room database, network APIs, device sensors).
+- **Data Layer**: Contains the implementations for data sources, such as Room databases and
+  Retrofit/Apollo network services.
 
 -----
 
 ## Technologies Used
 
-- **Kotlin**: The primary programming language, utilizing coroutines and Flow for asynchronous operations.
+- **Kotlin**: The primary programming language, utilizing coroutines and Flow for asynchronous
+  operations.
 - **Jetpack Compose**: For building modern, declarative UI components.
 - **Hilt**: For dependency injection, making the code more modular and testable.
 - **Room**: For local database management, providing a clean API over SQLite.
@@ -158,23 +177,24 @@ Follow these instructions to get the project up and running on your local machin
 
 ### Setup and Installation
 
-1.  **Clone the repository**:
+1. **Clone the repository**:
 
-    ```bash
-    git clone [https://github.com/developerY/BasePro.git](https://github.com/developerY/BasePro.git)
-    cd BasePro
-    ```
+   ```bash
+   git clone [https://github.com/developerY/BasePro.git](https://github.com/developerY/BasePro.git)
+   cd BasePro
+   ```
 
-2.  **Open the project in Android Studio**:
+2. **Open the project in Android Studio**:
 
     - Open Android Studio and select "Open an existing project."
     - Navigate to the `BasePro` directory and click "OK."
 
-3.  **Sync the project**:
+3. **Sync the project**:
 
-    - Let Android Studio sync the project and download the necessary dependencies defined in `gradle/libs.versions.toml`.
+    - Let Android Studio sync the project and download the necessary dependencies defined in
+      `gradle/libs.versions.toml`.
 
-4.  **Build and Run**:
+4. **Build and Run**:
 
     - Select the desired application target from the build variants dropdown (e.g., `ashbikeDebug`).
     - Click "Run" to build and deploy the app on your Android device or emulator.
@@ -185,11 +205,11 @@ Follow these instructions to get the project up and running on your local machin
 
 We welcome contributions to the BasePro project\! To contribute:
 
-1.  **Fork the repository**.
-2.  **Create a new branch**: `git checkout -b feature/your-feature-name`.
-3.  **Commit your changes**: `git commit -m 'Add some feature'`.
-4.  **Push to the branch**: `git push origin feature/your-feature-name`.
-5.  **Submit a pull request**.
+1. **Fork the repository**.
+2. **Create a new branch**: `git checkout -b feature/your-feature-name`.
+3. **Commit your changes**: `git commit -m 'Add some feature'`.
+4. **Push to the branch**: `git push origin feature/your-feature-name`.
+5. **Submit a pull request**.
 
 -----
 

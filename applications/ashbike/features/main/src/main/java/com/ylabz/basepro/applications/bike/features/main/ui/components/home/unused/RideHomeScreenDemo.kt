@@ -88,9 +88,9 @@ fun RideHomeScreen(
     ) {
         // ───  Big blue card with gauges ─────────────────────────────────────────
         Card(
-            modifier  = Modifier.fillMaxWidth(),
-            colors    = CardDefaults.cardColors(containerColor = Color(0xFF467AD0)),
-            shape     = RoundedCornerShape(16.dp),
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF467AD0)),
+            shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
         ) {
             Box(Modifier.padding(16.dp)) {
@@ -148,7 +148,10 @@ fun RideHomeScreen(
                         modifier = Modifier
                             .size(56.dp)
                             .align(Alignment.BottomStart)
-                            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
+                            .background(
+                                MaterialTheme.colorScheme.surface,
+                                RoundedCornerShape(12.dp)
+                            )
                     ) {
                         Icon(Icons.Default.PlayArrow, contentDescription = "Start Ride")
                     }
@@ -158,11 +161,15 @@ fun RideHomeScreen(
                         modifier = Modifier
                             .size(56.dp)
                             .align(Alignment.BottomEnd)
-                            .background(MaterialTheme.colorScheme.errorContainer, RoundedCornerShape(12.dp))
+                            .background(
+                                MaterialTheme.colorScheme.errorContainer,
+                                RoundedCornerShape(12.dp)
+                            )
                     ) {
                         Icon(
                             Icons.Default.Stop, contentDescription = "Stop Ride",
-                            tint = MaterialTheme.colorScheme.onErrorContainer)
+                            tint = MaterialTheme.colorScheme.onErrorContainer
+                        )
                     }
                 }
 
@@ -179,15 +186,27 @@ fun RideHomeScreen(
 
         // ───  3×2 Grid of Stats ────────────────────────────────────────────────
         val durationMin = durationSeconds / 60
-        val calories   = calculateCalories(
+        val calories = calculateCalories(
             distanceKm, avgSpeedKmh, userStats.weightKg, durationMin
         )
 
         // first row
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            MetricCard(label = "Distance", value = "%.1f km".format(distanceKm), Modifier.weight(1f))
-            MetricCard(label = "Duration", value = "%02d:%02d".format(durationMin / 60, durationMin % 60), Modifier.weight(1f))
-            MetricCard(label = "Avg Speed", value = "%.1f km/h".format(avgSpeedKmh), Modifier.weight(1f))
+            MetricCard(
+                label = "Distance",
+                value = "%.1f km".format(distanceKm),
+                Modifier.weight(1f)
+            )
+            MetricCard(
+                label = "Duration",
+                value = "%02d:%02d".format(durationMin / 60, durationMin % 60),
+                Modifier.weight(1f)
+            )
+            MetricCard(
+                label = "Avg Speed",
+                value = "%.1f km/h".format(avgSpeedKmh),
+                Modifier.weight(1f)
+            )
         }
         // second row
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -223,7 +242,11 @@ fun RideHomeScreen(
 fun WindGauge(speed: Float, direction: Float, modifier: Modifier = Modifier) {
     // your existing gauge code…
     Box(modifier.background(Color(0xFFCEE7FF), shape = CircleShape)) {
-        Text("%.1f m/s".format(speed), Modifier.align(Alignment.Center), style = MaterialTheme.typography.bodySmall)
+        Text(
+            "%.1f m/s".format(speed),
+            Modifier.align(Alignment.Center),
+            style = MaterialTheme.typography.bodySmall
+        )
     }
 }
 
@@ -231,7 +254,11 @@ fun WindGauge(speed: Float, direction: Float, modifier: Modifier = Modifier) {
 fun SpeedGauge(speed: Float, modifier: Modifier = Modifier) {
     // your existing large speed gauge code…
     Box(modifier.background(Color(0xFFB3D4FC), shape = RoundedCornerShape(100.dp))) {
-        Text("%.0f km/h".format(speed), Modifier.align(Alignment.Center), style = MaterialTheme.typography.headlineSmall)
+        Text(
+            "%.0f km/h".format(speed),
+            Modifier.align(Alignment.Center),
+            style = MaterialTheme.typography.headlineSmall
+        )
     }
 }
 
@@ -243,13 +270,15 @@ fun RouteProgressBar(progress: Float, modifier: Modifier = Modifier) {
 @Composable
 fun MetricCard(label: String, value: String, modifier: Modifier = Modifier) {
     Card(
-        modifier  = modifier.height(80.dp),
-        shape     = RoundedCornerShape(8.dp),
+        modifier = modifier.height(80.dp),
+        shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors    = CardDefaults.cardColors(containerColor = Color(0xFFDCEEFB))
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFDCEEFB))
     ) {
         Column(
-            Modifier.fillMaxSize().padding(8.dp),
+            Modifier
+                .fillMaxSize()
+                .padding(8.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -299,7 +328,9 @@ fun ExpandableCard(
                     Icon(
                         imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                         contentDescription = null,
-                        tint = if (enabled) LocalContentColor.current else LocalContentColor.current.copy(alpha = 0.3f)
+                        tint = if (enabled) LocalContentColor.current else LocalContentColor.current.copy(
+                            alpha = 0.3f
+                        )
                     )
                 }
                 if (expanded && enabled) {

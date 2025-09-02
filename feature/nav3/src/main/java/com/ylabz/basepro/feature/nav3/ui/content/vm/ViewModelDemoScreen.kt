@@ -100,7 +100,9 @@ fun ViewModelDemoScreen(modifier: Modifier = Modifier.Companion) {
                 val viewModel: MyScreenViewModel = viewModel()
 
                 Column(
-                    modifier = Modifier.Companion.fillMaxSize().padding(16.dp),
+                    modifier = Modifier.Companion
+                        .fillMaxSize()
+                        .padding(16.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.Companion.CenterHorizontally
                 ) {
@@ -122,7 +124,9 @@ fun ViewModelDemoScreen(modifier: Modifier = Modifier.Companion) {
             // 4. Define a second, simple screen to navigate to.
             entry<ScreenB> {
                 Column(
-                    modifier = Modifier.Companion.fillMaxSize().padding(16.dp),
+                    modifier = Modifier.Companion
+                        .fillMaxSize()
+                        .padding(16.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.Companion.CenterHorizontally
                 ) {

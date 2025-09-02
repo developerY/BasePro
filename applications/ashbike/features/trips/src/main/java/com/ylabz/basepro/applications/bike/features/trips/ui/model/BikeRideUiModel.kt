@@ -49,11 +49,24 @@ fun RideWithLocations.toUiModel(resources: Resources): BikeRideUiModel {
 
     return BikeRideUiModel(
         rideId = ride.rideId,
-        dateRange = resources.getString(R.string.feature_trips_model_daterange_format, dateFormatter.format(startDate), endFormatter.format(endDate)),
+        dateRange = resources.getString(
+            R.string.feature_trips_model_daterange_format,
+            dateFormatter.format(startDate),
+            endFormatter.format(endDate)
+        ),
         duration = durationText,
-        distance = resources.getString(R.string.feature_trips_model_distance_format, ride.totalDistance / 1000.0),
-        avgSpeed = resources.getString(R.string.feature_trips_model_avg_speed_format, ride.averageSpeed),
-        maxSpeed = resources.getString(R.string.feature_trips_model_max_speed_format, ride.maxSpeed),
+        distance = resources.getString(
+            R.string.feature_trips_model_distance_format,
+            ride.totalDistance / 1000.0
+        ),
+        avgSpeed = resources.getString(
+            R.string.feature_trips_model_avg_speed_format,
+            ride.averageSpeed
+        ),
+        maxSpeed = resources.getString(
+            R.string.feature_trips_model_max_speed_format,
+            ride.maxSpeed
+        ),
         rideType = ride.rideType,
         weatherCondition = ride.weatherCondition,
         notes = ride.notes?.takeIf { it.isNotBlank() },

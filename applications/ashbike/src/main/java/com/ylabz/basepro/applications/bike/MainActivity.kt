@@ -82,7 +82,10 @@ class MainActivity : ComponentActivity() {
             var showRationaleDialogState by rememberSaveable { mutableStateOf(false) }
             var currentPermissionStatus by rememberSaveable {
                 mutableStateOf(
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
                 )
             }
 
@@ -100,37 +103,47 @@ class MainActivity : ComponentActivity() {
                                 Manifest.permission.ACCESS_FINE_LOCATION
                             ) == PackageManager.PERMISSION_GRANTED -> {
                                 currentPermissionStatus = true
-                                permissionAction.value = PermissionAction.Granted // Move to granted state
+                                permissionAction.value =
+                                    PermissionAction.Granted // Move to granted state
                             }
+
                             shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
                                 showRationaleDialogState = true
                                 permissionAction.value = null // Consume action
                             }
+
                             else -> {
                                 requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                                 permissionAction.value = null // Consume action
                             }
                         }
                     }
+
                     PermissionAction.RequestPermission -> { // Can be triggered from rationale dialog
                         requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                         permissionAction.value = null // Consume action
                     }
+
                     PermissionAction.Granted -> {
                         currentPermissionStatus = true
                         showRationaleDialogState = false
                         permissionAction.value = null // Consume action
                     }
+
                     PermissionAction.Denied -> {
                         currentPermissionStatus = false
-                        showRationaleDialogState = false // Ensure rationale dialog is dismissed if it was part of denial
+                        showRationaleDialogState =
+                            false // Ensure rationale dialog is dismissed if it was part of denial
                         permissionAction.value = null // Consume action
                     }
+
                     PermissionAction.ShowRationale -> { // Can be explicitly set if needed
                         showRationaleDialogState = true
                         permissionAction.value = null
                     }
-                    null -> { /* No action */ }
+
+                    null -> { /* No action */
+                    }
                 }
             }
 
@@ -159,7 +172,8 @@ class MainActivity : ComponentActivity() {
                         PermissionDeniedScreen(
                             onGoToSettings = { openAppSettings() },
                             onTryAgain = {
-                                permissionAction.value = PermissionAction.CheckPermission // Re-trigger the check
+                                permissionAction.value =
+                                    PermissionAction.CheckPermission // Re-trigger the check
                             }
                         )
                     }

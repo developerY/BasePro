@@ -75,7 +75,8 @@ fun MapPathScreen(
             // 1) background + grid
             Canvas(Modifier.fillMaxSize()) {
                 drawRect(brush = backgroundGradient)
-                val cols = 10; val rows = 10
+                val cols = 10;
+                val rows = 10
                 val stepX = size.width / cols
                 val stepY = size.height / rows
                 repeat(cols - 1) { i ->
@@ -116,7 +117,10 @@ fun MapPathScreen(
                     .align(Alignment.TopEnd)
                     .padding(8.dp)
             ) {
-                Text("N", style = MaterialTheme.typography.labelSmall.copy(color = Color.Black.copy(alpha = 0.7f)))
+                Text(
+                    "N",
+                    style = MaterialTheme.typography.labelSmall.copy(color = Color.Black.copy(alpha = 0.7f))
+                )
                 Icon(
                     imageVector = Icons.Default.North,
                     contentDescription = "North",
@@ -141,6 +145,7 @@ fun MapPathScreen(
                 )
 
                 data class Seg(val a: Offset, val b: Offset, val speed: Double)
+
                 val segments = fixes.zipWithNext().map { (p0, p1) ->
                     val a = project(p0.lat, p0.lng)
                     val b = project(p1.lat, p1.lng)
@@ -157,7 +162,13 @@ fun MapPathScreen(
                     segments.forEach { seg ->
                         val t = ((seg.speed - minSpeed) / (maxSpeed - minSpeed)).toFloat()
                         val col = lerp(slowColor, fastColor, t)
-                        drawLine(col, seg.a, seg.b, strokeWidth = strokeWidth, cap = StrokeCap.Round)
+                        drawLine(
+                            col,
+                            seg.a,
+                            seg.b,
+                            strokeWidth = strokeWidth,
+                            cap = StrokeCap.Round
+                        )
                     }
                 }
 
@@ -192,7 +203,10 @@ fun MapPathScreen(
                 // 6) Draw business pins and labels
                 businesses.forEach { business ->
                     business.coordinates?.let { coords ->
-                        val position = project(coords?.latitude?.toDouble() ?: 0.0, coords?.longitude?.toDouble() ?: 0.0)
+                        val position = project(
+                            coords?.latitude?.toDouble() ?: 0.0,
+                            coords?.longitude?.toDouble() ?: 0.0
+                        )
                         val pinOffset = with(LocalDensity.current) {
                             IntOffset(
                                 x = (position.x - pinSize.toPx() / 2).roundToInt(),
@@ -215,7 +229,10 @@ fun MapPathScreen(
                                     style = MaterialTheme.typography.labelSmall,
                                     color = Color.Black,
                                     modifier = Modifier
-                                        .background(Color.White.copy(alpha = 0.7f), RoundedCornerShape(4.dp))
+                                        .background(
+                                            Color.White.copy(alpha = 0.7f),
+                                            RoundedCornerShape(4.dp)
+                                        )
                                         .padding(horizontal = 4.dp, vertical = 2.dp)
                                 )
                             }

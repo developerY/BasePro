@@ -14,7 +14,8 @@
     <journey name="startAndStopRide">
         <description>Test starting, monitoring, and stopping a bike ride.</description>
         <actions>
-            <action>Given the user is on the main dashboard and has granted location permissions</action>
+            <action>Given the user is on the main dashboard and has granted location permissions
+            </action>
             <action>When the user taps the 'Start Ride' button</action>
             <action>Then the ride timer should start</action>
             <action>And the user's speed and distance are updated in real-time</action>
@@ -49,11 +50,14 @@
     </journey>
 
     <journey name="handleBLEConnectionFailure">
-        <description>Test the user flow when the app fails to connect to the bike via BLE.</description>
+        <description>Test the user flow when the app fails to connect to the bike via BLE.
+        </description>
         <actions>
             <action>Given the user has scanned a bike's NFC or QR code</action>
             <action>When the app attempts to connect via BLE and fails</action>
-            <action>Then the app should display an error message 'Could not connect. Please ensure the bike is powered on and within range.'</action>
+            <action>Then the app should display an error message 'Could not connect. Please ensure
+                the bike is powered on and within range.'
+            </action>
             <action>And the user should have an option to retry the connection</action>
         </actions>
     </journey>

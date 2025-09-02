@@ -41,9 +41,10 @@ fun RidePathCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            Canvas(modifier = Modifier
-                .fillMaxSize()
-                .background(backgroundColor)
+            Canvas(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(backgroundColor)
             ) {
                 if (path.size < 2) return@Canvas
 
@@ -90,7 +91,7 @@ fun RidePathCard(
                 // 5) draw start/end circles
                 val markerPx = markerRadius.toPx()
                 val start = project(path.first().latitude, path.first().longitude)
-                val end   = project(path.last().latitude,  path.last().longitude)
+                val end = project(path.last().latitude, path.last().longitude)
 
                 drawCircle(
                     color = startMarkerColor,

@@ -23,12 +23,14 @@ fun MedUiRoute(
         is MedUiState.Loading -> {
             LoadingScreen()
         }
+
         is MedUiState.Error -> {
             ErrorScreen(
                 errorMessage = "error", //currentBikeUiState.message,
                 onRetry = { } // viewModel.onEvent(MedEvent.) } // <<< MODIFIED LINE: Use the passed-in viewModel
             )
         }
+
         is MedUiState.Success -> {
             MedDashboardContent(
                 modifier = modifier.fillMaxSize(),

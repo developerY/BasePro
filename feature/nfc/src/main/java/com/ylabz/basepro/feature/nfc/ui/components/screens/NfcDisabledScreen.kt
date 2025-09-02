@@ -19,7 +19,9 @@ fun NfcDisabledScreen(onEnableNfc: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("NFC is disabled. Please enable NFC in your device settings.")
         Spacer(modifier = Modifier.height(16.dp))

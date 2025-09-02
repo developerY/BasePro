@@ -1,6 +1,8 @@
-Not quite—`SyncRideUseCase` belongs in the *feature/domain* layer (your Bike module), 
-because it needs to know about your `BikeRide` model. The HealthConnect module should only expose the 
-plumbing (the `HealthConnectRepository` interface, the `HealthSessionManager` infra, and the `HealthViewModel` 
+Not quite—`SyncRideUseCase` belongs in the *feature/domain* layer (your Bike module),
+because it needs to know about your `BikeRide` model. The HealthConnect module should only expose
+the
+plumbing (the `HealthConnectRepository` interface, the `HealthSessionManager` infra, and the
+`HealthViewModel`
 that knows how to call that infra).
 
 So your structure ends up like this:
@@ -19,7 +21,10 @@ healthconnect-impl/      // implements healthconnect-api
  └─ HealthViewModel      // injects HealthConnectRepository, handles permissions + events
 ```
 
-* **`SyncRideUseCase` stays in your Bike module**, because it builds records from your domain entity.
-* **HealthConnect module** only provides the interface and its implementation plus a ViewModel that can be driven by events.
+* **`SyncRideUseCase` stays in your Bike module**, because it builds records from your domain
+  entity.
+* **HealthConnect module** only provides the interface and its implementation plus a ViewModel that
+  can be driven by events.
 
-This keeps each module focused on its own concerns and avoids entangling your Health infra with domain models.
+This keeps each module focused on its own concerns and avoids entangling your Health infra with
+domain models.

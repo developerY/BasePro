@@ -14,13 +14,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import com.ylabz.basepro.feature.camera.ui.CameraUIRoute
 import com.ylabz.basepro.core.ui.CameraScreen
 import com.ylabz.basepro.core.ui.PHOTO
 import com.ylabz.basepro.core.ui.PicScreen
 import com.ylabz.basepro.core.ui.Screen
-import androidx.navigation.navigation
+import com.ylabz.basepro.feature.camera.ui.CameraUIRoute
 import com.ylabz.basepro.ui.bar.AppScaffold
 import kotlinx.coroutines.CoroutineScope
 
@@ -70,7 +70,7 @@ fun NavGraphBuilder.photoNavGraph(
         composable<CameraScreen> {
             CameraUIRoute(
                 paddingValues = PaddingValues(0.dp),
-                navTo = {path -> navController.navigate(path)},
+                navTo = { path -> navController.navigate(path) },
             )
         }
 

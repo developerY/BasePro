@@ -56,7 +56,6 @@ private fun InterpolatedBatteryIndicator(
 }
 
 
-
 @Composable
 private fun SegmentedBatteryIndicator(
     batteryLevel: Int,
@@ -113,7 +112,8 @@ fun BikeBatteryCharge(
     val backgroundColor = if (isConnected) Color(0xFF74FFA5) else Color(0xFF2196F3)
     val cardText = if (isConnected) "Battery: ${batteryLevel ?: 0}%" else "Tap to Connect Bike"
     // Choose icon based on connection state
-    val connectionIcon = if (isConnected) Icons.Filled.BluetoothConnected else Icons.Filled.BluetoothDisabled
+    val connectionIcon =
+        if (isConnected) Icons.Filled.BluetoothConnected else Icons.Filled.BluetoothDisabled
 
     Card(
         modifier = Modifier

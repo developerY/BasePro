@@ -24,8 +24,8 @@ class SyncRideUseCase @Inject constructor(
 ) {
     @SuppressLint("RestrictedApi")
     operator fun invoke(ride: BikeRide): List<Record> {
-        val start  = Instant.ofEpochMilli(ride.startTime)
-        val end    = Instant.ofEpochMilli(ride.endTime)
+        val start = Instant.ofEpochMilli(ride.startTime)
+        val end = Instant.ofEpochMilli(ride.endTime)
         val offset = ZoneOffset.systemDefault().rules.getOffset(start)
 
         // 1) Pick a recording method. If it’s an “active” session, use activelyRecorded:
@@ -34,8 +34,8 @@ class SyncRideUseCase @Inject constructor(
          * overload guarantees clientRecordId is persisted & returned:
          */
         val rideMetaData = Metadata.manualEntry(
-            device             = Device(type = Device.TYPE_PHONE),
-            clientRecordId     = ride.rideId,    // your domain UUID
+            device = Device(type = Device.TYPE_PHONE),
+            clientRecordId = ride.rideId,    // your domain UUID
             /* clientRecordVersion defaults to 0, no need to supply */
             // clientRecordVersion= 0               // bump this on each update
         )
@@ -43,18 +43,18 @@ class SyncRideUseCase @Inject constructor(
         // 1) Session with a single segment
         //Metadata.autoRecorded(device = Device(type = Device.TYPE_PHONE))
         val session = ExerciseSessionRecord(
-            metadata        = rideMetaData,
-            startTime       = start,
+            metadata = rideMetaData,
+            startTime = start,
             startZoneOffset = offset,
-            endTime         = end,
-            endZoneOffset   = offset,
-            exerciseType    = when (ride.rideType) {
+            endTime = end,
+            endZoneOffset = offset,
+            exerciseType = when (ride.rideType) {
                 "Bike" -> ExerciseSessionRecord.EXERCISE_TYPE_BIKING
-                else   -> ExerciseSessionRecord.EXERCISE_TYPE_OTHER_WORKOUT
+                else -> ExerciseSessionRecord.EXERCISE_TYPE_OTHER_WORKOUT
             },
-            title           = ride.notes ?: "${ride.rideType} Session",
-            notes           = ride.notes,
-            segments        = listOf(
+            title = ride.notes ?: "${ride.rideType} Session",
+            notes = ride.notes,
+            segments = listOf(
                 ExerciseSegment(
                     startTime = start,
                     endTime = end,
@@ -65,22 +65,22 @@ class SyncRideUseCase @Inject constructor(
 
         // 2) Distance
         val distanceRecord = DistanceRecord(
-            metadata        = rideMetaData,
-            startTime       = start,
+            metadata = rideMetaData,
+            startTime = start,
             startZoneOffset = offset,
-            endTime         = end,
-            endZoneOffset   = offset,
-            distance        = Length.meters(ride.totalDistance.toDouble())
+            endTime = end,
+            endZoneOffset = offset,
+            distance = Length.meters(ride.totalDistance.toDouble())
         )
 
         // 3) Calories
         val caloriesRecord = TotalCaloriesBurnedRecord(
-            metadata        = rideMetaData,
-            startTime       = start,
+            metadata = rideMetaData,
+            startTime = start,
             startZoneOffset = offset,
-            endTime         = end,
-            endZoneOffset   = offset,
-            energy          = Energy.calories(ride.caloriesBurned.toDouble())
+            endTime = end,
+            endZoneOffset = offset,
+            energy = Energy.calories(ride.caloriesBurned.toDouble())
         )
 
         // 4) Optional heart‐rate series
@@ -92,12 +92,12 @@ class SyncRideUseCase @Inject constructor(
                 }
             )
             HeartRateRecord(
-                metadata        = rideMetaData,
-                startTime       = start,
+                metadata = rideMetaData,
+                startTime = start,
                 startZoneOffset = offset,
-                endTime         = end,
-                endZoneOffset   = offset,
-                samples         = samples
+                endTime = end,
+                endZoneOffset = offset,
+                samples = samples
             )
         }
 

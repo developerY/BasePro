@@ -1,7 +1,6 @@
 package com.ylabz.basepro.ui.bar
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.automirrored.twotone.List
@@ -11,7 +10,6 @@ import androidx.compose.material.icons.twotone.Home
 import androidx.compose.material.icons.twotone.Settings
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -23,11 +21,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-//import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.ylabz.basepro.core.ui.Screen
 import com.ylabz.basepro.ui.navigation.main.BottomNavigationItem
 
@@ -106,7 +100,7 @@ fun HomeBottomBar(
 // only used by the bottom bar
 private fun navigateTo(tabTitle: String, navController: NavHostController) {
     when (tabTitle) {
-        "Home"-> navController.navigate(Screen.HomeScreen.route)
+        "Home" -> navController.navigate(Screen.HomeScreen.route)
         "List" -> navController.navigate(Screen.ListScreen.route)
         "Settings" -> navController.navigate(Screen.SettingsScreen.route)
     }

@@ -1,7 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.weather.unused
 
 //import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,7 +24,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,17 +60,22 @@ fun WeatherBadgeContent(
         when {
             weatherInfo.conditionText.contains("rain", true) ->
                 Triple(Icons.Default.Umbrella, Color(0xFF1565C0), Color(0xFFE3F2FD))
+
             weatherInfo.conditionText.contains("clear", true)
                     || weatherInfo.conditionText.contains("sun", true) ->
                 Triple(Icons.Default.WbSunny, Color(0xFFFFA000), Color(0xFFFFF8E1))
+
             weatherInfo.conditionText.contains("cloud", true) ->
                 Triple(Icons.Default.Cloud, Color(0xFF455A64), Color(0xFFECEFF1))
+
             else ->
-                Triple(Icons.AutoMirrored.Filled.HelpOutline,
+                Triple(
+                    Icons.AutoMirrored.Filled.HelpOutline,
                     Color(0xFF455A64),
-                    Color(0xFFECEFF1))
-                    //MaterialTheme.colorScheme.onSurfaceVariant,
-                    //MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+                    Color(0xFFECEFF1)
+                )
+            //MaterialTheme.colorScheme.onSurfaceVariant,
+            //MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
         }
     }
     val transition = updateTransition(targetState = expanded, label = "")

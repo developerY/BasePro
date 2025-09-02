@@ -1,5 +1,6 @@
 package com.ylabz.basepro.feature.ble.ui.components
 
+// //import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,19 +11,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,13 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-// //import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
-import com.ylabz.basepro.core.model.ble.DeviceCharacteristic
 import com.ylabz.basepro.core.model.ble.DeviceService
-import com.ylabz.basepro.core.model.ble.GattConnectionState
-import com.ylabz.basepro.core.model.ble.ScanState
 import com.ylabz.basepro.feature.ble.R
 import com.ylabz.basepro.core.ui.R as CoreUiR
 
@@ -98,7 +91,9 @@ fun ExpandableGattServiceCard(
                 }
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = if (isExpanded) stringResource(id = CoreUiR.string.action_collapse) else stringResource(id = CoreUiR.string.action_expand),
+                    contentDescription = if (isExpanded) stringResource(id = CoreUiR.string.action_collapse) else stringResource(
+                        id = CoreUiR.string.action_expand
+                    ),
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -129,7 +124,11 @@ fun ExpandableGattServiceCard(
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
                             Text(
-                                text = stringResource(id = R.string.ble_text_characteristic_value_label, characteristic.value ?: stringResource(id = CoreUiR.string.text_na)),
+                                text = stringResource(
+                                    id = R.string.ble_text_characteristic_value_label,
+                                    characteristic.value
+                                        ?: stringResource(id = CoreUiR.string.text_na)
+                                ),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -178,7 +177,9 @@ fun ExpandableGattServiceCardOrig(service: DeviceService) {
                 )
                 service.characteristics.forEach { characteristic ->
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
@@ -187,7 +188,10 @@ fun ExpandableGattServiceCardOrig(service: DeviceService) {
                             color = Color.Gray
                         )
                         Text(
-                            text = stringResource(id = R.string.ble_text_characteristic_value_label, characteristic.value ?: stringResource(id = CoreUiR.string.text_na)),
+                            text = stringResource(
+                                id = R.string.ble_text_characteristic_value_label,
+                                characteristic.value ?: stringResource(id = CoreUiR.string.text_na)
+                            ),
                             style = MaterialTheme.typography.bodySmall
                         )
                     }

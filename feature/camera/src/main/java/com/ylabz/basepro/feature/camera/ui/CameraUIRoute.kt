@@ -26,11 +26,13 @@ fun CameraUIRoute(
         is CamUIState.Loading -> {
             LoadingScreen()
         }
+
         is CamUIState.Error -> {
             ErrorScreen(errorMessage = uiState.message) {
                 viewModel.onEvent(CamEvent.OnRetry)
             }
         }
+
         is CamUIState.Success -> {
             Column(modifier = modifier) {
                 SimpleCameraCaptureWithImagePreview(
@@ -53,7 +55,9 @@ fun LoadingScreen() {
 
 @Composable
 fun ErrorScreen(errorMessage: String, onRetry: () -> Unit) {
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
         Text(
             text = "Error: $errorMessage",
             style = MaterialTheme.typography.bodyLarge,

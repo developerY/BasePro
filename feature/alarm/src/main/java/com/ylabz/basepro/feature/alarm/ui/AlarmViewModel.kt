@@ -1,28 +1,18 @@
 package com.ylabz.basepro.feature.alarm.ui
 
-import android.app.AlarmManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.core.data.repository.alarm.AlarmReceiver
 import com.ylabz.basepro.core.data.repository.alarm.AlarmRepository
 import com.ylabz.basepro.core.model.alarm.ProAlarm
 import com.ylabz.basepro.core.model.shotime.ShotimeSessionData
-import com.ylabz.basepro.core.util.Logging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.random.Random
 
 @HiltViewModel
 class AlarmViewModel @Inject constructor(

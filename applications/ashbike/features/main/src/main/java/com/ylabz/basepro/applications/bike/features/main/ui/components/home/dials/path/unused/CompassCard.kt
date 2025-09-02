@@ -72,7 +72,8 @@ fun CompassDial(
         fun drawTextAtAngle(label: String, angleDeg: Float) {
             val angleRad = Math.toRadians(angleDeg.toDouble())
             val x = center.x + cos(angleRad).toFloat() * (radius - 30f)
-            val y = center.y + sin(angleRad).toFloat() * (radius - 30f) + 15f // offset to center text
+            val y =
+                center.y + sin(angleRad).toFloat() * (radius - 30f) + 15f // offset to center text
             drawContext.canvas.nativeCanvas.drawText(label, x, y, textPaint)
         }
 
