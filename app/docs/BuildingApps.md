@@ -33,14 +33,17 @@ If you haven't already, you’ll need to set up a `signingConfig` for release bu
 
 ```kotlin
 buildTypes {
-    release {
-        isMinifyEnabled = false
-        signingConfig = signingConfigs.getByName("release")
-        proguardFiles(
-            getDefaultProguardFile("proguard-android-optimize.txt"),
-            "proguard-rules.pro"
-        )
-    }
+   release {
+      isMinifyEnabled = providers.gradleProperty("isMinifyForRelease").get().toBoolean()
+      proguardFiles(
+         getDefaultProguardFile("proguard-android-optimize.txt"),
+         "proguard-rules.pro"
+      )
+   }
+   // This debug block ensures a fast development cycle
+   debug {
+      isMinifyEnabled = false
+   }
 }
 ```
 
