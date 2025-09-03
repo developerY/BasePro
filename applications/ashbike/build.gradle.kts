@@ -14,12 +14,32 @@ android {
     namespace = "com.ylabz.basepro.applications.bike"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
+    signingConfigs {
+        create("release") {
+            val storeFile = providers.gradleProperty("RELEASE_STORE_FILE")
+            val storePassword = providers.gradleProperty("RELEASE_STORE_PASSWORD")
+            val keyAlias = providers.gradleProperty("RELEASE_KEY_ALIAS")
+            val keyPassword = providers.gradleProperty("RELEASE_KEY_PASSWORD")
+
+            if (storeFile.isPresent && storePassword.isPresent && keyAlias.isPresent && keyPassword.isPresent) {
+                this.storeFile = file(storeFile.get())
+                this.storePassword = storePassword.get()
+                this.keyAlias = keyAlias.get()
+                this.keyPassword = keyPassword.get()
+            } else {
+                println("Release signing keystore properties not found in gradle.properties. Release build may fail to sign.")
+                // Consider throwing an error here for CI/CD environments if properties are mandatory
+                // throw new GradleException("Release signing keystore properties not found in gradle.properties.")
+            }
+        }
+    }
+
     defaultConfig {
         applicationId = "com.ylabz.basepro.applications.bike"
         minSdk = 31
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "0.01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -31,10 +51,17 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
         // This debug block ensures a fast development cycle
         debug {
             isMinifyEnabled = false
+            // Debug builds are automatically signed with the debug keystore by default
+            // applicationVariants.all { variant ->
+            //     variant.outputs.all { output ->
+            //         outputFileName = "\${archivesBaseName}-\${variant.name}-\${versionName}.apk"
+            //     }
+            // }
         }
     }
 

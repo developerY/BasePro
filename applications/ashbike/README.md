@@ -24,7 +24,7 @@ These features are not accidents; they are the result of a deliberate and robust
 * **Dependency Injection**: **Hilt** manages dependencies throughout the app, which is critical for building a modular and maintainable codebase that can grow without collapsing under its own weight.
 * **Data & Networking**: With **Room** for local database management and both **Retrofit** and **Apollo Client** for networking, the data layer is flexible, efficient, and completely decoupled from the UI.
 * **Performance Optimization**: We've even included **Baseline Profiles**, an advanced optimization that pre-compiles the app for significantly faster startup times and smoother animations.
-* **App Supports**: Dark & Light mode, English, Spanish & French.
+* **App Supports**: Mode: Dark & Light / Lang: English, Spanish (& French in development)).
 ---
 
 ### **Resources**

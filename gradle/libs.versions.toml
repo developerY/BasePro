@@ -4,10 +4,10 @@ kotlin = "2.2.0"               # Kotlin programming language version
 coreKtx = "1.16.0"             # Core KTX, Kotlin extensions for Android core libraries
 junit = "4.13.2"               # JUnit, a framework for writing and running tests in Java
 junitVersion = "1.2.1"         # AndroidX JUnit extension, provides compatibility with JUnit
-espressoCore = "3.6.1"         # Espresso, a library for Android UI testing
+espressoCore = "3.7.0"         # Espresso, a library for Android UI testing
 # lifecycleRuntimeKtx = "2.8.4"  # AndroidX Lifecycle runtime KTX, provides Kotlin extensions for lifecycle management
 activityCompose = "1.10.1"      # Activity Compose, allows using Jetpack Compose in Activities
-composeBom = "2025.07.00"      # Compose BOM (Bill of Materials), ensures consistent Compose library versions
+composeBom = "2025.08.01"      # Compose BOM (Bill of Materials), ensures consistent Compose library versions
 
 # Additional Libraries
 hilt = "2.57"                  # Hilt, a dependency injection library for Android
@@ -22,24 +22,24 @@ hiltLifecycleViewModel = "1.0.0-alpha03"  # Hilt ViewModel injection
 hiltNavigation = "1.0.0"       # Hilt support for Navigation component
 hiltNavigationCompose = "1.2.0" # Hilt support for Jetpack Compose Navigation
 hiltWork = "1.2.0"             # Hilt support for WorkManager
-androidxNavigation = "2.8.2"
+androidxNavigation = "2.9.3"
 ksp = "2.2.0-2.0.2"
 serialization = "1.8.0"
-cameraX = "1.3.4"
-accompanistPermissions = "0.36.0"
-mapsCompose = "4.4.1"
+cameraX = "1.4.2"
+accompanistPermissions = "0.37.3"
+mapsCompose = "6.7.2"
 mapsplatformSecretsPlugin = "2.0.1" # mapsplatform-secrets
-okhttp = "5.0.0-alpha.11" # OkHttp
-healthConnect = "1.1.0-rc01" # Health Connect"
-datastore = "1.1.2" # DataStore
-coil = "2.2.2"
+okhttp = "5.1.0" # OkHttp
+healthConnect = "1.1.0-rc03" # Health Connect"
+datastore = "1.1.7" # DataStore
+coil = "2.7.0"
 
 # plugins
 # Apollo GraphQL
 apollo = "3.8.5"
-playServicesWearable = "18.0.0"
-composeMaterial = "1.2.1"
-composeMaterial3 = "1.0.0-alpha30"
+playServicesWearable = "19.0.0"
+composeMaterial = "1.7.8"
+composeMaterial3 = "1.5.0"
 
 wearToolingPreview = "1.0.0"
 coreSplashscreen = "1.0.1"
@@ -51,8 +51,8 @@ horologist = "0.6.20"
 watchfaceComplicationsDataSourceKtx = "1.2.1"
 playServicesLocation = "21.3.0" # apollo-graphql
 playServicesCoroutines = "1.10.2"
-playServicesMaps = "19.1.0"
-mlkit-text-recognition = "16.0.0"
+playServicesMaps = "19.2.0"
+mlkit-text-recognition = "16.0.1"
 immutableColections = "0.4.0"
 
 qrScannerVersion = "16.1.0"
@@ -64,7 +64,7 @@ lifecycleService = "2.9.1"
 # firebaseCrashlytics = "19.4.4" # Removed, BoM will manage
 firebaseBom = "33.16.0" # Added Firebase BoM version
 googleGmsGoogleServices = "4.4.3"
-googleFirebaseCrashlytics = "3.0.4"
+googleFirebaseCrashlytics = "3.0.6"
 
 # Nav 3
 nav3Core = "1.0.0-alpha07"
