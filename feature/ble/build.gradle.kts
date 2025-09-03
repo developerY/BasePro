@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.ylabz.basepro.feature.ble"
-    compileSdk = 35
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         minSdk = 31

@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.ylabz.probase.core.data"
-    compileSdk = 35
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         minSdk = 31

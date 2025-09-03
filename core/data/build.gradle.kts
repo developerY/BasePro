@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.ylabz.basepro.core.network"
-    compileSdk = 35
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         minSdk = 31

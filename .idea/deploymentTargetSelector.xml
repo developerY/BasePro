@@ -35,11 +35,14 @@
       </SelectionState>
       <SelectionState runConfigName="applications.ashbike">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-09-01T23:45:27.335967Z">
+        <DropdownSelection timestamp="2025-09-03T20:46:50.433497Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=8BQX1E6VA" />
+              <DeviceId pluginId="FirebaseDirectAccess" identifier="reservation=projects/ashbike-007/deviceSessions/session-3w4s292tfa7a1" />
             </handle>
+            <template>
+              <DeviceId pluginId="FirebaseDirectAccess" type="TEMPLATE" identifier="model_id=e1q/34" />
+            </template>
           </Target>
         </DropdownSelection>
         <DialogSelection />
