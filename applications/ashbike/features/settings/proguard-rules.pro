@@ -19,3 +19,12 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Rules from missing_rules.txt for ashbike app (features.settings module classes)
+-keep class com.ylabz.basepro.applications.bike.features.settings.ui.SettingsUiRouteKt { *; }
+-keep class com.ylabz.basepro.applications.bike.features.settings.ui.SettingsUiState$Success { *; }
+-keep class com.ylabz.basepro.applications.bike.features.settings.ui.SettingsUiState { *; }
+-keep class com.ylabz.basepro.applications.bike.features.settings.ui.SettingsViewModel { *; }
+-keep class com.ylabz.basepro.applications.bike.features.settings.ui.SettingsViewModel_HiltModules$KeyModule { *; }
+-keep class com.ylabz.basepro.applications.bike.features.settings.ui.SettingsViewModel_HiltModules_BindsModule_Binds_LazyMapKey { *; }
+-keep class com.ylabz.basepro.applications.bike.features.settings.ui.SettingsViewModel_HiltModules_KeyModule_Provide_LazyMapKey { *; }

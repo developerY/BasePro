@@ -25,3 +25,19 @@
     public static int d(...);
     public static int v(...);
 }
+
+# Rules from missing_rules.txt for ashbike app (features.trips module classes)
+-keep class com.ylabz.basepro.applications.bike.features.trips.domain.MarkRideAsSyncedUseCase { *; }
+-keep class com.ylabz.basepro.applications.bike.features.trips.domain.SyncRideUseCase { *; }
+-keep class com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent { *; }
+-keep class com.ylabz.basepro.applications.bike.features.trips.ui.TripsUIRouteKt { *; }
+-keep class com.ylabz.basepro.applications.bike.features.trips.ui.TripsViewModel { *; }
+-keep class com.ylabz.basepro.applications.bike.features.trips.ui.TripsViewModel_HiltModules$KeyModule { *; }
+-keep class com.ylabz.basepro.applications.bike.features.trips.ui.TripsViewModel_HiltModules_BindsModule_Binds_LazyMapKey { *; }
+-keep class com.ylabz.basepro.applications.bike.features.trips.ui.TripsViewModel_HiltModules_KeyModule_Provide_LazyMapKey { *; }
+-keep class com.ylabz.basepro.applications.bike.features.trips.ui.components.MapPathScreenKt { *; }
+-keep class com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailScreenKt { *; }
+-keep class com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailViewModel { *; }
+-keep class com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailViewModel_HiltModules$KeyModule { *; }
+-keep class com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailViewModel_HiltModules_BindsModule_Binds_LazyMapKey { *; }
+-keep class com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailViewModel_HiltModules_KeyModule_Provide_LazyMapKey { *; }
