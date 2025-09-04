@@ -20,8 +20,12 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-# Rules from missing_rules.txt for ashbike app (feature.weather module classes)
--keep class com.ylabz.basepro.feature.weather.ui.WeatherViewModel { *; }
--keep class com.ylabz.basepro.feature.weather.ui.WeatherViewModel_HiltModules$KeyModule { *; }
--keep class com.ylabz.basepro.feature.weather.ui.WeatherViewModel_HiltModules_BindsModule_Binds_LazyMapKey { *; }
--keep class com.ylabz.basepro.feature.weather.ui.WeatherViewModel_HiltModules_KeyModule_Provide_LazyMapKey { *; }
+# Rules from missing_rules.txt for ashbike app (core.ui module classes)
+-keep class com.ylabz.basepro.core.ui.BikeScreen$HomeBikeScreen { *; }
+-keep class com.ylabz.basepro.core.ui.BikeScreen$RideDetailScreen { *; }
+-keep class com.ylabz.basepro.core.ui.BikeScreen$SettingsBikeScreen { *; }
+-keep class com.ylabz.basepro.core.ui.BikeScreen$TripBikeScreen { *; }
+-keep class com.ylabz.basepro.core.ui.NavigationCommand$To { *; }
+-keep class com.ylabz.basepro.core.ui.NavigationCommand$ToTab { *; }
+-keep class com.ylabz.basepro.core.ui.NavigationCommand { *; }
+-keep class com.ylabz.basepro.core.ui.theme.AshBikeThemeKt { *; }

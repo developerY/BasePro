@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Rules from missing_rules.txt for ashbike app (feature.ble module classes)
+-keep class com.ylabz.basepro.feature.ble.ui.BluetoothLeViewModel { *; }
+-keep class com.ylabz.basepro.feature.ble.ui.BluetoothLeViewModel_HiltModules$KeyModule { *; }
+-keep class com.ylabz.basepro.feature.ble.ui.BluetoothLeViewModel_HiltModules_BindsModule_Binds_LazyMapKey { *; }
+-keep class com.ylabz.basepro.feature.ble.ui.BluetoothLeViewModel_HiltModules_KeyModule_Provide_LazyMapKey { *; }

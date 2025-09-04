@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Rules from missing_rules.txt for applications:ashbike:database module (core.model classes)
+-keep class com.ylabz.basepro.core.model.bike.BikeRide { *; }
+-keep class com.ylabz.basepro.core.model.bike.LocationEnergyLevel { *; }

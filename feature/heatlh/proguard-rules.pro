@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Rules from missing_rules.txt for ashbike app (feature.heatlh module classes)
+-keep class com.ylabz.basepro.feature.heatlh.ui.HealthViewModel { *; }
+-keep class com.ylabz.basepro.feature.heatlh.ui.HealthViewModel_HiltModules$KeyModule { *; }
+-keep class com.ylabz.basepro.feature.heatlh.ui.HealthViewModel_HiltModules_BindsModule_Binds_LazyMapKey { *; }
+-keep class com.ylabz.basepro.feature.heatlh.ui.HealthViewModel_HiltModules_KeyModule_Provide_LazyMapKey { *; }

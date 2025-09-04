@@ -19,3 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Rule from missing_rules.txt for ashbike app (core.util module classes)
+-keep class com.ylabz.basepro.core.util.Logging { *; }
