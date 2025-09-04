@@ -38,8 +38,8 @@ android {
         applicationId = "com.ylabz.basepro.applications.bike"
         minSdk = 31
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 2
-        versionName = "0.01"
+        versionCode = 3
+        versionName = "0.03"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

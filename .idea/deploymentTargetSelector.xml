@@ -35,14 +35,11 @@
       </SelectionState>
       <SelectionState runConfigName="applications.ashbike">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-09-03T20:46:50.433497Z">
+        <DropdownSelection timestamp="2025-09-03T23:57:23.328221Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="FirebaseDirectAccess" identifier="reservation=projects/ashbike-007/deviceSessions/session-3w4s292tfa7a1" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ash/.android/avd/Pixel_9a.avd" />
             </handle>
-            <template>
-              <DeviceId pluginId="FirebaseDirectAccess" type="TEMPLATE" identifier="model_id=e1q/34" />
-            </template>
           </Target>
         </DropdownSelection>
         <DialogSelection />
