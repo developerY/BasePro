@@ -12,40 +12,35 @@
 #   public *;
 #}
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Keep the line number information for debugging stack traces.
+-keepattributes SourceFile,LineNumberTable
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
-# Please add these rules to your existing keep rules in order to suppress warnings.
-# This is generated automatically by the Android Gradle plugin.
-# Hilt
+# Keep your app's data/model classes, which are often used with reflection.
+-keep class com.ylabz.basepro.applications.bike.database.** { *; }
+-keep class com.ylabz.basepro.core.model.** { *; }
+
+# Hilt - These are the official rules to keep Hilt's generated code.
 -keep class dagger.hilt.internal.aggregatedroot.codegen.*
--keep class com.ylabz.basepro.Hilt_MyApplication { <init>(); }
 -keep class hilt_aggregated_deps.*
 -keep @dagger.hilt.android.HiltAndroidApp class * { <init>(); }
 -keep class * extends android.app.Application {
     @dagger.hilt.android.HiltAndroidApp <init>();
 }
-# Keep Hilt entry points
 -keep @dagger.hilt.android.AndroidEntryPoint class * { *; }
-# Keep Hilt ViewModels
--keep class * extends androidx.lifecycle.ViewModel {
-    @javax.inject.Inject <init>(...);
-}
-# Keep classes annotated with @HiltViewModel
 -keep @dagger.hilt.android.lifecycle.HiltViewModel class * {*;}
 -keep class * extends androidx.lifecycle.SavedStateHandle {*;}
 
+# This is a broader rule for ViewModels that is often helpful.
+-keep class * extends androidx.lifecycle.ViewModel {
+  <init>(...);
+}
 
-# Coroutines
+# Coroutines - Keep internal classes used by Kotlin Coroutines.
 -keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
 -keepnames class kotlinx.coroutines.android.AndroidExceptionPreHandler {}
 -keepnames class kotlinx.coroutines.android.AndroidDispatcherFactory {}
 
-# OkHttp / Retrofit (if you use them)
+# OkHttp / Retrofit / Apollo - If you are using these for networking.
 -dontwarn okhttp3.**
 -dontwarn okio.**
 -dontwarn javax.annotation.**
@@ -53,8 +48,4 @@
 -keep class com.google.gson.** { *; }
 -keep class com.squareup.okhttp3.** { *; }
 -keep interface com.squareup.okhttp3.** { *; }
-
-
-# Keep your app's data/model classes that are serialized by Gson/Moshi
--keep class com.ylabz.basepro.core.model.** { *; }
--keep class com.ylabz.basepro.applications.bike.database.** { *; }
+-keep class com.apollographql.** { *; }
