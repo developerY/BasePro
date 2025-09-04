@@ -22,6 +22,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            consumerProguardFiles("proguard-rules.pro") // Added this line
         }
         // This debug block ensures a fast development cycle
         debug {
