@@ -41,3 +41,15 @@
 -keep class com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailViewModel_HiltModules$KeyModule { *; }
 -keep class com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailViewModel_HiltModules_BindsModule_Binds_LazyMapKey { *; }
 -keep class com.ylabz.basepro.applications.bike.features.trips.ui.components.RideDetailViewModel_HiltModules_KeyModule_Provide_LazyMapKey { *; }
+-dontwarn com.ylabz.basepro.applications.bike.database.mapper.RideMappersKt
+-dontwarn com.ylabz.basepro.core.ui.theme.ColorKt
+-dontwarn com.ylabz.basepro.feature.heatlh.ui.HealthEvent$Insert
+-dontwarn com.ylabz.basepro.feature.heatlh.ui.HealthEvent$LoadHealthData
+-dontwarn com.ylabz.basepro.feature.heatlh.ui.HealthEvent$RequestPermissions
+-dontwarn com.ylabz.basepro.feature.heatlh.ui.HealthEvent
+-dontwarn com.ylabz.basepro.feature.heatlh.ui.HealthSideEffect$BikeRideSyncedToHealth
+-dontwarn com.ylabz.basepro.feature.heatlh.ui.HealthSideEffect$LaunchPermissions
+-dontwarn com.ylabz.basepro.feature.heatlh.ui.HealthSideEffect
+-dontwarn com.ylabz.basepro.feature.heatlh.ui.HealthUiState$Error
+-dontwarn com.ylabz.basepro.feature.heatlh.ui.HealthUiState$Success
+-dontwarn com.ylabz.basepro.feature.heatlh.ui.HealthUiState

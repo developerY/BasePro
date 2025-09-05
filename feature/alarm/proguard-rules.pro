@@ -25,3 +25,4 @@
 -keep class com.ylabz.basepro.feature.alarm.ui.AlarmViewModel_HiltModules$KeyModule { *; }
 -keep class com.ylabz.basepro.feature.alarm.ui.AlarmViewModel_HiltModules_BindsModule_Binds_LazyMapKey { *; }
 -keep class com.ylabz.basepro.feature.alarm.ui.AlarmViewModel_HiltModules_KeyModule_Provide_LazyMapKey { *; }
+-dontwarn com.ylabz.basepro.core.model.shotime.ShotimeSessionData

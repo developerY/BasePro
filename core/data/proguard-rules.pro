@@ -42,3 +42,22 @@
 -keep class com.ylabz.basepro.core.data.repository.weather.WeatherRepo { *; }
 -keep class com.ylabz.basepro.core.data.repository.weather.WeatherRepoImpl { *; }
 -keep class com.ylabz.basepro.core.data.service.health.HealthSessionManager { *; }
+
+# Please add these rules to your existing keep rules in order to suppress warnings.
+# This is generated automatically by the Android Gradle plugin.
+-dontwarn com.ylabz.basepro.core.model.alarm.ProAlarm$Companion
+-dontwarn com.ylabz.basepro.core.model.alarm.ProAlarm
+-dontwarn com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
+-dontwarn com.ylabz.basepro.core.model.ble.DeviceCharacteristic
+-dontwarn com.ylabz.basepro.core.model.ble.DeviceService
+-dontwarn com.ylabz.basepro.core.model.ble.GattCharacteristicValue
+-dontwarn com.ylabz.basepro.core.model.ble.GattConnectionState$Connected
+-dontwarn com.ylabz.basepro.core.model.ble.GattConnectionState$Connecting
+-dontwarn com.ylabz.basepro.core.model.ble.GattConnectionState$Disconnected
+-dontwarn com.ylabz.basepro.core.model.ble.ScanState
+-dontwarn com.ylabz.basepro.core.model.ble.tools.UUIDMapKt
+-dontwarn com.ylabz.basepro.core.model.health.SleepSessionData
+-dontwarn com.ylabz.basepro.core.model.weather.OpenWeatherResponse
+-dontwarn com.ylabz.basepro.core.model.yelp.BusinessInfo
+-dontwarn com.ylabz.basepro.core.model.yelp.Category
+-dontwarn com.ylabz.basepro.core.model.yelp.Coordinates
