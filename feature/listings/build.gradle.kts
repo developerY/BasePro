@@ -27,7 +27,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = providers.gradleProperty("isMinifyForRelease").get().toBoolean()
+            isMinifyEnabled = false // providers.gradleProperty("isMinifyForRelease").get().toBoolean()
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -61,7 +61,7 @@ dependencies {
 
     // Hilt Dependency Injection
     implementation(libs.hilt.navigation.compose)
-    implementation(libs.hilt.android)
+    compileOnly(libs.hilt.android) // Changed from implementation
     ksp(libs.hilt.android.compiler)
     // kapt(libs.hilt.compiler)
 

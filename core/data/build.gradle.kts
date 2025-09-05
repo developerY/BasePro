@@ -79,7 +79,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.process)
 
     // Hilt Dependency Injection
-    implementation(libs.hilt.android)
+    compileOnly(libs.hilt.android) // Changed from implementation
     ksp(libs.hilt.android.compiler)
 
     // GraphQL
