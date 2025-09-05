@@ -43,6 +43,7 @@ android {
 
 dependencies {
     implementation(project(":core:database"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -61,7 +62,7 @@ dependencies {
 
     // Hilt Dependency Injection
     implementation(libs.hilt.navigation.compose)
-    compileOnly(libs.hilt.android) // Changed from implementation
+    implementation(libs.hilt.android) // Changed from implementation
     ksp(libs.hilt.android.compiler)
     // kapt(libs.hilt.compiler)
 
