@@ -21,7 +21,4 @@
 #-renamesourcefileattribute SourceFile
 
 # Rules from missing_rules.txt for ashbike app (feature.maps module classes)
--keep class com.ylabz.basepro.feature.maps.ui.MapViewModel { *; }
--keep class com.ylabz.basepro.feature.maps.ui.MapViewModel_HiltModules$KeyModule { *; }
--keep class com.ylabz.basepro.feature.maps.ui.MapViewModel_HiltModules_BindsModule_Binds_LazyMapKey { *; }
--keep class com.ylabz.basepro.feature.maps.ui.MapViewModel_HiltModules_KeyModule_Provide_LazyMapKey { *; }
+-keep class com.ylabz.basepro.feature.maps.** { *; }
