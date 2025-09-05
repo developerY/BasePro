@@ -21,7 +21,4 @@
 #-renamesourcefileattribute SourceFile
 
 # Rules from missing_rules.txt for ashbike app (feature.camera module classes)
--keep class com.ylabz.basepro.feature.camera.ui.CamViewModel { *; }
--keep class com.ylabz.basepro.feature.camera.ui.CamViewModel_HiltModules$KeyModule { *; }
--keep class com.ylabz.basepro.feature.camera.ui.CamViewModel_HiltModules_BindsModule_Binds_LazyMapKey { *; }
--keep class com.ylabz.basepro.feature.camera.ui.CamViewModel_HiltModules_KeyModule_Provide_LazyMapKey { *; }
+-keep class com.ylabz.basepro.feature.camera.** { *; }

@@ -12,14 +12,12 @@
 #   public *;
 #}
 
+# applications/ashbike/proguard-rules.pro
+
 # Keep the line number information for debugging stack traces.
 -keepattributes SourceFile,LineNumberTable
 
-# Keep your app's data/model classes, which are often used with reflection.
--keep class com.ylabz.basepro.applications.bike.database.** { *; }
--keep class com.ylabz.basepro.core.model.** { *; }
-
-# Hilt - These are the official rules to keep Hilt's generated code.
+# Hilt - Official rules to keep Hilt's generated code and entry points.
 -keep class dagger.hilt.internal.aggregatedroot.codegen.*
 -keep class hilt_aggregated_deps.*
 -keep @dagger.hilt.android.HiltAndroidApp class * { <init>(); }
@@ -30,22 +28,12 @@
 -keep @dagger.hilt.android.lifecycle.HiltViewModel class * {*;}
 -keep class * extends androidx.lifecycle.SavedStateHandle {*;}
 
-# This is a broader rule for ViewModels that is often helpful.
+# Keep all ViewModels.
 -keep class * extends androidx.lifecycle.ViewModel {
   <init>(...);
 }
 
-# Coroutines - Keep internal classes used by Kotlin Coroutines.
+# Coroutines - Standard rules for Kotlin Coroutines.
 -keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
 -keepnames class kotlinx.coroutines.android.AndroidExceptionPreHandler {}
 -keepnames class kotlinx.coroutines.android.AndroidDispatcherFactory {}
-
-# OkHttp / Retrofit / Apollo - If you are using these for networking.
--dontwarn okhttp3.**
--dontwarn okio.**
--dontwarn javax.annotation.**
--keep class retrofit2.** { *; }
--keep class com.google.gson.** { *; }
--keep class com.squareup.okhttp3.** { *; }
--keep interface com.squareup.okhttp3.** { *; }
--keep class com.apollographql.** { *; }

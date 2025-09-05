@@ -21,7 +21,4 @@
 #-renamesourcefileattribute SourceFile
 
 # Rules from missing_rules.txt for ashbike app (feature.nfc module classes)
--keep class com.ylabz.basepro.feature.nfc.ui.NfcViewModel { *; }
--keep class com.ylabz.basepro.feature.nfc.ui.NfcViewModel_HiltModules$KeyModule { *; }
--keep class com.ylabz.basepro.feature.nfc.ui.NfcViewModel_HiltModules_BindsModule_Binds_LazyMapKey { *; }
--keep class com.ylabz.basepro.feature.nfc.ui.NfcViewModel_HiltModules_KeyModule_Provide_LazyMapKey { *; }
+-keep class com.ylabz.basepro.feature.nfc.** { *; }

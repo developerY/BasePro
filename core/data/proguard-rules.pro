@@ -21,43 +21,17 @@
 #-renamesourcefileattribute SourceFile
 
 # Rules from missing_rules.txt for ashbike app (core.data module classes)
--keep class com.ylabz.basepro.core.data.api.interfaces.MapsAPI { *; }
--keep class com.ylabz.basepro.core.data.api.interfaces.YelpAPI { *; }
--keep class com.ylabz.basepro.core.data.di.AlarmModule_ProvideAlarmRepositoryFactory { *; }
--keep class com.ylabz.basepro.core.data.di.AppModule_ProvideContextFactory { *; }
--keep class com.ylabz.basepro.core.data.di.BLEModule_ProvideBluetoothAdapterFactory { *; }
--keep class com.ylabz.basepro.core.data.di.HealthModule_ProvideHealthSessionManagerFactory { *; }
--keep class com.ylabz.basepro.core.data.di.NetworkModule_BindsMapsAPIFactory { *; }
--keep class com.ylabz.basepro.core.data.di.NetworkModule_BindsYelpAPIFactory { *; }
--keep class com.ylabz.basepro.core.data.di.NetworkModule_ProvideApolloClientFactory { *; }
--keep class com.ylabz.basepro.core.data.repository.alarm.AlarmRepository { *; }
--keep class com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothLeRepImpl { *; }
--keep class com.ylabz.basepro.core.data.repository.bluetoothLE.BluetoothLeRepository { *; }
--keep class com.ylabz.basepro.core.data.repository.nfc.NfcRepository { *; }
--keep class com.ylabz.basepro.core.data.repository.nfc.NfcRepositoryImpl { *; }
--keep class com.ylabz.basepro.core.data.repository.travel.DrivingPtsRepImp { *; }
--keep class com.ylabz.basepro.core.data.repository.travel.DrivingPtsRepository { *; }
--keep class com.ylabz.basepro.core.data.repository.travel.LocationRepository { *; }
--keep class com.ylabz.basepro.core.data.repository.travel.LocationRepositoryImpl { *; }
--keep class com.ylabz.basepro.core.data.repository.weather.WeatherRepo { *; }
--keep class com.ylabz.basepro.core.data.repository.weather.WeatherRepoImpl { *; }
--keep class com.ylabz.basepro.core.data.service.health.HealthSessionManager { *; }
+# core/data/proguard-rules.pro
 
-# Please add these rules to your existing keep rules in order to suppress warnings.
-# This is generated automatically by the Android Gradle plugin.
--dontwarn com.ylabz.basepro.core.model.alarm.ProAlarm$Companion
--dontwarn com.ylabz.basepro.core.model.alarm.ProAlarm
--dontwarn com.ylabz.basepro.core.model.ble.BluetoothDeviceInfo
--dontwarn com.ylabz.basepro.core.model.ble.DeviceCharacteristic
--dontwarn com.ylabz.basepro.core.model.ble.DeviceService
--dontwarn com.ylabz.basepro.core.model.ble.GattCharacteristicValue
--dontwarn com.ylabz.basepro.core.model.ble.GattConnectionState$Connected
--dontwarn com.ylabz.basepro.core.model.ble.GattConnectionState$Connecting
--dontwarn com.ylabz.basepro.core.model.ble.GattConnectionState$Disconnected
--dontwarn com.ylabz.basepro.core.model.ble.ScanState
--dontwarn com.ylabz.basepro.core.model.ble.tools.UUIDMapKt
--dontwarn com.ylabz.basepro.core.model.health.SleepSessionData
--dontwarn com.ylabz.basepro.core.model.weather.OpenWeatherResponse
--dontwarn com.ylabz.basepro.core.model.yelp.BusinessInfo
--dontwarn com.ylabz.basepro.core.model.yelp.Category
--dontwarn com.ylabz.basepro.core.model.yelp.Coordinates
+# Keep all data models and repository interfaces/implementations.
+-keep class com.ylabz.basepro.core.data.** { *; }
+
+# Networking Libraries (OkHttp, Retrofit, Apollo)
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-dontwarn javax.annotation.**
+-keep class retrofit2.** { *; }
+-keep class com.google.gson.** { *; }
+-keep class com.squareup.okhttp3.** { *; }
+-keep interface com.squareup.okhttp3.** { *; }
+-keep class com.apollographql.** { *; }

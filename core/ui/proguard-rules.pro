@@ -21,11 +21,4 @@
 #-renamesourcefileattribute SourceFile
 
 # Rules from missing_rules.txt for ashbike app (core.ui module classes)
--keep class com.ylabz.basepro.core.ui.BikeScreen$HomeBikeScreen { *; }
--keep class com.ylabz.basepro.core.ui.BikeScreen$RideDetailScreen { *; }
--keep class com.ylabz.basepro.core.ui.BikeScreen$SettingsBikeScreen { *; }
--keep class com.ylabz.basepro.core.ui.BikeScreen$TripBikeScreen { *; }
--keep class com.ylabz.basepro.core.ui.NavigationCommand$To { *; }
--keep class com.ylabz.basepro.core.ui.NavigationCommand$ToTab { *; }
--keep class com.ylabz.basepro.core.ui.NavigationCommand { *; }
--keep class com.ylabz.basepro.core.ui.theme.AshBikeThemeKt { *; }
+-keep class com.ylabz.basepro.core.ui.** { *; }

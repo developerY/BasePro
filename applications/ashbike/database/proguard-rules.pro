@@ -21,16 +21,7 @@
 #-renamesourcefileattribute SourceFile
 
 # Rules from missing_rules.txt for ashbike app (database module classes)
--keep class com.ylabz.basepro.applications.bike.database.BikeRideDao { *; }
--keep class com.ylabz.basepro.applications.bike.database.BikeRideEntity { *; }
--keep class com.ylabz.basepro.applications.bike.database.BikeRideRepo { *; }
--keep class com.ylabz.basepro.applications.bike.database.RideLocationEntity { *; }
--keep class com.ylabz.basepro.applications.bike.database.RideWithLocations { *; }
--keep class com.ylabz.basepro.applications.bike.database.di.DataStoreModule_ProvideDataStoreFactory { *; }
--keep class com.ylabz.basepro.applications.bike.database.di.DatabaseModule_ProvideBikeRideDBFactory { *; }
--keep class com.ylabz.basepro.applications.bike.database.di.DatabaseModule_ProvideBikeRideDaoFactory { *; }
--keep class com.ylabz.basepro.applications.bike.database.di.DatabaseModule_ProvideRealBikeRideRepositoryFactory { *; }
--keep class com.ylabz.basepro.applications.bike.database.repository.AppSettingsRepository { *; }
--keep class com.ylabz.basepro.applications.bike.database.repository.DataStoreAppSettingsRepository { *; }
--keep class com.ylabz.basepro.applications.bike.database.repository.DataStoreUserProfileRepository { *; }
--keep class com.ylabz.basepro.applications.bike.database.repository.UserProfileRepository { *; }
+# applications/ashbike/database/proguard-rules.pro
+
+# Keep all Room database entities, DAOs, and TypeConverters.
+-keep class com.ylabz.basepro.applications.bike.database.** { *; }

@@ -21,8 +21,5 @@
 #-renamesourcefileattribute SourceFile
 
 # Rules from missing_rules.txt for ashbike app (feature.alarm module classes)
--keep class com.ylabz.basepro.feature.alarm.ui.AlarmViewModel { *; }
--keep class com.ylabz.basepro.feature.alarm.ui.AlarmViewModel_HiltModules$KeyModule { *; }
--keep class com.ylabz.basepro.feature.alarm.ui.AlarmViewModel_HiltModules_BindsModule_Binds_LazyMapKey { *; }
--keep class com.ylabz.basepro.feature.alarm.ui.AlarmViewModel_HiltModules_KeyModule_Provide_LazyMapKey { *; }
--dontwarn com.ylabz.basepro.core.model.shotime.ShotimeSessionData
+# This keeps all classes in this feature's package.
+-keep class com.ylabz.basepro.feature.alarm.** { *; }

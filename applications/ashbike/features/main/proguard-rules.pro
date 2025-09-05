@@ -21,9 +21,7 @@
 #-renamesourcefileattribute SourceFile
 
 # Rules from missing_rules.txt for ashbike app (features.main module classes)
--keep class com.ylabz.basepro.applications.bike.features.main.ui.BikeUiRouteKt { *; }
--keep class com.ylabz.basepro.applications.bike.features.main.ui.BikeViewModel { *; }
--keep class com.ylabz.basepro.applications.bike.features.main.ui.BikeViewModel_HiltModules$KeyModule { *; }
--keep class com.ylabz.basepro.applications.bike.features.main.ui.BikeViewModel_HiltModules_BindsModule_Binds_LazyMapKey { *; }
--keep class com.ylabz.basepro.applications.bike.features.main.ui.BikeViewModel_HiltModules_KeyModule_Provide_LazyMapKey { *; }
--keep class com.ylabz.basepro.applications.bike.features.main.ui.WeatherUseCase { *; }
+# This rule keeps all classes within the .main feature package.
+# This includes your ViewModel, UiRoute, UseCases, and any other related classes,
+# preventing them from being removed by R8.
+-keep class com.ylabz.basepro.applications.bike.features.main.** { *; }

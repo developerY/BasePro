@@ -21,11 +21,4 @@
 #-renamesourcefileattribute SourceFile
 
 # Rules from missing_rules.txt for ashbike app (feature.weather module classes)
--keep class com.ylabz.basepro.feature.weather.ui.WeatherViewModel { *; }
--keep class com.ylabz.basepro.feature.weather.ui.WeatherViewModel_HiltModules$KeyModule { *; }
--keep class com.ylabz.basepro.feature.weather.ui.WeatherViewModel_HiltModules_BindsModule_Binds_LazyMapKey { *; }
--keep class com.ylabz.basepro.feature.weather.ui.WeatherViewModel_HiltModules_KeyModule_Provide_LazyMapKey { *; }
-
-# Please add these rules to your existing keep rules in order to suppress warnings.
-# This is generated automatically by the Android Gradle plugin.
--dontwarn com.ylabz.basepro.core.model.weather.Weather
+-keep class com.ylabz.basepro.feature.weather.** { *; }
