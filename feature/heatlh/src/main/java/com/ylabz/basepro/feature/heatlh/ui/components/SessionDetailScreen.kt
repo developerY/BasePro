@@ -29,7 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.healthconnectsample.data.ExerciseSessionData
+import com.ylabz.basepro.core.data.service.health.ExerciseSessionData
 import com.ylabz.basepro.feature.heatlh.ui.HealthViewModel
 import java.time.Duration
 

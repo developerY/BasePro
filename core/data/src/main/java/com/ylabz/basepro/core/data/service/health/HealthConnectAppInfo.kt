@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.healthconnectsample.data
+package com.ylabz.basepro.core.data.service.health
 
 import android.graphics.drawable.Drawable
 

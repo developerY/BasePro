@@ -35,9 +35,6 @@ import androidx.health.connect.client.time.TimeRangeFilter
 import androidx.health.connect.client.units.Energy
 import androidx.health.connect.client.units.Length
 import androidx.health.connect.client.units.Mass
-import com.example.healthconnectsample.data.ExerciseSessionData
-import com.example.healthconnectsample.data.HealthConnectAppInfo
-import com.example.healthconnectsample.data.randomSleepStage
 import com.ylabz.basepro.core.model.health.SleepSessionData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
