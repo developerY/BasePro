@@ -157,6 +157,8 @@ private fun PermissionsGrantedScreen() {
     }
 }
 
+// Commented out as flagged unused by IDE analysis (YYYY-MM-DD - AI Assistant)
+/*
 @Composable
 fun HealthFeatureWithPermissions(onRequestPermissions: () -> Unit) {
     Box(
@@ -177,6 +179,7 @@ fun HealthFeatureWithPermissions(onRequestPermissions: () -> Unit) {
         }
     }
 }
+*/
 
 /*
 @Preview

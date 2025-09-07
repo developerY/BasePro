@@ -6,6 +6,10 @@
     <!-- PERMISSIONS                                                         -->
     <!-- =================================================================== -->
 
+    <queries>
+        <package android:name="com.google.android.apps.healthdata" />
+    </queries>
+
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove"/>
 
     <uses-permission android:name="android.permission.NFC" />

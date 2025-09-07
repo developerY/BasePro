@@ -37,3 +37,6 @@
 -keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
 -keepnames class kotlinx.coroutines.android.AndroidExceptionPreHandler {}
 -keepnames class kotlinx.coroutines.android.AndroidDispatcherFactory {}
+
+# Health Connect - Keep all classes for the Health Connect client library.
+-keep class androidx.health.connect.client.** { *; }
