@@ -44,8 +44,8 @@ private val ColorToVectorConverter =
         }
     )
 
-val LowEnergyColor = Color(0xFF4CAF50) // Green
-val MidEnergyColor = Color(0xFFFFC107) // Amber
+val LowEnergyColor = Color(0xFFFFC107) // Amber
+val MidEnergyColor = Color(0xFF4CAF50) // Green
 val HighEnergyColor = Color(0xFFF44336) // Red
 
 private val DefaultCountdownStrokeWidth = 3.dp

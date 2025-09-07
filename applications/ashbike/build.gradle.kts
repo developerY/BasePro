@@ -34,12 +34,13 @@ android {
         }
     }
 
+    // Version Name = Major.Minor.Patch
     defaultConfig {
         applicationId = "com.ylabz.basepro.applications.bike"
         minSdk = 31
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 4
-        versionName = "0.1"
+        versionCode = 5
+        versionName = "0.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
