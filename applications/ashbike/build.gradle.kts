@@ -38,8 +38,8 @@ android {
         applicationId = "com.ylabz.basepro.applications.bike"
         minSdk = 31
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 3
-        versionName = "0.03"
+        versionCode = 4
+        versionName = "0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -47,6 +47,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = providers.gradleProperty("isMinifyForRelease").get().toBoolean()
+            isShrinkResources = providers.gradleProperty("isShrinkResources").get().toBoolean()
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
