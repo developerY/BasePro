@@ -3,6 +3,7 @@ package com.ylabz.basepro.applications.bike.ui.navigation.main
 //import androidx.compose.ui.tooling.preview.Preview
 import android.Manifest
 import android.content.pm.PackageManager
+import android.util.Log // Added import
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -21,19 +22,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.ImageVector 
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeViewModel
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsUiState
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsViewModel
+import com.ylabz.basepro.applications.bike.ui.navigation.graphs.AshBikeTabRoutes
 import com.ylabz.basepro.applications.bike.ui.navigation.graphs.bikeNavGraph
-import com.ylabz.basepro.core.ui.BikeScreen
 
 // The @RequiresPermission annotation can be helpful for static analysis
 // but the runtime check is the most crucial part.
@@ -112,19 +114,36 @@ fun MainScreen(
             topBar = { TopBarForCurrentRoute(navController) },
             bottomBar = {
                 HomeBottomBar(
-                    navController = navController,
+                    currentNavController = navController, 
+                    onTabSelected = { navigationKey ->
+                        Log.d("MainScreen", "onTabSelected called with key: $navigationKey") // LOGGING
+                        val route = when (navigationKey) {
+                            "Home" -> AshBikeTabRoutes.HOME_ROOT
+                            "Ride" -> AshBikeTabRoutes.TRIPS_ROOT
+                            "Settings" -> AshBikeTabRoutes.SETTINGS_ROOT
+                            else -> AshBikeTabRoutes.HOME_ROOT 
+                        }
+                        Log.d("MainScreen", "Navigating to route: $route") // LOGGING
+                        navController.navigate(route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
                     unsyncedRidesCount = unsyncedRidesCount,
-                    showSettingsProfileAlert = showProfileAlert // Pass the new state here
+                    showSettingsProfileAlert = showProfileAlert
                 )
             },
         ) { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = BikeScreen.HomeBikeScreen.route,
+                startDestination = AshBikeTabRoutes.HOME_ROOT, 
                 modifier = Modifier.padding(innerPadding)
             ) {
                 bikeNavGraph(
-                    modifier = Modifier,
+                    modifier = Modifier, 
                     navHostController = navController,
                     bikeViewModel = bikeViewModel // <<< MODIFIED LINE: Pass the bikeViewModel instance
                 )
@@ -138,13 +157,18 @@ fun MainScreen(
     }
 }
 
-data class BottomNavigationItem(
-    val title: String,
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector,
-    val hasNews: Boolean,
-    val badgeCount: Int? = null
-)
+
+// This data class might be defined in HomeBottomBar.kt or a shared file.
+// If it's only used by the old HomeBottomBar, it might be removable if HomeBottomBar doesn't expose it.
+// For now, keeping it here if it's referenced elsewhere in this file or package.
+// data class BottomNavigationItem(
+//     val title: String,
+//     val selectedIcon: ImageVector,
+//     val unselectedIcon: ImageVector,
+//     val hasNews: Boolean,
+//     val badgeCount: Int? = null
+// )
+
 /*
 @Preview
 @Composable
