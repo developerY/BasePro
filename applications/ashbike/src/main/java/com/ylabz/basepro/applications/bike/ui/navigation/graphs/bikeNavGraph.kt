@@ -117,27 +117,30 @@ fun NavGraphBuilder.bikeNavGraph(
     }
 
     // 3) Settings Tab Nested Graph
-    val settingsBaseRoute = BikeScreen.SettingsBikeScreen.route 
-    val cardToExpandArgName = "cardToExpandArg"
-    val settingsRouteWithArg = "$settingsBaseRoute?$cardToExpandArgName={$cardToExpandArgName}"
+    val settingsBaseRoute = BikeScreen.SettingsBikeScreen.route
+    // Use the constant from BikeScreen.kt
+    val cardArgName = BikeScreen.SettingsBikeScreen.ARG_CARD_TO_EXPAND
+    val settingsRoutePattern = "$settingsBaseRoute?$cardArgName={$cardArgName}"
 
-    navigation(startDestination = settingsRouteWithArg, route = AshBikeTabRoutes.SETTINGS_ROOT) {
+    // Ensure startDestination can handle the pattern (it does with nullable arg)
+    navigation(startDestination = settingsRoutePattern, route = AshBikeTabRoutes.SETTINGS_ROOT) {
         composable(
-            route = settingsRouteWithArg, 
+            route = settingsRoutePattern, // Use the constructed pattern
             arguments = listOf(
-                navArgument(cardToExpandArgName) {
+                navArgument(cardArgName) { // Use the constant
                     type = NavType.StringType
                     nullable = true
                     defaultValue = null
                 }
             )
         ) { backStackEntry ->
-            val cardToExpand = backStackEntry.arguments?.getString(cardToExpandArgName)
+            val cardToExpand = backStackEntry.arguments?.getString(cardArgName) // Use the constant
             SettingsUiRoute(
                 modifier = modifier,
-                navTo = { path -> navHostController.navigate(path) }, 
+                navTo = { path -> navHostController.navigate(path) },
                 initialCardKeyToExpand = cardToExpand
             )
         }
     }
+
 }

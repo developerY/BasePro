@@ -1,7 +1,5 @@
 package com.ylabz.basepro.core.ui
 
-const val BIKE = "bike"  // if you plan to use a nested nav graph, otherwise remove it
-
 sealed class BikeScreen(val route: String) {
     object HomeBikeScreen : BikeScreen("home_bike_screen")
     object TripBikeScreen : BikeScreen("trip_bike_screen")
