@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.zoewave.basepro.applications.rxdigita"
-        minSdk = 32
+        minSdk =  libs.versions.minSdk.get().toInt() // UPDATED
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"

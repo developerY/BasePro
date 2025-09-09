@@ -9,7 +9,7 @@ android {
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 32 // Or your preferred minSdk for benchmarks (API 28+ for generation)
+        minSdk =  libs.versions.minSdk.get().toInt() // UPDATED // Or your preferred minSdk for benchmarks (API 28+ for generation)
         testInstrumentationRunner = "androidx.benchmark.junit4.AndroidBenchmarkRunner"
     }
 
