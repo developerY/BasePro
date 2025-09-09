@@ -22,7 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector 
+// import androidx.compose.ui.graphics.vector.ImageVector // No longer directly used here
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -114,17 +114,10 @@ fun MainScreen(
             topBar = { TopBarForCurrentRoute(navController) },
             bottomBar = {
                 HomeBottomBar(
-                    currentNavController = navController, 
-                    onTabSelected = { navigationKey ->
-                        Log.d("MainScreen", "onTabSelected called with key: $navigationKey") // LOGGING
-                        val route = when (navigationKey) {
-                            "Home" -> AshBikeTabRoutes.HOME_ROOT
-                            "Ride" -> AshBikeTabRoutes.TRIPS_ROOT
-                            "Settings" -> AshBikeTabRoutes.SETTINGS_ROOT
-                            else -> AshBikeTabRoutes.HOME_ROOT 
-                        }
-                        Log.d("MainScreen", "Navigating to route: $route") // LOGGING
-                        navController.navigate(route) {
+                    currentNavController = navController,
+                    onTabSelected = { route -> // route is now directly from AshBikeTabRoutes
+                        Log.d("MainScreen", "onTabSelected called with route: $route") // LOGGING
+                        navController.navigate(route) { // Use the route directly
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
                             }
@@ -139,13 +132,13 @@ fun MainScreen(
         ) { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = AshBikeTabRoutes.HOME_ROOT, 
+                startDestination = AshBikeTabRoutes.HOME_ROOT,
                 modifier = Modifier.padding(innerPadding)
             ) {
                 bikeNavGraph(
-                    modifier = Modifier, 
+                    modifier = Modifier,
                     navHostController = navController,
-                    bikeViewModel = bikeViewModel // <<< MODIFIED LINE: Pass the bikeViewModel instance
+                    bikeViewModel = bikeViewModel
                 )
             }
         }
@@ -157,17 +150,8 @@ fun MainScreen(
     }
 }
 
-
-// This data class might be defined in HomeBottomBar.kt or a shared file.
-// If it's only used by the old HomeBottomBar, it might be removable if HomeBottomBar doesn't expose it.
-// For now, keeping it here if it's referenced elsewhere in this file or package.
-// data class BottomNavigationItem(
-//     val title: String,
-//     val selectedIcon: ImageVector,
-//     val unselectedIcon: ImageVector,
-//     val hasNews: Boolean,
-//     val badgeCount: Int? = null
-// )
+// The BottomNavigationItem data class previously here can be removed if it was only for the old HomeBottomBar logic
+// and is not used elsewhere in this file or package.
 
 /*
 @Preview
@@ -176,14 +160,17 @@ fun MainScreenPreview() {
     MainScreen(navController = rememberNavController())
 }
 
-@Preview
-@Composable
-fun HomeBottomBarPreview() {
-    HomeBottomBar(
-        navController = rememberNavController(),
-        unsyncedRidesCount = 2,
-        showSettingsProfileAlert = true // Add default for preview
-    )
-}
-
- */
+// Preview for HomeBottomBar would now need a NavHostController that is actually navigating
+// to correctly test the selected item logic, or be simplified to just show the bar.
+// @Preview
+// @Composable
+// fun HomeBottomBarPreview() {
+//     val navController = rememberNavController()
+//     HomeBottomBar(
+//         currentNavController = navController,
+//         onTabSelected = { route -> println("Tab selected with route: $route") },
+//         unsyncedRidesCount = 2,
+//         showSettingsProfileAlert = true
+//     )
+// }
+*/

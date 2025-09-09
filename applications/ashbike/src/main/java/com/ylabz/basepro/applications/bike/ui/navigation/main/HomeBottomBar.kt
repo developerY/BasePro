@@ -1,6 +1,6 @@
 package com.ylabz.basepro.applications.bike.ui.navigation.main
 
-import android.util.Log 
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.automirrored.twotone.List
@@ -14,15 +14,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
+// import androidx.compose.material3.NavigationBarItemDefaults // No longer needed for custom colors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
+// import androidx.compose.ui.graphics.Color // No longer needed for custom colors
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavDestination.Companion.hierarchy // Added import
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.ylabz.basepro.applications.bike.R
@@ -30,7 +30,7 @@ import com.ylabz.basepro.applications.bike.ui.navigation.graphs.AshBikeTabRoutes
 import com.ylabz.basepro.core.ui.R as CoreUiR
 
 private data class TabInfo(
-    val navigationKey: String,
+    val route: String,
     val titleResId: Int,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
@@ -41,70 +41,66 @@ private data class TabInfo(
 @Composable
 fun HomeBottomBar(
     currentNavController: NavHostController,
-    onTabSelected: (navigationKey: String) -> Unit,
+    onTabSelected: (route: String) -> Unit,
     unsyncedRidesCount: Int,
     showSettingsProfileAlert: Boolean
 ) {
-    val tabs = listOf(
-        TabInfo(
-            navigationKey = "Home",
-            titleResId = CoreUiR.string.navigation_home,
-            selectedIcon = Icons.TwoTone.Home,
-            unselectedIcon = Icons.Outlined.Home,
-            hasNews = false
-        ),
-        TabInfo(
-            navigationKey = "Ride",
-            titleResId = R.string.bike_bottom_nav_ride,
-            selectedIcon = Icons.AutoMirrored.TwoTone.List,
-            unselectedIcon = Icons.AutoMirrored.Outlined.List,
-            hasNews = false,
-            badgeCount = unsyncedRidesCount
-        ),
-        TabInfo(
-            navigationKey = "Settings",
-            titleResId = CoreUiR.string.action_settings,
-            selectedIcon = Icons.TwoTone.Settings,
-            unselectedIcon = Icons.Outlined.Settings,
-            hasNews = showSettingsProfileAlert
+    val tabs = remember(unsyncedRidesCount, showSettingsProfileAlert) { // Added keys here
+        listOf(
+            TabInfo(
+                route = AshBikeTabRoutes.HOME_ROOT,
+                titleResId = CoreUiR.string.navigation_home,
+                selectedIcon = Icons.TwoTone.Home,
+                unselectedIcon = Icons.Outlined.Home,
+                hasNews = false,
+                badgeCount = null // Home tab doesn't use badgeCount
+            ),
+            TabInfo(
+                route = AshBikeTabRoutes.TRIPS_ROOT,
+                titleResId = R.string.bike_bottom_nav_ride,
+                selectedIcon = Icons.AutoMirrored.TwoTone.List,
+                unselectedIcon = Icons.AutoMirrored.Outlined.List,
+                hasNews = false, // Trips tab uses badgeCount, not hasNews for this scenario
+                badgeCount = unsyncedRidesCount // Uses the current value
+            ),
+            TabInfo(
+                route = AshBikeTabRoutes.SETTINGS_ROOT,
+                titleResId = CoreUiR.string.action_settings,
+                selectedIcon = Icons.TwoTone.Settings,
+                unselectedIcon = Icons.Outlined.Settings,
+                hasNews = showSettingsProfileAlert, // Uses the current value
+                badgeCount = null // Settings tab uses hasNews, not badgeCount for this scenario
+            )
         )
-    )
+    }
 
     val navBackStackEntry by currentNavController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    // Keep this log for the raw current destination's route if helpful
-    Log.d("HomeBottomBar", "Current Destination Route: ${currentDestination?.route}") 
+    // Log.d("HomeBottomBar", "Current Destination Route: ${currentDestination?.route}") // Optional: Keep for debugging
 
     val selectedItemIndex =
-        remember(currentDestination, tabs) { // Keyed by currentDestination now
+        remember(currentDestination, tabs) { // tabs is now a key too, ensuring this recalculates if tabs list object changes
             val index = tabs.indexOfFirst { tabInfo ->
-                val tabBaseRoute = when (tabInfo.navigationKey) {
-                    "Home" -> AshBikeTabRoutes.HOME_ROOT
-                    "Ride" -> AshBikeTabRoutes.TRIPS_ROOT
-                    "Settings" -> AshBikeTabRoutes.SETTINGS_ROOT
-                    else -> null
-                }
-                // Check if the tabBaseRoute is part of the current destination's hierarchy
-                currentDestination?.hierarchy?.any { it.route == tabBaseRoute } == true
+                currentDestination?.hierarchy?.any { it.route == tabInfo.route } == true
             }
             val finalIndex = if (index != -1) index else 0
-            Log.d("HomeBottomBar", "Calculated selectedItemIndex: $finalIndex for destination: ${currentDestination?.route}")
+            // Log.d("HomeBottomBar", "Calculated selectedItemIndex: $finalIndex for destination: ${currentDestination?.route}") // Optional: Keep for debugging
             finalIndex
         }
 
     NavigationBar(
-        contentColor = MaterialTheme.colorScheme.primary
+        // contentColor = MaterialTheme.colorScheme.primary // This is for the content of the NavigationBar itself, not items usually
     ) {
         tabs.forEachIndexed { index, tabInfo ->
             val displayTitle = stringResource(id = tabInfo.titleResId)
             val isSelected = selectedItemIndex == index
-            Log.d("HomeBottomBar", "TabItem '${tabInfo.navigationKey}' (index $index): isSelected = $isSelected (selectedItemIndex: $selectedItemIndex)")
+            // Log.d("HomeBottomBar", "TabItem '${tabInfo.route}' (index $index): isSelected = $isSelected (selectedItemIndex: $selectedItemIndex)") // Optional: Keep for debugging
 
             NavigationBarItem(
                 selected = isSelected,
                 onClick = {
-                    Log.d("HomeBottomBar", "Tab clicked: ${tabInfo.navigationKey}")
-                    onTabSelected(tabInfo.navigationKey)
+                    // Log.d("HomeBottomBar", "Tab clicked: ${tabInfo.route}") // Optional: Keep for debugging
+                    onTabSelected(tabInfo.route)
                 },
                 label = {
                     Text(text = displayTitle)
@@ -129,14 +125,9 @@ fun HomeBottomBar(
                             contentDescription = displayTitle
                         )
                     }
-                },
-                colors = NavigationBarItemDefaults.colors( // Diagnostic colors
-                    selectedIconColor = Color.Red, 
-                    unselectedIconColor = Color.Gray,
-                    selectedTextColor = Color.Red, 
-                    unselectedTextColor = Color.Gray, 
-                    indicatorColor = MaterialTheme.colorScheme.surfaceVariant 
-                )
+                }
+                // Removed explicit colors = NavigationBarItemDefaults.colors(...)
+                // to use default Material 3 theme colors.
             )
         }
     }
@@ -146,11 +137,12 @@ fun HomeBottomBar(
 @Preview
 @Composable
 fun BikeHomeBottomBarPreview() {
-    // Preview would need to be updated 
-    // val navController = rememberNavController() 
+    // Preview would need to be updated to correctly reflect theme colors
+    // and provide NavHostController with a flow for currentDestination
+    // val navController = rememberNavController()
     // HomeBottomBar(
     //     currentNavController = navController,
-    //     onTabSelected = { key -> println("Tab selected: $key") }, 
+    //     onTabSelected = { route -> println("Tab selected: $route") },
     //     unsyncedRidesCount = 3,
     //     showSettingsProfileAlert = true
     // )
