@@ -37,9 +37,9 @@ android {
     // Version Name = Major.Minor.Patch
     defaultConfig {
         applicationId = "com.ylabz.basepro.applications.bike"
-        minSdk = 31
+        minSdk = libs.versions.minSdk.get().toInt() // UPDATED
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 5
+        versionCode = 7
         versionName = "0.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

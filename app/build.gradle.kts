@@ -16,7 +16,7 @@ android {
     defaultConfig {
         // This gets overridden by flavors
         applicationId = "com.ylabz.basepro"
-        minSdk = 31
+        minSdk = libs.versions.minSdk.get().toInt() // UPDATED
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"

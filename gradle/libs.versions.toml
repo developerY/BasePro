@@ -13,7 +13,7 @@ composeBom = "2025.08.01"      # Compose BOM (Bill of Materials), ensures consis
 hilt = "2.57.1"                  # Hilt, a dependency injection library for Android
 androidxCoreKtx = "1.12.0"     # AndroidX Core KTX, Kotlin extensions for Android core libraries
 appCompat = "1.7.1"            # AppCompat, backward-compatible versions of Android components
-material = "1.12.0"            # Material Components for Android, implements Material Design
+material = "1.13.0"            # Material Components for Android, implements Material Design
 constraintLayout = "2.2.1"     # ConstraintLayout, a layout manager for complex layouts
 room = "2.7.2"                 # Room, an abstraction layer over SQLite to allow fluent database access
 work = "2.10.3"                 # WorkManager, manages background work with guaranteed execution
@@ -64,6 +64,7 @@ playServicesCodeScanner = "16.1.0" # QR Scanner
 
 compileSdk = "36"
 targetSdk = "35"
+minSdk = "34" # ADDED
 lifecycleService = "2.9.3"
 # firebaseCrashlytics = "19.4.4" # Removed, BoM will manage
 firebaseBom = "34.2.0" # Added Firebase BoM version
@@ -82,10 +83,13 @@ baselineProfile = "1.4.0"
 profileinstaller = "1.4.1"
 runner = "1.7.0"
 
+squareupRetrofit = "3.0.0"
+squareupOkhttp3 = "5.1.0"
+
 
 [libraries]
-compileSdk = { module = "com.android.tools.build:gradle", version.ref = "compileSdk" }
-targetSdk = { module = "com.android.tools.build:gradle", version.ref = "targetSdk" }
+# REMOVED compileSdk = { module = "com.android.tools.build:gradle", version.ref = "compileSdk" }
+# REMOVED targetSdk = { module = "com.android.tools.build:gradle", version.ref = "targetSdk" }
 
 # Core Navigation 3 libraries
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
@@ -180,9 +184,9 @@ room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }  
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }  # Kotlin extensions for Room
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }  # Room annotation processor
 
-squareup-retrofit = { module = 'com.squareup.retrofit2:retrofit', version = '3.0.0' }
-squareup-retrofit-converter-gson = { module = 'com.squareup.retrofit2:converter-gson', version = '3.0.0' }
-squareup-okhttp3-logging-interceptor = { module = 'com.squareup.okhttp3:logging-interceptor', version = '4.12.0' }
+squareup-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "squareupRetrofit" }
+squareup-retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "squareupRetrofit" }
+squareup-okhttp3-logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "squareupOkhttp3" }
 
 # WorkManager Library
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }  # WorkManager runtime with Kotlin extensions
@@ -216,7 +220,7 @@ apollo-graphql = { module = "com.apollographql.apollo3:apollo-runtime", version.
 apollo-graphql-cache = { module = "com.apollographql.apollo3:apollo-normalized-cache", version.ref = "apollo" }
 
 # Map
-google-maps-compose = { module = 'com.google.maps.android:maps-compose', version.ref = 'mapsCompose' }
+google-maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
 
 # Health
 androidx-health-connect-client = { module = "androidx.health.connect:connect-client", version.ref = "healthConnect" }
