@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.GpsLevelIndicator
+import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.RideMap
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.SpeedometerWithCompassOverlay
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path.BikePathWithControls
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.weather.WeatherBadgeWithDetails
@@ -79,6 +80,16 @@ fun SpeedAndProgressCard(
                     .fillMaxSize()
                     .padding(16.dp),
                 contentColor = contentColor
+            )
+
+            // RideMap now only needs uiState and onEvent
+            RideMap(
+                uiState = uiState,
+                onEvent = onBikeEvent, // Correctly passing onBikeEvent
+                navTo = navTo, // MODIFIED: Pass navTo instead of onEvent
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = 8.dp, end = 16.dp)
             )
 
             Icon(
@@ -148,61 +159,3 @@ fun SpeedAndProgressCard(
         }
     }
 }
-/*
-@Preview(showBackground = true, widthDp = 380, heightDp = 500)
-@Composable
-fun FinalSpeedometerCardPreview() {
-    val sampleBikeData = BikeRideInfo( // Updated preview data
-        location = LatLng(37.4219999, -122.0862462),
-        currentSpeed = 42.5,
-        averageSpeed = 30.0,
-        maxSpeed = 55.0,
-        currentTripDistance = 12.5f,
-        totalTripDistance = 20.0f,
-        remainingDistance = 7.5f,
-        elevationGain = 100.0,
-        elevationLoss = 20.0,
-        caloriesBurned = 250,
-        rideDuration = "00:30:00",
-        settings = persistentMapOf(),
-        heading = 292f,
-        elevation = 50.0,
-        isBikeConnected = true,
-        batteryLevel = 75,
-        motorPower = 250f,
-        rideState = RideState.Riding,
-        bikeWeatherInfo = BikeWeatherInfo(
-            windDegree = 45,
-            windSpeed = 15.0,
-            conditionText = "Sunny",
-            conditionDescription = "Clear sky",
-            conditionIcon = "01d",
-            temperature = 22.0,
-            feelsLike = 21.0,
-            humidity = 60,
-            ),
-        heartbeat = null,
-    )
-    val sampleUiState = BikeUiState.Success(sampleBikeData) // Wrapped in Success state
-
-    MaterialTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFF1A1A1A)), // Dark background for contrast
-            contentAlignment = Alignment.Center
-        ) {
-            SpeedAndProgressCard(
-                modifier = Modifier.padding(16.dp),
-                uiState = sampleUiState, // Pass uiState
-                onBikeEvent = { },
-                navTo = { },
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-        }
-    }
-}
-
-
- */
