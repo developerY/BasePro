@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
     alias(libs.plugins.mapsplatform.secrets)
+    alias(libs.plugins.kotlin.serialization) // Added Kotlinx Serialization plugin
 }
 
 android {
@@ -93,6 +94,13 @@ dependencies {
     // Compose Navigation
     implementation(libs.androidx.navigation.compose) // Added Compose Navigation dependency with safe args plugin
     implementation(libs.hilt.navigation.compose)
+
+    // Nav3
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.material3.adaptive.navigation3) // Added for scene strategies
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3) // Added for ViewModel scoping
+    implementation(libs.kotlinx.serialization.json) // Added for @Serializable NavKey
 
     // Icons
     implementation(libs.androidx.material.icons.extended)
