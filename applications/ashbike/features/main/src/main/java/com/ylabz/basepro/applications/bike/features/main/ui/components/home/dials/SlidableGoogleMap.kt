@@ -1,6 +1,5 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials
 
-import androidx.compose.foundation.Canvas // Added
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,7 +13,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text // Import for potential text drawing
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,17 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset // Added
-import androidx.compose.ui.graphics.Color // Added
-import androidx.compose.ui.graphics.PathEffect // For dashed line if needed, or remove
-import androidx.compose.ui.graphics.drawscope.Stroke // Added
-import androidx.compose.ui.platform.LocalDensity // Added
-import androidx.compose.ui.text.rememberTextMeasurer // For drawing text
-import androidx.compose.ui.text.style.TextAlign // For drawing text
-import androidx.compose.ui.text.TextStyle // For drawing text
-import androidx.compose.ui.text.drawText // For drawing text
-import androidx.compose.ui.unit.dp // Added
-import androidx.compose.ui.unit.sp // For text size
+import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -42,21 +30,23 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
-import com.ylabz.basepro.core.model.location.GpsFix // Import GpsFix
+// GpsFix import might not be strictly needed here anymore if not directly used,
+// but FallbackPathDisplay uses it.
+import com.ylabz.basepro.core.model.location.GpsFix 
 
 @Composable
 fun SlidableGoogleMap(
     modifier: Modifier = Modifier,
     uiState: BikeUiState.Success,
     onClose: () -> Unit,
-    showMapContent: Boolean = true 
+    showMapContent: Boolean = true
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(300.dp), 
+            .height(300.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        shape = MaterialTheme.shapes.large 
+        shape = MaterialTheme.shapes.large
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             if (showMapContent) {
@@ -85,67 +75,22 @@ fun SlidableGoogleMap(
                     onMapLoaded = { isMapReady = true }
                 ) {
                     Marker(
-                        state = markerState, 
+                        state = markerState,
                         title = "Current Location"
                     )
                 }
             } else {
-                // Fallback UI: Green Screen with Path
-                val fixes = uiState.bikeData.ridePath ?: emptyList() // Corrected line
-                val fallbackBackgroundColor = Color.Green.copy(alpha = 0.3f)
-                val pathColor = Color.White
-                val pathStrokeWidth = with(LocalDensity.current) { 2.dp.toPx() }
-                val insetPx = with(LocalDensity.current) { 16.dp.toPx() }
-                val textMeasurer = rememberTextMeasurer()
-
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    drawRect(color = fallbackBackgroundColor)
-
-                    if (fixes.size >= 2) {
-                        val minLat = fixes.minOf { it.lat }
-                        val maxLat = fixes.maxOf { it.lat }
-                        val minLng = fixes.minOf { it.lng }
-                        val maxLng = fixes.maxOf { it.lng }
-
-                        val latRange = (maxLat - minLat).takeIf { it > 0.00001 } ?: 0.001
-                        val lngRange = (maxLng - minLng).takeIf { it > 0.00001 } ?: 0.001
-
-                        val canvasWidth = size.width - 2 * insetPx
-                        val canvasHeight = size.height - 2 * insetPx
-
-                        val project: (Double, Double) -> Offset = { lat, lng ->
-                            val x = insetPx + (((lng - minLng) / lngRange) * canvasWidth).toFloat()
-                            val y = insetPx + (((maxLat - lat) / latRange) * canvasHeight).toFloat()
-                            Offset(x.coerceIn(insetPx, size.width - insetPx), y.coerceIn(insetPx, size.height - insetPx))
-                        }
-
-                        val pathPoints = fixes.map { project(it.lat, it.lng) }
-
-                        for (i in 0 until pathPoints.size - 1) {
-                            drawLine(
-                                color = pathColor,
-                                start = pathPoints[i],
-                                end = pathPoints[i + 1],
-                                strokeWidth = pathStrokeWidth,
-                                // Optional: dashed line, remove if solid line is preferred
-                                // pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f) 
-                            )
-                        }
-                    } else {
-                        val textLayoutResult = textMeasurer.measure(
-                            text = "No path data to display",
-                            style = TextStyle(color = Color.Black, fontSize = 16.sp, textAlign = TextAlign.Center),
-                            constraints = androidx.compose.ui.unit.Constraints(maxWidth = (size.width - 2 * insetPx).toInt())
-                        )
-                        drawText(
-                            textLayoutResult = textLayoutResult,
-                            topLeft = Offset(
-                                x = (size.width - textLayoutResult.size.width) / 2,
-                                y = (size.height - textLayoutResult.size.height) / 2
-                            )
-                        )
-                    }
-                }
+                // Use the new FallbackPathDisplay composable
+                FallbackPathDisplay(
+                    modifier = Modifier.fillMaxSize(),
+                    fixes = uiState.bikeData.ridePath ?: emptyList()
+                    // You can customize colors here if needed, e.g.:
+                    // backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
+                    // gridColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
+                    // slowColor = Color.Yellow,
+                    // fastColor = Color.Red,
+                    // textColor = MaterialTheme.colorScheme.onSurface
+                )
             }
 
             IconButton(
