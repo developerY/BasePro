@@ -40,7 +40,7 @@ import com.ylabz.basepro.core.model.yelp.BusinessInfo
 import kotlin.math.roundToInt
 
 @Composable
-fun MapPathScreen(
+fun MapPathScreenNOTUSED(
     fixes: List<GpsFix>,
     businesses: List<BusinessInfo>,
     placeName: String,

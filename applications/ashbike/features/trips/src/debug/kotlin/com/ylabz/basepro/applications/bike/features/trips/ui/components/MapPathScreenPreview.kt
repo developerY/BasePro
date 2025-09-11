@@ -3,6 +3,7 @@ package com.ylabz.basepro.applications.bike.features.trips.ui.components
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.res.stringResource
+import com.ylabz.basepro.applications.bike.features.core.ui.components.MapPathScreen
 import com.ylabz.basepro.applications.bike.features.trips.R
 import com.ylabz.basepro.core.model.location.GpsFix
 import com.ylabz.basepro.core.model.yelp.BusinessInfo

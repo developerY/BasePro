@@ -47,6 +47,7 @@ import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dial
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.SpeedAndProgressCard
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatsRow
 import com.ylabz.basepro.core.model.bike.RideState
+import com.ylabz.basepro.core.model.yelp.BusinessInfo // Added import
 import com.ylabz.basepro.core.ui.NavigationCommand
 
 @Composable
@@ -55,6 +56,9 @@ fun BikeDashboardContent(
     uiState: BikeUiState.Success,
     onBikeEvent: (BikeEvent) -> Unit,
     navTo: (NavigationCommand) -> Unit,
+    coffeeShops: List<BusinessInfo>, // Added parameter
+    placeName: String?, // Added parameter
+    onFindCafes: () -> Unit // Added parameter
 ) {
     var isMapPanelVisible by rememberSaveable { mutableStateOf(false) }
     val bikeRideInfo = uiState.bikeData
@@ -76,8 +80,8 @@ fun BikeDashboardContent(
 
     Box(modifier = modifier.fillMaxSize()) { // Wrap content in a Box
         Column(
-            modifier = Modifier 
-                .fillMaxSize() 
+            modifier = Modifier
+                .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -176,7 +180,10 @@ fun BikeDashboardContent(
             SlidableGoogleMap(
                 uiState = uiState,
                 onClose = { isMapPanelVisible = false },
-                showMapContent = false // Set to false to show green screen fallback
+                showMapContent = false, // Set to false to show green screen fallback
+                coffeeShops = coffeeShops, // Passed parameter
+                placeName = placeName, // Passed parameter
+                onFindCafes = onFindCafes // Passed parameter
             )
         }
     }

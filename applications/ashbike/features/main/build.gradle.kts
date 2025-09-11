@@ -43,6 +43,7 @@ android {
 dependencies {
     implementation(project(":applications:ashbike:features:settings"))
     implementation(project(":applications:ashbike:features:trips"))
+    implementation(project(":applications:ashbike:features:core"))
     implementation(project(":applications:ashbike:database"))
 
     implementation(project(":core:model"))
@@ -53,6 +54,7 @@ dependencies {
     implementation(project(":feature:heatlh"))
     implementation(project(":feature:nfc"))
     implementation(project(":feature:weather"))
+    implementation(project(":feature:places"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

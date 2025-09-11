@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.features.trips.ui.components
+package com.ylabz.basepro.applications.bike.features.core.ui.components
 
 ////import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextMeasurer
@@ -54,7 +55,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ylabz.basepro.applications.bike.features.trips.R
+import com.ylabz.basepro.applications.bike.features.core.R
 import com.ylabz.basepro.core.model.location.GpsFix
 import com.ylabz.basepro.core.model.yelp.BusinessInfo
 import kotlin.math.atan2
@@ -81,7 +82,7 @@ import kotlin.random.Random
  * @param placeName A descriptive name for the location, displayed at the top.
  */
 @Composable
-fun MapPathScreenNOUSE(
+fun MapPathScreen(
     fixes: List<GpsFix>,
     coffeeShops: List<BusinessInfo>,
     onFindCafes: () -> Unit,
@@ -233,6 +234,32 @@ fun MapPathScreenNOUSE(
 
 // --- Helper Composables & Drawing Functions ---
 
+private data class PathSegment(
+    val startOffset: Offset,
+    val endOffset: Offset,
+    val speedKmh: Double
+)
+
+private fun createPathSegment(
+    p0: GpsFix,
+    p1: GpsFix,
+    project: (Double, Double) -> Offset
+): PathSegment {
+    val distanceMeters = haversineMeters(p0.lat, p0.lng, p1.lat, p1.lng)
+    val timeSeconds = (p1.timeMs - p0.timeMs) / 1000.0
+
+    // FIX: Use the more reliable speed from the GpsFix data directly.
+    // We'll use the speed from the second point in the pair.
+    // val speedMps = p1.speedMps.toDouble()
+    val speedMps = if (timeSeconds > 0.1) distanceMeters / timeSeconds else 0.0 // does not work
+
+    return PathSegment(
+        startOffset = project(p0.lat, p0.lng),
+        endOffset = project(p1.lat, p1.lng),
+        speedKmh = speedMps * 3.6
+    )
+}
+
 @Composable
 private fun PlaceNameLabel(name: String, modifier: Modifier = Modifier) {
     Text(
@@ -263,55 +290,6 @@ private fun Compass(size: Dp, modifier: Modifier = Modifier) {
             modifier = Modifier.size(size)
         )
     }
-}
-
-@Composable
-private fun FindCafesButton(
-    cafesVisible: Boolean,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = modifier
-            .padding(8.dp)
-            .clip(CircleShape)
-            .background(Color.Black.copy(alpha = 0.4f))
-            .clickable(onClick = onClick)
-            .padding(8.dp)
-    ) {
-        Icon(
-            imageVector = Icons.Default.Coffee,
-            contentDescription = stringResource(R.string.feature_trips_map_cafes_button_content_desc),
-            tint = if (cafesVisible) MaterialTheme.colorScheme.primary else Color.White,
-            modifier = Modifier.size(24.dp)
-        )
-    }
-}
-
-private data class PathSegment(
-    val startOffset: Offset,
-    val endOffset: Offset,
-    val speedKmh: Double
-)
-
-private fun createPathSegment(
-    p0: GpsFix,
-    p1: GpsFix,
-    project: (Double, Double) -> Offset
-): PathSegment {
-    val distanceMeters = haversineMeters(p0.lat, p0.lng, p1.lat, p1.lng)
-    val timeSeconds = (p1.timeMs - p0.timeMs) / 1000.0
-
-    // FIX: Use the more reliable speed from the GpsFix data directly.
-    // We'll use the speed from the second point in the pair.
-    // val speedMps = p1.speedMps.toDouble()
-    val speedMps = if (timeSeconds > 0.1) distanceMeters / timeSeconds else 0.0 // does not work
-
-    return PathSegment(
-        startOffset = project(p0.lat, p0.lng),
-        endOffset = project(p1.lat, p1.lng),
-        speedKmh = speedMps * 3.6
-    )
 }
 
 private fun DrawScope.drawGrid(color: Color, rows: Int, cols: Int) {
@@ -414,7 +392,7 @@ private fun DrawScope.drawRidePath(
 
 @Composable
 private fun MapMarker(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     position: Offset,
     size: Dp,
     color: Color
@@ -514,7 +492,7 @@ private fun DistanceScale(
 
 // --- Math & Data ---
 // Make private
-fun haversineMeters(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
+private fun haversineMeters(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
     val r = 6_371_000.0 // Earth's radius in meters
     val dLat = Math.toRadians(lat2 - lat1)
     val dLng = Math.toRadians(lng2 - lng1)

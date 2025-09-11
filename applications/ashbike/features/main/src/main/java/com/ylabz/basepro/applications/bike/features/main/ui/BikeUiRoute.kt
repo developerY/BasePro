@@ -18,10 +18,16 @@ import com.ylabz.basepro.applications.bike.features.main.ui.components.ErrorScre
 import com.ylabz.basepro.applications.bike.features.main.ui.components.LoadingScreen
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.BikeDashboardContent
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.WaitingForGpsScreen
+import com.ylabz.basepro.applications.bike.features.trips.ui.components.haversineMeters
 import com.ylabz.basepro.core.ui.BikeScreen
 import com.ylabz.basepro.core.ui.NavigationCommand
 import com.ylabz.basepro.feature.heatlh.ui.HealthViewModel
 import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
+
+import com.ylabz.basepro.core.model.yelp.BusinessInfo // Ensure this import is present if not transitive
+import com.ylabz.basepro.feature.places.ui.CoffeeShopEvent
+import com.ylabz.basepro.feature.places.ui.CoffeeShopUIState
+import com.ylabz.basepro.feature.places.ui.CoffeeShopViewModel
 
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -29,49 +35,38 @@ import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
 @Composable
 fun BikeUiRoute(
     modifier: Modifier = Modifier,
-    navTo: (NavigationCommand) -> Unit, // <<< MODIFIED LINE
-    viewModel: BikeViewModel // <<< MODIFIED LINE: Accept BikeViewModel as a parameter
+    navTo: (NavigationCommand) -> Unit,
+    viewModel: BikeViewModel
 ) {
-    // DO NOT call hiltViewModel() for BikeViewModel here. Use the passed-in 'viewModel'.
-    // val bikeViewModelFromHilt = hiltViewModel<BikeViewModel>() // THIS LINE IS REMOVED/AVOIDED
-
-    // Other ViewModels can still be obtained via hiltViewModel if they are scoped appropriately
-    // and not meant to be the same instance as one from a parent composable.
     val healthViewModel = hiltViewModel<HealthViewModel>()
     val nfcViewModel = hiltViewModel<NfcViewModel>()
+    val coffeeShopViewModel = hiltViewModel<CoffeeShopViewModel>() // Added CoffeeShopViewModel
 
-    val bikeUiState by viewModel.uiState.collectAsState() // <<< MODIFIED LINE: Use the passed-in viewModel
+    val bikeUiState by viewModel.uiState.collectAsState()
+    val cafeUiState by coffeeShopViewModel.uiState.collectAsState() // Added Cafe UI State
 
-    // Log the instance hash code for confirmation (can be removed after verifying)
     Log.d(
         "BikeUiRoute_InstanceTest",
         "BikeUiRoute using BikeViewModel instance: ${viewModel.hashCode()}"
     )
-    // General state log for BikeUiRoute recomposition
     Log.d(
         "BikeUiRoute_StateLog",
-        "BikeUiRoute recomposing with bikeUiState: ${bikeUiState::class.java.simpleName}"
+        "BikeUiRoute recomposing with bikeUiState: ${bikeUiState::class.java.simpleName}, cafeUiState: ${cafeUiState::class.java.simpleName}"
     )
 
-
     val context = LocalContext.current
-    // rememberPermissionState for location, used by WaitingForGpsScreen's onRequestPermission callback
     val permissionState = rememberPermissionState(
         Manifest.permission.ACCESS_FINE_LOCATION
     )
 
-    // Event handler now uses the new navTo with NavigationCommand
     val eventHandler = { event: BikeEvent ->
         when (event) {
             is BikeEvent.NavigateToSettingsRequested -> {
                 val route = BikeScreen.SettingsBikeScreen.createRoute(event.cardKey)
                 Log.d("BikeUiRoute", "Requesting TAB navigation to: $route")
-                // Use the new command system
                 navTo(NavigationCommand.ToTab(route))
             }
-
             else -> {
-                // For all other events, pass them to the ViewModel
                 viewModel.onEvent(event)
             }
         }
@@ -92,13 +87,38 @@ fun BikeUiRoute(
         }
 
         is BikeUiState.Success -> {
-            // val bikeData = currentBikeUiState.bikeData // This line is no longer needed
+            val coffeeShops = when (val currentCafeUiState = cafeUiState) {
+                is CoffeeShopUIState.Success -> currentCafeUiState.coffeeShops
+                else -> emptyList()
+            }
+
+            val onFindCafes = {
+                val currentLocation = currentBikeUiState.bikeData.location
+                if (currentLocation != null && (currentLocation.latitude != 0.0 || currentLocation.longitude != 0.0)) {
+                    coffeeShopViewModel.onEvent(
+                        CoffeeShopEvent.FindCafesInArea(
+                            latitude = currentLocation.latitude,
+                            longitude = currentLocation.longitude,
+                            radius = 1000.0 // Radius in meters
+                        )
+                    )
+                } else {
+                    Log.d("BikeUiRoute", "Cannot find cafes: Location not available or is (0,0)")
+                    // Optionally, inform the user e.g., via a Toast or a Snackbar
+                }
+            }
+
+
+
             if (currentBikeUiState.bikeData.location != null && (currentBikeUiState.bikeData.location?.latitude != 0.0 || currentBikeUiState.bikeData.location?.longitude != 0.0)) {
                 BikeDashboardContent(
                     modifier = modifier.fillMaxSize(),
-                    uiState = currentBikeUiState, // Pass the whole UiState.Success object
-                    onBikeEvent = eventHandler, // Use the new eventHandler
-                    navTo = navTo // Pass the navTo lambda down
+                    uiState = currentBikeUiState,
+                    onBikeEvent = eventHandler,
+                    navTo = navTo,
+                    coffeeShops = coffeeShops, // Passed coffeeShops
+                    placeName = null, // Passed null for placeName, decide source later
+                    onFindCafes = onFindCafes as () -> Unit // Passed onFindCafes lambda
                 )
             } else {
                 WaitingForGpsScreen(
@@ -126,7 +146,6 @@ fun BikeUiRoute(
         }
 
         BikeUiState.Idle -> {
-            // Decided to show LoadingScreen for Idle as well, or define a specific IdleScreen
             LoadingScreen()
         }
     }

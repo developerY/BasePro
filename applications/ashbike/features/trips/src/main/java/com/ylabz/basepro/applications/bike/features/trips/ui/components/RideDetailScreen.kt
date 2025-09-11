@@ -37,7 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
 import com.ylabz.basepro.applications.bike.database.RideWithLocations
-import com.ylabz.basepro.applications.bike.features.core.ui.components.RidePathMap
+import com.ylabz.basepro.applications.bike.features.core.ui.components.MapPathScreen
 import com.ylabz.basepro.applications.bike.features.trips.R
 import com.ylabz.basepro.applications.bike.features.trips.ui.TripsEvent
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.maps.lookupPlaceName
@@ -182,14 +182,7 @@ fun RideDetailScreen(
             shape = RoundedCornerShape(12.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
-            /*MapPathScreen(
-                fixes = fixes,
-                placeName = placeName ?: "",
-                coffeeShops = coffeeShops,
-                onFindCafes = onFindCafes
-            )*/
-
-            RidePathMap(
+            MapPathScreen(
                 fixes = fixes,
                 placeName = placeName ?: "",
                 coffeeShops = coffeeShops,

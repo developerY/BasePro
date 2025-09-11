@@ -42,7 +42,10 @@ fun BikeDashboardContentPreviewConnected() {
         BikeDashboardContent(
             uiState = uiState,
             onBikeEvent = { },
-            navTo = { }
+            navTo = { },
+            placeName = "Sample Place",
+            onFindCafes = { },
+            coffeeShops = emptyList()
         )
     }
 }
@@ -78,7 +81,10 @@ fun BikeDashboardContentPreviewDisconnected() {
         BikeDashboardContent(
             uiState = uiState,
             onBikeEvent = { },
-            navTo = { }
+            navTo = { },
+            placeName = "Sample Place",
+            onFindCafes = { },
+            coffeeShops = emptyList()
         )
     }
 }

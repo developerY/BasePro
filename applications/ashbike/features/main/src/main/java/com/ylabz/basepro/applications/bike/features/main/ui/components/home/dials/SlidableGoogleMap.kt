@@ -29,17 +29,22 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
+import com.ylabz.basepro.applications.bike.features.core.ui.components.MapPathScreen
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
 // GpsFix import might not be strictly needed here anymore if not directly used,
 // but FallbackPathDisplay uses it.
-import com.ylabz.basepro.core.model.location.GpsFix 
+import com.ylabz.basepro.core.model.location.GpsFix
+import com.ylabz.basepro.core.model.yelp.BusinessInfo // Added import
 
 @Composable
 fun SlidableGoogleMap(
     modifier: Modifier = Modifier,
     uiState: BikeUiState.Success,
     onClose: () -> Unit,
-    showMapContent: Boolean = true
+    showMapContent: Boolean = true,
+    placeName: String? = null, // Added parameter
+    coffeeShops: List<BusinessInfo>, // Added parameter
+    onFindCafes: () -> Unit // Added parameter
 ) {
     Card(
         modifier = modifier
@@ -80,17 +85,23 @@ fun SlidableGoogleMap(
                     )
                 }
             } else {
+                MapPathScreen(
+                    fixes = uiState.bikeData.ridePath ?: emptyList(),
+                    placeName = placeName ?: "",
+                    coffeeShops = coffeeShops, // Passed parameter
+                    onFindCafes = onFindCafes // Passed parameter
+                )
                 // Use the new FallbackPathDisplay composable
-                FallbackPathDisplay(
+                /*FallbackPathDisplay(
                     modifier = Modifier.fillMaxSize(),
-                    fixes = uiState.bikeData.ridePath ?: emptyList()
+                    fixes =
                     // You can customize colors here if needed, e.g.:
                     // backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
                     // gridColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
                     // slowColor = Color.Yellow,
                     // fastColor = Color.Red,
                     // textColor = MaterialTheme.colorScheme.onSurface
-                )
+                )*/
             }
 
             IconButton(
