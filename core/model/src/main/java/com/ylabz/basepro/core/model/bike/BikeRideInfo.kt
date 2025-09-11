@@ -1,6 +1,7 @@
 package com.ylabz.basepro.core.model.bike
 
 import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.core.model.location.GpsFix // Added import
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
@@ -8,7 +9,6 @@ import kotlinx.collections.immutable.ImmutableMap
 enum class RideState {
     NotStarted,
     Riding,
-
     //Paused,
     Ended
 }
@@ -46,7 +46,8 @@ data class BikeRideInfo(
     val rideState: RideState = RideState.NotStarted,
     val bikeWeatherInfo: BikeWeatherInfo? = null,
     val lastGpsUpdateTime: Long = 0L,
-    val gpsUpdateIntervalMillis: Long = 0L
+    val gpsUpdateIntervalMillis: Long = 0L,
+    val ridePath: List<GpsFix> = emptyList() // Added ridePath field
 )
 
 
