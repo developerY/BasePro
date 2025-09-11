@@ -43,6 +43,7 @@ android {
 
 dependencies {
     implementation(project(":applications:ashbike:database"))
+    implementation(project(":applications:ashbike:features:core"))
     implementation(project(":feature:heatlh"))
     implementation(project(":core:ui"))
     implementation(project(":core:data"))

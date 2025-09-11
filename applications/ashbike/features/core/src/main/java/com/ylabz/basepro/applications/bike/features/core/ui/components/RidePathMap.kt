@@ -28,7 +28,6 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.runtime.remember
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.*
-import com.ylabz.basepro.applications.bike.features.trips.ui.components.haversineMeters
 import com.ylabz.basepro.core.model.location.GpsFix
 import com.ylabz.basepro.core.model.yelp.BusinessInfo
 import kotlin.math.*
@@ -115,6 +114,18 @@ fun RidePathMap(
 // - PathSegment data class, createPathSegment function
 // - drawGrid, generateRandomPastelColor, drawCafeMarkers, drawRidePath
 // - haversineMeters, niceDistance
+
+private fun haversineMeters(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
+    val r = 6_371_000.0 // Earth's radius in meters
+    val dLat = Math.toRadians(lat2 - lat1)
+    val dLng = Math.toRadians(lng2 - lng1)
+    val a =
+        sin(dLat / 2).pow(2) + cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(dLng / 2).pow(
+            2
+        )
+    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    return r * c
+}
 
 private data class PathSegment(
     val startOffset: Offset,

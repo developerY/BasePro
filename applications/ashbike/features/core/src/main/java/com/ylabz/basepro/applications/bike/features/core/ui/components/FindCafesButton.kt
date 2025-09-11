@@ -16,7 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.applications.bike.features.trips.R
+import com.ylabz.basepro.applications.bike.features.core.R
 
 @Composable
 fun FindCafesButton(

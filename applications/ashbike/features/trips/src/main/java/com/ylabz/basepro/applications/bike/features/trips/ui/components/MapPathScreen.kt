@@ -513,7 +513,7 @@ private fun DistanceScale(
 
 
 // --- Math & Data ---
-
+// Make private
 fun haversineMeters(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
     val r = 6_371_000.0 // Earth's radius in meters
     val dLat = Math.toRadians(lat2 - lat1)

@@ -15,6 +15,16 @@ data class GpsFix(
     val lng: Double,
     val timeMs: Long,
     val altitude: Double? = null,
-    val speed: Float? = null,
+    val speed: Float? = null, // meters/second
     val accuracy: Float? = null
 )
+//Old
+/*
+data class GpsFix(
+    val lat: Double,
+    val lng: Double,
+    val elevation: Float,
+    val timeMs: Long,
+    val speedMps: Float
+)
+*/

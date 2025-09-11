@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.ylabz.basepro.applications.bike.features.main"
+    namespace = "com.ylabz.basepro.applications.bike.features.core"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
@@ -41,15 +41,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":applications:ashbike:features:settings"))
-    implementation(project(":applications:ashbike:features:trips"))
-    implementation(project(":applications:ashbike:database"))
-
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
     implementation(project(":core:data"))
-
-
     implementation(project(":feature:heatlh"))
     implementation(project(":feature:nfc"))
     implementation(project(":feature:weather"))
