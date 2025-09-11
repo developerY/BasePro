@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/applications/ashbike/benchmark" />
             <option value="$PROJECT_DIR$/applications/ashbike/database" />
             <option value="$PROJECT_DIR$/applications/ashbike/features" />
+            <option value="$PROJECT_DIR$/applications/ashbike/features/core" />
             <option value="$PROJECT_DIR$/applications/ashbike/features/main" />
             <option value="$PROJECT_DIR$/applications/ashbike/features/settings" />
             <option value="$PROJECT_DIR$/applications/ashbike/features/trips" />
