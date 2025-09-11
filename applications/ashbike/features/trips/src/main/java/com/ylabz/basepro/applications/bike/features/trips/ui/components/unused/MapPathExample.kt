@@ -34,8 +34,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.applications.bike.features.trips.ui.components.GpsFix
 import com.ylabz.basepro.applications.bike.features.trips.ui.components.haversineMeters
+import com.ylabz.basepro.core.model.location.GpsFix
 import com.ylabz.basepro.core.model.yelp.BusinessInfo
 import kotlin.math.roundToInt
 

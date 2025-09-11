@@ -56,15 +56,6 @@ data class LatLngWithElev(
     val elevation: Float
 )
 
-data class GpsFix(
-    val lat: Double,
-    val lng: Double,
-    val elevation: Float,
-    val timeMs: Long,
-    val speedMps: Float
-)
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RideDetailScreen(

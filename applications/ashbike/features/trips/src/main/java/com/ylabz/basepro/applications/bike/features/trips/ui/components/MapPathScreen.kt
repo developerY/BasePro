@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ylabz.basepro.applications.bike.features.trips.R
+import com.ylabz.basepro.core.model.location.GpsFix
 import com.ylabz.basepro.core.model.yelp.BusinessInfo
 import kotlin.math.atan2
 import kotlin.math.cos
