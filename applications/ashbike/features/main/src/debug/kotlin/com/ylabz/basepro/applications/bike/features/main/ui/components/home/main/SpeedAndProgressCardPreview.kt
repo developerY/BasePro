@@ -67,7 +67,8 @@ fun FinalSpeedometerCardPreview() {
                 onBikeEvent = { },
                 navTo = { },
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                onShowMapPanel = { }
             )
         }
     }

@@ -1,15 +1,12 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.main
 
-// Explicitly import the top-level AnimatedVisibility if not already done, 
-// though qualifying the call is more robust for this specific case.
-import androidx.compose.animation.AnimatedVisibility // General animation import
+import androidx.compose.animation.AnimatedVisibility 
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+// Removed slideInVertically and slideOutVertically as they are no longer used here
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.remember // Keep for weatherIconsVisible
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +34,7 @@ import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.GpsLevelIndicator
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.RideMap
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.SlidableGoogleMap
+// SlidableGoogleMap is no longer directly used here
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.SpeedometerWithCompassOverlay
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path.BikePathWithControls
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.weather.WeatherBadgeWithDetails
@@ -52,9 +49,10 @@ fun SpeedAndProgressCard(
     navTo: (NavigationCommand) -> Unit, 
     containerColor: Color,
     contentColor: Color,
+    onShowMapPanel: () -> Unit // New parameter to trigger map panel from parent
 ) {
     var weatherIconsVisible by remember { mutableStateOf(false) }
-    var isMapPanelVisible by remember { mutableStateOf(false) } // State for map panel visibility
+    // isMapPanelVisible state is removed, now managed by parent
 
     val bikeData = uiState.bikeData
     val currentSpeed = bikeData.currentSpeed
@@ -94,7 +92,7 @@ fun SpeedAndProgressCard(
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(top = 8.dp, start = 16.dp), 
-                onMapIconClick = { isMapPanelVisible = true } 
+                onMapIconClick = onShowMapPanel // Use the passed-in callback
             )
 
             Icon(
@@ -117,10 +115,9 @@ fun SpeedAndProgressCard(
                     .padding(top = 8.dp, end = 16.dp)
             )
 
-            // Weather Icons Visibility - uses ColumnScope.AnimatedVisibility via cardScope receiver
             cardScope.AnimatedVisibility(
                 visible = weatherIconsVisible,
-                modifier = Modifier.align(Alignment.TopStart), // ColumnScope.align
+                modifier = Modifier.align(Alignment.TopStart), 
                 enter = fadeIn(animationSpec = tween(300)) + slideInHorizontally(initialOffsetX = { -it }),
                 exit = fadeOut(animationSpec = tween(300)) + slideOutHorizontally(targetOffsetX = { -it })
             ) {
@@ -137,7 +134,7 @@ fun SpeedAndProgressCard(
 
             cardScope.AnimatedVisibility(
                 visible = weatherIconsVisible,
-                modifier = Modifier.align(Alignment.TopEnd), // ColumnScope.align
+                modifier = Modifier.align(Alignment.TopEnd), 
                 enter = fadeIn(animationSpec = tween(300)) + slideInHorizontally(initialOffsetX = { it }),
                 exit = fadeOut(animationSpec = tween(300)) + slideOutHorizontally(targetOffsetX = { it })
             ) {
@@ -150,7 +147,7 @@ fun SpeedAndProgressCard(
 
             Box(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter) // BoxScope.align
+                    .align(Alignment.BottomCenter) 
                     .fillMaxWidth()
                     .padding(16.dp),
                 contentAlignment = Alignment.Center
@@ -161,19 +158,8 @@ fun SpeedAndProgressCard(
                 )
             }
 
-            // Slidable Google Map Panel - explicitly use top-level AnimatedVisibility
-            androidx.compose.animation.AnimatedVisibility(
-                visible = isMapPanelVisible,
-                modifier = Modifier.align(Alignment.BottomCenter), // BoxScope.align
-                enter = slideInVertically(initialOffsetY = { fullHeight -> fullHeight }) + fadeIn(),
-                exit = slideOutVertically(targetOffsetY = { fullHeight -> fullHeight }) + fadeOut()
-            ) {
-                SlidableGoogleMap(
-                    uiState = uiState,
-                    onClose = { isMapPanelVisible = false },
-                    showMapContent = false // <--- Set to false to show green screen fallback
-                )
-            }
+            // The AnimatedVisibility block for SlidableGoogleMap has been removed from here.
+            // It is now managed by BikeDashboardContent.kt
         }
     }
 }

@@ -1,16 +1,15 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home
 
-//import androidx.compose.ui.tooling.preview.Preview
-// StatItem no longer needed here as StatsSection builds its own
-// import com.ylabz.basepro.core.ui.theme.iconColorElevation // Not used directly here
-// import com.ylabz.basepro.core.ui.theme.iconColorSpeed // Not used directly here
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.main.R
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
+import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.SlidableGoogleMap
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.StatsSection
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.StatsSectionType
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.bike.BikeBatteryLevels
@@ -52,11 +52,12 @@ import com.ylabz.basepro.core.ui.NavigationCommand
 @Composable
 fun BikeDashboardContent(
     modifier: Modifier = Modifier,
-    uiState: BikeUiState.Success, // Changed parameter
+    uiState: BikeUiState.Success,
     onBikeEvent: (BikeEvent) -> Unit,
-    navTo: (NavigationCommand) -> Unit, // <<< MODIFIED LINE
+    navTo: (NavigationCommand) -> Unit,
 ) {
-    val bikeRideInfo = uiState.bikeData // Access bikeData from uiState
+    var isMapPanelVisible by rememberSaveable { mutableStateOf(false) }
+    val bikeRideInfo = uiState.bikeData
     val view = LocalView.current
     DisposableEffect(view) {
         view.keepScreenOn = true
@@ -65,8 +66,6 @@ fun BikeDashboardContent(
 
     val isBikeConnected = bikeRideInfo.isBikeConnected
     val batteryLevel = bikeRideInfo.batteryLevel
-    bikeRideInfo.motorPower
-    // heartRate and calories are now handled within StatsSection based on uiState
     val rideState = bikeRideInfo.rideState
     val currRiding = rideState == RideState.Riding
 
@@ -74,102 +73,111 @@ fun BikeDashboardContent(
         if (currRiding) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
     val contentColor =
         if (currRiding) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
-    if (currRiding) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
 
-
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        SpeedAndProgressCard(
-            uiState = uiState, // Pass the full uiState
-            onBikeEvent = onBikeEvent,
-            navTo = navTo, // Pass down the updated navTo
-            containerColor = containerColor,
-            contentColor = contentColor
-        )
-
-        StatsRow(
-            uiState = uiState,
-            // onEvent = { /* No events from StatsRow to handle for now */ }
-        )
-
-        // Health Stats Section - uses uiState directly
-        StatsSection(
-            uiState = uiState,
-            sectionType = StatsSectionType.HEALTH,
-            onEvent = onBikeEvent
-        )
-
-        var expanded by rememberSaveable { mutableStateOf(false) }
-        Card(
-            modifier = Modifier // Corrected to use a local Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp), // Consider if this padding is needed or if StatsSection handles it
-            shape = RoundedCornerShape(8.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow) // Consistent card bg
+    Box(modifier = modifier.fillMaxSize()) { // Wrap content in a Box
+        Column(
+            modifier = Modifier 
+                .fillMaxSize() 
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { expanded = !expanded }
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = stringResource(R.string.feature_main_ebike_stats_title),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface // Ensure text color is from theme
-                    )
-                    Icon(
-                        imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
-                        contentDescription = if (expanded) stringResource(R.string.feature_main_action_collapse) else stringResource(
-                            R.string.feature_main_action_expand
-                        ),
-                        tint = MaterialTheme.colorScheme.onSurface // Ensure icon color is from theme
-                    )
-                }
+            SpeedAndProgressCard(
+                uiState = uiState,
+                onBikeEvent = onBikeEvent,
+                navTo = navTo,
+                containerColor = containerColor,
+                contentColor = contentColor,
+                onShowMapPanel = { isMapPanelVisible = true } // Pass callback to show map
+            )
 
-                AnimatedVisibility(
-                    visible = expanded,
-                    enter = expandVertically() + fadeIn(),
-                    exit = shrinkVertically() + fadeOut()
-                ) {
-                    Column(
+            StatsRow(
+                uiState = uiState,
+            )
+
+            StatsSection(
+                uiState = uiState,
+                sectionType = StatsSectionType.HEALTH,
+                onEvent = onBikeEvent
+            )
+
+            var expanded by rememberSaveable { mutableStateOf(false) }
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                shape = RoundedCornerShape(8.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
+            ) {
+                Column {
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(
-                                horizontal = 16.dp,
-                                vertical = 8.dp
-                            ), // Consider padding with StatsSection
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                            .clickable { expanded = !expanded }
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        // EBike Stats Section - uses uiState directly
-                        StatsSection(
-                            uiState = uiState,
-                            sectionType = StatsSectionType.EBIKE,
-                            onEvent = onBikeEvent
+                        Text(
+                            text = stringResource(R.string.feature_main_ebike_stats_title),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
+                        Icon(
+                            imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+                            contentDescription = if (expanded) stringResource(R.string.feature_main_action_collapse) else stringResource(
+                                R.string.feature_main_action_expand
+                            ),
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
 
-                        BikeBatteryLevels(
-                            isConnected = isBikeConnected,
-                            batteryLevel = batteryLevel,
-                            onConnectClick = {
-                                // This would typically trigger an event to connect the bike
-                                // For preview, you might toggle a state if this were in a ViewModel
-                            }
-                        )
+                    AnimatedVisibility(
+                        visible = expanded,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut()
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    horizontal = 16.dp,
+                                    vertical = 8.dp
+                                ),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            StatsSection(
+                                uiState = uiState,
+                                sectionType = StatsSectionType.EBIKE,
+                                onEvent = onBikeEvent
+                            )
+
+                            BikeBatteryLevels(
+                                isConnected = isBikeConnected,
+                                batteryLevel = batteryLevel,
+                                onConnectClick = { /* TODO */ }
+                            )
+                        }
                     }
                 }
             }
+        }
+
+        // Slidable Google Map Panel, aligned to the bottom of the Box
+        androidx.compose.animation.AnimatedVisibility(
+            visible = isMapPanelVisible,
+            modifier = Modifier.align(Alignment.BottomCenter), // Ensures it's at the bottom of the Box
+            enter = slideInVertically(initialOffsetY = { fullHeight -> fullHeight }) + fadeIn(),
+            exit = slideOutVertically(targetOffsetY = { fullHeight -> fullHeight }) + fadeOut()
+        ) {
+            SlidableGoogleMap(
+                uiState = uiState,
+                onClose = { isMapPanelVisible = false },
+                showMapContent = false // Set to false to show green screen fallback
+            )
         }
     }
 }
