@@ -1,12 +1,15 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.main
 
-//import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.animation.AnimatedVisibility
+// Explicitly import the top-level AnimatedVisibility if not already done, 
+// though qualifying the call is more robust for this specific case.
+import androidx.compose.animation.AnimatedVisibility // General animation import
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,6 +37,7 @@ import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.GpsLevelIndicator
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.RideMap
+import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.SlidableGoogleMap
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.SpeedometerWithCompassOverlay
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.path.BikePathWithControls
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.weather.WeatherBadgeWithDetails
@@ -43,15 +47,16 @@ import com.ylabz.basepro.feature.weather.ui.components.combine.WindDirectionDial
 @Composable
 fun SpeedAndProgressCard(
     modifier: Modifier = Modifier.fillMaxSize(),
-    uiState: BikeUiState.Success, // Changed parameter
+    uiState: BikeUiState.Success, 
     onBikeEvent: (BikeEvent) -> Unit,
-    navTo: (NavigationCommand) -> Unit, // <<< MODIFIED LINE
+    navTo: (NavigationCommand) -> Unit, 
     containerColor: Color,
     contentColor: Color,
 ) {
     var weatherIconsVisible by remember { mutableStateOf(false) }
+    var isMapPanelVisible by remember { mutableStateOf(false) } // State for map panel visibility
 
-    val bikeData = uiState.bikeData // Access bikeData from uiState
+    val bikeData = uiState.bikeData
     val currentSpeed = bikeData.currentSpeed
     val heading = bikeData.heading
     val weather = bikeData.bikeWeatherInfo
@@ -67,14 +72,14 @@ fun SpeedAndProgressCard(
             contentColor = contentColor
         )
     ) {
-        val cardScope = this
+        val cardScope = this // 'this' is ColumnScope from Card
 
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize() // 'this' is BoxScope here
         ) {
             SpeedometerWithCompassOverlay(
                 currentSpeed = currentSpeed.toFloat(),
-                maxSpeed = 60f, // Consider making this dynamic if needed
+                maxSpeed = 60f, 
                 heading = heading,
                 modifier = Modifier
                     .fillMaxSize()
@@ -82,14 +87,14 @@ fun SpeedAndProgressCard(
                 contentColor = contentColor
             )
 
-            // RideMap now only needs uiState and onEvent
             RideMap(
                 uiState = uiState,
-                onEvent = onBikeEvent, // Correctly passing onBikeEvent
-                navTo = navTo, // MODIFIED: Pass navTo instead of onEvent
+                onEvent = onBikeEvent, 
+                navTo = navTo, 
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .padding(top = 8.dp, end = 16.dp)
+                    .padding(top = 8.dp, start = 16.dp), 
+                onMapIconClick = { isMapPanelVisible = true } 
             )
 
             Icon(
@@ -103,26 +108,26 @@ fun SpeedAndProgressCard(
                     .clickable { weatherIconsVisible = !weatherIconsVisible }
             )
 
-            // GpsLevelIndicator now only needs uiState and onEvent
             GpsLevelIndicator(
                 uiState = uiState,
-                onEvent = onBikeEvent, // Correctly passing onBikeEvent
-                navTo = navTo, // MODIFIED: Pass navTo instead of onEvent
+                onEvent = onBikeEvent, 
+                navTo = navTo, 
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = 8.dp, end = 16.dp)
             )
 
+            // Weather Icons Visibility - uses ColumnScope.AnimatedVisibility via cardScope receiver
             cardScope.AnimatedVisibility(
                 visible = weatherIconsVisible,
-                modifier = Modifier.align(Alignment.TopStart),
+                modifier = Modifier.align(Alignment.TopStart), // ColumnScope.align
                 enter = fadeIn(animationSpec = tween(300)) + slideInHorizontally(initialOffsetX = { -it }),
                 exit = fadeOut(animationSpec = tween(300)) + slideOutHorizontally(targetOffsetX = { -it })
             ) {
                 Box(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .size(48.dp) // Consider adjusting size if necessary
+                        .padding(start = 56.dp, top = 8.dp) 
+                        .size(48.dp)
                 ) {
                     weather?.let {
                         WindDirectionDialWithSpeed(degree = it.windDegree, speed = it.windSpeed)
@@ -132,11 +137,11 @@ fun SpeedAndProgressCard(
 
             cardScope.AnimatedVisibility(
                 visible = weatherIconsVisible,
-                modifier = Modifier.align(Alignment.TopEnd),
+                modifier = Modifier.align(Alignment.TopEnd), // ColumnScope.align
                 enter = fadeIn(animationSpec = tween(300)) + slideInHorizontally(initialOffsetX = { it }),
                 exit = fadeOut(animationSpec = tween(300)) + slideOutHorizontally(targetOffsetX = { it })
             ) {
-                Box(modifier = Modifier.padding(16.dp)) {
+                Box(modifier = Modifier.padding(end=56.dp, top=8.dp)) { 
                     weather?.let {
                         WeatherBadgeWithDetails(weatherInfo = it)
                     }
@@ -145,15 +150,28 @@ fun SpeedAndProgressCard(
 
             Box(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
+                    .align(Alignment.BottomCenter) // BoxScope.align
                     .fillMaxWidth()
                     .padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {
                 BikePathWithControls(
-                    uiState = uiState, // Just pass the state object
+                    uiState = uiState, 
                     onBikeEvent = onBikeEvent,
-                    //navTo = navTo // BikePathWithControls might need its own navTo if it navigates
+                )
+            }
+
+            // Slidable Google Map Panel - explicitly use top-level AnimatedVisibility
+            androidx.compose.animation.AnimatedVisibility(
+                visible = isMapPanelVisible,
+                modifier = Modifier.align(Alignment.BottomCenter), // BoxScope.align
+                enter = slideInVertically(initialOffsetY = { fullHeight -> fullHeight }) + fadeIn(),
+                exit = slideOutVertically(targetOffsetY = { fullHeight -> fullHeight }) + fadeOut()
+            ) {
+                SlidableGoogleMap(
+                    uiState = uiState,
+                    onClose = { isMapPanelVisible = false },
+                    showMapContent = false // <--- Set to false to show green screen fallback
                 )
             }
         }
