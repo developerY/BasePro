@@ -64,7 +64,7 @@ playServicesCodeScanner = "16.1.0" # QR Scanner
 
 compileSdk = "36"
 targetSdk = "35"
-minSdk = "31" # "34" # ADDED
+minSdk = "34" # "31/34"
 lifecycleService = "2.9.3"
 # firebaseCrashlytics = "19.4.4" # Removed, BoM will manage
 firebaseBom = "34.2.0" # Added Firebase BoM version
