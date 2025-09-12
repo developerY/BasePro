@@ -39,8 +39,8 @@ android {
         applicationId = "com.ylabz.basepro.applications.bike"
         minSdk = libs.versions.minSdk.get().toInt() // UPDATED
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 7
-        versionName = "0.1.1"
+        versionCode = 9
+        versionName = "0.1.9"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
