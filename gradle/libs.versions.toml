@@ -71,11 +71,11 @@ firebaseBom = "34.2.0" # Added Firebase BoM version
 googleGmsGoogleServices = "4.4.3"
 googleFirebaseCrashlytics = "3.0.6"
 
+kotlinxSerializationCore = "1.9.0"
 # Nav 3
 nav3Core = "1.0.0-alpha09"
-lifecycleViewmodelNav3 = "1.0.0-SNAPSHOT" # This is the latest version for this artifact
-kotlinxSerializationCore = "1.9.0"
-material3AdaptiveNav3 = "1.0.0-SNAPSHOT"
+lifecycleViewmodelNav3 = "1.0.0-alpha04" # This is the latest version for this artifact
+material3AdaptiveNav3 = "1.0.0-alpha02"
 
 uiautomator = "2.3.0"
 

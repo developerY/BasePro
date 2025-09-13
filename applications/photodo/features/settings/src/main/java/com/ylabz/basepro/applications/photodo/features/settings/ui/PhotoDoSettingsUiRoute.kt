@@ -6,8 +6,8 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun PhotoDoSettingsUiRoute(
-    modifier: Modifier = Modifier,
-    navTo: (String) -> Unit
+    modifier: Modifier = Modifier
+    // viewModel: PhotoDoSettingsViewModel // Example: if you add a ViewModel
 ) {
     // Placeholder UI for PhotoDo Settings
     Text(modifier = modifier, text = "PhotoDo Settings Feature Screen")

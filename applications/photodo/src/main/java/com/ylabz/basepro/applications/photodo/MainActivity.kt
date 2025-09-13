@@ -13,6 +13,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.ylabz.basepro.applications.photodo.ui.nav3.PhotoDoAppNav3
 import com.ylabz.basepro.applications.photodo.ui.navigation.root.RootNavGraph
 import com.ylabz.basepro.applications.photodo.ui.theme.BaseProTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,12 +25,20 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             BaseProTheme {
+
+                // Bottom bar
+
+
+
+                // PhotoDoAppNav3() // Main Composable for Nav3
+                /*
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+
                     Greeting(
                         name = "Android",
                         modifier = Modifier.padding(innerPadding)
                     )
-                }
+                }*/
             }
         }
     }

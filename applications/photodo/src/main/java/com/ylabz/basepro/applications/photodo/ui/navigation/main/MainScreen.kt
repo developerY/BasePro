@@ -4,13 +4,13 @@ package com.ylabz.basepro.applications.photodo.ui.navigation.main
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.ylabz.basepro.applications.photodo.ui.navigation.graphs.photodoNavGraph
 import com.ylabz.basepro.core.ui.RxDigitaScreen
 
 
@@ -39,11 +39,12 @@ fun MainScreen(
             startDestination = RxDigitaScreen.HomeRxDigitaScreen.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            photodoNavGraph(
+            // homeNavGraph(navController = navController, bikeViewModel = bikeViewModel){Text("MainScreen")}
+            /*photodoNavGraph(
                 modifier = Modifier,
                 navHostController = navController,
                 //bikeViewModel = rxDigitaViewModel // <<< MODIFIED LINE: Pass the bikeViewModel instance
-            )
+            )*/
         }
     }
 }
