@@ -8,11 +8,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun PhotoDoHomeUiRoute(navTo: (String) -> Unit) {
+fun PhotoDoDetailUiRoute(photoId: String) {
+    // This is where you would fetch and display the full details for the given photoId
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text("Select an item from the list")
+        Text(text = "Details for Photo ID: $photoId")
     }
 }
