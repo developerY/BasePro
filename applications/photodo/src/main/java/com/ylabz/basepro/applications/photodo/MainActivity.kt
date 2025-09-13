@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
 
                 // Bottom bar
 
-
+                PhotoDoApp()
 
                 // PhotoDoAppNav3() // Main Composable for Nav3
                 /*

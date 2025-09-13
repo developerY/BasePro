@@ -74,8 +74,9 @@ googleFirebaseCrashlytics = "3.0.6"
 kotlinxSerializationCore = "1.9.0"
 # Nav 3
 nav3Core = "1.0.0-alpha09"
-lifecycleViewmodelNav3 = "1.0.0-alpha04" # This is the latest version for this artifact
-material3AdaptiveNav3 = "1.0.0-alpha02"
+lifecycleViewmodelNav3 = "1.0.0-alpha04" # NOT "2.10.0-alpha04" #
+# "1.0.0-alpha02" # This is the latest version for this artifact but not compile
+material3AdaptiveNav3 = "1.0.0-SNAPSHOT"
 
 uiautomator = "2.3.0"
 
