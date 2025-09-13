@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose) // Added Kotlin Compose Plugin
     alias(libs.plugins.ksp)
     alias(libs.plugins.mapsplatform.secrets)
 }
@@ -31,11 +32,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_21 // Aligned with feature:nav3
+        targetCompatibility = JavaVersion.VERSION_21 // Aligned with feature:nav3
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "21" // Aligned with feature:nav3 (will use jvmToolchain if this causes issues)
     }
 }
 
@@ -53,14 +54,16 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
-    implementation(project(":applications:ashbike:features:main"))
+    // implementation(project(":applications:ashbike:features:main")) // Commented out, seems unrelated to PhotoDo settings
     implementation(project(":core:ui"))
     ksp(libs.hilt.android.compiler)   // Hilt compiler dependency for annotation processing
     // Hilt Dependency Injection
     // kapt(libs.hilt.compiler)
 
-    // Compose Navigation
-    implementation(libs.androidx.navigation.compose) // Added Compose Navigation dependency with safe args plugin
+    // Navigation
+    implementation(libs.androidx.navigation3.runtime) // Added Nav3 Runtime
+    // libs.androidx.navigation.compose might be legacy if Nav3 is used for invocation
+    implementation(libs.androidx.navigation.compose) 
     implementation(libs.hilt.navigation.compose)
 
     // Icons

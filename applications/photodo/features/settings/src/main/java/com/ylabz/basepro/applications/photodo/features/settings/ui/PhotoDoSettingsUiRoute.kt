@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun PhotoDoSettingsUiRoute(
-    modifier: Modifier = Modifier
+    modifier: Modifier // Default value removed
     // viewModel: PhotoDoSettingsViewModel // Example: if you add a ViewModel
 ) {
     // Placeholder UI for PhotoDo Settings

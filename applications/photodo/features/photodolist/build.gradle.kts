@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose) // Added Kotlin Compose Plugin
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
 }
@@ -58,8 +59,10 @@ dependencies {
     // Hilt Dependency Injection
     // kapt(libs.hilt.compiler)
 
-    // Compose Navigation
-    implementation(libs.androidx.navigation.compose) // Added Compose Navigation dependency with safe args plugin
+    // Navigation
+    implementation(libs.androidx.navigation3.runtime) // Added Nav3 Runtime
+    // libs.androidx.navigation.compose might be legacy if Nav3 is used for invocation
+    implementation(libs.androidx.navigation.compose) 
     implementation(libs.hilt.navigation.compose)
 
     // Icons

@@ -71,6 +71,7 @@ fun PhotoDoAppNav3(modifier: Modifier = Modifier) {
                 entry<PhotoDoSettingsSectionKey> {
                     // val settingsViewModel = hiltViewModel<PhotoDoSettingsViewModel>() // Assuming PhotoDoSettingsViewModel
                     PhotoDoSettingsUiRoute(
+                        modifier = Modifier.padding(paddingValues),
                         // viewModel = settingsViewModel // Pass ViewModel if needed
                     )
                 }
