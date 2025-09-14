@@ -97,11 +97,11 @@ fun PhotoDoApp() {
 
                 entry<PhotoDoDetailKey>(
                     metadata = ListDetailSceneStrategy.detailPane()
-                ) { backStackEntry ->
-                    // val navKey = backStackEntry.getValue<PhotoDoDetailKey>()
-                    PhotoDoDetailUiRoute( 
+                ) { detailKey -> // <-- Change the parameter name here
+                    // 'detailKey' is already the PhotoDoDetailKey object.
+                    PhotoDoDetailUiRoute(
                         modifier = Modifier,
-                        photoId = "0" //navKey.photoDoId
+                        photoId = detailKey.photoDoId // <-- Now you can access its properties directly
                     )
                 }
 
