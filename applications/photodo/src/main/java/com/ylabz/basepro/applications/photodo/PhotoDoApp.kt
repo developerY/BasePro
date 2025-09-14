@@ -5,10 +5,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material3.*
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
@@ -33,25 +31,35 @@ import com.ylabz.basepro.applications.photodo.ui.navigation.SettingsKey
 import com.ylabz.basepro.applications.photodo.ui.navigation.components.HomeBottomBarNav3
 import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackStack
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoDoApp() {
     val topLevelBackStack = remember { TopLevelBackStack<NavKey>(HomeFeedKey) }
     val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
-    // Get an instance of the ViewModel here
     val photoDoListViewModel: PhotoDoListViewModel = hiltViewModel()
 
     Scaffold(
+        // Add the TopAppBar
+        topBar = {
+            TopAppBar(
+                title = { Text("PhotoDo") },
+                actions = {
+                    IconButton(onClick = {
+                        photoDoListViewModel.onEvent(PhotoDoListEvent.OnDeleteAllTasksClicked)
+                    }) {
+                        Icon(Icons.Filled.DeleteSweep, contentDescription = "Delete All Tasks")
+                    }
+                }
+            )
+        },
         bottomBar = {
             HomeBottomBarNav3(
                 topLevelBackStack = topLevelBackStack,
                 onNavigate = { topLevelBackStack.switchTopLevel(it) }
             )
         },
-        // Add the FloatingActionButton to the Scaffold
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                // Send the event to the ViewModel when the FAB is clicked
                 photoDoListViewModel.onEvent(PhotoDoListEvent.OnAddTaskClicked)
             }) {
                 Icon(Icons.Filled.Add, contentDescription = "Add Task")
@@ -87,7 +95,8 @@ fun PhotoDoApp() {
                                 topLevelBackStack.add(PhotoDoDetailKey(id))
                             }
                         },
-                        // Pass the viewModel instance to the route
+                        // Pass the onEvent lambda from the ViewModel
+                        onEvent = photoDoListViewModel::onEvent,
                         viewModel = photoDoListViewModel
                     )
                 }
@@ -112,7 +121,7 @@ fun PhotoDoApp() {
                                 topLevelBackStack.add(PhotoDoDetailKey(id))
                             }
                         },
-                        // Pass the same viewModel instance here as well
+                        onEvent = photoDoListViewModel::onEvent,
                         viewModel = photoDoListViewModel
                     )
                 }

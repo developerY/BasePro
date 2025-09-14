@@ -14,4 +14,13 @@ class PhotoDoRepositoryImpl @Inject constructor(
     override suspend fun insertTask(task: TaskEntity) {
         photoDoDao.insertTask(task)
     }
+
+    // Implement the new functions
+    override suspend fun deleteTask(task: TaskEntity) {
+        photoDoDao.deleteTask(task)
+    }
+
+    override suspend fun deleteAllTasks() {
+        photoDoDao.deleteAllTasks()
+    }
 }

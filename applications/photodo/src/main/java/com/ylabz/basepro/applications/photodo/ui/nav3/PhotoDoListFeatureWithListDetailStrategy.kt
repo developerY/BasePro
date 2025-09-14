@@ -55,13 +55,13 @@ fun PhotoDoListFeatureWithListDetailStrategy(modifier: Modifier = Modifier) {
                 )
             ) {
                 // val listViewModel = hiltViewModel<PhotoDoListViewModel>() // If needed
-                PhotoDoListUiRoute( // <--- FUNCTION CALL REVERTED
+                /* PhotoDoListUiRoute( // <--- FUNCTION CALL REVERTED
                     modifier = Modifier, // <--- EXPLICITLY PASS Modifier
                     // viewModel = listViewModel, // Pass ViewModel if needed
                     onItemClick = { itemId -> // <--- PARAMETER REVERTED
                         listDetailBackStack.add(PhotoDoItemDetailKey(itemId = itemId))
                     }
-                )
+                )*/
             }
             entry<PhotoDoItemDetailKey> { navKey ->
                 // val detailViewModel = hiltViewModel<PhotoDoItemDetailViewModel>(navKey) // Example with Hilt and NavKey args

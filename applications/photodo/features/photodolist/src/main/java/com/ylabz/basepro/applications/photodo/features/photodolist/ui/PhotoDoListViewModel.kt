@@ -1,9 +1,10 @@
 package com.ylabz.basepro.applications.photodo.features.photodolist.ui
 
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.applications.photodo.db.TaskEntity
 import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepository
+import com.ylabz.basepro.applications.photodo.db.TaskEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,13 +19,11 @@ class PhotoDoListViewModel @Inject constructor(
     private val repository: PhotoDoRepository
 ) : ViewModel() {
 
-    // This counter will just make each new task name unique
     private var taskCounter = 0
 
     val uiState: StateFlow<PhotoDoListUiState> =
         repository.getAllTasks()
             .map { tasks ->
-                // Keep track of the latest task number
                 taskCounter = tasks.size
                 PhotoDoListUiState.Success(tasks)
             }
@@ -47,13 +46,23 @@ class PhotoDoListViewModel @Inject constructor(
     fun onEvent(event: PhotoDoListEvent) {
         when (event) {
             is PhotoDoListEvent.OnItemClick -> {
-                // Handle item click logic here
+                // Not implemented yet
             }
-            // Handle the new event
             is PhotoDoListEvent.OnAddTaskClicked -> {
                 viewModelScope.launch {
                     val newTaskName = "New Task ${taskCounter + 1}"
                     repository.insertTask(TaskEntity(name = newTaskName))
+                }
+            }
+            // Handle the new delete events
+            is PhotoDoListEvent.OnDeleteTaskClicked -> {
+                viewModelScope.launch {
+                    repository.deleteTask(event.task)
+                }
+            }
+            is PhotoDoListEvent.OnDeleteAllTasksClicked -> {
+                viewModelScope.launch {
+                    repository.deleteAllTasks()
                 }
             }
         }

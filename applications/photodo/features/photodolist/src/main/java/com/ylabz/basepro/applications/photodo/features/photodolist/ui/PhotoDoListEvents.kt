@@ -1,7 +1,12 @@
 package com.ylabz.basepro.applications.photodo.features.photodolist.ui
 
+import com.ylabz.basepro.applications.photodo.db.TaskEntity
+
 sealed class PhotoDoListEvent {
     data class OnItemClick(val itemId: String) : PhotoDoListEvent()
-    // Add this new event for the FAB click
     object OnAddTaskClicked : PhotoDoListEvent()
+    // Add event for deleting a single task
+    data class OnDeleteTaskClicked(val task: TaskEntity) : PhotoDoListEvent()
+    // Add event for deleting all tasks
+    object OnDeleteAllTasksClicked : PhotoDoListEvent()
 }
