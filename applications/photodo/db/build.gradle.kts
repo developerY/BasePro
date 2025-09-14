@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.ylabz.basepro.applications.photodo.database"
+    namespace = "com.ylabz.basepro.applications.photodo.db"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
