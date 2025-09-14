@@ -3,27 +3,26 @@ package com.ylabz.basepro.applications.photodo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
+// import androidx.compose.material.icons.Icons // Will be in HomeBottomBarNav3.kt
+// import androidx.compose.material.icons.filled.Home // Will be in HomeBottomBarNav3.kt
+// import androidx.compose.material3.Icon // Will be in HomeBottomBarNav3.kt
+// import androidx.compose.material3.NavigationBar // Will be in HomeBottomBarNav3.kt
+// import androidx.compose.material3.NavigationBarItem // Will be in HomeBottomBarNav3.kt
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.Text // Keep for placeholder in NavDisplay
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-// import androidx.compose.runtime.getValue // Removed to avoid conflict, using the specific Nav3 one below
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Alignment
+// import androidx.compose.runtime.setValue // Not directly used in this file after refactor
+// import androidx.compose.runtime.mutableStateListOf // Will be in TopLevelBackStack.kt
+// import androidx.compose.runtime.mutableStateOf // Will be in TopLevelBackStack.kt
+// import androidx.compose.runtime.snapshots.SnapshotStateList // Will be in TopLevelBackStack.kt
+import androidx.compose.ui.Alignment // Keep for placeholder in NavDisplay
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+// import androidx.compose.ui.graphics.vector.ImageVector // Will be in HomeBottomBarNav3.kt & NavKeys.kt
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entry // For entry<T>() function
 import androidx.navigation3.runtime.entryProvider // For entryProvider builder
@@ -37,113 +36,14 @@ import com.ylabz.basepro.applications.photodo.ui.navigation.HomeFeedKey
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoDetailKey
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoListKey
 import com.ylabz.basepro.applications.photodo.ui.navigation.SettingsKey
+// Import for the moved TopLevelBackStack
+import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackStack
+// Placeholder import for HomeBottomBarNav3, will be created next
+import com.ylabz.basepro.applications.photodo.ui.navigation.components.HomeBottomBarNav3
 
+// TopLevelBackStack class definition REMOVED
 
-/**
- * A helper class to manage the back stack for each top-level destination in the bottom navigation bar.
- * This ensures that each tab maintains its own navigation history.
- */
-class TopLevelBackStack<T : NavKey>(private val startKey: T) {
-
-    private var topLevelBackStacks: HashMap<T, SnapshotStateList<T>> = hashMapOf(
-        startKey to mutableStateListOf(startKey)
-    )
-
-    var topLevelKey by mutableStateOf(startKey)
-        private set
-
-    val backStack = mutableStateListOf<T>(startKey)
-
-    private fun updateBackStack() {
-        backStack.clear()
-        val currentStack = topLevelBackStacks[topLevelKey] ?: emptyList()
-
-        if (topLevelKey == startKey) {
-            backStack.addAll(currentStack)
-        } else {
-            val startStack = topLevelBackStacks[startKey] ?: emptyList()
-            backStack.addAll(startStack + currentStack)
-        }
-    }
-
-    fun switchTopLevel(key: T) {
-        if (topLevelBackStacks[key] == null) {
-            topLevelBackStacks[key] = mutableStateListOf(key)
-        }
-        topLevelKey = key
-        updateBackStack()
-    }
-
-    fun add(key: T) {
-        topLevelBackStacks[topLevelKey]?.add(key)
-        updateBackStack()
-    }
-
-    fun removeLast() {
-        val currentStack = topLevelBackStacks[topLevelKey] ?: return
-
-        if (currentStack.size > 1) {
-            currentStack.removeLastOrNull()
-        } else if (topLevelKey != startKey) {
-            topLevelKey = startKey
-        }
-        updateBackStack()
-    }
-
-    fun replaceLast(key: T) {
-        val currentStack = topLevelBackStacks[topLevelKey]
-        if (currentStack != null && currentStack.isNotEmpty()) {
-            currentStack[currentStack.lastIndex] = key
-            updateBackStack()
-        }
-    }
-}
-
-/**
- * The Bottom Navigation Bar composable, designed for Navigation 3.
- * It is stateless and driven by the [topLevelBackStack].
- */
-@Composable
-fun HomeBottomBarNav3( 
-    topLevelBackStack: TopLevelBackStack<NavKey>,
-    onNavigate: (NavKey) -> Unit
-) {
-    val bottomNavItems = listOf(
-        HomeFeedKey,
-        PhotoListKey,
-        SettingsKey
-    )
-
-    NavigationBar {
-        bottomNavItems.forEach { item ->
-            val title = when (item) {
-                is HomeFeedKey -> item.title
-                is PhotoListKey -> item.title
-                is SettingsKey -> item.title
-                else -> "N/A"
-            }
-            val icon = when (item) {
-                is HomeFeedKey -> item.icon
-                is PhotoListKey -> item.icon
-                is SettingsKey -> item.icon
-                else -> Icons.Default.Home 
-            }
-
-            val selected = topLevelBackStack.topLevelKey == item
-            NavigationBarItem(
-                selected = selected,
-                onClick = { onNavigate(item) },
-                icon = {
-                    Icon(
-                        imageVector = icon, 
-                        contentDescription = title
-                    )
-                },
-                label = { Text(title) }
-            )
-        }
-    }
-}
+// HomeBottomBarNav3 composable definition REMOVED
 
 /**
  * The main entry point for the PhotoDo application's UI.
@@ -184,7 +84,7 @@ fun PhotoDoApp() {
                 ) {
                     PhotoDoListUiRoute(
                         modifier = Modifier, 
-                        onItemClick = { id ->  // Corrected to onItemClick
+                        onItemClick = { id ->
                             val last = topLevelBackStack.backStack.lastOrNull()
                             if (last is PhotoDoDetailKey) {
                                 topLevelBackStack.replaceLast(PhotoDoDetailKey(id))
@@ -198,18 +98,17 @@ fun PhotoDoApp() {
                 entry<PhotoDoDetailKey>(
                     metadata = ListDetailSceneStrategy.detailPane()
                 ) { backStackEntry ->
-                    //val navKey = backStackEntry.getValue<PhotoDoDetailKey>()
-                    // Now calls your actual PhotoDoDetailUiRoute from its module
-                    PhotoDoDetailUiRoute(
+                    // val navKey = backStackEntry.getValue<PhotoDoDetailKey>()
+                    PhotoDoDetailUiRoute( 
                         modifier = Modifier,
-                        photoId = "the id"//navKey.photoDoId,
+                        photoId = "0" //navKey.photoDoId
                     )
                 }
 
                 entry<PhotoListKey> {
                     PhotoDoListUiRoute(
                         modifier = Modifier, 
-                        onItemClick = { id -> // Corrected to onItemClick
+                        onItemClick = { id -> 
                             val last = topLevelBackStack.backStack.lastOrNull()
                             if (last is PhotoDoDetailKey) {
                                 topLevelBackStack.replaceLast(PhotoDoDetailKey(id))
