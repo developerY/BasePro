@@ -106,7 +106,6 @@ fun PhotoDoApp() {
                 ) { detailKey ->
                     PhotoDoDetailUiRoute(
                         modifier = Modifier,
-                        photoId = detailKey.photoDoId
                     )
                 }
 

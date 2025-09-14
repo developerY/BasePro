@@ -12,14 +12,16 @@ interface PhotoDoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTask(task: TaskEntity)
 
-    // Add this method to delete a single task
     @Delete
     suspend fun deleteTask(task: TaskEntity)
 
-    // Add this method to delete all tasks
     @Query("DELETE FROM tasks")
     suspend fun deleteAllTasks()
 
     @Query("SELECT * FROM tasks ORDER BY startTime DESC")
     fun getAllTasks(): Flow<List<TaskEntity>>
+
+    // Added method to get a single task by its ID
+    @Query("SELECT * FROM tasks WHERE id = :taskId")
+    fun getTaskById(taskId: Long): Flow<TaskEntity?>
 }
