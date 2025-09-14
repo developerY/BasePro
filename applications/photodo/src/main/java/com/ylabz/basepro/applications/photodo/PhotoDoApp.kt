@@ -3,6 +3,10 @@ package com.ylabz.basepro.applications.photodo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
@@ -12,12 +16,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoDetailUiRoute
+import com.ylabz.basepro.applications.photodo.features.photodolist.ui.PhotoDoListEvent
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.PhotoDoListUiRoute
+import com.ylabz.basepro.applications.photodo.features.photodolist.ui.PhotoDoListViewModel
 import com.ylabz.basepro.applications.photodo.features.settings.ui.PhotoDoSettingsUiRoute
 import com.ylabz.basepro.applications.photodo.ui.navigation.HomeFeedKey
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoDetailKey
@@ -31,6 +38,8 @@ import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackSta
 fun PhotoDoApp() {
     val topLevelBackStack = remember { TopLevelBackStack<NavKey>(HomeFeedKey) }
     val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
+    // Get an instance of the ViewModel here
+    val photoDoListViewModel: PhotoDoListViewModel = hiltViewModel()
 
     Scaffold(
         bottomBar = {
@@ -38,6 +47,15 @@ fun PhotoDoApp() {
                 topLevelBackStack = topLevelBackStack,
                 onNavigate = { topLevelBackStack.switchTopLevel(it) }
             )
+        },
+        // Add the FloatingActionButton to the Scaffold
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                // Send the event to the ViewModel when the FAB is clicked
+                photoDoListViewModel.onEvent(PhotoDoListEvent.OnAddTaskClicked)
+            }) {
+                Icon(Icons.Filled.Add, contentDescription = "Add Task")
+            }
         }
     ) { innerPadding ->
         NavDisplay(
@@ -68,7 +86,9 @@ fun PhotoDoApp() {
                             } else {
                                 topLevelBackStack.add(PhotoDoDetailKey(id))
                             }
-                        }
+                        },
+                        // Pass the viewModel instance to the route
+                        viewModel = photoDoListViewModel
                     )
                 }
 
@@ -91,7 +111,9 @@ fun PhotoDoApp() {
                             } else {
                                 topLevelBackStack.add(PhotoDoDetailKey(id))
                             }
-                        }
+                        },
+                        // Pass the same viewModel instance here as well
+                        viewModel = photoDoListViewModel
                     )
                 }
 
