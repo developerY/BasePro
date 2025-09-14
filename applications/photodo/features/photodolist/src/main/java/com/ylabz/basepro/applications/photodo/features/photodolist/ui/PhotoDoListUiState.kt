@@ -1,7 +1,9 @@
 package com.ylabz.basepro.applications.photodo.features.photodolist.ui
 
+import com.ylabz.basepro.applications.photodo.db.TaskEntity
+
 sealed class PhotoDoListUiState {
     object Loading : PhotoDoListUiState()
-    data class Success(val photoItems: List<String>) : PhotoDoListUiState()
+    data class Success(val photoItems: List<TaskEntity>) : PhotoDoListUiState()
     data class Error(val message: String) : PhotoDoListUiState()
 }

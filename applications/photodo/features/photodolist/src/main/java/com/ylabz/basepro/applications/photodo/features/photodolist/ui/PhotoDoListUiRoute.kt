@@ -38,10 +38,10 @@ fun PhotoDoListUiRoute(
             LazyColumn(modifier = modifier) {
                 items(state.photoItems) { item ->
                     Text(
-                        text = item,
+                        text = item.name,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { onItemClick(item) }
+                            .clickable { onItemClick(item.name) }
                             .padding(16.dp)
                     )
                 }

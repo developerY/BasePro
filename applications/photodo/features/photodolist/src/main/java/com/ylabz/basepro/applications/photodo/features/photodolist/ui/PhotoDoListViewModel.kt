@@ -2,24 +2,39 @@ package com.ylabz.basepro.applications.photodo.features.photodolist.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ylabz.basepro.applications.photodo.db.TaskEntity
+import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PhotoDoListViewModel @Inject constructor() : ViewModel() {
+class PhotoDoListViewModel @Inject constructor(
+    private val repository: PhotoDoRepository
+) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<PhotoDoListUiState>(PhotoDoListUiState.Loading)
-    val uiState: StateFlow<PhotoDoListUiState> = _uiState
+    val uiState: StateFlow<PhotoDoListUiState> =
+        repository.getAllTasks()
+            .map { tasks -> PhotoDoListUiState.Success(tasks) }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = PhotoDoListUiState.Loading
+            )
 
     init {
-        // Simulate loading data
+        // Populate with dummy data if the database is empty
         viewModelScope.launch {
-            // In a real app, you would fetch this from a repository
-            val photoItems = List(20) { "Photo Item ${it + 1}" }
-            _uiState.value = PhotoDoListUiState.Success(photoItems)
+            if (repository.getAllTasks().first().isEmpty()) {
+                for (i in 1..7) {
+                    repository.insertTask(TaskEntity(name = "Dummy Task $i"))
+                }
+            }
         }
     }
 
