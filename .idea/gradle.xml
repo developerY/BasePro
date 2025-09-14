@@ -23,6 +23,7 @@
             <option value="$PROJECT_DIR$/applications/home" />
             <option value="$PROJECT_DIR$/applications/medtime" />
             <option value="$PROJECT_DIR$/applications/photodo" />
+            <option value="$PROJECT_DIR$/applications/photodo/db" />
             <option value="$PROJECT_DIR$/applications/photodo/features" />
             <option value="$PROJECT_DIR$/applications/photodo/features/home" />
             <option value="$PROJECT_DIR$/applications/photodo/features/photodolist" />
