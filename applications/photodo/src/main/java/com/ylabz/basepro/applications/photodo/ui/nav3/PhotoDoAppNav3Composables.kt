@@ -59,7 +59,7 @@ fun PhotoDoAppNav3(modifier: Modifier = Modifier) {
                     // val homeViewModel = hiltViewModel<PhotoDoHomeViewModel>() // Assuming PhotoDoHomeViewModel
                     PhotoDoHomeUiRoute(
                         // viewModel = homeViewModel, // Pass ViewModel if needed
-                        onNavigateToSettings = {
+                        navTo = {
                             sectionBackStack.clear()
                             sectionBackStack.add(PhotoDoSettingsSectionKey)
                         }

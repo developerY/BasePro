@@ -58,7 +58,7 @@ fun PhotoDoListFeatureWithListDetailStrategy(modifier: Modifier = Modifier) {
                 PhotoDoListUiRoute( // <--- FUNCTION CALL REVERTED
                     modifier = Modifier, // <--- EXPLICITLY PASS Modifier
                     // viewModel = listViewModel, // Pass ViewModel if needed
-                    navToItemDetail = { itemId -> // <--- PARAMETER REVERTED
+                    onItemClick = { itemId -> // <--- PARAMETER REVERTED
                         listDetailBackStack.add(PhotoDoItemDetailKey(itemId = itemId))
                     }
                 )

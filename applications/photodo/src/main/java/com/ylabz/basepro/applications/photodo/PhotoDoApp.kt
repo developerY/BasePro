@@ -1,7 +1,10 @@
 package com.ylabz.basepro.applications.photodo
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -12,16 +15,21 @@ import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+// import androidx.compose.runtime.getValue // Removed to avoid conflict, using the specific Nav3 one below
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entry
-import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.entry // For entry<T>() function
+import androidx.navigation3.runtime.entryProvider // For entryProvider builder
 import androidx.navigation3.ui.NavDisplay
+// Import for your actual PhotoDoDetailUiRoute
+import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoDetailUiRoute 
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.PhotoDoListUiRoute
 import com.ylabz.basepro.applications.photodo.features.settings.ui.PhotoDoSettingsUiRoute
@@ -29,7 +37,7 @@ import com.ylabz.basepro.applications.photodo.ui.navigation.HomeFeedKey
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoDetailKey
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoListKey
 import com.ylabz.basepro.applications.photodo.ui.navigation.SettingsKey
-import com.ylabz.basepro.applications.photodo.ui.navigation.main.HomeBottomBar
+
 
 /**
  * A helper class to manage the back stack for each top-level destination in the bottom navigation bar.
@@ -96,7 +104,7 @@ class TopLevelBackStack<T : NavKey>(private val startKey: T) {
  * It is stateless and driven by the [topLevelBackStack].
  */
 @Composable
-fun HomeBottomBarNav3(
+fun HomeBottomBarNav3( 
     topLevelBackStack: TopLevelBackStack<NavKey>,
     onNavigate: (NavKey) -> Unit
 ) {
@@ -108,17 +116,30 @@ fun HomeBottomBarNav3(
 
     NavigationBar {
         bottomNavItems.forEach { item ->
+            val title = when (item) {
+                is HomeFeedKey -> item.title
+                is PhotoListKey -> item.title
+                is SettingsKey -> item.title
+                else -> "N/A"
+            }
+            val icon = when (item) {
+                is HomeFeedKey -> item.icon
+                is PhotoListKey -> item.icon
+                is SettingsKey -> item.icon
+                else -> Icons.Default.Home 
+            }
+
             val selected = topLevelBackStack.topLevelKey == item
             NavigationBarItem(
                 selected = selected,
                 onClick = { onNavigate(item) },
                 icon = {
                     Icon(
-                        imageVector = item.icon,
-                        contentDescription = item.title
+                        imageVector = icon, 
+                        contentDescription = title
                     )
                 },
-                label = { Text(item.title) }
+                label = { Text(title) }
             )
         }
     }
@@ -131,10 +152,7 @@ fun HomeBottomBarNav3(
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun PhotoDoApp() {
-    // The TopLevelBackStack manages the navigation history for each tab.
     val topLevelBackStack = remember { TopLevelBackStack<NavKey>(HomeFeedKey) }
-
-    // This scene strategy automatically handles list-detail layouts on larger screens (like foldables).
     val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
 
     Scaffold(
@@ -151,24 +169,22 @@ fun PhotoDoApp() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            entryProvider = entryProvider { 
-                // Define the screen for the Home tab
-                entry<HomeFeedKey> {
-                    PhotoDoHomeUiRoute(
-                        modifier = Modifier, 
-                        onNavigateToSettings = { 
-                            topLevelBackStack.switchTopLevel(SettingsKey)
+            entryProvider = entryProvider { // Explicitly use the entryProvider builder
+                entry<HomeFeedKey>(
+                    metadata = ListDetailSceneStrategy.listPane(
+                        detailPlaceholder = {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("Select an item to see details")
+                            }
                         }
                     )
-                }
-
-                // Define the screen for the List tab, marking it as the "list" part of a list-detail view
-                entry<PhotoListKey>(
-                    metadata = ListDetailSceneStrategy.listPane()
                 ) {
                     PhotoDoListUiRoute(
                         modifier = Modifier, 
-                        navToItemDetail = { id -> 
+                        onItemClick = { id ->  // Corrected to onItemClick
                             val last = topLevelBackStack.backStack.lastOrNull()
                             if (last is PhotoDoDetailKey) {
                                 topLevelBackStack.replaceLast(PhotoDoDetailKey(id))
@@ -179,18 +195,31 @@ fun PhotoDoApp() {
                     )
                 }
 
-                // Define the screen for the Detail view, marking it as the "detail" part
                 entry<PhotoDoDetailKey>(
                     metadata = ListDetailSceneStrategy.detailPane()
                 ) { backStackEntry ->
-                    // val navKey = backStackEntry.getValue<PhotoDoDetailKey>() // Corrected to use getValue()
-                    // Here you will create and call your detail screen.
-                    // You will need to create this `PhotoDoDetailUiRoute` composable.
-                    // Example: PhotoDoDetailUiRoute(photoId = navKey.photoDoId, modifier = Modifier)
-                    Text("Detail Screen for ID:") // Updated to use navKey //  ${navKey.photoDoId}
+                    //val navKey = backStackEntry.getValue<PhotoDoDetailKey>()
+                    // Now calls your actual PhotoDoDetailUiRoute from its module
+                    PhotoDoDetailUiRoute(
+                        modifier = Modifier,
+                        photoId = "the id"//navKey.photoDoId,
+                    )
                 }
 
-                // Define the screen for the Settings tab
+                entry<PhotoListKey> {
+                    PhotoDoListUiRoute(
+                        modifier = Modifier, 
+                        onItemClick = { id -> // Corrected to onItemClick
+                            val last = topLevelBackStack.backStack.lastOrNull()
+                            if (last is PhotoDoDetailKey) {
+                                topLevelBackStack.replaceLast(PhotoDoDetailKey(id))
+                            } else {
+                                topLevelBackStack.add(PhotoDoDetailKey(id))
+                            }
+                        }
+                    )
+                }
+
                 entry<SettingsKey> {
                     PhotoDoSettingsUiRoute(
                         modifier = Modifier 

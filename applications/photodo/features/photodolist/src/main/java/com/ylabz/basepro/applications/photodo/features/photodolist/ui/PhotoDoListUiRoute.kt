@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun PhotoDoListUiRoute(
+    modifier: Modifier = Modifier,
     // The onItemClick lambda will notify the parent when an item is selected
     onItemClick: (String) -> Unit
 ) {
