@@ -15,7 +15,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 @Composable
 fun PhotoDoDetailUiRoute(
     modifier: Modifier = Modifier,
-    viewModel: PhotoDoDetailViewModel = hiltViewModel()
+    viewModel: PhotoDoDetailViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

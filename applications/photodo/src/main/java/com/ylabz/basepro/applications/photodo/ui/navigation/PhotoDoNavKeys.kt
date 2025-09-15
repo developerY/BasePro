@@ -38,7 +38,7 @@ data object SettingsKey : NavKey, BottomBarItem {
 
 // The key for the detail screen, which takes an ID
 @Serializable
-data class PhotoDoDetailKey(val photoDoId: String) : NavKey
+data class PhotoDoDetailKey(val photoId: String) : NavKey
 
 
 // You can add more NavKeys here as your application evolves.

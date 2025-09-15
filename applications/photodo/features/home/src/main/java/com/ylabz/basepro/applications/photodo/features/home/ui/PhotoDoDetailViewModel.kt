@@ -22,8 +22,8 @@ class PhotoDoDetailViewModel @Inject constructor(
     val uiState: StateFlow<PhotoDoDetailUiState> = _uiState
 
     init {
-        val photoIdString: String? = savedStateHandle["photoDoId"]
-        Log.d("PhotoDetailVM", "Retrieved from SavedStateHandle photoDoId: '$photoIdString'") 
+        val photoIdString: String? = savedStateHandle["photoId"]
+        Log.d("PhotoDetailVM", "Retrieved from SavedStateHandle photoDoId: '$photoIdString'")
         if (photoIdString != null) {
             try {
                 val photoIdLong = photoIdString.toLong()
