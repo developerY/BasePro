@@ -15,7 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
@@ -26,17 +26,14 @@ import com.ylabz.basepro.applications.photodo.features.photodolist.ui.PhotoDoLis
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.PhotoDoListUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.PhotoDoListViewModel
 import com.ylabz.basepro.applications.photodo.features.settings.ui.PhotoDoSettingsUiRoute
-import com.ylabz.basepro.applications.photodo.ui.navigation.HomeFeedKey
-import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoDetailKey
-import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoListKey
-import com.ylabz.basepro.applications.photodo.ui.navigation.SettingsKey
+import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 import com.ylabz.basepro.applications.photodo.ui.navigation.components.HomeBottomBarNav3
 import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackStack
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoDoApp() {
-    val topLevelBackStack = remember { TopLevelBackStack<NavKey>(HomeFeedKey) }
+    val topLevelBackStack = remember { TopLevelBackStack<NavKey>(PhotoDoNavKeys.HomeFeedKey) }
     val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
     val photoDoListViewModel: PhotoDoListViewModel = hiltViewModel()
 
@@ -67,14 +64,17 @@ fun PhotoDoApp() {
             }
         }
     ) { innerPadding ->
+        val screenModifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
         NavDisplay(
             backStack = topLevelBackStack.backStack,
-            sceneStrategy = listDetailStrategy,
+            // sceneStrategy = listDetailStrategy, Just A Place Holder For Now
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
             entryProvider = entryProvider {
-                entry<HomeFeedKey>(
+                entry<PhotoDoNavKeys.HomeFeedKey>(
                     metadata = ListDetailSceneStrategy.listPane(
                         detailPlaceholder = {
                             Box(
@@ -91,10 +91,10 @@ fun PhotoDoApp() {
                         onItemClick = { id ->
                             Log.d("PhotoDoApp", "HomeFeedKey: Navigating to detail with ID string: '$id'")
                             val last = topLevelBackStack.backStack.lastOrNull()
-                            if (last is PhotoDoDetailKey) {
-                                topLevelBackStack.replaceLast(PhotoDoDetailKey(id))
+                            if (last is PhotoDoNavKeys.PhotoDoDetailKey) {
+                                topLevelBackStack.replaceLast(PhotoDoNavKeys.PhotoDoDetailKey(id))
                             } else {
-                                topLevelBackStack.add(PhotoDoDetailKey(id))
+                                topLevelBackStack.add(PhotoDoNavKeys.PhotoDoDetailKey(id))
                             }
                         },
                         onEvent = photoDoListViewModel::onEvent,
@@ -102,7 +102,7 @@ fun PhotoDoApp() {
                     )
                 }
 
-                entry<PhotoDoDetailKey>(
+                entry<PhotoDoNavKeys.PhotoDoDetailKey>(
                     metadata = ListDetailSceneStrategy.detailPane()
                 ) { detailKey -> // 'detailKey' IS the PhotoDoDetailKey object
                     Log.d("PhotoDoApp", "Detail Entry: ID from detailKey.photoDoId: '${detailKey.photoId}'")
@@ -112,16 +112,16 @@ fun PhotoDoApp() {
                     )
                 }
 
-                entry<PhotoListKey> {
+                entry<PhotoDoNavKeys.PhotoListKey> {
                     PhotoDoListUiRoute(
                         modifier = Modifier,
                         onItemClick = { id ->
                             Log.d("PhotoDoApp", "PhotoListKey: Navigating to detail with ID string: '$id'")
                             val last = topLevelBackStack.backStack.lastOrNull()
-                            if (last is PhotoDoDetailKey) {
-                                topLevelBackStack.replaceLast(PhotoDoDetailKey(id))
+                            if (last is PhotoDoNavKeys.PhotoDoDetailKey) {
+                                topLevelBackStack.replaceLast(PhotoDoNavKeys.PhotoDoDetailKey(id))
                             } else {
-                                topLevelBackStack.add(PhotoDoDetailKey(id))
+                                topLevelBackStack.add(PhotoDoNavKeys.PhotoDoDetailKey(id))
                             }
                         },
                         onEvent = photoDoListViewModel::onEvent,
@@ -129,7 +129,7 @@ fun PhotoDoApp() {
                     )
                 }
 
-                entry<SettingsKey> {
+                entry<PhotoDoNavKeys.SettingsKey> {
                     PhotoDoSettingsUiRoute(
                         modifier = Modifier
                     )

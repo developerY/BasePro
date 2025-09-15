@@ -16,29 +16,34 @@ interface BottomBarItem {
     val title: String
 }
 
-// Renamed HomeFeedKey to HomeListKey for clarity
+/**
+ * A sealed class representing all possible navigation destinations in the PhotoDo app.
+ * This provides type-safety and allows for exhaustive checks in `when` statements.
+ */
 @Serializable
-data object HomeFeedKey : NavKey, BottomBarItem {
-    override val icon = Icons.Default.Home
-    override val title = "Home"
-}
+sealed class PhotoDoNavKeys : NavKey {
 
-// This will represent your second tab, which can also have its own master-detail flow
-@Serializable
-data object PhotoListKey : NavKey, BottomBarItem {
-    override val icon = Icons.Default.List
-    override val title = "List"
-}
+    @Serializable
+    data object HomeFeedKey : PhotoDoNavKeys(), BottomBarItem {
+        override val icon = Icons.Default.Home
+        override val title = "Home"
+    }
 
-@Serializable
-data object SettingsKey : NavKey, BottomBarItem {
-    override val icon = Icons.Default.Settings
-    override val title = "Settings"
-}
+    @Serializable
+    data object PhotoListKey : PhotoDoNavKeys(), BottomBarItem {
+        override val icon = Icons.Default.List
+        override val title = "List"
+    }
 
-// The key for the detail screen, which takes an ID
-@Serializable
-data class PhotoDoDetailKey(val photoId: String) : NavKey
+    @Serializable
+    data object SettingsKey : PhotoDoNavKeys(), BottomBarItem {
+        override val icon = Icons.Default.Settings
+        override val title = "Settings"
+    }
+
+    @Serializable
+    data class PhotoDoDetailKey(val photoId: String) : PhotoDoNavKeys()
+}
 
 
 // You can add more NavKeys here as your application evolves.

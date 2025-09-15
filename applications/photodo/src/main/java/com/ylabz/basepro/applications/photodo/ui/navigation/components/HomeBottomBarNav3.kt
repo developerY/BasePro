@@ -9,9 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector // For item.icon type
 import androidx.navigation3.runtime.NavKey
-import com.ylabz.basepro.applications.photodo.ui.navigation.HomeFeedKey
-import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoListKey
-import com.ylabz.basepro.applications.photodo.ui.navigation.SettingsKey
+import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys.HomeFeedKey
+import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys.PhotoListKey
+import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys.SettingsKey
 import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackStack
 import com.ylabz.basepro.applications.photodo.ui.navigation.BottomBarItem // Import the interface
 
