@@ -1,119 +1,55 @@
 package com.ylabz.basepro.applications.photodo.ui.navigation.main
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.List
-import androidx.compose.material.icons.automirrored.twotone.List
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.twotone.Home
-import androidx.compose.material.icons.twotone.Settings
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
-// Removed HiltViewModel and TripsViewModel imports as they are no longer needed here
-// import androidx.hilt.navigation.compose.hiltViewModel
-// import com.ylabz.basepro.applications.bike.features.trips.ui.TripsViewModel
-// import androidx.compose.runtime.collectAsState
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import com.ylabz.basepro.core.ui.RxDigitaScreen
+import androidx.navigation3.runtime.NavKey
+import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys.HomeFeedKey
+import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys.PhotoListKey
+import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys.SettingsKey
+import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackStack
+import com.ylabz.basepro.applications.photodo.ui.navigation.BottomBarItem // Import the interface
 
+
+/**
+ * The Bottom Navigation Bar composable, designed for Navigation 3.
+ * It is stateless and driven by the [topLevelBackStack].
+ */
 @Composable
 fun HomeBottomBar(
-    navController: NavHostController,
-    //showSettingsProfileAlert: Boolean // New parameter
+    topLevelBackStack: TopLevelBackStack<NavKey>,
+    onNavigate: (NavKey) -> Unit
 ) {
-
-    // val unsyncedRidesCount by tripsViewModel.unsyncedRidesCount.collectAsState() // Removed
-
-    val items = listOf(
-        BottomNavigationItem(
-            title = "Home",
-            selectedIcon = Icons.TwoTone.Home,
-            unselectedIcon = Icons.Outlined.Home,
-            hasNews = false,
-        ),
-        BottomNavigationItem(
-            title = "MedList",
-            selectedIcon = Icons.AutoMirrored.TwoTone.List,
-            unselectedIcon = Icons.AutoMirrored.Outlined.List,
-            hasNews = false,
-        ),
-        BottomNavigationItem(
-            title = "Settings", // Category -> Cat
-            selectedIcon = Icons.TwoTone.Settings,
-            unselectedIcon = Icons.Outlined.Settings,
-            hasNews = false //showSettingsProfileAlert, // Use the new parameter
-        ),
+    val bottomNavItems = listOf<BottomBarItem>(
+        HomeFeedKey, // HomeFeedKey now conforms to BottomBarItem
+        PhotoListKey,
+        SettingsKey
     )
-    var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
 
-    NavigationBar(
-        contentColor = Color.Blue
-    ) {
-        items.forEachIndexed { index, item ->
+    NavigationBar {
+        bottomNavItems.forEach { item ->
+            // item is now guaranteed to have .title and .icon due to BottomBarItem interface
+            val title = item.title
+            val icon = item.icon
+
+            // We need to cast back to NavKey for comparison if topLevelKey is NavKey,
+            // or ensure topLevelKey is also BottomBarItem for direct comparison.
+            // For now, assuming topLevelBackStack.topLevelKey can be compared with NavKey instances.
+            val selected = topLevelBackStack.topLevelKey == (item as NavKey)
+
             NavigationBarItem(
-                //colors = NavigationBarItemColors(),
-                selected = selectedItemIndex == index,
-                onClick = {
-                    selectedItemIndex = index
-                    navigateTo(item.title, navController = navController)
-                },
-                label = {
-                    Text(text = item.title)
-                },
-                alwaysShowLabel = false,
+                selected = selected,
+                onClick = { onNavigate(item as NavKey) }, // Pass the NavKey itself
                 icon = {
-                    BadgedBox(
-                        badge = {
-                            // Updated condition: show badge if badgeCount is greater than 0
-                            if (item.badgeCount != null && item.badgeCount > 0) {
-                                Badge {
-                                    Text(text = item.badgeCount.toString())
-                                }
-                            } else if (item.hasNews) { // Existing logic for other types of badges (e.g., "Settings")
-                                Badge()
-                            }
-                        }
-                    ) {
-                        Icon(
-                            imageVector = if (index == selectedItemIndex) {
-                                item.selectedIcon
-                            } else item.unselectedIcon,
-                            contentDescription = item.title
-                        )
-                    }
-                }
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = title
+                    )
+                },
+                label = { Text(title) }
             )
         }
-    }
-}
-
-private fun navigateTo(tabTitle: String, navController: NavHostController) {
-    val route = when (tabTitle) {
-        "Home" -> RxDigitaScreen.HomeRxDigitaScreen.route
-        "MedList" -> RxDigitaScreen.TripRxDigitaScreen.route
-        "Settings" -> RxDigitaScreen.SettingsRxDigitaScreen.route
-        else -> RxDigitaScreen.HomeRxDigitaScreen.route // Default fallback
-    }
-
-    navController.navigate(route) {
-        // Avoid multiple copies of the same destination
-        popUpTo(navController.graph.findStartDestination().id) {
-            saveState = true
-        }
-        // Avoid reloading the same destination if already on it
-        launchSingleTop = true
-        // Restore state when reselecting a previously selected tab
-        restoreState = true
     }
 }
