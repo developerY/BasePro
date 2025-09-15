@@ -6,11 +6,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.DeleteSweep
+// import androidx.compose.material.icons.filled.DeleteSweep // No longer directly used here
 import androidx.compose.material3.*
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
-import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
+// import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy // Not used currently
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -38,15 +38,10 @@ fun MainScreen() {
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("PhotoDo") },
-                actions = {
-                    IconButton(onClick = {
-                        photoDoListViewModel.onEvent(PhotoDoListEvent.OnDeleteAllTasksClicked)
-                    }) {
-                        Icon(Icons.Filled.DeleteSweep, contentDescription = "Delete All Tasks")
-                    }
-                }
+            TopBarForCurrentRoute(
+                topLevelBackStack = topLevelBackStack,
+                photoDoListViewModel = photoDoListViewModel,
+                onNavigateBack = { topLevelBackStack.removeLastOrNull()} // Added onNavigateBack
             )
         },
         bottomBar = {
@@ -63,12 +58,12 @@ fun MainScreen() {
             }
         }
     ) { innerPadding ->
-        val screenModifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)
+        // val screenModifier = Modifier // screenModifier not used, can be removed if not needed later
+        //     .fillMaxSize()
+        //     .padding(innerPadding)
         NavDisplay(
             backStack = topLevelBackStack.backStack,
-            // sceneStrategy = listDetailStrategy, Just A Place Holder For Now
+            // sceneStrategy = listDetailStrategy, // Just A Place Holder For Now, ensure it's used if list/detail is active
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
@@ -103,11 +98,11 @@ fun MainScreen() {
 
                 entry<PhotoDoNavKeys.PhotoDoDetailKey>(
                     metadata = ListDetailSceneStrategy.detailPane()
-                ) { detailKey -> // 'detailKey' IS the PhotoDoDetailKey object
-                    Log.d("PhotoDoApp", "Detail Entry: ID from detailKey.photoDoId: '${detailKey.photoId}'")
+                ) { detailKey -> // 'detailKey' IS the PhotoDoNavKeys.PhotoDoDetailKey object
+                    Log.d("PhotoDoApp", "Detail Entry: ID from detailKey.photoId: '${detailKey.photoId}'")
                     PhotoDoDetailUiRoute(
                         modifier = Modifier,
-                        photoDoIdForcingRecomposition = detailKey.photoId // Added this line
+                        photoDoIdForcingRecomposition = detailKey.photoId
                     )
                 }
 
