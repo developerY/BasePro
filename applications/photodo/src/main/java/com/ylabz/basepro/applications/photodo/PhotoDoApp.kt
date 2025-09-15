@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.photodo
 
+import android.util.Log // Added for logging
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
+// androidx.navigation3.runtime.getValue is not needed here as 'detailKey' is the NavKey itself
 import androidx.navigation3.ui.NavDisplay
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoDetailUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.PhotoDoListEvent
@@ -39,7 +41,6 @@ fun PhotoDoApp() {
     val photoDoListViewModel: PhotoDoListViewModel = hiltViewModel()
 
     Scaffold(
-        // Add the TopAppBar
         topBar = {
             TopAppBar(
                 title = { Text("PhotoDo") },
@@ -88,6 +89,7 @@ fun PhotoDoApp() {
                     PhotoDoListUiRoute(
                         modifier = Modifier,
                         onItemClick = { id ->
+                            Log.d("PhotoDoApp", "HomeFeedKey: Navigating to detail with ID string: '$id'")
                             val last = topLevelBackStack.backStack.lastOrNull()
                             if (last is PhotoDoDetailKey) {
                                 topLevelBackStack.replaceLast(PhotoDoDetailKey(id))
@@ -95,7 +97,6 @@ fun PhotoDoApp() {
                                 topLevelBackStack.add(PhotoDoDetailKey(id))
                             }
                         },
-                        // Pass the onEvent lambda from the ViewModel
                         onEvent = photoDoListViewModel::onEvent,
                         viewModel = photoDoListViewModel
                     )
@@ -103,7 +104,8 @@ fun PhotoDoApp() {
 
                 entry<PhotoDoDetailKey>(
                     metadata = ListDetailSceneStrategy.detailPane()
-                ) { detailKey ->
+                ) { detailKey -> // 'detailKey' IS the PhotoDoDetailKey object
+                    Log.d("PhotoDoApp", "Detail Entry: ID from detailKey.photoDoId: '${detailKey.photoDoId}'")
                     PhotoDoDetailUiRoute(
                         modifier = Modifier,
                     )
@@ -113,6 +115,7 @@ fun PhotoDoApp() {
                     PhotoDoListUiRoute(
                         modifier = Modifier,
                         onItemClick = { id ->
+                            Log.d("PhotoDoApp", "PhotoListKey: Navigating to detail with ID string: '$id'")
                             val last = topLevelBackStack.backStack.lastOrNull()
                             if (last is PhotoDoDetailKey) {
                                 topLevelBackStack.replaceLast(PhotoDoDetailKey(id))
