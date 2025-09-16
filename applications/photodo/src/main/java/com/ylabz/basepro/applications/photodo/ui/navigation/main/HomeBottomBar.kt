@@ -7,7 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavKey
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys.HomeFeedKey
-import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys.PhotoListKey
+import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys.PhotoDolListKey
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys.SettingsKey
 import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackStack
 import com.ylabz.basepro.applications.photodo.ui.navigation.BottomBarItem // Import the interface
@@ -24,7 +24,7 @@ fun HomeBottomBar(
 ) {
     val bottomNavItems = listOf<BottomBarItem>(
         HomeFeedKey, // HomeFeedKey now conforms to BottomBarItem
-        PhotoListKey,
+        PhotoDolListKey,
         SettingsKey
     )
 

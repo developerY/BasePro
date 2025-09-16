@@ -30,7 +30,10 @@ sealed class PhotoDoNavKeys : NavKey {
     }
 
     @Serializable
-    data object PhotoListKey : PhotoDoNavKeys(), BottomBarItem {
+    data class PhotoDoDetailKey(val photoId: String) : PhotoDoNavKeys()
+
+    @Serializable
+    data object PhotoDolListKey : PhotoDoNavKeys(), BottomBarItem {
         override val icon = Icons.Default.List
         override val title = "List"
     }
@@ -41,8 +44,6 @@ sealed class PhotoDoNavKeys : NavKey {
         override val title = "Settings"
     }
 
-    @Serializable
-    data class PhotoDoDetailKey(val photoId: String) : PhotoDoNavKeys()
 }
 
 

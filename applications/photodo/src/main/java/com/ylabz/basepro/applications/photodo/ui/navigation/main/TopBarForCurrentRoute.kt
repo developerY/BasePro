@@ -34,7 +34,7 @@ fun TopBarForCurrentRoute(
             showDeleteAll = true,
             photoDoListViewModel = photoDoListViewModel
         )
-        is PhotoDoNavKeys.PhotoListKey -> PhotoDoAppTopBar(
+        is PhotoDoNavKeys.PhotoDolListKey -> PhotoDoAppTopBar(
             title = "Photo List",
             showDeleteAll = true,
             photoDoListViewModel = photoDoListViewModel

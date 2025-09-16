@@ -99,7 +99,7 @@ fun MainScreen() {
                     )
                 }
 
-                entry<PhotoDoNavKeys.PhotoListKey> {
+                entry<PhotoDoNavKeys.PhotoDolListKey> {
                     PhotoDoListUiRoute(
                         modifier = Modifier,
                         onItemClick = { id ->
