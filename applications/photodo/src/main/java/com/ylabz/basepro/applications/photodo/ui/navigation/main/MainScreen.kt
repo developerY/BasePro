@@ -21,6 +21,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailUiRoute
+import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailViewModel
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListEvent
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListViewModel
@@ -67,11 +68,11 @@ fun MainScreen() {
                 .fillMaxSize()
                 .padding(innerPadding),
             entryProvider = entryProvider {
-                entry<PhotoDoNavKeys.HomeFeedKey>(
-                    metadata = ListDetailSceneStrategy.listPane(
-                        /* detailPlaceholder = { Box( modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center)
-                        { Text("Select an item to see details") } } */ )
-                ) {
+                entry<PhotoDoNavKeys.HomeFeedKey>
+                    /*(metadata = ListDetailSceneStrategy.listPane(
+                        detailPlaceholder = { Box( modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center)
+                        { Text("Select an item to see details") } }  ))*/
+                {
                     PhotoDoHomeUiRoute(navTo = {})
                     /*PhotoDoListUiRoute(
                         modifier = Modifier,
@@ -90,12 +91,16 @@ fun MainScreen() {
                 }
 
                 entry<PhotoDoNavKeys.PhotoDoDetailKey>(
-                    metadata = ListDetailSceneStrategy.detailPane()
+                    // metadata = ListDetailSceneStrategy.detailPane()
                 ) { detailKey -> // 'detailKey' IS the PhotoDoNavKeys.PhotoDoDetailKey object
                     Log.d("PhotoDoApp", "Detail Entry: ID from detailKey.photoId: '${detailKey.photoId}'")
+                    // 1. CREATE THE VIEWMODEL HERE
+                    val detailViewModel: PhotoDoDetailViewModel = hiltViewModel()
+
+                    // 2. PASS THE CREATED VIEWMODEL INSTANCE DOWN
                     PhotoDoDetailUiRoute(
                         modifier = Modifier,
-                        photoDoIdForcingRecomposition = detailKey.photoId
+                        viewModel = detailViewModel
                     )
                 }
 

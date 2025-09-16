@@ -16,8 +16,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 @Composable
 fun PhotoDoDetailUiRoute(
     modifier: Modifier = Modifier,
-    photoDoIdForcingRecomposition: String, // Added this parameter
-    viewModel: PhotoDoDetailViewModel = hiltViewModel() // ViewModel is now correctly fetched here
+    // photoDoIdForcingRecomposition: String, // Added this parameter
+    viewModel: PhotoDoDetailViewModel // = hiltViewModel() // ViewModel is now correctly fetched here
 ) {
     // It's good practice to also pass the key or relevant parts of it to the ViewModel
     // if it needs to re-trigger loading based on this specific ID, especially if the
@@ -27,14 +27,14 @@ fun PhotoDoDetailUiRoute(
 
     // We can use LaunchedEffect to explicitly tell the ViewModel to load data for the new ID
     // when photoDoIdForcingRecomposition changes. This is more robust if the ViewModel
-    // instance is reused across navigations to the same route type.
+    /* instance is reused across navigations to the same route type.
     LaunchedEffect(photoDoIdForcingRecomposition) {
         // This approach requires the ViewModel to have a method to load/reload data for an ID.
         // Assuming your ViewModel's init {} block handles loading via SavedStateHandle,
         // and if hiltViewModel() gives a fresh ViewModel when the NavBackStackEntry changes,
         // this LaunchedEffect might primarily be for cases where the same ViewModel instance is kept.
         // For now, we rely on the init{} block and SavedStateHandle being correct upon ViewModel creation.
-    }
+    }*/
 
     val uiState by viewModel.uiState.collectAsState()
 
@@ -48,7 +48,7 @@ fun PhotoDoDetailUiRoute(
             Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column {
                     Text(text = "Details for Task: ${state.task.name}")
-                    Text(text = "Task ID from Route Param: $photoDoIdForcingRecomposition") // Display the passed ID
+                    // Text(text = "Task ID from Route Param: $photoDoIdForcingRecomposition") // Display the passed ID
                     Text(text = "Task ID from State: ${state.task.id}") // Display ID from loaded task
                     // This is where you will build the UI to show the photos
                 }

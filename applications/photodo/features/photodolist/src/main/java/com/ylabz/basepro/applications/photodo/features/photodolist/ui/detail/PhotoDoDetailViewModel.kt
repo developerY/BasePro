@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PhotoDoDetailViewModel @Inject constructor(
     private val repository: PhotoDoRepository,
-    private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<PhotoDoDetailUiState>(PhotoDoDetailUiState.Loading)
