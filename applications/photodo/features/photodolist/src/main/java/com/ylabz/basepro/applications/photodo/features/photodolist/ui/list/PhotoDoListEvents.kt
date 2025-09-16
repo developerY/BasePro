@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.photodo.features.photodolist.ui
+package com.ylabz.basepro.applications.photodo.features.photodolist.ui.list
 
 import com.ylabz.basepro.applications.photodo.db.TaskEntity
 

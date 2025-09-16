@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.photodo.features.home.ui
+package com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

@@ -1,7 +1,6 @@
 package com.ylabz.basepro.applications.photodo.ui.navigation.main
 
 import android.util.Log // Added for logging
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -13,7 +12,6 @@ import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 // import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy // Not used currently
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
@@ -21,10 +19,11 @@ import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 // androidx.navigation3.runtime.getValue is not needed here as 'detailKey' is the NavKey itself
 import androidx.navigation3.ui.NavDisplay
-import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoDetailUiRoute
-import com.ylabz.basepro.applications.photodo.features.photodolist.ui.PhotoDoListEvent
-import com.ylabz.basepro.applications.photodo.features.photodolist.ui.PhotoDoListUiRoute
-import com.ylabz.basepro.applications.photodo.features.photodolist.ui.PhotoDoListViewModel
+import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
+import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailUiRoute
+import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListEvent
+import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListUiRoute
+import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListViewModel
 import com.ylabz.basepro.applications.photodo.features.settings.ui.PhotoDoSettingsUiRoute
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackStack
@@ -70,17 +69,11 @@ fun MainScreen() {
             entryProvider = entryProvider {
                 entry<PhotoDoNavKeys.HomeFeedKey>(
                     metadata = ListDetailSceneStrategy.listPane(
-                        detailPlaceholder = {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text("Select an item to see details")
-                            }
-                        }
-                    )
+                        /* detailPlaceholder = { Box( modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center)
+                        { Text("Select an item to see details") } } */ )
                 ) {
-                    PhotoDoListUiRoute(
+                    PhotoDoHomeUiRoute(navTo = {})
+                    /*PhotoDoListUiRoute(
                         modifier = Modifier,
                         onItemClick = { id ->
                             Log.d("PhotoDoApp", "HomeFeedKey: Navigating to detail with ID string: '$id'")
@@ -93,7 +86,7 @@ fun MainScreen() {
                         },
                         onEvent = photoDoListViewModel::onEvent,
                         viewModel = photoDoListViewModel
-                    )
+                    )*/
                 }
 
                 entry<PhotoDoNavKeys.PhotoDoDetailKey>(

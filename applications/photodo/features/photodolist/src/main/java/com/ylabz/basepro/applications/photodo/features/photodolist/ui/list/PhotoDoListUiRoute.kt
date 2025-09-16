@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.photodo.features.photodolist.ui
+package com.ylabz.basepro.applications.photodo.features.photodolist.ui.list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*

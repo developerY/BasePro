@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.photodo.features.home.ui
+package com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail
 
 import android.util.Log // Added this import
 import androidx.lifecycle.SavedStateHandle
@@ -8,7 +8,6 @@ import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

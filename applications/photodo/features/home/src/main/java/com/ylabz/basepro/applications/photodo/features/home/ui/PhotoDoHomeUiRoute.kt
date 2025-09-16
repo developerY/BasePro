@@ -13,6 +13,6 @@ fun PhotoDoHomeUiRoute(navTo: (String) -> Unit) {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text("Select an item from the list")
+        Text(text = "PhotoDo Home Screen")
     }
 }

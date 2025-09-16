@@ -15,7 +15,7 @@ import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.ylabz.basepro.applications.photodo.features.photodolist.ui.PhotoDoListUiRoute // <--- IMPORT REVERTED
+
 // import com.ylabz.basepro.applications.photodo.features.photodolist.ui.PhotoDoListViewModel // Assuming ViewModel name
 
 // Placeholder for the detail screen Composable - we will define this properly later

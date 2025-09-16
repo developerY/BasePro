@@ -11,8 +11,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 // import androidx.compose.runtime.State // No longer needed for currentKey
 // import androidx.compose.runtime.collectAsState // No longer needed for currentKey
-import com.ylabz.basepro.applications.photodo.features.photodolist.ui.PhotoDoListEvent
-import com.ylabz.basepro.applications.photodo.features.photodolist.ui.PhotoDoListViewModel
+import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListEvent
+import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListViewModel
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys // Assuming your NavKeys are here
 import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackStack // For current key access
 import androidx.navigation3.runtime.NavKey

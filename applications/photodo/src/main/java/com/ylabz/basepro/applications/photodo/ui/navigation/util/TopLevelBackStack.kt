@@ -44,11 +44,22 @@ class TopLevelBackStack<T : NavKey>(private val startKey: T) {
         updateBackStack() // Refresh the main backStack for NavDisplay
     }
 
+    fun removeLast() {
+        val currentStack = topLevelBackStacks[topLevelKey] ?: return
+
+        if (currentStack.size > 1) {
+            currentStack.removeLastOrNull()
+        } else if (topLevelKey != startKey) {
+            topLevelKey = startKey
+        }
+        updateBackStack()
+    }
+
     /**
      * Removes the last element from the current top-level stack if the stack has more than one element.
      * Does not return the removed element.
      */
-    fun removeLast() {
+    fun removeLastOrig() {
         val currentActiveStack = topLevelBackStacks[topLevelKey]
         // Only remove if there's more than one item (the initial key) in the current tab's stack
         if (currentActiveStack != null && currentActiveStack.size > 1) {
@@ -71,6 +82,11 @@ class TopLevelBackStack<T : NavKey>(private val startKey: T) {
             updateBackStack() // Refresh the main backStack for NavDisplay
         }
         return removedItem
+    }
+
+    fun replaceStack(vararg keys: T) {
+        topLevelBackStacks[topLevelKey] = mutableStateListOf(*keys)
+        updateBackStack()
     }
 
     fun replaceLast(key: T) {
