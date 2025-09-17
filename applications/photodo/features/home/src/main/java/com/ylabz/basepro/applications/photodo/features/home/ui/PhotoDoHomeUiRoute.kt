@@ -9,10 +9,9 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun PhotoDoHomeUiRoute(navTo: (String) -> Unit) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "PhotoDo Home Screen")
-    }
+    HomeScreen(
+        categories = listOf("Home", "Car", "School", "Shopping"),
+        onCategoryClick = navTo,
+        onAddNewCategoryClick = { /* Handle add new category click */ }
+    )
 }
