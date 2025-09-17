@@ -8,9 +8,10 @@ import androidx.compose.material.icons.filled.Add
 // import androidx.compose.material.icons.filled.DeleteSweep // No longer directly used here
 import androidx.compose.material3.*
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
+// import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy // Not directly used in detail entry
 // import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy // Not used currently
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect // Added import
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -58,48 +59,48 @@ fun MainScreen() {
             }
         }
     ) { innerPadding ->
-        // val screenModifier = Modifier // screenModifier not used, can be removed if not needed later
-        //     .fillMaxSize()
-        //     .padding(innerPadding)
         NavDisplay(
             backStack = topLevelBackStack.backStack,
-            // sceneStrategy = listDetailStrategy, // Just A Place Holder For Now, ensure it's used if list/detail is active
+            // sceneStrategy = listDetailStrategy,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
             entryProvider = entryProvider {
                 entry<PhotoDoNavKeys.HomeFeedKey>
-                    /*(metadata = ListDetailSceneStrategy.listPane(
-                        detailPlaceholder = { Box( modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center)
-                        { Text("Select an item to see details") } }  ))*/
                 {
-                    PhotoDoHomeUiRoute(navTo = {})
-                    /*PhotoDoListUiRoute(
-                        modifier = Modifier,
-                        onItemClick = { id ->
-                            Log.d("PhotoDoApp", "HomeFeedKey: Navigating to detail with ID string: '$id'")
+                    PhotoDoHomeUiRoute(navTo = { destinationKey ->
+                        // Example of how PhotoDoHomeUiRoute might navigate to detail
+                        // This part depends on how navTo is implemented in PhotoDoHomeUiRoute
+                        if (destinationKey is PhotoDoNavKeys.PhotoDoDetailKey) {
+                            Log.d("PhotoDoApp", "Home navigating to detail with ID: '${destinationKey.photoId}'")
                             val last = topLevelBackStack.backStack.lastOrNull()
                             if (last is PhotoDoNavKeys.PhotoDoDetailKey) {
-                                topLevelBackStack.replaceLast(PhotoDoNavKeys.PhotoDoDetailKey(id))
+                                topLevelBackStack.replaceLast(destinationKey)
                             } else {
-                                topLevelBackStack.add(PhotoDoNavKeys.PhotoDoDetailKey(id))
+                                topLevelBackStack.add(destinationKey)
                             }
-                        },
-                        onEvent = photoDoListViewModel::onEvent,
-                        viewModel = photoDoListViewModel
-                    )*/
+                        } else {
+                            // Handle other navigations from home if necessary
+                            // For example, if HomeFeedKey itself can be a destination from home:
+                            // if (destinationKey == PhotoDoNavKeys.HomeFeedKey) { /* ... */ }
+                        }
+                    })
                 }
 
                 entry<PhotoDoNavKeys.PhotoDoDetailKey>(
-                    // metadata = ListDetailSceneStrategy.detailPane()
+                    // metadata = ListDetailSceneStrategy.detailPane() // Example if using ListDetailSceneStrategy
                 ) { detailKey -> // 'detailKey' IS the PhotoDoNavKeys.PhotoDoDetailKey object
-                    Log.d("PhotoDoApp", "Detail Entry: ID from detailKey.photoId: '${detailKey.photoId}'")
-                    // 1. CREATE THE VIEWMODEL HERE
+                    Log.d("PhotoDoApp", "Detail Entry Scope: ID from detailKey.photoId: '${detailKey.photoId}'")
                     val detailViewModel: PhotoDoDetailViewModel = hiltViewModel()
 
-                    // 2. PASS THE CREATED VIEWMODEL INSTANCE DOWN
+                    // Call loadPhoto when detailKey.photoId is available or changes
+                    LaunchedEffect(detailKey.photoId) {
+                        Log.d("PhotoDoApp", "Detail LaunchedEffect: Calling loadPhoto with ID: '${detailKey.photoId}'")
+                        detailViewModel.loadPhoto(detailKey.photoId)
+                    }
+
                     PhotoDoDetailUiRoute(
-                        modifier = Modifier,
+                        modifier = Modifier.fillMaxSize(), // Typically fill an area
                         viewModel = detailViewModel
                     )
                 }
