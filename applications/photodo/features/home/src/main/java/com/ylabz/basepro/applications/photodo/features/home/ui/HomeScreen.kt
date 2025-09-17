@@ -16,48 +16,39 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 /**
- * The main home screen composable for the PhoToDo app.
+ * The main content for the PhoToDo home screen.
  *
- * It displays either a list of existing categories or an empty state
- * with suggestions to create new ones.
+ * This composable is stateless and does not include a Scaffold, making it
+ * easy to reuse within different screen layouts.
  *
+ * @param modifier The modifier to be applied to the content's root.
  * @param categories The list of category names to display.
  * @param onCategoryClick Lambda function to be invoked when a category is clicked.
  * @param onAddNewCategoryClick Lambda function for the 'Add New Category' button.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
     categories: List<String>,
     onCategoryClick: (String) -> Unit,
     onAddNewCategoryClick: () -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("PhoToDo 📸") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                )
-            )
-        }
-    ) { innerPadding ->
-        // Decide which view to show based on whether the category list is empty
-        if (categories.isEmpty()) {
-            EmptyStateView(
-                modifier = Modifier.padding(innerPadding),
-                onAddNewCategoryClick = onAddNewCategoryClick
-            )
-        } else {
-            CategoryListView(
-                modifier = Modifier.padding(innerPadding),
-                categories = categories,
-                onCategoryClick = onCategoryClick
-            )
-        }
+    // Decide which view to show based on whether the category list is empty
+    if (categories.isEmpty()) {
+        EmptyStateView(
+            modifier = modifier,
+            onAddNewCategoryClick = onAddNewCategoryClick
+        )
+    } else {
+        CategoryListView(
+            modifier = modifier,
+            categories = categories,
+            onCategoryClick = onCategoryClick
+        )
     }
 }
+
+// NOTE: The helper composables below remain the same as before.
 
 /**
  * Displays the list of photo categories.
@@ -109,7 +100,6 @@ private fun CategoryItem(categoryName: String, onClick: () -> Unit) {
     }
 }
 
-
 /**
  * Displays a welcome message and suggestions when no categories exist.
  */
@@ -118,8 +108,6 @@ private fun EmptyStateView(
     modifier: Modifier = Modifier,
     onAddNewCategoryClick: () -> Unit
 ) {
-    val suggestedCategories = listOf("Home", "Car", "School", "Shopping")
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -137,20 +125,6 @@ private fun EmptyStateView(
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            "Some suggestions to start:",
-            style = MaterialTheme.typography.titleMedium
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        // Display suggested categories
-        suggestedCategories.forEach { category ->
-            Text(
-                text = "• $category",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(vertical = 2.dp)
-            )
-        }
         Spacer(modifier = Modifier.height(32.dp))
         Button(onClick = onAddNewCategoryClick) {
             Icon(imageVector = Icons.Default.Add, contentDescription = null)
