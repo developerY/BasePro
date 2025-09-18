@@ -22,6 +22,7 @@ import com.ylabz.basepro.ui.navigation.graphs.alarmNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.bluetoothLeNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.gmapNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.healthNavGraph
+import com.ylabz.basepro.ui.navigation.graphs.material3NavGraph
 import com.ylabz.basepro.ui.navigation.graphs.mlNavGraph
 import com.ylabz.basepro.ui.navigation.graphs.nav3NavGraph
 import com.ylabz.basepro.ui.navigation.graphs.nfcNavGraph
@@ -138,6 +139,12 @@ fun MainNavGraph(
         )
 
         nav3NavGraph(
+            drawerState,
+            scope,
+            navController
+        )
+
+        material3NavGraph(
             drawerState,
             scope,
             navController

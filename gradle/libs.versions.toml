@@ -38,8 +38,8 @@ coil = "2.7.0"
 # Apollo GraphQL
 apollo = "3.8.6"
 playServicesWearable = "19.0.0"
-composeMaterial = "1.7.8"
-composeMaterial3 = "1.5.1"
+wearComposeMaterial = "1.7.8"
+wearComposeMaterial3 = "1.5.1"
 
 wearToolingPreview = "1.0.0"
 coreSplashscreen = "1.0.1"
@@ -125,9 +125,10 @@ androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }  # Compose U
 androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }  # Compose UI test manifest
 androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }  # Compose UI test library for JUnit4
 androidx-material3 = { module = "androidx.compose.material3:material3" }  # Material Design 3 components for Compose
+# androidx_material3_window_size_class = { module = "androidx.compose.material3:material3-window-size-class" } # Material Design 3 Window Size Class
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNavigation" }
 
-androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "composeMaterial" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 
 
 
@@ -140,10 +141,10 @@ androidx-datastore-core = { module = "androidx.datastore:datastore-core", versio
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
 # WearOS Compose alterniative way
 # wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
-androidx-wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
-androidx-wear-compose-material-icons = { group = "androidx.wear.compose", name = "compose-material-icons", version.ref = "composeMaterial" }
-androidx-wear-compose-material3 = { module = "androidx.wear.compose:compose-material3", version.ref = "composeMaterial3" }
-androidx-wear-compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "composeMaterial" }
+androidx-wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "wearComposeMaterial" }
+androidx-wear-compose-material-icons = { group = "androidx.wear.compose", name = "compose-material-icons", version.ref = "wearComposeMaterial" }
+androidx-wear-compose-material3 = { module = "androidx.wear.compose:compose-material3", version.ref = "wearComposeMaterial3" }
+androidx-wear-compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "wearComposeMaterial" }
 
 #androidx-wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "composeFoundation" }
 androidx-wear-tooling-preview = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wearToolingPreview" }

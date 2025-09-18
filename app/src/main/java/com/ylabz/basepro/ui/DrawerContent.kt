@@ -109,6 +109,13 @@ fun DrawerContent(onNavigate: (String) -> Unit) {
             onClick = { onNavigate("nav3") }
         )
 
+        //Material3
+        NavigationDrawerItem(
+            label = { Text("Material3") },
+            selected = false,
+            onClick = { onNavigate("material3") }
+        )
+
 
         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 

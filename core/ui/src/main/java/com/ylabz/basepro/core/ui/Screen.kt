@@ -42,6 +42,7 @@ const val WEATHER = "weather"
 const val NFC = "nfc"
 const val ML = "ml"
 const val NAV3 = "nav3"
+const val MATERIAL3 = "material3"
 
 
 sealed class Screen(val route: String) {
@@ -60,6 +61,7 @@ sealed class Screen(val route: String) {
     data object NfcScreen : Screen("nfc_screen")
     data object MLScreen : Screen("ml_screen")
     data object Nav3Screen : Screen("nav_3_screen")
+    data object Material3Screen : Screen("material_3_screen")
 }
 
 @Serializable

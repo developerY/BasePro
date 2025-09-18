@@ -82,6 +82,7 @@ dependencies {
     implementation(project(":feature:nfc"))
     implementation(project(":feature:ml"))
     implementation(project(":feature:nav3"))
+    implementation(project(":feature:material3"))
 
     // Application module dependencies
     implementation(project(":applications:home"))
