@@ -69,7 +69,16 @@ dependencies {
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.material3)
+
+    implementation("androidx.compose.material3:material3:1.3.2")
+    implementation("androidx.compose.material3:material3-window-size-class:1.3.2")
+    implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.5.0-alpha04")
+
+    implementation("androidx.compose.material3.adaptive:adaptive:1.2.0-beta01")
+    implementation("androidx.compose.material3.adaptive:adaptive-layout:1.2.0-beta01")
+    implementation("androidx.compose.material3.adaptive:adaptive-navigation:1.2.0-beta01")
+
+    // implementation(libs.androidx.material3)
     // implementation(libs.androidx.material3.adaptive) // <-- This line is now active
     implementation(libs.androidx.material3.adaptive.navigation3)
     debugImplementation(libs.androidx.ui.tooling)

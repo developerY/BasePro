@@ -40,6 +40,7 @@ apollo = "3.8.6"
 playServicesWearable = "19.0.0"
 wearComposeMaterial = "1.7.8"
 wearComposeMaterial3 = "1.5.1"
+composeMaterial = "1.7.8"
 
 wearToolingPreview = "1.0.0"
 coreSplashscreen = "1.0.1"
@@ -128,7 +129,8 @@ androidx-material3 = { module = "androidx.compose.material3:material3" }  # Mate
 # androidx_material3_window_size_class = { module = "androidx.compose.material3:material3-window-size-class" } # Material Design 3 Window Size Class
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNavigation" }
 
-androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
+#androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "composeMaterial" }
 
 
 
