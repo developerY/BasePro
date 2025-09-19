@@ -49,12 +49,11 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:util"))
 
-    implementation(libs.androidx.material3)
+
 
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
-    implementation(libs.androidx.material3.adaptive.navigation3)
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.json)
 
@@ -71,6 +70,8 @@ dependencies {
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.material3)
+    // implementation(libs.androidx.material3.adaptive) // <-- This line is now active
+    implementation(libs.androidx.material3.adaptive.navigation3)
     debugImplementation(libs.androidx.ui.tooling)
 
     // Icons
