@@ -48,7 +48,7 @@ fun ButtonGroupTestPreview() {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ButtonGroupExample(modifier: Modifier = Modifier) {
-    val numButtons = 7
+    val numButtons = 10
     ButtonGroup(
         overflowIndicator = { menuState ->
             FilledIconButton(
