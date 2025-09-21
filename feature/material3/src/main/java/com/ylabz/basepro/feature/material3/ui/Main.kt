@@ -5,13 +5,24 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -36,7 +47,7 @@ import androidx.compose.ui.unit.dp
 // import com.ylabz.basepro.feature.material3.ui.ExpressiveLoadingIndicatorExample
 // import com.ylabz.basepro.feature.material3.ui.SplitButtonExample
 
-@OptIn(ExperimentalMaterial3Api::class) // For Scaffold, TopAppBar
+@OptIn(ExperimentalMaterial3Api::class) // For Scaffold, TopAppBar, BottomAppBar, FAB
 @Composable
 fun Material3ShowcaseScreen(modifier: Modifier = Modifier) {
     Scaffold(
@@ -49,6 +60,30 @@ fun Material3ShowcaseScreen(modifier: Modifier = Modifier) {
                 )
             )
         },
+        bottomBar = {
+            BottomAppBar(
+                actions = {
+                    IconButton(onClick = { /* TODO: Handle menu click */ }) {
+                        Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                    }
+                    IconButton(onClick = { /* TODO: Handle search click */ }) {
+                        Icon(Icons.Filled.Search, contentDescription = "Search")
+                    }
+                    Spacer(Modifier.weight(1f, true)) // Pushes subsequent items to the end
+                    IconButton(onClick = { /* TODO: Handle home click */ }) {
+                        Icon(Icons.Filled.Home, contentDescription = "Home")
+                    }
+                },
+                floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = { /* TODO: Handle FAB click */ }
+                    ) {
+                        Icon(Icons.Filled.Add, contentDescription = "Add")
+                    }
+                }
+            )
+        },
+        floatingActionButtonPosition = FabPosition.Center,
         modifier = modifier
     ) { innerPadding ->
         LazyColumn(
@@ -63,12 +98,8 @@ fun Material3ShowcaseScreen(modifier: Modifier = Modifier) {
             item { ShowcaseSection(title = "Button Group") { ButtonGroupExample() } }
             item { ShowcaseSection(title = "FAB Menu") { FabMenuExample() } }
             item { ShowcaseSection(title = "Morphing Icon Button") { MorphingIconButtonExample() } }
-            item { ShowcaseSection(title = "Expressive Loading Indicator") { ExpressiveLoadingIndicatorExample(
-                selectedOption = "Default"
-            ) } }
-            item { ShowcaseSection(title = "Expressive Loading Indicator") { ExpressiveLoadingIndicatorExample(
-                selectedOption = "Contained"
-            ) } }
+            item { ShowcaseSection(title = "Expressive Loading Indicator (Default)") { ExpressiveLoadingIndicatorExample(selectedOption = "Default") } }
+            item { ShowcaseSection(title = "Expressive Loading Indicator (Contained)") { ExpressiveLoadingIndicatorExample(selectedOption = "Contained") } }
             item { ShowcaseSection(title = "Split Button") { SplitButtonExample() } }
             // Add other examples here if available
         }
