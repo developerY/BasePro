@@ -9,6 +9,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButtonShapes
+import androidx.compose.material3.MaterialTheme // For Preview
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,10 +26,10 @@ fun MorphingIconButtonExample() {
     FilledTonalIconToggleButton(
         checked = checked,
         onCheckedChange = { checked = it },
-        shapes = IconToggleButtonShapes( // Directly construct IconToggleButtonShapes
+        shapes = IconToggleButtonShapes(
             shape = CircleShape,
             checkedShape = RoundedCornerShape(12.dp),
-            pressedShape = CircleShape
+            pressedShape = CircleShape // Or RoundedCornerShape(10.dp) for a subtle press
         )
     ) {
         val icon = if (checked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder
@@ -36,9 +37,10 @@ fun MorphingIconButtonExample() {
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun MorphingIconButtonExamplePreview() {
-    MorphingIconButtonExample()
+private fun MorphingIconButtonExamplePreview() {
+    MaterialTheme {
+        MorphingIconButtonExample()
+    }
 }

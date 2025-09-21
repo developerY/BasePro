@@ -13,47 +13,55 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun ExpressiveLoadingIndicatorExample(selectedOption: String) {
+fun ExpressiveLoadingIndicatorExample(
+    modifier: Modifier = Modifier,
+    selectedOption: String = "Default" // "Default" or "Contained"
+) {
     Column(
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        if (selectedOption == "Default") { // Still keeping this as per original user code structure
-            // Default LoadingIndicator
-            LoadingIndicator()
-        } else {
-            // ContainedLoadingIndicator with custom color and shapes
-            ContainedLoadingIndicator(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                // color = MaterialTheme.colorScheme.onSecondaryContainer, // REMOVED THIS LINE
-                polygons = listOf(
-                    MaterialShapes.Cookie9Sided,
-                    MaterialShapes.Pentagon,
-                    MaterialShapes.SoftBurst
-                ),
-                progress = { 0.5f },
-                modifier = Modifier
-            )
+        when (selectedOption) {
+            "Default" -> {
+                // Default LoadingIndicator
+                LoadingIndicator()
+            }
+            "Contained" -> {
+                // ContainedLoadingIndicator with custom color and shapes
+                ContainedLoadingIndicator(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    indicatorColor = MaterialTheme.colorScheme.onSecondaryContainer, // Note: using indicatorColor
+                    polygons = listOf(
+                        MaterialShapes.Cookie9Sided,
+                        MaterialShapes.Pentagon,
+                        MaterialShapes.SoftBurst
+                    ),
+                    progress = { 0.75f } // Example determinate progress
+                )
+            }
+            else -> {
+                // Fallback to default if option is unknown
+                LoadingIndicator()
+            }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Preview
+@Preview(showBackground = true, name = "Default Loading Indicator")
 @Composable
-fun ExpressiveLoadingIndicatorExampleDefaultPreview() {
-    ExpressiveLoadingIndicatorExample(selectedOption = "Default")
+private fun ExpressiveLoadingIndicatorDefaultPreview() {
+    MaterialTheme {
+        ExpressiveLoadingIndicatorExample(selectedOption = "Default")
+    }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Preview
+@Preview(showBackground = true, name = "Contained Loading Indicator")
 @Composable
-fun ExpressiveLoadingIndicatorExampleContainedPreview() {
-    ExpressiveLoadingIndicatorExample(selectedOption = "Contained")
+private fun ExpressiveLoadingIndicatorContainedPreview() {
+    MaterialTheme {
+        ExpressiveLoadingIndicatorExample(selectedOption = "Contained")
+    }
 }
-
-
-
