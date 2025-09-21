@@ -1,13 +1,17 @@
 package com.ylabz.basepro.feature.material3.ui
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.layout.Arrangement // Added for Row
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row       // Added for button layout
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding // Added for Row padding
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LinearWavyProgressIndicator
+import androidx.compose.material3.MaterialTheme // Added for Preview
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
@@ -31,27 +35,66 @@ fun WavyProgressIndicatorExample() {
         label = "ProgressAnimation"
     )
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        // Linear Wavy Progress Indicator
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(16.dp) // Added some padding to the column
+    ) {
+        Text(
+            "Linear Wavy Progress",
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
         LinearWavyProgressIndicator(
             progress = { animatedProgress },
             modifier = Modifier.fillMaxWidth()
         )
-        Spacer(Modifier.height(30.dp))
-        // Circular Wavy Progress Indicator
+        Spacer(Modifier.height(24.dp)) // Adjusted spacing
+
+        Text(
+            "Circular Wavy Progress",
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
         CircularWavyProgressIndicator(progress = { animatedProgress })
-        Spacer(Modifier.height(30.dp))
-        OutlinedButton(
-            onClick = { if (progress < 1f) progress += 0.1f }
+
+        Spacer(Modifier.height(32.dp)) // Adjusted spacing
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally) // Spaced buttons
         ) {
-            Text("Increase Progress")
+            OutlinedButton(
+                onClick = { if (progress > 0f) progress = (progress - 0.1f).coerceAtLeast(0f) },
+                modifier = Modifier.weight(1f) // Give buttons equal weight
+            ) {
+                Text("Decrease")
+            }
+            OutlinedButton(
+                onClick = { progress = 0.1f },
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Reset")
+            }
+            OutlinedButton(
+                onClick = { if (progress < 1f) progress = (progress + 0.1f).coerceAtMost(1f) },
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Increase")
+            }
         }
+        Text(
+            text = "Current Progress: ${"%.2f".format(animatedProgress)}",
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(top = 16.dp)
+        )
     }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun WavyProgressIndicatorExamplePreview() {
-    WavyProgressIndicatorExample()
+private fun WavyProgressIndicatorExamplePreview() { // Renamed for clarity
+    MaterialTheme {
+        WavyProgressIndicatorExample()
+    }
 }
