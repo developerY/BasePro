@@ -12,10 +12,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.ylabz.basepro.core.ui.MATERIAL3
-import com.ylabz.basepro.core.ui.NAV3
 import com.ylabz.basepro.core.ui.Screen
-import com.ylabz.basepro.feature.material3.ui.Material3Main
-import com.ylabz.basepro.feature.nav3.ui.Nav3Main
+import com.ylabz.basepro.feature.material3.ui.Material3ShowcaseScreen
 import com.ylabz.basepro.ui.bar.AppScaffold
 import kotlinx.coroutines.CoroutineScope
 
@@ -45,7 +43,7 @@ fun NavGraphBuilder.material3NavGraph(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Material3Main(modifier = Modifier)
+                    Material3ShowcaseScreen(modifier = Modifier)
                 }
             }
         }
