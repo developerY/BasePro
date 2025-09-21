@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
@@ -24,7 +23,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -65,11 +63,12 @@ fun Material3ShowcaseScreen(modifier: Modifier = Modifier) {
                         Icon(Icons.Filled.Home, contentDescription = "Home")
                     }
                 },
+                // Notice how the home button moves to the left to make room
                 floatingActionButton = {
                     FloatingActionButton(
                         onClick = { /* TODO: Handle FAB click */ }
                     ) {
-                        Icon(Icons.Filled.Add, contentDescription = "Add")
+                        Icon(Icons.Filled.Search, contentDescription = "Search")
                     }
                 }
             )
@@ -94,6 +93,11 @@ fun Material3ShowcaseScreen(modifier: Modifier = Modifier) {
             item { ShowcaseSection(title = "Split Button") { SplitButtonExample() } }
         }
     }
+}
+
+@Composable
+fun FloatingActionButton(onClick: () -> Unit, content: @Composable () -> Unit) {
+    TODO("Not yet implemented")
 }
 
 @Composable
