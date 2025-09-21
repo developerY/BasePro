@@ -44,6 +44,7 @@ fun NavGraphBuilder.material3NavGraph(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Material3ShowcaseScreen(modifier = Modifier)
+                    //Material3ExpressiveShowcaseScreen(modifier = Modifier)
                 }
             }
         }
