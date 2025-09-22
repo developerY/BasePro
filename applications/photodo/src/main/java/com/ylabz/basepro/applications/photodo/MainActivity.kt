@@ -6,16 +6,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.ylabz.basepro.applications.photodo.ui.nav3.PhotoDoAppNav3
 import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreen
-import com.ylabz.basepro.applications.photodo.ui.theme.BaseProTheme
+import com.ylabz.basepro.applications.photodo.ui.theme.PhotoDoTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,7 +21,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            BaseProTheme {
+            PhotoDoTheme {
 
                 // Bottom bar
 
