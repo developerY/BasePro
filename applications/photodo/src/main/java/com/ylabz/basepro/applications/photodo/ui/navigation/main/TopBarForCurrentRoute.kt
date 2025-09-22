@@ -1,58 +1,62 @@
 package com.ylabz.basepro.applications.photodo.ui.navigation.main
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack // Use AutoMirrored for LTR/RTL
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar // New import
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarScrollBehavior // New import
 import androidx.compose.runtime.Composable
-// import androidx.compose.runtime.State // No longer needed for currentKey
-// import androidx.compose.runtime.collectAsState // No longer needed for currentKey
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListEvent
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListViewModel
-import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys // Assuming your NavKeys are here
-import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackStack // For current key access
+import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
+import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackStack
 import androidx.navigation3.runtime.NavKey
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBarForCurrentRoute(
-    topLevelBackStack: TopLevelBackStack<NavKey>, // To get the current key
-    photoDoListViewModel: PhotoDoListViewModel,  // For actions
-    onNavigateBack: () -> Unit                   // For back navigation from detail
+    topLevelBackStack: TopLevelBackStack<NavKey>,
+    photoDoListViewModel: PhotoDoListViewModel,
+    onNavigateBack: () -> Unit,
+    scrollBehavior: TopAppBarScrollBehavior // New parameter
 ) {
-    // topLevelBackStack.backStack is a SnapshotStateList, which is directly observable by Compose.
-    // We can get the last element directly. Recomposition will occur if the list changes.
     val currentKey = topLevelBackStack.backStack.lastOrNull()
 
     when (currentKey) {
         is PhotoDoNavKeys.HomeFeedKey -> PhotoDoAppTopBar(
             title = "PhotoDo Home",
             showDeleteAll = true,
-            photoDoListViewModel = photoDoListViewModel
+            photoDoListViewModel = photoDoListViewModel,
+            scrollBehavior = scrollBehavior // Pass scrollBehavior
         )
         is PhotoDoNavKeys.PhotoDolListKey -> PhotoDoAppTopBar(
             title = "Photo List",
             showDeleteAll = true,
-            photoDoListViewModel = photoDoListViewModel
+            photoDoListViewModel = photoDoListViewModel,
+            scrollBehavior = scrollBehavior // Pass scrollBehavior
         )
         is PhotoDoNavKeys.PhotoDoDetailKey -> PhotoDoDetailTopBar(
-            title = "Task Details", // You might want to pass the actual task name/ID here later
-            onNavigateBack = onNavigateBack
+            title = "Task Details",
+            onNavigateBack = onNavigateBack,
+            scrollBehavior = scrollBehavior // Pass scrollBehavior
         )
-        is PhotoDoNavKeys.SettingsKey -> PhotoDoAppTopBar(
+        is PhotoDoNavKeys.SettingsKey -> PhotoDoAppTopBar( // Settings could use a standard TopAppBar or LargeTopAppBar
             title = "Settings",
-            showDeleteAll = false, // No delete all on settings screen
-            photoDoListViewModel = photoDoListViewModel // Not strictly needed if showDeleteAll is false
+            showDeleteAll = false,
+            photoDoListViewModel = photoDoListViewModel,
+            scrollBehavior = scrollBehavior // Pass scrollBehavior
         )
         else -> PhotoDoAppTopBar(
-            title = "PhotoDo", // Default title
+            title = "PhotoDo",
             showDeleteAll = false,
-            photoDoListViewModel = photoDoListViewModel
-        ) // Fallback, though ideally all top-level keys should be handled
+            photoDoListViewModel = photoDoListViewModel,
+            scrollBehavior = scrollBehavior // Pass scrollBehavior
+        )
     }
 }
 
@@ -61,9 +65,10 @@ fun TopBarForCurrentRoute(
 private fun PhotoDoAppTopBar(
     title: String,
     showDeleteAll: Boolean,
-    photoDoListViewModel: PhotoDoListViewModel // Needed for the action
+    photoDoListViewModel: PhotoDoListViewModel,
+    scrollBehavior: TopAppBarScrollBehavior // New parameter
 ) {
-    TopAppBar(
+    LargeTopAppBar( // Changed to LargeTopAppBar
         title = { Text(title) },
         actions = {
             if (showDeleteAll) {
@@ -73,7 +78,8 @@ private fun PhotoDoAppTopBar(
                     Icon(Icons.Filled.DeleteSweep, contentDescription = "Delete All Tasks")
                 }
             }
-        }
+        },
+        scrollBehavior = scrollBehavior // Use scrollBehavior
     )
 }
 
@@ -81,14 +87,16 @@ private fun PhotoDoAppTopBar(
 @Composable
 private fun PhotoDoDetailTopBar(
     title: String,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    scrollBehavior: TopAppBarScrollBehavior // New parameter
 ) {
-    TopAppBar(
+    TopAppBar( // Stays as TopAppBar, but could be MediumTopAppBar
         title = { Text(title) },
         navigationIcon = {
             IconButton(onClick = onNavigateBack) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
-        }
+        },
+        scrollBehavior = scrollBehavior // Use scrollBehavior
     )
 }

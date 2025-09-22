@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton // Added import
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults // New import
+import androidx.compose.material3.rememberTopAppBarState // New import
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
@@ -23,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll // New import
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entry
@@ -44,13 +47,16 @@ fun MainScreen() {
     val topLevelBackStack = remember { TopLevelBackStack<NavKey>(PhotoDoNavKeys.HomeFeedKey) }
     val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
     val photoDoListViewModel: PhotoDoListViewModel = hiltViewModel()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState()) // New
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection), // New
         topBar = {
             TopBarForCurrentRoute(
                 topLevelBackStack = topLevelBackStack,
                 photoDoListViewModel = photoDoListViewModel,
-                onNavigateBack = { topLevelBackStack.removeLastOrNull() } // Added onNavigateBack
+                onNavigateBack = { topLevelBackStack.removeLastOrNull() },
+                scrollBehavior = scrollBehavior // New
             )
         },
         bottomBar = {
@@ -69,22 +75,16 @@ fun MainScreen() {
             )
         }
     ) { innerPadding ->
-        // val screenModifier = Modifier // screenModifier not used, can be removed if not needed later
-        //     .fillMaxSize()
-        //     .padding(innerPadding)
         NavDisplay(
             backStack = topLevelBackStack.backStack,
             sceneStrategy = listDetailStrategy,
-            /*onBack = { keysToRemove ->
-                repeat(keysToRemove) {
-                    if (topLevelBackStack.backStack.isNotEmpty()) {
-                        topLevelBackStack.removeLastOrNull()
-                    }
-                }
-            },*/
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
+            // The content of NavDisplay's entries will need to be scrollable
+            // for the scroll behavior to work. This usually means ensuring
+            // composables like PhotoDoHomeUiRoute, PhotoDoListUiRoute, etc.,
+            // contain a LazyColumn or similar scrollable container.
             entryProvider = entryProvider {
                 entry<PhotoDoNavKeys.HomeFeedKey>(
                     metadata = ListDetailSceneStrategy.listPane(
