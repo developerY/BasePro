@@ -25,7 +25,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme // Keep this for fallback or specific uses
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -35,69 +35,73 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.feature.material3.ui.theme.MaterialExpressiveTheme // Added custom theme
 
 @OptIn(ExperimentalMaterial3Api::class) // For Scaffold, TopAppBar, BottomAppBar, FAB
 @Composable
 fun Material3ShowcaseScreen(modifier: Modifier = Modifier) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Material 3 Components Showcase") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+    MaterialExpressiveTheme { // Apply MaterialExpressiveTheme
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("Material 3 Components Showcase") },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
                 )
-            )
-        },
-        bottomBar = {
-            BottomAppBar(
-                actions = {
-                    IconButton(onClick = { /* TODO: Handle menu click */ }) {
-                        Icon(Icons.Filled.Menu, contentDescription = "Menu")
+            },
+            bottomBar = {
+                BottomAppBar(
+                    actions = {
+                        IconButton(onClick = { /* TODO: Handle menu click */ }) {
+                            Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                        }
+                        IconButton(onClick = { /* TODO: Handle search click */ }) {
+                            Icon(Icons.Filled.Search, contentDescription = "Search")
+                        }
+                        Spacer(Modifier.weight(1f, true)) // Pushes subsequent items to the end
+                        IconButton(onClick = { /* TODO: Handle home click */ }) {
+                            Icon(Icons.Filled.Home, contentDescription = "Home")
+                        }
+                    },
+                    floatingActionButton = {
+                        FloatingActionButton(
+                            onClick = { /* TODO: Handle FAB click */ }
+                        ) {
+                            Icon(Icons.Filled.Search, contentDescription = "Search")
+                        }
                     }
-                    IconButton(onClick = { /* TODO: Handle search click */ }) {
-                        Icon(Icons.Filled.Search, contentDescription = "Search")
-                    }
-                    Spacer(Modifier.weight(1f, true)) // Pushes subsequent items to the end
-                    IconButton(onClick = { /* TODO: Handle home click */ }) {
-                        Icon(Icons.Filled.Home, contentDescription = "Home")
-                    }
-                },
-                // Notice how the home button moves to the left to make room
-                floatingActionButton = {
-                    FloatingActionButton(
-                        onClick = { /* TODO: Handle FAB click */ }
-                    ) {
-                        Icon(Icons.Filled.Search, contentDescription = "Search")
-                    }
-                }
-            )
-        },
-        floatingActionButtonPosition = FabPosition.Center,
-        modifier = modifier
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
-            item { ShowcaseSection(title = "Wavy Progress Indicator") { WavyProgressIndicatorExample() } }
-            item { ShowcaseSection(title = "Expressive Card") { ExpressiveCardExample() } }
-            item { ShowcaseSection(title = "Button Group") { ButtonGroupExample() } }
-            item { ShowcaseSection(title = "FAB Menu") { FabMenuExample() } }
-            item { ShowcaseSection(title = "Morphing Icon Button") { MorphingIconButtonExample() } }
-            item { ShowcaseSection(title = "Expressive Loading Indicator (Default)") { ExpressiveLoadingIndicatorExample(selectedOption = "Default") } }
-            item { ShowcaseSection(title = "Expressive Loading Indicator (Contained)") { ExpressiveLoadingIndicatorExample(selectedOption = "Contained") } }
-            item { ShowcaseSection(title = "Split Button") { SplitButtonExample() } }
+                )
+            },
+            floatingActionButtonPosition = FabPosition.Center,
+            modifier = modifier
+        ) { innerPadding ->
+            LazyColumn(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                item { ShowcaseSection(title = "Wavy Progress Indicator") { WavyProgressIndicatorExample() } }
+                item { ShowcaseSection(title = "Expressive Card") { ExpressiveCardExample() } }
+                item { ShowcaseSection(title = "Button Group") { ButtonGroupExample() } }
+                item { ShowcaseSection(title = "FAB Menu") { FabMenuExample() } }
+                item { ShowcaseSection(title = "Morphing Icon Button") { MorphingIconButtonExample() } }
+                item { ShowcaseSection(title = "Expressive Loading Indicator (Default)") { ExpressiveLoadingIndicatorExample(selectedOption = "Default") } }
+                item { ShowcaseSection(title = "Expressive Loading Indicator (Contained)") { ExpressiveLoadingIndicatorExample(selectedOption = "Contained") } }
+                item { ShowcaseSection(title = "Split Button") { SplitButtonExample() } }
+            }
         }
     }
 }
 
 @Composable
 fun FloatingActionButton(onClick: () -> Unit, content: @Composable () -> Unit) {
-    // TODO("Not yet implemented")
+    androidx.compose.material3.FloatingActionButton(onClick = onClick) {
+        content()
+    }
 }
 
 @Composable
@@ -117,8 +121,8 @@ private fun ShowcaseSection(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(bottom = 12.dp) // Increased bottom padding
+                style = MaterialTheme.typography.titleLarge, // This will now use ExpressiveTypography.titleLarge from the theme
+                modifier = Modifier.padding(bottom = 12.dp)
             )
             Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                 content()
@@ -127,10 +131,10 @@ private fun ShowcaseSection(
     }
 }
 
-@Preview(showBackground = true, widthDp = 400, heightDp = 1200) // Increased height for better view
+@Preview(showBackground = true, widthDp = 400, heightDp = 1200)
 @Composable
 fun Material3ShowcaseScreenPreview() {
-    MaterialTheme { // Ensure MaterialTheme is applied for the preview
+    MaterialExpressiveTheme { // Ensure MaterialExpressiveTheme is applied for the preview
         Material3ShowcaseScreen()
     }
 }
