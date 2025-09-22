@@ -7,12 +7,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 // Replace with your app's font assets if you have custom fonts
-// val AppFontFamily = FontFamily(...)
+// val שלךAppFontFamily = FontFamily(...)
 
 // Default Material 3 typography
 val Typography = Typography(
     displayLarge = TextStyle(
-        fontFamily = FontFamily.Default, // Replace with AppFontFamily if you have one
+        fontFamily = FontFamily.Default, // Replace with שלךAppFontFamily if you have one
         fontWeight = FontWeight.Normal,
         fontSize = 57.sp,
         lineHeight = 64.sp,
