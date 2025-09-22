@@ -1,6 +1,5 @@
 package com.ylabz.basepro.feature.material3.ui.theme
 
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
@@ -33,7 +32,7 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
+    primary = Purple40, // Reverted to Purple40
     secondary = PurpleGrey40,
     tertiary = Pink40,
     // Other default colors to override
@@ -43,8 +42,7 @@ private val LightColorScheme = lightColorScheme(
     onSecondary = Color.White,
     onTertiary = Color.White,
     onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-
+    onSurface = Color(0xFF1C1B1F)
 )
 
 /**
@@ -92,7 +90,7 @@ fun MaterialExpressiveTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+        dynamicColor -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
@@ -105,7 +103,7 @@ fun MaterialExpressiveTheme(
         // Here is the key part: We pass our custom ExpressiveTypography
         typography = ExpressiveTypography,
         // You could also pass custom shapes here for more expression
-        // shapes = ExpressiveShapes, // Assuming you'''d define ExpressiveShapes similarly
+        // shapes = ExpressiveShapes, // Assuming youd define ExpressiveShapes similarly
         content = content
     )
 }
