@@ -1,276 +1,308 @@
+# This file defines the versions, libraries, and plugins used in the project.
+# It is organized into three main sections:
+# [versions]: Defines version aliases for dependencies and build configurations.
+# [libraries]: Defines the actual library dependencies using version aliases from the [versions] section.
+# [plugins]: Defines Gradle plugins used in the project.
+
 [versions]
-agp = "8.13.0"          # Android Gradle Plugin, used to build Android apps
+# Build & SDK Configuration
+agp = "8.13.0"                  # Android Gradle Plugin version
+compileSdk = "36"               # Android Compile SDK version
+targetSdk = "35"                # Android Target SDK version
+minSdk = "34"                   # Android Minimum SDK version
+
+# Kotlin & Related Tools
 kotlin = "2.2.20"               # Kotlin programming language version
-coreKtx = "1.17.0"             # Core KTX, Kotlin extensions for Android core libraries
-junit = "4.13.2"               # JUnit, a framework for writing and running tests in Java
-junitVersion = "1.3.0"         # AndroidX JUnit extension, provides compatibility with JUnit
-espressoCore = "3.7.0"         # Espresso, a library for Android UI testing
-# lifecycleRuntimeKtx = "2.8.4"  # AndroidX Lifecycle runtime KTX, provides Kotlin extensions for lifecycle management
-activityCompose = "1.11.0"      # Activity Compose, allows using Jetpack Compose in Activities
-composeBom = "2025.09.00"      # Compose BOM (Bill of Materials), ensures consistent Compose library versions
+ksp = "2.2.20-2.0.3"            # Kotlin Symbol Processing API version
+kotlinxSerialization = "1.9.0"  # Kotlinx Serialization library version (used for core and json)
+immutableCollections = "0.4.0"  # Kotlinx Immutable Collections library version
 
-# Additional Libraries
-hilt = "2.57.1"                  # Hilt, a dependency injection library for Android
-androidxCoreKtx = "1.12.0"     # AndroidX Core KTX, Kotlin extensions for Android core libraries
-appCompat = "1.7.1"            # AppCompat, backward-compatible versions of Android components
-material = "1.13.0"            # Material Components for Android, implements Material Design
-constraintLayout = "2.2.1"     # ConstraintLayout, a layout manager for complex layouts
-room = "2.8.0"                 # Room, an abstraction layer over SQLite to allow fluent database access
-work = "2.10.4"                 # WorkManager, manages background work with guaranteed execution
-lifecycle = "2.9.3"            # AndroidX Lifecycle components, manages UI-related data in a lifecycle-conscious way
-hiltLifecycleViewModel = "1.3.0"  # Hilt ViewModel injection
-hiltNavigation = "1.0.0"       # Hilt support for Navigation component
-hiltNavigationCompose = "1.3.0" # Hilt support for Jetpack Compose Navigation
-hiltWork = "1.3.0"             # Hilt support for WorkManager
-androidxNavigation = "2.9.4"
-ksp = "2.2.20-2.0.3"
-serialization = "1.9.0"
-cameraX = "1.5.0"
-accompanistPermissions = "0.37.3"
-mapsCompose = "6.10.0"
-mapsplatformSecretsPlugin = "2.0.1" # mapsplatform-secrets
-okhttp = "5.1.0" # OkHttp
-healthConnect = "1.1.0-rc03" # Health Connect"
-datastore = "1.1.7" # DataStore
-coil = "2.7.0"
+# AndroidX - Core & AppCompat
+coreKtx = "1.17.0"              # AndroidX Core KTX, Kotlin extensions for Android core libraries
+appCompat = "1.7.1"             # AndroidX AppCompat, for backward-compatible versions of Android components
 
-# plugins
-# Apollo GraphQL
-apollo = "3.8.6"
-playServicesWearable = "19.0.0"
-wearComposeMaterial = "1.7.8"
-wearComposeMaterial3 = "1.5.1"
-composeMaterial = "1.7.8"
+# AndroidX - Lifecycle
+lifecycle = "2.9.3"             # AndroidX Lifecycle components (ViewModel, LiveData, Runtime)
+lifecycleService = "2.9.3"      # AndroidX Lifecycle Service component
 
-wearToolingPreview = "1.0.0"
-coreSplashscreen = "1.0.1"
+# AndroidX - Activity
+activityCompose = "1.11.0"      # AndroidX Activity Compose, for Jetpack Compose in Activities
 
-# Wonder if these are all the same
-tiles = "1.5.0"
-tilesMaterial = "1.5.0"
-tilesTooling = "1.5.0"
-tilesToolingPreview = "1.5.0"
+# AndroidX - Navigation (Includes Nav3)
+androidxNavigation = "2.9.4"    # AndroidX Navigation component (Compose)
+nav3Core = "1.0.0-alpha09"      # Navigation 3 Core libraries version
+lifecycleViewmodelNav3 = "1.0.0-alpha04" # Navigation 3 ViewModel support
+material3AdaptiveNav3 = "1.0.0-SNAPSHOT" # Navigation 3 Material3 Adaptive Layouts (Snapshot)
 
+# Jetpack Compose
+composeBom = "2025.09.00"       # Jetpack Compose Bill of Materials (BOM)
+composeMaterial = "1.7.8"       # Jetpack Compose Material (used for icons, wear material)
+# Note: androidx.compose.material3 uses the BoM version.
+# Note: androidx.compose.ui:ui-tooling-preview uses the BoM version.
 
-horologist = "0.7.15"
-watchfaceComplicationsDataSourceKtx = "1.2.1"
-playServicesLocation = "21.3.0" # apollo-graphql
-playServicesCoroutines = "1.10.2"
-playServicesMaps = "19.2.0"
-mlkit-text-recognition = "16.0.1"
-immutableColections = "0.4.0"
+# Dependency Injection - Hilt
+hilt = "2.57.1"                 # Hilt, a dependency injection library for Android
+hiltLifecycleViewModel = "1.3.0" # Hilt AndroidX Lifecycle ViewModel integration
+hiltNavigationCompose = "1.3.0" # Hilt Jetpack Compose Navigation integration
+hiltWork = "1.3.0"              # Hilt WorkManager integration
 
-qrScannerVersion = "16.1.0"
-playServicesCodeScanner = "16.1.0" # QR Scanner
+# Data Persistence
+room = "2.8.0"                  # AndroidX Room, an abstraction layer over SQLite
+datastore = "1.1.7"             # AndroidX DataStore, for persistent data storage
 
-compileSdk = "36"
-targetSdk = "35"
-minSdk = "34" # "31/34"
-lifecycleService = "2.9.3"
-# firebaseCrashlytics = "19.4.4" # Removed, BoM will manage
-firebaseBom = "34.2.0" # Added Firebase BoM version
-googleGmsGoogleServices = "4.4.3"
-googleFirebaseCrashlytics = "3.0.6"
+# Background Processing
+work = "2.10.4"                 # AndroidX WorkManager, for background tasks
 
-kotlinxSerializationCore = "1.9.0"
-# Nav 3
-nav3Core = "1.0.0-alpha09"
-lifecycleViewmodelNav3 = "1.0.0-alpha04" # NOT "2.10.0-alpha04" #
-# "1.0.0-alpha02" # This is the latest version for this artifact but not compile
-material3AdaptiveNav3 = "1.0.0-SNAPSHOT"
+# Networking
+okhttp = "5.1.0"                # Square OkHttp, HTTP client
+squareupRetrofit = "3.0.0"      # Square Retrofit, type-safe HTTP client for Android and Java
 
-uiautomator = "2.3.0"
+# UI Components & Utilities
+material = "1.13.0"             # Google Material Components for Android (legacy, non-Compose)
+constraintLayout = "2.2.1"      # AndroidX ConstraintLayout, a layout manager
+coil = "2.7.0"                  # Coil, an image loading library for Android
 
-# Set to one version?
-benchmarkMacroJunit4 = "1.4.1"
-baselineProfile = "1.4.1"
-profileinstaller = "1.4.1"
+# Permissions
+accompanistPermissions = "0.37.3" # Accompanist Permissions library
 
-runner = "1.7.0"
+# Camera
+cameraX = "1.5.0"               # AndroidX CameraX libraries
 
-squareupRetrofit = "3.0.0"
-squareupOkhttp3 = "5.1.0"
+# Maps & Location
+mapsCompose = "6.10.0"          # Maps Compose library for Jetpack Compose
+mapsplatformSecretsPlugin = "2.0.1" # Gradle plugin for Maps API key secrets
+playServicesMaps = "19.2.0"     # Google Play Services Maps SDK
+playServicesLocation = "21.3.0" # Google Play Services Location SDK
+
+# Health Connect
+healthConnect = "1.1.0-rc03"    # Health Connect client library
+
+# Wear OS
+playServicesWearable = "19.0.0" # Google Play Services for Wear OS
+wearComposeMaterial = "1.7.8"   # Wear OS Jetpack Compose Material library (used by icons too)
+wearComposeMaterial3 = "1.5.1"  # Wear OS Jetpack Compose Material3 library
+wearToolingPreview = "1.0.0"    # Wear OS Tooling Preview library
+coreSplashscreen = "1.0.1"      # AndroidX Core Splashscreen library
+tiles = "1.5.0"                 # Wear OS Tiles libraries (tiles, tiles-material, tiles-tooling, tiles-tooling-preview)
+horologist = "0.7.15"           # Horologist libraries for Wear OS
+watchfaceComplicationsDataSourceKtx = "1.2.1" # Wear OS Watchface Complications KTX library
+
+# Google Play Services (Miscellaneous)
+playServicesCoroutines = "1.10.2" # Kotlin Coroutines support for Google Play Services
+
+# ML Kit & Scanning
+mlkitTextRecognition = "16.0.1" # ML Kit Text Recognition library
+playServicesCodeScanner = "16.1.0" # Google Play Services Code Scanner (QR Scanner)
+
+# Firebase
+firebaseBom = "34.2.0"          # Firebase Bill of Materials (BOM)
+googleGmsGoogleServices = "4.4.3" # Google Services Gradle plugin
+googleFirebaseCrashltyics = "3.0.6" # Firebase Crashlytics Gradle plugin
+
+# GraphQL (Apollo)
+apollo = "3.8.6"                # Apollo GraphQL client version
+
+# Testing & Profiling
+junit = "4.13.2"                # JUnit 4, a framework for Java tests
+junitVersion = "1.3.0"          # AndroidX JUnit extension
+espressoCore = "3.7.0"          # AndroidX Espresso, for Android UI testing
+uiautomator = "2.3.0"           # AndroidX UI Automator, for UI testing across apps
+androidxProfiling = "1.4.1"     # Version for AndroidX Benchmark, Baseline Profile, ProfileInstaller
+runner = "1.7.0"                # AndroidX Test Runner
 
 
 [libraries]
-# REMOVED compileSdk = { module = "com.android.tools.build:gradle", version.ref = "compileSdk" }
-# REMOVED targetSdk = { module = "com.android.tools.build:gradle", version.ref = "targetSdk" }
+# AndroidX - Core & Foundational
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appCompat" }
 
+# AndroidX - Lifecycle
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycle" }
+lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
+lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+lifecycle-viewmodel-android = { module = "androidx.lifecycle:lifecycle-viewmodel-android", version.ref = "lifecycle" } # ViewModel support for Android
+androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycleService" }
+
+# AndroidX - Activity
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+
+# Jetpack Compose - BOM & UI Core
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+androidx-ui = { module = "androidx.compose.ui:ui" }  # Compose UI core library (version from BOM)
+androidx-ui-graphics = { module = "androidx.compose.ui:ui-graphics" } # Compose UI graphics library (version from BOM)
+androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" } # Compose UI tooling library (version from BOM)
+androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" } # Compose UI tooling preview (version from BOM)
+
+# Jetpack Compose - Material & Icons
+androidx-material3 = { module = "androidx.compose.material3:material3" } # Material Design 3 components for Compose (version from BOM)
+# androidx-material3-window-size-class = { module = "androidx.compose.material3:material3-window-size-class" } # Optional: Material3 Window Size Class
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "composeMaterial" }
+
+# Jetpack Compose - Image Loading
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+
+# Navigation - AndroidX Navigation (for Compose)
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNavigation" }
+
+# Navigation - AndroidX Navigation 3
 # Core Navigation 3 libraries
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
-
-# Optional add-on libraries
+# Optional add-on libraries for Navigation 3
 androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
-kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
-
 # Note: The Material3 adaptive layouts library for Navigation 3 is currently
-# only available in snapshot builds. Follow the instructions at androidx.dev to
-# add the snapshot builds repository to your project.
+# only available in snapshot builds. Follow instructions at androidx.dev to add the snapshot repository.
 androidx-material3-adaptive-navigation3 = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "material3AdaptiveNav3" }
 
-androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }  # Core KTX library
-junit = { module = "junit:junit", version.ref = "junit" }  # JUnit testing library
-androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }  # AndroidX JUnit extension
-androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }  # Espresso UI testing
-androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }  # Lifecycle runtime KTX
-androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
-androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycle" }
+# Dependency Injection - Hilt
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+# hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" } # Common Dagger compiler, not typically used directly in Android Hilt setup
+hilt-lifecycle-viewmodel = { module = "androidx.hilt:hilt-lifecycle-viewmodel", version.ref = "hiltLifecycleViewModel" }
+hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }
 
-androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }  # Activity support for Compose
-androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }  # Compose BOM for consistent versions
-androidx-ui = { module = "androidx.compose.ui:ui" }  # Compose UI library
-androidx-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }  # Compose UI graphics library
-androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }  # Compose UI tooling library
-# androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }  # Compose UI tooling preview
-androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }  # Compose UI test manifest
-androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }  # Compose UI test library for JUnit4
-androidx-material3 = { module = "androidx.compose.material3:material3" }  # Material Design 3 components for Compose
-# androidx_material3_window_size_class = { module = "androidx.compose.material3:material3-window-size-class" } # Material Design 3 Window Size Class
-androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNavigation" }
+# Data Persistence - Room
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" } # Room annotation processor
 
-#androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
-androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "composeMaterial" }
-
-
-
-# datastore
+# Data Persistence - DataStore
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-datastore-core = { module = "androidx.datastore:datastore-core", version.ref = "datastore" }
 
+# Background Processing - WorkManager
+work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
 
-# WearOS
+# Networking - OkHttp & Retrofit
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+squareup-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "squareupRetrofit" }
+squareup-retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "squareupRetrofit" }
+squareup-okhttp3-logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
+
+# Networking - GraphQL (Apollo)
+apollo-graphql = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apollo" }
+apollo-graphql-cache = { module = "com.apollographql.apollo3:apollo-normalized-cache", version.ref = "apollo" }
+
+# UI Components - Material (Legacy) & ConstraintLayout
+material = { module = "com.google.android.material:material", version.ref = "material" }
+constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintLayout" }
+
+# Permissions - Accompanist
+google-accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
+
+# CameraX
+androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "cameraX" }
+androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraX" } # Camera2 implementation
+androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraX" } # Lifecycle support
+androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraX" } # View support (needed for Compose integration)
+
+# Google Services - Maps & Location
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
+google-maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
+
+# Google Services - Kotlin Coroutines Support
+kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "playServicesCoroutines" }
+
+# Health Connect
+androidx-health-connect-client = { module = "androidx.health.connect:connect-client", version.ref = "healthConnect" }
+# androidx-health-connect-client-datatypes = { module = "androidx.health.connect:connect-client-datatypes", version.ref = "healthConnect" } # Optional: if specific datatypes are needed
+
+# Wear OS - Core & Splashscreen
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
-# WearOS Compose alterniative way
-# wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
+
+# Wear OS - Compose
 androidx-wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "wearComposeMaterial" }
 androidx-wear-compose-material-icons = { group = "androidx.wear.compose", name = "compose-material-icons", version.ref = "wearComposeMaterial" }
 androidx-wear-compose-material3 = { module = "androidx.wear.compose:compose-material3", version.ref = "wearComposeMaterial3" }
-androidx-wear-compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "wearComposeMaterial" }
-
-#androidx-wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "composeFoundation" }
+androidx-wear-compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "wearComposeMaterial" } # Uses wearComposeMaterial version
 androidx-wear-tooling-preview = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wearToolingPreview" }
-androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
-androidx-tiles = { group = "androidx.wear.tiles", name = "tiles", version.ref = "tiles" }
-androidx-tiles-material = { group = "androidx.wear.tiles", name = "tiles-material", version.ref = "tilesMaterial" }
-androidx-tiles-tooling = { group = "androidx.wear.tiles", name = "tiles-tooling", version.ref = "tilesTooling" }
-androidx-tiles-tooling-preview = { group = "androidx.wear.tiles", name = "tiles-tooling-preview", version.ref = "tilesToolingPreview" }
+# androidx-wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "wearComposeFoundation" } # If needed
 
+# Wear OS - Tiles
+androidx-tiles = { group = "androidx.wear.tiles", name = "tiles", version.ref = "tiles" }
+androidx-tiles-material = { group = "androidx.wear.tiles", name = "tiles-material", version.ref = "tiles" }
+androidx-tiles-tooling = { group = "androidx.wear.tiles", name = "tiles-tooling", version.ref = "tiles" }
+androidx-tiles-tooling-preview = { group = "androidx.wear.tiles", name = "tiles-tooling-preview", version.ref = "tiles" }
+
+# Wear OS - Watchface
 androidx-watchface-complications-data-source-ktx = { group = "androidx.wear.watchface", name = "watchface-complications-data-source-ktx", version.ref = "watchfaceComplicationsDataSourceKtx" }
 
-
+# Wear OS - Horologist
 horologist-compose-layout = { group = "com.google.android.horologist", name = "horologist-compose-layout", version.ref = "horologist" }
 horologist-compose-tools = { group = "com.google.android.horologist", name = "horologist-compose-tools", version.ref = "horologist" }
 horologist-tiles = { group = "com.google.android.horologist", name = "horologist-tiles", version.ref = "horologist" }
 horologist-composables = { module = "com.google.android.horologist:horologist-composables", version.ref = "horologist" }
 horologist-compose-material = { module = "com.google.android.horologist:horologist-compose-material", version.ref = "horologist" }
 
-
-# Jetbrains Libraries
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
-kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "playServicesCoroutines" }
-kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutableColections" }
-
-
-
-# Hilt Librariesandroidx.navigation:navigation-compose
-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }  # Hilt core library for dependency injection
-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }  # Hilt annotation processor
-# hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" } # Not used in Android
-hilt-lifecycle-viewmodel = { module = "androidx.hilt:hilt-lifecycle-viewmodel", version.ref = "hiltLifecycleViewModel" }  # Hilt integration for ViewModel
-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }  # Hilt integration for Compose Navigation
-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }  # Hilt integration for WorkManager
-
-# AppCompat and Material Libraries
-androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appCompat" }  # Backward-compatible versions of Android components
-material = { module = "com.google.android.material:material", version.ref = "material" }  # Material Design components for Android
-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintLayout" }  # ConstraintLayout manager for complex layouts
-
-# Room Libraries
-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }  # Room runtime library for database access
-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }  # Kotlin extensions for Room
-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }  # Room annotation processor
-
-squareup-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "squareupRetrofit" }
-squareup-retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "squareupRetrofit" }
-squareup-okhttp3-logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "squareupOkhttp3" }
-
-# WorkManager Library
-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }  # WorkManager runtime with Kotlin extensions
-
-# Lifecycle Libraries
-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }  # ViewModel support with Kotlin extensions
-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
-lifecycle-viewmodel-android = { module = "androidx.lifecycle:lifecycle-viewmodel-android", version.ref = "lifecycle" }  # LiveData support with Kotlin extensions
-# lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }  # Lifecycle runtime with Kotlin extensions
-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
-
-# Permissions
-google-accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
-
-# CameraX core library
-androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "cameraX" }
-# CameraX Camera2 implementation
-androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraX" }
-# CameraX lifecycle support
-androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraX" }
-# CameraX View (needed for CameraX in Compose)
-androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraX" }
-
-mlkit-text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "mlkit-text-recognition" }
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
-
-
-# GraphQL
-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
-apollo-graphql = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apollo" }
-apollo-graphql-cache = { module = "com.apollographql.apollo3:apollo-normalized-cache", version.ref = "apollo" }
-
-# Map
-google-maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
-
-# Health
-androidx-health-connect-client = { module = "androidx.health.connect:connect-client", version.ref = "healthConnect" }
-# androidx-health-connect-client-datatypes = { module = "androidx.health.connect:connect-client-datatypes", version.ref = "healthConnect" }
-
-
-play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
-play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
-
-
-# QR Scanner
+# ML Kit & Scanning
+mlkit-text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "mlkitTextRecognition" }
 gms-play-services-code-scanner = { module = "com.google.android.gms:play-services-code-scanner", version.ref = "playServicesCodeScanner" }
-androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycleService" }
 
-# Firebase
-firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" } # Added
-firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" } # Version removed
-# firebase-auth = { group = "com.google.firebase", name = "firebase-auth" } # Added
-# firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" } # Added
-firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+# Firebase - BOM & Services
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" } # Version managed by BOM
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" } # Version managed by BOM
+# firebase-auth = { group = "com.google.firebase", name = "firebase-auth" } # Example: Add if using Firebase Auth (version from BOM)
+# firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" } # Example: Add if using Firebase Firestore (version from BOM)
+
+# KotlinX - Serialization & Collections
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerialization" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutableCollections" }
+
+# Testing - Unit Testing
+junit = { module = "junit:junit", version.ref = "junit" }
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
+
+# Testing - UI Testing & Espresso
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
+androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" } # Version from BOM
+androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" } # Version from BOM
+
+# Testing - UI Automator & Runner
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
-androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" } # Added
-
-androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
+
+# Testing - Benchmarking & Profiling
+androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxProfiling" }
+androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "androidxProfiling" }
 
 
 [plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }  # Android application plugin
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }  # Kotlin Android plugin
-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }  # Kotlin Compose plugin
-# kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" } # Kotlin annotation processing
+# Core Android & Kotlin Plugins
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+
+# Jetpack Compose Plugin
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+
+# Dependency Injection & Code Generation
 hilt-gradle = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-# jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization"}
-mapsplatform-secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "mapsplatformSecretsPlugin" }
+# kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" } # Kapt plugin, if needed for Java annotation processors
 
-apollo-graphql = { id = "com.apollographql.apollo3", version.ref = "apollo" }
+# Kotlin Serialization Plugin
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" } # Note: Uses Kotlin version
+
+# Google Services & Maps Plugins
+mapsplatform-secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "mapsplatformSecretsPlugin" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
-google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "googleFirebaseCrashlytics" }
+
+# Firebase Plugins
+google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "googleFirebaseCrashltyics" }
+
+# Android Test Plugin
 android-test = { id = "com.android.test", version.ref = "agp" }
 
-androidx-baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineProfile" } # Or your desired version
+# Performance Profiling Plugins
+androidx-baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidxProfiling" }
+
+# GraphQL (Apollo) Plugin
+apollo-graphql = { id = "com.apollographql.apollo3", version.ref = "apollo" }
