@@ -97,7 +97,7 @@ fun Material3ShowcaseScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun FloatingActionButton(onClick: () -> Unit, content: @Composable () -> Unit) {
-    TODO("Not yet implemented")
+    // TODO("Not yet implemented")
 }
 
 @Composable
