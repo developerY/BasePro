@@ -40,7 +40,7 @@ import com.ylabz.basepro.feature.material3.ui.theme.MaterialExpressiveTheme // A
 @OptIn(ExperimentalMaterial3Api::class) // For Scaffold, TopAppBar, BottomAppBar, FAB
 @Composable
 fun Material3ShowcaseScreen(modifier: Modifier = Modifier) {
-    MaterialExpressiveTheme(dynamicColor = false) { // Apply MaterialExpressiveTheme with dynamicColor = false
+    MaterialExpressiveTheme(dynamicColor = true) { // Apply MaterialExpressiveTheme with dynamicColor = false
         Scaffold(
             topBar = {
                 TopAppBar(
