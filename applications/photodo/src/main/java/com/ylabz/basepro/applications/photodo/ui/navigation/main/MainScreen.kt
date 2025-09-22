@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExtendedFloatingActionButton // Added import
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -60,11 +60,13 @@ fun MainScreen() {
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                photoDoListViewModel.onEvent(PhotoDoListEvent.OnAddTaskClicked)
-            }) {
-                Icon(Icons.Filled.Add, contentDescription = "Add Task")
-            }
+            ExtendedFloatingActionButton(
+                onClick = {
+                    photoDoListViewModel.onEvent(PhotoDoListEvent.OnAddTaskClicked)
+                },
+                icon = { Icon(Icons.Filled.Add, contentDescription = "Add Task Icon") },
+                text = { Text("Add Task") }
+            )
         }
     ) { innerPadding ->
         // val screenModifier = Modifier // screenModifier not used, can be removed if not needed later
