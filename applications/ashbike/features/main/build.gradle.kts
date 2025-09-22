@@ -58,11 +58,11 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+    implementation(libs.material.legacy)
 
     // androidx-lifecycle-viewmodel-compose
-    implementation(libs.lifecycle.viewmodel.compose)
-    implementation(libs.lifecycle.viewmodel.android)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.android)
 
     //lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -70,7 +70,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.service)
 
     //Maps
-    implementation(libs.play.services.location)
+    implementation(libs.google.play.services.location)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))

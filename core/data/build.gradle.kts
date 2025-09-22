@@ -66,7 +66,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+    implementation(libs.material.legacy)
 
     // Datastore
     implementation(libs.androidx.datastore.preferences)
@@ -83,16 +83,16 @@ dependencies {
     ksp(libs.hilt.android.compiler)
 
     // GraphQL
-    implementation(libs.okhttp)
-    implementation(libs.apollo.graphql)
-    implementation(libs.apollo.graphql.cache)
+    implementation(libs.squareup.okhttp)
+    implementation(libs.apollo.graphql.runtime)
+    implementation(libs.apollo.graphql.normalized.cache)
 
     // Health Connect
     implementation(libs.androidx.health.connect.client)
 
     // maps
     implementation(libs.google.maps.compose)
-    implementation(libs.play.services.location)
+    implementation(libs.google.play.services.location)
 
     implementation(libs.kotlinx.coroutines.play.services)
 

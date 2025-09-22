@@ -49,11 +49,11 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+    implementation(libs.material.legacy)
 
     // androidx-lifecycle-viewmodel-compose
-    implementation(libs.lifecycle.viewmodel.compose)
-    implementation(libs.lifecycle.viewmodel.android)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.android)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
@@ -67,7 +67,7 @@ dependencies {
     // Hilt Dependency Injection
     implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.android)
-    implementation(libs.play.services.maps)
+    implementation(libs.google.play.services.maps)
     // implementation((libs.play.services.location))
     ksp(libs.hilt.android.compiler)
     // kapt(libs.hilt.compiler)

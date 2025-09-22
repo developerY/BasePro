@@ -53,7 +53,7 @@ dependencies {
     implementation(project(":feature:wearos:drunkwatch"))
 
 
-    implementation(libs.play.services.wearable)
+    implementation(libs.google.play.services.wearable)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)

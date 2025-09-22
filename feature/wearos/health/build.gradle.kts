@@ -55,8 +55,8 @@ dependencies {
     //implementation(libs.material)
 
     // androidx-lifecycle-viewmodel-compose
-    implementation(libs.lifecycle.viewmodel.compose)
-    implementation(libs.lifecycle.viewmodel.android)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.android)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
@@ -76,7 +76,7 @@ dependencies {
     // Health Connect
     implementation(libs.androidx.health.connect.client)
 
-    implementation(libs.play.services.wearable)
+    implementation(libs.google.play.services.wearable)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     debugImplementation(libs.androidx.ui.tooling)

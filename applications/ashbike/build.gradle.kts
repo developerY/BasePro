@@ -118,8 +118,8 @@ dependencies {
     implementation(project(""":applications:ashbike:features:settings"""))
 
     // androidx-lifecycle-viewmodel-compose
-    implementation(libs.lifecycle.viewmodel.compose)
-    implementation(libs.lifecycle.viewmodel.android)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.android)
 
     // AndroidX + Compose
     implementation(libs.androidx.core.ktx)

@@ -97,7 +97,7 @@ playServicesCodeScanner = "16.1.0" # Google Play Services Code Scanner (QR Scann
 # Firebase
 firebaseBom = "34.2.0"          # Firebase Bill of Materials (BOM)
 googleGmsGoogleServices = "4.4.3" # Google Services Gradle plugin
-googleFirebaseCrashltyics = "3.0.6" # Firebase Crashlytics Gradle plugin
+googleFirebaseCrashlytics = "3.0.6" # Firebase Crashlytics Gradle plugin
 
 # GraphQL (Apollo)
 apollo = "3.8.6"                # Apollo GraphQL client version
@@ -120,10 +120,10 @@ androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "a
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycle" }
-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
-lifecycle-viewmodel-android = { module = "androidx.lifecycle:lifecycle-viewmodel-android", version.ref = "lifecycle" } # ViewModel support for Android
+androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel-android = { module = "androidx.lifecycle:lifecycle-viewmodel-android", version.ref = "lifecycle" } # ViewModel support for Android
 androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycleService" }
 
 # AndroidX - Activity
@@ -178,18 +178,18 @@ androidx-datastore-core = { module = "androidx.datastore:datastore-core", versio
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
 
 # Networking - OkHttp & Retrofit
-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+squareup-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 squareup-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "squareupRetrofit" }
 squareup-retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "squareupRetrofit" }
 squareup-okhttp3-logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
 
 # Networking - GraphQL (Apollo)
-apollo-graphql = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apollo" }
-apollo-graphql-cache = { module = "com.apollographql.apollo3:apollo-normalized-cache", version.ref = "apollo" }
+apollo-graphql-runtime = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apollo" }
+apollo-graphql-normalized-cache = { module = "com.apollographql.apollo3:apollo-normalized-cache", version.ref = "apollo" }
 
 # UI Components - Material (Legacy) & ConstraintLayout
-material = { module = "com.google.android.material:material", version.ref = "material" }
-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintLayout" }
+material-legacy = { module = "com.google.android.material:material", version.ref = "material" }
+androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintLayout" }
 
 # Permissions - Accompanist
 google-accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -201,8 +201,8 @@ androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", versi
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraX" } # View support (needed for Compose integration)
 
 # Google Services - Maps & Location
-play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
-play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
+google-play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+google-play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 google-maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
 
 # Google Services - Kotlin Coroutines Support
@@ -213,7 +213,7 @@ androidx-health-connect-client = { module = "androidx.health.connect:connect-cli
 # androidx-health-connect-client-datatypes = { module = "androidx.health.connect:connect-client-datatypes", version.ref = "healthConnect" } # Optional: if specific datatypes are needed
 
 # Wear OS - Core & Splashscreen
-play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
+google-play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 
 # Wear OS - Compose
@@ -296,7 +296,7 @@ mapsplatform-secrets = { id = "com.google.android.libraries.mapsplatform.secrets
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 
 # Firebase Plugins
-google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "googleFirebaseCrashltyics" }
+google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "googleFirebaseCrashlytics" }
 
 # Android Test Plugin
 android-test = { id = "com.android.test", version.ref = "agp" }
