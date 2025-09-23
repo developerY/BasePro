@@ -1,0 +1,81 @@
+<resources>
+
+    <!-- PANTALLA DE AJUSTES -->
+    <string name="settings_dark_mode_label">Modo Oscuro</string>
+    <string name="settings_notifications_label">Notificaciones</string>
+    <string name="settings_units_label">Unidades</string>
+    <string name="settings_units_metric">Métrico</string>
+    <string name="settings_units_imperial">Imperial</string>
+    <string name="settings_app_version_label">Versión de la App: %1$s</string>
+    <string name="settings_app_version_value_text">1.0.1</string>
+    <string name="settings_build_number_label">Número de Build: %1$s</string>
+    <string name="settings_build_number_value_text">20240321</string>
+    <string name="settings_about_info_visit_text">Para más información, visite:</string>
+    <string name="settings_about_website_url">www.ashbike.com</string>
+
+    <string name="settings_app_preferences_title">Preferencias de la App</string>
+    <string name="settings_app_preferences_cd_icon">Icono de Preferencias de la App</string>
+
+
+    <string name="profile_incomplete_warning">Por favor, actualice su altura y peso.</string>
+    <string name="profile_person_icon_cd">Perfil</string>
+    <string name="profile_details_format" formatted="true">Altura: %1$s cm | Peso: %2$s kg</string>
+    <string name="profile_edit_icon_cd">Editar Perfil</string>
+    <string name="profile_label_name">Nombre</string>
+    <string name="profile_label_height_cm">Altura (cm)</string>
+    <string name="profile_label_weight_kg">Peso (kg)</string>
+    <string name="profile_button_save">Guardar</string>
+
+    <string name="theme_system_display">Sistema</string>
+    <string name="theme_light_display">Claro</string>
+    <string name="theme_dark_display">Oscuro</string>
+    <string name="theme_settings_card_title">Configuración de Tema</string> <!-- For the preview -->
+    <string name="theme_icon_cd">Icono de selección de tema</string>
+
+    <string name="settings_location_energy_level_label">Frecuencia de Actualización de Ubicación</string>
+    <string name="settings_location_long_ride_label">Largo Viaje</string>
+    <string name="settings_energy_level_power_saver">Ahorro de Energía</string>
+    <string name="settings_energy_level_balanced">Equilibrado</string>
+    <string name="settings_energy_level_high_accuracy">Alta Precisión</string>
+    <string name="settings_energy_level_auto">Automático (según velocidad)</string>
+
+    <!-- TÍTULOS DE SECCIÓN Y TARJETA -->
+    <string name="settings_section_title_app">Aplicación</string>
+    <string name="settings_section_title_connectivity">Conectividad y Salud</string>
+    <string name="settings_section_title_bike">Bicicleta</string>
+    <string name="settings_card_title_theme">Tema</string>
+    <string name="settings_about_cd">Acerca cd</string>
+    <string name="settings_about_title">Acerca de</string>
+    <string name="settings_health_connect_title">Health Connect</string>
+    <string name="settings_nfc_title">NFC</string>
+    <string name="settings_qr_scanner_title">Escáner QR</string>
+    <string name="settings_ble_title">Bluetooth LE</string>
+    <string name="settings_bike_config_title">Configuración de la Bicicleta</string>
+
+
+    <!-- ACCIONES GENÉRICAS -->
+    <string name="settings_action_expand">Expandir</string>
+    <string name="settings_action_collapse">Colapsar</string>
+    <string name="settings_profile_data_unavailable">Los datos del perfil no están disponibles.</string>
+
+
+    <!-- NFC -->
+    <string name="settings_nfc_cd">Icono de NFC</string>
+
+    <!-- ESCÁNER QR -->
+    <string name="settings_qr_scanner_cd">Icono de Escáner QR</string>
+    <string name="settings_qr_scanner_placeholder_text">Escanee un código QR para una configuración rápida.</string>
+
+    <!-- BLE -->
+    <string name="settings_ble_cd">Icono de Bluetooth LE</string>
+
+    <!-- CONFIGURACIÓN DE BICICLETA -->
+    <string name="settings_bike_config_cd">Icono de Configuración de Bicicleta</string>
+    <string name="settings_motor_assistance_label">Asistencia del Motor</string>
+    <string name="settings_gearing_level_label">Nivel de Marcha: %1$d</string>
+    <string name="settings_advanced_bike_settings_button">Ajustes Avanzados de la Bicicleta</string>
+
+    <!-- TARJETA DE INFORMACIÓN DE PERFIL/BICICLETA (Potencialmente para otra pantalla) -->
+    <string name="settings_user_profile_cd">Perfil de Usuario</string>
+    <string name="settings_profile_bike_info_details">Batería: %1$s | Último Recorrido: %2$s</string>
+</resources>

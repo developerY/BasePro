@@ -1,0 +1,64 @@
+<resources>
+    <string name="settings_action_expand">Expand section</string>
+    <string name="settings_action_collapse">Collapse section</string>
+
+    <string name="settings_section_title_app">App</string>
+    <string name="settings_section_title_connectivity">Connectivity</string>
+    <string name="settings_section_title_bike">Bike</string>
+
+    <string name="settings_card_title_theme">Theme</string>
+    <string name="settings_dark_mode_label">Dark Mode</string>
+    <string name="settings_notifications_label">Notifications</string>
+    <string name="settings_units_label">Units</string>
+    <string name="settings_units_metric">Metric</string>
+    <string name="settings_units_imperial">Imperial</string>
+    <string name="settings_about_title">About</string>
+    <string name="settings_nfc_title">NFC</string>
+    <string name="settings_qr_scanner_title">QR Scanner</string>
+    <string name="settings_ble_title">Bluetooth LE</string>
+    <string name="settings_health_connect_title">Health Connect</string>
+    <string name="settings_bike_config_title">Bike Configuration</string>
+    <string name="settings_app_preferences_title">App Preferences</string>
+    <string name="settings_location_energy_level_label">Location Update Frequency</string>
+    <string name="settings_location_long_ride_label">Long Ride</string>
+    <string name="settings_energy_level_power_saver">Power Saver</string>
+    <string name="settings_energy_level_balanced">Balanced</string>
+    <string name="settings_energy_level_high_accuracy">High Accuracy</string>
+    <string name="settings_energy_level_auto">Auto (Speed-based)</string>
+
+    <!-- Content Descriptions -->
+    <string name="settings_user_profile_cd">User profile icon</string>
+    <string name="settings_nfc_cd">NFC icon</string>
+    <string name="settings_qr_scanner_cd">QR scanner icon</string>
+    <string name="settings_ble_cd">Bluetooth icon</string>
+    <string name="settings_bike_config_cd">Bike configuration icon</string>
+    <string name="settings_about_cd">Information icon</string>
+    <string name="settings_app_preferences_cd_icon">Settings icon</string>
+
+    <!-- Other UI texts -->
+    <string name="settings_profile_data_unavailable">Profile data is currently unavailable.</string>
+    <string name="settings_qr_scanner_placeholder_text">Position the camera over a QR code.</string>
+    <string name="settings_motor_assistance_label">Motor Assistance</string>
+    <string name="settings_gearing_level_label">Gearing Level: %d</string>
+    <string name="settings_advanced_bike_settings_button">Advanced Bike Settings</string>
+    <string name="settings_app_version_label">App Version: %s</string>
+    <string name="settings_build_number_label">Build Number: %s</string>
+    <string name="settings_app_version_value_text">1.0.0</string>
+    <string name="settings_build_number_value_text">1</string>
+    <string name="settings_about_info_visit_text">For more information, visit our website:</string>
+    <string name="settings_about_website_url">www.ylabz.com</string>
+    <string name="settings_profile_bike_info_details">Bike Battery: %1$s | Last Ride: %2$s</string>
+    <string name="profile_incomplete_warning">Please update your height and weight.</string>
+    <string name="profile_person_icon_cd">Profile</string>
+    <string name="profile_details_format" formatted="true">Height: %1$s cm | Weight: %2$s kg</string>
+    <string name="profile_edit_icon_cd">Edit Profile</string>
+    <string name="profile_label_name">Name</string>
+    <string name="profile_label_height_cm">Height (cm)</string>
+    <string name="profile_label_weight_kg">Weight (kg)</string>
+    <string name="profile_button_save">Save</string>
+    <string name="theme_system_display">System</string>
+    <string name="theme_light_display">Light</string>
+    <string name="theme_dark_display">Dark</string>
+    <string name="theme_settings_card_title">Theme Settings</string>
+    <string name="theme_icon_cd">Theme selection icon</string>
+</resources>
