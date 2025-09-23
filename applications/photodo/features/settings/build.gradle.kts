@@ -41,6 +41,12 @@ android {
 }
 
 dependencies {
+    implementation(project("::core:ui"))
+    implementation(project("::core:model"))
+    implementation(project("::core:util"))
+
+    implementation(project(":feature:qrscanner"))
+    implementation(project(":applications:photodo:db"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

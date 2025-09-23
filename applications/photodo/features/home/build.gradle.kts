@@ -55,7 +55,7 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
-    implementation(project(":applications:ashbike:features:main"))
+    // implementation(project(":applications:ashbike:features:main")) // Commented out to resolve duplicate bindings
     implementation(project(":core:ui"))
     ksp(libs.hilt.android.compiler)   // Hilt compiler dependency for annotation processing
     // Hilt Dependency Injection
