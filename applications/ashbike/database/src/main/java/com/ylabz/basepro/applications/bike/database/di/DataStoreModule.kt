@@ -17,7 +17,7 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 // TOP-LEVEL: the actual file-backed DataStore<Preferences>
-private const val APP_PREFS_NAME = "app_settings"
+private const val APP_PREFS_NAME = "app_ashbike_settings"
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = APP_PREFS_NAME)
 
 @Module
