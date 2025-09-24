@@ -31,7 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.applications.photodo.db.TaskEntity
+import com.ylabz.basepro.applications.photodo.db.entity.TaskEntity
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -121,7 +121,7 @@ fun PhotoDoTaskCard(
 
             // Task Creation Time - shown below the name
             Text(
-                text = "Created: ${task.startTime.toFormattedDate()}",
+                text = "Created: ${task.creationDate.toFormattedDate()}",
                 style = MaterialTheme.typography.bodySmall,
                 color = contentColor,
                 modifier = Modifier.padding(top = 4.dp)
