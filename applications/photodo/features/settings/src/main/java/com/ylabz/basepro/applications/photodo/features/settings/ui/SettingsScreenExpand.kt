@@ -8,15 +8,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect // Keep for now if other cards might be expanded via nav args
+import androidx.compose.runtime.LaunchedEffect // Keep for now if QrExpandableEx might be expanded via nav args
 import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.photodo.features.settings.R
-import com.ylabz.basepro.applications.photodo.features.settings.ui.components.AboutExpandable
-import com.ylabz.basepro.applications.photodo.features.settings.ui.components.NotificationSettingsItem // UPDATED IMPORT
+import com.ylabz.basepro.applications.photodo.features.settings.ui.components.AboutInfoCard // UPDATED IMPORT
+import com.ylabz.basepro.applications.photodo.features.settings.ui.components.NotificationSettingsItem
 import com.ylabz.basepro.applications.photodo.features.settings.ui.components.QrExpandableEx
 import com.ylabz.basepro.applications.photodo.features.settings.ui.components.SectionHeader
 import com.ylabz.basepro.applications.photodo.features.settings.ui.components.ThemeSettingsCard
@@ -33,8 +33,8 @@ internal object AppPreferenceKeys {
 }
 
 private enum class SectionKey { App, Connectivity }
-// CardKey.AppPrefs removed as NotificationSettingsItem is not an expandable card
-private enum class CardKey { Theme, About, Qr }
+// CardKey.AppPrefs, CardKey.Theme, CardKey.About removed as they are no longer expandable cards
+private enum class CardKey { Qr } // Only Qr remains as an expandable card
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -46,17 +46,33 @@ fun SettingsScreenEx(
     initialCardKeyToExpand: String? = null
 ) {
     val expandedSections = remember { mutableStateSetOf<SectionKey>() }
+    // expandedCards now only manages Qr (or any other truly expandable card)
     val expandedCards = remember { mutableStateSetOf<CardKey>() }
 
-    // Effect to expand a card specified by the navigation argument (if any)
-    // If AppPrefs is no longer a concept to be expanded, this specific check is removed.
-    // This LaunchedEffect can be adapted if other cards need deep-linking expansion.
     LaunchedEffect(initialCardKeyToExpand) {
-        // Example: if (initialCardKeyToExpand == CardKey.About.name) {
-        //     expandedSections.add(SectionKey.App)
-        //     expandedCards.add(CardKey.About)
+        // Example: if (initialCardKeyToExpand == CardKey.Qr.name) {
+        //     expandedSections.add(SectionKey.Connectivity)
+        //     expandedCards.add(CardKey.Qr)
         // }
-        // For now, the AppPrefs specific expansion is removed.
+        // For now, no specific card expansion via argument is implemented here
+        // as AppPrefs, Theme, and About are no longer 'expandable cards'
+        // that would match the old initialCardKeyToExpand mechanism.
+        // If QrExpandableEx needs this, the logic can be added.
+        if (initialCardKeyToExpand != null) {
+            try {
+                val cardToExpand = CardKey.valueOf(initialCardKeyToExpand)
+                // Determine which section the card belongs to
+                when (cardToExpand) {
+                    CardKey.Qr -> {
+                        expandedSections.add(SectionKey.Connectivity)
+                        expandedCards.add(CardKey.Qr)
+                    }
+                    // Add other cases if more expandable cards are introduced
+                }
+            } catch (e: IllegalArgumentException) {
+                // Invalid card key passed
+            }
+        }
     }
 
     fun <T> toggle(set: MutableSet<T>, key: T) {
@@ -95,7 +111,6 @@ fun SettingsScreenEx(
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
             }
             item {
-                // Replaced AppPreferencesExpandable with NotificationSettingsItem
                 NotificationSettingsItem(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     uiState = uiState,
@@ -104,10 +119,9 @@ fun SettingsScreenEx(
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
             }
             item {
-                AboutExpandable(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    expanded = expandedCards.contains(CardKey.About),
-                    onExpandToggle = { toggle(expandedCards, CardKey.About) }
+                // Replaced AboutExpandable with AboutInfoCard
+                AboutInfoCard(
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
                 // No divider after the last item in a section usually
             }
