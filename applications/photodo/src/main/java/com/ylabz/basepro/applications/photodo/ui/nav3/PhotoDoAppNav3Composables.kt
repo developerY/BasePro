@@ -23,7 +23,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
 // import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeViewModel // Assuming ViewModel name
 // No longer directly importing PhotoDoListUiRoute here, it's used inside PhotoDoListFeatureWithListDetailStrategy
-import com.ylabz.basepro.applications.photodo.features.settings.ui.PhotoDoSettingsUiRoute
+import com.ylabz.basepro.applications.photodo.features.settings.ui.SettingsUiRoute
 // import com.ylabz.basepro.applications.photodo.features.settings.ui.PhotoDoSettingsViewModel // Assuming ViewModel name
 
 @Composable
@@ -70,8 +70,14 @@ fun PhotoDoAppNav3(modifier: Modifier = Modifier) {
                 }
                 entry<PhotoDoSettingsSectionKey> {
                     // val settingsViewModel = hiltViewModel<PhotoDoSettingsViewModel>() // Assuming PhotoDoSettingsViewModel
-                    PhotoDoSettingsUiRoute(
+                    SettingsUiRoute(
                         modifier = Modifier.padding(paddingValues),
+                        navTo =  {
+                            sectionBackStack.clear()
+                            sectionBackStack.add(PhotoDoSettingsSectionKey)
+                        },
+                        viewModel = TODO(),
+                        initialCardKeyToExpand = TODO(),
                         // viewModel = settingsViewModel // Pass ViewModel if needed
                     )
                 }

@@ -15,17 +15,17 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults // New import
-import androidx.compose.material3.rememberTopAppBarState // New import
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll // New import
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entry
@@ -37,7 +37,7 @@ import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.Pho
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListEvent
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListViewModel
-import com.ylabz.basepro.applications.photodo.features.settings.ui.PhotoDoSettingsUiRoute
+import com.ylabz.basepro.applications.photodo.features.settings.ui.SettingsUiRoute
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackStack
 
@@ -189,8 +189,10 @@ fun MainScreen() {
                 }
 
                 entry<PhotoDoNavKeys.SettingsKey> {
-                    PhotoDoSettingsUiRoute(
-                        modifier = Modifier
+                    SettingsUiRoute(
+                        modifier = Modifier,
+                        navTo = {},
+                        initialCardKeyToExpand = null
                     )
                 }
             }
