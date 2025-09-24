@@ -2,10 +2,10 @@ package com.ylabz.basepro.applications.photodo.db.di
 
 import android.content.Context
 import androidx.room.Room
+import com.ylabz.basepro.applications.photodo.db.PhotoDoDB
 import com.ylabz.basepro.applications.photodo.db.PhotoDoDao
-import com.ylabz.basepro.applications.photodo.db.PhotoDoDatabase
-import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepository
-import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepositoryImpl
+import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepo
+import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepoImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,23 +19,23 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun providePhotoDoDatabase(@ApplicationContext context: Context): PhotoDoDatabase {
+    fun providePhotoDoDatabase(@ApplicationContext context: Context): PhotoDoDB {
         return Room.databaseBuilder(
             context,
-            PhotoDoDatabase::class.java,
+            PhotoDoDB::class.java,
             "photodo_database"
         ).build()
     }
 
     @Provides
     @Singleton
-    fun providePhotoDoDao(database: PhotoDoDatabase): PhotoDoDao {
+    fun providePhotoDoDao(database: PhotoDoDB): PhotoDoDao {
         return database.photoDoDao()
     }
 
     @Provides
     @Singleton
-    fun providePhotoDoRepository(photoDoDao: PhotoDoDao): PhotoDoRepository {
-        return PhotoDoRepositoryImpl(photoDoDao)
+    fun providePhotoDoRepository(photoDoDao: PhotoDoDao): PhotoDoRepo {
+        return PhotoDoRepoImpl(photoDoDao)
     }
 }
