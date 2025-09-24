@@ -15,9 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.photodo.features.settings.R
-import com.ylabz.basepro.applications.photodo.features.settings.ui.components.AboutExpandable // UPDATED IMPORT
+import com.ylabz.basepro.applications.photodo.features.settings.ui.components.AboutExpandable
 import com.ylabz.basepro.applications.photodo.features.settings.ui.components.NotificationSettingsItem
-import com.ylabz.basepro.applications.photodo.features.settings.ui.components.QrExpandableEx
+import com.ylabz.basepro.applications.photodo.features.settings.ui.components.QrScannerSettingsItem // UPDATED IMPORT
 import com.ylabz.basepro.applications.photodo.features.settings.ui.components.SectionHeader
 import com.ylabz.basepro.applications.photodo.features.settings.ui.components.ThemeSettingsCard
 
@@ -33,8 +33,8 @@ internal object AppPreferenceKeys {
 }
 
 private enum class SectionKey { App, Connectivity }
-// CardKey.About is now back as it's an expandable card again.
-private enum class CardKey { Qr, About }
+// CardKey.Qr removed as it's no longer an expandable card managed by this state.
+private enum class CardKey { About }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -46,6 +46,7 @@ fun SettingsScreenEx(
     initialCardKeyToExpand: String? = null
 ) {
     val expandedSections = remember { mutableStateSetOf<SectionKey>() }
+    // expandedCards now only manages About (or any other truly expandable card)
     val expandedCards = remember { mutableStateSetOf<CardKey>() }
 
     LaunchedEffect(initialCardKeyToExpand) {
@@ -53,10 +54,6 @@ fun SettingsScreenEx(
             try {
                 val cardToExpand = CardKey.valueOf(initialCardKeyToExpand)
                 when (cardToExpand) {
-                    CardKey.Qr -> {
-                        expandedSections.add(SectionKey.Connectivity)
-                        expandedCards.add(CardKey.Qr)
-                    }
                     CardKey.About -> {
                         expandedSections.add(SectionKey.App)
                         expandedCards.add(CardKey.About)
@@ -113,7 +110,6 @@ fun SettingsScreenEx(
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
             }
             item {
-                // Changed back to AboutExpandable
                 AboutExpandable(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     expanded = expandedCards.contains(CardKey.About),
@@ -132,11 +128,12 @@ fun SettingsScreenEx(
         }
         if (expandedSections.contains(SectionKey.Connectivity)) {
             item {
-                QrExpandableEx(
+                // Replaced QrExpandableEx with QrScannerSettingsItem
+                QrScannerSettingsItem(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    expanded = expandedCards.contains(CardKey.Qr),
-                    onExpandToggle = { toggle(expandedCards, CardKey.Qr) }
+                    onNavigate = { navTo("qrScannerDestination") } // Replace "qrScannerDestination" with your actual route
                 )
+                // No divider after the last item in a section usually
             }
         }
     }
@@ -168,7 +165,7 @@ fun SettingsScreenExPreview() {
     // PhotoDoTheme { // Assuming your theme is PhotoDoTheme
     //    SettingsScreenEx(
     //        uiState = dummyUiState, onEvent = { }, navTo = { },
-    //        initialCardKeyToExpand = null // or CardKey.About.name to test
+    //        initialCardKeyToExpand = CardKey.About.name // Example to test initial expansion
     //    )
     // }
 }
