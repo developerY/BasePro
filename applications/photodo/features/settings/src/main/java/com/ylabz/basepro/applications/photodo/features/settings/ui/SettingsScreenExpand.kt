@@ -8,14 +8,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect // Keep for now if QrExpandableEx might be expanded via nav args
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.photodo.features.settings.R
-import com.ylabz.basepro.applications.photodo.features.settings.ui.components.AboutInfoCard // UPDATED IMPORT
+import com.ylabz.basepro.applications.photodo.features.settings.ui.components.AboutExpandable // UPDATED IMPORT
 import com.ylabz.basepro.applications.photodo.features.settings.ui.components.NotificationSettingsItem
 import com.ylabz.basepro.applications.photodo.features.settings.ui.components.QrExpandableEx
 import com.ylabz.basepro.applications.photodo.features.settings.ui.components.SectionHeader
@@ -33,8 +33,8 @@ internal object AppPreferenceKeys {
 }
 
 private enum class SectionKey { App, Connectivity }
-// CardKey.AppPrefs, CardKey.Theme, CardKey.About removed as they are no longer expandable cards
-private enum class CardKey { Qr } // Only Qr remains as an expandable card
+// CardKey.About is now back as it's an expandable card again.
+private enum class CardKey { Qr, About }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -46,31 +46,25 @@ fun SettingsScreenEx(
     initialCardKeyToExpand: String? = null
 ) {
     val expandedSections = remember { mutableStateSetOf<SectionKey>() }
-    // expandedCards now only manages Qr (or any other truly expandable card)
     val expandedCards = remember { mutableStateSetOf<CardKey>() }
 
     LaunchedEffect(initialCardKeyToExpand) {
-        // Example: if (initialCardKeyToExpand == CardKey.Qr.name) {
-        //     expandedSections.add(SectionKey.Connectivity)
-        //     expandedCards.add(CardKey.Qr)
-        // }
-        // For now, no specific card expansion via argument is implemented here
-        // as AppPrefs, Theme, and About are no longer 'expandable cards'
-        // that would match the old initialCardKeyToExpand mechanism.
-        // If QrExpandableEx needs this, the logic can be added.
         if (initialCardKeyToExpand != null) {
             try {
                 val cardToExpand = CardKey.valueOf(initialCardKeyToExpand)
-                // Determine which section the card belongs to
                 when (cardToExpand) {
                     CardKey.Qr -> {
                         expandedSections.add(SectionKey.Connectivity)
                         expandedCards.add(CardKey.Qr)
                     }
+                    CardKey.About -> {
+                        expandedSections.add(SectionKey.App)
+                        expandedCards.add(CardKey.About)
+                    }
                     // Add other cases if more expandable cards are introduced
                 }
             } catch (e: IllegalArgumentException) {
-                // Invalid card key passed
+                // Invalid card key passed, log or ignore
             }
         }
     }
@@ -119,9 +113,11 @@ fun SettingsScreenEx(
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
             }
             item {
-                // Replaced AboutExpandable with AboutInfoCard
-                AboutInfoCard(
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                // Changed back to AboutExpandable
+                AboutExpandable(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    expanded = expandedCards.contains(CardKey.About),
+                    onExpandToggle = { toggle(expandedCards, CardKey.About) }
                 )
                 // No divider after the last item in a section usually
             }
@@ -172,7 +168,7 @@ fun SettingsScreenExPreview() {
     // PhotoDoTheme { // Assuming your theme is PhotoDoTheme
     //    SettingsScreenEx(
     //        uiState = dummyUiState, onEvent = { }, navTo = { },
-    //        initialCardKeyToExpand = null
+    //        initialCardKeyToExpand = null // or CardKey.About.name to test
     //    )
     // }
 }
