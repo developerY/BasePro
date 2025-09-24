@@ -1,35 +1,96 @@
-## 🚀 Core Features
+# AshBike: A Feature-Rich Cycling Computer
 
-* **Seamless Hardware Integration & Connectivity**
-  The app features a fully operational **Bluetooth Low Energy (BLE)** service to connect with any external sensor, **NFC** for tap-to-pair functionality, and an integrated **QR Code scanner**. This deep hardware access is a core strength of native development.
+## 🚴 Overview
 
-* **A Full Wear OS Companion App** (Framework in place)
-  This isn't just a mirrored notification. It's a high-performance smartwatch application built with **Wear Compose** and **Horologist**, featuring custom **Tiles** and **Complications**. This creates a true ecosystem experience that keeps users engaged.
+Welcome to AshBike, a standalone cycling computer application built on the **BasePro** framework.
+This application serves as a prime example of how to build a feature-rich, product-focused app by
+leveraging the shared modules and robust architecture provided by the BasePro project.
 
-* **Intelligent, On-Device Features** (Famework in place)
-  Leveraging the device's full power, we integrated **CameraX** with **ML Kit** for on-the-fly text recognition—a feature that runs smoothly and instantly, without relying on a server.
+AshBike provides cyclists with a comprehensive toolset for tracking, analyzing, and managing their
+rides, from live metric dashboards to historical data analysis and health platform integration.
 
-* **Guaranteed Performance & Reliability**
-  The live-tracking dashboard runs flawlessly in a **Foreground Service**, ensuring that critical, real-time data is never lost, even when the app is in the background. This is the level of reliability that builds user trust.
+## ✨ Key Features
 
----
+* **Live Ride Dashboard**: A real-time, state-driven UI built with Jetpack Compose that displays
+  critical metrics like speed, distance, elevation gain, and calories burned.
+* **Resilient Background Tracking**: Utilizes a `ForegroundService` to ensure accurate and
+  uninterrupted GPS tracking, safeguarding ride data even if the app is backgrounded or the UI is
+  destroyed.
+* **Dedicated Local Database**: All ride data, including detailed location paths, is stored in a
+  dedicated Room database, ensuring full offline functionality and data integrity.
+* **Health Connect Synchronization**: Seamlessly syncs completed rides with Google Health Connect,
+  allowing users to consolidate their fitness data across multiple platforms.
+* **Historical Ride Analysis**: A master-detail interface for browsing past rides, complete with map
+  visualizations of the route taken and detailed performance statistics.
+* **Dynamic Theming**: Adapts its visual theme based on user preferences stored in a local
+  DataStore.
 
-## 🛠️ The Architectural Foundation of Excellence
+## 🏛️ AshBike Architecture
 
-These features are not accidents; they are the result of a deliberate and robust architectural strategy. This is the blueprint for a scalable, maintainable, and high-performance application:
+The `ashbike` application is a self-contained product within the BasePro monorepo. It has its own
+internal feature and data modules while also consuming the shared `core` libraries.
 
-* **Core Architecture**: A clean **MVVM (Model-View-ViewModel)** pattern separates concerns, making the app easy to test and scale.
-* **State Management**: We use **ViewModel** and **StateFlow** to create a predictable, one-way data flow, which eliminates a whole class of bugs and makes the UI incredibly stable.
-* **User Interface**: The entire UI is built with **Jetpack Compose**, a modern, declarative toolkit that allows for beautiful, responsive interfaces with less code and better performance.
-* **Dependency Injection**: **Hilt** manages dependencies throughout the app, which is critical for building a modular and maintainable codebase that can grow without collapsing under its own weight.
-* **Data & Networking**: With **Room** for local database management and both **Retrofit** and **Apollo Client** for networking, the data layer is flexible, efficient, and completely decoupled from the UI.
-* **Performance Optimization**: We've even included **Baseline Profiles**, an advanced optimization that pre-compiles the app for significantly faster startup times and smoother animations.
-* **App Supports**: Mode: Dark & Light / Lang: English, Spanish (& French in development)).
----
+```
 
-### **Resources**
+applications/ashbike/
+│
+├── features/                   \# Internal features specific to AshBike
+│   ├── main/                   \# Core ride tracking UI, ViewModel, and ForegroundService
+│   ├── settings/               \# AshBike-specific settings and user profile management
+│   └── trips/                  \# UI and logic for displaying historical ride data
+│
+├── database/                   \# AshBike's dedicated Room database
+│   ├── src/main/java/com/ylabz/basepro/applications/bike/database/
+│   │   ├── di/                 \# Hilt modules for providing the database and DAOs
+│   │   ├── repository/         \# Repository implementation for ride data
+│   │   ├── BikeRideDB.kt       \# The Room database definition
+│   │   ├── BikeRideDao.kt      \# Data Access Object for ride entities
+│   │   └── BikeRideEntity.kt   \# Room entity for storing ride data
+│   └── build.gradle.kts
+│
+├── src/main/java/com/ylabz/basepro/applications/bike/
+│   ├── MainActivity.kt         \# The application's main entry point
+│   ├── ui/navigation/          \# Navigation graphs specific to AshBike
+│   └── MyApplication.kt        \# Hilt application class
+│
+└── build.gradle.kts            \# Application-level build script
 
-* **Android Source (MAD)**: [github.com/developerY/BasePro](https://github.com/developerY/BasePro)
-    * *The AshBike project is under `applications/ashbike`*
-* **iOS Source (Native)**: [github.com/developerY/AshBike](https://github.com/developerY/AshBike)
-* **Video Demo**: [youtube.com/watch?v=dLmREN9eUdw](https://www.youtube.com/watch?v=dLmREN9eUdw)
+````
+
+### Architectural Highlights
+
+* **Self-Contained Features**: AshBike's primary functionalities (`main`, `settings`, `trips`) are
+  organized into their own internal `features` modules. This keeps the application's logic isolated
+  and focused.
+* **Dedicated Data Persistence**: By having its own `database` module, AshBike ensures its data
+  schema is decoupled from other applications in the monorepo, preventing conflicts and allowing it
+  to evolve independently.
+* **Leveraging Core Modules**: AshBike heavily relies on the `core` modules of the BasePro project.
+  It uses `core:ui` for theming, `core:data` for sensor repositories (GPS, Compass), and
+  `core:model` for shared data structures, demonstrating the power of the framework's code reuse
+  strategy.
+
+## 🚀 Getting Started with AshBike
+
+Follow these instructions to build and run the AshBike application specifically.
+
+### Prerequisites
+
+* Android Studio (Iguana | 2023.2.1 or later recommended)
+* Java Development Kit (JDK) 17
+* Gradle 8.4
+
+### Setup and Installation
+
+1. **Clone the BasePro repository**:
+   ```
+   git clone [https://github.com/developerY/BasePro.git](https://github.com/developerY/BasePro.git)
+   cd BasePro
+   ```
+2. **Open** the project in Android **Studio**.
+3. **Sync the project with Gradle**.
+4. **Build and Run AshBike**:
+    * In the top toolbar of Android Studio, find the "Edit Run/Debug Configurations" dropdown.
+    * Select `applications.ashbike`.
+    * Connect your Android device or start an emulator.
+    * Click the "Run" button (▶️) to build and deploy the AshBike app.
