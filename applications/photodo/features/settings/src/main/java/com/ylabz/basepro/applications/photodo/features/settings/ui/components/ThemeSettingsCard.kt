@@ -1,6 +1,5 @@
 package com.ylabz.basepro.applications.photodo.features.settings.ui.components
 
-//import androidx.compose.ui.tooling.preview.Preview
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -11,24 +10,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material3.Card
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.filled.Palette // Palette icon for theme
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.photodo.features.settings.R
-import com.ylabz.basepro.core.ui.theme.ThemeIdentifiers
+import com.ylabz.basepro.core.ui.theme.ThemeIdentifiers // Assuming this path is correct
 
-// Sealed class to represent theme options with their string resource IDs
+// Sealed class ThemeOption and themeOptionsList can remain as they are.
 sealed class ThemeOption(val identifier: String, @StringRes val displayResId: Int) {
     data object SystemTheme : ThemeOption(ThemeIdentifiers.SYSTEM, R.string.theme_system_display)
     data object LightTheme : ThemeOption(ThemeIdentifiers.LIGHT, R.string.theme_light_display)
@@ -41,100 +33,112 @@ private val themeOptionsList = listOf(
     ThemeOption.DarkTheme
 )
 
+// Helper to get display string for current theme
 @Composable
-fun getCurrentThemeDisplayStringRes(themeIdentifier: String): Int {
-    return when (themeIdentifier) {
+private fun getCurrentThemeDisplayString(themeIdentifier: String): String {
+    val resId = when (themeIdentifier) {
         ThemeIdentifiers.LIGHT -> R.string.theme_light_display
         ThemeIdentifiers.DARK -> R.string.theme_dark_display
         ThemeIdentifiers.SYSTEM -> R.string.theme_system_display
-        else -> R.string.theme_system_display // Default or throw an error
+        else -> R.string.theme_system_display // Default
     }
+    return stringResource(id = resId)
 }
 
 @Composable
 fun ThemeSettingsCard(
-    title: String, // Expecting this to be a resolved string (ideally from stringResource at call site)
-    expanded: Boolean,
-    onExpandToggle: () -> Unit,
-    currentTheme: String, // This will be an identifier like ThemeIdentifiers.SYSTEM
+    modifier: Modifier = Modifier,
+    title: String, // Expecting this to be a resolved string
+    currentTheme: String, // Identifier like ThemeIdentifiers.SYSTEM
     onThemeSelected: (String) -> Unit // Callback with the identifier
 ) {
-    Card(
-        modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 4.dp)
-            .fillMaxWidth()
-    ) {
-        Column {
-            Row(
-                modifier = Modifier
-                    .clickable { onExpandToggle() }
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Palette,
-                    contentDescription = stringResource(R.string.theme_icon_cd)
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(text = title, style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = stringResource(id = getCurrentThemeDisplayStringRes(currentTheme)),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Icon(
-                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = stringResource(if (expanded) R.string.settings_action_collapse else R.string.settings_action_expand)
-                )
-            }
+    var showDialog by remember { mutableStateOf(false) }
+    val currentThemeDisplay = getCurrentThemeDisplayString(currentTheme)
 
-            if (expanded) {
-                HorizontalDivider()
-                Column(modifier = Modifier.padding(16.dp)) {
-                    themeOptionsList.forEach { themeOption ->
-                        Row(
-                            Modifier
-                                .fillMaxWidth()
-                                .selectable(
-                                    selected = (themeOption.identifier == currentTheme),
-                                    onClick = { onThemeSelected(themeOption.identifier) }
-                                )
-                                .padding(vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
+    Card(
+        modifier = modifier
+            .padding(horizontal = 16.dp, vertical = 4.dp) // Maintain consistent padding
+            .fillMaxWidth()
+            .clickable { showDialog = true } // Card click opens dialog
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Palette,
+                contentDescription = stringResource(R.string.theme_icon_cd)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(text = title, style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = currentThemeDisplay,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary // Highlight current selection
+            )
+            // Consider adding a dropdown arrow icon if you prefer:
+            // Icon(Icons.Filled.ArrowDropDown, contentDescription = "Select theme")
+        }
+    }
+
+    if (showDialog) {
+        ThemeSelectionDialog(
+            currentTheme = currentTheme,
+            onThemeSelected = { selectedIdentifier ->
+                onThemeSelected(selectedIdentifier)
+                showDialog = false
+            },
+            onDismissRequest = { showDialog = false }
+        )
+    }
+}
+
+@Composable
+private fun ThemeSelectionDialog(
+    currentTheme: String,
+    onThemeSelected: (String) -> Unit,
+    onDismissRequest: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        icon = { Icon(Icons.Default.Palette, contentDescription = null) },
+        title = { Text(stringResource(R.string.settings_card_title_theme_selection)) }, // e.g., "Select Theme"
+        text = {
+            HorizontalDivider(modifier = Modifier.padding(bottom = 8.dp)) // Divider above options
+            Column {
+                themeOptionsList.forEach { themeOption ->
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .selectable(
                                 selected = (themeOption.identifier == currentTheme),
                                 onClick = { onThemeSelected(themeOption.identifier) }
                             )
-                            Text(
-                                text = stringResource(themeOption.displayResId),
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.padding(start = 16.dp)
-                            )
-                        }
+                            .padding(vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = (themeOption.identifier == currentTheme),
+                            // onClick = null // RadioButton is controlled by Row's selectable onClick
+                            onClick = { onThemeSelected(themeOption.identifier) } // Direct click on radio also works
+                        )
+                        Text(
+                            text = stringResource(themeOption.displayResId),
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(start = 16.dp)
+                        )
                     }
                 }
             }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(stringResource(R.string.dialog_action_cancel)) // Use a general "Cancel"
+            }
         }
-    }
-}
-/*
-@Preview
-@Composable
-fun ThemeSettingsCardPreview() {
-    var expanded by remember { mutableStateOf(true) }
-    // currentTheme in preview now uses the identifier
-    var currentTheme by remember { mutableStateOf(ThemeIdentifiers.SYSTEM) }
-
-    ThemeSettingsCard(
-        title = stringResource(R.string.theme_settings_card_title), // Title from string resource
-        expanded = expanded,
-        onExpandToggle = { expanded = !expanded },
-        currentTheme = currentTheme,
-        onThemeSelected = { themeIdentifier -> // Receives identifier
-            currentTheme = themeIdentifier
-        }
+        // Dismiss button can be omitted if cancel serves the purpose.
     )
 }
-*/

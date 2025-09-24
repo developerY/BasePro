@@ -1,5 +1,8 @@
 <resources>
 
+    <string name="settings_card_title_theme_selection">Selección de Tema</string>
+    <string name="dialog_action_cancel">Cancelar</string>
+
     <!-- PANTALLA DE AJUSTES -->
     <string name="settings_dark_mode_label">Modo Oscuro</string>
     <string name="settings_notifications_label">Notificaciones</string>

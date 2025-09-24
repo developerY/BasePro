@@ -6,6 +6,9 @@
     <string name="settings_section_title_connectivity">Connectivity</string>
     <string name="settings_section_title_bike">Bike</string>
 
+    <string name="settings_card_title_theme_selection">Theme Selection</string>
+    <string name="dialog_action_cancel">Cancel</string>
+
     <string name="settings_card_title_theme">Theme</string>
     <string name="settings_dark_mode_label">Dark Mode</string>
     <string name="settings_notifications_label">Notifications</string>

@@ -17,7 +17,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.HorizontalDivider // Added for visual separation
 import androidx.compose.material3.MaterialTheme
+// import androidx.compose.material3.Text // Text is still used in Preview, but not directly in SettingsScreenEx if all components are external
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,7 +53,7 @@ internal object AppPreferenceKeys {
 }
 
 private enum class SectionKey { App, Connectivity } // Removed Bike
-private enum class CardKey { Theme, About, Qr, AppPrefs } // Removed Health, Nfc, Ble, BikeConfig
+private enum class CardKey { Theme, About, Qr, AppPrefs } // Removed Health, Nfc, Ble, BikeConfig (Theme kept for now in case other logic depends on it, but not for ThemeSettingsCard expansion)
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -64,7 +66,7 @@ fun SettingsScreenEx(
 ) {
     val expandedSections = remember { mutableStateSetOf<SectionKey>() }
     val expandedCards = remember { mutableStateSetOf<CardKey>() }
-    var isEditing by remember { mutableStateOf(false) } // This state is not used, consider removing if not needed for future edits
+    // var isEditing by remember { mutableStateOf(false) } // This state is not used, consider removing if not needed for future edits (already commented in previous step)
 
     // Effect to expand the card specified by the navigation argument
     LaunchedEffect(initialCardKeyToExpand) {
@@ -82,7 +84,7 @@ fun SettingsScreenEx(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(vertical = 12.dp), // Horizontal padding removed from LazyColumn, will be on items/sections
     ) {
 
 
@@ -96,9 +98,8 @@ fun SettingsScreenEx(
         if (expandedSections.contains(SectionKey.App)) {
             item {
                 ThemeSettingsCard(
+                    modifier = Modifier.padding(horizontal = 16.dp), // Add padding to individual card
                     title = stringResource(R.string.settings_card_title_theme),
-                    expanded = expandedCards.contains(CardKey.Theme),
-                    onExpandToggle = { toggle(expandedCards, CardKey.Theme) },
                     currentTheme = uiState.selections[AppPreferenceKeys.KEY_THEME]
                         ?: AppPreferenceKeys.VALUE_THEME_SYSTEM,
                     onThemeSelected = { theme ->
@@ -110,20 +111,25 @@ fun SettingsScreenEx(
                         )
                     }
                 )
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
             }
             item {
                 AppPreferencesExpandable(
+                    modifier = Modifier.padding(horizontal = 16.dp), // Add padding
                     expanded = expandedCards.contains(CardKey.AppPrefs),
                     onExpandToggle = { toggle(expandedCards, CardKey.AppPrefs) },
                     uiState = uiState,
                     onEvent = onEvent
                 )
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) // Divider
             }
             item {
                 AboutExpandable(
+                    modifier = Modifier.padding(horizontal = 16.dp), // Add padding
                     expanded = expandedCards.contains(CardKey.About),
                     onExpandToggle = { toggle(expandedCards, CardKey.About) }
                 )
+                // No divider after the last item in a section usually
             }
         }
 
@@ -137,9 +143,11 @@ fun SettingsScreenEx(
         if (expandedSections.contains(SectionKey.Connectivity)) {
             item {
                 QrExpandableEx(
+                    modifier = Modifier.padding(horizontal = 16.dp), // Add padding
                     expanded = expandedCards.contains(CardKey.Qr),
                     onExpandToggle = { toggle(expandedCards, CardKey.Qr) }
                 )
+                // No divider after the last item in a section usually
             }
         }
     }
@@ -176,7 +184,7 @@ fun SettingsScreenExPreview() {
         selections = dummyPhotodoSelections
     )
     // Replace AshBikeTheme with your PhotoDoTheme if it's different
-    // AshBikeTheme {
+    // PhotoDoTheme { // Assuming your theme is PhotoDoTheme
     //    SettingsScreenEx(
     //        uiState = dummyUiState, onEvent = { }, navTo = { },
     //        initialCardKeyToExpand = null

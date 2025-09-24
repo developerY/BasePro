@@ -28,6 +28,7 @@ import com.ylabz.basepro.applications.photodo.features.settings.R
 
 @Composable
 fun AboutExpandable(
+    modifier: Modifier = Modifier,
     expanded: Boolean,
     onExpandToggle: () -> Unit
 ) {

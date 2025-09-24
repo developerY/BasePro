@@ -37,6 +37,7 @@ import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 
 @Composable
 fun AppPreferencesExpandable(
+    modifier: Modifier = Modifier,
     expanded: Boolean,
     onExpandToggle: () -> Unit,
     uiState: SettingsUiState.Success,
@@ -158,37 +159,7 @@ fun AppPreferencesExpandable(
                             enabled = false // Assuming this is still disabled
                         )
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Units Setting
-                    val isMetric =
-                        uiState.selections[AppPreferenceKeys.KEY_UNITS] == AppPreferenceKeys.VALUE_UNITS_METRIC
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(stringResource(id = R.string.settings_units_label) + ":   ")
-                        Text(
-                            text = if (isMetric) {
-                                stringResource(id = R.string.settings_units_metric)
-                            } else {
-                                stringResource(id = R.string.settings_units_imperial)
-                            },
-                            style = MaterialTheme.typography.titleSmall
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        Switch(
-                            checked = isMetric,
-                            onCheckedChange = { newIsMetric ->
-                                val newUnit =
-                                    if (newIsMetric) AppPreferenceKeys.VALUE_UNITS_METRIC else AppPreferenceKeys.VALUE_UNITS_IMPERIAL
-                                onEvent(
-                                    SettingsEvent.UpdateSetting(
-                                        AppPreferenceKeys.KEY_UNITS,
-                                        newUnit
-                                    )
-                                )
-                            },
-                            enabled = false // work in progress
-                        )
-                    }
+                    //Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }

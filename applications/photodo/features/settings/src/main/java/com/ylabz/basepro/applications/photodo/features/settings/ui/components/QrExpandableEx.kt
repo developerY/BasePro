@@ -28,6 +28,7 @@ import com.ylabz.basepro.feature.qrscanner.ui.QRCodeScannerScreen
 
 @Composable
 fun QrExpandableEx(
+    modifier: Modifier = Modifier,
     expanded: Boolean,
     onExpandToggle: () -> Unit
 ) {
