@@ -17,21 +17,17 @@ import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailUiRoute
-import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailViewModel
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListUiRoute
-import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListViewModel
 import com.ylabz.basepro.applications.photodo.features.settings.ui.SettingsUiRoute
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackStack
@@ -41,8 +37,6 @@ import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackSta
 fun MainScreen() {
     val topLevelBackStack = remember { TopLevelBackStack<NavKey>(PhotoDoNavKeys.HomeFeedKey) }
     val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
-    // val photoDoListViewModel: PhotoDoListViewModel = hiltViewModel() // REMOVED - will be scoped to NavDisplay entry
-
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
@@ -50,7 +44,6 @@ fun MainScreen() {
         topBar = {
             TopBarForCurrentRoute(
                 topLevelBackStack = topLevelBackStack,
-                // photoDoListViewModel will be handled by TopBarForCurrentRoute itself or removed if not needed globally
                 onNavigateBack = { topLevelBackStack.removeLastOrNull() },
                 scrollBehavior = scrollBehavior
             )
@@ -59,26 +52,13 @@ fun MainScreen() {
             HomeBottomBar(
                 topLevelBackStack = topLevelBackStack,
                 onNavigate = { key ->
-                    val newKey = when (key) {
-                        is PhotoDoNavKeys.PhotoDolListKey -> PhotoDoNavKeys.PhotoDolListKey(projectId = 1L) // Example: Default projectId
-                        else -> key
-                    }
-                    topLevelBackStack.switchTopLevel(newKey)
+                    topLevelBackStack.switchTopLevel(key)
                 }
             )
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = {
-                    // TODO: FAB action should be tied to the current active screen's ViewModel or via events.
-                    // Example: If current route is PhotoDolListKey, get its ViewModel
-                    // val currentRoute = topLevelBackStack.backStack.lastOrNull()
-                    // if (currentRoute is PhotoDoNavKeys.PhotoDolListKey) {
-                    // val listViewModel: PhotoDoListViewModel = hiltViewModel() // This would get a VM scoped to MainScreen's NavHost
-                    // // A better approach: PhotoDoListUiRoute exposes an onAddTask event.
-                    // }
-                    Log.d("MainScreenFAB", "Add Task Clicked - further action needed based on current screen")
-                },
+                onClick = { /* TODO: Implement add task functionality */ },
                 icon = { Icon(Icons.Filled.Add, contentDescription = "Add Task Icon") },
                 text = { Text("Add Task") }
             )
@@ -98,32 +78,14 @@ fun MainScreen() {
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
                             )
-                            { Text("Select an item to see details") }
+                            { Text("Select a category") }
                         })
                 )
                 {
-                    PhotoDoHomeUiRoute(navTo = { destinationKey ->
-                        // Example: Navigating from Home to a specific project's list
-                        if (destinationKey is PhotoDoNavKeys.PhotoDolListKey) {
-                             topLevelBackStack.add(PhotoDoNavKeys.PhotoDolListKey(projectId = destinationKey.projectId)) // Ensure projectId is passed
-                        } else if (destinationKey is PhotoDoNavKeys.PhotoDoDetailKey) {
-                            topLevelBackStack.add(destinationKey)
+                    PhotoDoHomeUiRoute(
+                        navTo = { projectId ->
+                            //topLevelBackStack.add(PhotoDoNavKeys.PhotoDolListKey(projectId))
                         }
-                        // Handle other potential navigations from home
-                    })
-                }
-
-                entry<PhotoDoNavKeys.PhotoDoDetailKey>(
-                    metadata = ListDetailSceneStrategy.detailPane()
-                ) { detailKey ->
-                    val detailViewModel: PhotoDoDetailViewModel = hiltViewModel()
-                    LaunchedEffect(detailKey.photoId) {
-                        // detailViewModel.loadPhoto(detailKey.photoId) // Assuming loadPhoto exists
-                        Log.d("PhotoDoApp", "Detail LaunchedEffect: ID: '\${detailKey.photoId}'")
-                    }
-                    PhotoDoDetailUiRoute(
-                        modifier = Modifier.fillMaxSize(),
-                        viewModel = detailViewModel
                     )
                 }
 
@@ -137,24 +99,20 @@ fun MainScreen() {
                             { Text("Select an item to see details") }
                         }),
                 )
-                { listKey -> // listKey is PhotoDoNavKeys.PhotoDolListKey(projectId=...)
-                    // ViewModel is instantiated here, scoped to this navigation destination
-                    val photoDoListViewModel: PhotoDoListViewModel = hiltViewModel()
-
-                    LaunchedEffect(listKey.projectId) {
-                        Log.d("PhotoDoApp", "PhotoDolListKey active with projectId: \${listKey.projectId}")
-                        // ViewModel's uiState will collect based on this projectId
-                    }
-
+                {
                     PhotoDoListUiRoute(
-                        modifier = Modifier,
-                        onTaskClick = { taskId -> // taskId is Long
-                            Log.d("PhotoDoApp", "PhotoListKey: Navigating to detail with Task ID string: '\$taskId'")
-                            topLevelBackStack.add(PhotoDoNavKeys.PhotoDoDetailKey(photoId = taskId.toString())) // Convert Long to String
+                        onTaskClick = { taskId ->
+                            Log.d("PhotoDoApp", "Navigating to detail with ID: '$taskId'")
+                            topLevelBackStack.add(PhotoDoNavKeys.PhotoDoDetailKey(taskId.toString()))
                         },
-                        onEvent = photoDoListViewModel::onEvent,
-                        viewModel = photoDoListViewModel
+                        onEvent = {},
                     )
+                }
+
+                entry<PhotoDoNavKeys.PhotoDoDetailKey>(
+                    metadata = ListDetailSceneStrategy.detailPane()
+                ) {
+                    PhotoDoDetailUiRoute()
                 }
 
                 entry<PhotoDoNavKeys.SettingsKey> {

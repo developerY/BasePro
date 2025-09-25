@@ -11,7 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel // ViewModel-specific hilt import
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListEvent
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListViewModel
@@ -22,7 +23,6 @@ import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackSta
 @Composable
 fun TopBarForCurrentRoute(
     topLevelBackStack: TopLevelBackStack<NavKey>,
-    // photoDoListViewModel: PhotoDoListViewModel, // REMOVED parameter
     onNavigateBack: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior
 ) {
@@ -30,20 +30,25 @@ fun TopBarForCurrentRoute(
 
     when (currentKey) {
         is PhotoDoNavKeys.HomeFeedKey -> {
-            val photoDoListViewModel: PhotoDoListViewModel = hiltViewModel()
+            // The ViewModel created here is scoped to the NavHost, which doesn't have a projectId.
+            // We must provide one if the ViewModel is to be created here.
+            // A better solution would be for the Home screen to have its own ViewModel.
+            // For now, to prevent a crash, we can't create a PhotoDoListViewModel here if it expects a projectId.
+            // Let's assume the delete action is not available on the generic home screen for now.
             PhotoDoAppTopBar(
                 title = "PhotoDo Home",
-                showDeleteAll = true,
-                photoDoListViewModel = photoDoListViewModel,
+                showDeleteAll = false, // Changed to false to avoid creating the ViewModel
+                onDeleteAllClicked = {},
                 scrollBehavior = scrollBehavior
             )
         }
         is PhotoDoNavKeys.PhotoDolListKey -> {
+            // This is the correct place to get the ViewModel, as the NavKey has the projectId
             val photoDoListViewModel: PhotoDoListViewModel = hiltViewModel()
             PhotoDoAppTopBar(
-                title = "Photo List", // Consider dynamic title with project name: "Project: ${currentKey.projectId}"
+                title = "Photo List",
                 showDeleteAll = true,
-                photoDoListViewModel = photoDoListViewModel,
+                onDeleteAllClicked = { photoDoListViewModel.onEvent(PhotoDoListEvent.OnDeleteAllTasksClicked) },
                 scrollBehavior = scrollBehavior
             )
         }
@@ -53,22 +58,18 @@ fun TopBarForCurrentRoute(
             scrollBehavior = scrollBehavior
         )
         is PhotoDoNavKeys.SettingsKey -> {
-            // Even if showDeleteAll is false, PhotoDoAppTopBar expects the ViewModel.
-            // Hilt will provide a ViewModel scoped to the SettingsKey destination.
-            val photoDoListViewModel: PhotoDoListViewModel = hiltViewModel()
             PhotoDoAppTopBar(
                 title = "Settings",
                 showDeleteAll = false,
-                photoDoListViewModel = photoDoListViewModel,
+                onDeleteAllClicked = {},
                 scrollBehavior = scrollBehavior
             )
         }
         else -> {
-            val photoDoListViewModel: PhotoDoListViewModel = hiltViewModel()
             PhotoDoAppTopBar(
                 title = "PhotoDo",
                 showDeleteAll = false,
-                photoDoListViewModel = photoDoListViewModel,
+                onDeleteAllClicked = {},
                 scrollBehavior = scrollBehavior
             )
         }
@@ -80,16 +81,14 @@ fun TopBarForCurrentRoute(
 private fun PhotoDoAppTopBar(
     title: String,
     showDeleteAll: Boolean,
-    photoDoListViewModel: PhotoDoListViewModel, // Stays non-null
+    onDeleteAllClicked: () -> Unit, // Accept a lambda instead of the whole ViewModel
     scrollBehavior: TopAppBarScrollBehavior
 ) {
     LargeTopAppBar(
         title = { Text(title) },
         actions = {
             if (showDeleteAll) {
-                IconButton(onClick = {
-                    photoDoListViewModel.onEvent(PhotoDoListEvent.OnDeleteAllTasksClicked) // Make sure this event is still relevant/handled
-                }) {
+                IconButton(onClick = onDeleteAllClicked) { // Use the passed lambda
                     Icon(Icons.Filled.DeleteSweep, contentDescription = "Delete All Tasks")
                 }
             }
