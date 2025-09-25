@@ -72,7 +72,7 @@ class PhotoDoDatabaseCallback : RoomDatabase.Callback() {
             val currentTime = System.currentTimeMillis()
             db.execSQL("INSERT INTO tasks (projectId, name, notes, status, priority, creationDate) VALUES (1, 'Welcome to PhotoDo!', 'You can add notes and photos to your tasks.', 'To-Do', 1, $currentTime)")
             db.execSQL("INSERT INTO tasks (projectId, name, notes, status, priority, creationDate) VALUES (1, 'Tap on a task to see details', null, 'To-Do', 0, $currentTime)")
-            db.execSQL("INSERT INTO tasks (projectId, name, notes, status, priority, creationDate) VALUES (1, 'Use the + button to add a new task', 'You\'ll need to implement this feature.', 'To-Do', 0, $currentTime)")
+            db.execSQL("INSERT INTO tasks (projectId, name, notes, status, priority, creationDate) VALUES (1, 'Use the + button to add a new task', 'You''ll need to implement this feature.', 'To-Do', 0, $currentTime)")
         }
     }
 }
