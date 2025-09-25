@@ -1,17 +1,19 @@
 package com.ylabz.basepro.applications.photodo.ui.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Dehaze
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * An interface to mark top-level destinations that should appear in the bottom navigation bar.
  */
 interface BottomBarItem {
+    @Transient // Add Transient here as well if the interface itself is ever directly serialized (though less common for interfaces)
     val icon: ImageVector
     val title: String
 }
@@ -25,7 +27,7 @@ sealed class PhotoDoNavKeys : NavKey {
 
     @Serializable
     data object HomeFeedKey : PhotoDoNavKeys(), BottomBarItem {
-        override val icon = Icons.Default.Home
+        @Transient override val icon = Icons.Default.Home
         override val title = "Home"
     }
 
@@ -33,14 +35,14 @@ sealed class PhotoDoNavKeys : NavKey {
     data class PhotoDoDetailKey(val photoId: String) : PhotoDoNavKeys()
 
     @Serializable
-    data object PhotoDolListKey : PhotoDoNavKeys(), BottomBarItem {
-        override val icon = Icons.Default.List
-        override val title = "List"
+    data class PhotoDolListKey(val projectId: Long) : PhotoDoNavKeys(), BottomBarItem {
+        @Transient override val icon = Icons.Default.Dehaze // Or Icons.Default.List as it was before
+        override val title = "List" // You might want to make the title dynamic based on the project
     }
 
     @Serializable
     data object SettingsKey : PhotoDoNavKeys(), BottomBarItem {
-        override val icon = Icons.Default.Settings
+        @Transient override val icon = Icons.Default.Settings
         override val title = "Settings"
     }
 
