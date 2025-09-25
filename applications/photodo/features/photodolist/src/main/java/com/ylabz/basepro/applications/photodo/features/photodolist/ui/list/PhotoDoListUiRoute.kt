@@ -11,12 +11,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 @Composable
 fun PhotoDoListUiRoute(
+    modifier: Modifier = Modifier,
+    onTaskClick: (Long) -> Unit,
+    onEvent: (PhotoDoListEvent) -> Unit,
     viewModel: PhotoDoListViewModel = hiltViewModel(),
-    onTaskClick: (Long) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

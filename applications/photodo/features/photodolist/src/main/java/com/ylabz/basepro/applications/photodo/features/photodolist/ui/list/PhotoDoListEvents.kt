@@ -1,12 +1,11 @@
 package com.ylabz.basepro.applications.photodo.features.photodolist.ui.list
 
-import com.ylabz.basepro.applications.photodo.db.entity.TaskEntity
+// import com.ylabz.basepro.applications.photodo.db.entity.TaskEntity // Not needed if only passing taskId
 
-sealed class PhotoDoListEvent {
-    data class OnItemClick(val itemId: String) : PhotoDoListEvent()
-    object OnAddTaskClicked : PhotoDoListEvent()
-    // Add event for deleting a single task
-    data class OnDeleteTaskClicked(val task: TaskEntity) : PhotoDoListEvent()
-    // Add event for deleting all tasks
-    object OnDeleteAllTasksClicked : PhotoDoListEvent()
+// This is the version consistent with PhotoDoListViewModel's onEvent handler
+sealed interface PhotoDoListEvent {
+    data object OnDeleteAllTasksClicked : PhotoDoListEvent
+    data object OnAddTaskClicked : PhotoDoListEvent
+    data class OnDeleteTaskClicked(val taskId: Long) : PhotoDoListEvent // Assuming taskId is Long
+    data class OnItemClick(val taskId: Long) : PhotoDoListEvent      // Assuming taskId is Long
 }
