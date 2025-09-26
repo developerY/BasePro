@@ -14,11 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.applications.photodo.db.entity.TaskEntity
+import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
 
 @Composable
 fun TaskListItem(
-    task: TaskEntity,
+    taskList: TaskListEntity,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -30,13 +30,13 @@ fun TaskListItem(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = task.name,
+                text = taskList.name,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = task.notes ?: "No notes/description",
+                text = taskList.notes ?: "No notes/description",
                 style = MaterialTheme.typography.bodySmall,
                 maxLines = 2
             )
