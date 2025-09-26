@@ -5,20 +5,20 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "tasks",
+    tableName = "task_lists",
     foreignKeys = [
         ForeignKey(
-            entity = ProjectEntity::class,
-            parentColumns = ["projectId"],
-            childColumns = ["projectId"],
+            entity = CategoryEntity::class,
+            parentColumns = ["categoryId"],
+            childColumns = ["categoryId"],
             onDelete = ForeignKey.CASCADE
         )
     ]
 )
-data class TaskEntity(
+data class TaskListEntity(
     @PrimaryKey(autoGenerate = true)
-    val taskId: Long = 0,
-    val projectId: Long,
+    val listId: Long = 0,
+    val categoryId: Long,
     var name: String,
     var notes: String? = null,
     var status: String = "To-Do", // "To-Do" or "Done"
