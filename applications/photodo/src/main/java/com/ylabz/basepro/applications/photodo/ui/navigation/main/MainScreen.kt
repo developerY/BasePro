@@ -29,7 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
@@ -43,6 +43,7 @@ import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.Photo
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListViewModel
 import com.ylabz.basepro.applications.photodo.features.settings.ui.SettingsUiRoute
+import com.ylabz.basepro.applications.photodo.features.settings.ui.SettingsViewModel
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackStack
 
@@ -181,10 +182,16 @@ fun MainScreen() {
                 }
 
                 entry<PhotoDoNavKeys.SettingsKey> {
+                    val viewModel: SettingsViewModel = hiltViewModel()
                     topBar = { LargeTopAppBar(title = { Text("Settings") }, scrollBehavior = scrollBehavior) }
                     fabState = null // Hide FAB on settings screen
 
-                    SettingsUiRoute(modifier = Modifier, navTo = {}, initialCardKeyToExpand = null)
+                    SettingsUiRoute(
+                        modifier = Modifier,
+                        navTo = {},
+                        viewModel = viewModel, // Pass the viewModel down
+                        initialCardKeyToExpand = null
+                    )
                 }
             }
         )

@@ -5,23 +5,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
-internal const val ROUTE_NAME =
-    "settings_ui_route" // Assuming this was intended to be here or is defined elsewhere for navigation
-internal const val ARG_CARD_TO_EXPAND = "cardToExpandArg" // Added argument name
-
+/**
+ * The route for the Settings screen.
+ * This composable is stateless and driven by the provided ViewModel.
+ */
 @Composable
 fun SettingsUiRoute(
     modifier: Modifier = Modifier,
     navTo: (String) -> Unit,
-    //nfcUiState : NfcUiState,
-    //nfcEvent : (NfcRwEvent) -> Unit,
-    viewModel: SettingsViewModel = hiltViewModel(),
+    // The ViewModel is now a required parameter.
+    viewModel: SettingsViewModel,
     initialCardKeyToExpand: String? // Added parameter
 ) {
     val uiState = viewModel.uiState.collectAsState().value
-    // val showGpsCountdown by viewModel.showGpsCountdown.collectAsState() // Collect the new state
 
     when (val state = uiState) {
         is SettingsUiState.Loading -> {
@@ -43,7 +40,8 @@ fun SettingsUiRoute(
         }
     }
 }
-// TODO: NEED to replace with Materail 3 loading screen
+
+// TODO: NEED to replace with Material 3 loading screen
 @Composable
 fun LoadingScreen() {
     Text(

@@ -11,52 +11,42 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 
+/**
+ * The route for displaying the list of tasks for a given project.
+ * This composable is stateless and driven by the provided ViewModel.
+ */
 @Composable
 fun PhotoDoListUiRoute(
     modifier: Modifier = Modifier,
     onTaskClick: (Long) -> Unit,
-    onEvent: (PhotoDoListEvent) -> Unit, // onEvent is still passed in, though not used directly here
-    viewModel: PhotoDoListViewModel = hiltViewModel(),
+    onEvent: (PhotoDoListEvent) -> Unit, // Allows parent to send events
+    // The ViewModel is now a required parameter.
+    viewModel: PhotoDoListViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     when (val state = uiState) {
         is PhotoDoListUiState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
         }
         is PhotoDoListUiState.Success -> {
-            LazyColumn {
+            LazyColumn(modifier = modifier) {
                 items(state.tasks) { task ->
-                    Text("Task: ${task.name}")
-                    /*
-                    fun PhotoDoTaskCard(
-    task: TaskEntity,
-    onItemClick: () -> Unit,
-    onDeleteClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-                     */
-
                     PhotoDoTaskCard(
                         task = task,
                         onItemClick = { onTaskClick(task.taskId) },
-                        onDeleteClick = {},
+                        onDeleteClick = { onEvent(PhotoDoListEvent.OnDeleteTaskClicked(task.taskId)) },
                     )
                 }
-
             }
         }
         is PhotoDoListUiState.Error -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(text = state.message)
             }
         }
     }
 }
-
-// TaskRow composable is now removed, as its functionality is in PhotoDoTaskCard
-// private fun Long.toFormattedDate(): String { ... } // Also removed, present in PhotoDoTaskCard (or move to common utils)
