@@ -65,11 +65,16 @@ fun MainScreen() {
             HomeBottomBar(
                 topLevelBackStack = topLevelBackStack,
                 onNavigate = { key ->
-                    val newKey = when (key) {
-                        is PhotoDoNavKeys.PhotoDolListKey -> PhotoDoNavKeys.PhotoDolListKey(projectId = 1L)
-                        else -> key
+                    // If the user re-selects the current tab, pop to the root of its back stack
+                    if (topLevelBackStack.topLevelKey::class == key::class) {
+                        topLevelBackStack.popToRoot()
+                    } else {
+                        val newKey = when (key) {
+                            is PhotoDoNavKeys.PhotoDolListKey -> PhotoDoNavKeys.PhotoDolListKey(projectId = 1L) // Default project
+                            else -> key
+                        }
+                        topLevelBackStack.switchTopLevel(newKey)
                     }
-                    topLevelBackStack.switchTopLevel(newKey)
                 }
             )
         },
@@ -102,7 +107,11 @@ fun MainScreen() {
 
                     PhotoDoHomeUiRoute(
                         navTo = { projectId ->
-                            topLevelBackStack.add(PhotoDoNavKeys.PhotoDolListKey(projectId.toLong()))
+                            val listKey = PhotoDoNavKeys.PhotoDolListKey(projectId)
+                            // First, switch to the List tab
+                            topLevelBackStack.switchTopLevel(listKey)
+                            // Then, ensure the stack for the List tab IS the new key
+                            topLevelBackStack.replaceStack(listKey)
                         },
                         viewModel = homeViewModel // Pass the viewModel down
                     )

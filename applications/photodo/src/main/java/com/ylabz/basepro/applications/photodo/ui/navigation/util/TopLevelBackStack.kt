@@ -13,87 +13,77 @@ import androidx.navigation3.runtime.NavKey
  */
 class TopLevelBackStack<T : NavKey>(private val startKey: T) {
 
+    // The key of the map is the representative NavKey instance that identifies the tab.
     private var topLevelBackStacks: HashMap<T, SnapshotStateList<T>> = hashMapOf(
         startKey to mutableStateListOf(startKey)
     )
 
+    // This is the representative key for the currently selected TAB (e.g., Home, List, Settings)
     var topLevelKey by mutableStateOf(startKey)
         private set
 
-    // This 'backStack' is the one observed by NavDisplay
+    // This is the actual back stack for the NavDisplay, which shows the history of the current tab
     val backStack = mutableStateListOf<T>(startKey)
 
     private fun updateBackStack() {
-        // The NavDisplay should show the history of the currently selected topLevelKey
-        val currentActiveStack = topLevelBackStacks[topLevelKey] ?: mutableStateListOf(topLevelKey) // Fallback to key itself
+        val currentActiveStack = topLevelBackStacks[topLevelKey] ?: mutableStateListOf(topLevelKey)
         backStack.clear()
         backStack.addAll(currentActiveStack)
     }
 
+    /**
+     * Switches the current top-level destination (tab).
+     */
     fun switchTopLevel(key: T) {
         if (topLevelBackStacks[key] == null) {
-            topLevelBackStacks[key] = mutableStateListOf(key) // Each tab starts with its own key as its initial stack
+            topLevelBackStacks[key] = mutableStateListOf(key)
         }
         topLevelKey = key
         updateBackStack()
     }
 
+    /**
+     * Adds a new key to the back stack of the currently active tab.
+     */
     fun add(key: T) {
-        // Add to the currently active top-level stack
         topLevelBackStacks[topLevelKey]?.add(key)
-        updateBackStack() // Refresh the main backStack for NavDisplay
-    }
-
-    fun removeLast() {
-        val currentStack = topLevelBackStacks[topLevelKey] ?: return
-
-        if (currentStack.size > 1) {
-            currentStack.removeLastOrNull()
-        } else if (topLevelKey != startKey) {
-            topLevelKey = startKey
-        }
         updateBackStack()
     }
 
     /**
-     * Removes the last element from the current top-level stack if the stack has more than one element.
-     * Does not return the removed element.
+     * Pops the current tab's navigation stack back to its root screen.
+     * This is typically called when a user re-selects an already active tab.
      */
-    fun removeLastOrig() {
-        val currentActiveStack = topLevelBackStacks[topLevelKey]
-        // Only remove if there's more than one item (the initial key) in the current tab's stack
-        if (currentActiveStack != null && currentActiveStack.size > 1) {
-            currentActiveStack.removeLastOrNull() // This is MutableList.removeLastOrNull()
-            updateBackStack() // Refresh the main backStack for NavDisplay
+    fun popToRoot() {
+        val currentStack = topLevelBackStacks[topLevelKey]
+        if (currentStack != null && currentStack.size > 1) {
+            val root = currentStack.first()
+            currentStack.clear()
+            currentStack.add(root)
+            updateBackStack()
         }
-        // If the stack for a tab becomes empty (or just its root), it stays on that tab's root.
-        // No automatic switching to startKey unless explicitly designed.
     }
-
+    
     /**
-     * Removes and returns the last element from the current top-level stack if the stack has more than one element.
-     * Returns null if no element was removed (e.g., stack was empty or had only the initial key).
+     * Replaces the entire back stack for the current tab.
+     * Used for navigating from one tab's content to another's root.
      */
-    fun removeLastOrNull(): T? {
-        val currentActiveStack = topLevelBackStacks[topLevelKey]
-        var removedItem: T? = null
-        if (currentActiveStack != null && currentActiveStack.size > 1) {
-            removedItem = currentActiveStack.removeLastOrNull() // This is MutableList.removeLastOrNull()
-            updateBackStack() // Refresh the main backStack for NavDisplay
-        }
-        return removedItem
-    }
-
     fun replaceStack(vararg keys: T) {
         topLevelBackStacks[topLevelKey] = mutableStateListOf(*keys)
         updateBackStack()
     }
 
-    fun replaceLast(key: T) {
+    /**
+     * Removes and returns the last element from the current tab's back stack.
+     * This is the standard "back" navigation action.
+     */
+    fun removeLastOrNull(): T? {
         val currentActiveStack = topLevelBackStacks[topLevelKey]
-        if (currentActiveStack != null && currentActiveStack.isNotEmpty()) {
-            currentActiveStack[currentActiveStack.lastIndex] = key
-            updateBackStack() // Refresh the main backStack for NavDisplay
+        var removedItem: T? = null
+        if (currentActiveStack != null && currentActiveStack.size > 1) {
+            removedItem = currentActiveStack.removeLastOrNull()
+            updateBackStack()
         }
+        return removedItem
     }
 }
