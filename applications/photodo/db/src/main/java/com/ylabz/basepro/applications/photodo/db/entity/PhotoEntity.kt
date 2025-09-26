@@ -8,9 +8,9 @@ import androidx.room.PrimaryKey
     tableName = "photos",
     foreignKeys = [
         ForeignKey(
-            entity = TaskEntity::class,
-            parentColumns = ["taskId"],
-            childColumns = ["taskId"],
+            entity = TaskListEntity::class, // Corrected: Points to the new TaskListEntity
+            parentColumns = ["listId"],      // Corrected: Points to the new primary key
+            childColumns = ["listId"],       // Corrected: The foreign key column in this table
             onDelete = ForeignKey.CASCADE
         )
     ]
@@ -18,7 +18,7 @@ import androidx.room.PrimaryKey
 data class PhotoEntity(
     @PrimaryKey(autoGenerate = true)
     val photoId: Long = 0,
-    val taskId: Long,
+    val listId: Long, // Corrected: Renamed from taskId to listId
     val uri: String,
     val caption: String? = null,
     val timestamp: Long = System.currentTimeMillis()
