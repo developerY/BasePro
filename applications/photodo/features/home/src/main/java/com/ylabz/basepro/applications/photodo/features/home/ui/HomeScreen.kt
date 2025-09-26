@@ -13,11 +13,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.photodo.db.entity.ProjectEntity
 
 @Composable
 fun HomeScreen(
-    categories: List<String>,
-    onCategoryClick: (String) -> Unit,
+    // It now accepts a list of ProjectEntity
+    projects: List<ProjectEntity>,
+    // The click listener provides the projectId (Long)
+    onCategoryClick: (Long) -> Unit,
     onAddNewCategoryClick: () -> Unit
 ) {
     LazyVerticalGrid(
@@ -27,13 +30,13 @@ fun HomeScreen(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(categories) { category ->
+        items(projects) { project ->
             Card(
                 modifier = Modifier
-                    .clickable { onCategoryClick(category) }
+                    .clickable { onCategoryClick(project.projectId) }
             ) {
                 Text(
-                    text = category,
+                    text = project.name,
                     modifier = Modifier.padding(16.dp)
                 )
             }
