@@ -2,6 +2,7 @@ package com.ylabz.basepro.applications.photodo.features.photodolist.ui.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ylabz.basepro.applications.photodo.db.entity.TaskEntity
 import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -54,16 +55,22 @@ class PhotoDoListViewModel @Inject constructor(
                 }
             }
             is PhotoDoListEvent.OnAddTaskClicked -> {
-                // TODO: Handle Add Task Click
-            }
-            is PhotoDoListEvent.OnDeleteTaskClicked -> {
                 viewModelScope.launch {
-                    // TODO: Implement photoDoRepo.deleteTask(event.taskId)
+                    // Create a new task with a unique name
+                    val newTask = TaskEntity(
+                        projectId = currentProjectId,
+                        name = "New Task ${System.currentTimeMillis()}",
+                        notes = "Tap to edit details",
+                        status = "To-Do"
+                    )
+                    photoDoRepo.insertTask(newTask)
                 }
             }
             is PhotoDoListEvent.OnItemClick -> {
                 // TODO: Handle Item Click for navigation
             }
+
+            is PhotoDoListEvent.OnDeleteTaskClicked -> TODO()
         }
     }
 }

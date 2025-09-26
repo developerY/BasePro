@@ -46,10 +46,10 @@ private fun Long.toFormattedDate(): String {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoDoTaskCard(
+    modifier: Modifier = Modifier,
     task: TaskEntity,
     onItemClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }

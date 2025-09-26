@@ -11,13 +11,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun PhotoDoListUiRoute(
     modifier: Modifier = Modifier,
     onTaskClick: (Long) -> Unit,
-    onEvent: (PhotoDoListEvent) -> Unit,
+    onEvent: (PhotoDoListEvent) -> Unit, // onEvent is still passed in, though not used directly here
     viewModel: PhotoDoListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -32,13 +32,22 @@ fun PhotoDoListUiRoute(
             LazyColumn {
                 items(state.tasks) { task ->
                     Text("Task: ${task.name}")
-                    /*PhotoDoTaskCard(
-                        task = task, onClick = { onTaskClick(task.taskId) },
-                        onItemClick = TODO(),
-                        onDeleteClick = TODO(),
-                        modifier = TODO()
-                    )*/
+                    /*
+                    fun PhotoDoTaskCard(
+    task: TaskEntity,
+    onItemClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+                     */
+
+                    PhotoDoTaskCard(
+                        task = task,
+                        onItemClick = { onTaskClick(task.taskId) },
+                        onDeleteClick = {},
+                    )
                 }
+
             }
         }
         is PhotoDoListUiState.Error -> {
