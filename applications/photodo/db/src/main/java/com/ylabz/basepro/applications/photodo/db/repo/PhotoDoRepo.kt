@@ -1,9 +1,9 @@
 package com.ylabz.basepro.applications.photodo.db.repo
 
+import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 import com.ylabz.basepro.applications.photodo.db.entity.PhotoEntity
-import com.ylabz.basepro.applications.photodo.db.entity.ProjectEntity
-import com.ylabz.basepro.applications.photodo.db.entity.TaskEntity
-import com.ylabz.basepro.applications.photodo.db.entity.TaskWithPhotos
+import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
+import com.ylabz.basepro.applications.photodo.db.entity.TaskListWithPhotos
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -11,71 +11,35 @@ import kotlinx.coroutines.flow.Flow
  */
 interface PhotoDoRepo {
 
-    // --- Project Operations ---
+    // --- Category Operations ---
 
-    /**
-     * Inserts a new project into the database.
-     */
-    suspend fun insertProject(project: ProjectEntity)
+    suspend fun insertCategory(category: CategoryEntity)
 
-    /**
-     * Deletes a project from the database.
-     */
-    suspend fun deleteProject(project: ProjectEntity)
+    suspend fun deleteCategory(category: CategoryEntity)
 
-    /**
-     * Retrieves all projects from the database, ordered by name.
-     */
-    fun getAllProjects(): Flow<List<ProjectEntity>>
+    fun getAllCategories(): Flow<List<CategoryEntity>>
 
-    /**
-     * Retrieves a single project by its ID.
-     */
-    fun getProjectById(projectId: Long): Flow<ProjectEntity?>
+    fun getCategoryById(categoryId: Long): Flow<CategoryEntity?>
 
-    // --- Task Operations ---
+    // --- TaskList Operations ---
 
-    /**
-     * Inserts a new task into the database.
-     */
-    suspend fun insertTask(task: TaskEntity)
+    suspend fun insertTaskList(taskList: TaskListEntity)
 
-    /**
-     * Deletes a task from the database.
-     */
-    suspend fun deleteTask(task: TaskEntity)
+    suspend fun deleteTaskList(taskList: TaskListEntity)
 
-    /**
-     * Retrieves a single task by its ID.
-     */
-    fun getTaskById(taskId: Long): Flow<TaskEntity?>
+    fun getTaskListById(listId: Long): Flow<TaskListEntity?>
 
-    /**
-     * Retrieves all tasks for a given project ID.
-     */
-    fun getTasksForProject(projectId: Long): Flow<List<TaskEntity>>
+    fun getTaskListsForCategory(categoryId: Long): Flow<List<TaskListEntity>>
 
     // --- Photo Operations ---
 
-    /**
-     * Inserts a new photo into the database.
-     */
     suspend fun insertPhoto(photo: PhotoEntity)
 
-    /**
-     * Deletes a photo from the database.
-     */
     suspend fun deletePhoto(photo: PhotoEntity)
 
-    /**
-     * Retrieves all photos for a given task ID.
-     */
-    fun getPhotosForTask(taskId: Long): Flow<List<PhotoEntity>>
+    fun getPhotosForTaskList(listId: Long): Flow<List<PhotoEntity>>
 
     // --- Relational Operations ---
 
-    /**
-     * Retrieves a task along with all of its associated photos.
-     */
-    fun getTaskWithPhotos(taskId: Long): Flow<TaskWithPhotos?>
+    fun getTaskListWithPhotos(listId: Long): Flow<TaskListWithPhotos?>
 }

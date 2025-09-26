@@ -1,56 +1,51 @@
 package com.ylabz.basepro.applications.photodo.db.repo
 
 import com.ylabz.basepro.applications.photodo.db.PhotoDoDao
+import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 import com.ylabz.basepro.applications.photodo.db.entity.PhotoEntity
-import com.ylabz.basepro.applications.photodo.db.entity.ProjectEntity
-import com.ylabz.basepro.applications.photodo.db.entity.TaskEntity
-import com.ylabz.basepro.applications.photodo.db.entity.TaskWithPhotos
+import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
+import com.ylabz.basepro.applications.photodo.db.entity.TaskListWithPhotos
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-/**
- * Concrete implementation of the PhotoDo repository.
- *
- * @param photoDoDao The Data Access Object for the PhotoDo database.
- */
 class PhotoDoRepoImpl @Inject constructor(
     private val photoDoDao: PhotoDoDao
 ) : PhotoDoRepo {
 
-    // --- Project Operations ---
+    // --- Category Operations ---
 
-    override suspend fun insertProject(project: ProjectEntity) {
-        photoDoDao.insertProject(project)
+    override suspend fun insertCategory(category: CategoryEntity) {
+        photoDoDao.insertCategory(category)
     }
 
-    override suspend fun deleteProject(project: ProjectEntity) {
-        photoDoDao.deleteProject(project)
+    override suspend fun deleteCategory(category: CategoryEntity) {
+        photoDoDao.deleteCategory(category)
     }
 
-    override fun getAllProjects(): Flow<List<ProjectEntity>> {
-        return photoDoDao.getAllProjects()
+    override fun getAllCategories(): Flow<List<CategoryEntity>> {
+        return photoDoDao.getAllCategories()
     }
 
-    override fun getProjectById(projectId: Long): Flow<ProjectEntity?> {
-        return photoDoDao.getProjectById(projectId)
+    override fun getCategoryById(categoryId: Long): Flow<CategoryEntity?> {
+        return photoDoDao.getCategoryById(categoryId)
     }
 
-    // --- Task Operations ---
+    // --- TaskList Operations ---
 
-    override suspend fun insertTask(task: TaskEntity) {
-        photoDoDao.insertTask(task)
+    override suspend fun insertTaskList(taskList: TaskListEntity) {
+        photoDoDao.insertTaskList(taskList)
     }
 
-    override suspend fun deleteTask(task: TaskEntity) {
-        photoDoDao.deleteTask(task)
+    override suspend fun deleteTaskList(taskList: TaskListEntity) {
+        photoDoDao.deleteTaskList(taskList)
     }
 
-    override fun getTaskById(taskId: Long): Flow<TaskEntity?> {
-        return photoDoDao.getTaskById(taskId)
+    override fun getTaskListById(listId: Long): Flow<TaskListEntity?> {
+        return photoDoDao.getTaskListById(listId)
     }
 
-    override fun getTasksForProject(projectId: Long): Flow<List<TaskEntity>> {
-        return photoDoDao.getTasksForProject(projectId)
+    override fun getTaskListsForCategory(categoryId: Long): Flow<List<TaskListEntity>> {
+        return photoDoDao.getTaskListsForCategory(categoryId)
     }
 
     // --- Photo Operations ---
@@ -63,13 +58,13 @@ class PhotoDoRepoImpl @Inject constructor(
         photoDoDao.deletePhoto(photo)
     }
 
-    override fun getPhotosForTask(taskId: Long): Flow<List<PhotoEntity>> {
-        return photoDoDao.getPhotosForTask(taskId)
+    override fun getPhotosForTaskList(listId: Long): Flow<List<PhotoEntity>> {
+        return photoDoDao.getPhotosForTaskList(listId)
     }
 
     // --- Relational Operations ---
 
-    override fun getTaskWithPhotos(taskId: Long): Flow<TaskWithPhotos?> {
-        return photoDoDao.getTaskWithPhotos(taskId)
+    override fun getTaskListWithPhotos(listId: Long): Flow<TaskListWithPhotos?> {
+        return photoDoDao.getTaskListWithPhotos(listId)
     }
 }
