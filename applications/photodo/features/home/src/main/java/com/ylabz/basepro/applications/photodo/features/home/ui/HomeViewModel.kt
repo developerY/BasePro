@@ -36,6 +36,9 @@ class HomeViewModel @Inject constructor(
                     photoDoRepo.insertProject(ProjectEntity(name = newProjectName))
                 }
             }
+
+            HomeEvent.OnAddListClicked -> {}//TODO()
+            is HomeEvent.OnProjectSelected -> {}//TODO()
         }
     }
 }

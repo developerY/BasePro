@@ -3,6 +3,7 @@ package com.ylabz.basepro.applications.photodo.features.home.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -12,6 +13,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 @Composable
 fun PhotoDoHomeUiRoute(
+    modifier: Modifier = Modifier,
     // The navigation lambda now expects a Long (the projectId)
     navTo: (Long) -> Unit,
     // Use the new, dedicated HomeViewModel
@@ -27,12 +29,20 @@ fun PhotoDoHomeUiRoute(
         }
         is HomeUiState.Success -> {
             HomeScreen(
-                projects = state.projects,
-                onCategoryClick = { projectId ->
-                    navTo(projectId)
+                uiState = state,
+                onEvent = viewModel::onEvent,
+                // When a list is selected, navigate using its projectId
+                onSelectList = { task ->
+                    {}//navTo(task.projectId)
                 },
-                onAddNewCategoryClick = { /* TODO: Handle add new category */ }
+                modifier = modifier
             )
+        }
+        is HomeUiState.Error -> {
+            // A simple error screen
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = "Error: ${state.message}")
+            }
         }
     }
 }

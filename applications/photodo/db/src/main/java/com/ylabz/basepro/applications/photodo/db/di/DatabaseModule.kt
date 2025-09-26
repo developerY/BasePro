@@ -27,7 +27,6 @@ object DatabaseModule {
     @Singleton
     fun providePhotoDoDatabase(
         @ApplicationContext context: Context,
-        // Use Provider for lazy injection to break circular dependency
         callback: Provider<PhotoDoDatabaseCallback>
     ): PhotoDoDB {
         return Room.databaseBuilder(
@@ -35,6 +34,7 @@ object DatabaseModule {
             PhotoDoDB::class.java,
             "photodo_database"
         )
+        .fallbackToDestructiveMigration() // Added to handle schema changes gracefully during dev
         .addCallback(callback.get())
         .build()
     }
@@ -51,7 +51,6 @@ object DatabaseModule {
         return PhotoDoRepoImpl(photoDoDao)
     }
 
-    // Callback to pre-populate the database
     @Provides
     @Singleton
     fun providePhotoDoDatabaseCallback(): PhotoDoDatabaseCallback {
@@ -59,20 +58,20 @@ object DatabaseModule {
     }
 }
 
-// The callback class itself
 class PhotoDoDatabaseCallback : RoomDatabase.Callback() {
     override fun onCreate(db: SupportSQLiteDatabase) {
         super.onCreate(db)
-        // Use CoroutineScope to run this in a background thread
         CoroutineScope(Dispatchers.IO).launch {
-            // Insert initial project
-            db.execSQL("INSERT INTO projects (projectId, name, description) VALUES (1, 'Default Project', 'A default project to get you started.')")
-
-            // Insert initial tasks for the default project (projectId = 1)
             val currentTime = System.currentTimeMillis()
-            db.execSQL("INSERT INTO tasks (projectId, name, notes, status, priority, creationDate) VALUES (1, 'Welcome to PhotoDo!', 'You can add notes and photos to your tasks.', 'To-Do', 1, $currentTime)")
-            db.execSQL("INSERT INTO tasks (projectId, name, notes, status, priority, creationDate) VALUES (1, 'Tap on a task to see details', null, 'To-Do', 0, $currentTime)")
-            db.execSQL("INSERT INTO tasks (projectId, name, notes, status, priority, creationDate) VALUES (1, 'Use the + button to add a new task', 'You''ll need to implement this feature.', 'To-Do', 0, $currentTime)")
+
+            // Insert initial Categories (Projects)
+            db.execSQL("INSERT INTO projects (projectId, name, description) VALUES (1, 'Home', 'Tasks related to home.')")
+            db.execSQL("INSERT INTO projects (projectId, name, description) VALUES (2, 'Family', 'Family related tasks.')")
+            db.execSQL("INSERT INTO projects (projectId, name, description) VALUES (3, 'Work', 'Work related tasks.')")
+
+            // Insert initial Lists (as Tasks) for the 'Home' category
+            db.execSQL("INSERT INTO tasks (projectId, name, notes, status, priority, creationDate) VALUES (1, 'Shopping List', 'Groceries and other items.', 'To-Do', 1, $currentTime)")
+            db.execSQL("INSERT INTO tasks (projectId, name, notes, status, priority, creationDate) VALUES (1, 'Cleaning Tasks', 'Weekly cleaning schedule.', 'To-Do', 0, $currentTime)")
         }
     }
 }

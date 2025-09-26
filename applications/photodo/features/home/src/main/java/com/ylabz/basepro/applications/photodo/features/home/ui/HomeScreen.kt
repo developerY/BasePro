@@ -21,8 +21,6 @@ fun HomeScreen(
     val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
 
     ListDetailPaneScaffold(
-        directive = navigator.scaffoldDirective,
-        value = navigator.scaffoldValue,
         listPane = {
             AnimatedPane(modifier = modifier) {
                 // In unfolded mode, this is the master pane (the list of categories)
