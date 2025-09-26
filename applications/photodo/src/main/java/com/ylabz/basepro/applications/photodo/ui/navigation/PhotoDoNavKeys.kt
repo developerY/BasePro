@@ -13,7 +13,7 @@ import kotlinx.serialization.Transient
  * An interface to mark top-level destinations that should appear in the bottom navigation bar.
  */
 interface BottomBarItem {
-    @Transient // Add Transient here as well if the interface itself is ever directly serialized (though less common for interfaces)
+    @Transient
     val icon: ImageVector
     val title: String
 }
@@ -32,27 +32,17 @@ sealed class PhotoDoNavKeys : NavKey {
     }
 
     @Serializable
-    data class PhotoDoDetailKey(val photoId: String) : PhotoDoNavKeys()
+    data class TaskListKey(val categoryId: Long) : PhotoDoNavKeys(), BottomBarItem {
+        @Transient override val icon = Icons.Default.Dehaze
+        override val title = "List"
+    }
 
     @Serializable
-    data class PhotoDolListKey(val projectId: Long) : PhotoDoNavKeys(), BottomBarItem {
-        @Transient override val icon = Icons.Default.Dehaze // Or Icons.Default.List as it was before
-        override val title = "List" // You might want to make the title dynamic based on the project
-    }
+    data class TaskListDetailKey(val listId: String) : PhotoDoNavKeys()
 
     @Serializable
     data object SettingsKey : PhotoDoNavKeys(), BottomBarItem {
         @Transient override val icon = Icons.Default.Settings
         override val title = "Settings"
     }
-
 }
-
-
-// You can add more NavKeys here as your application evolves.
-// For example:
-// @Serializable
-// data object AddPhotoDoKey : NavKey
-//
-// @Serializable
-// data class AlbumViewKey(val albumId: String) : NavKey

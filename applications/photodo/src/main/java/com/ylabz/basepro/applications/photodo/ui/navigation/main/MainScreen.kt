@@ -29,7 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
@@ -47,12 +47,9 @@ import com.ylabz.basepro.applications.photodo.features.settings.ui.SettingsViewM
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackStack
 
-// Data class to hold FAB configuration
 private data class FabState(val text: String, val onClick: () -> Unit)
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3AdaptiveApi::class
-)
+@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
     val topLevelBackStack = remember { TopLevelBackStack<NavKey>(PhotoDoNavKeys.HomeFeedKey) }
@@ -69,12 +66,11 @@ fun MainScreen() {
             HomeBottomBar(
                 topLevelBackStack = topLevelBackStack,
                 onNavigate = { key ->
-                    // If the user re-selects the current tab, pop to the root of its back stack
                     if (topLevelBackStack.topLevelKey::class == key::class) {
                         topLevelBackStack.popToRoot()
                     } else {
                         val newKey = when (key) {
-                            is PhotoDoNavKeys.PhotoDolListKey -> PhotoDoNavKeys.PhotoDolListKey(projectId = 1L) // Default project
+                            is PhotoDoNavKeys.TaskListKey -> PhotoDoNavKeys.TaskListKey(categoryId = 1L) // Default category
                             else -> key
                         }
                         topLevelBackStack.switchTopLevel(newKey)
@@ -83,7 +79,6 @@ fun MainScreen() {
             )
         },
         floatingActionButton = {
-            // Render FAB based on fabState
             fabState?.let {
                 ExtendedFloatingActionButton(
                     onClick = it.onClick,
@@ -96,79 +91,71 @@ fun MainScreen() {
         NavDisplay(
             backStack = topLevelBackStack.backStack,
             sceneStrategy = listDetailStrategy,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
+            modifier = Modifier.fillMaxSize().padding(innerPadding),
             entryProvider = entryProvider {
                 entry<PhotoDoNavKeys.HomeFeedKey>(
                     metadata = ListDetailSceneStrategy.listPane(
                         detailPlaceholder = { Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Select a category") } })
-                )
-                {
+                ) {
                     val homeViewModel: HomeViewModel = hiltViewModel()
                     topBar = { LargeTopAppBar(title = { Text("PhotoDo Home") }, scrollBehavior = scrollBehavior) }
                     fabState = FabState("Add Category") { homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked) }
 
                     PhotoDoHomeUiRoute(
-                        navTo = { projectId ->
-                            val listKey = PhotoDoNavKeys.PhotoDolListKey(projectId)
-                            // First, switch to the List tab
+                        navTo = { categoryId ->
+                            val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
                             topLevelBackStack.switchTopLevel(listKey)
-                            // Then, ensure the stack for the List tab IS the new key
                             topLevelBackStack.replaceStack(listKey)
                         },
-                        viewModel = homeViewModel // Pass the viewModel down
+                        viewModel = homeViewModel
                     )
                 }
 
-                entry<PhotoDoNavKeys.PhotoDolListKey>(
+                entry<PhotoDoNavKeys.TaskListKey>(
                     metadata = ListDetailSceneStrategy.listPane(
-                        detailPlaceholder = { Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Select an item to see details") } })
-                )
-                { listKey ->
+                        detailPlaceholder = { Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Select a list to see details") } })
+                ) { listKey ->
                     val viewModel: PhotoDoListViewModel = hiltViewModel()
-                    LaunchedEffect(listKey.projectId) {
-                        viewModel.loadProject(listKey.projectId)
+                    LaunchedEffect(listKey.categoryId) {
+                        viewModel.loadCategory(listKey.categoryId)
                     }
 
-                    fabState = FabState("Add Item") { viewModel.onEvent(PhotoDoListEvent.OnAddTaskClicked) }
+                    fabState = FabState("Add List") { viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked) }
 
                     topBar = {
                         LargeTopAppBar(
-                            title = { Text("Photo List") },
+                            title = { Text("Task Lists") },
                             scrollBehavior = scrollBehavior,
                             actions = {
-                                IconButton(onClick = { viewModel.onEvent(PhotoDoListEvent.OnDeleteAllTasksClicked) }) {
-                                    Icon(Icons.Filled.DeleteSweep, contentDescription = "Delete All Tasks")
+                                IconButton(onClick = { viewModel.onEvent(PhotoDoListEvent.OnDeleteAllTaskListsClicked) }) {
+                                    Icon(Icons.Filled.DeleteSweep, contentDescription = "Delete All Lists")
                                 }
                             }
                         )
                     }
 
                     PhotoDoListUiRoute(
-                        onTaskClick = { taskId ->
-                            topLevelBackStack.add(PhotoDoNavKeys.PhotoDoDetailKey(taskId.toString()))
+                        onTaskClick = { listId ->
+                            topLevelBackStack.add(PhotoDoNavKeys.TaskListDetailKey(listId.toString()))
                         },
                         onEvent = viewModel::onEvent,
                         viewModel = viewModel
                     )
                 }
 
-                entry<PhotoDoNavKeys.PhotoDoDetailKey>(
+                entry<PhotoDoNavKeys.TaskListDetailKey>(
                     metadata = ListDetailSceneStrategy.detailPane()
                 ) { detailKey ->
                     val viewModel: PhotoDoDetailViewModel = hiltViewModel()
-                    
-                    // Trigger the task loading when the screen is composed or the taskId changes
-                    LaunchedEffect(detailKey.photoId) {
-                        viewModel.loadTask(detailKey.photoId)
+                    LaunchedEffect(detailKey.listId) {
+                        viewModel.loadList(detailKey.listId)
                     }
 
-                    fabState = null // Hide FAB on detail screen
+                    fabState = null
 
                     topBar = {
                         TopAppBar(
-                            title = { Text("Task Details") },
+                            title = { Text("List Details") },
                             scrollBehavior = scrollBehavior,
                             navigationIcon = {
                                 IconButton(onClick = { topLevelBackStack.removeLastOrNull() }) {
@@ -177,19 +164,18 @@ fun MainScreen() {
                             }
                         )
                     }
-                    // Pass the correctly initialized ViewModel to the route
                     PhotoDoDetailUiRoute(viewModel = viewModel)
                 }
 
                 entry<PhotoDoNavKeys.SettingsKey> {
                     val viewModel: SettingsViewModel = hiltViewModel()
                     topBar = { LargeTopAppBar(title = { Text("Settings") }, scrollBehavior = scrollBehavior) }
-                    fabState = null // Hide FAB on settings screen
+                    fabState = null
 
                     SettingsUiRoute(
                         modifier = Modifier,
                         navTo = {},
-                        viewModel = viewModel, // Pass the viewModel down
+                        viewModel = viewModel,
                         initialCardKeyToExpand = null
                     )
                 }
