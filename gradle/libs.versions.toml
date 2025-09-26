@@ -108,7 +108,8 @@ junitVersion = "1.3.0"          # AndroidX JUnit extension
 espressoCore = "3.7.0"          # AndroidX Espresso, for Android UI testing
 uiautomator = "2.3.0"           # AndroidX UI Automator, for UI testing across apps
 androidxProfiling = "1.4.1"     # Version for AndroidX Benchmark, Baseline Profile, ProfileInstaller
-runner = "1.7.0"                # AndroidX Test Runner
+runner = "1.7.0"
+material3Adaptive = "1.0.0-alpha06"                # AndroidX Test Runner
 
 
 [libraries]
@@ -272,6 +273,7 @@ androidx-runner = { group = "androidx.test", name = "runner", version.ref = "run
 # Testing - Benchmarking & Profiling
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxProfiling" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "androidxProfiling" }
+androidx-compose-material3-adaptive = { group = "androidx.compose.material3", name = "material3-adaptive", version.ref = "material3Adaptive" }
 
 
 [plugins]
