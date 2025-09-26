@@ -34,7 +34,7 @@ object DatabaseModule {
             PhotoDoDB::class.java,
             "photodo_database"
         )
-        .fallbackToDestructiveMigration() // Added to handle schema changes gracefully during dev
+        .fallbackToDestructiveMigration() // Handles schema changes gracefully during dev
         .addCallback(callback.get())
         .build()
     }
@@ -64,14 +64,14 @@ class PhotoDoDatabaseCallback : RoomDatabase.Callback() {
         CoroutineScope(Dispatchers.IO).launch {
             val currentTime = System.currentTimeMillis()
 
-            // Insert initial Categories (Projects)
-            db.execSQL("INSERT INTO projects (projectId, name, description) VALUES (1, 'Home', 'Tasks related to home.')")
-            db.execSQL("INSERT INTO projects (projectId, name, description) VALUES (2, 'Family', 'Family related tasks.')")
-            db.execSQL("INSERT INTO projects (projectId, name, description) VALUES (3, 'Work', 'Work related tasks.')")
+            // Insert initial Categories
+            db.execSQL("INSERT INTO categories (categoryId, name, description) VALUES (1, 'Home', 'Tasks related to home.')")
+            db.execSQL("INSERT INTO categories (categoryId, name, description) VALUES (2, 'Family', 'Family related tasks.')")
+            db.execSQL("INSERT INTO categories (categoryId, name, description) VALUES (3, 'Work', 'Work related tasks.')")
 
-            // Insert initial Lists (as Tasks) for the 'Home' category
-            db.execSQL("INSERT INTO tasks (projectId, name, notes, status, priority, creationDate) VALUES (1, 'Shopping List', 'Groceries and other items.', 'To-Do', 1, $currentTime)")
-            db.execSQL("INSERT INTO tasks (projectId, name, notes, status, priority, creationDate) VALUES (1, 'Cleaning Tasks', 'Weekly cleaning schedule.', 'To-Do', 0, $currentTime)")
+            // Insert initial Task Lists for the 'Home' category
+            db.execSQL("INSERT INTO task_lists (categoryId, name, notes, status, priority, creationDate) VALUES (1, 'Shopping List', 'Groceries and other items.', 'To-Do', 1, $currentTime)")
+            db.execSQL("INSERT INTO task_lists (categoryId, name, notes, status, priority, creationDate) VALUES (1, 'Cleaning Tasks', 'Weekly cleaning schedule.', 'To-Do', 0, $currentTime)")
         }
     }
 }

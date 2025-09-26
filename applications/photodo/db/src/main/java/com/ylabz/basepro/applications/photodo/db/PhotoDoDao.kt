@@ -6,42 +6,42 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 import com.ylabz.basepro.applications.photodo.db.entity.PhotoEntity
-import com.ylabz.basepro.applications.photodo.db.entity.ProjectEntity
-import com.ylabz.basepro.applications.photodo.db.entity.TaskEntity
-import com.ylabz.basepro.applications.photodo.db.entity.TaskWithPhotos
+import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
+import com.ylabz.basepro.applications.photodo.db.entity.TaskListWithPhotos
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PhotoDoDao {
 
-    // --- Project Operations ---
+    // --- Category Operations ---
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertProject(project: ProjectEntity)
+    suspend fun insertCategory(category: CategoryEntity)
 
     @Delete
-    suspend fun deleteProject(project: ProjectEntity)
+    suspend fun deleteCategory(category: CategoryEntity)
 
-    @Query("SELECT * FROM projects ORDER BY name ASC")
-    fun getAllProjects(): Flow<List<ProjectEntity>>
+    @Query("SELECT * FROM categories ORDER BY name ASC")
+    fun getAllCategories(): Flow<List<CategoryEntity>>
 
-    @Query("SELECT * FROM projects WHERE projectId = :projectId")
-    fun getProjectById(projectId: Long): Flow<ProjectEntity?>
+    @Query("SELECT * FROM categories WHERE categoryId = :categoryId")
+    fun getCategoryById(categoryId: Long): Flow<CategoryEntity?>
 
-    // --- Task Operations ---
+    // --- TaskList Operations ---
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTask(task: TaskEntity)
+    suspend fun insertTaskList(taskList: TaskListEntity)
 
     @Delete
-    suspend fun deleteTask(task: TaskEntity)
+    suspend fun deleteTaskList(taskList: TaskListEntity)
 
-    @Query("SELECT * FROM tasks WHERE taskId = :taskId")
-    fun getTaskById(taskId: Long): Flow<TaskEntity?>
+    @Query("SELECT * FROM task_lists WHERE listId = :listId")
+    fun getTaskListById(listId: Long): Flow<TaskListEntity?>
 
-    @Query("SELECT * FROM tasks WHERE projectId = :projectId ORDER BY creationDate DESC")
-    fun getTasksForProject(projectId: Long): Flow<List<TaskEntity>>
+    @Query("SELECT * FROM task_lists WHERE categoryId = :categoryId ORDER BY creationDate DESC")
+    fun getTaskListsForCategory(categoryId: Long): Flow<List<TaskListEntity>>
 
     // --- Photo Operations ---
 
@@ -51,12 +51,12 @@ interface PhotoDoDao {
     @Delete
     suspend fun deletePhoto(photo: PhotoEntity)
 
-    @Query("SELECT * FROM photos WHERE taskId = :taskId ORDER BY timestamp DESC")
-    fun getPhotosForTask(taskId: Long): Flow<List<PhotoEntity>>
+    @Query("SELECT * FROM photos WHERE listId = :listId ORDER BY timestamp DESC")
+    fun getPhotosForTaskList(listId: Long): Flow<List<PhotoEntity>>
 
     // --- Relational Query ---
 
     @Transaction
-    @Query("SELECT * FROM tasks WHERE taskId = :taskId")
-    fun getTaskWithPhotos(taskId: Long): Flow<TaskWithPhotos?>
+    @Query("SELECT * FROM task_lists WHERE listId = :listId")
+    fun getTaskListWithPhotos(listId: Long): Flow<TaskListWithPhotos?>
 }
