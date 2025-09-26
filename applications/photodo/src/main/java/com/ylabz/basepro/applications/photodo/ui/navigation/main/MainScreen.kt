@@ -30,6 +30,9 @@ import com.ylabz.basepro.applications.photodo.features.settings.ui.SettingsUiRou
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackStack
 
+// Data class to hold FAB configuration
+private data class FabState(val text: String, val onClick: () -> Unit)
+
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
@@ -38,6 +41,7 @@ fun MainScreen() {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
     var topBar: @Composable () -> Unit by remember { mutableStateOf({}) }
+    var fabState: FabState? by remember { mutableStateOf(null) }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -47,7 +51,7 @@ fun MainScreen() {
                 topLevelBackStack = topLevelBackStack,
                 onNavigate = { key ->
                     val newKey = when (key) {
-                        is PhotoDoNavKeys.PhotoDolListKey -> PhotoDoNavKeys.PhotoDolListKey(projectId = 1L) // Default to project 1 when clicking tab
+                        is PhotoDoNavKeys.PhotoDolListKey -> PhotoDoNavKeys.PhotoDolListKey(projectId = 1L)
                         else -> key
                     }
                     topLevelBackStack.switchTopLevel(newKey)
@@ -55,11 +59,14 @@ fun MainScreen() {
             )
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = { /* TODO: Implement add task functionality based on current screen */ },
-                icon = { Icon(Icons.Filled.Add, contentDescription = "Add Task Icon") },
-                text = { Text("Add Task") }
-            )
+            // Render FAB based on fabState
+            fabState?.let {
+                ExtendedFloatingActionButton(
+                    onClick = it.onClick,
+                    icon = { Icon(Icons.Filled.Add, contentDescription = "${it.text} Icon") },
+                    text = { Text(it.text) }
+                )
+            }
         }
     ) { innerPadding ->
         NavDisplay(
@@ -74,15 +81,12 @@ fun MainScreen() {
                         detailPlaceholder = { Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Select a category") } })
                 )
                 {
-                    topBar = {
-                        LargeTopAppBar(
-                            title = { Text("PhotoDo Home") },
-                            scrollBehavior = scrollBehavior
-                        )
-                    }
+                    topBar = { LargeTopAppBar(title = { Text("PhotoDo Home") }, scrollBehavior = scrollBehavior) }
+                    fabState = FabState("Add Category") { /* TODO: Add category action */ }
+
                     PhotoDoHomeUiRoute(
-                        navTo = { projectId -> // projectId is a String here
-                            topLevelBackStack.add(PhotoDoNavKeys.PhotoDolListKey(projectId.toLong())) // Convert to Long
+                        navTo = { projectId ->
+                            topLevelBackStack.add(PhotoDoNavKeys.PhotoDolListKey(projectId.toLong()))
                         }
                     )
                 }
@@ -93,15 +97,16 @@ fun MainScreen() {
                 )
                 { listKey ->
                     val viewModel: PhotoDoListViewModel = hiltViewModel()
-
-                    // Trigger the project loading when the screen is composed or projectId changes
                     LaunchedEffect(listKey.projectId) {
                         viewModel.loadProject(listKey.projectId)
                     }
 
+                    topBar = { /* ... as before ... */ }
+                    fabState = FabState("Add Item") { viewModel.onEvent(PhotoDoListEvent.OnAddTaskClicked) }
+
                     topBar = {
                         LargeTopAppBar(
-                            title = { Text("Photo List") }, // Consider: "Project: ${listKey.projectId}"
+                            title = { Text("Photo List") },
                             scrollBehavior = scrollBehavior,
                             actions = {
                                 IconButton(onClick = { viewModel.onEvent(PhotoDoListEvent.OnDeleteAllTasksClicked) }) {
@@ -110,9 +115,9 @@ fun MainScreen() {
                             }
                         )
                     }
+
                     PhotoDoListUiRoute(
                         onTaskClick = { taskId ->
-                            Log.d("PhotoDoApp", "Navigating to detail with ID: '$taskId'")
                             topLevelBackStack.add(PhotoDoNavKeys.PhotoDoDetailKey(taskId.toString()))
                         },
                         onEvent = viewModel::onEvent,
@@ -123,6 +128,9 @@ fun MainScreen() {
                 entry<PhotoDoNavKeys.PhotoDoDetailKey>(
                     metadata = ListDetailSceneStrategy.detailPane()
                 ) { detailKey ->
+                    topBar = { /* ... as before ... */ }
+                    fabState = null // Hide FAB on detail screen
+
                     topBar = {
                         TopAppBar(
                             title = { Text("Task Details") },
@@ -134,21 +142,14 @@ fun MainScreen() {
                             }
                         )
                     }
-                    PhotoDoDetailUiRoute() // ViewModel will be created inside
+                    PhotoDoDetailUiRoute()
                 }
 
                 entry<PhotoDoNavKeys.SettingsKey> {
-                    topBar = {
-                        LargeTopAppBar(
-                            title = { Text("Settings") },
-                            scrollBehavior = scrollBehavior
-                        )
-                    }
-                    SettingsUiRoute(
-                        modifier = Modifier,
-                        navTo = {},
-                        initialCardKeyToExpand = null
-                    )
+                    topBar = { LargeTopAppBar(title = { Text("Settings") }, scrollBehavior = scrollBehavior) }
+                    fabState = null // Hide FAB on settings screen
+
+                    SettingsUiRoute(modifier = Modifier, navTo = {}, initialCardKeyToExpand = null)
                 }
             }
         )
