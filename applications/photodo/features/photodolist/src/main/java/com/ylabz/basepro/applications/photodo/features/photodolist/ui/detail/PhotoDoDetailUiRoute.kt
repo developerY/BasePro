@@ -10,30 +10,35 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
+/**
+ * The route for displaying the details of a specific task.
+ * This composable is stateless and driven by the provided ViewModel.
+ */
 @Composable
 fun PhotoDoDetailUiRoute(
     modifier: Modifier = Modifier,
-    viewModel: PhotoDoDetailViewModel = hiltViewModel()
+    // The ViewModel is now a required parameter, removing the default hiltViewModel() call.
+    // This ensures that the caller is responsible for providing a correctly initialized ViewModel.
+    viewModel: PhotoDoDetailViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     when (val state = uiState) {
         is PhotoDoDetailUiState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
         }
         is PhotoDoDetailUiState.Success -> {
-            Column {
+            Column(modifier = modifier) {
                 Text(text = "Task: ${state.taskWithPhotos.task.name}")
                 Text(text = "Status: ${state.taskWithPhotos.task.status}")
-                // Add more details and a list of photos here
+                // TODO: Add more details and a list of photos here
             }
         }
         is PhotoDoDetailUiState.Error -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(text = state.message)
             }
         }

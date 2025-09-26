@@ -38,6 +38,7 @@ import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailUiRoute
+import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailViewModel
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListEvent
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListViewModel
@@ -48,7 +49,9 @@ import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackSta
 // Data class to hold FAB configuration
 private data class FabState(val text: String, val onClick: () -> Unit)
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3AdaptiveApi::class
+)
 @Composable
 fun MainScreen() {
     val topLevelBackStack = remember { TopLevelBackStack<NavKey>(PhotoDoNavKeys.HomeFeedKey) }
@@ -153,6 +156,13 @@ fun MainScreen() {
                 entry<PhotoDoNavKeys.PhotoDoDetailKey>(
                     metadata = ListDetailSceneStrategy.detailPane()
                 ) { detailKey ->
+                    val viewModel: PhotoDoDetailViewModel = hiltViewModel()
+                    
+                    // Trigger the task loading when the screen is composed or the taskId changes
+                    LaunchedEffect(detailKey.photoId) {
+                        viewModel.loadTask(detailKey.photoId)
+                    }
+
                     fabState = null // Hide FAB on detail screen
 
                     topBar = {
@@ -166,7 +176,8 @@ fun MainScreen() {
                             }
                         )
                     }
-                    PhotoDoDetailUiRoute()
+                    // Pass the correctly initialized ViewModel to the route
+                    PhotoDoDetailUiRoute(viewModel = viewModel)
                 }
 
                 entry<PhotoDoNavKeys.SettingsKey> {
