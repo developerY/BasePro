@@ -1,6 +1,5 @@
 package com.ylabz.basepro.applications.photodo.features.home.ui
 
-
 import androidx.compose.material3.adaptive.AnimatedPane
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.ListDetailPaneScaffold
@@ -23,22 +22,20 @@ fun HomeScreen(
     ListDetailPaneScaffold(
         listPane = {
             AnimatedPane(modifier = modifier) {
-                // In unfolded mode, this is the master pane (the list of categories)
                 CategoryList(
-                    categories = uiState.projects,
-                    selectedCategory = uiState.selectedProject,
+                    categories = uiState.categories,
+                    selectedCategory = uiState.selectedCategory,
                     onCategoryClick = { category ->
-                        onEvent(HomeEvent.OnProjectSelected(category))
+                        onEvent(HomeEvent.OnCategorySelected(category))
                     }
                 )
             }
         },
         detailPane = {
             AnimatedPane(modifier = modifier) {
-                // In unfolded mode, this is the detail pane (the lists for the selected category)
                 TaskList(
-                    project = uiState.selectedProject,
-                    tasks = uiState.tasksForSelectedProject,
+                    category = uiState.selectedCategory,
+                    taskLists = uiState.taskListsForSelectedCategory,
                     onSelectList = onSelectList
                 )
             }

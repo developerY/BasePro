@@ -1,6 +1,6 @@
 package com.ylabz.basepro.applications.photodo.features.home.ui
 
-import com.ylabz.basepro.applications.photodo.db.entity.ProjectEntity
+import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 
 /**
  * Defines the events that can be triggered from the Home screen.
@@ -12,14 +12,9 @@ sealed interface HomeEvent {
     data object OnAddCategoryClicked : HomeEvent
 
     /**
-     * Event triggered when the "Add List" button is clicked from the FAB.
-     */
-    data object OnAddListClicked : HomeEvent
-
-    /**
-     * Event triggered when a user selects a project (category) from the list or carousel.
+     * Event triggered when a user selects a category from the list.
      *
-     * @param project The project that was selected.
+     * @param category The category that was selected.
      */
-    data class OnProjectSelected(val project: ProjectEntity) : HomeEvent
+    data class OnCategorySelected(val category: CategoryEntity) : HomeEvent
 }

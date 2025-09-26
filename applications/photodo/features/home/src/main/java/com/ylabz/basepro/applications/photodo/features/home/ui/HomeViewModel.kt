@@ -2,7 +2,7 @@ package com.ylabz.basepro.applications.photodo.features.home.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.applications.photodo.db.entity.ProjectEntity
+import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,8 +18,8 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     val uiState: StateFlow<HomeUiState> =
-        photoDoRepo.getAllProjects()
-            .map { projects -> HomeUiState.Success(projects) }
+        photoDoRepo.getAllCategories() // Updated from getAllProjects
+            .map { categories -> HomeUiState.Success(categories = categories) } // Updated to use categories
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
@@ -29,16 +29,16 @@ class HomeViewModel @Inject constructor(
     fun onEvent(event: HomeEvent) {
         when (event) {
             is HomeEvent.OnAddCategoryClicked -> {
-                // For now, we will just add a new project with a default name.
-                // A more complete solution would show a dialog to get the name.
                 viewModelScope.launch {
-                    val newProjectName = "New Category ${System.currentTimeMillis() % 1000}"
-                    photoDoRepo.insertProject(ProjectEntity(name = newProjectName))
+                    val newCategoryName = "New Category ${System.currentTimeMillis() % 1000}"
+                    // Updated to use insertCategory and CategoryEntity
+                    photoDoRepo.insertCategory(CategoryEntity(name = newCategoryName))
                 }
             }
-
-            HomeEvent.OnAddListClicked -> {}//TODO()
-            is HomeEvent.OnProjectSelected -> {}//TODO()
+            // This will be updated in a subsequent step when HomeEvent is refactored
+            is HomeEvent.OnCategorySelected -> {
+                // TODO: Handle category selection to show its task lists
+            }
         }
     }
 }

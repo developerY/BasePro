@@ -9,14 +9,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun PhotoDoHomeUiRoute(
     modifier: Modifier = Modifier,
-    // The navigation lambda now expects a Long (the projectId)
+    // The navigation lambda now expects a Long (the categoryId)
     navTo: (Long) -> Unit,
-    // Use the new, dedicated HomeViewModel
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -31,15 +30,14 @@ fun PhotoDoHomeUiRoute(
             HomeScreen(
                 uiState = state,
                 onEvent = viewModel::onEvent,
-                // When a list is selected, navigate using its projectId
-                onSelectList = { task ->
-                    {}//navTo(task.projectId)
+                // When a task list is selected, navigate using its categoryId
+                onSelectList = { taskList ->
+                    {} //navTo(taskList.categoryId)
                 },
                 modifier = modifier
             )
         }
         is HomeUiState.Error -> {
-            // A simple error screen
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(text = "Error: ${state.message}")
             }

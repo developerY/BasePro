@@ -1,7 +1,7 @@
 package com.ylabz.basepro.applications.photodo.features.home.ui
 
-import com.ylabz.basepro.applications.photodo.db.entity.ProjectEntity
-import com.ylabz.basepro.applications.photodo.db.entity.TaskEntity
+import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
+import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
 
 /**
  * Represents the possible UI states for the Home screen.
@@ -13,16 +13,16 @@ sealed interface HomeUiState {
     object Loading : HomeUiState
 
     /**
-     * The state representing that the projects and tasks have been successfully loaded.
+     * The state representing that the categories and task lists have been successfully loaded.
      *
-     * @param projects The complete list of all projects (categories).
-     * @param selectedProject The currently selected project. Can be null if no project is selected.
-     * @param tasksForSelectedProject The list of tasks (lists) for the `selectedProject`.
+     * @param categories The complete list of all categories.
+     * @param selectedCategory The currently selected category. Can be null if no category is selected.
+     * @param taskListsForSelectedCategory The list of task lists for the `selectedCategory`.
      */
     data class Success(
-        val projects: List<ProjectEntity>,
-        val selectedProject: ProjectEntity? = null,
-        val tasksForSelectedProject: List<TaskEntity> = emptyList()
+        val categories: List<CategoryEntity>,
+        val selectedCategory: CategoryEntity? = null,
+        val taskListsForSelectedCategory: List<TaskListEntity> = emptyList()
     ) : HomeUiState
 
     /**
