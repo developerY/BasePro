@@ -2,7 +2,7 @@ package com.ylabz.basepro.applications.photodo.features.photodolist.ui.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.applications.photodo.db.entity.TaskEntity
+import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
 import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,18 +19,16 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 class PhotoDoListViewModel @Inject constructor(
     private val photoDoRepo: PhotoDoRepo
-    // SavedStateHandle is no longer needed here for projectId
 ) : ViewModel() {
 
-    private val _projectId = MutableStateFlow<Long?>(null)
+    private val _categoryId = MutableStateFlow<Long?>(null)
 
-    // This flow reactively loads tasks whenever _projectId changes.
-    val uiState: StateFlow<PhotoDoListUiState> = _projectId.flatMapLatest { projectId ->
-        if (projectId == null) {
-            MutableStateFlow(PhotoDoListUiState.Loading) // Or an Empty state
+    val uiState: StateFlow<PhotoDoListUiState> = _categoryId.flatMapLatest { categoryId ->
+        if (categoryId == null) {
+            MutableStateFlow(PhotoDoListUiState.Loading)
         } else {
-            photoDoRepo.getTasksForProject(projectId)
-                .map { tasks -> PhotoDoListUiState.Success(tasks) }
+            photoDoRepo.getTaskListsForCategory(categoryId)
+                .map { taskLists -> PhotoDoListUiState.Success(taskLists) }
         }
     }.stateIn(
         scope = viewModelScope,
@@ -38,39 +36,32 @@ class PhotoDoListViewModel @Inject constructor(
         initialValue = PhotoDoListUiState.Loading
     )
 
-    /**
-     * Sets the project ID to load tasks for. The uiState will automatically update.
-     */
-    fun loadProject(id: Long) {
-        _projectId.value = id
+    fun loadCategory(id: Long) {
+        _categoryId.value = id
     }
 
     fun onEvent(event: PhotoDoListEvent) {
-        val currentProjectId = _projectId.value ?: return // Don't handle events without a project ID
+        val currentCategoryId = _categoryId.value ?: return
 
         when (event) {
             is PhotoDoListEvent.OnDeleteAllTasksClicked -> {
                 viewModelScope.launch {
-                    // TODO: Implement photoDoRepo.deleteAllTasksForProject(currentProjectId)
+                    // TODO: Implement photoDoRepo.deleteAllTaskListsForCategory(currentCategoryId)
                 }
             }
             is PhotoDoListEvent.OnAddTaskClicked -> {
                 viewModelScope.launch {
-                    // Create a new task with a unique name
-                    val newTask = TaskEntity(
-                        projectId = currentProjectId,
-                        name = "New Task ${System.currentTimeMillis()}",
-                        notes = "Tap to edit details",
-                        status = "To-Do"
+                    val newTaskList = TaskListEntity(
+                        categoryId = currentCategoryId,
+                        name = "New List ${System.currentTimeMillis() % 1000}",
+                        notes = "Tap to edit details"
                     )
-                    photoDoRepo.insertTask(newTask)
+                    photoDoRepo.insertTaskList(newTaskList)
                 }
             }
-            is PhotoDoListEvent.OnItemClick -> {
-                // TODO: Handle Item Click for navigation
+            is PhotoDoListEvent.OnDeleteTaskClicked -> {
+                // TODO: Handle delete single task list
             }
-
-            is PhotoDoListEvent.OnDeleteTaskClicked -> TODO()
         }
     }
 }

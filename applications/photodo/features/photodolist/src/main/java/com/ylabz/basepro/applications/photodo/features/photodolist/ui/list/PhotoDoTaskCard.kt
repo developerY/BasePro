@@ -31,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.applications.photodo.db.entity.TaskEntity
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

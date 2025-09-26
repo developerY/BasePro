@@ -19,21 +19,19 @@ class PhotoDoDetailViewModel @Inject constructor(
     private val photoDoRepo: PhotoDoRepo
 ) : ViewModel() {
 
-    private val _taskId = MutableStateFlow<String?>(null)
+    private val _listId = MutableStateFlow<String?>(null)
 
-    val uiState: StateFlow<PhotoDoDetailUiState> = _taskId.flatMapLatest { taskId ->
-        if (taskId == null) {
+    val uiState: StateFlow<PhotoDoDetailUiState> = _listId.flatMapLatest { listId ->
+        if (listId == null) {
             MutableStateFlow(PhotoDoDetailUiState.Loading)
         } else {
-            // Ensure taskId can be converted to Long for the repository call
-            val longTaskId = taskId.toLongOrNull() ?: return@flatMapLatest MutableStateFlow(PhotoDoDetailUiState.Loading)
-            photoDoRepo.getTaskWithPhotos(longTaskId)
-                .map { taskWithPhotos ->
-                    if (taskWithPhotos != null) {
-                        PhotoDoDetailUiState.Success(taskWithPhotos)
+            val longListId = listId.toLongOrNull() ?: return@flatMapLatest MutableStateFlow(PhotoDoDetailUiState.Loading)
+            photoDoRepo.getTaskListWithPhotos(longListId)
+                .map { taskListWithPhotos ->
+                    if (taskListWithPhotos != null) {
+                        PhotoDoDetailUiState.Success(taskListWithPhotos)
                     } else {
-                        // Handle case where task is not found
-                        PhotoDoDetailUiState.Loading // Or a specific Error state
+                        PhotoDoDetailUiState.Loading
                     }
                 }
         }
@@ -43,10 +41,7 @@ class PhotoDoDetailViewModel @Inject constructor(
         initialValue = PhotoDoDetailUiState.Loading
     )
 
-    /**
-     * Sets the task ID to load details for. The uiState will automatically update.
-     */
-    fun loadTask(id: String) {
-        _taskId.value = id
+    fun loadList(id: String) {
+        _listId.value = id
     }
 }
