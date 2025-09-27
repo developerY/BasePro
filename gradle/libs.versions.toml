@@ -32,7 +32,8 @@ activityCompose = "1.11.0"      # AndroidX Activity Compose, for Jetpack Compose
 androidxNavigation = "2.9.4"    # AndroidX Navigation component (Compose)
 nav3Core = "1.0.0-alpha09"      # Navigation 3 Core libraries version
 lifecycleViewmodelNav3 = "1.0.0-alpha04" # Navigation 3 ViewModel support
-material3AdaptiveNav3 = "1.0.0-SNAPSHOT" # Navigation 3 Material3 Adaptive Layouts (Snapshot)
+material3AdaptiveNav3 = "1.0.0-alpha03" # Navigation 3 Material3 Adaptive Layouts (Snapshot)
+material3Adaptive = "1.0.0-alpha06"                # AndroidX Test Runner
 
 # Jetpack Compose
 composeBom = "2025.09.00"       # Jetpack Compose Bill of Materials (BOM)
@@ -109,7 +110,7 @@ espressoCore = "3.7.0"          # AndroidX Espresso, for Android UI testing
 uiautomator = "2.3.0"           # AndroidX UI Automator, for UI testing across apps
 androidxProfiling = "1.4.1"     # Version for AndroidX Benchmark, Baseline Profile, ProfileInstaller
 runner = "1.7.0"
-material3Adaptive = "1.0.0-alpha06"                # AndroidX Test Runner
+
 
 
 [libraries]
@@ -156,7 +157,9 @@ androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", vers
 androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
 # Note: The Material3 adaptive layouts library for Navigation 3 is currently
 # only available in snapshot builds. Follow instructions at androidx.dev to add the snapshot repository.
-androidx-material3-adaptive-navigation3 = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "material3AdaptiveNav3" }
+androidx-compose-material3-adaptive-navigation3 = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "material3AdaptiveNav3" }
+androidx-compose-material3-adaptive = { group = "androidx.compose.material3", name = "material3-adaptive", version.ref = "material3Adaptive" }
+
 
 # Dependency Injection - Hilt
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
@@ -273,7 +276,6 @@ androidx-runner = { group = "androidx.test", name = "runner", version.ref = "run
 # Testing - Benchmarking & Profiling
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxProfiling" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "androidxProfiling" }
-androidx-compose-material3-adaptive = { group = "androidx.compose.material3", name = "material3-adaptive", version.ref = "material3Adaptive" }
 
 
 [plugins]

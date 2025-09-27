@@ -92,9 +92,9 @@ dependencies {
     // Nav3
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
-    implementation(libs.androidx.material3.adaptive.navigation3) {
+    implementation(libs.androidx.compose.material3.adaptive.navigation3) {
         // Exclude the conflicting transitive dependency
-        exclude(group = "androidx.compose.material3.adaptive", module = "adaptive-android")
+        // exclude(group = "androidx.compose.material3.adaptive", module = "adaptive-android")
     }
     implementation(libs.androidx.lifecycle.viewmodel.navigation3) // Added for ViewModel scoping
     implementation(libs.kotlinx.serialization.json) // Added for @Serializable NavKey

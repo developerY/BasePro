@@ -80,7 +80,7 @@ dependencies {
 
     // implementation(libs.androidx.material3)
     // implementation(libs.androidx.material3.adaptive) // <-- This line is now active
-    implementation(libs.androidx.material3.adaptive.navigation3)
+    implementation(libs.androidx.compose.material3.adaptive.navigation3)
     debugImplementation(libs.androidx.ui.tooling)
 
     // Icons
