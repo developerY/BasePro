@@ -32,8 +32,8 @@ fun PhotoDoDetailUiRoute(
         }
         is PhotoDoDetailUiState.Success -> {
             Column(modifier = modifier) {
-                Text(text = "Task: ${state.taskWithPhotos.task.name}")
-                Text(text = "Status: ${state.taskWithPhotos.task.status}")
+                Text(text = "Task: ${state.taskListWithPhotos.taskList.name}")
+                Text(text = "Status: ${state.taskListWithPhotos.taskList.status}")
                 // TODO: Add more details and a list of photos here
             }
         }

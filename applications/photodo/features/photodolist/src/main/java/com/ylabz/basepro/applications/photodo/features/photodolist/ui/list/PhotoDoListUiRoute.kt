@@ -34,11 +34,11 @@ fun PhotoDoListUiRoute(
         }
         is PhotoDoListUiState.Success -> {
             LazyColumn(modifier = modifier) {
-                items(state.tasks) { task ->
+                items(state.taskLists) { task ->
                     PhotoDoTaskCard(
                         task = task,
-                        onItemClick = { onTaskClick(task.taskId) },
-                        onDeleteClick = { onEvent(PhotoDoListEvent.OnDeleteTaskClicked(task.taskId)) },
+                        onItemClick = { onTaskClick(task.listId) },
+                        onDeleteClick = { }//onEvent(PhotoDoListEvent.OnDeleteTaskClicked(task.taskId)) },
                     )
                 }
             }

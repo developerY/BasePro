@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -46,7 +47,7 @@ private fun Long.toFormattedDate(): String {
 @Composable
 fun PhotoDoTaskCard(
     modifier: Modifier = Modifier,
-    task: TaskEntity,
+    task: TaskListEntity,
     onItemClick: () -> Unit,
     onDeleteClick: () -> Unit,
 ) {
@@ -131,7 +132,7 @@ fun PhotoDoTaskCard(
             AnimatedVisibility(visible = expanded) {
                 Column(modifier = Modifier.padding(top = 8.dp)) {
                     Text(
-                        text = task.name ?: "No description available.", // Assuming TaskEntity might have a description
+                        text = task.name ?: "No description available.", // Assuming TaskList might have a description
                         style = MaterialTheme.typography.bodyMedium,
                         color = contentColor
                     )

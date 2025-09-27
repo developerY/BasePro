@@ -2,7 +2,6 @@ package com.ylabz.basepro.applications.photodo.features.photodolist.ui.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
 import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -12,7 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,7 +42,7 @@ class PhotoDoListViewModel @Inject constructor(
         val currentCategoryId = _categoryId.value ?: return
 
         when (event) {
-            is PhotoDoListEvent.OnDeleteAllTasksClicked -> {
+            /*is PhotoDoListEvent.OnDeleteAllTasksClicked -> {
                 viewModelScope.launch {
                     // TODO: Implement photoDoRepo.deleteAllTaskListsForCategory(currentCategoryId)
                 }
@@ -61,7 +59,12 @@ class PhotoDoListViewModel @Inject constructor(
             }
             is PhotoDoListEvent.OnDeleteTaskClicked -> {
                 // TODO: Handle delete single task list
-            }
+            }*/
+
+            PhotoDoListEvent.OnAddTaskListClicked -> {}//TODO()
+            PhotoDoListEvent.OnDeleteAllTaskListsClicked -> {}//TODO()
+            is PhotoDoListEvent.OnDeleteTaskListClicked -> {}//TODO()
+            is PhotoDoListEvent.OnTaskListClick -> {}//TODO()
         }
     }
 }
