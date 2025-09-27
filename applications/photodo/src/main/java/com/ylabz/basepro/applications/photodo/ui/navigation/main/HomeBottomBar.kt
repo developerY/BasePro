@@ -6,9 +6,9 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavKey
+import com.ylabz.basepro.applications.photodo.ui.navigation.BottomBarItem
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 import com.ylabz.basepro.applications.photodo.ui.navigation.util.TopLevelBackStack
-import com.ylabz.basepro.applications.photodo.ui.navigation.BottomBarItem
 
 /**
  * The Bottom Navigation Bar composable, designed for Navigation 3.
@@ -21,7 +21,7 @@ fun HomeBottomBar(
 ) {
     val bottomNavItems = listOf<BottomBarItem>(
         PhotoDoNavKeys.HomeFeedKey, 
-        PhotoDoNavKeys.PhotoDolListKey(projectId = 0L), // Placeholder, projectId doesn't matter for selection
+        PhotoDoNavKeys.TaskListKey(categoryId = 0L), // Placeholder, projectId doesn't matter for selection
         PhotoDoNavKeys.SettingsKey
     )
 
