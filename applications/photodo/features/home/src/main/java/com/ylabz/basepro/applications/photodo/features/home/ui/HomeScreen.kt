@@ -1,13 +1,13 @@
 package com.ylabz.basepro.applications.photodo.features.home.ui
 
-import androidx.compose.material3.adaptive.AnimatedPane
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.ListDetailPaneScaffold
-import androidx.compose.material3.adaptive.rememberListDetailPaneScaffoldNavigator
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
+import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.ylabz.basepro.applications.photodo.features.home.ui.components.CategoryList
 import com.ylabz.basepro.applications.photodo.features.home.ui.components.TaskList
+
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
@@ -20,8 +20,11 @@ fun HomeScreen(
     val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
 
     ListDetailPaneScaffold(
+        modifier = modifier, // The modifier for the whole screen goes on the scaffold
+        directive = navigator.scaffoldDirective,
+        value = navigator.scaffoldValue,
         listPane = {
-            AnimatedPane(modifier = modifier) {
+            //AnimatedPane(modifier = modifier) {
                 CategoryList(
                     categories = uiState.categories,
                     selectedCategory = uiState.selectedCategory,
@@ -29,16 +32,15 @@ fun HomeScreen(
                         onEvent(HomeEvent.OnCategorySelected(category))
                     }
                 )
-            }
+
         },
         detailPane = {
-            AnimatedPane(modifier = modifier) {
+            //AnimatedPane(modifier = modifier) {
                 TaskList(
                     category = uiState.selectedCategory,
                     taskLists = uiState.taskListsForSelectedCategory,
                     onSelectList = onSelectList
                 )
-            }
         }
     )
 }

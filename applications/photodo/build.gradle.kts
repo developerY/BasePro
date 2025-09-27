@@ -75,7 +75,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.compose.material3.adaptive) // Added to resolve runtime crash
+    //implementation(libs.androidx.compose.material3.adaptive) // Added to resolve runtime crash
 
     // Hilt
     implementation(libs.hilt.android)
@@ -92,10 +92,7 @@ dependencies {
     // Nav3
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
-    implementation(libs.androidx.compose.material3.adaptive.navigation3) {
-        // Exclude the conflicting transitive dependency
-        // exclude(group = "androidx.compose.material3.adaptive", module = "adaptive-android")
-    }
+    implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3) // Added for ViewModel scoping
     implementation(libs.kotlinx.serialization.json) // Added for @Serializable NavKey
 
