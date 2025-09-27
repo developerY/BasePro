@@ -34,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.applications.photodo.db.entity.ProjectEntity
 
 @Composable
 fun SplitButtonFab(
