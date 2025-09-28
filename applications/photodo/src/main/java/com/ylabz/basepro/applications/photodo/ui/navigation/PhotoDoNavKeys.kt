@@ -1,7 +1,7 @@
 package com.ylabz.basepro.applications.photodo.ui.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Dehaze
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -27,13 +27,13 @@ sealed class PhotoDoNavKeys : NavKey {
 
     @Serializable
     data object HomeFeedKey : PhotoDoNavKeys(), BottomBarItem {
-        @Transient override val icon = Icons.Default.Home
+        override val icon = Icons.Default.Home
         override val title = "Home"
     }
 
     @Serializable
     data class TaskListKey(val categoryId: Long) : PhotoDoNavKeys(), BottomBarItem {
-        @Transient override val icon = Icons.Default.Dehaze
+        @Transient override val icon = Icons.AutoMirrored.Filled.List
         override val title = "List"
     }
 
@@ -42,7 +42,7 @@ sealed class PhotoDoNavKeys : NavKey {
 
     @Serializable
     data object SettingsKey : PhotoDoNavKeys(), BottomBarItem {
-        @Transient override val icon = Icons.Default.Settings
+        override val icon = Icons.Default.Settings
         override val title = "Settings"
     }
 }

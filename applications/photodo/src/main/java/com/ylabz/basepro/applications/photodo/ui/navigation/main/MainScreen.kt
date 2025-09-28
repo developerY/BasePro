@@ -115,8 +115,8 @@ fun MainScreen() {
                             // CORRECTED: Replace the current list (categories)
                             // with the new list (tasks).
                             val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
-                            // topLevelBackStack.switchTopLevel(listKey)
-                            topLevelBackStack.replaceStack(listKey) // Use replaceStack, not add
+                            topLevelBackStack.switchTopLevel(listKey)
+                            // topLevelBackStack.replaceStack(listKey) // Use replaceStack, not add
                         },
                         viewModel = homeViewModel
                     )
