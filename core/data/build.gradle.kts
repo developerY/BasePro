@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.apollo.graphql)
     alias(libs.plugins.mapsplatform.secrets)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 android {

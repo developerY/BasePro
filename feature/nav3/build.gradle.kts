@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
     // Optional, provides the @Serialize annotation for autogeneration of Serializers.
-    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 android {
@@ -52,7 +52,7 @@ dependencies {
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
-    implementation(libs.androidx.compose.material3.adaptive)
+    implementation(libs.androidx.material3.adaptive.navigation3)
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.json)
 

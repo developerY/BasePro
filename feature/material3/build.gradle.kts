@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
     // Optional, provides the @Serialize annotation for autogeneration of Serializers.
-    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 android {
@@ -80,7 +80,7 @@ dependencies {
 
     // implementation(libs.androidx.material3)
     // implementation(libs.androidx.material3.adaptive) // <-- This line is now active
-    implementation(libs.androidx.compose.material3.adaptive)
+    implementation(libs.androidx.material3.adaptive.navigation3)
     debugImplementation(libs.androidx.ui.tooling)
 
     // Icons
