@@ -68,7 +68,9 @@ fun MainScreen() {
     val windowSizeClass = calculateWindowSizeClass(activity)
     val isExpandedScreen = windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
 
+    // This is the only navigator you need for this pattern
     val topLevelBackStack = remember { TopLevelBackStack<NavKey>(PhotoDoNavKeys.HomeFeedKey) }
+    // This strategy is what makes the adaptive logic work
     val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
@@ -110,9 +112,11 @@ fun MainScreen() {
 
                     PhotoDoHomeUiRoute(
                         navTo = { categoryId ->
+                            // CORRECTED: Replace the current list (categories)
+                            // with the new list (tasks).
                             val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
-                            topLevelBackStack.switchTopLevel(listKey)
-                            topLevelBackStack.replaceStack(listKey)
+                            // topLevelBackStack.switchTopLevel(listKey)
+                            topLevelBackStack.replaceStack(listKey) // Use replaceStack, not add
                         },
                         viewModel = homeViewModel
                     )
@@ -149,7 +153,11 @@ fun MainScreen() {
 
                     PhotoDoListUiRoute(
                         onTaskClick = { listId ->
-                            topLevelBackStack.add(PhotoDoNavKeys.TaskListDetailKey(listId.toString()))
+                            // CORRECT: Add the detail screen. The strategy will handle
+                            // showing it in the second pane on large screens.
+                            // topLevelBackStack.add(PhotoDoNavKeys.TaskListDetailKey(listId.toString()))
+                            val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
+                            topLevelBackStack.add(detailKey) // Use add here
                         },
                         onEvent = viewModel::onEvent,
                         viewModel = viewModel
