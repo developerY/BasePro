@@ -96,6 +96,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.navigation3) // Added for ViewModel scoping
     implementation(libs.kotlinx.serialization.json) // Added for @Serializable NavKey
 
+    // Window Size
+    implementation(libs.androidx.material3.window.size)
+
     // Icons
     implementation(libs.androidx.material.icons.extended)
 

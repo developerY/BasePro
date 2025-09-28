@@ -110,6 +110,7 @@ espressoCore = "3.7.0"          # AndroidX Espresso, for Android UI testing
 uiautomator = "2.3.0"           # AndroidX UI Automator, for UI testing across apps
 androidxProfiling = "1.4.1"     # Version for AndroidX Benchmark, Baseline Profile, ProfileInstaller
 runner = "1.7.0"
+material3AdaptiveNavigationSuite = "1.4.0"
 
 
 
@@ -140,7 +141,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 
 # Jetpack Compose - Material & Icons
 androidx-material3 = { module = "androidx.compose.material3:material3" } # Material Design 3 components for Compose (version from BOM)
-# androidx-material3-window-size-class = { module = "androidx.compose.material3:material3-window-size-class" } # Optional: Material3 Window Size Class
+androidx-material3-window-size = { module = "androidx.compose.material3:material3-window-size-class" } # Optional: Material3 Window Size Class
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "composeMaterial" }
 
 # Jetpack Compose - Image Loading
@@ -276,6 +277,7 @@ androidx-runner = { group = "androidx.test", name = "runner", version.ref = "run
 # Testing - Benchmarking & Profiling
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxProfiling" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "androidxProfiling" }
+androidx-compose-material3-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite", version.ref = "material3AdaptiveNavigationSuite" }
 
 
 [plugins]
