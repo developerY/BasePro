@@ -16,12 +16,11 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
@@ -56,7 +55,6 @@ import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.Photo
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListViewModel
 import com.ylabz.basepro.applications.photodo.features.settings.ui.SettingsUiRoute
 import com.ylabz.basepro.applications.photodo.features.settings.ui.SettingsViewModel
-import com.ylabz.basepro.applications.photodo.ui.navigation.BottomBarItem
 import com.ylabz.basepro.applications.photodo.ui.navigation.NavKeySaver
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 
@@ -90,8 +88,22 @@ fun MainScreen() {
         }
     }
 
-    // A key that forces recomposition when the back stack changes, fixing the detail navigation bug.
+    // A key that forces recomposition when the back stack changes.
     val backStackKey = backStack.joinToString { (it as? PhotoDoNavKeys)?.javaClass?.simpleName ?: "Detail" }
+
+    val appContent = @Composable { modifier: Modifier ->
+        key(backStackKey) {
+            AppContent(
+                modifier = modifier,
+                backStack = backStack,
+                sceneStrategy = listDetailStrategy,
+                scrollBehavior = scrollBehavior,
+                setTopBar = { topBar = it },
+                setFabState = { fabState = it },
+                updateCurrentTopLevelKey = { currentTopLevelKey = it }
+            )
+        }
+    }
 
     if (isExpandedScreen) {
         Row(modifier = Modifier.fillMaxSize()) {
@@ -101,16 +113,7 @@ fun MainScreen() {
                 topBar = topBar,
                 floatingActionButton = { Fab(fabState) }
             ) { padding ->
-                key(backStackKey) {
-                    AppContent(
-                        modifier = Modifier.padding(padding),
-                        backStack = backStack,
-                        sceneStrategy = listDetailStrategy,
-                        setTopBar = { topBar = it },
-                        setFabState = { fabState = it },
-                        updateCurrentTopLevelKey = { currentTopLevelKey = it }
-                    )
-                }
+                appContent(Modifier.padding(padding))
             }
         }
     } else {
@@ -120,16 +123,7 @@ fun MainScreen() {
             bottomBar = { HomeBottomBar(currentTopLevelKey = currentTopLevelKey, onNavigate = onNavigate) },
             floatingActionButton = { Fab(fabState) }
         ) { padding ->
-            key(backStackKey) {
-                AppContent(
-                    modifier = Modifier.padding(padding),
-                    backStack = backStack,
-                    sceneStrategy = listDetailStrategy,
-                    setTopBar = { topBar = it },
-                    setFabState = { fabState = it },
-                    updateCurrentTopLevelKey = { currentTopLevelKey = it }
-                )
-            }
+            appContent(Modifier.padding(padding))
         }
     }
 }
@@ -140,11 +134,12 @@ private fun AppContent(
     modifier: Modifier = Modifier,
     backStack: NavBackStack<NavKey>,
     sceneStrategy: ListDetailSceneStrategy<NavKey>,
+    scrollBehavior: TopAppBarScrollBehavior,
     setTopBar: (@Composable () -> Unit) -> Unit,
     setFabState: (FabState?) -> Unit,
     updateCurrentTopLevelKey: (NavKey) -> Unit
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    // val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
     NavDisplay(
         backStack = backStack,
@@ -234,28 +229,6 @@ private fun Fab(fabState: FabState?) {
             icon = { Icon(Icons.Filled.Add, contentDescription = "${it.text} Icon") },
             text = { Text(it.text) }
         )
-    }
-}
-
-@Composable
-fun HomeNavigationRail(currentTopLevelKey: NavKey, onNavigate: (NavKey) -> Unit) {
-    val bottomNavItems = listOf<BottomBarItem>(
-        PhotoDoNavKeys.HomeFeedKey,
-        PhotoDoNavKeys.TaskListKey(categoryId = 0L),
-        PhotoDoNavKeys.SettingsKey
-    )
-
-    NavigationRail {
-        bottomNavItems.forEach { item ->
-            val navKeyItem = item as NavKey
-            val selected = currentTopLevelKey::class == navKeyItem::class
-            NavigationRailItem(
-                selected = selected,
-                onClick = { onNavigate(navKeyItem) },
-                icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
-                label = { Text(item.title) }
-            )
-        }
     }
 }
 
