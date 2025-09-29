@@ -49,8 +49,7 @@ import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
-
-// STEP 1: DEFINE DESTINATIONS (No changes)
+// --- STEP 1: DEFINE DESTINATIONS (UPDATED) ---
 @Serializable
 sealed class AppScreen(val title: String) : NavKey {
     @Transient
@@ -62,8 +61,10 @@ sealed class AppScreen(val title: String) : NavKey {
         override val icon = Icons.Default.Home
     }
 
+    // NEW: Add a key for the detail screen. It takes an ID as an argument.
     @Serializable
     data class Detail(val id: Int) : AppScreen("Detail") {
+        // This icon is not used for navigation but is required to satisfy the abstract property.
         @Transient
         override val icon = Icons.Default.Home
     }
@@ -81,14 +82,17 @@ sealed class AppScreen(val title: String) : NavKey {
     }
 }
 
+// Updated to include all top-level screens for the bottom bar.
 private val topLevelScreens = listOf(AppScreen.Home, AppScreen.Search, AppScreen.Profile)
 
-val AppScreenSaverNav3 = Saver<AppScreen, String>(
+// Updated Saver to handle all AppScreen types.
+val AppScreenSaver = Saver<AppScreen, String>(
     save = { it.title },
     restore = { title -> topLevelScreens.find { it.title == title } ?: AppScreen.Home }
 )
 
-// --- FINAL, WORKING VERSION ---
+
+// --- STEP 2: CREATE THE UI (UPDATED FOR LIST-DETAIL) ---
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3AdaptiveApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable fun SimpleAdaptiveBottomBar() {
@@ -96,34 +100,34 @@ val AppScreenSaverNav3 = Saver<AppScreen, String>(
     val windowSizeClass = calculateWindowSizeClass(activity)
     val isExpandedScreen = windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
 
+    // The back stack now holds the generic NavKey type to accommodate different screen types.
     val backStack = rememberNavBackStack<NavKey>(AppScreen.Home)
-    var currentTab: AppScreen by rememberSaveable(stateSaver = AppScreenSaverNav3) {
+    var currentTab: AppScreen by rememberSaveable(stateSaver = AppScreenSaver) {
         mutableStateOf(AppScreen.Home)
     }
 
+    // --- NEW: Remember the ListDetailSceneStrategy ---
     val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
 
     val onNavigate = { screen: AppScreen ->
+        // When switching tabs, we should clear the back stack to avoid weird states.
         if (currentTab.title != screen.title) {
             currentTab = screen
             backStack.replaceAll(screen)
         }
     }
 
-    // --- THE CRUCIAL FIX ---
-    // We create a variable that represents the current state of the back stack.
-    // By using this as a `key`, we tell Compose that if this value changes,
-    // the content inside the key MUST be recomposed from scratch. This fixes
-    // the issue where adding a detail pane wasn't updating the UI.
+    // --- NEW: Add a `key` to force recomposition on back stack changes ---
+    // This is the crucial fix that makes detail navigation work reliably.
     val backStackKey = backStack.joinToString { (it as? AppScreen)?.title ?: "Detail" }
 
     if (isExpandedScreen) {
         Row(modifier = Modifier.fillMaxSize()) {
             AppNavigationRail(currentTab = currentTab, onNavigate = onNavigate)
-            key(backStackKey) { // Apply the key here
+            key(backStackKey) {
                 AppContent(
                     backStack = backStack,
-                    sceneStrategy = listDetailStrategy
+                    sceneStrategy = listDetailStrategy // Pass the strategy
                 )
             }
         }
@@ -132,10 +136,10 @@ val AppScreenSaverNav3 = Saver<AppScreen, String>(
             bottomBar = { AppBottomBar(currentTab = currentTab, onNavigate = onNavigate) }
         ) { padding ->
             Box(modifier = Modifier.padding(padding)) {
-                key(backStackKey) { // Apply the key here as well
+                key(backStackKey) {
                     AppContent(
                         backStack = backStack,
-                        sceneStrategy = listDetailStrategy
+                        sceneStrategy = listDetailStrategy // Pass the strategy
                     )
                 }
             }
@@ -143,27 +147,36 @@ val AppScreenSaverNav3 = Saver<AppScreen, String>(
     }
 }
 
+// --- STEP 3: UPDATE CONTENT AND NAVIGATION COMPONENTS ---
+
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-private fun AppContent(
+fun AppContent(
     backStack: NavBackStack<NavKey>,
     sceneStrategy: ListDetailSceneStrategy<NavKey>
 ) {
     NavDisplay(
         backStack = backStack,
         onBack = { backStack.removeLastOrNull() },
-        sceneStrategy = sceneStrategy,
+        sceneStrategy = sceneStrategy, // Use the provided strategy
         entryProvider = entryProvider {
             entry<AppScreen.Home>(
+                // Mark this as the "list" part of the list-detail view
                 metadata = ListDetailSceneStrategy.listPane()
             ) {
+                // Show a list that can navigate to details
                 ListScreen(onItemClick = { id -> backStack.add(AppScreen.Detail(id)) })
             }
+
             entry<AppScreen.Detail>(
+                // Mark this as the "detail" part of the list-detail view
                 metadata = ListDetailSceneStrategy.detailPane()
             ) { detailKey ->
+                // The detail key contains the arguments (e.g., the ID)
                 DetailScreen(id = detailKey.id)
             }
+
+            // Other top-level screens remain the same
             entry<AppScreen.Search> { ScreenContent(name = "Search Screen") }
             entry<AppScreen.Profile> { ScreenContent(name = "Profile Screen") }
         }
@@ -171,7 +184,7 @@ private fun AppContent(
 }
 
 @Composable
-private fun AppBottomBar(currentTab: AppScreen, onNavigate: (AppScreen) -> Unit) {
+fun AppBottomBar(currentTab: AppScreen, onNavigate: (AppScreen) -> Unit) {
     NavigationBar {
         topLevelScreens.forEach { screen ->
             val isSelected = currentTab.title == screen.title
@@ -186,7 +199,7 @@ private fun AppBottomBar(currentTab: AppScreen, onNavigate: (AppScreen) -> Unit)
 }
 
 @Composable
-private fun AppNavigationRail(currentTab: AppScreen, onNavigate: (AppScreen) -> Unit) {
+fun AppNavigationRail(currentTab: AppScreen, onNavigate: (AppScreen) -> Unit) {
     NavigationRail {
         topLevelScreens.forEach { screen ->
             val isSelected = currentTab.title == screen.title
@@ -200,8 +213,10 @@ private fun AppNavigationRail(currentTab: AppScreen, onNavigate: (AppScreen) -> 
     }
 }
 
+// --- STEP 4: ADD NEW SCREEN COMPOSABLES ---
+
 @Composable
-private fun ListScreen(onItemClick: (Int) -> Unit) {
+fun ListScreen(onItemClick: (Int) -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -216,24 +231,26 @@ private fun ListScreen(onItemClick: (Int) -> Unit) {
 }
 
 @Composable
-private fun DetailScreen(id: Int) {
+fun DetailScreen(id: Int) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text = "Detail for item #$id", style = MaterialTheme.typography.headlineLarge)
     }
 }
 
 @Composable
-private fun ScreenContent(name: String) {
+fun ScreenContent(name: String) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text = name, style = MaterialTheme.typography.headlineLarge)
     }
 }
 
-private fun <T : Any> MutableList<T>.replace(item: T) {
+// --- HELPER FUNCTIONS ---
+
+fun <T : Any> MutableList<T>.replace(item: T) {
     if (isNotEmpty()) this[lastIndex] = item else add(item)
 }
 
-private fun <T : Any> MutableList<T>.replaceAll(item: T) {
+fun <T : Any> MutableList<T>.replaceAll(item: T) {
     clear()
     add(item)
 }
