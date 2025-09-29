@@ -100,7 +100,7 @@ fun MainScreen() {
                 scrollBehavior = scrollBehavior,
                 setTopBar = { topBar = it },
                 setFabState = { fabState = it },
-                updateCurrentTopLevelKey = { currentTopLevelKey = it }
+                // updateCurrentTopLevelKey = { currentTopLevelKey = it }
             )
         }
     }
@@ -137,7 +137,8 @@ private fun AppContent(
     scrollBehavior: TopAppBarScrollBehavior,
     setTopBar: (@Composable () -> Unit) -> Unit,
     setFabState: (FabState?) -> Unit,
-    updateCurrentTopLevelKey: (NavKey) -> Unit
+    // REMOVE the updateCurrentTopLevelKey parameter, it's not needed here
+    // updateCurrentTopLevelKey: (NavKey) -> Unit
 ) {
     // val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
@@ -154,9 +155,14 @@ private fun AppContent(
 
                 PhotoDoHomeUiRoute(
                     navTo = { categoryId ->
-                        val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
+                        /*val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
                         updateCurrentTopLevelKey(listKey) // Update the selected tab
-                        backStack.replace(listKey)      // Navigate to the new screen
+                        backStack.replace(listKey)      // Navigate to the new screen*/
+                        // CORRECTED LOGIC:
+                        // 1. Do NOT update the top-level key here.
+                        // 2. ADD the new screen to the stack for forward navigation.
+                        val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
+                        backStack.add(listKey)
                     },
                     viewModel = homeViewModel
                 )
@@ -180,9 +186,15 @@ private fun AppContent(
 
                 PhotoDoListUiRoute(
                     onTaskClick = { listId ->
+                        // This is already correct! You are correctly adding the detail
+                        // key to the stack.
                         val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
                         backStack.add(detailKey)
                     },
+                    /*onTaskClick = { listId ->
+                        val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
+                        backStack.add(detailKey)
+                    },*/
                     onEvent = viewModel::onEvent,
                     viewModel = viewModel
                 )
