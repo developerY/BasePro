@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
 
                 MainScreen()
 
-                // PhotoDoAppNav3() // Main Composable for Nav3
+                //SimpleAdaptiveBottomBar() // Main Composable for Nav3
                 /*
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
