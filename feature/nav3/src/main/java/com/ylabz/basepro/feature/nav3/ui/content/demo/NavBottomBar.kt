@@ -1,4 +1,4 @@
-package com.ylabz.basepro.feature.nav3.ui
+package com.ylabz.basepro.feature.nav3.ui.content.demo
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -20,7 +20,10 @@ import androidx.navigation3.runtime.NavKey
 // rememberNavBackStack is not directly used here.
 // import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.ylabz.basepro.feature.nav3.ui.content.demo.TopLevelBackStack
+import com.ylabz.basepro.feature.nav3.ui.FeedKey
+import com.ylabz.basepro.feature.nav3.ui.HomeKey
+import com.ylabz.basepro.feature.nav3.ui.ProfileKey
+import com.ylabz.basepro.feature.nav3.ui.createNav3EntryProvider
 
 // AppBottomNavItem sealed class definition
 sealed class AppBottomNavItem(
