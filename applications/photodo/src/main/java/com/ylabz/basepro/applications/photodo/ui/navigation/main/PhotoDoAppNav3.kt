@@ -1,7 +1,10 @@
 package com.ylabz.basepro.applications.photodo.ui.navigation.main // Change this to your package name
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -11,8 +14,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -29,11 +38,9 @@ import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
-// STEP 1: DEFINE THE DESTINATIONS (CORRECTED)
+// STEP 1: DEFINE THE DESTINATIONS (No changes here)
 @Serializable
 sealed class SimpleScreen(val title: String) : NavKey {
-    // @Transient tells the serialization library to completely ignore this property.
-    // This solves the error because the ImageVector is never part of the serialization process.
     @Transient
     abstract val icon: ImageVector
 
@@ -67,51 +74,99 @@ val SimpleScreenSaver = Saver<SimpleScreen, String>(
     restore = { title -> bottomBarItems.find { it.title == title } ?: SimpleScreen.Home }
 )
 
-// STEP 2: CREATE THE UI
+// STEP 2: CREATE THE UI (With Adaptive Layout)
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun PhotoDoAppNav3() {
-    val backStack = rememberNavBackStack<SimpleScreen>(SimpleScreen.Home)
+fun SimpleAdaptiveBottomBar() {
+    val activity = LocalActivity.current as Activity
+    val windowSizeClass = calculateWindowSizeClass(activity)
+    val isExpandedScreen = windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
 
+    val backStack = rememberNavBackStack<SimpleScreen>(SimpleScreen.Home)
     var currentTab: SimpleScreen by rememberSaveable(stateSaver = SimpleScreenSaver) {
         mutableStateOf(SimpleScreen.Home)
     }
 
-    Scaffold(
-        bottomBar = {
-            NavigationBar {
-                bottomBarItems.forEach { screen ->
-                    val isSelected = currentTab.title == screen.title
-                    NavigationBarItem(
-                        selected = isSelected,
-                        onClick = {
-                            if (!isSelected) {
-                                currentTab = screen
-                                backStack.replace(screen)
-                            }
-                        },
-                        icon = { Icon(imageVector = screen.icon, contentDescription = screen.title) },
-                        label = { Text(text = screen.title) }
-                    )
-                }
+    val onNavigate = { screen: SimpleScreen ->
+        if (currentTab.title != screen.title) {
+            currentTab = screen
+            backStack.replace(screen)
+        }
+    }
+
+    if (isExpandedScreen) {
+        Row(modifier = Modifier.fillMaxSize()) {
+            AppNavigationRail(
+                currentTab = currentTab,
+                onNavigate = onNavigate
+            )
+            // This call is now correct
+            AppContent(backStack = backStack)
+        }
+    } else {
+        Scaffold(
+            bottomBar = {
+                AppBottomBar(
+                    currentTab = currentTab,
+                    onNavigate = onNavigate
+                )
+            }
+        ) {
+            // This call is now correct
+            AppContent(backStack = backStack)
+        }
+    }
+}
+
+// --- CORRECTED: The parameter type is now NavBackStack ---
+@Composable
+fun AppContent(backStack: NavBackStack<NavKey>) {
+    NavDisplay(
+        backStack = backStack,
+        onBack = { backStack.removeLastOrNull() },
+        entryProvider = entryProvider {
+            entry<SimpleScreen.Home> {
+                ScreenContent(name = "Home Screen")
+            }
+            entry<SimpleScreen.Search> {
+                ScreenContent(name = "Search Screen")
+            }
+            entry<SimpleScreen.Profile> {
+                ScreenContent(name = "Profile Screen")
             }
         }
-    ) {
-        NavDisplay(
-            backStack = backStack,
-            onBack = { backStack.removeLastOrNull() },
-            entryProvider = entryProvider {
-                entry<SimpleScreen.Home> {
-                    ScreenContent(name = "Home Screen")
-                }
-                entry<SimpleScreen.Search> {
-                    ScreenContent(name = "Search Screen")
-                }
-                entry<SimpleScreen.Profile> {
-                    ScreenContent(name = "Profile Screen")
-                }
-            }
-        )
+    )
+}
+
+// --- UI COMPONENTS (No changes below this line) ---
+@Composable
+fun AppBottomBar(currentTab: SimpleScreen, onNavigate: (SimpleScreen) -> Unit) {
+    NavigationBar {
+        bottomBarItems.forEach { screen ->
+            val isSelected = currentTab.title == screen.title
+            NavigationBarItem(
+                selected = isSelected,
+                onClick = { onNavigate(screen) },
+                icon = { Icon(imageVector = screen.icon, contentDescription = screen.title) },
+                label = { Text(text = screen.title) }
+            )
+        }
+    }
+}
+
+@Composable
+fun AppNavigationRail(currentTab: SimpleScreen, onNavigate: (SimpleScreen) -> Unit) {
+    NavigationRail {
+        bottomBarItems.forEach { screen ->
+            val isSelected = currentTab.title == screen.title
+            NavigationRailItem(
+                selected = isSelected,
+                onClick = { onNavigate(screen) },
+                icon = { Icon(imageVector = screen.icon, contentDescription = screen.title) },
+                label = { Text(text = screen.title) }
+            )
+        }
     }
 }
 
