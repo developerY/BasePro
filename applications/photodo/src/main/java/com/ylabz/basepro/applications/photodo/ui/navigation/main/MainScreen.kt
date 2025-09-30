@@ -31,6 +31,7 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -103,7 +104,15 @@ fun MainScreen() {
     }
 
     // A key that forces recomposition when the back stack changes.
-    val backStackKey = backStack.joinToString { (it as? PhotoDoNavKeys)?.javaClass?.simpleName ?: "Detail" }
+    // CORRECTED KEY: This now uses derivedStateOf to be state-aware.
+    val backStackKey by remember { derivedStateOf { 
+        backStack.joinToString("-") { navKey ->
+            when (navKey) {
+                is PhotoDoNavKeys.TaskListKey -> "TaskList(${navKey.categoryId})"
+                else -> navKey.javaClass.simpleName
+            }
+        }
+    } }
 
     val appContent = @Composable { modifier: Modifier ->
         key(backStackKey) {

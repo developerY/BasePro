@@ -24,23 +24,24 @@ fun HomeScreen(
         directive = navigator.scaffoldDirective,
         value = navigator.scaffoldValue,
         listPane = {
-            //AnimatedPane(modifier = modifier) {
-                CategoryList(
-                    categories = uiState.categories,
-                    selectedCategory = uiState.selectedCategory,
-                    onCategoryClick = { category ->
-                        onEvent(HomeEvent.OnCategorySelected(category))
-                    }
-                )
-
+            CategoryList(
+                categories = uiState.categories,
+                selectedCategory = uiState.selectedCategory,
+                onCategoryClick = { category ->
+                    // First, update the state for the detail view
+                    onEvent(HomeEvent.OnCategorySelected(category))
+                    // Then, trigger the navigation
+                    onSelectList(category.categoryId)
+                }
+            )
         },
         detailPane = {
-            //AnimatedPane(modifier = modifier) {
-                TaskList(
-                    category = uiState.selectedCategory,
-                    taskLists = uiState.taskListsForSelectedCategory,
-                    onSelectList = onSelectList
-                )
+            TaskList(
+                category = uiState.selectedCategory,
+                taskLists = uiState.taskListsForSelectedCategory,
+                // This is for clicking items in the right-hand pane, which is already correct
+                onSelectList = onSelectList
+            )
         }
     )
 }

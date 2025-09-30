@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.photodo.features.home.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,7 +33,8 @@ fun PhotoDoHomeUiRoute(
                 onEvent = viewModel::onEvent,
                 // When a task list is selected, navigate using its categoryId
                 onSelectList = { taskList ->
-                    {} //navTo(taskList.categoryId)
+                    Log.d("PhotoDoHomeUiRoute", "Navigating to TaskList with categoryId: ")//${taskList.categoryId}")
+                    // navTo(taskList.categoryId)
                 },
                 modifier = modifier
             )
