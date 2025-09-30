@@ -2,6 +2,7 @@ package com.ylabz.basepro.applications.photodo.ui.navigation.main
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -58,6 +59,7 @@ import com.ylabz.basepro.applications.photodo.features.settings.ui.SettingsViewM
 import com.ylabz.basepro.applications.photodo.ui.navigation.NavKeySaver
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 
+private const val TAG = "MainScreen"
 private data class FabState(val text: String, val onClick: () -> Unit)
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3Api::class)
@@ -75,16 +77,28 @@ fun MainScreen() {
     var currentTopLevelKey: NavKey by rememberSaveable(stateSaver = NavKeySaver) {
         mutableStateOf(PhotoDoNavKeys.HomeFeedKey)
     }
+    // Remember the last category ID the user interacted with. Default to 1L since we know it has data.
+    var lastSelectedCategoryId by rememberSaveable { mutableStateOf(1L) }
 
     val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     var topBar: @Composable () -> Unit by remember { mutableStateOf({}) }
     var fabState: FabState? by remember { mutableStateOf(null) }
 
-    val onNavigate: (NavKey) -> Unit = { newKey ->
-        if (currentTopLevelKey::class != newKey::class) {
-            currentTopLevelKey = newKey
-            backStack.replaceAll(newKey) // Clear history when switching tabs
+    val onNavigate: (NavKey) -> Unit = { navKey ->
+        // When navigating via BottomBar/Rail, if the target is the List tab,
+        // use the last selected category ID instead of the hardcoded one.
+        val keyToNavigate = if (navKey is PhotoDoNavKeys.TaskListKey) {
+            Log.d(TAG, "List tab clicked. Overriding to last selected categoryId: $lastSelectedCategoryId")
+            PhotoDoNavKeys.TaskListKey(lastSelectedCategoryId)
+        } else {
+            navKey
+        }
+
+        if (currentTopLevelKey::class != keyToNavigate::class) {
+            Log.d(TAG, "Top-level navigation to: ${keyToNavigate::class.simpleName}")
+            currentTopLevelKey = keyToNavigate
+            backStack.replaceAll(keyToNavigate) // Clear history when switching tabs
         }
     }
 
@@ -100,7 +114,9 @@ fun MainScreen() {
                 scrollBehavior = scrollBehavior,
                 setTopBar = { topBar = it },
                 setFabState = { fabState = it },
-                // updateCurrentTopLevelKey = { currentTopLevelKey = it }
+                onCategorySelected = { categoryId ->
+                    lastSelectedCategoryId = categoryId
+                }
             )
         }
     }
@@ -137,6 +153,7 @@ private fun AppContent(
     scrollBehavior: TopAppBarScrollBehavior,
     setTopBar: (@Composable () -> Unit) -> Unit,
     setFabState: (FabState?) -> Unit,
+    onCategorySelected: (Long) -> Unit // Callback to update the remembered category ID
     // REMOVE the updateCurrentTopLevelKey parameter, it's not needed here
     // updateCurrentTopLevelKey: (NavKey) -> Unit
 ) {
@@ -161,6 +178,8 @@ private fun AppContent(
                         // CORRECTED LOGIC:
                         // 1. Do NOT update the top-level key here.
                         // 2. ADD the new screen to the stack for forward navigation.
+                        Log.d(TAG, "Navigating from Home to TaskList with categoryId: $categoryId")
+                        onCategorySelected(categoryId) // Update the remembered category ID
                         val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
                         backStack.add(listKey)
                     },
@@ -169,7 +188,11 @@ private fun AppContent(
             }
             entry<PhotoDoNavKeys.TaskListKey>(metadata = ListDetailSceneStrategy.listPane(detailPlaceholder = { Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Select a list to see details") } })) { listKey ->
                 val viewModel: PhotoDoListViewModel = hiltViewModel()
-                LaunchedEffect(listKey.categoryId) { viewModel.loadCategory(listKey.categoryId) }
+                LaunchedEffect(listKey.categoryId) {
+                    Log.d(TAG, "TaskListKey LaunchedEffect triggered. Loading category with id: ${listKey.categoryId}")
+                    onCategorySelected(listKey.categoryId) // Also update when loading a list directly
+                    viewModel.loadCategory(listKey.categoryId)
+                }
 
                 setFabState(FabState("Add List") { viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked) })
                 setTopBar {
@@ -188,6 +211,7 @@ private fun AppContent(
                     onTaskClick = { listId ->
                         // This is already correct! You are correctly adding the detail
                         // key to the stack.
+                        Log.d(TAG, "Navigating from TaskList to Detail with listId: $listId")
                         val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
                         backStack.add(detailKey)
                     },
@@ -201,7 +225,10 @@ private fun AppContent(
             }
             entry<PhotoDoNavKeys.TaskListDetailKey>(metadata = ListDetailSceneStrategy.detailPane()) { detailKey ->
                 val viewModel: PhotoDoDetailViewModel = hiltViewModel()
-                LaunchedEffect(detailKey.listId) { viewModel.loadList(detailKey.listId) }
+                LaunchedEffect(detailKey.listId) {
+                    Log.d(TAG, "TaskListDetailKey LaunchedEffect triggered. Loading list with id: ${detailKey.listId}")
+                    viewModel.loadList(detailKey.listId)
+                }
 
                 setFabState(null)
                 setTopBar {

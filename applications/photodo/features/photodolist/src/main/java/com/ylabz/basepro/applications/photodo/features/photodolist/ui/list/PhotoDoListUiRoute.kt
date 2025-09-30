@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.photodo.features.photodolist.ui.list
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,6 +12,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+
+private const val TAG = "PhotoDoListUiRoute"
 
 /**
  * The route for displaying the list of tasks for a given project.
@@ -28,11 +31,13 @@ fun PhotoDoListUiRoute(
 
     when (val state = uiState) {
         is PhotoDoListUiState.Loading -> {
+            Log.d(TAG, "Displaying Loading state")
             Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
         }
         is PhotoDoListUiState.Success -> {
+            Log.d(TAG, "Displaying Success state with ${state.taskLists.size} items.")
             LazyColumn(modifier = modifier) {
                 items(state.taskLists) { task ->
                     PhotoDoTaskCard(
@@ -44,6 +49,7 @@ fun PhotoDoListUiRoute(
             }
         }
         is PhotoDoListUiState.Error -> {
+            Log.e(TAG, "Displaying Error state: ${state.message}")
             Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(text = state.message)
             }
