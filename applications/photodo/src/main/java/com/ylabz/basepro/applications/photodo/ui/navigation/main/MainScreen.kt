@@ -165,7 +165,13 @@ private fun AppContent(
         sceneStrategy = sceneStrategy,
         modifier = modifier,
         entryProvider = entryProvider {
-            entry<PhotoDoNavKeys.HomeFeedKey>(metadata = ListDetailSceneStrategy.listPane(detailPlaceholder = { Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Select a category") } })) {
+            entry<PhotoDoNavKeys.HomeFeedKey>(metadata = ListDetailSceneStrategy.listPane(
+                detailPlaceholder = {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center)
+                    { Text("Select a category") }
+                }
+            ))
+            {
                 val homeViewModel: HomeViewModel = hiltViewModel()
                 setTopBar { LargeTopAppBar(title = { Text("PhotoDo Home") }, scrollBehavior = scrollBehavior) }
                 setFabState(FabState("Add Category") { homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked) })
@@ -186,7 +192,13 @@ private fun AppContent(
                     viewModel = homeViewModel
                 )
             }
-            entry<PhotoDoNavKeys.TaskListKey>(metadata = ListDetailSceneStrategy.listPane(detailPlaceholder = { Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Select a list to see details") } })) { listKey ->
+            entry<PhotoDoNavKeys.TaskListKey>(metadata = ListDetailSceneStrategy.listPane(
+                detailPlaceholder = {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center)
+                    { Text("Select a list to see details") }
+                }
+            ))
+            { listKey ->
                 val viewModel: PhotoDoListViewModel = hiltViewModel()
                 LaunchedEffect(listKey.categoryId) {
                     Log.d(TAG, "TaskListKey LaunchedEffect triggered. Loading category with id: ${listKey.categoryId}")
