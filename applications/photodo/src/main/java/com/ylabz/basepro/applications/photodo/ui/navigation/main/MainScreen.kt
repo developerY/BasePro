@@ -201,7 +201,18 @@ private fun AppContent(
 
 
             /**
+             * First Tab: Home
+             * Defines the content for the 'Home' screen, which is the root of our navigation.
+             * This entry corresponds to the `PhotoDoNavKeys.HomeFeedKey`.
              *
+             * Behavior in Adaptive Layouts:
+             * - `metadata = ListDetailSceneStrategy.listPane(...)`: This designates the home screen
+             * as a "list" pane in a list-detail layout. On large screens (unfolded), it will occupy
+             * the first pane on the left.
+             *
+             * - `detailPlaceholder`: When this list pane is visible on a large screen but no detail
+             * pane is active, this placeholder composable is shown in the detail area, prompting
+             * the user to make a selection. On small screens (folded), this has no effect.
              */
             entry<PhotoDoNavKeys.HomeFeedKey>(metadata = ListDetailSceneStrategy.listPane(
                 detailPlaceholder = {
@@ -247,7 +258,18 @@ private fun AppContent(
 
 
             /**
+             * Second Tab: Task Lists
+             * Defines the content when a user navigates to a list of tasks within a specific category.
+             * This entry corresponds to the `PhotoDoNavKeys.TaskListKey(categoryId)`.
              *
+             * Behavior in Adaptive Layouts:
+             * - `metadata = ListDetailSceneStrategy.listPane(...)`: Similar to the home screen, this is also
+             * a "list" pane. When navigating from home on a folded device, this screen replaces the home
+             * screen. On an unfolded device, this content typically appears in the second pane, replacing
+             * the initial placeholder.
+             *
+             * - `detailPlaceholder`: This provides a placeholder for the third pane, prompting the user
+             * to select a specific task list to see its details.
              */
             entry<PhotoDoNavKeys.TaskListKey>(metadata = ListDetailSceneStrategy.listPane(
                 detailPlaceholder = {
@@ -297,7 +319,16 @@ private fun AppContent(
 
 
             /**
+             * Detailed Screen: Task Details (Not A Tab)
+             * Defines the content for the final detail screen, showing the photo tasks within a task list.
+             * This entry corresponds to the `PhotoDoNavKeys.TaskListDetailKey(listId)`.
              *
+             * Behavior in Adaptive Layouts:
+             * - `metadata = ListDetailSceneStrategy.detailPane()`: This marks the screen as a "detail" pane.
+             * - On a folded device, it will cover the entire screen.
+             * - On an unfolded device, it will appear in the final (third) pane on the right, completing
+             * the three-pane layout. The `listDetailStrategy` automatically handles showing or hiding
+             * the previous panes based on screen size and navigation history.
              */
             entry<PhotoDoNavKeys.TaskListDetailKey>(metadata = ListDetailSceneStrategy.detailPane()) { detailKey ->
                 // NAV_LOG: Log rendering of TaskListDetailKey entry
@@ -322,6 +353,18 @@ private fun AppContent(
                 }
                 PhotoDoDetailUiRoute(viewModel = viewModel)
             }
+
+            /**
+             * Third Tab: Settings
+             * Defines the content for the Settings screen.
+             * This entry corresponds to the `PhotoDoNavKeys.SettingsKey`.
+             *
+             * Behavior in Adaptive Layouts:
+             * - This entry has no special metadata, so it behaves as a standard, full-screen destination.
+             * When navigated to, it will replace all existing panes on both folded and unfolded screens.
+             * This is appropriate for top-level destinations like Settings that are not part of the
+             * list-detail flow.
+             */
             entry<PhotoDoNavKeys.SettingsKey> {
                 // NAV_LOG: Log rendering of SettingsKey entry
                 Log.d(TAG, "Displaying content for SettingsKey")

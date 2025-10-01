@@ -7,9 +7,68 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 
+val NavKeySaverGood = Saver<NavKey, Any>(
+    save = { navKey ->
+        when (navKey) {
+            is PhotoDoNavKeys.HomeFeedKey -> "HomeFeedKey"
+            is PhotoDoNavKeys.SettingsKey -> "SettingsKey"
+            is PhotoDoNavKeys.TaskListKey -> "TaskListKey:${navKey.categoryId}"
+            // This is the missing piece that causes the crash
+            is PhotoDoNavKeys.TaskListDetailKey -> "TaskListDetailKey:${navKey.listId}"
+            else -> throw IllegalArgumentException("Unknown NavKey type for saving")
+        }
+    },
+    restore = { value ->
+        val stringValue = value as String
+        when {
+            stringValue == "HomeFeedKey" -> PhotoDoNavKeys.HomeFeedKey
+            stringValue == "SettingsKey" -> PhotoDoNavKeys.SettingsKey
+            stringValue.startsWith("TaskListKey:") -> {
+                val categoryId = stringValue.substringAfter(":").toLong()
+                PhotoDoNavKeys.TaskListKey(categoryId)
+            }
+            // This is the missing piece to restore the key
+            stringValue.startsWith("TaskListDetailKey:") -> {
+                val listId = stringValue.substringAfter(":")
+                PhotoDoNavKeys.TaskListDetailKey(listId)
+            }
+            else -> throw IllegalArgumentException("Unknown NavKey type for restoring")
+        }
+    }
+)
+
+val NavKeySaver = Saver<NavKey, Any>(
+    save = { navKey ->
+        when (navKey) {
+            is PhotoDoNavKeys.HomeFeedKey -> "HomeFeedKey"
+            is PhotoDoNavKeys.SettingsKey -> "SettingsKey"
+            is PhotoDoNavKeys.TaskListKey -> "TaskListKey:${navKey.categoryId}"
+            // ADD THIS LINE to handle the detail key
+            is PhotoDoNavKeys.TaskListDetailKey -> "TaskListDetailKey:${navKey.listId}"
+            else -> throw IllegalArgumentException("Unknown NavKey type for saving")
+        }
+    },
+    restore = { value ->
+        val stringValue = value as String
+        when {
+            stringValue == "HomeFeedKey" -> PhotoDoNavKeys.HomeFeedKey
+            stringValue == "SettingsKey" -> PhotoDoNavKeys.SettingsKey
+            stringValue.startsWith("TaskListKey:") -> {
+                val categoryId = stringValue.substringAfter(":").toLong()
+                PhotoDoNavKeys.TaskListKey(categoryId)
+            }
+            // ADD THIS BLOCK to restore the detail key
+            stringValue.startsWith("TaskListDetailKey:") -> {
+                val listId = stringValue.substringAfter(":")
+                PhotoDoNavKeys.TaskListDetailKey(listId)
+            }
+            else -> throw IllegalArgumentException("Unknown NavKey type for restoring")
+        }
+    }
+)
 
 // This Saver is crucial for `rememberSaveable` to work with your custom NavKey class.
-val NavKeySaverWorking = Saver<NavKey, String>(
+val NavKeySaverRev0 = Saver<NavKey, String>(
     save = {
         when (it) {
             is PhotoDoNavKeys.HomeFeedKey -> "Home"
@@ -29,7 +88,7 @@ val NavKeySaverWorking = Saver<NavKey, String>(
 )
 
 @OptIn(InternalSerializationApi::class)
-val NavKeySaver = Saver<NavKey, String>(
+val NavKeySaverRev1 = Saver<NavKey, String>(
     save = { navKey ->
         val serializer = navKey::class.serializer() as KSerializer<NavKey>
         Json.encodeToString(serializer, navKey)
