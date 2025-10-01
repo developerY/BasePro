@@ -32,10 +32,16 @@ fun PhotoDoHomeUiRoute(
                 uiState = state,
                 onEvent = viewModel::onEvent,
                 // When a task list is selected, navigate using its categoryId
-                onSelectList = { taskList ->
-                    Log.d("PhotoDoHomeUiRoute", "STEP2: Navigating to TaskList with categoryId: $taskList")
-                    // navTo(taskList.categoryId)
+                onSelectList = { taskID ->
+                    Log.d("PhotoDoHomeUiRoute", "STEP2: Navigating to TaskList with categoryId: $taskID")
+                    navTo(taskID)
                 },
+                // This handles the "Add" button on the empty screen
+                /*onAddList = {
+                    state.selectedCategory?.let { category ->
+                        viewModel.onEvent(HomeEvent.OnAddTaskListClicked(category.categoryId))
+                    }
+                },*/
                 modifier = modifier
             )
         }

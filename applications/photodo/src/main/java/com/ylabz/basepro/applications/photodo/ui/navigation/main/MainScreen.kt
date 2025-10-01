@@ -186,14 +186,23 @@ private fun AppContent(
     NavDisplay(
         backStack = backStack,
         onBack = {
-            // NAV_LOG: Log back press
-            val currentStack = backStack.joinToString { (it as? PhotoDoNavKeys)?.javaClass?.simpleName ?: "Detail" }
-            Log.d(TAG, "onBack invoked. Current backstack: $currentStack")
-            backStack.removeLastOrNull()
+            val currentKey = backStack.lastOrNull()
+            val isAtRootTaskList = currentKey is PhotoDoNavKeys.TaskListKey && backStack.size == 1
+            Log.d(TAG, "onBack invoked. Current backstack: $currentKey")
+            if (isAtRootTaskList) {
+                backStack.replace(PhotoDoNavKeys.HomeFeedKey)
+            } else {
+                backStack.removeLastOrNull()
+            }
         },
         sceneStrategy = sceneStrategy,
         modifier = modifier,
         entryProvider = entryProvider {
+
+
+            /**
+             *
+             */
             entry<PhotoDoNavKeys.HomeFeedKey>(metadata = ListDetailSceneStrategy.listPane(
                 detailPlaceholder = {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center)
@@ -235,6 +244,11 @@ private fun AppContent(
                     viewModel = homeViewModel
                 )
             }
+
+
+            /**
+             *
+             */
             entry<PhotoDoNavKeys.TaskListKey>(metadata = ListDetailSceneStrategy.listPane(
                 detailPlaceholder = {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center)
@@ -280,6 +294,11 @@ private fun AppContent(
                     viewModel = viewModel
                 )
             }
+
+
+            /**
+             *
+             */
             entry<PhotoDoNavKeys.TaskListDetailKey>(metadata = ListDetailSceneStrategy.detailPane()) { detailKey ->
                 // NAV_LOG: Log rendering of TaskListDetailKey entry
                 Log.d(TAG, "Displaying content for TaskListDetailKey (listId=${detailKey.listId})")
