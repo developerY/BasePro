@@ -186,14 +186,31 @@ private fun AppContent(
     NavDisplay(
         backStack = backStack,
         onBack = {
+            // --- NEW LOGGING ADDED HERE ---
+            Log.d(TAG, "onBack invoked. Backstack count BEFORE action: ${backStack.size}")
+            val currentStack = backStack.joinToString { it::class.simpleName ?: "Unknown" }
+            Log.d(TAG, "Current backstack contents: [$currentStack]")
+            // --- END OF NEW LOGGING ---
+
+            // Your custom back navigation logic
             val currentKey = backStack.lastOrNull()
             val isAtRootTaskList = currentKey is PhotoDoNavKeys.TaskListKey && backStack.size == 1
             Log.d(TAG, "onBack invoked. Current backstack: $currentKey")
             if (isAtRootTaskList) {
+                Log.d(TAG, "Back action: At a root task list, replacing with HomeFeedKey.")
                 backStack.replace(PhotoDoNavKeys.HomeFeedKey)
             } else {
+                Log.d(TAG, "Back action: Performing default 'removeLastOrNull'.")
                 backStack.removeLastOrNull()
             }
+
+            // --- NEW LOGGING ADDED HERE ---
+            Log.d(TAG, "Backstack count AFTER action: ${backStack.size}")
+            if (backStack.isEmpty()) {
+                Log.d(TAG, "Backstack is now empty. App will exit on next back press if not handled by system.")
+            }
+            // --- END OF NEW LOGGING ---
+
         },
         sceneStrategy = sceneStrategy,
         modifier = modifier,
