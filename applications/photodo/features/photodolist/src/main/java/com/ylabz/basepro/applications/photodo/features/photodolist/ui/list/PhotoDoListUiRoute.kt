@@ -43,7 +43,7 @@ fun PhotoDoListUiRoute(
                     PhotoDoTaskCard(
                         task = task,
                         onItemClick = { onTaskClick(task.listId) },
-                        onDeleteClick = { }//onEvent(PhotoDoListEvent.OnDeleteTaskClicked(task.taskId)) },
+                        onDeleteClick = { onEvent(PhotoDoListEvent.OnDeleteTaskListClicked(task.listId)) },
                     )
                 }
             }

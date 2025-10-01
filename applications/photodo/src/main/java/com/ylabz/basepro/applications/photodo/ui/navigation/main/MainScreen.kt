@@ -81,31 +81,40 @@ fun MainScreen() {
     // Remember the last category ID the user interacted with. Default to 1L since we know it has data.
     var lastSelectedCategoryId by rememberSaveable { mutableStateOf(1L) }
 
+    // NAV_LOG: Log recomposition and state values
+    Log.d(TAG, "MainScreen recomposing -> isExpanded: $isExpandedScreen, topLevelKey: ${currentTopLevelKey::class.simpleName}, lastSelectedCategoryId: $lastSelectedCategoryId")
+
     val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     var topBar: @Composable () -> Unit by remember { mutableStateOf({}) }
     var fabState: FabState? by remember { mutableStateOf(null) }
 
     val onNavigate: (NavKey) -> Unit = { navKey ->
+        // NAV_LOG: Log top-level tab navigation click
+        Log.d(TAG, "onNavigate triggered with navKey: ${navKey::class.simpleName}")
+
         // When navigating via BottomBar/Rail, if the target is the List tab,
         // use the last selected category ID instead of the hardcoded one.
         val keyToNavigate = if (navKey is PhotoDoNavKeys.TaskListKey) {
-            Log.d(TAG, "List tab clicked. Overriding to last selected categoryId: $lastSelectedCategoryId")
+            Log.d(TAG, " -> List tab clicked. Overriding to last selected categoryId: $lastSelectedCategoryId")
             PhotoDoNavKeys.TaskListKey(lastSelectedCategoryId)
         } else {
+            Log.d(TAG, " -> Tab is not TaskListKey, using original key.")
             navKey
         }
 
         if (currentTopLevelKey::class != keyToNavigate::class) {
-            Log.d(TAG, "Top-level navigation to: ${keyToNavigate::class.simpleName}")
+            Log.d(TAG, " -> Switching top-level tab from ${currentTopLevelKey::class.simpleName} to ${keyToNavigate::class.simpleName}")
             currentTopLevelKey = keyToNavigate
             backStack.replaceAll(keyToNavigate) // Clear history when switching tabs
+        } else {
+            Log.d(TAG, " -> Already on top-level tab ${keyToNavigate::class.simpleName}. No change.")
         }
     }
 
     // A key that forces recomposition when the back stack changes.
     // CORRECTED KEY: This now uses derivedStateOf to be state-aware.
-    val backStackKey by remember { derivedStateOf { 
+    val backStackKey by remember { derivedStateOf {
         backStack.joinToString("-") { navKey ->
             when (navKey) {
                 is PhotoDoNavKeys.TaskListKey -> "TaskList(${navKey.categoryId})"
@@ -113,6 +122,9 @@ fun MainScreen() {
             }
         }
     } }
+
+    // NAV_LOG: Log the current back stack state before rendering AppContent
+    Log.d(TAG, "BackStack state before AppContent: $backStackKey")
 
     val appContent = @Composable { modifier: Modifier ->
         key(backStackKey) {
@@ -124,6 +136,8 @@ fun MainScreen() {
                 setTopBar = { topBar = it },
                 setFabState = { fabState = it },
                 onCategorySelected = { categoryId ->
+                    // NAV_LOG: Log when the last selected category ID is updated
+                    Log.d(TAG, "onCategorySelected callback triggered. Updating lastSelectedCategoryId to: $categoryId")
                     lastSelectedCategoryId = categoryId
                 }
             )
@@ -166,11 +180,17 @@ private fun AppContent(
     // REMOVE the updateCurrentTopLevelKey parameter, it's not needed here
     // updateCurrentTopLevelKey: (NavKey) -> Unit
 ) {
-    // val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    // NAV_LOG: Log AppContent recomposition
+    Log.d(TAG, "AppContent recomposing. Backstack size: ${backStack.size}")
 
     NavDisplay(
         backStack = backStack,
-        onBack = { backStack.removeLastOrNull() },
+        onBack = {
+            // NAV_LOG: Log back press
+            val currentStack = backStack.joinToString { (it as? PhotoDoNavKeys)?.javaClass?.simpleName ?: "Detail" }
+            Log.d(TAG, "onBack invoked. Current backstack: $currentStack")
+            backStack.removeLastOrNull()
+        },
         sceneStrategy = sceneStrategy,
         modifier = modifier,
         entryProvider = entryProvider {
@@ -181,6 +201,8 @@ private fun AppContent(
                 }
             ))
             {
+                // NAV_LOG: Log rendering of HomeFeedKey entry
+                Log.d(TAG, "Displaying content for HomeFeedKey")
                 val homeViewModel: HomeViewModel = hiltViewModel()
                 setTopBar { LargeTopAppBar(title = { Text("PhotoDo Home") }, scrollBehavior = scrollBehavior) }
                 setFabState(FabState("Add Category") { homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked) })
@@ -196,6 +218,7 @@ private fun AppContent(
                         Log.d(TAG, "Navigating from Home to TaskList with categoryId: $categoryId")
                         onCategorySelected(categoryId) // Update the remembered category ID
                         val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
+                        Log.d(TAG, " -> Calling backStack.add(TaskListKey($categoryId))")
                         backStack.add(listKey)
                     },
                     viewModel = homeViewModel
@@ -208,6 +231,8 @@ private fun AppContent(
                 }
             ))
             { listKey ->
+                // NAV_LOG: Log rendering of TaskListKey entry
+                Log.d(TAG, "Displaying content for TaskListKey (categoryId=${listKey.categoryId})")
                 val viewModel: PhotoDoListViewModel = hiltViewModel()
                 LaunchedEffect(listKey.categoryId) {
                     Log.d(TAG, "TaskListKey LaunchedEffect triggered. Loading category with id: ${listKey.categoryId}")
@@ -230,10 +255,10 @@ private fun AppContent(
 
                 PhotoDoListUiRoute(
                     onTaskClick = { listId ->
-                        // This is already correct! You are correctly adding the detail
-                        // key to the stack.
-                        Log.d(TAG, "Navigating from TaskList to Detail with listId: $listId")
+                        // NAV_LOG: Log navigation from TaskList to Detail
+                        Log.d(TAG, "TaskList onTaskClick triggered. ListId: $listId")
                         val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
+                        Log.d(TAG, " -> Calling backStack.add with TaskListDetailKey($listId)")
                         backStack.add(detailKey)
                     },
                     /*onTaskClick = { listId ->
@@ -245,6 +270,8 @@ private fun AppContent(
                 )
             }
             entry<PhotoDoNavKeys.TaskListDetailKey>(metadata = ListDetailSceneStrategy.detailPane()) { detailKey ->
+                // NAV_LOG: Log rendering of TaskListDetailKey entry
+                Log.d(TAG, "Displaying content for TaskListDetailKey (listId=${detailKey.listId})")
                 val viewModel: PhotoDoDetailViewModel = hiltViewModel()
                 LaunchedEffect(detailKey.listId) {
                     Log.d(TAG, "TaskListDetailKey LaunchedEffect triggered. Loading list with id: ${detailKey.listId}")
@@ -266,6 +293,8 @@ private fun AppContent(
                 PhotoDoDetailUiRoute(viewModel = viewModel)
             }
             entry<PhotoDoNavKeys.SettingsKey> {
+                // NAV_LOG: Log rendering of SettingsKey entry
+                Log.d(TAG, "Displaying content for SettingsKey")
                 val viewModel: SettingsViewModel = hiltViewModel()
                 setTopBar { LargeTopAppBar(title = { Text("Settings") }, scrollBehavior = scrollBehavior) }
                 setFabState(null)
