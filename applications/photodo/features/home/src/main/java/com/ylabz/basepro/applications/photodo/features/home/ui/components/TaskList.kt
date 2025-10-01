@@ -63,6 +63,7 @@ fun TaskList(
                         TaskListItem(
                             taskList = taskList,
                             onClick = {
+                                Log.d(TAG, "STEP1: Clicked on task list: ${taskList.name}")
                                 onSelectList(taskList.listId)
                             }
                         )

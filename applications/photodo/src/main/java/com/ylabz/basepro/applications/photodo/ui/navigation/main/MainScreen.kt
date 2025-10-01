@@ -207,8 +207,9 @@ private fun AppContent(
                 setTopBar { LargeTopAppBar(title = { Text("PhotoDo Home") }, scrollBehavior = scrollBehavior) }
                 setFabState(FabState("Add Category") { homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked) })
 
+                // In MainScreen.kt -> AppContent()
                 PhotoDoHomeUiRoute(
-                    navTo = { categoryId ->
+                    /*navTo = { categoryId ->
                         /*val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
                         updateCurrentTopLevelKey(listKey) // Update the selected tab
                         backStack.replace(listKey)      // Navigate to the new screen*/
@@ -220,6 +221,16 @@ private fun AppContent(
                         val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
                         Log.d(TAG, " -> Calling backStack.add(TaskListKey($categoryId))")
                         backStack.add(listKey)
+                    },*/
+                    // This function is ONLY for navigating from a Task List item to the Detail screen.
+                    navTo = { listId ->
+                        Log.d(TAG, "Step3: Navigating from Task List Item to Detail Screen with listId: $listId")
+
+                        // 1. Create the key for the final detail screen (Pane 3).
+                        val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
+
+                        // 2. Add it to the back stack. The adaptive strategy handles the rest.
+                        backStack.add(detailKey)
                     },
                     viewModel = homeViewModel
                 )

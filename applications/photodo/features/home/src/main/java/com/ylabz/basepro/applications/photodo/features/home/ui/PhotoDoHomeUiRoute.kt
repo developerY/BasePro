@@ -33,7 +33,7 @@ fun PhotoDoHomeUiRoute(
                 onEvent = viewModel::onEvent,
                 // When a task list is selected, navigate using its categoryId
                 onSelectList = { taskList ->
-                    Log.d("PhotoDoHomeUiRoute", "Navigating to TaskList with categoryId: ")//${taskList.categoryId}")
+                    Log.d("PhotoDoHomeUiRoute", "STEP2: Navigating to TaskList with categoryId: $taskList")
                     // navTo(taskList.categoryId)
                 },
                 modifier = modifier
