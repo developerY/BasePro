@@ -12,15 +12,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -28,11 +24,9 @@ import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -40,14 +34,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
@@ -57,7 +49,7 @@ import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
-// --- DATA CLASSES AND SAVERS (No changes) ---
+// --- STEP 1: DEFINE DESTINATIONS (UPDATED) ---
 @Serializable
 sealed class AppScreen(val title: String) : NavKey {
     @Transient
@@ -69,8 +61,10 @@ sealed class AppScreen(val title: String) : NavKey {
         override val icon = Icons.Default.Home
     }
 
+    // NEW: Add a key for the detail screen. It takes an ID as an argument.
     @Serializable
     data class Detail(val id: Int) : AppScreen("Detail") {
+        // This icon is not used for navigation but is required to satisfy the abstract property.
         @Transient
         override val icon = Icons.Default.Home
     }
@@ -88,19 +82,18 @@ sealed class AppScreen(val title: String) : NavKey {
     }
 }
 
+// Updated to include all top-level screens for the bottom bar.
 private val topLevelScreens = listOf(AppScreen.Home, AppScreen.Search, AppScreen.Profile)
 
+// Updated Saver to handle all AppScreen types.
 val AppScreenSaver = Saver<AppScreen, String>(
     save = { it.title },
     restore = { title -> topLevelScreens.find { it.title == title } ?: AppScreen.Home }
 )
 
-// --- NEW: State holder for the FAB ---
-private data class FabStateRef(val text: String, val onClick: () -> Unit)
 
-
-// --- FINAL, WORKING VERSION (UPDATED FOR HOISTED STATE) ---
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3Api::class)
+// --- STEP 2: CREATE THE UI (UPDATED FOR LIST-DETAIL) ---
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3AdaptiveApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SimpleAdaptiveBottomBar() {
@@ -108,140 +101,90 @@ fun SimpleAdaptiveBottomBar() {
     val windowSizeClass = calculateWindowSizeClass(activity)
     val isExpandedScreen = windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
 
+    // The back stack now holds the generic NavKey type to accommodate different screen types.
     val backStack = rememberNavBackStack<NavKey>(AppScreen.Home)
     var currentTab: AppScreen by rememberSaveable(stateSaver = AppScreenSaver) {
         mutableStateOf(AppScreen.Home)
     }
 
+    // --- NEW: Remember the ListDetailSceneStrategy ---
     val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
 
-    // --- NEW: Hoisted state for TopAppBar and FAB ---
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-    var topBar: @Composable () -> Unit by remember { mutableStateOf({}) }
-    var FabStateRef: FabStateRef? by remember { mutableStateOf(null) }
-
     val onNavigate = { screen: AppScreen ->
+        // When switching tabs, we should clear the back stack to avoid weird states.
         if (currentTab.title != screen.title) {
             currentTab = screen
             backStack.replaceAll(screen)
         }
     }
 
+    // This key is crucial for forcing recomposition when the back stack changes.
     val backStackKey = backStack.joinToString { (it as? AppScreen)?.title ?: "Detail" }
 
     if (isExpandedScreen) {
         Row(modifier = Modifier.fillMaxSize()) {
             AppNavigationRail(currentTab = currentTab, onNavigate = onNavigate)
-            // --- UPDATED: Pass hoisted state into the Scaffold ---
-            Scaffold(
-                modifier = Modifier.weight(1f).nestedScroll(scrollBehavior.nestedScrollConnection),
-                topBar = topBar,
-                floatingActionButton = {
-                    FabStateRef?.let {
-                        ExtendedFloatingActionButton(
-                            onClick = it.onClick,
-                            icon = { Icon(Icons.Default.Add, contentDescription = null) },
-                            text = { Text(it.text) }
-                        )
-                    }
-                }
-            ) { padding ->
-                key(backStackKey) {
-                    AppContent(
-                        modifier = Modifier.padding(padding),
-                        backStack = backStack,
-                        sceneStrategy = listDetailStrategy,
-                        // Pass lambdas to update the hoisted state from the content
-                        setTopBar = { topBar = it },
-                        setFabStateRef = { FabStateRef = it }
-                    )
-                }
+            key(backStackKey) {
+                AppContent(
+                    backStack = backStack,
+                    sceneStrategy = listDetailStrategy // Pass the strategy
+                )
             }
         }
     } else {
-        // --- UPDATED: Pass hoisted state into the Scaffold ---
         Scaffold(
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = topBar,
-            bottomBar = { AppBottomBar(currentTab = currentTab, onNavigate = onNavigate) },
-            floatingActionButton = {
-                FabStateRef?.let {
-                    ExtendedFloatingActionButton(
-                        onClick = it.onClick,
-                        icon = { Icon(Icons.Default.Add, contentDescription = null) },
-                        text = { Text(it.text) }
+            bottomBar = { AppBottomBar(currentTab = currentTab, onNavigate = onNavigate) }
+        ) { padding ->
+            Box(modifier = Modifier.padding(padding)) {
+                key(backStackKey) {
+                    AppContent(
+                        backStack = backStack,
+                        sceneStrategy = listDetailStrategy // Pass the strategy
                     )
                 }
-            }
-        ) { padding ->
-            key(backStackKey) {
-                AppContent(
-                    modifier = Modifier.padding(padding),
-                    backStack = backStack,
-                    sceneStrategy = listDetailStrategy,
-                    // Pass lambdas to update the hoisted state from the content
-                    setTopBar = { topBar = it },
-                    setFabStateRef = { FabStateRef = it }
-                )
             }
         }
     }
 }
 
-// --- UPDATED: AppContent now takes lambdas to set the hoisted state ---
-@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3Api::class)
-@Composable
-private fun AppContent(
-    modifier: Modifier = Modifier,
-    backStack: NavBackStack<NavKey>,
-    sceneStrategy: ListDetailSceneStrategy<NavKey>,
-    setTopBar: (@Composable () -> Unit) -> Unit,
-    setFabStateRef: (FabStateRef?) -> Unit
-) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+// --- STEP 3: UPDATE CONTENT AND NAVIGATION COMPONENTS ---
 
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@Composable
+fun AppContent(
+    backStack: NavBackStack<NavKey>,
+    sceneStrategy: ListDetailSceneStrategy<NavKey>
+) {
     NavDisplay(
         backStack = backStack,
         onBack = { backStack.removeLastOrNull() },
-        sceneStrategy = sceneStrategy,
-        modifier = modifier,
+        sceneStrategy = sceneStrategy, // Use the provided strategy
         entryProvider = entryProvider {
-            entry<AppScreen.Home>(metadata = ListDetailSceneStrategy.listPane()) {
-                // This screen sets the TopAppBar and FAB
-                setTopBar { LargeTopAppBar(title = { Text("Home") }, scrollBehavior = scrollBehavior) }
-                setFabStateRef(FabStateRef("New Item") { /* TODO */ })
-
+            entry<AppScreen.Home>(
+                // Mark this as the "list" part of the list-detail view
+                metadata = ListDetailSceneStrategy.listPane()
+            ) {
+                // Show a list that can navigate to details
                 ListScreen(onItemClick = { id -> backStack.add(AppScreen.Detail(id)) })
             }
-            entry<AppScreen.Detail>(metadata = ListDetailSceneStrategy.detailPane()) { detailKey ->
-                // The detail screen has a simple TopAppBar and no FAB
-                setTopBar { LargeTopAppBar(title = { Text("Detail ${detailKey.id}") }, scrollBehavior = scrollBehavior) }
-                setFabStateRef(null)
 
+            entry<AppScreen.Detail>(
+                // Mark this as the "detail" part of the list-detail view
+                metadata = ListDetailSceneStrategy.detailPane()
+            ) { detailKey ->
+                // The detail key contains the arguments (e.g., the ID)
                 DetailScreen(id = detailKey.id)
             }
-            entry<AppScreen.Search> {
-                // This screen has its own title and no FAB
-                setTopBar { LargeTopAppBar(title = { Text("Search") }, scrollBehavior = scrollBehavior) }
-                setFabStateRef(null)
 
-                ScreenContent(name = "Search Screen")
-            }
-            entry<AppScreen.Profile> {
-                // This screen has its own title and no FAB
-                setTopBar { LargeTopAppBar(title = { Text("Profile") }, scrollBehavior = scrollBehavior) }
-                setFabStateRef(null)
-
-                ScreenContent(name = "Profile Screen")
-            }
+            // Other top-level screens remain the same
+            entry<AppScreen.Search> { ScreenContent(name = "Search Screen") }
+            entry<AppScreen.Profile> { ScreenContent(name = "Profile Screen") }
         }
     )
 }
 
-// --- UI COMPONENTS AND HELPERS (No changes below this line) ---
-
 @Composable
-private fun AppBottomBar(currentTab: AppScreen, onNavigate: (AppScreen) -> Unit) {
+fun AppBottomBar(currentTab: AppScreen, onNavigate: (AppScreen) -> Unit) {
     NavigationBar {
         topLevelScreens.forEach { screen ->
             val isSelected = currentTab.title == screen.title
@@ -256,7 +199,7 @@ private fun AppBottomBar(currentTab: AppScreen, onNavigate: (AppScreen) -> Unit)
 }
 
 @Composable
-private fun AppNavigationRail(currentTab: AppScreen, onNavigate: (AppScreen) -> Unit) {
+fun AppNavigationRail(currentTab: AppScreen, onNavigate: (AppScreen) -> Unit) {
     NavigationRail {
         topLevelScreens.forEach { screen ->
             val isSelected = currentTab.title == screen.title
@@ -270,8 +213,10 @@ private fun AppNavigationRail(currentTab: AppScreen, onNavigate: (AppScreen) -> 
     }
 }
 
+// --- STEP 4: ADD NEW SCREEN COMPOSABLES ---
+
 @Composable
-private fun ListScreen(onItemClick: (Int) -> Unit) {
+fun ListScreen(onItemClick: (Int) -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -286,24 +231,15 @@ private fun ListScreen(onItemClick: (Int) -> Unit) {
 }
 
 @Composable
-private fun DetailScreen(id: Int) {
+fun DetailScreen(id: Int) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text = "Detail for item #$id", style = MaterialTheme.typography.headlineLarge)
     }
 }
 
 @Composable
-private fun ScreenContent(name: String) {
+fun ScreenContent(name: String) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text = name, style = MaterialTheme.typography.headlineLarge)
     }
-}
-
-private fun <T : Any> MutableList<T>.replaceNav3(item: T) {
-    if (isNotEmpty()) this[lastIndex] = item else add(item)
-}
-
-private fun <T : Any> MutableList<T>.replaceAllNav3(item: T) {
-    clear()
-    add(item)
 }
