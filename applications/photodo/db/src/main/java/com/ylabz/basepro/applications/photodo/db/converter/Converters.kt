@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.core.net.toUri
 import androidx.room.TypeConverter
 import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
+import com.ylabz.basepro.applications.photodo.db.model.Category
 
 //import kotlinx.datetime.LocalDateTime
 
