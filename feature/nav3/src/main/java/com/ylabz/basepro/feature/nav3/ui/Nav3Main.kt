@@ -40,13 +40,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
+import androidx.navigation3.scene.rememberSceneSetupNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.navigation3.ui.NavDisplay.transitionSpec
-import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
 // TODO: Ensure these Content composables are correctly referenced or moved/redefined in LeanNav.kt
 // For now, these imports will cause errors until LeanNav is set up.
 // If your Content composables (ContentOrange etc.) are in the feature.nav3.ui.content package,
@@ -357,7 +356,7 @@ fun Nav3MainExample(modifier: Modifier = Modifier) {
             // Global animations that will be overridden by screen-specific metadata.
             transitionSpec = if (globalEnterExitEnabled) slideRightSpec else noAnimationSpec,
             popTransitionSpec = if (globalPopEnabled) slideLeftSpec else noAnimationSpec,
-            predictivePopTransitionSpec = if (globalPredictivePopEnabled) slideLeftSpec else noAnimationSpec
+            //predictivePopTransitionSpec = if (globalPredictivePopEnabled) slideLeftSpec else noAnimationSpec
 
             // FYI ... normal looks like this without the if statements
             // Animation for forward / back navigation (e.g., backStack.add)

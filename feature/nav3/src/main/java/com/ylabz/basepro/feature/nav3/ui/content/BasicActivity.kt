@@ -29,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
@@ -202,7 +201,7 @@ fun BasicActivity(modifier: Modifier = Modifier) {
             },
             transitionSpec = if (globalEnterExitEnabled) slideRightSpec else noAnimationSpec,
             popTransitionSpec = if (globalPopEnabled) slideLeftSpec else noAnimationSpec,
-            predictivePopTransitionSpec = if (globalPredictivePopEnabled) slideLeftSpec else noAnimationSpec
+            // predictivePopTransitionSpec = if (globalPredictivePopEnabled) slideLeftSpec else noAnimationSpec
         )
     }
 }
