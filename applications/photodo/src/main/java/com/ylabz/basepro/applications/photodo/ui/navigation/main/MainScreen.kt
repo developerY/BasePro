@@ -71,20 +71,24 @@ fun MainScreen() {
     val windowSizeClass = calculateWindowSizeClass(activity)
     val isExpandedScreen = windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
 
-    // The actual navigation history for the NavDisplay.
-    val backStack = rememberNavBackStack<NavKey>(PhotoDoNavKeys.HomeFeedKey)
-
+    //NOTE: **Top-Level Navigation State**
+    // (`currentTopLevelKey`): This tracks which main section of the app the user is in (e.g., "Home," "Tasks," or "Settings")
     // The currently selected top-level tab. `rememberSaveable` ensures this state survives process death.
     var currentTopLevelKey: NavKey by rememberSaveable(stateSaver = NavKeySaver) {
         mutableStateOf(PhotoDoNavKeys.HomeFeedKey)
     }
+    // NOTE: **Bottom Navigation State**
+    // The actual navigation history for the NavDisplay.
+    val backStack = rememberNavBackStack<NavKey>(PhotoDoNavKeys.HomeFeedKey)
+    // NOTE: **Adaptive Navigation State**
+    val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
+
     // Remember the last category ID the user interacted with. Default to 1L since we know it has data.
     var lastSelectedCategoryId by rememberSaveable { mutableStateOf(1L) }
 
     // NAV_LOG: Log recomposition and state values
     Log.d(TAG, "MainScreen recomposing -> isExpanded: $isExpandedScreen, topLevelKey: ${currentTopLevelKey::class.simpleName}, lastSelectedCategoryId: $lastSelectedCategoryId")
 
-    val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     var topBar: @Composable () -> Unit by remember { mutableStateOf({}) }
     var fabState: FabState? by remember { mutableStateOf(null) }
@@ -214,6 +218,11 @@ private fun AppContent(
         },
         sceneStrategy = sceneStrategy,
         modifier = modifier,
+
+
+        /**
+         * Entry Provider: Defines the structure of the navigation graph.
+         */
         entryProvider = entryProvider {
 
 
@@ -240,6 +249,14 @@ private fun AppContent(
             {
                 // NAV_LOG: Log rendering of HomeFeedKey entry
                 Log.d(TAG, "Displaying content for HomeFeedKey")
+
+
+                /**
+                 * NOTE: Hilt ViewModel Injection
+                 * By placing the hiltViewModel() call inside the trailing lambda of an entry,
+                 * the Navigation 3 library automatically ensures that the ViewModel's lifecycle is
+                 * tied to that specific destination on the backstack.
+                 */
                 val homeViewModel: HomeViewModel = hiltViewModel()
                 setTopBar { LargeTopAppBar(title = { Text("PhotoDo Home") }, scrollBehavior = scrollBehavior) }
                 setFabState(FabState("Add Category") { homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked) })
