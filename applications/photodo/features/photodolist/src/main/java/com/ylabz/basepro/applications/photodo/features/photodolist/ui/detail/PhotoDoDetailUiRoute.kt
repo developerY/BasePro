@@ -1,7 +1,6 @@
 package com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -10,6 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.components.DetailCard
 
 /**
  * The route for displaying the details of a specific task.
@@ -31,11 +31,10 @@ fun PhotoDoDetailUiRoute(
             }
         }
         is PhotoDoDetailUiState.Success -> {
-            Column(modifier = modifier) {
-                Text(text = "Task: ${state.taskListWithPhotos.taskList.name}")
-                Text(text = "Status: ${state.taskListWithPhotos.taskList.status}")
-                // TODO: Add more details and a list of photos here
-            }
+            DetailCard(
+                modifier = modifier,
+                state = state
+            )
         }
         is PhotoDoDetailUiState.Error -> {
             Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

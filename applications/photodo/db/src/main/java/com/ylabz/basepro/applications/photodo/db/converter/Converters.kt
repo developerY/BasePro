@@ -3,6 +3,7 @@ package com.ylabz.basepro.applications.photodo.db.converter
 import android.net.Uri
 import androidx.core.net.toUri
 import androidx.room.TypeConverter
+import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 
 //import kotlinx.datetime.LocalDateTime
 
@@ -27,4 +28,13 @@ class Converters {
     fun toString(uri: Uri?): String? {
         return uri?.toString()
     }
+}
+
+// This function converts the database object to the UI model
+fun CategoryEntity.toDomainModel(): Category {
+    return Category(
+        categoryId = this.categoryId,
+        name = this.name,
+        description = this.description
+    )
 }
