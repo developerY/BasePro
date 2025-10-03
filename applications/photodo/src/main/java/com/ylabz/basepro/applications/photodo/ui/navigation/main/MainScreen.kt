@@ -258,8 +258,22 @@ private fun AppContent(
                  * tied to that specific destination on the backstack.
                  */
                 val homeViewModel: HomeViewModel = hiltViewModel()
-                setTopBar { LargeTopAppBar(title = { Text("PhotoDo Home") }, scrollBehavior = scrollBehavior) }
-                setFabState(FabState("Add Category") { homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked) })
+
+
+                // ### WHY THIS CHANGE IS NEEDED ###
+                // Calling setTopBar and setFabState directly inside the composable body
+                // updates state in the parent (MainScreen), causing an immediate request
+                // to redraw everything. This creates an infinite loop.
+                //
+                // ### WHAT THIS CODE DOES ###
+                // By wrapping these calls in a LaunchedEffect(Unit), we tell Compose to run
+                // this block of code only ONCE when this screen (HomeFeedKey) first appears.
+                // This breaks the loop by treating the UI update as a one-time "side effect"
+                // of navigation, not part of the regular drawing process.
+                LaunchedEffect(Unit) {
+                    setTopBar { LargeTopAppBar(title = { Text("PhotoDo Home") }, scrollBehavior = scrollBehavior) }
+                    setFabState(FabState("Add Category") { homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked) })
+                }
 
                 // In MainScreen.kt -> AppContent()
                 PhotoDoHomeUiRoute(
@@ -321,17 +335,25 @@ private fun AppContent(
                     viewModel.loadCategory(listKey.categoryId)
                 }
 
-                setFabState(FabState("Add List") { viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked) })
-                setTopBar {
-                    LargeTopAppBar(
-                        title = { Text("Task Lists") },
-                        scrollBehavior = scrollBehavior,
-                        actions = {
-                            IconButton(onClick = { viewModel.onEvent(PhotoDoListEvent.OnDeleteAllTaskListsClicked) }) {
-                                Icon(Icons.Filled.DeleteSweep, contentDescription = "Delete All Lists")
+                // ### WHY & WHAT ###
+                // Same reason as above. We wrap these state updates in a LaunchedEffect
+                // to prevent the infinite recomposition loop when this screen is shown.
+                LaunchedEffect(Unit) {
+                    setFabState(FabState("Add List") { viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked) })
+                    setTopBar {
+                        LargeTopAppBar(
+                            title = { Text("Task Lists") },
+                            scrollBehavior = scrollBehavior,
+                            actions = {
+                                IconButton(onClick = { viewModel.onEvent(PhotoDoListEvent.OnDeleteAllTaskListsClicked) }) {
+                                    Icon(
+                                        Icons.Filled.DeleteSweep,
+                                        contentDescription = "Delete All Lists"
+                                    )
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
 
                 PhotoDoListUiRoute(
