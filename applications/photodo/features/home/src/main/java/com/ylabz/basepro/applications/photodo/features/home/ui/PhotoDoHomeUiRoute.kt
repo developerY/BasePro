@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.photodo.features.home.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,13 +28,20 @@ fun PhotoDoHomeUiRoute(
             }
         }
         is HomeUiState.Success -> {
-            // The `HomeScreen` is now simpler. Its `onSelectList` parameter is directly
-            // used for navigating when a category is selected.
             HomeScreen(
                 uiState = state,
                 onEvent = viewModel::onEvent,
-                // Pass the navigation function directly.
-                onSelectList = navTo,
+                // When a task list is selected, navigate using its categoryId
+                onSelectList = { taskID ->
+                    Log.d("PhotoDoHomeUiRoute", "STEP2: Navigating to TaskList with categoryId: $taskID")
+                    navTo(taskID)
+                },
+                // This handles the "Add" button on the empty screen
+                /*onAddList = {
+                    state.selectedCategory?.let { category ->
+                        viewModel.onEvent(HomeEvent.OnAddTaskListClicked(category.categoryId))
+                    }
+                },*/
                 modifier = modifier
             )
         }

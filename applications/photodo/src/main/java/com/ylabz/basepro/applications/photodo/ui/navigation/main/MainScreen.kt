@@ -71,7 +71,7 @@ fun MainScreen() {
     val windowSizeClass = calculateWindowSizeClass(activity)
     val isExpandedScreen = windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
 
-    // NOTE: **Top-Level Navigation State**
+    //NOTE: **Top-Level Navigation State**
     // (`currentTopLevelKey`): This tracks which main section of the app the user is in (e.g., "Home," "Tasks," or "Settings")
     // The currently selected top-level tab. `rememberSaveable` ensures this state survives process death.
     var currentTopLevelKey: NavKey by rememberSaveable(stateSaver = NavKeySaver) {
@@ -181,6 +181,8 @@ private fun AppContent(
     setTopBar: (@Composable () -> Unit) -> Unit,
     setFabState: (FabState?) -> Unit,
     onCategorySelected: (Long) -> Unit // Callback to update the remembered category ID
+    // REMOVE the updateCurrentTopLevelKey parameter, it's not needed here
+    // updateCurrentTopLevelKey: (NavKey) -> Unit
 ) {
     // NAV_LOG: Log AppContent recomposition
     Log.d(TAG, "AppContent recomposing. Backstack size: ${backStack.size}")
@@ -261,13 +263,28 @@ private fun AppContent(
 
                 // In MainScreen.kt -> AppContent()
                 PhotoDoHomeUiRoute(
-                    // This function handles navigating from the category list (Home) to the task list.
-                    navTo = { categoryId ->
+                    /*navTo = { categoryId ->
+                        /*val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
+                        updateCurrentTopLevelKey(listKey) // Update the selected tab
+                        backStack.replace(listKey)      // Navigate to the new screen*/
+                        // CORRECTED LOGIC:
+                        // 1. Do NOT update the top-level key here.
+                        // 2. ADD the new screen to the stack for forward navigation.
                         Log.d(TAG, "Navigating from Home to TaskList with categoryId: $categoryId")
                         onCategorySelected(categoryId) // Update the remembered category ID
                         val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
                         Log.d(TAG, " -> Calling backStack.add(TaskListKey($categoryId))")
                         backStack.add(listKey)
+                    },*/
+                    // This function is ONLY for navigating from a Task List item to the Detail screen.
+                    navTo = { listId ->
+                        Log.d(TAG, "Step3: Navigating from Task List Item to Detail Screen with listId: $listId")
+
+                        // 1. Create the key for the final detail screen (Pane 3).
+                        val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
+
+                        // 2. Add it to the back stack. The adaptive strategy handles the rest.
+                        backStack.add(detailKey)
                     },
                     viewModel = homeViewModel
                 )
@@ -325,6 +342,10 @@ private fun AppContent(
                         Log.d(TAG, " -> Calling backStack.add with TaskListDetailKey($listId)")
                         backStack.add(detailKey)
                     },
+                    /*onTaskClick = { listId ->
+                        val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
+                        backStack.add(detailKey)
+                    },*/
                     onEvent = viewModel::onEvent,
                     viewModel = viewModel
                 )
