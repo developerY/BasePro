@@ -32,7 +32,7 @@ activityCompose = "1.11.0"      # AndroidX Activity Compose, for Jetpack Compose
 androidxNavigation = "2.9.4"    # AndroidX Navigation component (Compose)
 # # AndroidX - Navigation (Nav3)
 nav3Core = "1.0.0-alpha10"      # Navigation 3 Core libraries version
-lifecycleViewmodelNav3 = "1.0.0-alpha04" # Navigation 3 ViewModel support
+lifecycleViewmodelNav3 = "2.10.0-alpha04" # Navigation 3 ViewModel support
 material3AdaptiveNav3 = "1.0.0-alpha03" # Navigation 3 Material3 Adaptive Layouts (Snapshot)
 # material3Adaptive = "1.0.0-alpha06"                # AndroidX Test Runner
 
