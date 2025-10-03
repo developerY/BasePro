@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepo
@@ -40,6 +41,17 @@ class PhotoDoDetailViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = PhotoDoDetailUiState.Loading
     )
+
+    // ### NEW FUNCTION ###
+    // This function will be called by the FAB when the user is on the detail screen.
+    fun onEvent(event: PhotoDoDetailEvent) {
+        when (event) {
+            PhotoDoDetailEvent.OnAddPhotoClicked -> {
+                Log.d("PhotoDoDetailVM", "FAB Clicked: Add Photo to list.")
+                // TODO: Implement navigation to camera or photo picker screen.
+            }
+        }
+    }
 
     fun loadList(id: String) {
         _listId.value = id
