@@ -292,7 +292,10 @@ private fun AppContent(
                     },*/
                     // This function is ONLY for navigating from a Task List item to the Detail screen.
                     navTo = { listId ->
-                        Log.d(TAG, "Step3: Navigating from Task List Item to Detail Screen with listId: $listId")
+                        Log.d(
+                            TAG,
+                            "Step3: Navigating from Task List Item to Detail Screen with listId: $listId"
+                        )
 
                         // 1. Create the key for the final detail screen (Pane 3).
                         val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
@@ -300,7 +303,13 @@ private fun AppContent(
                         // 2. Add it to the back stack. The adaptive strategy handles the rest.
                         backStack.add(detailKey)
                     },
-                    viewModel = homeViewModel
+                    viewModel = homeViewModel,
+                    // ### THIS IS THE SOLUTION ###
+                    // The `onCategorySelected` lambda is already available here as a
+                    // parameter of the `AppContent` function. You just need to pass it down.
+                    // This allows the HomeScreen to notify the MainScreen whenever a new
+                    // category is selected, keeping the "Tasks" tab in sync.
+                    onCategorySelected = onCategorySelected
                 )
             }
 

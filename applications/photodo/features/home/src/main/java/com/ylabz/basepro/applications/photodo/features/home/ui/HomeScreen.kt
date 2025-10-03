@@ -20,6 +20,7 @@ fun HomeScreen(
     onEvent: (HomeEvent) -> Unit,
     // This is for navigating from a Task in the list to the Task Detail (3rd pane)
     onSelectList: (Long) -> Unit,
+    onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
     modifier: Modifier = Modifier,
 ) {
     // val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
@@ -44,6 +45,9 @@ fun HomeScreen(
                     onSelectList(category.categoryId)*/
                     // This updates the state, so the detailPane knows what to show. This is correct.
                     onEvent(HomeEvent.OnCategorySelected(category))
+
+                    // This calls the lambda to update the GLOBAL state in MainScreen
+                    onCategorySelected(category.categoryId) // <-- CALL THE LAMBDA
 
                     // 2. Replace onSelectList with the navigator call.
                     // This tells the scaffold to show the detail pane.

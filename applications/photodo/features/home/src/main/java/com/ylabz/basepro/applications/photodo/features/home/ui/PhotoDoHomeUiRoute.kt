@@ -17,6 +17,7 @@ fun PhotoDoHomeUiRoute(
     modifier: Modifier = Modifier,
     // The navigation lambda now expects a Long (the categoryId)
     navTo: (Long) -> Unit,
+    onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -36,6 +37,7 @@ fun PhotoDoHomeUiRoute(
                     Log.d("PhotoDoHomeUiRoute", "STEP2: Navigating to TaskList with categoryId: $taskID")
                     navTo(taskID)
                 },
+                onCategorySelected = onCategorySelected, // <-- PASS THE LAMBDA DOWN
                 // This handles the "Add" button on the empty screen
                 /*onAddList = {
                     state.selectedCategory?.let { category ->
