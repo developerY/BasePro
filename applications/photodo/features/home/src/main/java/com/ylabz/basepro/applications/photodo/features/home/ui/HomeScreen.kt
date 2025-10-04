@@ -3,6 +3,7 @@ package com.ylabz.basepro.applications.photodo.features.home.ui
 import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
@@ -11,7 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import com.ylabz.basepro.applications.photodo.core.ui.FabState
+import com.ylabz.basepro.applications.photodo.core.ui.FabAction
+import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
 import com.ylabz.basepro.applications.photodo.features.home.ui.components.CategoryList
 import com.ylabz.basepro.applications.photodo.features.home.ui.components.TaskList
 import kotlinx.coroutines.launch
@@ -27,7 +29,7 @@ fun HomeScreen(
     onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
     // ### WHAT: This parameter was added to accept the "setter" function from MainScreen.
     // ### WHY: This allows HomeScreen to tell MainScreen which FAB to display.
-    setFabState: (FabState?) -> Unit, // <-- IT'S A PARAMETER PASSED TO THE FUNCTION
+    setFabState: (FabStateMenu?) -> Unit, // <-- IT'S A PARAMETER PASSED TO THE FUNCTION
     modifier: Modifier = Modifier,
 ) {
     // ### NEW LOGIC: Context-Aware FAB ###
@@ -45,21 +47,37 @@ fun HomeScreen(
             // Action: The FAB should add a new category.
             // Context: No category is selected.
             // Use the correct `FabState.Single` constructor and provide the icon.
-            setFabState(FabState.Single(
-                text = "Add Category",
-                icon = Icons.Default.Add,
-                onClick = { onEvent(HomeEvent.OnAddCategoryClicked) }
-            ))
+            Log.d("HomeScreen", "Selected category: ${uiState.selectedCategory}")
+
+            setFabState(
+                FabStateMenu.Single(
+                    action = FabAction(
+                        text = "Add Category",
+                        icon = Icons.Default.Add,
+                        onClick = { onEvent(HomeEvent.OnAddCategoryClicked) }
+                    )
+                )
+            )
         } else {
             // Context: A category IS selected.
             // Action: The FAB should add a new list to that category.
             // ### FIX ###
             // Use the correct `FabState.Single` constructor and provide the icon.
-            setFabState(FabState.Single(
-                text = "Add List",
-                icon = Icons.Default.Add,
-                onClick = { /*onEvent(HomeEvent.OnAddTaskListClicked)*/ }
-            ))
+            Log.d("HomeScreen", "Selected category: ${uiState.selectedCategory.categoryId}")
+            FabStateMenu.Menu(
+                mainButtonAction = FabAction(
+                    text = "Add List",
+                    icon = Icons.Default.Add,
+                    onClick = { /* onEvent(HomeEvent.OnAddTaskListClicked) */ }
+                ),
+                items = listOf(
+                    FabAction(
+                        text = "Add Category",
+                        icon = Icons.Default.Create,
+                        onClick = { onEvent(HomeEvent.OnAddCategoryClicked) }
+                    )
+                )
+            )
         }
     }
 

@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -15,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -54,4 +57,18 @@ fun SplitButtonFab(
             Icon(fabState.primaryIcon, contentDescription = null)
         }
     }
+}
+
+@Preview
+@Composable
+fun SplitButtonFabPreview() {
+    val fabState = FabState.Split(
+        primaryText = "Primary Action",
+        primaryIcon = Icons.Default.Add,
+        primaryOnClick = {},
+        secondaryText = "Secondary Action",
+        secondaryIcon = Icons.Default.Add,
+        secondaryOnClick = {}
+    )
+    SplitButtonFab(fabState = fabState)
 }

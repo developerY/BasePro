@@ -13,7 +13,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
@@ -47,8 +46,9 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.ylabz.basepro.applications.photodo.core.ui.FabState
-import com.ylabz.basepro.applications.photodo.core.ui.SplitButtonFab
+import com.ylabz.basepro.applications.photodo.core.ui.FabAction
+import com.ylabz.basepro.applications.photodo.core.ui.FabMenu
+import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailEvent
@@ -92,7 +92,7 @@ fun MainScreen() {
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     var topBar: @Composable () -> Unit by remember { mutableStateOf({}) }
-    var fabState: FabState? by remember { mutableStateOf(null) }
+    var fabState: FabStateMenu? by remember { mutableStateOf(null) }
 
     val onNavigate: (NavKey) -> Unit = { navKey ->
         // NAV_LOG: Log top-level tab navigation click
@@ -157,7 +157,7 @@ fun MainScreen() {
             Scaffold(
                 modifier = Modifier.weight(1f).nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = topBar,
-                floatingActionButton = { Fab(fabState) }
+                floatingActionButton = { FabMenu(fabState) }
             ) { padding ->
                 appContent(Modifier.padding(padding))
             }
@@ -167,7 +167,7 @@ fun MainScreen() {
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = topBar,
             bottomBar = { HomeBottomBar(currentTopLevelKey = currentTopLevelKey, onNavigate = onNavigate) },
-            floatingActionButton = { Fab(fabState) }
+            floatingActionButton = { FabMenu(fabState) }
         ) { padding ->
             appContent(Modifier.padding(padding))
         }
@@ -182,7 +182,7 @@ private fun AppContent(
     sceneStrategy: ListDetailSceneStrategy<NavKey>,
     scrollBehavior: TopAppBarScrollBehavior,
     setTopBar: (@Composable () -> Unit) -> Unit,
-    setFabState: (FabState?) -> Unit,
+    setFabState: (FabStateMenu?) -> Unit,
     onCategorySelected: (Long) -> Unit // Callback to update the remembered category ID
     // REMOVE the updateCurrentTopLevelKey parameter, it's not needed here
     // updateCurrentTopLevelKey: (NavKey) -> Unit
@@ -372,16 +372,23 @@ private fun AppContent(
                     //setFabState(FabState("Add List") { viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked) })
                     // THIS IS THE NEW SPLIT FAB LOGIC
                     setFabState(
-                        FabState.Split(
+                        FabStateMenu.Single(
+                            action = FabAction(
+                                text = "Add List",
+                                icon = Icons.Default.Add,
+                                onClick = { viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked) }
+                            )
+                        )
+
+                        /*FabState.Split(
                             primaryText = "Add Item",
                             primaryIcon = Icons.Default.Add, // Or a more specific item icon
                             primaryOnClick = { /* TODO: Add item to a default/selected list */ },
                             secondaryText = "Add List",
                             secondaryIcon = Icons.Default.Add, // Or a more specific list icon
                             secondaryOnClick = { viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked) }
-                        )
+                        )*/
                     )
-
                 }
 
                 PhotoDoListUiRoute(
@@ -447,10 +454,12 @@ private fun AppContent(
                     // the FAB would disappear on this screen.
 
                     // The FAB is a single "Add Item" button on this screen.
-                    setFabState(FabState.Single(
-                        text = "Add Item",
-                        icon = Icons.Default.Add,
-                        onClick = { viewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked) }
+                    setFabState(FabStateMenu.Single(
+                        action = FabAction(
+                            text = "Add Item -- but we need to show state",
+                            icon = Icons.Default.Add,
+                            onClick = { viewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked) }
+                        )
                     ))
                 }
                 PhotoDoDetailUiRoute(viewModel = viewModel)
@@ -472,7 +481,7 @@ private fun AppContent(
                 Log.d(TAG, "Displaying content for SettingsKey")
                 val viewModel: SettingsViewModel = hiltViewModel()
                 setTopBar { LargeTopAppBar(title = { Text("Settings") }, scrollBehavior = scrollBehavior) }
-                setFabState(null)
+                setFabState(FabStateMenu.Hidden)
 
                 SettingsUiRoute(
                     modifier = Modifier,
@@ -483,26 +492,6 @@ private fun AppContent(
             }
         }
     )
-}
-
-@Composable
-private fun Fab(fabState: FabState?) {
-    when (fabState) {
-        is FabState.Single -> {
-            ExtendedFloatingActionButton(
-                onClick = fabState.onClick,
-                text = { Text(fabState.text) },
-                icon = { Icon(fabState.icon, contentDescription = null) }
-            )
-        }
-        is FabState.Split -> {
-            // We are calling the new SplitButtonFab composable here
-            SplitButtonFab(fabState = fabState)
-        }
-        is FabState.Hidden, null -> {
-            // Do nothing to show no FAB
-        }
-    }
 }
 
 // Helper extension functions

@@ -52,3 +52,38 @@ sealed interface FabState {
         val secondaryOnClick: () -> Unit
     ) : FabState
 }
+
+/**
+ * Represents a single action item within a FAB menu.
+ * @param text The text label for the action.
+ * @param icon The icon for the action.
+ * @param onClick The lambda to execute when the action is triggered.
+ */
+data class FabAction(
+    val text: String,
+    val icon: ImageVector,
+    val onClick: () -> Unit
+)
+
+/**
+ * A sealed interface to represent all possible states of the Floating Action Button.
+ */
+sealed interface FabStateMenu {
+    /**
+     * The FAB is not visible.
+     */
+    data object Hidden : FabStateMenu
+
+    /**
+     * A standard, single-action Extended FAB.
+     */
+    data class Single(val action: FabAction) : FabStateMenu
+
+    /**
+     * A FAB menu with a primary button and a list of secondary menu items.
+     */
+    data class Menu(
+        val mainButtonAction: FabAction,
+        val items: List<FabAction>
+    ) : FabStateMenu
+}
