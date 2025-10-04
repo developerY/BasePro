@@ -410,7 +410,7 @@ private fun AppContent(
                 LaunchedEffect(Unit) {
                     setTopBar {
                         LargeTopAppBar(
-                            title = { Text("Task Lists") },
+                            title = { Text("Task Lists with (+)") },
                             scrollBehavior = scrollBehavior,
                             actions = {
                                 IconButton(onClick = { viewModel.onEvent(PhotoDoListEvent.OnDeleteAllTaskListsClicked) }) {
@@ -424,7 +424,7 @@ private fun AppContent(
                     }
                     //setFabState(FabState("Add List") { viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked) })
                     // THIS IS THE NEW SPLIT FAB LOGIC
-                    setFabState(
+                    /*setFabState(
                         FabStateMenu.Single(
                             action = FabAction(
                                 text = "Add List",
@@ -441,7 +441,29 @@ private fun AppContent(
                             secondaryIcon = Icons.Default.Add, // Or a more specific list icon
                             secondaryOnClick = { viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked) }
                         )*/
-                    )
+                    )*/
+                }
+
+                LaunchedEffect(backStack.size, isExpandedScreen) {
+                    val isDetailVisible = backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey
+
+                    if (isExpandedScreen) {
+                        // On tablets, the Tasks tab always offers to add a List or an Item
+                        setFabState(FabStateMenu.Menu(
+                            mainButtonAction = FabAction("Add", Icons.Default.Add, {}),
+                            items = listOfNotNull(
+                                FabAction("List", Icons.AutoMirrored.Filled.NoteAdd) { /*listViewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked)*/ },
+                                if (isDetailVisible) FabAction("Item", Icons.Default.Add) { /*detailViewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked)*/ } else null
+                            )
+                        ))
+                    } else {
+                        // On phones, show the most specific action
+                        if (isDetailVisible) {
+                            setFabState(FabStateMenu.Single(FabAction("Add Item", Icons.Default.Add) { /*detailViewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked)*/ }))
+                        } else {
+                            setFabState(FabStateMenu.Single(FabAction("Add List", Icons.Default.Add) { /*listViewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked)*/ }))
+                        }
+                    }
                 }
 
                 PhotoDoListUiRoute(
