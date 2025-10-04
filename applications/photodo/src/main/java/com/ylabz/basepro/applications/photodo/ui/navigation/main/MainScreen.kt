@@ -48,6 +48,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.ylabz.basepro.applications.photodo.core.ui.FabState
+import com.ylabz.basepro.applications.photodo.core.ui.SplitButtonFab
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailEvent
@@ -272,6 +273,8 @@ private fun AppContent(
                 // this block of code only ONCE when this screen (HomeFeedKey) first appears.
                 // This breaks the loop by treating the UI update as a one-time "side effect"
                 // of navigation, not part of the regular drawing process.
+
+                // The Home screen FAB logic remains in HomeScreen, so we only set the TopBar here.
                 LaunchedEffect(Unit) {
                     setTopBar { LargeTopAppBar(title = { Text("PhotoDo Home") }, scrollBehavior = scrollBehavior) }
                     // setFabState(FabState("Add Category") { homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked) })
@@ -352,7 +355,6 @@ private fun AppContent(
                 // Same reason as above. We wrap these state updates in a LaunchedEffect
                 // to prevent the infinite recomposition loop when this screen is shown.
                 LaunchedEffect(Unit) {
-                    setFabState(FabState("Add List") { viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked) })
                     setTopBar {
                         LargeTopAppBar(
                             title = { Text("Task Lists") },
@@ -367,6 +369,19 @@ private fun AppContent(
                             }
                         )
                     }
+                    //setFabState(FabState("Add List") { viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked) })
+                    // THIS IS THE NEW SPLIT FAB LOGIC
+                    setFabState(
+                        FabState.Split(
+                            primaryText = "Add Item",
+                            primaryIcon = Icons.Default.Add, // Or a more specific item icon
+                            primaryOnClick = { /* TODO: Add item to a default/selected list */ },
+                            secondaryText = "Add List",
+                            secondaryIcon = Icons.Default.Add, // Or a more specific list icon
+                            secondaryOnClick = { viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked) }
+                        )
+                    )
+
                 }
 
                 PhotoDoListUiRoute(
@@ -410,13 +425,6 @@ private fun AppContent(
 
                 // This effect now correctly sets the FAB to "Add Item" instead of null.
                 LaunchedEffect(Unit) {
-                    // ### WHY & WHAT ###
-                    // This sets the FAB state when the detail screen is visible.
-                    // The text is "Add Item" and the action calls the new onEvent
-                    // function in the PhotoDoDetailViewModel. This fixes the bug where
-                    // the FAB would disappear on this screen.
-                    setFabState(FabState("Add Item") { viewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked) })
-
                     setTopBar {
                         TopAppBar(
                             title = { Text("List Details") },
@@ -431,6 +439,19 @@ private fun AppContent(
                             }
                         )
                     }
+
+                    // ### WHY & WHAT ###
+                    // This sets the FAB state when the detail screen is visible.
+                    // The text is "Add Item" and the action calls the new onEvent
+                    // function in the PhotoDoDetailViewModel. This fixes the bug where
+                    // the FAB would disappear on this screen.
+
+                    // The FAB is a single "Add Item" button on this screen.
+                    setFabState(FabState.Single(
+                        text = "Add Item",
+                        icon = Icons.Default.Add,
+                        onClick = { viewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked) }
+                    ))
                 }
                 PhotoDoDetailUiRoute(viewModel = viewModel)
             }
@@ -466,12 +487,21 @@ private fun AppContent(
 
 @Composable
 private fun Fab(fabState: FabState?) {
-    fabState?.let {
-        ExtendedFloatingActionButton(
-            onClick = it.onClick,
-            icon = { Icon(Icons.Filled.Add, contentDescription = "${it.text} Icon") },
-            text = { Text(it.text) }
-        )
+    when (fabState) {
+        is FabState.Single -> {
+            ExtendedFloatingActionButton(
+                onClick = fabState.onClick,
+                text = { Text(fabState.text) },
+                icon = { Icon(fabState.icon, contentDescription = null) }
+            )
+        }
+        is FabState.Split -> {
+            // We are calling the new SplitButtonFab composable here
+            SplitButtonFab(fabState = fabState)
+        }
+        is FabState.Hidden, null -> {
+            // Do nothing to show no FAB
+        }
     }
 }
 

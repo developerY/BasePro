@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -42,6 +43,20 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material.legacy)
+
+    // Compose
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.material3.adaptive.navigation3)
+    debugImplementation(libs.androidx.ui.tooling)
+
+    // Compose Navigation
+    implementation(libs.androidx.navigation.compose) // Added Compose Navigation dependency with safe args plugin
+    implementation(libs.hilt.navigation.compose)
+
+    // Icons
+    implementation(libs.androidx.material.icons.extended)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
