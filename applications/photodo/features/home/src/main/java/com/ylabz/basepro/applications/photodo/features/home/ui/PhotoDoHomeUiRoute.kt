@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.ylabz.basepro.applications.photodo.core.ui.FabState
 
 @Composable
 fun PhotoDoHomeUiRoute(
@@ -18,6 +19,7 @@ fun PhotoDoHomeUiRoute(
     // The navigation lambda now expects a Long (the categoryId)
     navTo: (Long) -> Unit,
     onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
+    setFabState: (FabState?) -> Unit, // <-- ADD THIS PARAMETER
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -34,7 +36,10 @@ fun PhotoDoHomeUiRoute(
                 onEvent = viewModel::onEvent,
                 // When a task list is selected, navigate using its categoryId
                 onSelectList = { taskID ->
-                    Log.d("PhotoDoHomeUiRoute", "STEP2: Navigating to TaskList with categoryId: $taskID")
+                    Log.d(
+                        "PhotoDoHomeUiRoute",
+                        "STEP2: Navigating to TaskList with categoryId: $taskID"
+                    )
                     navTo(taskID)
                 },
                 onCategorySelected = onCategorySelected, // <-- PASS THE LAMBDA DOWN
@@ -44,7 +49,8 @@ fun PhotoDoHomeUiRoute(
                         viewModel.onEvent(HomeEvent.OnAddTaskListClicked(category.categoryId))
                     }
                 },*/
-                modifier = modifier
+                modifier = modifier,
+                setFabState = setFabState
             )
         }
         is HomeUiState.Error -> {

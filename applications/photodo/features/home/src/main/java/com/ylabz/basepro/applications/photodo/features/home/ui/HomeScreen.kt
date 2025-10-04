@@ -6,8 +6,10 @@ import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import com.ylabz.basepro.applications.photodo.core.ui.FabState
 import com.ylabz.basepro.applications.photodo.features.home.ui.components.CategoryList
 import com.ylabz.basepro.applications.photodo.features.home.ui.components.TaskList
 import kotlinx.coroutines.launch
@@ -21,8 +23,25 @@ fun HomeScreen(
     // This is for navigating from a Task in the list to the Task Detail (3rd pane)
     onSelectList: (Long) -> Unit,
     onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
+    setFabState: (FabState?) -> Unit, // <-- IT'S A PARAMETER PASSED TO THE FUNCTION
     modifier: Modifier = Modifier,
 ) {
+    // ### NEW LOGIC: Context-Aware FAB ###
+    // This LaunchedEffect observes the selectedCategory. If it changes, the
+    // effect will re-run, updating the FAB to match the current context.
+    LaunchedEffect(uiState.selectedCategory) {
+        if (uiState.selectedCategory == null) {
+            // Context: No category is selected.
+            // Action: The FAB should add a new category.
+            setFabState(FabState("Add Category") { onEvent(HomeEvent.OnAddCategoryClicked) })
+        } else {
+            // Context: A category IS selected.
+            // Action: The FAB should add a new list to that category.
+            setFabState(FabState("Add List") { /*onEvent(HomeEvent.OnAddTaskListClicked)*/ })
+        }
+    }
+
+
     // val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
     val navigator = rememberListDetailPaneScaffoldNavigator()
     val scope = rememberCoroutineScope() // 3. Get a coroutine scope
