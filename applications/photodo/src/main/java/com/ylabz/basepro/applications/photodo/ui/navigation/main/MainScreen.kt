@@ -10,8 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.NoteAdd
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.NoteAdd
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,7 +51,10 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.ylabz.basepro.applications.photodo.core.ui.FabAction
 import com.ylabz.basepro.applications.photodo.core.ui.FabMenu
+import com.ylabz.basepro.applications.photodo.core.ui.FabState
 import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
+import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
+import com.ylabz.basepro.applications.photodo.features.home.ui.HomeUiState
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailEvent
@@ -227,7 +233,7 @@ private fun AppContent(
          * Entry Provider: Defines the structure of the navigation graph.
          */
         entryProvider = entryProvider {
-
+            val isExpandedScreen = true
 
             /**
              * First Tab: Home
@@ -275,11 +281,58 @@ private fun AppContent(
                 // of navigation, not part of the regular drawing process.
 
                 // The Home screen FAB logic remains in HomeScreen, so we only set the TopBar here.
-                LaunchedEffect(Unit) {
-                    setTopBar { LargeTopAppBar(title = { Text("PhotoDo Home") }, scrollBehavior = scrollBehavior) }
-                    // setFabState(FabState("Add Category") { homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked) })
-                }
+                // Determine the correct FAB state based on screen size and what's visible
+                LaunchedEffect(backStack.size, isExpandedScreen, homeViewModel.uiState.value) {
+                    val currentUiState = homeViewModel.uiState.value
+                    val isCategorySelected = currentUiState is HomeUiState.Success && currentUiState.selectedCategory != null
+                    val isListSelected = backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey
 
+                    if (isExpandedScreen) {
+                        // --- LOGIC FOR EXPANDED (OPEN) SCREENS ---
+                        setFabState(
+                            FabStateMenu.Menu(
+                                mainButtonAction = FabAction(
+                                    text = "Add",
+                                    icon = Icons.Default.Add,
+                                    onClick = {} // Main button just opens the menu
+                                ),
+                                items = listOfNotNull(
+                                    // Action to add to Column 1 (Category) - Always available
+                                    FabAction(
+                                        text = "Category",
+                                        icon = Icons.Default.Create,
+                                        onClick = { homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked) }
+                                    ),
+                                    // Action to add to Column 2 (List) - Only if a category is selected
+                                    if (isCategorySelected) FabAction(
+                                        text = "List",
+                                        icon = Icons.AutoMirrored.Filled.NoteAdd,
+                                        onClick = { /*homeViewModel.onEvent(HomeEvent.OnAddTaskListClicked)*/ }
+                                    ) else null,
+                                    // Action to add to Column 3 (Item) - Only if a list is selected
+                                    if (isListSelected) FabAction(
+                                        text = "Item",
+                                        icon = Icons.Default.Add,
+                                        onClick = {
+                                            // We need to find the Detail ViewModel to send the event
+                                            // This is an advanced use case, for now we log it.
+                                            Log.d(TAG, "Add Item from Global FAB Clicked")
+                                        }
+                                    ) else null
+                                )
+                            )
+                        )
+                    } else {
+                        // --- LOGIC FOR COMPACT (CLOSED) SCREENS ---
+                        // The FAB action depends on the top-most screen
+                        when (backStack.lastOrNull()) {
+                            is PhotoDoNavKeys.HomeFeedKey -> setFabState(FabStateMenu.Single(FabAction("Add Category", Icons.Default.Add) { homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked) }))
+                            is PhotoDoNavKeys.TaskListKey -> setFabState(FabStateMenu.Single(FabAction("Add List", Icons.Default.Add) { /* This would need the list ViewModel */ }))
+                            is PhotoDoNavKeys.TaskListDetailKey -> setFabState(FabStateMenu.Single(FabAction("Add Item", Icons.Default.Add) { /* This would need the detail ViewModel */ }))
+                            else -> setFabState(FabStateMenu.Hidden)
+                        }
+                    }
+                }
                 // In MainScreen.kt -> AppContent()
                 PhotoDoHomeUiRoute(
                     /*navTo = { categoryId ->
@@ -315,7 +368,7 @@ private fun AppContent(
                     // This allows the HomeScreen to notify the MainScreen whenever a new
                     // category is selected, keeping the "Tasks" tab in sync.
                     onCategorySelected = onCategorySelected,
-                    setFabState = setFabState // <-- Pass the FAB setter down
+                    // setFabState = setFabState // <-- Pass the FAB setter down
 
                 )
             }

@@ -78,9 +78,11 @@ fun FabMenu(fabStateMenu: FabStateMenu?) {
 
     when (fabStateMenu) {
         is FabStateMenu.Single -> {
-            // If the state is Single, draw a standard Extended FAB.
             ExtendedFloatingActionButton(
-                onClick = fabStateMenu.action.onClick,
+                onClick = {
+                    isFabMenuExpanded = false // Ensure menu is closed
+                    fabStateMenu.action.onClick()
+                },
                 text = { Text(fabStateMenu.action.text) },
                 icon = { Icon(fabStateMenu.action.icon, contentDescription = fabStateMenu.action.text) }
             )

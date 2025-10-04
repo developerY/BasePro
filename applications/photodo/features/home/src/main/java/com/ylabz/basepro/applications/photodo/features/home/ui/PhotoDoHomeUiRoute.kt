@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.ylabz.basepro.applications.photodo.core.ui.FabState
 import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
 
 @Composable
@@ -20,7 +19,7 @@ fun PhotoDoHomeUiRoute(
     // The navigation lambda now expects a Long (the categoryId)
     navTo: (Long) -> Unit,
     onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
-    setFabState: (FabStateMenu?) -> Unit, // <-- ADD THIS PARAMETER
+    setFabState: (FabStateMenu?) -> Unit = {}, // <-- ADD THIS PARAMETER
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
