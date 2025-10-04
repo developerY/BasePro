@@ -47,9 +47,10 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
+import com.ylabz.basepro.applications.photodo.core.ui.FabState
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
+import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailEvent
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailViewModel
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListEvent
@@ -61,7 +62,6 @@ import com.ylabz.basepro.applications.photodo.ui.navigation.NavKeySaver
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 
 private const val TAG = "MainScreen"
-private data class FabState(val text: String, val onClick: () -> Unit)
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -138,7 +138,9 @@ fun MainScreen() {
                 sceneStrategy = listDetailStrategy,
                 scrollBehavior = scrollBehavior,
                 setTopBar = { topBar = it },
-                setFabState = { fabState = it },
+                // THIS IS WHERE THE FUNCTION IS CREATED AND PASSED DOWN
+                setFabState = { newFabState -> fabState = newFabState },
+                // setFabState = { fabState = it },
                 onCategorySelected = { categoryId ->
                     // NAV_LOG: Log when the last selected category ID is updated
                     Log.d(TAG, "onCategorySelected callback triggered. Updating lastSelectedCategoryId to: $categoryId")
@@ -272,7 +274,7 @@ private fun AppContent(
                 // of navigation, not part of the regular drawing process.
                 LaunchedEffect(Unit) {
                     setTopBar { LargeTopAppBar(title = { Text("PhotoDo Home") }, scrollBehavior = scrollBehavior) }
-                    setFabState(FabState("Add Category") { homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked) })
+                    // setFabState(FabState("Add Category") { homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked) })
                 }
 
                 // In MainScreen.kt -> AppContent()
@@ -309,7 +311,9 @@ private fun AppContent(
                     // parameter of the `AppContent` function. You just need to pass it down.
                     // This allows the HomeScreen to notify the MainScreen whenever a new
                     // category is selected, keeping the "Tasks" tab in sync.
-                    onCategorySelected = onCategorySelected
+                    onCategorySelected = onCategorySelected,
+                    setFabState = setFabState // <-- Pass the FAB setter down
+
                 )
             }
 
@@ -404,17 +408,29 @@ private fun AppContent(
                     viewModel.loadList(detailKey.listId)
                 }
 
-                setFabState(null)
-                setTopBar {
-                    TopAppBar(
-                        title = { Text("List Details") },
-                        scrollBehavior = scrollBehavior,
-                        navigationIcon = {
-                            IconButton(onClick = { backStack.removeLastOrNull() }) {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                // This effect now correctly sets the FAB to "Add Item" instead of null.
+                LaunchedEffect(Unit) {
+                    // ### WHY & WHAT ###
+                    // This sets the FAB state when the detail screen is visible.
+                    // The text is "Add Item" and the action calls the new onEvent
+                    // function in the PhotoDoDetailViewModel. This fixes the bug where
+                    // the FAB would disappear on this screen.
+                    setFabState(FabState("Add Item") { viewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked) })
+
+                    setTopBar {
+                        TopAppBar(
+                            title = { Text("List Details") },
+                            scrollBehavior = scrollBehavior,
+                            navigationIcon = {
+                                IconButton(onClick = { backStack.removeLastOrNull() }) {
+                                    Icon(
+                                        Icons.AutoMirrored.Filled.ArrowBack,
+                                        contentDescription = "Back"
+                                    )
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
                 PhotoDoDetailUiRoute(viewModel = viewModel)
             }
