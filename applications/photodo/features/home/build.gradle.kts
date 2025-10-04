@@ -43,6 +43,8 @@ android {
 dependencies {
 
     implementation(project(":applications:photodo:db"))
+    implementation(project(":applications:photodo:core"))
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

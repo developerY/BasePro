@@ -59,6 +59,7 @@ dependencies {
 
     implementation(project(":core:util"))
     implementation(project(":applications:photodo:db"))
+    implementation(project(":applications:photodo:core"))
     implementation(project(":applications:photodo:features:home"))
     implementation(project(":applications:photodo:features:photodolist"))
     implementation(project(":applications:photodo:features:settings"))
