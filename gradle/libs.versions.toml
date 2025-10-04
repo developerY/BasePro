@@ -41,6 +41,7 @@ composeBom = "2025.09.00"       # Jetpack Compose Bill of Materials (BOM)
 composeMaterial = "1.7.8"       # Jetpack Compose Material (used for icons, wear material)
 # Note: androidx.compose.material3 uses the BoM version.
 # Note: androidx.compose.ui:ui-tooling-preview uses the BoM version.
+composeMaterial3Expressive = "1.5.0-alpha04"                # AndroidX Test Runner
 
 # Dependency Injection - Hilt
 hilt = "2.57.1"                 # Hilt, a dependency injection library for Android
@@ -111,7 +112,6 @@ espressoCore = "3.7.0"          # AndroidX Espresso, for Android UI testing
 uiautomator = "2.3.0"           # AndroidX UI Automator, for UI testing across apps
 androidxProfiling = "1.4.1"     # Version for AndroidX Benchmark, Baseline Profile, ProfileInstaller
 runner = "1.7.0"
-material3AdaptiveNavigationSuite = "1.4.0"
 
 
 
@@ -144,6 +144,10 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-material3 = { module = "androidx.compose.material3:material3" } # Material Design 3 components for Compose (version from BOM)
 androidx-material3-window-size = { module = "androidx.compose.material3:material3-window-size-class" } # Optional: Material3 Window Size Class
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "composeMaterial" }
+# Since Material 3 Expressive features are typically in newer, potentially pre-release, versions of specific Material 3 libraries, you will declare these libraries individually and explicitly set their versions, overriding the version provided by the BOM.
+androidx-material3-expressive = { module = "androidx.compose.material3:material3-android", version.ref = "composeMaterial3Expressive" }
+
+
 
 # Jetpack Compose - Image Loading
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
@@ -278,7 +282,6 @@ androidx-runner = { group = "androidx.test", name = "runner", version.ref = "run
 # Testing - Benchmarking & Profiling
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxProfiling" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "androidxProfiling" }
-androidx-compose-material3-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite", version.ref = "material3AdaptiveNavigationSuite" }
 
 
 [plugins]

@@ -48,6 +48,8 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material3.adaptive.navigation3)
+    implementation(libs.androidx.material3.expressive)
+
     debugImplementation(libs.androidx.ui.tooling)
 
     // Compose Navigation
