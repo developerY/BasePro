@@ -14,7 +14,6 @@ import androidx.compose.material.icons.automirrored.filled.NoteAdd
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.DeleteSweep
-import androidx.compose.material.icons.filled.NoteAdd
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,6 +32,7 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -51,7 +51,6 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.ylabz.basepro.applications.photodo.core.ui.FabAction
 import com.ylabz.basepro.applications.photodo.core.ui.FabMenu
-import com.ylabz.basepro.applications.photodo.core.ui.FabState
 import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeUiState
@@ -282,7 +281,7 @@ private fun AppContent(
 
                 // The Home screen FAB logic remains in HomeScreen, so we only set the TopBar here.
                 // Determine the correct FAB state based on screen size and what's visible
-                LaunchedEffect(backStack.size, isExpandedScreen, homeViewModel.uiState.value) {
+                LaunchedEffect(backStack.size, isExpandedScreen, homeViewModel.uiState.collectAsState().value) {
                     val currentUiState = homeViewModel.uiState.value
                     val isCategorySelected = currentUiState is HomeUiState.Success && currentUiState.selectedCategory != null
                     val isListSelected = backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey
@@ -292,22 +291,28 @@ private fun AppContent(
                         setFabState(
                             FabStateMenu.Menu(
                                 mainButtonAction = FabAction(
-                                    text = "Add",
+                                    text = "Add Main Screen",
                                     icon = Icons.Default.Add,
-                                    onClick = {} // Main button just opens the menu
+                                    onClick = {Log.d(TAG,"Main Button Pressed")} // Main button just opens the menu
                                 ),
                                 items = listOfNotNull(
                                     // Action to add to Column 1 (Category) - Always available
                                     FabAction(
                                         text = "Category",
                                         icon = Icons.Default.Create,
-                                        onClick = { homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked) }
+                                        onClick = {
+                                            Log.d(TAG, "Add Category from Global FAB Clicked")
+                                            homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked)
+                                        }
                                     ),
                                     // Action to add to Column 2 (List) - Only if a category is selected
                                     if (isCategorySelected) FabAction(
                                         text = "List",
                                         icon = Icons.AutoMirrored.Filled.NoteAdd,
-                                        onClick = { /*homeViewModel.onEvent(HomeEvent.OnAddTaskListClicked)*/ }
+                                        onClick = {
+                                            Log.d(TAG, "Add List from Global FAB Clicked")
+                                            /*homeViewModel.onEvent(HomeEvent.OnAddTaskListClicked)*/
+                                        }
                                     ) else null,
                                     // Action to add to Column 3 (Item) - Only if a list is selected
                                     if (isListSelected) FabAction(

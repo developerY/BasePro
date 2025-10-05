@@ -80,7 +80,10 @@ sealed interface FabStateMenu {
     data class Single(val action: FabAction) : FabStateMenu
 
     /**
-     * A FAB menu with a primary button and a list of secondary menu items.
+     *  A FAB menu with a primary button and a list of secondary menu items.
+     * The FAB is a menu with a main button and multiple secondary items.
+     * @param mainButtonAction The action for the always-visible button.
+     * @param items The list of actions that appear in the expanded menu.
      */
     data class Menu(
         val mainButtonAction: FabAction,

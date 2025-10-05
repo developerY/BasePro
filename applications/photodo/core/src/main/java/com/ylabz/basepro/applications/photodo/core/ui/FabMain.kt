@@ -116,15 +116,17 @@ fun FabMenu(fabStateMenu: FabStateMenu?) {
             ) { // This is the `content` block for the menu items.
                 // Loop through the list of secondary actions and create a Small FAB for each.
                 fabStateMenu.items.forEach { item ->
-                    SmallFloatingActionButton(
+                    ExtendedFloatingActionButton(
+                    //LargeFloatingActionButton(
+                    //SmallFloatingActionButton(
+                        text = { Text(item.text) },
                         onClick = {
                             item.onClick()
                             isFabMenuExpanded = false // Close the menu after an item is clicked.
                         },
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
-                    ) {
-                        Icon(item.icon, contentDescription = item.text)
-                    }
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        icon = { Icon(item.icon, contentDescription = item.text) }
+                    ) //{Icon(item.icon, contentDescription = item.text)}
                 }
             }
         }
