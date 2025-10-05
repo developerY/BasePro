@@ -1,7 +1,3 @@
-Excellent question — and honestly, it depends **what kind of debugging you’re doing** and **when** you need to see the feedback. Let’s break it down clearly 👇
-
----
-
 ## 🧠 TL;DR
 
 | Goal                                                                    | Best Tool        |
@@ -111,7 +107,3 @@ While developing **Compose UI**, `DebugAlert` is often *more useful* because:
 
 So if you’re deep in **Compose**, prefer `DebugAlert`.
 If you just need a “did this fire?” ping while building logic — use `Toast`.
-
----
-
-Would you like me to show a version of `DebugAlert` that auto-dismisses after a few seconds (to behave more like a Toast but still Compose-aware)?
