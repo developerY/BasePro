@@ -69,7 +69,11 @@ import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 
 private const val TAG = "MainScreen"
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3WindowSizeClassApi::class,
+    ExperimentalMaterial3AdaptiveApi::class,
+    ExperimentalMaterial3Api::class
+)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreen() {
@@ -93,7 +97,10 @@ fun MainScreen() {
     var lastSelectedCategoryId by rememberSaveable { mutableStateOf(1L) }
 
     // NAV_LOG: Log recomposition and state values
-    Log.d(TAG, "MainScreen recomposing -> isExpanded: $isExpandedScreen, topLevelKey: ${currentTopLevelKey::class.simpleName}, lastSelectedCategoryId: $lastSelectedCategoryId")
+    Log.d(
+        TAG,
+        "MainScreen recomposing -> isExpanded: $isExpandedScreen, topLevelKey: ${currentTopLevelKey::class.simpleName}, lastSelectedCategoryId: $lastSelectedCategoryId"
+    )
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     var topBar: @Composable () -> Unit by remember { mutableStateOf({}) }
@@ -106,7 +113,10 @@ fun MainScreen() {
         // When navigating via BottomBar/Rail, if the target is the List tab,
         // use the last selected category ID instead of the hardcoded one.
         val keyToNavigate = if (navKey is PhotoDoNavKeys.TaskListKey) {
-            Log.d(TAG, " -> List tab clicked. Overriding to last selected categoryId: $lastSelectedCategoryId")
+            Log.d(
+                TAG,
+                " -> List tab clicked. Overriding to last selected categoryId: $lastSelectedCategoryId"
+            )
             PhotoDoNavKeys.TaskListKey(lastSelectedCategoryId)
         } else {
             Log.d(TAG, " -> Tab is not TaskListKey, using original key.")
@@ -114,24 +124,32 @@ fun MainScreen() {
         }
 
         if (currentTopLevelKey::class != keyToNavigate::class) {
-            Log.d(TAG, " -> Switching top-level tab from ${currentTopLevelKey::class.simpleName} to ${keyToNavigate::class.simpleName}")
+            Log.d(
+                TAG,
+                " -> Switching top-level tab from ${currentTopLevelKey::class.simpleName} to ${keyToNavigate::class.simpleName}"
+            )
             currentTopLevelKey = keyToNavigate
             backStack.replaceAll(keyToNavigate) // Clear history when switching tabs
         } else {
-            Log.d(TAG, " -> Already on top-level tab ${keyToNavigate::class.simpleName}. No change.")
+            Log.d(
+                TAG,
+                " -> Already on top-level tab ${keyToNavigate::class.simpleName}. No change."
+            )
         }
     }
 
     // A key that forces recomposition when the back stack changes.
     // CORRECTED KEY: This now uses derivedStateOf to be state-aware.
-    val backStackKey by remember { derivedStateOf {
-        backStack.joinToString("-") { navKey ->
-            when (navKey) {
-                is PhotoDoNavKeys.TaskListKey -> "TaskList(${navKey.categoryId})"
-                else -> navKey.javaClass.simpleName
+    val backStackKey by remember {
+        derivedStateOf {
+            backStack.joinToString("-") { navKey ->
+                when (navKey) {
+                    is PhotoDoNavKeys.TaskListKey -> "TaskList(${navKey.categoryId})"
+                    else -> navKey.javaClass.simpleName
+                }
             }
         }
-    } }
+    }
 
     // NAV_LOG: Log the current back stack state before rendering AppContent
     Log.d(TAG, "BackStack state before AppContent: $backStackKey")
@@ -149,7 +167,10 @@ fun MainScreen() {
                 // setFabState = { fabState = it },
                 onCategorySelected = { categoryId ->
                     // NAV_LOG: Log when the last selected category ID is updated
-                    Log.d(TAG, "onCategorySelected callback triggered. Updating lastSelectedCategoryId to: $categoryId")
+                    Log.d(
+                        TAG,
+                        "onCategorySelected callback triggered. Updating lastSelectedCategoryId to: $categoryId"
+                    )
                     lastSelectedCategoryId = categoryId
                 }
             )
@@ -160,7 +181,9 @@ fun MainScreen() {
         Row(modifier = Modifier.fillMaxSize()) {
             HomeNavigationRail(currentTopLevelKey = currentTopLevelKey, onNavigate = onNavigate)
             Scaffold(
-                modifier = Modifier.weight(1f).nestedScroll(scrollBehavior.nestedScrollConnection),
+                modifier = Modifier
+                    .weight(1f)
+                    .nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = topBar,
                 floatingActionButton = { FabMenu(fabState) }
             ) { padding ->
@@ -171,7 +194,12 @@ fun MainScreen() {
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = topBar,
-            bottomBar = { HomeBottomBar(currentTopLevelKey = currentTopLevelKey, onNavigate = onNavigate) },
+            bottomBar = {
+                HomeBottomBar(
+                    currentTopLevelKey = currentTopLevelKey,
+                    onNavigate = onNavigate
+                )
+            },
             floatingActionButton = { FabMenu(fabState) }
         ) { padding ->
             appContent(Modifier.padding(padding))
@@ -219,7 +247,10 @@ private fun AppContent(
             // --- NEW LOGGING ADDED HERE ---
             Log.d(TAG, "Backstack count AFTER action: ${backStack.size}")
             if (backStack.isEmpty()) {
-                Log.d(TAG, "Backstack is now empty. App will exit on next back press if not handled by system.")
+                Log.d(
+                    TAG,
+                    "Backstack is now empty. App will exit on next back press if not handled by system."
+                )
             }
             // --- END OF NEW LOGGING ---
 
@@ -248,7 +279,8 @@ private fun AppContent(
              * pane is active, this placeholder composable is shown in the detail area, prompting
              * the user to make a selection. On small screens (folded), this has no effect.
              */
-            entry<PhotoDoNavKeys.HomeFeedKey>(metadata = ListDetailSceneStrategy.listPane(
+            entry<PhotoDoNavKeys.HomeFeedKey>(
+                metadata = ListDetailSceneStrategy.listPane(
                 detailPlaceholder = {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center)
                     { Text("Select a category") }
@@ -281,9 +313,14 @@ private fun AppContent(
 
                 // The Home screen FAB logic remains in HomeScreen, so we only set the TopBar here.
                 // Determine the correct FAB state based on screen size and what's visible
-                LaunchedEffect(backStack.size, isExpandedScreen, homeViewModel.uiState.collectAsState().value) {
+                LaunchedEffect(
+                    backStack.size,
+                    isExpandedScreen,
+                    homeViewModel.uiState.collectAsState().value
+                ) {
                     val currentUiState = homeViewModel.uiState.value
-                    val isCategorySelected = currentUiState is HomeUiState.Success && currentUiState.selectedCategory != null
+                    val isCategorySelected =
+                        currentUiState is HomeUiState.Success && currentUiState.selectedCategory != null
                     val isListSelected = backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey
 
                     if (isExpandedScreen) {
@@ -293,7 +330,12 @@ private fun AppContent(
                                 mainButtonAction = FabAction(
                                     text = "Add Main Screen",
                                     icon = Icons.Default.Add,
-                                    onClick = {Log.d(TAG,"Main Button Pressed")} // Main button just opens the menu
+                                    onClick = {
+                                        Log.d(
+                                            TAG,
+                                            "Main Button Pressed"
+                                        )
+                                    } // Main button just opens the menu
                                 ),
                                 items = listOfNotNull(
                                     // Action to add to Column 1 (Category) - Always available
@@ -331,9 +373,40 @@ private fun AppContent(
                         // --- LOGIC FOR COMPACT (CLOSED) SCREENS ---
                         // The FAB action depends on the top-most screen
                         when (backStack.lastOrNull()) {
-                            is PhotoDoNavKeys.HomeFeedKey -> setFabState(FabStateMenu.Single(FabAction("Add Category", Icons.Default.Add) { homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked) }))
-                            is PhotoDoNavKeys.TaskListKey -> setFabState(FabStateMenu.Single(FabAction("Add List", Icons.Default.Add) { /* This would need the list ViewModel */ }))
-                            is PhotoDoNavKeys.TaskListDetailKey -> setFabState(FabStateMenu.Single(FabAction("Add Item", Icons.Default.Add) { /* This would need the detail ViewModel */ }))
+                            is PhotoDoNavKeys.HomeFeedKey -> setFabState(
+                                FabStateMenu.Single(
+                                    FabAction(
+                                        "Add Category",
+                                        Icons.Default.Add
+                                    ) {
+                                        Log.d(TAG, "Add Category from Global FAB Clicked -- Closed Screen")
+                                        homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked)
+                                    })
+                            )
+
+                            is PhotoDoNavKeys.TaskListKey -> setFabState(
+                                FabStateMenu.Single(
+                                    FabAction(
+                                        "Add List",
+                                        Icons.Default.Add
+                                    ) {
+                                        Log.d(TAG, "Add List from Global FAB Clicked -- Closed Screen")
+                                    /* This would need the list ViewModel */
+                                        //homeViewModel.onEvent(HomeEvent.OnAddTaskListClicked)
+                                    })
+                            )
+
+                            is PhotoDoNavKeys.TaskListDetailKey -> setFabState(
+                                FabStateMenu.Single(
+                                    FabAction(
+                                        "Add Item",
+                                        Icons.Default.Add
+                                    ) {
+                                        Log.d(TAG, "Add Item from Global FAB Clicked -- Closed Screen")
+                                    /* This would need the detail ViewModel */
+                                    })
+                            )
+
                             else -> setFabState(FabStateMenu.Hidden)
                         }
                     }
@@ -393,7 +466,8 @@ private fun AppContent(
              * - `detailPlaceholder`: This provides a placeholder for the third pane, prompting the user
              * to select a specific task list to see its details.
              */
-            entry<PhotoDoNavKeys.TaskListKey>(metadata = ListDetailSceneStrategy.listPane(
+            entry<PhotoDoNavKeys.TaskListKey>(
+                metadata = ListDetailSceneStrategy.listPane(
                 detailPlaceholder = {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center)
                     { Text("Select a list to see details") }
@@ -408,6 +482,12 @@ private fun AppContent(
                     onCategorySelected(listKey.categoryId) // Also update when loading a list directly
                     viewModel.loadCategory(listKey.categoryId)
                 }
+
+                /*LaunchedEffect(listKey.categoryId) {
+                    onCategorySelected(listKey.categoryId);
+                    listViewModel.loadCategory(listKey.categoryId)
+                }*/
+
 
                 // ### WHY & WHAT ###
                 // Same reason as above. We wrap these state updates in a LaunchedEffect
@@ -454,19 +534,56 @@ private fun AppContent(
 
                     if (isExpandedScreen) {
                         // On tablets, the Tasks tab always offers to add a List or an Item
-                        setFabState(FabStateMenu.Menu(
-                            mainButtonAction = FabAction("Add", Icons.Default.Add, {}),
-                            items = listOfNotNull(
-                                FabAction("List", Icons.AutoMirrored.Filled.NoteAdd) { /*listViewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked)*/ },
-                                if (isDetailVisible) FabAction("Item", Icons.Default.Add) { /*detailViewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked)*/ } else null
+                        setFabState(
+                            FabStateMenu.Menu(
+                                mainButtonAction = FabAction(
+                                    "Add",
+                                    Icons.Default.Add,
+                                    onClick = {
+                                        Log.d(TAG, "Add List from Global FAB Clicked -- Closed Screen")
+                                    }
+                                ),
+                                items = listOfNotNull(
+                                FabAction(
+                                    "List",
+                                    Icons.AutoMirrored.Filled.NoteAdd
+                                ) {
+                                    Log.d(TAG, "Add List from Global FAB Clicked -- Closed Screen")
+                                    /*listViewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked)*/
+                                  },
+                                if (isDetailVisible) FabAction(
+                                    "Item",
+                                    Icons.Default.Add
+                                ) {
+                                    Log.d(TAG, "Add Item from Global FAB Clicked -- Closed Screen")
+                                    /*detailViewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked)*/
+                                } else null
                             )
                         ))
                     } else {
                         // On phones, show the most specific action
                         if (isDetailVisible) {
-                            setFabState(FabStateMenu.Single(FabAction("Add Item", Icons.Default.Add) { /*detailViewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked)*/ }))
+                            setFabState(
+                                FabStateMenu.Single(
+                                    FabAction(
+                                        "Add Item",
+                                        Icons.Default.Add
+                                    ) {
+                                        Log.d(TAG, "Add Item from Global FAB Clicked -- Closed Screen")
+                                    /*detailViewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked)*/
+                                    })
+                            )
                         } else {
-                            setFabState(FabStateMenu.Single(FabAction("Add List", Icons.Default.Add) { /*listViewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked)*/ }))
+                            setFabState(
+                                FabStateMenu.Single(
+                                    FabAction(
+                                        "Add List",
+                                        Icons.Default.Add
+                                    ) {
+                                        Log.d(TAG, "Add List from Global FAB Clicked -- Closed Screen")
+                                        /*listViewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked)*/
+                                    })
+                            )
                         }
                     }
                 }
@@ -506,7 +623,10 @@ private fun AppContent(
                 Log.d(TAG, "Displaying content for TaskListDetailKey (listId=${detailKey.listId})")
                 val viewModel: PhotoDoDetailViewModel = hiltViewModel()
                 LaunchedEffect(detailKey.listId) {
-                    Log.d(TAG, "TaskListDetailKey LaunchedEffect triggered. Loading list with id: ${detailKey.listId}")
+                    Log.d(
+                        TAG,
+                        "TaskListDetailKey LaunchedEffect triggered. Loading list with id: ${detailKey.listId}"
+                    )
                     viewModel.loadList(detailKey.listId)
                 }
 
@@ -534,8 +654,9 @@ private fun AppContent(
                     // the FAB would disappear on this screen.
 
                     // The FAB is a single "Add Item" button on this screen.
-                    setFabState(FabStateMenu.Single(
-                        action = FabAction(
+                    setFabState(
+                        FabStateMenu.Single(
+                            action = FabAction(
                             text = "Add Item -- but we need to show state",
                             icon = Icons.Default.Add,
                             onClick = { viewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked) }
@@ -560,7 +681,12 @@ private fun AppContent(
                 // NAV_LOG: Log rendering of SettingsKey entry
                 Log.d(TAG, "Displaying content for SettingsKey")
                 val viewModel: SettingsViewModel = hiltViewModel()
-                setTopBar { LargeTopAppBar(title = { Text("Settings") }, scrollBehavior = scrollBehavior) }
+                setTopBar {
+                    LargeTopAppBar(
+                        title = { Text("Settings") },
+                        scrollBehavior = scrollBehavior
+                    )
+                }
                 setFabState(FabStateMenu.Hidden)
 
                 SettingsUiRoute(
@@ -575,5 +701,10 @@ private fun AppContent(
 }
 
 // Helper extension functions
-fun <T : Any> MutableList<T>.replace(item: T) { if (isNotEmpty()) this[lastIndex] = item else add(item) }
-fun <T : Any> MutableList<T>.replaceAll(item: T) { clear(); add(item) }
+fun <T : Any> MutableList<T>.replace(item: T) {
+    if (isNotEmpty()) this[lastIndex] = item else add(item)
+}
+
+fun <T : Any> MutableList<T>.replaceAll(item: T) {
+    clear(); add(item)
+}
