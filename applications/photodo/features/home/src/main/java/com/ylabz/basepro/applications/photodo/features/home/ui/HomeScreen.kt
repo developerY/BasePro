@@ -49,8 +49,8 @@ fun HomeScreen(
             // Use the correct `FabState.Single` constructor and provide the icon.
             Log.d("HomeScreen", "Selected category: ${uiState.selectedCategory}")
 
-            setFabState(
-                FabStateMenu.Single(
+            /*setFabState(
+                FabStateMenu.Single_NOTUSE(
                     action = FabAction(
                         text = "Add Category",
                         icon = Icons.Default.Add,
@@ -60,7 +60,7 @@ fun HomeScreen(
                         }
                     )
                 )
-            )
+            )*/
         } else {
             // Context: A category IS selected.
             // Action: The FAB should add a new list to that category.

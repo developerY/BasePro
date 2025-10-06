@@ -1,10 +1,13 @@
 package com.ylabz.basepro.applications.photodo.core.ui
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -15,6 +18,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.tooling.preview.Preview
 
 // In MainScreen.kt
@@ -74,10 +79,10 @@ fun FabMain(fabState: FabState?) {
 @Composable
 fun FabMenu(fabStateMenu: FabStateMenu?) {
     // This state now lives here and controls the expansion of the menu.
-    var isFabMenuExpanded by remember { mutableStateOf(true) }
+    var isFabMenuExpanded by remember { mutableStateOf(false) }
 
     when (fabStateMenu) {
-        is FabStateMenu.Single -> {
+        /*is FabStateMenu.Single -> {
             ExtendedFloatingActionButton(
                 onClick = {
                     isFabMenuExpanded = false // Ensure menu is closed
@@ -86,47 +91,48 @@ fun FabMenu(fabStateMenu: FabStateMenu?) {
                 text = { Text(fabStateMenu.action.text) },
                 icon = { Icon(fabStateMenu.action.icon, contentDescription = fabStateMenu.action.text) }
             )
-        }
+        }*/
         is FabStateMenu.Menu -> {
-            // If the state is Menu, draw the FloatingActionButtonMenu.
+            // State to control whether the menu is open or closed.
+            var isFabMenuExpanded by remember { mutableStateOf(false) }
+
+            // This is a custom composable that likely handles the layout and animation
+            // of the expanding menu.
             FloatingActionButtonMenu(
                 expanded = isFabMenuExpanded,
-                // The main button that is always visible.
+                // --- Main Button ---
+                // Changed to a standard FloatingActionButton to show only the icon.
                 button = {
-                    ExtendedFloatingActionButton(
-                        text = { Text(fabStateMenu.mainButtonAction.text) },
-                        icon = { Icon(fabStateMenu.mainButtonAction.icon, contentDescription = fabStateMenu.mainButtonAction.text) },
-                        onClick = {
-                            // If the menu has items, clicking the main button toggles the menu.
-                            // If the menu is already open, it performs the primary action.
-                            if (fabStateMenu.items.isNotEmpty()) {
-                                if (isFabMenuExpanded) {
-                                    fabStateMenu.mainButtonAction.onClick()
-                                    isFabMenuExpanded = false
-                                } else {
-                                    isFabMenuExpanded = true
-                                }
-                            } else {
-                                // If there are no menu items, it's just a regular button.
-                                fabStateMenu.mainButtonAction.onClick()
-                            }
-                        }
-                    )
+                    FloatingActionButton(
+                        // The main button's only job is to toggle the menu's expanded state.
+                        onClick = { isFabMenuExpanded = !isFabMenuExpanded }
+                    ) {
+                        // Animate the icon rotation from a '+' to an 'x' when expanded.
+                        val rotation by animateFloatAsState(
+                            targetValue = if (isFabMenuExpanded) 45f else 0f,
+                            animationSpec = tween(durationMillis = 200)
+                        )
+                        Icon(
+                            imageVector = fabStateMenu.mainButtonAction.icon, // This should be Icons.Default.Add
+                            contentDescription = "Open menu",
+                            modifier = Modifier.rotate(rotation)
+                        )
+                    }
                 }
-            ) { // This is the `content` block for the menu items.
-                // Loop through the list of secondary actions and create a Small FAB for each.
+            ) { // --- Menu Items Content ---
+                // Iterate through the list of actions defined in the current screen's state.
                 fabStateMenu.items.forEach { item ->
+                    // Using ExtendedFloatingActionButton for items that have both text and an icon.
                     ExtendedFloatingActionButton(
-                    //LargeFloatingActionButton(
-                    //SmallFloatingActionButton(
-                        text = { Text(item.text) },
                         onClick = {
-                            item.onClick()
-                            isFabMenuExpanded = false // Close the menu after an item is clicked.
+                            item.onClick() // Execute the specific action for this item.
+                            isFabMenuExpanded = false // Close the menu after clicking an item.
                         },
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        icon = { Icon(item.icon, contentDescription = item.text) }
-                    ) //{Icon(item.icon, contentDescription = item.text)}
+                        text = { Text(item.text) },
+                        icon = { Icon(item.icon, contentDescription = item.text) },
+                        // Use a secondary color to distinguish menu items from the main button.
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer
+                    )
                 }
             }
         }

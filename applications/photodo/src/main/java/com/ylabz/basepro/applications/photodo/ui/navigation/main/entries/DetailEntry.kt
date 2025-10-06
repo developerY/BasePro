@@ -73,14 +73,23 @@ fun DetailEntry(
         // the FAB would disappear on this screen.
 
         // The FAB is a single "Add Item" button on this screen.
+        // ** FAB LOGIC UPDATED **
         setFabState(
-            FabStateMenu.Single(
-                action = FabAction(
-                    text = "Add Item -- but we need to show state",
+            FabStateMenu.Menu(
+                mainButtonAction = FabAction(
+                    text = "",
                     icon = Icons.Default.Add,
-                    onClick = { viewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked) }
+                    onClick = {}
+                ),
+                items = listOf(
+                    FabAction(
+                        text = "Item",
+                        icon = Icons.Default.Add,
+                        onClick = { viewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked) }
+                    )
                 )
-            ))
+            )
+        )
     }
     PhotoDoDetailUiRoute(viewModel = viewModel)
 

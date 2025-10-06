@@ -52,7 +52,7 @@ fun HomeEntry(
      */
     LaunchedEffect(
         backStack.size,
-        isExpandedScreen,
+        //isExpandedScreen,
         homeViewModel.uiState.collectAsState().value
     ) {
         val currentUiState = homeViewModel.uiState.value
@@ -61,52 +61,55 @@ fun HomeEntry(
         val isListSelected = backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey
 
         // --- FAB Logic for Expanded Screens (e.g., Tablets) ---
-        if (isExpandedScreen) {
-            // --- LOGIC FOR EXPANDED (OPEN) SCREENS ---
-            setFabState(
-                FabStateMenu.Menu(
-                    mainButtonAction = FabAction(
-                        text = "Add Main Screen",
+        //if (isExpandedScreen) {
+        // --- LOGIC FOR EXPANDED (OPEN) SCREENS ---
+        setFabState(
+            FabStateMenu.Menu(
+                mainButtonAction = FabAction(
+                    text = "Add Main Screen",
+                    icon = Icons.Default.Add,
+                    onClick = {
+                        Log.d(TAG, "Main Button Pressed")
+                    } // Main button just opens the menu
+                ),
+                // The menu items are conditional based on the user's selections.
+                items = listOfNotNull(
+                    // Action to add to Column 1 (Category) - Always available
+                    FabAction(
+                        text = "Category",
+                        icon = Icons.Default.Create,
+                        onClick = {
+                            Log.d(TAG, "Add Category from Global FAB Clicked")
+                            homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked)
+                        }
+                    ),
+                    // Action to add to Column 2 (List) - Only if a category is selected
+                    if (isCategorySelected) FabAction(
+                        text = "List",
+                        icon = Icons.AutoMirrored.Filled.NoteAdd,
+                        onClick = {
+                            Log.d(TAG, "Add List from Global FAB Clicked")
+                            /*homeViewModel.onEvent(HomeEvent.OnAddTaskListClicked)*/
+                        }
+                    ) else null,
+                    // Action to add to Column 3 (Item) - Only if a list is selected
+                    if (isListSelected) FabAction(
+                        text = "Item",
                         icon = Icons.Default.Add,
                         onClick = {
-                            Log.d(TAG, "Main Button Pressed")
-                        } // Main button just opens the menu
-                    ),
-                    // The menu items are conditional based on the user's selections.
-                    items = listOfNotNull(
-                        // Action to add to Column 1 (Category) - Always available
-                        FabAction(
-                            text = "Category",
-                            icon = Icons.Default.Create,
-                            onClick = {
-                                Log.d(TAG, "Add Category from Global FAB Clicked")
-                                homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked)
-                            }
-                        ),
-                        // Action to add to Column 2 (List) - Only if a category is selected
-                        if (isCategorySelected) FabAction(
-                            text = "List",
-                            icon = Icons.AutoMirrored.Filled.NoteAdd,
-                            onClick = {
-                                Log.d(TAG, "Add List from Global FAB Clicked")
-                                /*homeViewModel.onEvent(HomeEvent.OnAddTaskListClicked)*/
-                            }
-                        ) else null,
-                        // Action to add to Column 3 (Item) - Only if a list is selected
-                        if (isListSelected) FabAction(
-                            text = "Item",
-                            icon = Icons.Default.Add,
-                            onClick = {
-                                // We need to find the Detail ViewModel to send the event
-                                // This is an advanced use case, for now we log it.
-                                Log.d(TAG, "Add Item from Global FAB Clicked")
-                            }
-                        ) else null
-                    )
+                            // We need to find the Detail ViewModel to send the event
+                            // This is an advanced use case, for now we log it.
+                            Log.d(TAG, "Add Item from Global FAB Clicked")
+                        }
+                    ) else null
                 )
             )
-            // --- FAB Logic for Compact Screens (e.g., Phones) ---
-        } else {
+        )
+
+        // --- END OF FAB Logic for Expanded Screens ---
+
+        // --- FAB Logic for Compact Screens (e.g., Phones) ---
+        /* } else {
             // --- LOGIC FOR COMPACT (CLOSED) SCREENS ---
             // The FAB action depends on the top-most screen
             // On smaller screens, the FAB shows the most specific, single action available.
@@ -148,6 +151,7 @@ fun HomeEntry(
                 else -> setFabState(FabStateMenu.Hidden)
             }
         }
+        }*/
     }
 
     // In MainScreen.kt -> AppContent()
@@ -167,10 +171,7 @@ fun HomeEntry(
         },*/
         // This function is ONLY for navigating from a Task List item to the Detail screen.
         navTo = { listId ->
-            Log.d(
-                TAG,
-                "Step3: Navigating from Task List Item to Detail Screen with listId: $listId"
-            )
+            Log.d(TAG, "Step3: Navigating from Task List Item to Detail Screen with listId: $listId")
 
             // 1. Create the key for the final detail screen (Pane 3).
             val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())

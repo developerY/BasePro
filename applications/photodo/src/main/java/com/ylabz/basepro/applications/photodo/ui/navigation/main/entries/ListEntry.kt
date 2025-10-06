@@ -7,10 +7,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.NoteAdd
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DeleteSweep
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.ylabz.basepro.applications.photodo.core.ui.FabAction
@@ -88,61 +92,33 @@ fun ListEntry(
         )*/
     }
 
-    LaunchedEffect(backStack.size, isExpandedScreen) {
+// ** FAB LOGIC UPDATED **
+    LaunchedEffect(backStack.lastOrNull()) {
         val isDetailVisible = backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey
 
-        if (isExpandedScreen) {
-            // On tablets, the Tasks tab always offers to add a List or an Item
-            setFabState(
-                FabStateMenu.Menu(
-                    mainButtonAction = FabAction(
-                        "Add",
-                        Icons.Default.Add,
-                        onClick = { Log.d(TAG, "Add List from Global FAB Clicked -- Closed Screen") }
-                    ),
-                    items = listOfNotNull(
-                        FabAction(
-                            "List",
-                            Icons.AutoMirrored.Filled.NoteAdd
-                        ) {
-                            Log.d(TAG, "Add List from Global FAB Clicked -- Closed Screen")
-                            /*listViewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked)*/
-                        },
-                        if (isDetailVisible) FabAction(
-                            "Item",
-                            Icons.Default.Add
-                        ) {
-                            Log.d(TAG, "Add Item from Global FAB Clicked -- Closed Screen")
-                            /*detailViewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked)*/
-                        } else null
-                    )
-                ))
-        } else {
-            // On phones, show the most specific action
-            if (isDetailVisible) {
-                setFabState(
-                    FabStateMenu.Single(
-                        FabAction(
-                            "Add Item",
-                            Icons.Default.Add
-                        ) {
-                            Log.d(TAG, "Add Item from Global FAB Clicked -- Closed Screen")
-                            /*detailViewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked)*/
-                        })
+        setFabState(
+            FabStateMenu.Menu(
+                mainButtonAction = FabAction(
+                    text = "", // Icon-only FAB
+                    icon = Icons.Default.Add,
+                    onClick = {}
+                ),
+                items = listOfNotNull(
+                    FabAction(
+                        "List",
+                        Icons.AutoMirrored.Filled.NoteAdd
+                    ) {
+                        viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked)
+                    },
+                    if (isDetailVisible) FabAction(
+                        "Item",
+                        Icons.Default.Add
+                    ) {
+                        Log.d(TAG, "Add Item from FAB clicked (requires Detail ViewModel)")
+                    } else null
                 )
-            } else {
-                setFabState(
-                    FabStateMenu.Single(
-                        FabAction(
-                            "Add List",
-                            Icons.Default.Add
-                        ) {
-                            Log.d(TAG, "Add List from Global FAB Clicked -- Closed Screen")
-                            /*listViewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked)*/
-                        })
-                )
-            }
-        }
+            )
+        )
     }
 
     PhotoDoListUiRoute(
