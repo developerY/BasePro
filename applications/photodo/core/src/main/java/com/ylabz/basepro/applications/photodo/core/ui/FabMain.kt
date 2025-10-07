@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,62 +76,55 @@ fun FabMain(fabState: FabState?) {
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class) // Add this annotation
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FabMenu(fabStateMenu: FabStateMenu?) {
-    // This state now lives here and controls the expansion of the menu.
+    // This is the SINGLE source of truth for the menu's state.
+    // It is initialized to `false` so the menu always starts closed.
     var isFabMenuExpanded by remember { mutableStateOf(false) }
 
-    when (fabStateMenu) {
-        /*is FabStateMenu.Single -> {
-            ExtendedFloatingActionButton(
-                onClick = {
-                    isFabMenuExpanded = false // Ensure menu is closed
-                    fabStateMenu.action.onClick()
-                },
-                text = { Text(fabStateMenu.action.text) },
-                icon = { Icon(fabStateMenu.action.icon, contentDescription = fabStateMenu.action.text) }
-            )
-        }*/
-        is FabStateMenu.Menu -> {
-            // State to control whether the menu is open or closed.
-            var isFabMenuExpanded by remember { mutableStateOf(false) }
+    // This is the key to "forcing" it closed. This effect will run
+    // whenever the fabStateMenu object itself changes (e.g., navigating to a new screen).
+    // It guarantees that the menu will reset to a closed state on navigation.
+    LaunchedEffect(fabStateMenu) {
+        isFabMenuExpanded = false
+    }
 
-            // This is a custom composable that likely handles the layout and animation
-            // of the expanding menu.
+    when (fabStateMenu) {
+
+
+        is FabStateMenu.Menu -> {
+            // The duplicate state declaration has been removed from here.
             FloatingActionButtonMenu(
                 expanded = isFabMenuExpanded,
                 // --- Main Button ---
-                // Changed to a standard FloatingActionButton to show only the icon.
                 button = {
                     FloatingActionButton(
-                        // The main button's only job is to toggle the menu's expanded state.
+                        // The button's only job is to toggle the single state variable.
                         onClick = { isFabMenuExpanded = !isFabMenuExpanded }
                     ) {
-                        // Animate the icon rotation from a '+' to an 'x' when expanded.
+                        // Animate the icon from a '+' to an 'x' when expanded.
                         val rotation by animateFloatAsState(
                             targetValue = if (isFabMenuExpanded) 45f else 0f,
-                            animationSpec = tween(durationMillis = 200)
+                            animationSpec = tween(durationMillis = 200),
+                            label = "FabRotationAnimation"
                         )
                         Icon(
-                            imageVector = fabStateMenu.mainButtonAction.icon, // This should be Icons.Default.Add
+                            imageVector = fabStateMenu.mainButtonAction.icon,
                             contentDescription = "Open menu",
                             modifier = Modifier.rotate(rotation)
                         )
                     }
                 }
             ) { // --- Menu Items Content ---
-                // Iterate through the list of actions defined in the current screen's state.
                 fabStateMenu.items.forEach { item ->
-                    // Using ExtendedFloatingActionButton for items that have both text and an icon.
                     ExtendedFloatingActionButton(
                         onClick = {
-                            item.onClick() // Execute the specific action for this item.
-                            isFabMenuExpanded = false // Close the menu after clicking an item.
+                            item.onClick()
+                            isFabMenuExpanded = false // Close the menu after clicking.
                         },
                         text = { Text(item.text) },
                         icon = { Icon(item.icon, contentDescription = item.text) },
-                        // Use a secondary color to distinguish menu items from the main button.
                         containerColor = MaterialTheme.colorScheme.secondaryContainer
                     )
                 }
@@ -141,7 +135,6 @@ fun FabMenu(fabStateMenu: FabStateMenu?) {
         }
     }
 }
-
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Preview
 @Composable
