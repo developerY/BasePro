@@ -79,13 +79,17 @@ fun DetailEntry(
                 mainButtonAction = FabAction(
                     text = "",
                     icon = Icons.Default.Add,
-                    onClick = {}
+                    onClick = {
+                        Log.d(TAG, "Main button clicked in DetailEntry")
+                    }
                 ),
                 items = listOf(
                     FabAction(
                         text = "Item",
                         icon = Icons.Default.Add,
-                        onClick = { viewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked) }
+                        onClick = {
+                            Log.d(TAG, "Item button clicked in DetailEntry")
+                            viewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked) }
                     )
                 )
             )
