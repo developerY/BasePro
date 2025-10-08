@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Create
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.ylabz.basepro.applications.photodo.core.ui.FabAction
@@ -19,6 +20,8 @@ import com.ylabz.basepro.applications.photodo.features.home.ui.HomeUiState
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
+import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenEvent
+import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenViewModel
 
 private const val TAG = "HomeEntry"
 
@@ -40,7 +43,9 @@ fun HomeEntry(
      * the Navigation 3 library automatically ensures that the ViewModel's lifecycle is
      * tied to that specific destination on the backstack.
      */
-    val homeViewModel: HomeViewModel = androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel()
+    val homeViewModel: HomeViewModel = hiltViewModel()
+
+    val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
 
 
     /**
@@ -97,9 +102,11 @@ fun HomeEntry(
                         text = "Item",
                         icon = Icons.Default.Add,
                         onClick = {
-                            // We need to find the Detail ViewModel to send the event
-                            // This is an advanced use case, for now we log it.
-                            Log.d(TAG, "Add Item from Global FAB Clicked")
+                            // --- THIS IS THE CORRECTED CODE ---
+                            // We post an event to the shared ViewModel.
+                            // This announces that the "Add Item" button was clicked.
+                            Log.d(TAG, "Add Item from Global FAB Clicked - Posting Event")
+                            mainScreenViewModel.postEvent(MainScreenEvent.AddItem)
                         }
                     ) else null
                 )

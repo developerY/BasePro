@@ -125,10 +125,6 @@ fun DetailEntry(...) {
 }
 ```
 # Alternatives
-That's a fantastic question. You're right to ask if there are other ways. The **Shared ViewModel is not the only way**, but it is the most common and recommended solution for this specific problem in Modern Android Development (MAD).
-
-Let's quickly cover the three main patterns for communication between different screens or features in Compose.
-
 ### 1. State Hoisting & Callbacks (The "Pure Compose" Way)
 
 This is the pattern you suggested earlier. You "hoist" the state and the event logic to the nearest common parent, which in this case is `MainScreen`.
@@ -157,4 +153,4 @@ This is the pattern we've been discussing.
 
 ### Conclusion
 
-For your specific use case—communicating between two separate, decoupled feature screens (`Home` and `Detail`) in a complex, multi-pane layout—the **Shared ViewModel** is considered the best practice. It hits the sweet spot by providing a clean, explicit, and lifecycle-safe way for your screens to communicate without becoming tightly coupled or making your parent composables overly complex.
+For this specific use case—communicating between two separate, decoupled feature screens (`Home` and `Detail`) in a complex, multi-pane layout—the **Shared ViewModel** is considered the best practice. It hits the sweet spot by providing a clean, explicit, and lifecycle-safe way for your screens to communicate without becoming tightly coupled or making your parent composables overly complex.
