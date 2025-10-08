@@ -123,7 +123,7 @@ fun DetailEntry(...) {
         }
     }
 }
-
+```
 # Alternatives
 That's a fantastic question. You're right to ask if there are other ways. The **Shared ViewModel is not the only way**, but it is the most common and recommended solution for this specific problem in Modern Android Development (MAD).
 
