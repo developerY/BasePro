@@ -19,6 +19,8 @@ import com.ylabz.basepro.applications.photodo.features.home.ui.HomeUiState
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
+import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenEvent
+import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenViewModel
 
 private const val TAG = "HomeEntry"
 
@@ -44,6 +46,15 @@ fun HomeEntry(
      * tied to that specific destination on the backstack.
      */
     val homeViewModel: HomeViewModel = hiltViewModel()
+    val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
+
+    LaunchedEffect(Unit) {
+        mainScreenViewModel.events.collect { event ->
+            if (event is MainScreenEvent.AddCategory) {
+                homeViewModel.addCategory(event.name)
+            }
+        }
+    }
 
     /**
      * Side Effect for UI State Updates:

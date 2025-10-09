@@ -83,10 +83,6 @@ fun MainScreen() {
                 is MainScreenEvent.ShowAddCategorySheet -> {
                     showAddCategorySheet = true
                 }
-
-                is MainScreenEvent.AddCategory -> {
-                    mainScreenViewModel.postEvent(event)
-                }
                 else -> Unit
             }
         }
@@ -96,6 +92,7 @@ fun MainScreen() {
         AddCategorySheet(
             onAddCategory = { categoryName ->
                 mainScreenViewModel.postEvent(MainScreenEvent.AddCategory(categoryName))
+                showAddCategorySheet = false
             },
             onDismiss = { showAddCategorySheet = false }
         )
