@@ -15,12 +15,14 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.ylabz.basepro.applications.photodo.core.ui.FabAction
 import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
+import com.ylabz.basepro.applications.photodo.core.ui.MainScreenEvent
+import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeUiState
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
-import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenEvent
 import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "HomeEntry"
 
@@ -48,10 +50,18 @@ fun HomeEntry(
     val homeViewModel: HomeViewModel = hiltViewModel()
     val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
 
+    // This block now LISTENS for events that this screen is responsible for.
     LaunchedEffect(Unit) {
-        mainScreenViewModel.events.collect { event ->
-            if (event is MainScreenEvent.AddCategory) {
-                homeViewModel.addCategory(event.name)
+        mainScreenViewModel.events.collectLatest { event : MainScreenEvent ->
+            when (event) {
+                is MainScreenEvent.AddCategory -> {
+                    homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked)
+                }
+                is MainScreenEvent.AddList -> {
+                    ///homeViewModel.onEvent(HomeEvent.OnAddListClicked)
+                }
+                // It ignores the AddItem event, as another screen handles that.
+                else -> {}
             }
         }
     }

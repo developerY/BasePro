@@ -21,20 +21,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
 import com.ylabz.basepro.applications.photodo.core.ui.FabMenu
 import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
+import com.ylabz.basepro.applications.photodo.core.ui.MainScreenEvent
 import com.ylabz.basepro.applications.photodo.features.home.ui.components.AddCategorySheet
-import com.ylabz.basepro.applications.photodo.shared.MainScreenEvent
-import com.ylabz.basepro.applications.photodo.shared.MainScreenViewModel
 import com.ylabz.basepro.applications.photodo.ui.navigation.NavKeySaver
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 
@@ -65,7 +65,7 @@ fun MainScreen() {
     val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
 
     // Remember the last category ID the user interacted with. Default to 1L since we know it has data.
-    var lastSelectedCategoryId by rememberSaveable { mutableStateOf(1L) }
+    var lastSelectedCategoryId by rememberSaveable { mutableLongStateOf(1L) }
 
     // NAV_LOG: Log recomposition and state values
     Log.d(TAG, "MainScreen recomposing -> isExpanded: $isExpandedScreen, topLevelKey: ${currentTopLevelKey::class.simpleName}, lastSelectedCategoryId: $lastSelectedCategoryId")
@@ -78,7 +78,7 @@ fun MainScreen() {
     val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
 
     LaunchedEffect(Unit) {
-        mainScreenViewModel.events.collect { event ->
+        mainScreenViewModel.events.collect { event: MainScreenEvent ->
             when (event) {
                 is MainScreenEvent.ShowAddCategorySheet -> {
                     showAddCategorySheet = true
@@ -87,6 +87,7 @@ fun MainScreen() {
             }
         }
     }
+
 
     if (showAddCategorySheet) {
         AddCategorySheet(
