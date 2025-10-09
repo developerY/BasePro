@@ -27,7 +27,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
 import com.ylabz.basepro.applications.photodo.core.ui.FabMenu
@@ -85,11 +85,9 @@ fun MainScreen() {
                 }
 
                 is MainScreenEvent.AddCategory -> {
-                    homeViewModel.addCategory(event.name)
+                    mainScreenViewModel.postEvent(event)
                 }
-
-                MainScreenEvent.AddItem -> TODO()
-                MainScreenEvent.AddList -> TODO()
+                else -> Unit
             }
         }
     }
@@ -164,7 +162,10 @@ fun MainScreen() {
                     // NAV_LOG: Log when the last selected category ID is updated
                     Log.d(TAG, "onCategorySelected callback triggered. Updating lastSelectedCategoryId to: $categoryId")
                     lastSelectedCategoryId = categoryId
-                }
+                },
+                onAddCategoryClicked = { mainScreenViewModel.postEvent(MainScreenEvent.ShowAddCategorySheet) },
+                onAddListClicked = { mainScreenViewModel.postEvent(MainScreenEvent.AddList) },
+                onAddItemClicked = { mainScreenViewModel.postEvent(MainScreenEvent.AddItem) }
             )
         }
     }

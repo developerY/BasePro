@@ -12,9 +12,9 @@ sealed interface MainScreenEvent {
     data object AddList : MainScreenEvent
 
     /**
-     * An event to signal that the "Add Category" action was triggered from a global context.
+     * An event to signal that a category should be added with the given name.
      */
-    data object AddCategory : MainScreenEvent
+    data class AddCategory(val name: String) : MainScreenEvent
 
     data object ShowAddCategorySheet : MainScreenEvent
 }

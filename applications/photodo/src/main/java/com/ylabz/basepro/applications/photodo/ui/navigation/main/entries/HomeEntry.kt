@@ -19,8 +19,6 @@ import com.ylabz.basepro.applications.photodo.features.home.ui.HomeUiState
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
-import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenEvent
-import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenViewModel
 
 private const val TAG = "HomeEntry"
 
@@ -29,7 +27,10 @@ fun HomeEntry(
     isExpandedScreen: Boolean,
     backStack: NavBackStack<NavKey>,
     setFabState: (FabStateMenu?) -> Unit,
-    onCategorySelected: (Long) -> Unit
+    onCategorySelected: (Long) -> Unit,
+    onAddCategoryClicked: () -> Unit,
+    onAddListClicked: () -> Unit,
+    onAddItemClicked: () -> Unit
 ) {
     // NAV_LOG: Log rendering of HomeFeedKey entry
     Log.d(TAG, "Displaying content for HomeFeedKey")
@@ -43,9 +44,6 @@ fun HomeEntry(
      * tied to that specific destination on the backstack.
      */
     val homeViewModel: HomeViewModel = hiltViewModel()
-
-    val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
-
 
     /**
      * Side Effect for UI State Updates:
@@ -82,31 +80,25 @@ fun HomeEntry(
                     FabAction(
                         text = "Category",
                         icon = Icons.Default.Create,
-                        onClick = {
-                            Log.d(TAG, "Add Category from Global FAB Clicked")
-                            mainScreenViewModel.postEvent(MainScreenEvent.ShowAddCategorySheet)
-                        }
+                        //Log.d(TAG, "Add Category from Global FAB Clicked")
+                                onClick =onAddCategoryClicked
                     ),
                     // Action to add to Column 2 (List) - Only if a category is selected
                     if (isCategorySelected) FabAction(
                         text = "List",
                         icon = Icons.AutoMirrored.Filled.NoteAdd,
-                        onClick = {
-                            Log.d(TAG, "Add List from Global FAB Clicked")
-                            /*homeViewModel.onEvent(HomeEvent.OnAddTaskListClicked)*/
-                        }
+                        //Log.d(TAG, "Add List from Global FAB Clicked")
+                        onClick = onAddListClicked
                     ) else null,
                     // Action to add to Column 3 (Item) - Only if a list is selected
                     if (isListSelected) FabAction(
                         text = "Item",
                         icon = Icons.Default.Add,
-                        onClick = {
-                            // --- THIS IS THE CORRECTED CODE ---
-                            // We post an event to the shared ViewModel.
-                            // This announces that the "Add Item" button was clicked.
-                            Log.d(TAG, "Add Item from Global FAB Clicked - Posting Event")
-                            mainScreenViewModel.postEvent(MainScreenEvent.AddItem)
-                        }
+                        // --- THIS IS THE CORRECTED CODE ---
+                        // We post an event to the shared ViewModel.
+                        // This announces that the "Add Item" button was clicked.
+                        // Log.d(TAG, "Add Item from Global FAB Clicked - Posting Event")
+                        onClick = onAddItemClicked
                     ) else null
                 )
             )

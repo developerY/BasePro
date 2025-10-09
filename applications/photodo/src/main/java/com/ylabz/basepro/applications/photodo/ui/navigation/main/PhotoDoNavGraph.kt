@@ -49,7 +49,10 @@ fun PhotoDoNavGraph(
     scrollBehavior: TopAppBarScrollBehavior,
     setTopBar: (@Composable () -> Unit) -> Unit,
     setFabState: (FabStateMenu?) -> Unit,
-    onCategorySelected: (Long) -> Unit // Callback to update the remembered category ID
+    onCategorySelected: (Long) -> Unit, // Callback to update the remembered category ID
+    onAddCategoryClicked: () -> Unit,
+    onAddListClicked: () -> Unit,
+    onAddItemClicked: () -> Unit
     // REMOVE the updateCurrentTopLevelKey parameter, it's not needed here
     // updateCurrentTopLevelKey: (NavKey) -> Unit
 ) {
@@ -124,7 +127,10 @@ fun PhotoDoNavGraph(
                     isExpandedScreen = isExpandedScreen,
                     backStack = backStack,
                     setFabState = setFabState,
-                    onCategorySelected = onCategorySelected
+                    onCategorySelected = onCategorySelected,
+                    onAddCategoryClicked = onAddCategoryClicked,
+                    onAddListClicked = onAddListClicked,
+                    onAddItemClicked = onAddItemClicked
                 )
             }
 
