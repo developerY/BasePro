@@ -33,6 +33,8 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import com.ylabz.basepro.applications.photodo.core.ui.FabMenu
 import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
 import com.ylabz.basepro.applications.photodo.features.home.ui.components.AddCategorySheet
+import com.ylabz.basepro.applications.photodo.shared.MainScreenEvent
+import com.ylabz.basepro.applications.photodo.shared.MainScreenViewModel
 import com.ylabz.basepro.applications.photodo.ui.navigation.NavKeySaver
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 

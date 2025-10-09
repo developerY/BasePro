@@ -127,13 +127,7 @@ class HomeViewModel @Inject constructor(
                     repository.deleteCategory(event.category)
                 }
             }*/
-            HomeEvent.OnAddCategoryClicked -> {
-                viewModelScope.launch {
-                    val newCategory = CategoryEntity(name = "New Category", description = "")
-                    // repository.insertCategory(newCategory)
-                }
-            }
-
+            HomeEvent.OnAddCategoryClicked -> {} //TODO()
         }
     }
 }
