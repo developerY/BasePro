@@ -15,7 +15,6 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.ylabz.basepro.applications.photodo.core.ui.FabAction
 import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
-import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeUiState
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
@@ -85,7 +84,7 @@ fun HomeEntry(
                         icon = Icons.Default.Create,
                         onClick = {
                             Log.d(TAG, "Add Category from Global FAB Clicked")
-                            homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked)
+                            mainScreenViewModel.postEvent(MainScreenEvent.ShowAddCategorySheet)
                         }
                     ),
                     // Action to add to Column 2 (List) - Only if a category is selected

@@ -17,6 +17,7 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -26,10 +27,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
 import com.ylabz.basepro.applications.photodo.core.ui.FabMenu
 import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
+import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
+import com.ylabz.basepro.applications.photodo.features.home.ui.components.AddCategorySheet
 import com.ylabz.basepro.applications.photodo.ui.navigation.NavKeySaver
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 
@@ -68,6 +72,36 @@ fun MainScreen() {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     var topBar: @Composable () -> Unit by remember { mutableStateOf({}) }
     var fabState: FabStateMenu? by remember { mutableStateOf(null) }
+
+    var showAddCategorySheet by remember { mutableStateOf(false) }
+    val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
+    val homeViewModel: HomeViewModel = hiltViewModel()
+
+    LaunchedEffect(Unit) {
+        mainScreenViewModel.events.collect { event ->
+            when (event) {
+                is MainScreenEvent.ShowAddCategorySheet -> {
+                    showAddCategorySheet = true
+                }
+
+                is MainScreenEvent.AddCategory -> {
+                    homeViewModel.addCategory(event.name)
+                }
+
+                MainScreenEvent.AddItem -> TODO()
+                MainScreenEvent.AddList -> TODO()
+            }
+        }
+    }
+
+    if (showAddCategorySheet) {
+        AddCategorySheet(
+            onAddCategory = { categoryName ->
+                mainScreenViewModel.postEvent(MainScreenEvent.AddCategory(categoryName))
+            },
+            onDismiss = { showAddCategorySheet = false }
+        )
+    }
 
     val onNavigate: (NavKey) -> Unit = { navKey ->
         // NAV_LOG: Log top-level tab navigation click

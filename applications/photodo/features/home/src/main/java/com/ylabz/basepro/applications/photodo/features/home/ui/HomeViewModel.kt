@@ -71,6 +71,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun addCategory(name: String) {
+        viewModelScope.launch {
+            photoDoRepo.insertCategory(CategoryEntity(name = name))
+        }
+    }
+
     fun onEvent(event: HomeEvent) {
         when (event) {
             is HomeEvent.OnAddCategoryClicked -> {

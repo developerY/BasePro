@@ -1,9 +1,5 @@
 package com.ylabz.basepro.applications.photodo.ui.navigation.main
 
-/**
- * Defines the shared events that can be communicated across different screens
- * via the MainScreenViewModel.
- */
 sealed interface MainScreenEvent {
     /**
      * An event to signal that the "Add Item" action was triggered from a global context.
@@ -19,4 +15,6 @@ sealed interface MainScreenEvent {
      * An event to signal that the "Add Category" action was triggered from a global context.
      */
     data object AddCategory : MainScreenEvent
+
+    data object ShowAddCategorySheet : MainScreenEvent
 }
