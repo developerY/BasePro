@@ -9,7 +9,7 @@ sealed interface HomeEvent {
     /**
      * Event triggered when the "Add Category" button is clicked.
      */
-    data object OnAddCategoryClicked : HomeEvent
+    data class OnAddCategoryClicked(val categoryName: String) : HomeEvent
 
     /**
      * Event triggered when a user selects a category from the list.

@@ -127,7 +127,7 @@ class HomeViewModel @Inject constructor(
                     repository.deleteCategory(event.category)
                 }
             }*/
-            HomeEvent.OnAddCategoryClicked -> {} //TODO()
+            is HomeEvent.OnAddCategoryClicked -> {} //TODO()
         }
     }
 }

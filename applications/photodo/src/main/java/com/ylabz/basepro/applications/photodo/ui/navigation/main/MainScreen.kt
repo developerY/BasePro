@@ -89,9 +89,11 @@ fun MainScreen() {
     }
 
 
+    // When the state is true, show the bottom sheet.
     if (showAddCategorySheet) {
         AddCategorySheet(
             onAddCategory = { categoryName ->
+                // When the user saves, post the event to add the category
                 mainScreenViewModel.postEvent(MainScreenEvent.AddCategory(categoryName))
                 showAddCategorySheet = false
             },

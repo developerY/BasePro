@@ -50,12 +50,15 @@ fun HomeEntry(
     val homeViewModel: HomeViewModel = hiltViewModel()
     val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
 
+    // --- THIS IS THE FIX ---
     // This block now LISTENS for events that this screen is responsible for.
     LaunchedEffect(Unit) {
         mainScreenViewModel.events.collectLatest { event : MainScreenEvent ->
             when (event) {
                 is MainScreenEvent.AddCategory -> {
-                    homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked)
+                    homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked(event.categoryName))
+
+                    //homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked)
                 }
                 is MainScreenEvent.AddList -> {
                     ///homeViewModel.onEvent(HomeEvent.OnAddListClicked)

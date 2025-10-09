@@ -82,7 +82,7 @@ fun HomeScreen(
                         icon = Icons.Default.Create,
                         onClick = {
                             Log.d("HomeScreen", "Selected category: ${uiState.selectedCategory.categoryId}")
-                            onEvent(HomeEvent.OnAddCategoryClicked)
+                            onEvent(HomeEvent.OnAddCategoryClicked("Tst"))
                         }
                     )
                 )
