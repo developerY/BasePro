@@ -32,7 +32,6 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
 import com.ylabz.basepro.applications.photodo.core.ui.FabMenu
 import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
-import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
 import com.ylabz.basepro.applications.photodo.features.home.ui.components.AddCategorySheet
 import com.ylabz.basepro.applications.photodo.ui.navigation.NavKeySaver
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
@@ -75,7 +74,6 @@ fun MainScreen() {
 
     var showAddCategorySheet by remember { mutableStateOf(false) }
     val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
-    val homeViewModel: HomeViewModel = hiltViewModel()
 
     LaunchedEffect(Unit) {
         mainScreenViewModel.events.collect { event ->

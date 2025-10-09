@@ -79,13 +79,6 @@ class HomeViewModel @Inject constructor(
 
     fun onEvent(event: HomeEvent) {
         when (event) {
-            is HomeEvent.OnAddCategoryClicked -> {
-                viewModelScope.launch {
-                    val newCategoryName = "New Category ${System.currentTimeMillis() % 1000}"
-                    // Updated to use insertCategory and CategoryEntity
-                    photoDoRepo.insertCategory(CategoryEntity(name = newCategoryName))
-                }
-            }
             // This will be updated in a subsequent step when HomeEvent is refactored
             is HomeEvent.OnCategorySelected -> {
                 // --- THIS IS THE CRITICAL LOGIC ---
