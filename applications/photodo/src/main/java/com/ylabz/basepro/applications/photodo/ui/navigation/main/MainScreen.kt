@@ -17,7 +17,6 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -34,7 +33,6 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import com.ylabz.basepro.applications.photodo.core.ui.FabMenu
 import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
 import com.ylabz.basepro.applications.photodo.core.ui.MainScreenEvent
-import com.ylabz.basepro.applications.photodo.features.home.ui.components.AddCategorySheet
 import com.ylabz.basepro.applications.photodo.ui.navigation.NavKeySaver
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 
@@ -74,32 +72,7 @@ fun MainScreen() {
     var topBar: @Composable () -> Unit by remember { mutableStateOf({}) }
     var fabState: FabStateMenu? by remember { mutableStateOf(null) }
 
-    var showAddCategorySheet by remember { mutableStateOf(false) }
     val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
-
-    LaunchedEffect(Unit) {
-        mainScreenViewModel.events.collect { event: MainScreenEvent ->
-            when (event) {
-                is MainScreenEvent.ShowAddCategorySheet -> {
-                    showAddCategorySheet = true
-                }
-                else -> Unit
-            }
-        }
-    }
-
-
-    // When the state is true, show the bottom sheet.
-    if (showAddCategorySheet) {
-        AddCategorySheet(
-            onAddCategory = { categoryName ->
-                // When the user saves, post the event to add the category
-                mainScreenViewModel.postEvent(MainScreenEvent.AddCategory(categoryName))
-                showAddCategorySheet = false
-            },
-            onDismiss = { showAddCategorySheet = false }
-        )
-    }
 
     val onNavigate: (NavKey) -> Unit = { navKey ->
         // NAV_LOG: Log top-level tab navigation click
@@ -116,18 +89,15 @@ fun MainScreen() {
         }
 
         if (currentTopLevelKey::class != keyToNavigate::class) {
-            Log.d(TAG, "NAVIGATION --  -> Switching top-level tab from ${currentTopLevelKey::class.simpleName} to ${keyToNavigate::class.simpleName}"
-            )
+            Log.d(TAG, "NAVIGATION --  -> Switching top-level tab from ${currentTopLevelKey::class.simpleName} to ${keyToNavigate::class.simpleName}")
             currentTopLevelKey = keyToNavigate
             backStack.replaceAll(keyToNavigate) // Clear history when switching tabs
         } else {
             Log.d(TAG, "NAVIGATION --  -> Already on top-level tab ${keyToNavigate::class.simpleName}. No change."
             )
         }
-
         // NAV_LOG: Log navigation
         Log.d(TAG, "NAVIGATION -DONE- onNavigate triggered with navKey: ${navKey::class.simpleName}")
-
     }
 
     // A key that forces recomposition when the back stack changes.
@@ -238,3 +208,26 @@ fun MainScreen() {
 fun <T : Any> MutableList<T>.replaceAll(item: T) {
     clear(); add(item)
 }
+
+/**
+ * This version removes the local state management for the bottom sheet and relies
+ * on the PhotoDoNavGraph to pass down the correct click handlers to the HomeEntry.
+// When the state is true, show the bottom sheet.
+LaunchedEffect(Unit) {
+mainScreenViewModel.events.collect { event: MainScreenEvent ->
+when (event) {
+is MainScreenEvent.ShowAddCategorySheet -> {
+showAddCategorySheet = true
+}
+else -> Unit}}}
+
+if (showAddCategorySheet) {
+AddCategorySheet(
+onAddCategory = { categoryName ->
+// When the user saves, post the event to add the category
+mainScreenViewModel.postEvent(MainScreenEvent.AddCategory(categoryName))
+showAddCategorySheet = false
+},
+onDismiss = { showAddCategorySheet = false }
+)
+}*/
