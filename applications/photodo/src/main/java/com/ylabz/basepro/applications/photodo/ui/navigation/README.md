@@ -142,3 +142,92 @@ Now, the `ListDetailSceneStrategy` sees a `listPane` (`TaskListKey`) followed by
 * **Unfolded:** It shows the `TaskListKey` screen in the left pane and the `TaskListDetailKey` screen in the right pane.
 
 This architecture creates a powerful, flexible, and maintainable navigation system that is perfectly suited for the diverse range of devices on the market today.
+
+-----
+
+## 🧠 Inter-Screen Communication: The Shared ViewModel
+
+While the navigation architecture handles *how screens are displayed*, it does not handle *how independent screens communicate* with each other in a multi-pane layout.
+
+**The Challenge:** In a three-pane layout, the global FAB is controlled by `HomeEntry`, but the "Add Item" action needs to be handled by the `DetailEntry`. These two screens are siblings and have no direct knowledge of each other.
+
+**The Solution:** We solve this using a **Shared ViewModel** (`MainScreenViewModel`) that acts as a central "message bus" or "announcement board."
+
+### The Flow
+
+1.  The **FAB `onClick`** in `HomeEntry` does not contain any business logic. Instead, it calls `postEvent` on the shared `MainScreenViewModel`.
+2.  The `MainScreenViewModel` emits this event on a public `SharedFlow`.
+3.  The `DetailEntry`, which is also on screen, collects events from the same `MainScreenViewModel` instance.
+4.  Upon receiving the event, `DetailEntry` tells its own **local, specialist** `PhotoDoDetailViewModel` to handle the logic (e.g., show the bottom sheet).
+
+This keeps the features decoupled. `HomeEntry` doesn't need to know how to add an item, and `DetailEntry` doesn't need to know where the event came from.
+
+### Key Code Snippets
+
+#### 1\. The Shared ViewModel (Message Bus)
+
+This ViewModel's only job is to relay messages.
+
+**File:** `applications/photodo/src/main/java/com/ylabz/basepro/applications/photodo/ui/navigation/main/MainScreenViewModel.kt`
+
+```kotlin
+@HiltViewModel
+class MainScreenViewModel @Inject constructor() : ViewModel() {
+    private val _events = MutableSharedFlow<MainScreen-Event>()
+    val events = _events.asSharedFlow()
+
+    fun postEvent(event: MainScreenEvent) {
+        viewModelScope.launch {
+            _events.emit(event)
+        }
+    }
+}
+
+sealed interface MainScreenEvent {
+    data object AddItem : MainScreenEvent
+    // ... other global events
+}
+```
+
+#### 2\. The Broadcaster (`HomeEntry`)
+
+Injects the shared ViewModel and posts an event on click.
+
+**File:** `applications/photodo/src/main/java/com/ylabz/basepro/applications/photodo/ui/navigation/main/entries/HomeEntry.kt`
+
+```kotlin
+@Composable
+fun HomeEntry(...) {
+    val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
+    
+    // ... Inside the FAB's onClick for the "Item" action
+    onClick = {
+        mainScreenViewModel.postEvent(MainScreenEvent.AddItem)
+    }
+}
+```
+
+#### 3\. The Listener (`DetailEntry`)
+
+Injects the shared ViewModel and listens for events, delegating to its local ViewModel.
+
+**File:** `applications/photodo/src/main/java/com/ylabz/basepro/applications/photodo/ui/navigation/main/entries/DetailEntry.kt`
+
+```kotlin
+@Composable
+fun DetailEntry(...) {
+    val detailViewModel: PhotoDoDetailViewModel = hiltViewModel()
+    val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
+
+    LaunchedEffect(Unit) {
+        mainScreenViewModel.events.collectLatest { event ->
+            when (event) {
+                is MainScreenEvent.AddItem -> {
+                    detailViewModel.onEvent(PhotoDoDetailEvent.OnAddItemClicked)
+                }
+                else -> {}
+            }
+        }
+    }
+}
+```
