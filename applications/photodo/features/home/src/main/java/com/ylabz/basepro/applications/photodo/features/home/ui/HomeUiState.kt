@@ -13,16 +13,18 @@ sealed interface HomeUiState {
     object Loading : HomeUiState
 
     /**
-     * The state representing that the categories and task lists have been successfully loaded.
+     * The state representing that the data has been successfully loaded.
      *
-     * @param categories The complete list of all categories.
-     * @param selectedCategory The currently selected category. Can be null if no category is selected.
-     * @param taskListsForSelectedCategory The list of task lists for the `selectedCategory`.
+     * @param categories The list of all categories to display.
+     * @param selectedCategory The currently selected category, if any.
+     * @param taskListsForSelectedCategory The list of tasks for the currently selected category.
+     * @param isAddingCategory A flag to control the visibility of the 'Add Category' bottom sheet.
      */
     data class Success(
-        val categories: List<CategoryEntity>,
+        val categories: List<CategoryEntity> = emptyList(),
         val selectedCategory: CategoryEntity? = null,
-        val taskListsForSelectedCategory: List<TaskListEntity> = emptyList()
+        val taskListsForSelectedCategory: List<TaskListEntity> = emptyList(),
+        val isAddingCategory: Boolean = false
     ) : HomeUiState
 
     /**

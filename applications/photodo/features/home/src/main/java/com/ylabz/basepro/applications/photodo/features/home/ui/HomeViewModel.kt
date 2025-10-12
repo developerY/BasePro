@@ -41,9 +41,9 @@ class HomeViewModel @Inject constructor(
         loadInitialData()
         /*viewModelScope.launch {
             photoDoRepo.getAllCategories().collect { categories ->
-                _uiState.update { currentState ->
-                    if (currentState is HomeUiState.Success) {
-                        currentState.copy(categories = categories)
+                _uiState.update {
+                    if (it is HomeUiState.Success) {
+                        it.copy(categories = categories)
                     } else {
                         HomeUiState.Success(categories = categories)
                     }
@@ -82,20 +82,20 @@ class HomeViewModel @Inject constructor(
             // This will be updated in a subsequent step when HomeEvent is refactored
             is HomeEvent.OnCategorySelected -> {
                 // --- THIS IS THE CRITICAL LOGIC ---
-                val category = event.category
-                Log.d(TAG, "OnCategorySelected event received for category: '${category.name}' (ID: ${category.categoryId})")
-
-                viewModelScope.launch {
+                val category = event
+                Log.d(TAG, "OnCategorySelected event received for category:")// '${category.name}' (ID: ${category.categoryId})")
+                handleCategorySelection(event.categoryId)
+                /*viewModelScope.launch {
                     try {
                         // 1. Log before fetching from the database
-                        Log.d(TAG, "Fetching task lists for category ID: ${category.categoryId}...")
+                        Log.d(TAG, "Fetching task lists for category ID") // ${category.categoryId}...")
                         // --- THE FIX IS HERE ---
                         // Use .first() to get the List from the Flow<List>
-                        val taskLists = photoDoRepo.getTaskListsForCategory(category.categoryId).first()
+                        val taskLists = photoDoRepo.getTaskListsForCategory(category).first()
 
 
                         // 2. Log the result of the database fetch
-                        Log.d(TAG, "Found ${taskLists.count()} task lists for category '${category.name}'.")
+                        Log.d(TAG, "Found ${taskLists.count()} task lists for category")// '${category.name}'.")
 
                         // 3. Update the UI State with the new data
                         // This uses the current state to ensure we don't lose the category list
@@ -105,6 +105,7 @@ class HomeViewModel @Inject constructor(
                                     selectedCategory = category,
                                     taskListsForSelectedCategory = taskLists
                                 )
+                                currentState
                             } else {
                                 // This case should ideally not happen if data loaded correctly
                                 currentState
@@ -113,10 +114,10 @@ class HomeViewModel @Inject constructor(
                         Log.d(TAG, "UI State updated successfully.")
 
                     } catch (e: Exception) {
-                        Log.e(TAG, "Error fetching task lists for category ID ${category.categoryId}", e)
+                        Log.e(TAG, "Error fetching task lists for category ID ${category}", e)
                         // Optionally, you can update the UI to show an error within the detail pane
                     }
-                }
+                }*/
             }
             // --- END OF CRITICAL LOGIC ---
 
@@ -128,6 +129,45 @@ class HomeViewModel @Inject constructor(
                 }
             }*/
             is HomeEvent.OnAddCategoryClicked -> {} //TODO()
+            HomeEvent.OnAddListClicked -> {} //TODO()
+            HomeEvent.OnDismissAddCategory -> {} //TODO()
+            is HomeEvent.OnSaveCategory -> {} //TODO()
+        }
+    }
+
+
+    private fun handleCategorySelection(category: CategoryEntity) {
+        Log.d(TAG, "OnCategorySelected event received for category: '${category.name}' (ID: ${category.categoryId})")
+
+        viewModelScope.launch {
+            try {
+                // 1. Fetch the task lists for the selected category.
+                Log.d(TAG, "Fetching task lists for category ID: ${category.categoryId}...")
+                val taskLists = photoDoRepo.getTaskListsForCategory(category.categoryId).first()
+                Log.d(TAG, "Found ${taskLists.size} task lists for category '${category.name}'.")
+
+                // 2. Update the UI State with both the selected category AND the new list of tasks.
+                _uiState.update { currentState ->
+                    if (currentState is HomeUiState.Success) {
+                        currentState.copy(
+                            selectedCategory = category,
+                            taskListsForSelectedCategory = taskLists
+                        )
+                    } else {
+                        currentState
+                    }
+                }
+                Log.d(TAG, "UI State updated successfully.")
+
+            } catch (e: Exception) {
+                Log.e(TAG, "Error fetching task lists for category ID ${category.categoryId}", e)
+            }
         }
     }
 }
+
+
+
+}
+
+
