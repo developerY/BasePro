@@ -136,38 +136,30 @@ class HomeViewModel @Inject constructor(
     }
 
 
-    private fun handleCategorySelection(category: CategoryEntity) {
-        Log.d(TAG, "OnCategorySelected event received for category: '${category.name}' (ID: ${category.categoryId})")
-
+    private fun handleCategorySelection(categoryId: Long) {
         viewModelScope.launch {
             try {
-                // 1. Fetch the task lists for the selected category.
+                val currentState = _uiState.value
+                if (currentState !is HomeUiState.Success) return@launch
+
+                val category = currentState.categories.find { it.categoryId == categoryId } ?: return@launch
                 Log.d(TAG, "Fetching task lists for category ID: ${category.categoryId}...")
+
                 val taskLists = photoDoRepo.getTaskListsForCategory(category.categoryId).first()
                 Log.d(TAG, "Found ${taskLists.size} task lists for category '${category.name}'.")
 
-                // 2. Update the UI State with both the selected category AND the new list of tasks.
-                _uiState.update { currentState ->
-                    if (currentState is HomeUiState.Success) {
-                        currentState.copy(
-                            selectedCategory = category,
-                            taskListsForSelectedCategory = taskLists
-                        )
-                    } else {
-                        currentState
-                    }
+                _uiState.update {
+                    (it as HomeUiState.Success).copy(
+                        selectedCategory = category,
+                        taskListsForSelectedCategory = taskLists
+                    )
                 }
                 Log.d(TAG, "UI State updated successfully.")
-
             } catch (e: Exception) {
-                Log.e(TAG, "Error fetching task lists for category ID ${category.categoryId}", e)
+                Log.e(TAG, "Error fetching task lists for category ID $categoryId", e)
             }
         }
     }
-}
-
-
-
 }
 
 
