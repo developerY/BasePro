@@ -19,6 +19,7 @@ import com.ylabz.basepro.applications.photodo.core.ui.MainScreenEvent
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeUiState
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
+import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -181,7 +182,7 @@ fun HomeEntry(
         }*/
     }
 
-    /* In MainScreen.kt -> AppContent()
+    // In MainScreen.kt -> AppContent()
     PhotoDoHomeUiRoute(
         /*navTo = { categoryId ->
             /*val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
@@ -196,6 +197,9 @@ fun HomeEntry(
             Log.d(TAG, " -> Calling backStack.add(TaskListKey($categoryId))")
             backStack.add(listKey)
         },*/
+        // --- RelativeDateTimeFormatter.Direction.
+        // It has been renamed to `onNavigateToDetail` for clarity.
+        // Its job is to handle the click from a TaskList item and navigate to the detail screen.
         // This function is ONLY for navigating from a Task List item to the Detail screen.
         navTo = { listId ->
             Log.d(TAG, "Step3: Navigating from Task List Item to Detail Screen with listId: $listId")
@@ -215,5 +219,5 @@ fun HomeEntry(
         onCategorySelected = onCategorySelected,
         // setFabState = setFabState // <-- Pass the FAB setter down
 
-    )*/
+    )
 }
