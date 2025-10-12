@@ -19,7 +19,6 @@ import com.ylabz.basepro.applications.photodo.core.ui.MainScreenEvent
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeUiState
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
-import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -55,14 +54,20 @@ fun HomeEntry(
     LaunchedEffect(Unit) {
         mainScreenViewModel.events.collectLatest { event : MainScreenEvent ->
             when (event) {
-                is MainScreenEvent.AddCategory -> {
-                    homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked(event.categoryName))
 
-                    //homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked)
+                // When it's asked to show the sheet, tell the HomeViewModel
+                is MainScreenEvent.RequestAddCategory -> {
+                    homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked)
                 }
-                is MainScreenEvent.AddList -> {
+                // When it's asked to save the data, tell the HomeViewModel
+                is MainScreenEvent.AddCategory -> {
+                    homeViewModel.onEvent(HomeEvent.OnSaveCategory(event.categoryName))
+                    // homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked(event.categoryName))
+                    // homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked)
+                }
+                /*is MainScreenEvent.AddList -> {
                     ///homeViewModel.onEvent(HomeEvent.OnAddListClicked)
-                }
+                }*/
                 // It ignores the AddItem event, as another screen handles that.
                 else -> {}
             }
@@ -105,7 +110,7 @@ fun HomeEntry(
                         text = "Category",
                         icon = Icons.Default.Create,
                         //Log.d(TAG, "Add Category from Global FAB Clicked")
-                                onClick =onAddCategoryClicked
+                        onClick = onAddCategoryClicked
                     ),
                     // Action to add to Column 2 (List) - Only if a category is selected
                     if (isCategorySelected) FabAction(
@@ -176,7 +181,7 @@ fun HomeEntry(
         }*/
     }
 
-    // In MainScreen.kt -> AppContent()
+    /* In MainScreen.kt -> AppContent()
     PhotoDoHomeUiRoute(
         /*navTo = { categoryId ->
             /*val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
@@ -210,5 +215,5 @@ fun HomeEntry(
         onCategorySelected = onCategorySelected,
         // setFabState = setFabState // <-- Pass the FAB setter down
 
-    )
+    )*/
 }

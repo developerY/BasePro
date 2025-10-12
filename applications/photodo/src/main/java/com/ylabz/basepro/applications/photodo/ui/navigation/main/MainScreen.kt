@@ -133,6 +133,7 @@ fun MainScreen() {
                     Log.d(TAG, "onCategorySelected callback triggered. Updating lastSelectedCategoryId to: $categoryId")
                     lastSelectedCategoryId = categoryId
                 },
+                // Pass down lambdas that post the correct event
                 onAddCategoryClicked = { mainScreenViewModel.postEvent(MainScreenEvent.ShowAddCategorySheet) },
                 onAddListClicked = { mainScreenViewModel.postEvent(MainScreenEvent.AddList) },
                 onAddItemClicked = { mainScreenViewModel.postEvent(MainScreenEvent.AddItem) }

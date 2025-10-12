@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
     uiState: HomeUiState.Success,
     onEvent: (HomeEvent) -> Unit,
     // This is for navigating from a Task in the list to the Task Detail (3rd pane)
@@ -30,7 +31,6 @@ fun HomeScreen(
     // ### WHAT: This parameter was added to accept the "setter" function from MainScreen.
     // ### WHY: This allows HomeScreen to tell MainScreen which FAB to display.
     setFabState: (FabStateMenu?) -> Unit, // <-- IT'S A PARAMETER PASSED TO THE FUNCTION
-    modifier: Modifier = Modifier,
 ) {
     // ### NEW LOGIC: Context-Aware FAB ###
     // This LaunchedEffect observes the selectedCategory. If it changes, the
@@ -82,7 +82,7 @@ fun HomeScreen(
                         icon = Icons.Default.Create,
                         onClick = {
                             Log.d("HomeScreen", "Selected category: ${uiState.selectedCategory.categoryId}")
-                            onEvent(HomeEvent.OnAddCategoryClicked("Tst"))
+                            //onEvent(HomeEvent.OnAddCategoryClicked("Tst"))
                         }
                     )
                 )
@@ -112,7 +112,7 @@ fun HomeScreen(
                     // Then, trigger the navigation
                     onSelectList(category.categoryId)*/
                     // This updates the state, so the detailPane knows what to show. This is correct.
-                    onEvent(HomeEvent.OnCategorySelected(category))
+                    onEvent(HomeEvent.OnCategorySelected(category.categoryId))
 
                     // This calls the lambda to update the GLOBAL state in MainScreen
                     onCategorySelected(category.categoryId) // <-- CALL THE LAMBDA

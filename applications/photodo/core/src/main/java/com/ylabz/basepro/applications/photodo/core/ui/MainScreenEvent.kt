@@ -8,6 +8,9 @@ sealed interface MainScreenEvent {
     /** Signals that the user wants to add a new Category. */
     data class AddCategory(val categoryName: String) : MainScreenEvent
 
+    // Event to request showing the "Add Category" UI
+    data object RequestAddCategory : MainScreenEvent
+
     /** Signals that the user wants to add a new List. */
     data object AddList : MainScreenEvent
 
