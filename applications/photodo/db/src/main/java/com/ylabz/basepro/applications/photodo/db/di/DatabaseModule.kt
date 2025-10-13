@@ -65,7 +65,7 @@ class PhotoDoDatabaseCallback : RoomDatabase.Callback() {
             val currentTime = System.currentTimeMillis()
 
             // Insert initial Categories
-            db.execSQL("INSERT INTO categories (categoryId, name, description) VALUES (1, 'Home', 'Tasks related to home.')")
+            db.execSQL("INSERT INTO categories (categoryId, name, description) VALUES (1, 'House', 'Tasks related to home.')")
             db.execSQL("INSERT INTO categories (categoryId, name, description) VALUES (2, 'Family', 'Family related tasks.')")
             db.execSQL("INSERT INTO categories (categoryId, name, description) VALUES (3, 'Work', 'Work related tasks.')")
 
