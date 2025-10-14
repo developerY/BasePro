@@ -128,7 +128,18 @@ class HomeViewModel @Inject constructor(
                     repository.deleteCategory(event.category)
                 }
             }*/
-            is HomeEvent.OnAddCategoryClicked -> {} //TODO()
+            is HomeEvent.OnAddCategoryClicked -> {
+                // --- THIS IS THE FIX ---
+                _uiState.update { currentState ->
+                    (currentState as? HomeUiState.Success)?.copy(isAddingCategory = true) ?: currentState
+                }
+                /*
+                _uiState.update {
+                    (it as? HomeUiState.Success)?.copy(isAddingCategory = true)
+                }
+                */
+                Log.d(TAG,  "Add Cat Called ")
+            } //TODO()
             HomeEvent.OnAddListClicked -> {} //TODO()
             HomeEvent.OnDismissAddCategory -> {} //TODO()
             is HomeEvent.OnSaveCategory -> {} //TODO()

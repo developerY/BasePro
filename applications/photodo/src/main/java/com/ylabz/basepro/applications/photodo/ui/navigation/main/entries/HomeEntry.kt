@@ -108,7 +108,7 @@ fun HomeEntry(
                 items = listOfNotNull(
                     // Action to add to Column 1 (Category) - Always available
                     FabAction(
-                        text = "Category",
+                        text = "Category -- list in HomeEntry",
                         icon = Icons.Default.Create,
                         //Log.d(TAG, "Add Category from Global FAB Clicked")
                         onClick = onAddCategoryClicked
@@ -210,7 +210,7 @@ fun HomeEntry(
             // 2. Add it to the back stack. The adaptive strategy handles the rest.
             backStack.add(detailKey)
         },
-        viewModel = homeViewModel,
+        homeViewModel = homeViewModel,
         // ### THIS IS THE SOLUTION ###
         // The `onCategorySelected` lambda is already available here as a
         // parameter of the `AppContent` function. You just need to pass it down.

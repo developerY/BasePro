@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
+import com.ylabz.basepro.applications.photodo.features.home.ui.components.AddCategorySheet
 
 @Composable
 fun PhotoDoHomeUiRoute(
@@ -19,9 +20,9 @@ fun PhotoDoHomeUiRoute(
     navTo: (Long) -> Unit,
     onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
     setFabState: (FabStateMenu?) -> Unit = {}, // <-- ADD THIS PARAMETER
-    viewModel: HomeViewModel, // do not use hiltViewModel
+    homeViewModel: HomeViewModel, // do not use hiltViewModel
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by homeViewModel.uiState.collectAsState()
 
     when (val state = uiState) {
         is HomeUiState.Loading -> {
@@ -32,7 +33,7 @@ fun PhotoDoHomeUiRoute(
         is HomeUiState.Success -> {
             HomeScreen(
                 uiState = state,
-                onEvent = viewModel::onEvent,
+                onEvent = homeViewModel::onEvent,
                 // When a task list is selected, navigate using its categoryId
                 onSelectList = { taskID ->
                     Log.d(
@@ -51,6 +52,20 @@ fun PhotoDoHomeUiRoute(
                 modifier = modifier,
                 setFabState = setFabState
             )
+            // --- THIS IS THE UI LOGIC ---
+            // When the ViewModel's state flag is true, show the sheet.
+            if (state.isAddingCategory) {
+                AddCategorySheet(
+                    onAddCategory = { categoryName ->
+                        homeViewModel.onEvent(HomeEvent.OnSaveCategory(categoryName))
+                    },
+                    onDismiss = {
+                        homeViewModel.onEvent(HomeEvent.OnDismissAddCategory)
+                    }
+                )
+            }
+
+
         }
         is HomeUiState.Error -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
