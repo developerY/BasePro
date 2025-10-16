@@ -55,6 +55,8 @@ class HomeViewModel @Inject constructor(
 
 
     private fun loadInitialData() {
+        Log.d("ViewModelInstance", "HomeViewModel created with hashCode: ${this.hashCode()}")
+
         viewModelScope.launch {
             Log.d(TAG, "Loading initial data...")
             photoDoRepo.getAllCategories().catch { e ->
@@ -127,8 +129,10 @@ class HomeViewModel @Inject constructor(
                 viewModelScope.launch {
                     repository.deleteCategory(event.category)
                 }
-            }*/
-            is HomeEvent.OnAddCategoryClicked -> {
+            }
+            HomeEvent.OnAddCategoryClicked -> {
+                Log.d("HomeViewModel", "OnAddCategoryClicked event received. Updating state.")
+
                 // --- THIS IS THE FIX ---
                 _uiState.update { currentState ->
                     (currentState as? HomeUiState.Success)?.copy(isAddingCategory = true) ?: currentState
@@ -139,10 +143,34 @@ class HomeViewModel @Inject constructor(
                 }
                 */
                 Log.d(TAG,  "Add Cat Called ")
-            } //TODO()
+            }*/
+            HomeEvent.OnAddCategoryClicked -> {
+                Log.d(TAG, "OnAddCategoryClicked event received. Updating state.")
+                _uiState.update { currentState ->
+                    (currentState as? HomeUiState.Success)?.copy(isAddingCategory = true) ?: currentState
+                }
+            }
+
+            // --- ADD THIS LOGIC ---
+            HomeEvent.OnDismissAddCategory -> {
+                Log.d(TAG, "OnDismissAddCategory event received. Hiding sheet.")
+                _uiState.update { currentState ->
+                    (currentState as? HomeUiState.Success)?.copy(isAddingCategory = false) ?: currentState
+                }
+            }
+
+            // --- ADD THIS LOGIC ---
+            is HomeEvent.OnSaveCategory -> {
+                // Log.d(TAG, "OnSaveCategory event received for name: '${event.name}'. Saving and hiding sheet.")
+                // Call the function to save the category to the database
+                // addCategory(event.name)
+                // Update the state to hide the sheet
+                _uiState.update { currentState ->
+                    (currentState as? HomeUiState.Success)?.copy(isAddingCategory = false) ?: currentState
+                }
+            }
+
             HomeEvent.OnAddListClicked -> {} //TODO()
-            HomeEvent.OnDismissAddCategory -> {} //TODO()
-            is HomeEvent.OnSaveCategory -> {} //TODO()
         }
     }
 

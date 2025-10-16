@@ -13,6 +13,9 @@ import androidx.compose.ui.Modifier
 import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
 import com.ylabz.basepro.applications.photodo.features.home.ui.components.AddCategorySheet
 
+
+private const val TAG = "PhotoDoHomeUiRoute"
+
 @Composable
 fun PhotoDoHomeUiRoute(
     modifier: Modifier = Modifier,
@@ -20,8 +23,12 @@ fun PhotoDoHomeUiRoute(
     navTo: (Long) -> Unit,
     onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
     setFabState: (FabStateMenu?) -> Unit = {}, // <-- ADD THIS PARAMETER
-    homeViewModel: HomeViewModel, // do not use hiltViewModel
+     homeViewModel: HomeViewModel, // do not use hiltViewModel
 ) {
+
+    Log.d(TAG, "Entered PhotoDoHomeUiRoute composable") // <-- BREADCRUMB 1
+
+
     val uiState by homeViewModel.uiState.collectAsState()
 
     when (val state = uiState) {
@@ -57,9 +64,13 @@ fun PhotoDoHomeUiRoute(
             if (state.isAddingCategory) {
                 AddCategorySheet(
                     onAddCategory = { categoryName ->
+                        // Log the event being sent to the ViewModel to save the category
+                        Log.d(TAG, "onAddCategory called with name: '$categoryName'. Posting OnSaveCategory event.")
                         homeViewModel.onEvent(HomeEvent.OnSaveCategory(categoryName))
                     },
                     onDismiss = {
+                        // Log the event being sent to the ViewModel to dismiss the sheet
+                        Log.d(TAG, "onDismiss called. Posting OnDismissAddCategory event.")
                         homeViewModel.onEvent(HomeEvent.OnDismissAddCategory)
                     }
                 )
