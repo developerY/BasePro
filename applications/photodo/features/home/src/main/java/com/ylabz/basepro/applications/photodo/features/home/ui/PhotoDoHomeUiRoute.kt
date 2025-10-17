@@ -25,6 +25,8 @@ fun PhotoDoHomeUiRoute(
     setFabState: (FabStateMenu?) -> Unit = {}, // <-- ADD THIS PARAMETER
      homeViewModel: HomeViewModel, // do not use hiltViewModel
 ) {
+    // --- ADD THIS HASHCODE LOG ---
+    Log.d("ViewModelInstance", "PhotoDoHomeUiRoute is OBSERVING hashCode: ${homeViewModel.hashCode()}")
 
     Log.d(TAG, "Entered PhotoDoHomeUiRoute composable") // <-- BREADCRUMB 1
 

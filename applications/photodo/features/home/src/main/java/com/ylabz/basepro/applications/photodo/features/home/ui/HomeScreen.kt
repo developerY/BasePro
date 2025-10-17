@@ -48,6 +48,7 @@ fun HomeScreen(
             // Context: No category is selected.
             // Use the correct `FabState.Single` constructor and provide the icon.
             Log.d("HomeScreen", "Selected category: ${uiState.selectedCategory}")
+            Log.d("FabLifecycle", "HomeScreen: In LaunchedEffect, selectedCategory is null. Preparing to set FAB state.") // BREADCRUMB 1
 
             /*setFabState(
                 FabStateMenu.Single_NOTUSE(

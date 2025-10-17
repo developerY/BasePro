@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.photodo.core.ui
 
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.material.icons.Icons
@@ -22,6 +23,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.tooling.preview.Preview
+
+
+
+private val TAG = "FabMain "
+
+
 
 // In MainScreen.kt
 @OptIn(ExperimentalMaterial3ExpressiveApi::class) // Add this annotation
@@ -91,6 +98,19 @@ fun FabMenu(fabStateMenu: FabStateMenu?) {
     }
 
     when (fabStateMenu) {
+        // NOT USED
+        /* This handles a simple, single-action button
+        is FabStateMenu.Single -> {
+            FloatingActionButton(
+                onClick = {
+                    // THIS LOG WILL NOW APPEAR for single buttons
+                    Log.d(TAG, "Single FAB clicked: '${fabStateMenu.action.text}'.")
+                    fabStateMenu.action.onClick()
+                }
+            ) {
+                Icon(imageVector = fabStateMenu.action.icon, contentDescription = fabStateMenu.action.text)
+            }
+        }*/
 
 
         is FabStateMenu.Menu -> {
@@ -100,14 +120,21 @@ fun FabMenu(fabStateMenu: FabStateMenu?) {
                 // --- Main Button ---
                 button = {
                     FloatingActionButton(
-                        // The button's only job is to toggle the single state variable.
-                        onClick = { isFabMenuExpanded = !isFabMenuExpanded }
+                        onClick = {
+                            // If there are items, the main button toggles the menu
+                            if (fabStateMenu.items.isNotEmpty()) {
+                                Log.d(TAG, "Main FAB clicked. Toggling menu.")
+                                isFabMenuExpanded = !isFabMenuExpanded
+                            } else {
+                                // If there are NO items, the main button performs its own action
+                                Log.d(TAG, "Main FAB clicked. Executing mainButtonAction.")
+                                fabStateMenu.mainButtonAction.onClick()
+                            }
+                        }
                     ) {
-                        // Animate the icon from a '+' to an 'x' when expanded.
                         val rotation by animateFloatAsState(
                             targetValue = if (isFabMenuExpanded) 45f else 0f,
-                            animationSpec = tween(durationMillis = 200),
-                            label = "FabRotationAnimation"
+                            animationSpec = tween(durationMillis = 200), label = "FabRotation"
                         )
                         Icon(
                             imageVector = fabStateMenu.mainButtonAction.icon,
@@ -120,6 +147,7 @@ fun FabMenu(fabStateMenu: FabStateMenu?) {
                 fabStateMenu.items.forEach { item ->
                     ExtendedFloatingActionButton(
                         onClick = {
+                            Log.d(TAG, " FabStateMenu.items Got the click ${item.text}")
                             item.onClick()
                             isFabMenuExpanded = false // Close the menu after clicking.
                         },

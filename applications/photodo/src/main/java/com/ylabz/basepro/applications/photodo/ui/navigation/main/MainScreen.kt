@@ -179,7 +179,12 @@ fun MainScreen() {
                     .weight(1f)
                     .nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = topBar,
-                floatingActionButton = { FabMenu(fabState) }
+                floatingActionButton = {
+                    if (fabState != null) {
+                        FabMenu(fabStateMenu = fabState!!)
+                    }
+                }
+                //floatingActionButton = { FabMenu(fabState) }
             ) { padding ->
                 appContent(Modifier.padding(padding))
             }
@@ -197,7 +202,12 @@ fun MainScreen() {
                     onNavigate = onNavigate
                 )
             },
-            floatingActionButton = { FabMenu(fabState) }
+            //floatingActionButton = { FabMenu(fabState) }
+            floatingActionButton = {
+                if (fabState != null) {
+                    FabMenu(fabStateMenu = fabState!!)
+                }
+            }
         ) { padding ->
             appContent(Modifier.padding(padding))
         }
