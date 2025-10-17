@@ -23,7 +23,8 @@ fun PhotoDoHomeUiRoute(
     navTo: (Long) -> Unit,
     onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
     setFabState: (FabStateMenu?) -> Unit = {}, // <-- ADD THIS PARAMETER
-     homeViewModel: HomeViewModel, // do not use hiltViewModel
+    homeViewModel: HomeViewModel, // -- do not use new hiltViewModel
+    // --- FIX: The signature should never includes the mainScreenViewModel ---
 ) {
     // --- ADD THIS HASHCODE LOG ---
     Log.d("ViewModelInstance", "PhotoDoHomeUiRoute is OBSERVING hashCode: ${homeViewModel.hashCode()}")

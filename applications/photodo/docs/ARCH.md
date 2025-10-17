@@ -63,3 +63,36 @@ Here is the simple, top-down flow of how your app's UI is put together:
 3.  **`PhotoDoHomeUiRoute.kt`**: This is the final stateful component. It connects the `HomeViewModel` to the actual UI (`HomeScreen.kt`), collecting the state and passing down the events.
 
 This layered approach is a key part of your MAD architecture. It cleanly separates navigation logic (`PhotoDoNavGraph`), feature setup (`HomeEntry`), and state management (`PhotoDoHomeUiRoute`) from the pure UI (`HomeScreen`).
+
+# PhotoDo Architecture: FABs, Events, and State Management
+
+This document explains the application's architecture for handling the global Floating Action Button (FAB) and triggering UI state changes, such as displaying a bottom sheet.
+
+The architecture is a **hybrid model** that combines two powerful Jetpack Compose patterns: **State Hoisting** for the UI and an **Event Bus** for actions. This provides a clean separation of concerns and allows any screen to trigger global actions.
+
+## Architectural Flow
+
+1.  **FAB Definition (State Hoisting)**: The currently visible screen entry (e.g., `HomeEntry.kt`, `ListEntry.kt`) is responsible for deciding what the FAB should look like and what its buttons do. It calls `setFabState(...)` to "hoist" this UI configuration up to `MainScreen.kt`.
+
+2.  **FAB Action (Event Bus)**: When a FAB button is clicked, it posts a global event (e.g., `RequestAddCategory`) to the `MainScreenViewModel`, which acts as a message bus.
+
+3.  **Event Listening**: A designated "listener" within a specific entry file (`HomeEntry.kt` for category actions) has a `LaunchedEffect` that is always listening to the `MainScreenViewModel`.
+
+4.  **State Management**: When the listener hears a relevant event, it calls the appropriate function on its feature-specific ViewModel (e.g., `homeViewModel.onEvent(...)`). This ViewModel then updates its own UI state (e.g., setting `showAddCategorySheet = true`).
+
+5.  **UI Update**: The UI layer (`PhotoDoHomeUiRoute.kt`) is observing the state of the feature ViewModel. When the state changes, the UI recomposes and displays the bottom sheet.
+
+### Key Components and Their Roles
+
+* **`MainScreen.kt`**: Owns the `Scaffold` and the `floatingActionButton` slot. It only displays the FAB configuration it's given via `setFabState`.
+
+* **`HomeEntry.kt` / `ListEntry.kt` / `DetailEntry.kt`**: These screen-level "entry" composables are the controllers.
+    * They define the FAB's appearance and actions for their context.
+    * They post events to the `MainScreenViewModel` when a FAB button is clicked.
+    * `HomeEntry.kt` contains the permanent listener for all category-related events.
+
+* **`MainScreenViewModel.kt`**: A stateless event bus. Its only job is to receive and re-emit events.
+
+* **`HomeViewModel.kt`**: The state manager for the home feature. It owns the `HomeUiState` and is the single source of truth for whether the "Add Category" bottom sheet should be visible.
+
+* **`PhotoDoHomeUiRoute.kt`**: The UI layer that observes state from `HomeViewModel` and renders the appropriate UI, including the bottom sheet.

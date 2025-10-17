@@ -50,7 +50,7 @@ fun HomeScreen(
             Log.d("HomeScreen", "Selected category: ${uiState.selectedCategory}")
             Log.d("FabLifecycle", "HomeScreen: In LaunchedEffect, selectedCategory is null. Preparing to set FAB state.") // BREADCRUMB 1
 
-            /*setFabState(
+            setFabState(
                 FabStateMenu.Single_NOTUSE(
                     action = FabAction(
                         text = "Add Category",
@@ -61,20 +61,21 @@ fun HomeScreen(
                         }
                     )
                 )
-            )*/
+            )
         } else {
+            setFabState(
             // Context: A category IS selected.
             // Action: The FAB should add a new list to that category.
             // ### FIX ###
             // Use the correct `FabState.Single` constructor and provide the icon.
-            Log.d("HomeScreen", "Selected category: ${uiState.selectedCategory.categoryId}")
+            //Log.d("HomeScreen", "Selected category: ${uiState.selectedCategory.categoryId}")
             FabStateMenu.Menu(
                 mainButtonAction = FabAction(
                     text = "Add List",
                     icon = Icons.Default.Add,
                     onClick = {
                         Log.d("HomeScreen", "Selected category: ${uiState.selectedCategory.categoryId}")
-                        /* onEvent(HomeEvent.OnAddTaskListClicked) */
+                        //onEvent(HomeEvent.OnAddTaskListClicked)
                     }
                 ),
                 items = listOf(
@@ -87,6 +88,7 @@ fun HomeScreen(
                         }
                     )
                 )
+            )
             )
         }
     }

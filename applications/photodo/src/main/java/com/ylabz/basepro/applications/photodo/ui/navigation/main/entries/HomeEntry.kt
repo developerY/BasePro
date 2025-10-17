@@ -2,6 +2,7 @@ package com.ylabz.basepro.applications.photodo.ui.navigation.main.entries
 
 // applications/photodo/src/main/java/com/ylabz/basepro/applications/photodo/ui/navigation/main/entries/HomeEntry.kt
 
+import android.R.attr.onClick
 import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.NoteAdd
@@ -52,16 +53,19 @@ fun HomeEntry(
 
     // --- THIS IS THE FIX ---
     // This block now LISTENS for events that this screen is responsible for.
+    // This "Listener" is waiting for a `RequestAddCategory` event.
     LaunchedEffect(Unit) {
         mainScreenViewModel.events.collectLatest { event : MainScreenEvent ->
             when (event) {
 
                 // When it's asked to show the sheet, tell the HomeViewModel
                 is MainScreenEvent.RequestAddCategory -> {
+                    Log.d(TAG, "Listener heard RequestAddCategory. Telling HomeViewModel to show sheet.")
                     homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked)
                 }
                 // When it's asked to save the data, tell the HomeViewModel
                 is MainScreenEvent.AddCategory -> {
+                    Log.d(TAG, "Listener heard AddCategory. Telling HomeViewModel to show sheet.")
                     homeViewModel.onEvent(HomeEvent.OnSaveCategory(event.categoryName))
                     // homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked(event.categoryName))
                     // homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked)
@@ -70,7 +74,10 @@ fun HomeEntry(
                     ///homeViewModel.onEvent(HomeEvent.OnAddListClicked)
                 }*/
                 // It ignores the AddItem event, as another screen handles that.
-                else -> {}
+                else -> {
+                    Log.d(TAG, "Listener heard something happened and we missed it.")
+
+                }
             }
         }
     }
@@ -101,24 +108,40 @@ fun HomeEntry(
                     text = "Add Main Screen",
                     icon = Icons.Default.Add,
                     onClick = {
-                        Log.d(TAG, "Main Button Pressed")
+                        Log.d(TAG, "Main Button Pressed -- set to hide / show")
                     } // Main button just opens the menu
                 ),
                 // The menu items are conditional based on the user's selections.
                 items = listOfNotNull(
+                    // "Add Category" is always available.
                     // Action to add to Column 1 (Category) - Always available
                     FabAction(
                         text = "Category -- list in HomeEntry",
                         icon = Icons.Default.Create,
                         //Log.d(TAG, "Add Category from Global FAB Clicked")
-                        onClick = onAddCategoryClicked
+                        //
+                        // --- THE FIX ---
+                        // Its onClick now posts a global event to the message bus.
+                        // The listener above will catch this and handle it.
+                        // This allows any screen to use this same pattern.
+                        //
+                        onClick = {
+                            Log.d(TAG, "Category FAB item clicked. Posting RequestAddCategory event.")
+                            mainScreenViewModel.postEvent(MainScreenEvent.RequestAddCategory)
+                            onAddCategoryClicked
+                        }
                     ),
+                    // "Add List" is only available if a category is selected.
                     // Action to add to Column 2 (List) - Only if a category is selected
                     if (isCategorySelected) FabAction(
                         text = "List",
                         icon = Icons.AutoMirrored.Filled.NoteAdd,
                         //Log.d(TAG, "Add List from Global FAB Clicked")
-                        onClick = onAddListClicked
+                        onClick = {
+                            Log.d(TAG, "List FAB item clicked. (Event not implemented yet)")
+                            // TODO: Implement this by posting a RequestAddList event
+                            onAddListClicked
+                        }
                     ) else null,
                     // Action to add to Column 3 (Item) - Only if a list is selected
                     if (isListSelected) FabAction(
@@ -128,7 +151,11 @@ fun HomeEntry(
                         // We post an event to the shared ViewModel.
                         // This announces that the "Add Item" button was clicked.
                         // Log.d(TAG, "Add Item from Global FAB Clicked - Posting Event")
-                        onClick = onAddItemClicked
+                        onClick = {
+                            Log.d(TAG, "Item FAB item clicked. (Event not implemented yet)")
+                            // TODO: Implement this by posting a RequestAddItem event
+                            onAddItemClicked
+                        }
                     ) else null
                 )
             )
@@ -218,6 +245,7 @@ fun HomeEntry(
         // category is selected, keeping the "Tasks" tab in sync.
         onCategorySelected = onCategorySelected,
         // setFabState = setFabState // <-- Pass the FAB setter down
+        setFabState = setFabState
 
     )
 }

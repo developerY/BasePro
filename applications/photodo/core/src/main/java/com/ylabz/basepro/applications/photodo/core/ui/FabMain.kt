@@ -98,19 +98,7 @@ fun FabMenu(fabStateMenu: FabStateMenu?) {
     }
 
     when (fabStateMenu) {
-        // NOT USED
-        /* This handles a simple, single-action button
-        is FabStateMenu.Single -> {
-            FloatingActionButton(
-                onClick = {
-                    // THIS LOG WILL NOW APPEAR for single buttons
-                    Log.d(TAG, "Single FAB clicked: '${fabStateMenu.action.text}'.")
-                    fabStateMenu.action.onClick()
-                }
-            ) {
-                Icon(imageVector = fabStateMenu.action.icon, contentDescription = fabStateMenu.action.text)
-            }
-        }*/
+
 
 
         is FabStateMenu.Menu -> {
@@ -127,14 +115,17 @@ fun FabMenu(fabStateMenu: FabStateMenu?) {
                                 isFabMenuExpanded = !isFabMenuExpanded
                             } else {
                                 // If there are NO items, the main button performs its own action
+                                // This is for cases where you use FabStateMenu.Menu with an empty item list.
                                 Log.d(TAG, "Main FAB clicked. Executing mainButtonAction.")
                                 fabStateMenu.mainButtonAction.onClick()
                             }
                         }
                     ) {
+                        // Icon animation logic (unchanged)
                         val rotation by animateFloatAsState(
                             targetValue = if (isFabMenuExpanded) 45f else 0f,
-                            animationSpec = tween(durationMillis = 200), label = "FabRotation"
+                            animationSpec = tween(durationMillis = 200),
+                            label = "FabRotation"
                         )
                         Icon(
                             imageVector = fabStateMenu.mainButtonAction.icon,
@@ -144,11 +135,12 @@ fun FabMenu(fabStateMenu: FabStateMenu?) {
                     }
                 }
             ) { // --- Menu Items Content ---
+                // This is the code you care about. It will now work because the menu can open.
                 fabStateMenu.items.forEach { item ->
                     ExtendedFloatingActionButton(
                         onClick = {
                             Log.d(TAG, " FabStateMenu.items Got the click ${item.text}")
-                            item.onClick()
+                            item.onClick() // <-- THIS WILL NOW CALL YOUR VIEWMODEL
                             isFabMenuExpanded = false // Close the menu after clicking.
                         },
                         text = { Text(item.text) },
@@ -158,6 +150,23 @@ fun FabMenu(fabStateMenu: FabStateMenu?) {
                 }
             }
         }
+
+        // NOT USED
+        // This handles a simple, single-action button
+        is FabStateMenu.Single_NOTUSE -> {
+            FloatingActionButton(
+                onClick = {
+                    // THIS LOG WILL NOW APPEAR for single buttons
+                    // OUR UI NEVER USES THIS !!!
+                    Log.d(TAG, "Should never see this -- single FAB clicked: '${fabStateMenu.action.text}'.")
+                    Log.d(TAG, "Single FAB clicked: '${fabStateMenu.action.text}'.")
+                    fabStateMenu.action.onClick() // <-- THIS WILL NOW CALL YOUR VIEWMODEL
+                }
+            ) {
+                Icon(imageVector = fabStateMenu.action.icon, contentDescription = fabStateMenu.action.text)
+            }
+        }
+
         is FabStateMenu.Hidden, null -> {
             // Render nothing.
         }
