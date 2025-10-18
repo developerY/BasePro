@@ -2,7 +2,6 @@ package com.ylabz.basepro.applications.photodo.ui.navigation.main.entries
 
 // applications/photodo/src/main/java/com/ylabz/basepro/applications/photodo/ui/navigation/main/entries/HomeEntry.kt
 
-import android.R.attr.onClick
 import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.NoteAdd
@@ -140,7 +139,7 @@ fun HomeEntry(
                         onClick = {
                             Log.d(TAG, "List FAB item clicked. (Event not implemented yet)")
                             // TODO: Implement this by posting a RequestAddList event
-                            onAddListClicked
+                            onAddListClicked()
                         }
                     ) else null,
                     // Action to add to Column 3 (Item) - Only if a list is selected
@@ -154,7 +153,7 @@ fun HomeEntry(
                         onClick = {
                             Log.d(TAG, "Item FAB item clicked. (Event not implemented yet)")
                             // TODO: Implement this by posting a RequestAddItem event
-                            onAddItemClicked
+                            onAddItemClicked()
                         }
                     ) else null
                 )
