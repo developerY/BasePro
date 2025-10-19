@@ -107,7 +107,7 @@ fun HomeEntry(
                     text = "Add Main Screen",
                     icon = Icons.Default.Add,
                     onClick = {
-                        Log.d(TAG, "Main Button Pressed -- set to hide / show")
+                        Log.d(TAG, "FAB ACTION: Main Button Pressed -- set to hide / show")
                     } // Main button just opens the menu
                 ),
                 // The menu items are conditional based on the user's selections.
@@ -125,9 +125,11 @@ fun HomeEntry(
                         // This allows any screen to use this same pattern.
                         //
                         onClick = {
-                            Log.d(TAG, "Category FAB item clicked. Posting RequestAddCategory event.")
+                            Log.d(TAG, "FAB ACTION: Add Category clicked.")
+                            Log.d(TAG, "-> Posting event: MainScreenEvent.RequestAddCategory")
                             mainScreenViewModel.postEvent(MainScreenEvent.RequestAddCategory)
-                            onAddCategoryClicked
+                            Log.d(TAG, "-> Evaluating onAddCategoryClicked lambda.")
+                            onAddCategoryClicked()
                         }
                     ),
                     // "Add List" is only available if a category is selected.
@@ -137,8 +139,10 @@ fun HomeEntry(
                         icon = Icons.AutoMirrored.Filled.NoteAdd,
                         //Log.d(TAG, "Add List from Global FAB Clicked")
                         onClick = {
-                            Log.d(TAG, "List FAB item clicked. (Event not implemented yet)")
+                            Log.d(TAG, "FAB ACTION: Add List clicked.")
+                            Log.d(TAG, "-> (TODO: Event not implemented yet)")
                             // TODO: Implement this by posting a RequestAddList event
+                            Log.d(TAG, "-> Evaluating onAddListClicked lambda.")
                             onAddListClicked()
                         }
                     ) else null,
@@ -151,8 +155,10 @@ fun HomeEntry(
                         // This announces that the "Add Item" button was clicked.
                         // Log.d(TAG, "Add Item from Global FAB Clicked - Posting Event")
                         onClick = {
-                            Log.d(TAG, "Item FAB item clicked. (Event not implemented yet)")
+                            Log.d(TAG, "FAB ACTION: Add Item clicked.")
+                            Log.d(TAG, "-> (TODO: Event not implemented yet)")
                             // TODO: Implement this by posting a RequestAddItem event
+                            Log.d(TAG, "-> Evaluating onAddItemClicked lambda.")
                             onAddItemClicked()
                         }
                     ) else null
