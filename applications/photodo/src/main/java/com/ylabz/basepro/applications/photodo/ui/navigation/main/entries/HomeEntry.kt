@@ -50,16 +50,24 @@ fun HomeEntry(
     val homeViewModel: HomeViewModel = hiltViewModel()
     val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
 
-    // --- THIS IS THE FIX ---
-    // This block now LISTENS for events that this screen is responsible for.
-    // This "Listener" is waiting for a `RequestAddCategory` event.
+    // --- BOTTOM SHEET FLOW: Step 2 ---
+    // This LaunchedEffect acts as a listener for global UI events from the MainScreenViewModel.
+    // It's key to decoupling the FAB click from the direct action, allowing any screen to
+    // request that the bottom sheet be shown.
     LaunchedEffect(Unit) {
         mainScreenViewModel.events.collectLatest { event : MainScreenEvent ->
             when (event) {
 
-                // When it's asked to show the sheet, tell the HomeViewModel
+                // --- BOTTOM SHEET FLOW: Step 3 ---
+                // When a 'RequestAddCategory' event is received, this is the code that runs.
                 is MainScreenEvent.RequestAddCategory -> {
                     Log.d(TAG, "Listener heard RequestAddCategory. Telling HomeViewModel to show sheet.")
+
+                    // --- BOTTOM SHEET FLOW: Step 4 ---
+                    // It tells the local HomeViewModel to handle the event. The HomeViewModel will
+                    // then update its own state (HomeUiState) to signal that the
+                    // bottom sheet should be displayed. The PhotoDoHomeUiRoute is observing
+                    // this state and will show the sheet accordingly when the state changes.
                     homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked)
                 }
                 // When it's asked to save the data, tell the HomeViewModel
@@ -125,10 +133,18 @@ fun HomeEntry(
                         // This allows any screen to use this same pattern.
                         //
                         onClick = {
+                            // --- BOTTOM SHEET FLOW: Step 1 ---
+                            // When the "Add Category" FAB is clicked, it doesn't directly
+                            // show the bottom sheet. Instead, it posts a 'RequestAddCategory'
+                            // event to the shared MainScreenViewModel. This acts as a message bus
+                            // for the entire screen.
                             Log.d(TAG, "FAB ACTION: Add Category clicked.")
                             Log.d(TAG, "-> Posting event: MainScreenEvent.RequestAddCategory")
                             mainScreenViewModel.postEvent(MainScreenEvent.RequestAddCategory)
-                            Log.d(TAG, "-> Evaluating onAddCategoryClicked lambda.")
+
+                            // Note: This lambda is for navigation and is separate from the bottom sheet logic.
+                            // It's called immediately after posting the event.
+                            Log.d(TAG, "-> Invoking onAddCategoryClicked lambda.")
                             onAddCategoryClicked()
                         }
                     ),
@@ -142,7 +158,7 @@ fun HomeEntry(
                             Log.d(TAG, "FAB ACTION: Add List clicked.")
                             Log.d(TAG, "-> (TODO: Event not implemented yet)")
                             // TODO: Implement this by posting a RequestAddList event
-                            Log.d(TAG, "-> Evaluating onAddListClicked lambda.")
+                            Log.d(TAG, "-> Invoking onAddListClicked lambda.")
                             onAddListClicked()
                         }
                     ) else null,
@@ -158,7 +174,7 @@ fun HomeEntry(
                             Log.d(TAG, "FAB ACTION: Add Item clicked.")
                             Log.d(TAG, "-> (TODO: Event not implemented yet)")
                             // TODO: Implement this by posting a RequestAddItem event
-                            Log.d(TAG, "-> Evaluating onAddItemClicked lambda.")
+                            Log.d(TAG, "-> Invoking onAddItemClicked lambda.")
                             onAddItemClicked()
                         }
                     ) else null
