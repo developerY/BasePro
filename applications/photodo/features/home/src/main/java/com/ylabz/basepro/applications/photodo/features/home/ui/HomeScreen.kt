@@ -51,7 +51,7 @@ fun HomeScreen(
             Log.d("FabLifecycle", "HomeScreen: In LaunchedEffect, selectedCategory is null. Preparing to set FAB state.") // BREADCRUMB 1
 
             setFabState(
-                FabStateMenu.Single_NOTUSE(
+                FabStateMenu.Single(
                     action = FabAction(
                         text = "Add Category",
                         icon = Icons.Default.Add,

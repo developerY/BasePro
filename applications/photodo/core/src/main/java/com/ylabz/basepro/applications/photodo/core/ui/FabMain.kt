@@ -153,7 +153,7 @@ fun FabMenu(fabStateMenu: FabStateMenu?) {
 
         // NOT USED
         // This handles a simple, single-action button
-        is FabStateMenu.Single_NOTUSE -> {
+        is FabStateMenu.Single -> {
             FloatingActionButton(
                 onClick = {
                     // THIS LOG WILL NOW APPEAR for single buttons

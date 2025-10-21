@@ -77,7 +77,7 @@ sealed interface FabStateMenu {
     /**
      * A standard, single-action Extended FAB.
      */
-    data class Single_NOTUSE(val action: FabAction) : FabStateMenu
+    data class Single(val action: FabAction) : FabStateMenu
 
     /**
      *  A FAB menu with a primary button and a list of secondary menu items.
