@@ -71,20 +71,20 @@ fun HomeScreen(
             //Log.d("HomeScreen", "Selected category: ${uiState.selectedCategory.categoryId}")
             FabStateMenu.Menu(
                 mainButtonAction = FabAction(
-                    text = "Add List",
+                    text = "Add List -- HomeScreen",
                     icon = Icons.Default.Add,
                     onClick = {
                         Log.d("HomeScreen", "Selected category: ${uiState.selectedCategory.categoryId}")
-                        //onEvent(HomeEvent.OnAddTaskListClicked)
+                        onEvent(HomeEvent.OnAddCategoryClicked)
                     }
                 ),
                 items = listOf(
                     FabAction(
-                        text = "Add Category",
+                        text = "Add Category -- HomeScreen",
                         icon = Icons.Default.Create,
                         onClick = {
                             Log.d("HomeScreen", "Selected category: ${uiState.selectedCategory.categoryId}")
-                            //onEvent(HomeEvent.OnAddCategoryClicked("Tst"))
+                            onEvent(HomeEvent.OnAddCategoryClicked)
                         }
                     )
                 )

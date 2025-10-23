@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.NoteAdd
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -88,7 +88,7 @@ fun AddListBottomSheet(
                 onValueChange = { listName = it },
                 modifier = Modifier.fillMaxWidth().focusRequester(focusRequester),
                 label = { Text("List Name") },
-                leadingIcon = { Icon(imageVector = Icons.AutoMirrored.Filled.NoteAdd, contentDescription = "List Name") },
+                leadingIcon = { Icon(imageVector = Icons.AutoMirrored.Filled.List, contentDescription = "List Name") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { handleSave() })
