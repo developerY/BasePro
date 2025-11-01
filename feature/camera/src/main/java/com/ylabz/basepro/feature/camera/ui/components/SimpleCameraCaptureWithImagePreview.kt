@@ -49,7 +49,8 @@ import com.ylabz.basepro.feature.camera.ui.CamEvent
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
-import java.util.concurrent.Executors
+
+// import java.util.concurrent.Executors // No longer needed
 
 /**
  * CameraXViewfinder Composable: Instead of using AndroidView to embed a PreviewView,
@@ -81,10 +82,6 @@ fun SimpleCameraCaptureWithImagePreview(
 
     var imageCapture: ImageCapture? by remember { mutableStateOf(null) }
     var savedImageUri by remember { mutableStateOf<Uri?>(null) }
-
-    // Remember a single-threaded executor for the SurfaceProvider
-    // You can also use ContextCompat.getMainExecutor(context) if preferred
-    val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
 
     // Track rotation using OrientationEventListener
     val orientationEventListener = remember {
@@ -119,10 +116,8 @@ fun SimpleCameraCaptureWithImagePreview(
             val preview = Preview.Builder().build()
 
             // **This is the key change:**
-            // Set the SurfaceProvider on the Preview use case.
-            // This provider will be called by CameraX when it needs a Surface.
-            // We update our Compose state (surfaceRequest) inside this callback.
-            preview.setSurfaceProvider(cameraExecutor) { request ->
+            // Set the SurfaceProvider on the Preview use case, using the main executor.
+            preview.setSurfaceProvider(ContextCompat.getMainExecutor(context)) { request ->
                 surfaceRequest = request
             }
 
@@ -157,7 +152,7 @@ fun SimpleCameraCaptureWithImagePreview(
                     CameraXViewfinder(
                         surfaceRequest = request,
                         modifier = Modifier
-                            .padding(paddingValues)
+                            // Removed redundant padding
                             .fillMaxSize()
                     )
                 }
@@ -212,15 +207,10 @@ fun SimpleCameraCaptureWithImagePreview(
         }
     }
 
-    // Clean up the executor when the composable is disposed
-    DisposableEffect(Unit) {
-        onDispose {
-            cameraExecutor.shutdown()
-        }
-    }
+    // No longer need the DisposableEffect to shut down the executor
 }
 
-// Function to create a file in external storage
+// Function to create a file in external storage (with your robust fallback)
 private fun createFile(context: Context): File {
     val mediaDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         ?: context.filesDir
@@ -240,8 +230,10 @@ fun CapturedImagePreview(imageUri: Uri) {
 
     // Load the image from the file
     LaunchedEffect(imageUri) {
-        val inputStream = context.contentResolver.openInputStream(imageUri)
-        bitmap = BitmapFactory.decodeStream(inputStream)
+        // **FIX:** Use a '.use' block to automatically close the InputStream
+        context.contentResolver.openInputStream(imageUri)?.use { inputStream ->
+            bitmap = BitmapFactory.decodeStream(inputStream)
+        }
     }
 
     bitmap?.let {
