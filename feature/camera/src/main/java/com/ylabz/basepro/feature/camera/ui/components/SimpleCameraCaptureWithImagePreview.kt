@@ -48,6 +48,20 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+/**
+ * CameraXViewfinder Composable: Instead of using AndroidView to embed a PreviewView,
+ * you can directly use the CameraXViewfinder Composable in your Jetpack Compose UI.
+ *
+ * This Composable handles the complexities of displaying the camera feed, including rotation,
+ * scaling, and managing the Surface lifecycle.
+ *
+ * A new artifact, camera-compose is released for the CameraX Viewfinder Compose Adapter which displays
+ * a Preview stream from a CameraX SurfaceRequest from camera-core. (I8666e)
+ *
+ * Added a new composable, CameraXViewfinder, which acts as an idiomatic composable that adapts CameraX
+ * SurfaceRequests for the composable Viewfinder. (I4770f)
+ */
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun SimpleCameraCaptureWithImagePreview(

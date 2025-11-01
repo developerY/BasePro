@@ -69,7 +69,7 @@ coil = "2.7.0"                  # Coil, an image loading library for Android
 accompanistPermissions = "0.37.3" # Accompanist Permissions library
 
 # Camera
-cameraX = "1.5.0"               # AndroidX CameraX libraries
+cameraX = "1.5.1"               # AndroidX CameraX libraries
 
 # Maps & Location
 mapsCompose = "6.10.0"          # Maps Compose library for Jetpack Compose
@@ -209,6 +209,7 @@ androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraX" } # Camera2 implementation
 androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraX" } # Lifecycle support
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraX" } # View support (needed for Compose integration)
+androidx-camera-compose = { module = "androidx.camera:camera-compose", version.ref = "cameraX" }
 
 # Google Services - Maps & Location
 google-play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
