@@ -1,5 +1,7 @@
 package com.ylabz.basepro.feature.camera.ui.components
 
+// import androidx.compose.ui.viewinterop.AndroidView // No longer needed
+// import androidx.lifecycle.LifecycleOwner // Replaced with LocalLifecycleOwner
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -7,10 +9,12 @@ import android.os.Environment
 import android.util.Log
 import android.view.OrientationEventListener
 import android.view.Surface
+import androidx.camera.compose.CameraXViewfinder
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
+import androidx.camera.core.SurfaceRequest
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -37,9 +41,7 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -47,6 +49,7 @@ import com.ylabz.basepro.feature.camera.ui.CamEvent
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.util.concurrent.Executors
 
 /**
  * CameraXViewfinder Composable: Instead of using AndroidView to embed a PreviewView,
@@ -70,11 +73,18 @@ fun SimpleCameraCaptureWithImagePreview(
     navTo: (String) -> Unit,
 ) {
     val context = LocalContext.current
-    val lifecycleOwner = context as LifecycleOwner
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
-    var previewView by remember { mutableStateOf<androidx.camera.view.PreviewView?>(null) }
+
+    // This state will hold the SurfaceRequest from the Preview's SurfaceProvider
+    var surfaceRequest by remember { mutableStateOf<SurfaceRequest?>(null) }
+
     var imageCapture: ImageCapture? by remember { mutableStateOf(null) }
     var savedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    // Remember a single-threaded executor for the SurfaceProvider
+    // You can also use ContextCompat.getMainExecutor(context) if preferred
+    val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
 
     // Track rotation using OrientationEventListener
     val orientationEventListener = remember {
@@ -102,23 +112,34 @@ fun SimpleCameraCaptureWithImagePreview(
 
     if (cameraPermissionState.status.isGranted) {
         // Initializing CameraX Preview and ImageCapture
-        LaunchedEffect(cameraProviderFuture) {
+        LaunchedEffect(cameraProviderFuture, lifecycleOwner) {
             val cameraProvider = cameraProviderFuture.get()
-            val preview = Preview.Builder().build()
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
+            // Build the Preview use case
+            val preview = Preview.Builder().build()
+
+            // **This is the key change:**
+            // Set the SurfaceProvider on the Preview use case.
+            // This provider will be called by CameraX when it needs a Surface.
+            // We update our Compose state (surfaceRequest) inside this callback.
+            preview.setSurfaceProvider(cameraExecutor) { request ->
+                surfaceRequest = request
+            }
+
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             imageCapture = ImageCapture.Builder().build()
 
-            previewView?.let { previewView ->
-                preview.setSurfaceProvider(previewView.surfaceProvider)
-                cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(
-                    lifecycleOwner, cameraSelector, preview, imageCapture
-                )
-            }
+            // Bind the use cases to the camera
+            cameraProvider.unbindAll() // Ensure no other use cases are bound
+            cameraProvider.bindToLifecycle(
+                lifecycleOwner,
+                cameraSelector,
+                preview, // The Preview use case
+                imageCapture // The ImageCapture use case
+            )
         }
 
-        // Enable the OrientationEventListener when the Composable is launched
+        // Enable/Disable OrientationEventListener
         DisposableEffect(Unit) {
             orientationEventListener.enable()
             onDispose {
@@ -130,16 +151,16 @@ fun SimpleCameraCaptureWithImagePreview(
             .padding(paddingValues)
             .fillMaxSize()) {
             Box(modifier = Modifier.weight(1f)) {
-                AndroidView(
-                    factory = { ctx ->
-                        androidx.camera.view.PreviewView(ctx).also {
-                            previewView = it
-                        }
-                    },
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize()
-                )
+                // Use the new CameraXViewfinder Composable
+                // It will recompose when surfaceRequest changes.
+                surfaceRequest?.let { request ->
+                    CameraXViewfinder(
+                        surfaceRequest = request,
+                        modifier = Modifier
+                            .padding(paddingValues)
+                            .fillMaxSize()
+                    )
+                }
             }
 
             // Capture Button
@@ -178,8 +199,6 @@ fun SimpleCameraCaptureWithImagePreview(
             // Display the captured image if it exists
             savedImageUri?.let { uri ->
                 Spacer(modifier = Modifier.height(16.dp))
-
-                // Show the saved image
                 CapturedImagePreview(imageUri = uri)
             }
         }
@@ -192,18 +211,26 @@ fun SimpleCameraCaptureWithImagePreview(
             }
         }
     }
+
+    // Clean up the executor when the composable is disposed
+    DisposableEffect(Unit) {
+        onDispose {
+            cameraExecutor.shutdown()
+        }
+    }
 }
 
 // Function to create a file in external storage
 private fun createFile(context: Context): File {
-    val mediaDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.let {
-        File(it, "CameraX").apply { mkdirs() }
-    }
+    val mediaDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        ?: context.filesDir
+
+    val outputDir = File(mediaDir, "CameraX").apply { mkdirs() }
 
     val fileName = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS", Locale.US)
         .format(System.currentTimeMillis()) + ".jpg"
 
-    return File(mediaDir, fileName)
+    return File(outputDir, fileName)
 }
 
 @Composable
@@ -229,4 +256,3 @@ fun CapturedImagePreview(imageUri: Uri) {
         )
     }
 }
-
