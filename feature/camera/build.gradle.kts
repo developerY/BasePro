@@ -65,6 +65,9 @@ dependencies {
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
 
+    // The new Compose-native viewfinder
+    implementation(libs.androidx.camera.compose)
+
     // Hilt Dependency Injection
     implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.android)
