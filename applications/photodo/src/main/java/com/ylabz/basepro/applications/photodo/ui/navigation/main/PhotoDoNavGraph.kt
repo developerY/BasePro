@@ -46,6 +46,7 @@ fun PhotoDoNavGraph(
     modifier: Modifier = Modifier,
     backStack: NavBackStack<NavKey>,
     sceneStrategy: ListDetailSceneStrategy<NavKey>,
+    isExpandedScreen: Boolean, // <-- ADD THIS
     scrollBehavior: TopAppBarScrollBehavior,
     setTopBar: (@Composable () -> Unit) -> Unit,
     setFabState: (FabStateMenu?) -> Unit,
@@ -101,7 +102,6 @@ fun PhotoDoNavGraph(
          * Composable content and adaptive layout metadata.
          */
         entryProvider = entryProvider {
-            val isExpandedScreen = true
 
             /**
              * =================================================================

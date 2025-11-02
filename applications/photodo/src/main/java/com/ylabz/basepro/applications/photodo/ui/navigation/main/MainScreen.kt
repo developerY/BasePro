@@ -136,6 +136,7 @@ fun MainScreen() {
                 modifier = modifier,
                 backStack = backStack,
                 sceneStrategy = listDetailStrategy,
+                isExpandedScreen = isExpandedScreen,
                 scrollBehavior = scrollBehavior,
                 setTopBar = { topBar = it },
                 // THIS IS WHERE THE FUNCTION IS CREATED AND PASSED DOWN
