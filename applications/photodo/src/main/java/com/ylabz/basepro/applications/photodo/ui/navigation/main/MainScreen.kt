@@ -193,14 +193,15 @@ fun MainScreen() {
                     .nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = topBar,
                 floatingActionButton = {
-                    /* 3. Animate the FAB based on the state.
+                    // 3. Animate the FAB based on the state.
                     AnimatedVisibility(
                         visible = currentFabState != null,
                         enter = slideInVertically { it } + fadeIn(),
                         exit = slideOutVertically { it } + fadeOut()
-                    )*/
+                    ) {
                         // 4. Render the actual FAB UI.
                         currentFabState?.let { FabMenu(fabStateMenu = it) }
+                    }
 
                 }
                 //floatingActionButton = { FabMenu(fabState) }
