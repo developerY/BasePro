@@ -1,6 +1,7 @@
 package com.ylabz.basepro.applications.photodo.features.home.ui.components
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
@@ -33,7 +35,8 @@ fun TaskList(
     // Log when the composable is recomposed, showing the state of the data
     Log.d(TAG, "Recomposing with category: ${category?.name ?: "null"}, task list count: ${taskLists.size}")
 
-    Column(modifier = modifier.fillMaxSize()) {
+    Column(modifier = modifier.fillMaxSize().background(Color(0xFFE0F7FA))) {
+        Text("Source: TaskList.kt")
         if (category != null) {
             Text(
                 text = category.name,
@@ -47,7 +50,7 @@ fun TaskList(
                 // Log that the empty state is being shown
                 Log.d(TAG, "No task lists found for category '${category.name}'. Showing empty state.")
                 EmptyState(
-                    message = "No lists found in ${category.name}.",
+                    message = "No lists found in ${category.name}. From TaskList.kt",
                     onAddClick = {}//onAddList
                 )
             } else {
@@ -76,7 +79,7 @@ fun TaskList(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Select a category to see your lists")
+                Text("Select a category to see your lists. From TaskList.kt")
             }
         }
     }
@@ -89,7 +92,7 @@ fun InitialPlaceholder() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Select a category to see your lists")
+        Text("Select a category to see your lists. From TaskList.kt")
     }
 }
 
@@ -106,7 +109,7 @@ fun EmptyState(message: String, onAddClick: () -> Unit) {
             modifier = Modifier.padding(bottom = 16.dp)
         )
         Button(onClick = onAddClick) {
-            Text("Add a new List")
+            Text("Add a new List from TaskList.kt")
         }
     }
 }

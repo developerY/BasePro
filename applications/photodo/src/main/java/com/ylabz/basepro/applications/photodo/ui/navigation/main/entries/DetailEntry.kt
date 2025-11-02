@@ -1,6 +1,10 @@
 package com.ylabz.basepro.applications.photodo.ui.navigation.main.entries
 
 import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -13,6 +17,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
@@ -53,7 +58,7 @@ fun DetailEntry(
     LaunchedEffect(Unit) {
         setTopBar {
             TopAppBar(
-                title = { Text("List Details") },
+                title = { Text("List Details from DetailEntry.kt") },
                 scrollBehavior = scrollBehavior,
                 navigationIcon = {
                     IconButton(onClick = { backStack.removeLastOrNull() }) {
@@ -77,7 +82,7 @@ fun DetailEntry(
         setFabState(
             FabStateMenu.Menu(
                 mainButtonAction = FabAction(
-                    text = "",
+                    text = "DetailEntry.kt",
                     icon = Icons.Default.Add,
                     onClick = {
                         Log.d(TAG, "Main button clicked in DetailEntry")
@@ -85,7 +90,7 @@ fun DetailEntry(
                 ),
                 items = listOf(
                     FabAction(
-                        text = "Item",
+                        text = "Item from DetailEntry.kt",
                         icon = Icons.Default.Add,
                         onClick = {
                             Log.d(TAG, "Item button clicked in DetailEntry")
@@ -95,6 +100,11 @@ fun DetailEntry(
             )
         )
     }
-    PhotoDoDetailUiRoute(viewModel = viewModel)
+    Box(modifier = Modifier.fillMaxSize().background(Color.Magenta)) {
+        Column {
+            Text("Source: DetailEntry.kt")
+            PhotoDoDetailUiRoute(viewModel = viewModel)
+        }
+    }
 
 }
