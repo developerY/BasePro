@@ -3,6 +3,7 @@ package com.ylabz.basepro.applications.photodo.ui.navigation.main.entries
 // applications/photodo/src/main/java/com/ylabz/basepro/applications/photodo/ui/navigation/main/entries/ListEntry.kt
 
 import android.util.Log
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.NoteAdd
 import androidx.compose.material.icons.filled.Add
@@ -58,13 +59,13 @@ fun ListEntry(
     LaunchedEffect(Unit) {
         setTopBar {
             LargeTopAppBar(
-                title = { Text("Task Lists with (+)") },
+                title = { Text("Task Lists from ListEntry.kt") },
                 scrollBehavior = scrollBehavior,
                 actions = {
                     IconButton(onClick = { viewModel.onEvent(PhotoDoListEvent.OnDeleteAllTaskListsClicked) }) {
                         Icon(
                             Icons.Filled.DeleteSweep,
-                            contentDescription = "Delete All Lists"
+                            contentDescription = "Delete All Lists from ListEntry.kt"
                         )
                     }
                 }
@@ -99,19 +100,19 @@ fun ListEntry(
         setFabState(
             FabStateMenu.Menu(
                 mainButtonAction = FabAction(
-                    text = "", // Icon-only FAB
+                    text = "ListEntry.kt", // Icon-only FAB
                     icon = Icons.Default.Add,
                     onClick = {}
                 ),
                 items = listOfNotNull(
                     FabAction(
-                        "List",
+                        "List from ListEntry.kt",
                         Icons.AutoMirrored.Filled.NoteAdd
                     ) {
                         viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked)
                     },
                     if (isDetailVisible) FabAction(
-                        "Item",
+                        "Item from ListEntry.kt",
                         Icons.Default.Add
                     ) {
                         Log.d(TAG, "Add Item from FAB clicked (requires Detail ViewModel)")
@@ -120,20 +121,22 @@ fun ListEntry(
             )
         )
     }
-
-    PhotoDoListUiRoute(
-        onTaskClick = { listId ->
-            // NAV_LOG: Log navigation from TaskList to Detail
-            Log.d(TAG, "TaskList onTaskClick triggered. ListId: $listId")
-            val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
-            Log.d(TAG, " -> Calling backStack.add with TaskListDetailKey($listId)")
-            backStack.add(detailKey)
-        },
-        /*onTaskClick = { listId ->
-            val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
-            backStack.add(detailKey)
-        },*/
-        onEvent = viewModel::onEvent,
-        viewModel = viewModel
-    )
+    Column {
+        Text("Source: ListEntry.kt")
+        PhotoDoListUiRoute(
+            onTaskClick = { listId ->
+                // NAV_LOG: Log navigation from TaskList to Detail
+                Log.d(TAG, "TaskList onTaskClick triggered. ListId: $listId")
+                val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
+                Log.d(TAG, " -> Calling backStack.add with TaskListDetailKey($listId)")
+                backStack.add(detailKey)
+            },
+            /*onTaskClick = { listId ->
+                val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
+                backStack.add(detailKey)
+            },*/
+            onEvent = viewModel::onEvent,
+            viewModel = viewModel
+        )
+    }
 }

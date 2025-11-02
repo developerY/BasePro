@@ -2,6 +2,7 @@ package com.ylabz.basepro.applications.photodo.features.photodolist.ui.list
 
 import android.util.Log
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -33,25 +34,34 @@ fun PhotoDoListUiRoute(
         is PhotoDoListUiState.Loading -> {
             Log.d(TAG, "Displaying Loading state")
             Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
+                Column {
+                    Text("Source: PhotoDoListUiRoute.kt")
+                    CircularProgressIndicator()
+                }
             }
         }
         is PhotoDoListUiState.Success -> {
             Log.d(TAG, "Displaying Success state with ${state.taskLists.size} items.")
-            LazyColumn(modifier = modifier) {
-                items(state.taskLists) { task ->
-                    PhotoDoTaskCard(
-                        task = task,
-                        onItemClick = { onTaskClick(task.listId) },
-                        onDeleteClick = { onEvent(PhotoDoListEvent.OnDeleteTaskListClicked(task.listId)) },
-                    )
+            Column {
+                Text("Source: PhotoDoListUiRoute.kt")
+                LazyColumn(modifier = modifier) {
+                    items(state.taskLists) { task ->
+                        PhotoDoTaskCard(
+                            task = task,
+                            onItemClick = { onTaskClick(task.listId) },
+                            onDeleteClick = { onEvent(PhotoDoListEvent.OnDeleteTaskListClicked(task.listId)) },
+                        )
+                    }
                 }
             }
         }
         is PhotoDoListUiState.Error -> {
             Log.e(TAG, "Displaying Error state: ${state.message}")
             Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = state.message)
+                Column {
+                    Text("Source: PhotoDoListUiRoute.kt")
+                    Text(text = state.message)
+                }
             }
         }
     }

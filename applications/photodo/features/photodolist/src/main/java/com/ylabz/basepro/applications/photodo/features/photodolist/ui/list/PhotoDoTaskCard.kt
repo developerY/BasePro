@@ -71,6 +71,7 @@ fun PhotoDoTaskCard(
                 .fillMaxWidth()
                 .animateContentSize() // Animate size changes smoothly
         ) {
+            Text("Source: PhotoDoTaskCard.kt")
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -90,7 +91,7 @@ fun PhotoDoTaskCard(
                         IconButton(onClick = { showMenu = true }) {
                             Icon(
                                 Icons.Filled.MoreVert,
-                                contentDescription = "More options",
+                                contentDescription = "More options from PhotoDoTaskCard.kt",
                                 tint = contentColor
                             )
                         }
@@ -99,7 +100,7 @@ fun PhotoDoTaskCard(
                             onDismissRequest = { showMenu = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Delete") },
+                                text = { Text("Delete from PhotoDoTaskCard.kt") },
                                 onClick = {
                                     onDeleteClick()
                                     showMenu = false
@@ -111,7 +112,7 @@ fun PhotoDoTaskCard(
                     IconButton(onClick = { expanded = !expanded }) {
                         Icon(
                             imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
-                            contentDescription = if (expanded) "Collapse" else "Expand",
+                            contentDescription = if (expanded) "Collapse from PhotoDoTaskCard.kt" else "Expand from PhotoDoTaskCard.kt",
                             modifier = Modifier.rotate(iconRotation),
                             tint = contentColor
                         )
