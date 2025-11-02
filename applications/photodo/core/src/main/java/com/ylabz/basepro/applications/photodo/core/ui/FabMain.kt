@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 
 
@@ -41,7 +42,7 @@ fun FabMain(fabState: FabState?) {
         is FabState.Single -> {
             ExtendedFloatingActionButton(
                 onClick = fabState.onClick,
-                text = { Text(fabState.text) },
+                text = { Text("${fabState.text} -- FabMain Single") },
                 icon = { Icon(fabState.icon, contentDescription = fabState.text) }
             )
         }
@@ -51,7 +52,7 @@ fun FabMain(fabState: FabState?) {
                 // The main button that toggles the menu
                 button = {
                     ExtendedFloatingActionButton(
-                        text = { Text("Add List") },
+                        text = { Text("Add List -- FabMain Split") },
                         icon = { Icon(Icons.Default.Add, contentDescription = "Add List") },
                         onClick = {
                             // If the menu is open, the main button performs the primary action.
@@ -98,9 +99,6 @@ fun FabMenu(fabStateMenu: FabStateMenu?) {
     }
 
     when (fabStateMenu) {
-
-
-
         is FabStateMenu.Menu -> {
             // The duplicate state declaration has been removed from here.
             FloatingActionButtonMenu(
@@ -130,7 +128,8 @@ fun FabMenu(fabStateMenu: FabStateMenu?) {
                         Icon(
                             imageVector = fabStateMenu.mainButtonAction.icon,
                             contentDescription = "Open menu",
-                            modifier = Modifier.rotate(rotation)
+                            modifier = Modifier.rotate(rotation),
+                            tint = Color.Green// LocalContentColor.current, -- used for debug
                         )
                     }
                 }
@@ -143,7 +142,7 @@ fun FabMenu(fabStateMenu: FabStateMenu?) {
                             item.onClick() // <-- THIS WILL NOW CALL YOUR VIEWMODEL
                             isFabMenuExpanded = false // Close the menu after clicking.
                         },
-                        text = { Text(item.text) },
+                        text = { Text("${item.text} -- FabMenu foreach") },
                         icon = { Icon(item.icon, contentDescription = item.text) },
                         containerColor = MaterialTheme.colorScheme.secondaryContainer
                     )
@@ -172,6 +171,11 @@ fun FabMenu(fabStateMenu: FabStateMenu?) {
         }
     }
 }
+
+
+/**
+ * Preview --- Starts Here
+ */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Preview
 @Composable
@@ -185,36 +189,4 @@ fun FabMainPreview() {
         secondaryOnClick = {}
     )
     FabMain(fabState)
-}
-
-@Preview
-@Composable
-fun FabOrigPreview() {
-    val fabState = FabState.Single(
-        text = "Add Item",
-        icon = Icons.Default.Add,
-        onClick = {}
-    )
-    FabOrig(fabState)
-}
-
-
-@Composable
-private fun FabOrig(fabState: FabState?) {
-    when (fabState) {
-        is FabState.Single -> {
-            ExtendedFloatingActionButton(
-                onClick = fabState.onClick,
-                text = { Text(fabState.text) },
-                icon = { Icon(fabState.icon, contentDescription = null) }
-            )
-        }
-        is FabState.Split -> {
-            // We are calling the new SplitButtonFab composable here
-            SplitButtonFab(fabState = fabState)
-        }
-        is FabState.Hidden, null -> {
-            // Do nothing to show no FAB
-        }
-    }
 }

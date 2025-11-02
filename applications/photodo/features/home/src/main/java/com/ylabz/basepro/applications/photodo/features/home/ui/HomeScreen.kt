@@ -64,31 +64,30 @@ fun HomeScreen(
             )
         } else {
             setFabState(
-            // Context: A category IS selected.
-            // Action: The FAB should add a new list to that category.
-            // ### FIX ###
-            // Use the correct `FabState.Single` constructor and provide the icon.
-            //Log.d("HomeScreen", "Selected category: ${uiState.selectedCategory.categoryId}")
-            FabStateMenu.Menu(
-                mainButtonAction = FabAction(
-                    text = "Add List -- HomeScreen",
-                    icon = Icons.Default.Add,
-                    onClick = {
-                        Log.d("HomeScreen", "Selected category: ${uiState.selectedCategory.categoryId}")
-                        onEvent(HomeEvent.OnAddCategoryClicked)
-                    }
-                ),
-                items = listOf(
-                    FabAction(
-                        text = "Add Category -- HomeScreen",
-                        icon = Icons.Default.Create,
+                // Context: A category IS selected.
+                // Action: The FAB should add a new list to that category.
+                // ### FIX ###
+                // Use the correct `FabState.Single` constructor and provide the icon.
+                //Log.d("HomeScreen", "Selected category: ${uiState.selectedCategory.categoryId}")
+                FabStateMenu.Menu(
+                    mainButtonAction = FabAction(
+                        text = "Add List -- HomeScreen",
+                        icon = Icons.Default.Add,
                         onClick = {
                             Log.d("HomeScreen", "Selected category: ${uiState.selectedCategory.categoryId}")
-                            onEvent(HomeEvent.OnAddCategoryClicked)
-                        }
+                            onEvent(HomeEvent.OnAddListClicked) } // <-- Corrected Event
+                    ),
+                    items = listOf(
+                        FabAction(
+                            text = "Add Category -- HomeScreen",
+                            icon = Icons.Default.Create,
+                            onClick = {
+                                Log.d("HomeScreen", "Selected category: ${uiState.selectedCategory.categoryId}")
+                                onEvent(HomeEvent.OnAddCategoryClicked)
+                            }
+                        )
                     )
                 )
-            )
             )
         }
     }
