@@ -9,6 +9,7 @@ import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -89,6 +90,59 @@ fun HomeScreen(
                     )
                 )
             )
+        }
+    }
+
+    // ### FIX: Use DisposableEffect to manage the FAB lifecycle ###
+    // ### WHY: This provides an `onDispose` block that is crucial for
+    // cleaning up the FAB state when the user navigates away from HomeScreen.
+
+    DisposableEffect(uiState.selectedCategory) {
+        val fabState = if (uiState.selectedCategory == null) {
+            // Context: No category is selected.
+            Log.d("FabLifecycle", "HomeScreen: Configuring FAB for 'Add Category'")
+            FabStateMenu.Single(
+                action = FabAction(
+                    text = "Add Category",
+                    icon = Icons.Default.Add,
+                    onClick = {
+                        Log.d("HomeScreen", "FAB Click: Add Category")
+                        onEvent(HomeEvent.OnAddCategoryClicked)
+                    }
+                )
+            )
+        } else {
+            // Context: A category IS selected.
+            Log.d("FabLifecycle", "HomeScreen: Configuring FAB for 'Add List' menu")
+            FabStateMenu.Menu(
+                mainButtonAction = FabAction(
+                    text = "Add List", // Simplified text
+                    icon = Icons.Default.Add,
+                    onClick = {
+                        Log.d("HomeScreen", "FAB Click: Add List to ${uiState.selectedCategory.categoryId}")
+                        onEvent(HomeEvent.OnAddListClicked)
+                    }
+                ),
+                items = listOf(
+                    FabAction(
+                        text = "Add Category", // Simplified text
+                        icon = Icons.Default.Create,
+                        onClick = {
+                            Log.d("HomeScreen", "FAB Click: Add Category")
+                            onEvent(HomeEvent.OnAddCategoryClicked)
+                        }
+                    )
+                )
+            )
+        }
+
+        // 1. SET the FAB state when the effect runs
+        setFabState(fabState)
+
+        // 2. CLEAN UP the FAB when HomeScreen is disposed
+        onDispose {
+            Log.d("FabLifecycle", "HomeScreen: Disposing. Clearing FAB state.")
+            setFabState(null)
         }
     }
 
