@@ -1,7 +1,3 @@
-Here is a `README.md` for your `BasePro` GitHub repository, based on the file structure you've provided.
-
----
-
 # BasePro Android Monorepo
 
 Welcome to the `BasePro` repository. This is an Android monorepo containing multiple, distinct applications that share a common set of core libraries and feature modules.

@@ -1,7 +1,3 @@
-That's a fantastic idea! A photo-first to-do app is a perfect match for a foldable device like the Pixel 10 Fold. The visual nature of it is very intuitive. Let's take that solid foundation and make it even better by focusing on the user experience and leveraging the unique form factor.
-
-Let's call the enhanced concept **TaskView**.
-
 ### The Core Idea, Enhanced
 
 Instead of just a single list of tasks, we can introduce a simple hierarchy that dramatically improves organization without adding complexity.
