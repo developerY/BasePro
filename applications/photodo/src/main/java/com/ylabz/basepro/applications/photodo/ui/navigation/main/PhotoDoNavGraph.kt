@@ -161,7 +161,9 @@ fun PhotoDoNavGraph(
                     scrollBehavior = scrollBehavior,
                     setTopBar = setTopBar,
                     setFabState = setFabState,
-                    onCategorySelected = onCategorySelected
+                    onCategorySelected = onCategorySelected,
+                    onAddListClicked = onAddListClicked,
+                    onAddItemClicked = onAddItemClicked
                 )
             }
 

@@ -15,6 +15,7 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
@@ -36,7 +37,9 @@ fun ListEntry(
     scrollBehavior: TopAppBarScrollBehavior,
     setTopBar: (@Composable () -> Unit) -> Unit,
     setFabState: (FabStateMenu?) -> Unit,
-    onCategorySelected: (Long) -> Unit
+    onCategorySelected: (Long) -> Unit,
+    onAddListClicked: () -> Unit, // <-- 1. ADD THIS PARAMETER
+    onAddItemClicked: () -> Unit // <-- 1. ADD THIS PARAMETER
 ) {
     // NAV_LOG: Log rendering of TaskListKey entry
     Log.d(TAG, "Displaying content for TaskListKey (categoryId=${listKey.categoryId})")
@@ -93,34 +96,42 @@ fun ListEntry(
         )*/
     }
 
-// ** FAB LOGIC UPDATED **
-    LaunchedEffect(backStack.lastOrNull()) {
+// ** FAB LOGIC UPDATED TO USE DisposableEffect **
+    DisposableEffect(backStack.lastOrNull()) { // <-- 2. CHANGED to DisposableEffect
         val isDetailVisible = backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey
 
-        setFabState(
-            FabStateMenu.Menu(
-                mainButtonAction = FabAction(
-                    text = "ListEntry.kt", // Icon-only FAB
-                    icon = Icons.Default.Add,
-                    onClick = {}
-                ),
-                items = listOfNotNull(
-                    FabAction(
-                        "List from ListEntry.kt",
-                        Icons.AutoMirrored.Filled.NoteAdd
-                    ) {
-                        viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked)
-                    },
-                    if (isDetailVisible) FabAction(
-                        "Item from ListEntry.kt",
-                        Icons.Default.Add
-                    ) {
-                        Log.d(TAG, "Add Item from FAB clicked (requires Detail ViewModel)")
-                    } else null
-                )
+        val fabMenu = FabStateMenu.Menu(
+            mainButtonAction = FabAction(
+                text = "Add", // "ListEntry.kt" was likely for debugging
+                icon = Icons.Default.Add,
+                onClick = onAddListClicked // <-- 3. WIRED main button to Add List
+            ),
+            items = listOfNotNull(
+                // This is the "Add List" button for the menu
+                FabAction(
+                    "Add List",
+                    Icons.AutoMirrored.Filled.NoteAdd
+                ) {
+                    onAddListClicked() // <-- 4. WIRED menu item to Add List
+                },
+                // Only show "Add Item" if the detail pane is also visible
+                if (isDetailVisible) FabAction(
+                    "Add Item",
+                    Icons.Default.Add
+                ) {
+                    onAddItemClicked() // <-- 5. WIRED menu item to Add Item
+                } else null
             )
         )
+
+        setFabState(fabMenu) // 6. SET the FAB state
+
+        // 7. CLEAN UP the FAB when ListEntry is disposed
+        onDispose {
+            setFabState(null)
+        }
     }
+
     Column {
         Text("Source: ListEntry.kt")
         PhotoDoListUiRoute(
@@ -131,10 +142,6 @@ fun ListEntry(
                 Log.d(TAG, " -> Calling backStack.add with TaskListDetailKey($listId)")
                 backStack.add(detailKey)
             },
-            /*onTaskClick = { listId ->
-                val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
-                backStack.add(detailKey)
-            },*/
             onEvent = viewModel::onEvent,
             viewModel = viewModel
         )

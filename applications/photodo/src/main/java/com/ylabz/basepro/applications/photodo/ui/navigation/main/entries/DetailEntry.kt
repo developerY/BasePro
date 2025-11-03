@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -55,7 +56,9 @@ fun DetailEntry(
     }
 
     // This effect now correctly sets the FAB to "Add Item" instead of null.
-    LaunchedEffect(Unit) {
+    // ### CHANGED to DisposableEffect ###
+    // This provides an 'onDispose' block to clear the FAB when navigating away.
+    DisposableEffect(detailKey) { // <-- CHANGED from LaunchedEffect
         setTopBar {
             TopAppBar(
                 title = { Text("List Details from DetailEntry.kt") },
@@ -79,32 +82,42 @@ fun DetailEntry(
 
         // The FAB is a single "Add Item" button on this screen.
         // ** FAB LOGIC UPDATED **
-        setFabState(
-            FabStateMenu.Menu(
-                mainButtonAction = FabAction(
-                    text = "DetailEntry.kt",
+        val detailFab = FabStateMenu.Menu(
+            mainButtonAction = FabAction(
+                text = "DetailEntry.kt",
+                icon = Icons.Default.Add,
+                onClick = {
+                    Log.d(TAG, "Main button clicked in DetailEntry")
+                    // This is your existing logic, which is fine.
+                    // It likely triggers a bottom sheet from the ViewModel.
+                    viewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked)
+                }
+            ),
+            items = listOf(
+                FabAction(
+                    text = "Item from DetailEntry.kt",
                     icon = Icons.Default.Add,
                     onClick = {
-                        Log.d(TAG, "Main button clicked in DetailEntry")
+                        Log.d(TAG, "Item button clicked in DetailEntry")
+                        viewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked)
                     }
-                ),
-                items = listOf(
-                    FabAction(
-                        text = "Item from DetailEntry.kt",
-                        icon = Icons.Default.Add,
-                        onClick = {
-                            Log.d(TAG, "Item button clicked in DetailEntry")
-                            viewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked) }
-                    )
                 )
             )
         )
+
+        setFabState(detailFab)
+
+        // ### ADDED ON_DISPOSE ###
+        // This is the crucial cleanup step.
+        onDispose {
+            setFabState(null)
+        }
     }
+
     Box(modifier = Modifier.fillMaxSize().background(Color.Magenta)) {
         Column {
             Text("Source: DetailEntry.kt")
             PhotoDoDetailUiRoute(viewModel = viewModel)
         }
     }
-
 }
