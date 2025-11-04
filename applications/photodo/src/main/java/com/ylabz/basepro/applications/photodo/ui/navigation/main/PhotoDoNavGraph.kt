@@ -184,6 +184,7 @@ fun PhotoDoNavGraph(
                 // Call the extracted composable, passing in the necessary state.
                 DetailEntry(
                     modifier = modifier,
+                    isExpandedScreen = isExpandedScreen,
                     detailKey = detailKey,
                     backStack = backStack,
                     scrollBehavior = scrollBehavior,

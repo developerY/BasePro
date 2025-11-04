@@ -38,6 +38,7 @@ private const val TAG = "DetailEntry"
 @Composable
 fun DetailEntry(
     modifier: Modifier = Modifier,
+    isExpandedScreen: Boolean, // <-- 1. PARAMETER ADDED
     detailKey: PhotoDoNavKeys.TaskListDetailKey,
     backStack: NavBackStack<NavKey>,
     scrollBehavior: TopAppBarScrollBehavior,
@@ -58,7 +59,7 @@ fun DetailEntry(
     // This effect now correctly sets the FAB to "Add Item" instead of null.
     // ### CHANGED to DisposableEffect ###
     // This provides an 'onDispose' block to clear the FAB when navigating away.
-    DisposableEffect(detailKey) { // <-- CHANGED from LaunchedEffect
+    DisposableEffect(detailKey, isExpandedScreen) { // <-- CHANGED from LaunchedEffect
         setTopBar {
             TopAppBar(
                 title = { Text("List Details from DetailEntry.kt") },
