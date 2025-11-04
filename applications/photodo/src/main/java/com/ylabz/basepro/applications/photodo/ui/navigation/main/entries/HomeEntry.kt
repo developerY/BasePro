@@ -162,6 +162,7 @@ fun HomeEntry(
                 ),
                 // "Add List" is only available if a category is selected.
                 // Action to add to Column 2 (List) - Only if a category is selected
+                // We only show "Add List" if a category is selected in this pane
                 if (isCategorySelected) FabAction(
                     text = "List",
                     icon = Icons.AutoMirrored.Filled.NoteAdd,
@@ -173,7 +174,7 @@ fun HomeEntry(
                         Log.d(TAG, "-> Invoking onAddListClicked lambda.")
                         onAddListClicked()
                     }
-                ) else null,
+                /*) else null,
                 // Action to add to Column 3 (Item) - Only if a list is selected
                 if (isListSelected) FabAction(
                     text = "Item",
@@ -188,8 +189,10 @@ fun HomeEntry(
                         // TODO: Implement this by posting a RequestAddItem event
                         Log.d(TAG, "-> Invoking onAddItemClicked lambda.")
                         onAddItemClicked()
-                    }
+                    }*/
                 ) else null
+                // "Add Item" is removed. It's impossible for Detail to be visible
+                // if Home is the last item on the stack.
             )
         )
 
@@ -291,26 +294,29 @@ fun HomeEntry(
         // parameter of the `AppContent` function. You just need to pass it down.
         // This allows the HomeScreen to notify the MainScreen whenever a new
         // category is selected, keeping the "Tasks" tab in sync.
-        onCategorySelected = onCategorySelected,
+        // onCategorySelected = onCategorySelected,
 
         // ### THIS IS THE FIX ###
         // The lambda for `onCategorySelected` (which is for Pane 1 -> Pane 2)
         // must perform navigation on the main backStack.
-        /* onCategorySelected = { categoryId ->
+        onCategorySelected = { categoryId ->
             Log.d(TAG, "Category clicked. Navigating to TaskList for categoryId: $categoryId")
-
-            // 1. Call the original lambda from MainScreen to update the remembered ID
-            onCategorySelected(categoryId)
-
-            // 2. Define the new destination key
+            onCategorySelected(categoryId) // Update remembered ID
             val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
 
-            // 3. Replace the stack *above* the HomeFeedKey.
-            // This cleanly removes any old ListKey or DetailKey and adds the new ListKey.
-            // This is the correct way to handle this navigation and avoids the race condition.
-            Log.d(TAG, " -> Calling backStack.replaceAll(HomeFeedKey, TaskListKey($categoryId))")
-            backStack.replaceAll(PhotoDoNavKeys.HomeFeedKey, listKey)
-        },*/
+            // This navigation logic is correct.
+            val homeKeyIndex = backStack.indexOf(PhotoDoNavKeys.HomeFeedKey)
+            if (homeKeyIndex != -1) {
+                while (backStack.lastIndex > homeKeyIndex) {
+                    backStack.removeLastOrNull()
+                }
+            } else {
+                backStack.clear()
+                backStack.add(PhotoDoNavKeys.HomeFeedKey)
+            }
+            backStack.add(listKey)
+            Log.d(TAG, " -> Stack modified. New top is TaskListKey($categoryId)")
+        },
         // ### END OF FIX ###
 
         // setFabState = setFabState // <-- Pass the FAB setter down
