@@ -45,7 +45,7 @@ fun DetailEntry(
     setTopBar: (@Composable () -> Unit) -> Unit,
     setFabState: (FabStateMenu?) -> Unit
 ) {
-// NAV_LOG: Log rendering of TaskListDetailKey entry
+    // NAV_LOG: Log rendering of TaskListDetailKey entry
     Log.d(TAG, "Displaying content for TaskListDetailKey (listId=${detailKey.listId})")
     val viewModel: PhotoDoDetailViewModel = hiltViewModel()
     LaunchedEffect(detailKey.listId) {
@@ -59,44 +59,29 @@ fun DetailEntry(
     // This effect now correctly sets the FAB to "Add Item" instead of null.
     // ### CHANGED to DisposableEffect ###
     // This provides an 'onDispose' block to clear the FAB when navigating away.
-    DisposableEffect(detailKey, isExpandedScreen) { // <-- CHANGED from LaunchedEffect
-        setTopBar {
-            TopAppBar(
-                title = { Text("List Details from DetailEntry.kt") },
-                scrollBehavior = scrollBehavior,
-                navigationIcon = {
-                    IconButton(onClick = { backStack.removeLastOrNull() }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        )
+    DisposableEffect(detailKey, isExpandedScreen) {
+        // ### THIS IS THE FIX ###
+        // Check if this entry is the "owner" of the FAB
+        val isFabOwner = backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey
+
+        if (isFabOwner) {
+            // We are the last pane. We control the FAB.
+            setTopBar {
+                TopAppBar(
+                    title = { Text("List Details from DetailEntry.kt") },
+                    scrollBehavior = scrollBehavior,
+                    navigationIcon = {
+                        IconButton(onClick = { backStack.removeLastOrNull() }) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        }
                     }
-                }
-            )
-        }
+                )
+            }
 
-        // ### WHY & WHAT ###
-        // This sets the FAB state when the detail screen is visible.
-        // The text is "Add Item" and the action calls the new onEvent
-        // function in the PhotoDoDetailViewModel. This fixes the bug where
-        // the FAB would disappear on this screen.
-
-        // The FAB is a single "Add Item" button on this screen.
-        // ** FAB LOGIC UPDATED **
-        val detailFab = FabStateMenu.Menu(
-            mainButtonAction = FabAction(
-                text = "DetailEntry.kt",
-                icon = Icons.Default.Add,
-                onClick = {
-                    Log.d(TAG, "Main button clicked in DetailEntry")
-                    // This is your existing logic, which is fine.
-                    // It likely triggers a bottom sheet from the ViewModel.
-                    viewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked)
-                }
-            ),
-            items = listOf(
-                FabAction(
-                    text = "Item from DetailEntry.kt",
+            // Both compact and expanded get a simple "Add Item" FAB
+            val detailFab = FabStateMenu.Single(
+                action = FabAction(
+                    text = "Add Item",
                     icon = Icons.Default.Add,
                     onClick = {
                         Log.d(TAG, "Item button clicked in DetailEntry")
@@ -104,14 +89,16 @@ fun DetailEntry(
                     }
                 )
             )
-        )
+            setFabState(detailFab)
+        }
+        // If we are not the owner (which shouldn't happen), we do nothing.
+        // ### END OF FIX ###
 
-        setFabState(detailFab)
-
-        // ### ADDED ON_DISPOSE ###
-        // This is the crucial cleanup step.
         onDispose {
-            setFabState(null)
+            // Only clear the FAB if we were the one who set it.
+            if (isFabOwner) {
+                setFabState(null)
+            }
         }
     }
 

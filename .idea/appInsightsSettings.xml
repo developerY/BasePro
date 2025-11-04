@@ -21,14 +21,6 @@
         <entry key="Firebase Crashlytics">
           <value>
             <InsightsFilterSettings>
-              <option name="connection">
-                <ConnectionSetting>
-                  <option name="appId" value="com.ylabz.basepro.applications.bike" />
-                  <option name="mobileSdkAppId" value="1:606488695912:android:4414b7232e838bfc7e57dd" />
-                  <option name="projectId" value="ashbike-zoewave" />
-                  <option name="projectNumber" value="606488695912" />
-                </ConnectionSetting>
-              </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
               <option name="timeIntervalDays" value="THIRTY_DAYS" />
               <option name="visibilityType" value="ALL" />

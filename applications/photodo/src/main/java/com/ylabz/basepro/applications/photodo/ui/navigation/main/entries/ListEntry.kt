@@ -39,7 +39,7 @@ fun ListEntry(
     setFabState: (FabStateMenu?) -> Unit,
     onCategorySelected: (Long) -> Unit,
     onAddListClicked: () -> Unit, // <-- 1. ADD THIS PARAMETER
-    onAddItemClicked: () -> Unit // <-- 1. ADD THIS PARAMETER
+    onAddItemClicked: () -> Unit // <-- Make sure this is passed from NavGraph
 ) {
     // NAV_LOG: Log rendering of TaskListKey entry
     Log.d(TAG, "Displaying content for TaskListKey (categoryId=${listKey.categoryId})")
@@ -96,41 +96,63 @@ fun ListEntry(
         )*/
     }
 
-// ** FAB LOGIC UPDATED TO USE DisposableEffect **
-    DisposableEffect(backStack.lastOrNull()) { // <-- 2. CHANGED to DisposableEffect
-        val isDetailVisible = backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey
+    // ** FAB LOGIC UPDATED TO USE DisposableEffect **
+    DisposableEffect(backStack.lastOrNull(), isExpandedScreen) {
+        // ### THIS IS THE FIX ###
+        // Check if this entry is the "owner" of the FAB
+        val isFabOwner = backStack.lastOrNull() is PhotoDoNavKeys.TaskListKey
 
-        val fabMenu = FabStateMenu.Menu(
-            mainButtonAction = FabAction(
-                text = "Add", // "ListEntry.kt" was likely for debugging
-                icon = Icons.Default.Add,
-                onClick = onAddListClicked // <-- 3. WIRED main button to Add List
-            ),
-            items = listOfNotNull(
-                // This is the "Add List" button for the menu
-                FabAction(
-                    "Add List",
-                    Icons.AutoMirrored.Filled.NoteAdd
-                ) {
-                    onAddListClicked() // <-- 4. WIRED menu item to Add List
-                },
-                // Only show "Add Item" if the detail pane is also visible
-                if (isDetailVisible) FabAction(
-                    "Add Item",
-                    Icons.Default.Add
-                ) {
-                    onAddItemClicked() // <-- 5. WIRED menu item to Add Item
-                } else null
-            )
-        )
+        if (isFabOwner) {
+            // We are the last pane. We control the FAB.
+            // On a folded phone, this is a simple "Add List" button.
+            // On an open phone, this is a menu with "Add List" and "Add Item".
+            val fabState = if (isExpandedScreen) {
+                FabStateMenu.Menu(
+                    mainButtonAction = FabAction(
+                        text = "Add",
+                        icon = Icons.Default.Add,
+                        onClick = onAddListClicked // Main action is Add List
+                    ),
+                    items = listOf(
+                        FabAction(
+                            "Add List",
+                            Icons.AutoMirrored.Filled.NoteAdd,
+                            onAddListClicked
+                        ),
+                        // We show "Add Item" because Pane 2 is active,
+                        // and it's logical to add an item to the selected list.
+                        FabAction(
+                            "Add Item",
+                            Icons.Default.Add,
+                            onAddItemClicked
+                        )
+                    )
+                )
+            } else {
+                // Compact screen, simple FAB
+                FabStateMenu.Single(
+                    action = FabAction(
+                        text = "Add List",
+                        icon = Icons.AutoMirrored.Filled.NoteAdd,
+                        onClick = onAddListClicked
+                    )
+                )
+            }
+            setFabState(fabState)
+        }
+        // If we are NOT the FabOwner, we do nothing.
+        // ### END OF FIX ###
 
-        setFabState(fabMenu) // 6. SET the FAB state
-
-        // 7. CLEAN UP the FAB when ListEntry is disposed
         onDispose {
-            setFabState(null)
+            // Only clear the FAB if we were the one who set it.
+            if (isFabOwner) {
+                setFabState(null)
+            }
         }
     }
+
+    // ... (rest of your Column and PhotoDoListUiRoute code) ...
+    // Be sure to pass `onAddItemClicked` to your PhotoDoListUiRoute if it's needed there
 
     Column {
         Text("Source: ListEntry.kt")
