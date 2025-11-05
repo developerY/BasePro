@@ -55,6 +55,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material3.adaptive.navigation3)
     debugImplementation(libs.androidx.ui.tooling)
+    // --- ADD THIS LINE ---
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     // Hilt
     implementation(libs.hilt.android)
@@ -70,6 +72,17 @@ dependencies {
 
     // Icons
     implementation(libs.androidx.material.icons.extended)
+
+    // Permissions
+    implementation(libs.google.accompanist.permissions)
+
+    // Add Camera
+    // CameraX
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
