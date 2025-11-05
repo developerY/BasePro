@@ -4,11 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.LocalActivity
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -75,10 +70,8 @@ fun MainScreen() {
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     var topBar: @Composable () -> Unit by remember { mutableStateOf({}) }
-    //var fabState: FabStateMenu? by remember { mutableStateOf(null) }
+    var fabState: FabStateMenu? by remember { mutableStateOf(null) }
 
-    // 1. Define the state for the FAB. It's nullable.
-    var currentFabState by remember { mutableStateOf<FabStateMenu?>(null) }
     val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
 
     // 2. Define the actions. These lambdas will be captured by the
@@ -140,8 +133,8 @@ fun MainScreen() {
                 scrollBehavior = scrollBehavior,
                 setTopBar = { topBar = it },
                 // THIS IS WHERE THE FUNCTION IS CREATED AND PASSED DOWN
-                setFabState = { newFabState -> currentFabState = newFabState },
-                // setFabState = { fabState = it },
+                // setFabState = { newFabState -> currentFabState = newFabState },
+                setFabState = { fabState = it },
                 onCategorySelected = { categoryId ->
                     // NAV_LOG: Log when the last selected category ID is updated
                     Log.d(TAG, "onCategorySelected callback triggered. Updating lastSelectedCategoryId to: $categoryId")
@@ -194,16 +187,9 @@ fun MainScreen() {
                     .nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = topBar,
                 floatingActionButton = {
-                    // 3. Animate the FAB based on the state.
-                    AnimatedVisibility(
-                        visible = currentFabState != null,
-                        enter = slideInVertically { it } + fadeIn(),
-                        exit = slideOutVertically { it } + fadeOut()
-                    ) {
-                        // 4. Render the actual FAB UI.
-                        currentFabState?.let { FabMenu(fabStateMenu = it) }
+                    if (fabState != null) {
+                        FabMenu(fabStateMenu = fabState!!)
                     }
-
                 }
                 //floatingActionButton = { FabMenu(fabState) }
             ) { padding ->
@@ -225,14 +211,8 @@ fun MainScreen() {
             },
             //floatingActionButton = { FabMenu(fabState) }
             floatingActionButton = {
-                // 3. Animate the FAB based on the state.
-                AnimatedVisibility(
-                    visible = currentFabState != null,
-                    enter = slideInVertically { it } + fadeIn(),
-                    exit = slideOutVertically { it } + fadeOut()
-                ) {
-                    // 4. Render the actual FAB UI.
-                    currentFabState?.let { FabMenu(fabStateMenu = it) }
+                if (fabState != null) {
+                    FabMenu(fabStateMenu = fabState!!)
                 }
             }
         ) { padding ->

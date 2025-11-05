@@ -102,6 +102,7 @@ fun PhotoDoNavGraph(
          * Composable content and adaptive layout metadata.
          */
         entryProvider = entryProvider {
+            val isExpandedScreen = true
 
             /**
              * =================================================================
@@ -189,7 +190,7 @@ fun PhotoDoNavGraph(
                     backStack = backStack,
                     scrollBehavior = scrollBehavior,
                     setTopBar = setTopBar,
-                    setFabState = setFabState
+                    // setFabState = setFabState
                 )
             }
 
@@ -204,7 +205,7 @@ fun PhotoDoNavGraph(
                     modifier = modifier,
                     scrollBehavior = scrollBehavior,
                     setTopBar = setTopBar,
-                    setFabState = setFabState,
+                    // setFabState = setFabState,
                 )
             }
         }

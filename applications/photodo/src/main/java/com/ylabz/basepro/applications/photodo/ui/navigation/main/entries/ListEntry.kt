@@ -15,7 +15,6 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
@@ -76,7 +75,7 @@ fun ListEntry(
         }
         //setFabState(FabState("Add List") { viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked) })
         // THIS IS THE NEW SPLIT FAB LOGIC
-        /*setFabState(
+        setFabState(
             FabStateMenu.Single(
                 action = FabAction(
                     text = "Add List",
@@ -93,67 +92,37 @@ fun ListEntry(
                 secondaryIcon = Icons.Default.Add, // Or a more specific list icon
                 secondaryOnClick = { viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked) }
             )*/
-        )*/
+        )
     }
 
-    // ** FAB LOGIC UPDATED TO USE DisposableEffect **
-    DisposableEffect(backStack.lastOrNull(), isExpandedScreen) {
-        // ### THIS IS THE FIX ###
-        // Check if this entry is the "owner" of the FAB
-        val isFabOwner = backStack.lastOrNull() is PhotoDoNavKeys.TaskListKey
+// ** FAB LOGIC UPDATED **
+    LaunchedEffect(backStack.lastOrNull()) {
+        val isDetailVisible = backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey
 
-        if (isFabOwner) {
-            // We are the last pane. We control the FAB.
-            // On a folded phone, this is a simple "Add List" button.
-            // On an open phone, this is a menu with "Add List" and "Add Item".
-            val fabState = if (isExpandedScreen) {
-                FabStateMenu.Menu(
-                    mainButtonAction = FabAction(
-                        text = "Add",
-                        icon = Icons.Default.Add,
-                        onClick = onAddListClicked // Main action is Add List
-                    ),
-                    items = listOf(
-                        FabAction(
-                            "Add List",
-                            Icons.AutoMirrored.Filled.NoteAdd,
-                            onAddListClicked
-                        ),
-                        // We show "Add Item" because Pane 2 is active,
-                        // and it's logical to add an item to the selected list.
-                        FabAction(
-                            "Add Item",
-                            Icons.Default.Add,
-                            onAddItemClicked
-                        )
-                    )
+        setFabState(
+            FabStateMenu.Menu(
+                mainButtonAction = FabAction(
+                    text = "ListEntry.kt", // Icon-only FAB
+                    icon = Icons.Default.Add,
+                    onClick = {}
+                ),
+                items = listOfNotNull(
+                    FabAction(
+                        "List from ListEntry.kt",
+                        Icons.AutoMirrored.Filled.NoteAdd
+                    ) {
+                        viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked)
+                    },
+                    if (isDetailVisible) FabAction(
+                        "Item from ListEntry.kt",
+                        Icons.Default.Add
+                    ) {
+                        Log.d(TAG, "Add Item from FAB clicked (requires Detail ViewModel)")
+                    } else null
                 )
-            } else {
-                // Compact screen, simple FAB
-                FabStateMenu.Single(
-                    action = FabAction(
-                        text = "Add List",
-                        icon = Icons.AutoMirrored.Filled.NoteAdd,
-                        onClick = onAddListClicked
-                    )
-                )
-            }
-            setFabState(fabState)
-        }
-        // If we are NOT the FabOwner, we do nothing.
-        // ### END OF FIX ###
-
-        onDispose {
-            // Only clear the FAB if we were the one who set it.
-            if (isFabOwner) {
-                setFabState(null)
-            }
-        }
+            )
+        )
     }
-
-    // ... (rest of your Column and PhotoDoListUiRoute code) ...
-    // Be sure to pass `onAddItemClicked` to your PhotoDoListUiRoute if it's needed there
-
     Column {
         Text("Source: ListEntry.kt")
         PhotoDoListUiRoute(
@@ -164,6 +133,10 @@ fun ListEntry(
                 Log.d(TAG, " -> Calling backStack.add with TaskListDetailKey($listId)")
                 backStack.add(detailKey)
             },
+            /*onTaskClick = { listId ->
+                val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
+                backStack.add(detailKey)
+            },*/
             onEvent = viewModel::onEvent,
             viewModel = viewModel
         )

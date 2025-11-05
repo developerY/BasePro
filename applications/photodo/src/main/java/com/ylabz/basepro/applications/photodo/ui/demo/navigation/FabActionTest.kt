@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 /**
  * A simple data class to hold the information for each menu item.
  */
-data class FabAction(
+data class FabActionDemo(
     val icon: ImageVector,
     val text: String,
     val onClick: () -> Unit
@@ -44,7 +44,7 @@ data class FabAction(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ExpandingFabMenuTest(
-    menuItems: List<FabAction>
+    menuItems: List<FabActionDemo>
 ) {
     // Menu starts closed
     var isFabMenuExpanded by remember { mutableStateOf(false) }
@@ -99,8 +99,8 @@ fun ExpandingFabMenuTest(
 @Composable
 fun TestFabInApp() {
     val menuItems = listOf(
-        FabAction(Icons.Default.Create, "Category") {},
-        FabAction(Icons.Default.NoteAdd, "List") {}
+        FabActionDemo(Icons.Default.Create, "Category") {},
+        FabActionDemo(Icons.Default.NoteAdd, "List") {}
     )
 
     Scaffold(
@@ -123,7 +123,7 @@ fun TestFabInApp() {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ExpandingFabMenu(
-    menuItems: List<FabAction>
+    menuItems: List<FabActionDemo>
 ) {
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -170,7 +170,7 @@ fun ExpandingFabMenu(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ExpandingFabMenuWorking(
-    menuItems: List<FabAction>
+    menuItems: List<FabActionDemo>
 ) {
     // Menu starts closed
     var isFabMenuExpanded by remember { mutableStateOf(false) }
@@ -226,12 +226,12 @@ fun ExpandingFabMenuWorking(
 /**
  * This is the self-contained expanding FAB menu composable.
  *
- * @param menuItems A list of [FabAction]s to display when the menu is open.
+ * @param menuItems A list of [FabActionDemo]s to display when the menu is open.
  */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ExpandingFabMenuOld(
-    menuItems: List<FabAction>
+    menuItems: List<FabActionDemo>
 ) {
     // This is the single source of truth for the menu's state.
     // It's initialized to `false` so the menu always starts closed.
@@ -286,12 +286,12 @@ fun ExpandingFabMenuOld(
 fun ExpandingFabPreview() {
     // 1. Define the list of actions for the preview.
     val sampleMenuItems = listOf(
-        FabAction(
+        FabActionDemo(
             icon = Icons.Default.Create,
             text = "Category",
             onClick = { /* TODO: Handle Category click */ }
         ),
-        FabAction(
+        FabActionDemo(
             icon = Icons.Default.NoteAdd,
             text = "List",
             onClick = { /* TODO: Handle List click */ }

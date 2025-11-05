@@ -8,7 +8,6 @@ import androidx.compose.material.icons.automirrored.filled.NoteAdd
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -32,7 +31,7 @@ fun HomeEntry(
     isExpandedScreen: Boolean,
     backStack: NavBackStack<NavKey>,
     setFabState: (FabStateMenu?) -> Unit,
-    onCategorySelected: (Long) -> Unit, // This is the lambda from MainScreen
+    onCategorySelected: (Long) -> Unit,
     onAddCategoryClicked: () -> Unit,
     onAddListClicked: () -> Unit,
     onAddItemClicked: () -> Unit
@@ -56,16 +55,13 @@ fun HomeEntry(
     // It's key to decoupling the FAB click from the direct action, allowing any screen to
     // request that the bottom sheet be shown.
     LaunchedEffect(Unit) {
-        mainScreenViewModel.events.collectLatest { event: MainScreenEvent ->
+        mainScreenViewModel.events.collectLatest { event : MainScreenEvent ->
             when (event) {
 
                 // --- BOTTOM SHEET FLOW: Step 3 ---
                 // When a 'RequestAddCategory' event is received, this is the code that runs.
                 is MainScreenEvent.RequestAddCategory -> {
-                    Log.d(
-                        TAG,
-                        "Listener heard RequestAddCategory. Telling HomeViewModel to show sheet."
-                    )
+                    Log.d(TAG, "Listener heard RequestAddCategory. Telling HomeViewModel to show sheet.")
 
                     // --- BOTTOM SHEET FLOW: Step 4 ---
                     // It tells the local HomeViewModel to handle the event. The HomeViewModel will
@@ -100,18 +96,9 @@ fun HomeEntry(
      * `setFabState` were called directly in the composable body, as they modify the
      * state of the parent (`MainScreen`).
      */
-    /**
-     * Side Effect for UI State Updates:
-     * This is the critical fix. We use DisposableEffect because setFabState is a
-     * synchronous action that needs a matching 'onDispose' cleanup.
-     *
-     * We add `isExpandedScreen` to the key to force this effect to re-run
-     * when the screen is folded/unfolded, which solves the race condition.
-     */
-    // <-- VITAL CHANGE: LaunchedEffect -> DisposableEffect
-    DisposableEffect(
-        backStack.lastOrNull(), // Use lastOrNull() for a more stable key than size
-        isExpandedScreen, // <-- VITAL CHANGE: Key on isExpandedScreen
+    LaunchedEffect(
+        backStack.size,
+        //isExpandedScreen,
         homeViewModel.uiState.collectAsState().value
     ) {
         val currentUiState = homeViewModel.uiState.value
@@ -122,91 +109,78 @@ fun HomeEntry(
         // --- FAB Logic for Expanded Screens (e.g., Tablets) ---
         //if (isExpandedScreen) {
         // --- LOGIC FOR EXPANDED (OPEN) SCREENS ---
-        val fabState = FabStateMenu.Menu(
-            mainButtonAction = FabAction(
-                text = "Add Main Screen",
-                icon = Icons.Default.Add,
-                onClick = {
-                    Log.d(TAG, "FAB ACTION: Main Button Pressed -- set to hide / show")
-                } // Main button just opens the menu
-            ),
-            // The menu items are conditional based on the user's selections.
-            items = listOfNotNull(
-                // "Add Category" is always available.
-                // Action to add to Column 1 (Category) - Always available
-                FabAction(
-                    text = "Category -- list in HomeEntry",
-                    icon = Icons.Default.Create,
-                    //Log.d(TAG, "Add Category from Global FAB Clicked")
-                    //
-                    // --- THE FIX ---
-                    // Its onClick now posts a global event to the message bus.
-                    // The listener above will catch this and handle it.
-                    // This allows any screen to use this same pattern.
-                    //
-                    onClick = {
-                        // --- BOTTOM SHEET FLOW: Step 1 ---
-                        // When the "Add Category" FAB is clicked, it doesn't directly
-                        // show the bottom sheet. Instead, it posts a 'RequestAddCategory'
-                        // event to the shared MainScreenViewModel. This acts as a message bus
-                        // for the entire screen.
-                        Log.d(TAG, "FAB ACTION: Add Category clicked.")
-                        Log.d(TAG, "-> Posting event: MainScreenEvent.RequestAddCategory")
-                        mainScreenViewModel.postEvent(MainScreenEvent.RequestAddCategory)
-
-                        // Note: This lambda is for navigation and is separate from the bottom sheet logic.
-                        // It's called immediately after posting the event.
-                        Log.d(TAG, "-> Invoking onAddCategoryClicked lambda.")
-                        onAddCategoryClicked()
-                    }
-                ),
-                // "Add List" is only available if a category is selected.
-                // Action to add to Column 2 (List) - Only if a category is selected
-                // We only show "Add List" if a category is selected in this pane
-                if (isCategorySelected) FabAction(
-                    text = "List",
-                    icon = Icons.AutoMirrored.Filled.NoteAdd,
-                    //Log.d(TAG, "Add List from Global FAB Clicked")
-                    onClick = {
-                        Log.d(TAG, "FAB ACTION: Add List clicked.")
-                        Log.d(TAG, "-> (TODO: Event not implemented yet)")
-                        // TODO: Implement this by posting a RequestAddList event
-                        Log.d(TAG, "-> Invoking onAddListClicked lambda.")
-                        onAddListClicked()
-                    }
-                /*) else null,
-                // Action to add to Column 3 (Item) - Only if a list is selected
-                if (isListSelected) FabAction(
-                    text = "Item",
+        setFabState(
+            FabStateMenu.Menu(
+                mainButtonAction = FabAction(
+                    text = "Add Main Screen",
                     icon = Icons.Default.Add,
-                    // --- THIS IS THE CORRECTED CODE ---
-                    // We post an event to the shared ViewModel.
-                    // This announces that the "Add Item" button was clicked.
-                    // Log.d(TAG, "Add Item from Global FAB Clicked - Posting Event")
                     onClick = {
-                        Log.d(TAG, "FAB ACTION: Add Item clicked.")
-                        Log.d(TAG, "-> (TODO: Event not implemented yet)")
-                        // TODO: Implement this by posting a RequestAddItem event
-                        Log.d(TAG, "-> Invoking onAddItemClicked lambda.")
-                        onAddItemClicked()
-                    }*/
-                ) else null
-                // "Add Item" is removed. It's impossible for Detail to be visible
-                // if Home is the last item on the stack.
+                        Log.d(TAG, "FAB ACTION: Main Button Pressed -- set to hide / show")
+                    } // Main button just opens the menu
+                ),
+                // The menu items are conditional based on the user's selections.
+                items = listOfNotNull(
+                    // "Add Category" is always available.
+                    // Action to add to Column 1 (Category) - Always available
+                    FabAction(
+                        text = "Category -- list in HomeEntry",
+                        icon = Icons.Default.Create,
+                        //Log.d(TAG, "Add Category from Global FAB Clicked")
+                        //
+                        // --- THE FIX ---
+                        // Its onClick now posts a global event to the message bus.
+                        // The listener above will catch this and handle it.
+                        // This allows any screen to use this same pattern.
+                        //
+                        onClick = {
+                            // --- BOTTOM SHEET FLOW: Step 1 ---
+                            // When the "Add Category" FAB is clicked, it doesn't directly
+                            // show the bottom sheet. Instead, it posts a 'RequestAddCategory'
+                            // event to the shared MainScreenViewModel. This acts as a message bus
+                            // for the entire screen.
+                            Log.d(TAG, "FAB ACTION: Add Category clicked.")
+                            Log.d(TAG, "-> Posting event: MainScreenEvent.RequestAddCategory")
+                            mainScreenViewModel.postEvent(MainScreenEvent.RequestAddCategory)
+
+                            // Note: This lambda is for navigation and is separate from the bottom sheet logic.
+                            // It's called immediately after posting the event.
+                            Log.d(TAG, "-> Invoking onAddCategoryClicked lambda.")
+                            onAddCategoryClicked()
+                        }
+                    ),
+                    // "Add List" is only available if a category is selected.
+                    // Action to add to Column 2 (List) - Only if a category is selected
+                    if (isCategorySelected) FabAction(
+                        text = "List",
+                        icon = Icons.AutoMirrored.Filled.NoteAdd,
+                        //Log.d(TAG, "Add List from Global FAB Clicked")
+                        onClick = {
+                            Log.d(TAG, "FAB ACTION: Add List clicked.")
+                            Log.d(TAG, "-> (TODO: Event not implemented yet)")
+                            // TODO: Implement this by posting a RequestAddList event
+                            Log.d(TAG, "-> Invoking onAddListClicked lambda.")
+                            onAddListClicked()
+                        }
+                    ) else null,
+                    // Action to add to Column 3 (Item) - Only if a list is selected
+                    if (isListSelected) FabAction(
+                        text = "Item",
+                        icon = Icons.Default.Add,
+                        // --- THIS IS THE CORRECTED CODE ---
+                        // We post an event to the shared ViewModel.
+                        // This announces that the "Add Item" button was clicked.
+                        // Log.d(TAG, "Add Item from Global FAB Clicked - Posting Event")
+                        onClick = {
+                            Log.d(TAG, "FAB ACTION: Add Item clicked.")
+                            Log.d(TAG, "-> (TODO: Event not implemented yet)")
+                            // TODO: Implement this by posting a RequestAddItem event
+                            Log.d(TAG, "-> Invoking onAddItemClicked lambda.")
+                            onAddItemClicked()
+                        }
+                    ) else null
+                )
             )
         )
-
-
-        // Set the FAB state based on the current screen
-        setFabState(fabState)
-
-        // --- VITAL CHANGE: Add the onDispose block ---
-        // This runs when HomeEntry is disposed (navigated away from OR folded)
-        // It clears the FAB, preventing it from getting stuck on other screens.
-        onDispose {
-            setFabState(null)
-        }
-
 
         // --- END OF FAB Logic for Expanded Screens ---
 
@@ -258,7 +232,6 @@ fun HomeEntry(
 
     // In MainScreen.kt -> AppContent()
     PhotoDoHomeUiRoute(
-        // This lambda navigates from List (Pane 2) to Detail (Pane 3)
         /*navTo = { categoryId ->
             /*val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
             updateCurrentTopLevelKey(listKey) // Update the selected tab
@@ -277,10 +250,7 @@ fun HomeEntry(
         // Its job is to handle the click from a TaskList item and navigate to the detail screen.
         // This function is ONLY for navigating from a Task List item to the Detail screen.
         navTo = { listId ->
-            Log.d(
-                TAG,
-                "Step3: Navigating from Task List Item to Detail Screen with listId: $listId"
-            )
+            Log.d(TAG, "Step3: Navigating from Task List Item to Detail Screen with listId: $listId")
 
             // 1. Create the key for the final detail screen (Pane 3).
             val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
@@ -294,33 +264,9 @@ fun HomeEntry(
         // parameter of the `AppContent` function. You just need to pass it down.
         // This allows the HomeScreen to notify the MainScreen whenever a new
         // category is selected, keeping the "Tasks" tab in sync.
-        // onCategorySelected = onCategorySelected,
-
-        // ### THIS IS THE FIX ###
-        // The lambda for `onCategorySelected` (which is for Pane 1 -> Pane 2)
-        // must perform navigation on the main backStack.
-        onCategorySelected = { categoryId ->
-            Log.d(TAG, "Category clicked. Navigating to TaskList for categoryId: $categoryId")
-            onCategorySelected(categoryId) // Update remembered ID
-            val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
-
-            // This navigation logic is correct.
-            val homeKeyIndex = backStack.indexOf(PhotoDoNavKeys.HomeFeedKey)
-            if (homeKeyIndex != -1) {
-                while (backStack.lastIndex > homeKeyIndex) {
-                    backStack.removeLastOrNull()
-                }
-            } else {
-                backStack.clear()
-                backStack.add(PhotoDoNavKeys.HomeFeedKey)
-            }
-            backStack.add(listKey)
-            Log.d(TAG, " -> Stack modified. New top is TaskListKey($categoryId)")
-        },
-        // ### END OF FIX ###
-
+        onCategorySelected = onCategorySelected,
         // setFabState = setFabState // <-- Pass the FAB setter down
-        setFabState = setFabState
+        // setFabState = setFabState
 
     )
 }

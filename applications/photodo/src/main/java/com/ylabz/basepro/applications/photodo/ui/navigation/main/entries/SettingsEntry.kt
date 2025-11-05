@@ -8,7 +8,6 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
 import com.ylabz.basepro.applications.photodo.features.settings.ui.SettingsUiRoute
 import com.ylabz.basepro.applications.photodo.features.settings.ui.SettingsViewModel
 
@@ -21,7 +20,7 @@ fun SettingsEntry(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior,
     setTopBar: (@Composable () -> Unit) -> Unit,
-    setFabState: (FabStateMenu?) -> Unit
+    // setFabState: (FabStateMenu?) -> Unit
 ) { // NAV_LOG: Log rendering of SettingsKey entry
     Log.d(TAG, "Displaying content for SettingsKey")
     val viewModel: SettingsViewModel = hiltViewModel()
@@ -31,7 +30,7 @@ fun SettingsEntry(
             scrollBehavior = scrollBehavior
         )
     }
-    setFabState(FabStateMenu.Hidden)
+    // setFabState(FabStateMenu.Hidden)
 
     SettingsUiRoute(
         modifier = Modifier,

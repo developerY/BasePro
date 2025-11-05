@@ -22,7 +22,7 @@ fun PhotoDoHomeUiRoute(
     // The navigation lambda now expects a Long (the categoryId)
     navTo: (Long) -> Unit,
     onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
-    setFabState: (FabStateMenu?) -> Unit = {}, // <-- ADD THIS PARAMETER
+    // setFabState: (FabStateMenu?) -> Unit = {}, // <-- ADD THIS PARAMETER
     homeViewModel: HomeViewModel, // -- do not use new hiltViewModel
     // --- FIX: The signature should never includes the mainScreenViewModel ---
 ) {
@@ -60,7 +60,7 @@ fun PhotoDoHomeUiRoute(
                     }
                 },*/
                 modifier = modifier,
-                setFabState = setFabState
+                // setFabState = setFabState
             )
             // --- THIS IS THE UI LOGIC ---
             // When the ViewModel's state flag is true, show the sheet.
