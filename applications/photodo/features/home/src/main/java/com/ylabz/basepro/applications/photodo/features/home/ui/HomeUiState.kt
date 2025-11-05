@@ -24,7 +24,8 @@ sealed interface HomeUiState {
         val categories: List<CategoryEntity> = emptyList(),
         val selectedCategory: CategoryEntity? = null,
         val taskListsForSelectedCategory: List<TaskListEntity> = emptyList(),
-        val isAddingCategory: Boolean = false
+        val isAddingCategory: Boolean = false,
+        val navigateToNewUi: Boolean = false
     ) : HomeUiState
 
     /**

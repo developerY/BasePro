@@ -40,4 +40,10 @@ sealed class PhotoDoNavKeys : NavKey {
         @Transient
         override val icon = Icons.Default.Settings
     }
+
+    @Serializable
+    data class CameraKey(val itemId: String) : PhotoDoNavKeys()
+
+    @Serializable
+    data object NewScreenKey : PhotoDoNavKeys()
 }

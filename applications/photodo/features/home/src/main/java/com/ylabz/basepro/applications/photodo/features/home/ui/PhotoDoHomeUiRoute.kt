@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -21,6 +22,7 @@ fun PhotoDoHomeUiRoute(
     modifier: Modifier = Modifier,
     // The navigation lambda now expects a Long (the categoryId)
     navTo: (Long) -> Unit,
+    navToNewUi: () -> Unit,
     onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
     // setFabState: (FabStateMenu?) -> Unit = {}, // <-- ADD THIS PARAMETER
     homeViewModel: HomeViewModel, // -- do not use new hiltViewModel
@@ -41,34 +43,44 @@ fun PhotoDoHomeUiRoute(
             }
         }
         is HomeUiState.Success -> {
-            HomeScreen(
-                uiState = state,
-                onEvent = homeViewModel::onEvent,
-                // When a task list is selected, navigate using its categoryId
-                onSelectList = { taskID ->
-                    Log.d(
-                        "PhotoDoHomeUiRoute",
-                        "STEP2: Navigating to TaskList with categoryId: $taskID"
-                    )
-                    navTo(taskID)
-                },
-                onCategorySelected = onCategorySelected, // <-- PASS THE LAMBDA DOWN
-                // This handles the "Add" button on the empty screen
-                /*onAddList = {
-                    state.selectedCategory?.let { category ->
-                        viewModel.onEvent(HomeEvent.OnAddTaskListClicked(category.categoryId))
-                    }
-                },*/
-                modifier = modifier,
-                // setFabState = setFabState
-            )
+            if (state.navigateToNewUi) {
+                LaunchedEffect(Unit) {
+                    navToNewUi()
+                    homeViewModel.onEvent(HomeEvent.OnNewUiNavigated)
+                }
+            } else {
+                HomeScreen(
+                    uiState = state,
+                    onEvent = homeViewModel::onEvent,
+                    // When a task list is selected, navigate using its categoryId
+                    onSelectList = { taskID ->
+                        Log.d(
+                            "PhotoDoHomeUiRoute",
+                            "STEP2: Navigating to TaskList with categoryId: $taskID"
+                        )
+                        navTo(taskID)
+                    },
+                    onCategorySelected = onCategorySelected, // <-- PASS THE LAMBDA DOWN
+                    // This handles the "Add" button on the empty screen
+                    /*onAddList = {
+                        state.selectedCategory?.let { category ->
+                            viewModel.onEvent(HomeEvent.OnAddTaskListClicked(category.categoryId))
+                        }
+                    },*/
+                    modifier = modifier,
+                    // setFabState = setFabState
+                )
+            }
             // --- THIS IS THE UI LOGIC ---
             // When the ViewModel's state flag is true, show the sheet.
             if (state.isAddingCategory) {
                 AddCategorySheet(
                     onAddCategory = { categoryName ->
                         // Log the event being sent to the ViewModel to save the category
-                        Log.d(TAG, "onAddCategory called with name: '$categoryName'. Posting OnSaveCategory event.")
+                        Log.d(
+                            TAG,
+                            "onAddCategory called with name: '$categoryName'. Posting OnSaveCategory event."
+                        )
                         homeViewModel.onEvent(HomeEvent.OnSaveCategory(categoryName))
                     },
                     onDismiss = {
