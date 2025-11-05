@@ -9,12 +9,9 @@ import android.util.Log
 import android.view.OrientationEventListener
 import android.view.Surface
 import androidx.camera.compose.CameraXViewfinder
-import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceRequest
-import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,7 +27,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,13 +39,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
-import androidx.lifecycle.compose.LocalLifecycleOwner
 
 
 //@OptIn(ExperimentalPermissionsApi::class)
@@ -60,7 +56,6 @@ fun NewScreen(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
 
     // This state will hold the SurfaceRequest from the Preview's SurfaceProvider
     var surfaceRequest by remember { mutableStateOf<SurfaceRequest?>(null) }
@@ -90,32 +85,6 @@ fun NewScreen(
     }
 
     if (cameraPermissionState.status.isGranted) {
-        LaunchedEffect(cameraProviderFuture, lifecycleOwner) {
-            val cameraProvider = cameraProviderFuture.get()
-            val preview = Preview.Builder().build()
-
-            preview.setSurfaceProvider(ContextCompat.getMainExecutor(context)) { request ->
-                surfaceRequest = request
-            }
-
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-            imageCapture = ImageCapture.Builder().build()
-
-            cameraProvider.unbindAll()
-            cameraProvider.bindToLifecycle(
-                lifecycleOwner,
-                cameraSelector,
-                preview,
-                imageCapture
-            )
-        }
-
-        DisposableEffect(Unit) {
-            orientationEventListener.enable()
-            onDispose {
-                orientationEventListener.disable()
-            }
-        }
 
         Column(modifier = modifier.fillMaxSize()) {
             Box(modifier = Modifier.weight(1f)) {
