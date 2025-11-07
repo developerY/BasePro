@@ -228,6 +228,6 @@ fun CapturedImagePreview(imageUri: Uri) {
 
 @androidx.compose.ui.tooling.preview.Preview(showBackground = true)
 @Composable
-fun SimpleComposablePreview() {
+fun CameraPreview() {
     CameraScreen()
 }

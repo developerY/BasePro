@@ -248,3 +248,13 @@ fun CapturedImagePreview(imageUri: Uri) {
         )
     }
 }
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun SimpleComposablePreview() {
+    SimpleCameraCaptureWithImagePreview(
+        paddingValues = PaddingValues(0.dp),
+        onEvent = {},
+        navTo = {}
+    )
+}
