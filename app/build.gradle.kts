@@ -11,13 +11,13 @@ plugins {
 
 android {
     namespace = "com.ylabz.basepro"
-    compileSdk = 36
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         // This gets overridden by flavors
         applicationId = "com.ylabz.basepro"
         minSdk = libs.versions.minSdk.get().toInt() // UPDATED
-        targetSdk = 34
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
 

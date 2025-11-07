@@ -48,7 +48,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material.legacy)
+    // implementation(libs.material.legacy) // <-- REMOVED: This is for older Material components and likely not needed for a Material 3 app.
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))

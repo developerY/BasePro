@@ -218,7 +218,7 @@ fun PhotoDoNavGraph(
              * A standard, full-screen destination that is not part of the list-detail flow.
              */
             entry<PhotoDoNavKeys.NewScreenKey> {
-                NewScreen(modifier = modifier)
+                NewScreen(modifier = Modifier.fillMaxSize())
             }
         }
     )
