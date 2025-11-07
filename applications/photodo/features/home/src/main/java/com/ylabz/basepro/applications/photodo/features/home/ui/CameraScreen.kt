@@ -55,7 +55,7 @@ import java.util.Locale
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun NewScreen(
+fun CameraScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
