@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.photodo.features.home.ui
 
+// import kotlinx.coroutines.guava.await // <-- No longer needed
 import android.Manifest
 import android.content.Context
 import android.graphics.BitmapFactory
@@ -12,7 +13,6 @@ import androidx.camera.compose.CameraXViewfinder
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceRequest
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
@@ -48,7 +48,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-// import kotlinx.coroutines.guava.await // <-- No longer needed
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -101,7 +100,7 @@ fun CameraScreen(
             // --------------------------
 
             // Build the Preview use case
-            val preview = Preview.Builder().build()
+            val preview = androidx.camera.core.Preview.Builder().build()
 
             // Set the SurfaceProvider on the Preview use case, using the main executor.
             preview.setSurfaceProvider(ContextCompat.getMainExecutor(context)) { request ->
@@ -225,4 +224,10 @@ fun CapturedImagePreview(imageUri: Uri) {
             contentScale = ContentScale.Crop
         )
     }
+}
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun SimpleComposablePreview() {
+    CameraScreen()
 }
