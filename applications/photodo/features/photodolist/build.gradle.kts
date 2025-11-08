@@ -67,6 +67,9 @@ dependencies {
     implementation(libs.androidx.camera.view)
     implementation(libs.androidx.camera.compose)
 
+    // coil
+    implementation(libs.coil.compose)
+
     // Hilt
     implementation(libs.hilt.android)
     implementation(project(":core:ui"))
