@@ -33,7 +33,8 @@ fun PhotoDoDetailUiRoute(
         is PhotoDoDetailUiState.Success -> {
             DetailCard(
                 modifier = modifier,
-                state = state
+                state = state,
+                onCameraClick = {}
             )
         }
         is PhotoDoDetailUiState.Error -> {

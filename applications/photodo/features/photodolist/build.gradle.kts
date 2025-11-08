@@ -47,10 +47,25 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material.legacy)
 
+    // Permissions
+    implementation(libs.google.accompanist.permissions)
+
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.material3)
     debugImplementation(libs.androidx.ui.tooling)
+
+    // --- ADD THIS LINE ---
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    debugImplementation(libs.androidx.ui.tooling)
+
+    // Add Camera
+    // CameraX
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.compose)
 
     // Hilt
     implementation(libs.hilt.android)

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Photo
@@ -19,6 +20,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +38,7 @@ import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.Pho
 fun DetailCard(
     modifier: Modifier = Modifier,
     state: PhotoDoDetailUiState.Success,
+    onCameraClick: () -> Unit // <-- ADDED: Callback for when the camera button is clicked
 ) {
     Card(
         modifier = modifier
@@ -82,12 +85,28 @@ fun DetailCard(
             Divider()
             Spacer(Modifier.height(8.dp))
 
-            // Section for Photos
-            Text(
-                text = "Photos",
-                style = MaterialTheme.typography.titleMedium
-            )
-            
+            // --- MODIFIED SECTION ---
+            // Section for Photos with Camera Button
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Photos",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                IconButton(onClick = onCameraClick) { // <-- ADDED: Camera button
+                    Icon(
+                        imageVector = Icons.Outlined.CameraAlt,
+                        contentDescription = "Add Photo",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+            // --- END OF MODIFIED SECTION ---
+
+
             // A simple horizontal list for photos.
             // Replace the placeholder with your actual image loading component.
             LazyRow(
@@ -121,7 +140,10 @@ fun DetailCardPreview() {
             photos = samplePhotos
         )
     )
-    DetailCard(state = sampleState)
+    DetailCard(
+        state = sampleState,
+        onCameraClick = {} // <-- ADDED: Handle click in preview
+    )
 }
 
 @Preview(showBackground = true)
@@ -147,4 +169,3 @@ fun PhotoPlaceholder(modifier: Modifier = Modifier) {
         )
     }
 }
-
