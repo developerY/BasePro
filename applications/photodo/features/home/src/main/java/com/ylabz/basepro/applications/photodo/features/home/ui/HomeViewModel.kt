@@ -171,19 +171,7 @@ class HomeViewModel @Inject constructor(
             }
 
             HomeEvent.OnAddListClicked -> {} //TODO()
-            HomeEvent.OnNavigateToNewUi -> {
-                _uiState.update { currentState ->
-                    (currentState as? HomeUiState.Success)?.copy(navigateToNewUi = true)
-                        ?: currentState
-                }
-            }
-
-            HomeEvent.OnNewUiNavigated -> {
-                _uiState.update { currentState ->
-                    (currentState as? HomeUiState.Success)?.copy(navigateToNewUi = false)
-                        ?: currentState
-                }
-            }
+            
         }
     }
 

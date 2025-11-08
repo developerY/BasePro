@@ -16,7 +16,6 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
-import com.ylabz.basepro.applications.photodo.features.home.ui.CameraScreen
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 import com.ylabz.basepro.applications.photodo.ui.navigation.main.entries.DetailEntry
 import com.ylabz.basepro.applications.photodo.ui.navigation.main.entries.HomeEntry
@@ -132,8 +131,7 @@ fun PhotoDoNavGraph(
                     onCategorySelected = onCategorySelected,
                     onAddCategoryClicked = onAddCategoryClicked,
                     onAddListClicked = onAddListClicked,
-                    onAddItemClicked = onAddItemClicked,
-                    navToNewUi = { backStack.add(PhotoDoNavKeys.NewScreenKey) }
+                    onAddItemClicked = onAddItemClicked
                 )
             }
 
@@ -209,16 +207,6 @@ fun PhotoDoNavGraph(
                     setTopBar = setTopBar,
                     // setFabState = setFabState,
                 )
-            }
-
-            /**
-             * =================================================================
-             * Entry: New Screen (`PhotoDoNavKeys.NewScreenKey`)
-             * =================================================================
-             * A standard, full-screen destination that is not part of the list-detail flow.
-             */
-            entry<PhotoDoNavKeys.NewScreenKey> {
-                CameraScreen(modifier = Modifier.fillMaxSize())
             }
         }
     )

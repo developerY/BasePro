@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -24,7 +23,6 @@ fun CategoryList(
     categories: List<CategoryEntity>,
     selectedCategory: CategoryEntity?,
     onCategoryClick: (CategoryEntity) -> Unit,
-    onNavigateToNewUi: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Log.d("CategoryList", "Recomposing with ${categories.size} categories")
@@ -32,14 +30,6 @@ fun CategoryList(
         modifier = modifier.padding(8.dp).background(Color.Yellow),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        item {
-            Button(onClick = {
-                Log.d("CategoryList", "Button clicked")
-                onNavigateToNewUi()
-            }) {
-                Text("Add New Category")
-            }
-        }
         item {
             Text("Source: CategoryList.kt")
         }

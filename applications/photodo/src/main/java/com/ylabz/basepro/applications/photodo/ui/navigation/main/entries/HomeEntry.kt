@@ -34,8 +34,7 @@ fun HomeEntry(
     onCategorySelected: (Long) -> Unit,
     onAddCategoryClicked: () -> Unit,
     onAddListClicked: () -> Unit,
-    onAddItemClicked: () -> Unit,
-    navToNewUi: () -> Unit
+    onAddItemClicked: () -> Unit
 ) {
     // NAV_LOG: Log rendering of HomeFeedKey entry
     Log.d(TAG, "Displaying content for HomeFeedKey")
@@ -258,9 +257,6 @@ fun HomeEntry(
 
             // 2. Add it to the back stack. The adaptive strategy handles the rest.
             backStack.add(detailKey)
-        },
-        navToNewUi = {
-            backStack.add(PhotoDoNavKeys.NewScreenKey)
         },
         homeViewModel = homeViewModel,
         // ### THIS IS THE SOLUTION ###

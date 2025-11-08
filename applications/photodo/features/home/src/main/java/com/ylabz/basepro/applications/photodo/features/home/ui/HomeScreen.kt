@@ -122,8 +122,7 @@ fun HomeScreen(
                         Log.d("HomeScreen", "Navigating to detail pane")
                         navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
                     }
-                },
-                onNavigateToNewUi = { onEvent(HomeEvent.OnNavigateToNewUi) }
+                }
             )
         },
         detailPane = {

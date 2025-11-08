@@ -35,13 +35,4 @@ sealed interface HomeEvent {
      */
     data object OnAddListClicked : HomeEvent
 
-    /**
-     * Event triggered when the user clicks the button to navigate to the new UI.
-     */
-    data object OnNavigateToNewUi : HomeEvent
-
-    /**
-     * Event triggered after navigation to the new UI has occurred.
-     */
-    data object OnNewUiNavigated : HomeEvent
 }
