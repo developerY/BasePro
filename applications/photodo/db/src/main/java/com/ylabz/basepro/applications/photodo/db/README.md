@@ -1,18 +1,19 @@
-Of course. Here is a detailed markdown file explaining the database entities for your PhotoDo application.
-
------
-
 # PhotoDo Database Entities
 
-This document provides a detailed breakdown of the Room database entities used in the PhotoDo application. These entities define the structure of the application's data and are the foundation of the `photodo/database` module.
+This document provides a detailed breakdown of the Room database entities used in the **PhotoDo** application.  
+These entities define the structure of the application's data and form the foundation of the `applications/photodo/db` module.
 
-## 1\. `ProjectEntity.kt`
+---
 
-This entity represents a "Project," which is a high-level container for a group of related tasks. For example, a user might have projects for "Home Renovations," "Work," or a "Shopping List."
+## 1. `CategoryEntity.kt`
+
+This entity represents a **Category**, which is a high-level container for a group of related task lists.  
+For example, a user might have categories such as **"Home Renovations"**, **"Work"**, or **"Shopping"**.
 
 ### Purpose
 
-To group and organize tasks into meaningful categories. This is the top-level organizational unit in the application.
+To group and organize task lists into meaningful categories.  
+This is the top-level organizational unit in the application.
 
 ### File Content
 
@@ -20,10 +21,10 @@ To group and organize tasks into meaningful categories. This is the top-level or
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "projects")
-data class ProjectEntity(
+@Entity(tableName = "categories")
+data class CategoryEntity(
     @PrimaryKey(autoGenerate = true)
-    val projectId: Long = 0,
+    val categoryId: Long = 0,
     val name: String,
     val description: String? = null
 )
@@ -31,75 +32,78 @@ data class ProjectEntity(
 
 ### Field-by-Field Breakdown
 
-| Field | Data Type | Description |
-| :--- | :--- | :--- |
-| `projectId` | `Long` | **Primary Key**. A unique, auto-incrementing identifier for each project. This ensures that every project has a distinct ID. |
-| `name` | `String` | The name of the project, as provided by the user (e.g., "Groceries," "Car Maintenance"). This is a required field. |
-| `description` | `String?` | An optional, longer description of the project, providing additional context. |
+| **Field** | **Data Type** | **Description** |
+|------------|---------------|-----------------|
+| `categoryId` | `Long` | **Primary Key**. A unique, auto-incrementing identifier for each category. |
+| `name` | `String` | The name of the category, as provided by the user (e.g., “Groceries,” “Car Maintenance”). This is a required field. |
+| `description` | `String?` | An optional, longer description of the category, providing additional context. |
 
------
+---
 
-## 2\. `TaskEntity.kt`
+## 2. `TaskListEntity.kt`
 
-This entity represents a single "Task," which is a to-do item that belongs to a specific project. This is the core of the to-do list functionality.
+This entity represents a single **Task List**, which belongs to a specific category.
 
 ### Purpose
 
-To store the details of each individual to-do item, including its status, priority, and any associated notes.
+To store the details of each individual to-do list, including its status, priority, and description.
 
 ### File Content
 
 ```kotlin
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "tasks",
+    tableName = "task_lists",
     foreignKeys = [
         ForeignKey(
-            entity = ProjectEntity::class,
-            parentColumns = ["projectId"],
-            childColumns = ["projectId"],
+            entity = CategoryEntity::class,
+            parentColumns = ["categoryId"],
+            childColumns = ["categoryId"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index(value = ["categoryId"])] // Added index for the foreign key
 )
-data class TaskEntity(
+data class TaskListEntity(
     @PrimaryKey(autoGenerate = true)
-    val taskId: Long = 0,
-    val projectId: Long,
-    var name: String,
-    var notes: String? = null,
-    var status: String = "To-Do", // "To-Do" or "Done"
-    var priority: Int = 0, // 0 for normal, 1 for high
-    val creationDate: Long = System.currentTimeMillis(),
-    var dueDate: Long? = null
+    val listId: Long = 0,
+    val categoryId: Long,
+    val title: String,
+    val description: String? = null,
+    val status: String = "Incomplete", // e.g., "Incomplete", "Completed"
+    val priority: Int = 0, // 0 for normal, 1 for high
+    val creationTimestamp: Long = System.currentTimeMillis(),
+    val dueTimestamp: Long? = null
 )
 ```
 
 ### Field-by-Field Breakdown
 
-| Field | Data Type | Description |
-| :--- | :--- | :--- |
-| `taskId` | `Long` | **Primary Key**. A unique, auto-incrementing identifier for each task. |
-| `projectId` | `Long` | **Foreign Key**. This field links the task to a `ProjectEntity`, creating a many-to-one relationship (many tasks can belong to one project). |
-| `name` | `String` | The name of the task (e.g., "Buy milk and eggs"). |
-| `notes` | `String?` | An optional field for more detailed notes about the task. |
-| `status` | `String` | The current status of the task. It is recommended to use an enum or a sealed class for this in practice, but for the database, a `String` is used. The default is "To-Do". |
-| `priority` | `Int` | An integer to represent the task's priority. For example, 0 could be normal priority and 1 could be high priority. |
-| `creationDate` | `Long` | The timestamp (in milliseconds) of when the task was created. This is automatically set to the current time. |
-| `dueDate` | `Long?` | An optional timestamp for the task's due date. |
+| **Field** | **Data Type** | **Description** |
+|------------|---------------|-----------------|
+| `listId` | `Long` | **Primary Key**. A unique, auto-incrementing identifier for each task list. |
+| `categoryId` | `Long` | **Foreign Key**. Links the task list to a `CategoryEntity`, creating a many-to-one relationship (many lists can belong to one category). |
+| `title` | `String` | The title of the task list (e.g., “Buy milk and eggs”). |
+| `description` | `String?` | Optional notes about the task list. |
+| `status` | `String` | The current status of the task list. Default: `"Incomplete"`. |
+| `priority` | `Int` | Integer representing the task’s priority. (`0` = normal, `1` = high). |
+| `creationTimestamp` | `Long` | The timestamp (in milliseconds) when the task list was created. Automatically set to the current time. |
+| `dueTimestamp` | `Long?` | Optional timestamp for the task list’s due date. |
 
------
+---
 
-## 3\. `PhotoEntity.kt`
+## 3. `PhotoEntity.kt`
 
-This entity represents a single photo that is associated with a specific task. This is what makes the application "photo-first."
+This entity represents a single **Photo** that is associated with a specific task list.  
+This is what makes the application “photo-first.”
 
 ### Purpose
 
-To store the URI and other metadata for each photo, and to link it to the task it belongs to.
+To store the URI and metadata for each photo and link it to the task list it belongs to.
 
 ### File Content
 
@@ -112,9 +116,9 @@ import androidx.room.PrimaryKey
     tableName = "photos",
     foreignKeys = [
         ForeignKey(
-            entity = TaskEntity::class,
-            parentColumns = ["taskId"],
-            childColumns = ["taskId"],
+            entity = TaskListEntity::class,
+            parentColumns = ["listId"],
+            childColumns = ["listId"],
             onDelete = ForeignKey.CASCADE
         )
     ]
@@ -122,7 +126,7 @@ import androidx.room.PrimaryKey
 data class PhotoEntity(
     @PrimaryKey(autoGenerate = true)
     val photoId: Long = 0,
-    val taskId: Long,
+    val listId: Long,
     val uri: String,
     val caption: String? = null,
     val timestamp: Long = System.currentTimeMillis()
@@ -131,10 +135,10 @@ data class PhotoEntity(
 
 ### Field-by-Field Breakdown
 
-| Field | Data Type | Description |
-| :--- | :--- | :--- |
+| **Field** | **Data Type** | **Description** |
+|------------|---------------|-----------------|
 | `photoId` | `Long` | **Primary Key**. A unique, auto-incrementing identifier for each photo. |
-| `taskId` | `Long` | **Foreign Key**. This field links the photo to a `TaskEntity`, creating a many-to-one relationship (many photos can be associated with one task). |
-| `uri` | `String` | The URI (Uniform Resource Identifier) of the photo file on the device. This is a `String` that represents the path to the image. |
-| `caption` | `String?` | An optional caption for the photo. |
-| `timestamp` | `Long` | The timestamp of when the photo was added or taken. |
+| `listId` | `Long` | **Foreign Key**. Links the photo to a `TaskListEntity`, creating a many-to-one relationship (many photos can belong to one list). |
+| `uri` | `String` | The URI (Uniform Resource Identifier) of the photo file on the device. Represents the path to the image. |
+| `caption` | `String?` | Optional caption for the photo. |
+| `timestamp` | `Long` | The timestamp when the photo was added or taken. |
