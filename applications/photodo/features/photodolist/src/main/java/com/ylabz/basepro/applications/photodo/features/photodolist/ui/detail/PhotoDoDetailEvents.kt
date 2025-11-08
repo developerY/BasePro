@@ -6,6 +6,9 @@ import android.net.Uri
  * Defines the events that can be triggered from the PhotoDoDetail screen.
  */
 sealed interface PhotoDoDetailEvent {
+
+    data class AddPhoto(val photoUri: String) : PhotoDoDetailEvent
+
     /**
      * Event triggered when the user saves a new photo from the camera.
      * @param uri The URI of the saved photo.

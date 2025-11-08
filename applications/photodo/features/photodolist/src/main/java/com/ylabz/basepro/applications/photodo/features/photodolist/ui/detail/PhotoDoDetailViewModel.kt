@@ -73,6 +73,10 @@ class PhotoDoDetailViewModel @Inject constructor(
                 }
             }
             // Handle other events
+            PhotoDoDetailEvent.OnBackFromCamera -> TODO()
+            PhotoDoDetailEvent.OnCameraClick -> TODO()
+            is PhotoDoDetailEvent.OnDeletePhoto -> TODO()
+            is PhotoDoDetailEvent.OnPhotoSaved -> TODO()
         }
     }
 
