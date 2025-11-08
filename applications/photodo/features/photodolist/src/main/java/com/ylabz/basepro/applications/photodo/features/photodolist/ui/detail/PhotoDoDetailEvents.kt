@@ -1,16 +1,42 @@
 package com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail
 
+import android.net.Uri
+
 /**
- * Sealed interface for events that can be triggered from the PhotoDo Detail UI
+ * Defines the events that can be triggered from the PhotoDoDetail screen.
  */
 sealed interface PhotoDoDetailEvent {
     /**
-     * Event to add a new photo to the current task list.
-     * @param photoUri The string URI of the saved photo.
+     * Event triggered when the user saves a new photo from the camera.
+     * @param uri The URI of the saved photo.
      */
-    data class AddPhoto(val photoUri: String) : PhotoDoDetailEvent
+    data class OnPhotoSaved(val uri: Uri) : PhotoDoDetailEvent
 
-    // Add other events here, e.g.:
-    // data class UpdateTaskStatus(val newStatus: String) : PhotoDoDetailEvent
-    // object DeleteTask : PhotoDoDetailEvent
+    /**
+     * Event triggered when a photo is deleted.
+     * @param photoId The ID of the photo to delete.
+     */
+    data class OnDeletePhoto(val photoId: Long) : PhotoDoDetailEvent
+
+    /**
+     * Event triggered when the "Add Photo" button is clicked.
+     */
+    data object OnCameraClick : PhotoDoDetailEvent
+
+    /**
+     * Event triggered when the user presses "Back" from the camera screen.
+     */
+    data object OnBackFromCamera : PhotoDoDetailEvent
+
+    /**
+     * Event to handle changes to the task list title.
+     * @param title The new title.
+     */
+    // data class OnTitleChange(val title: String) : PhotoDoDetailEvent
+
+    /**
+     * Event to handle changes to the task list description.
+     * @param description The new description.
+     */
+    // data class OnDescriptionChange(val description: String) : PhotoDoDetailEvent
 }
