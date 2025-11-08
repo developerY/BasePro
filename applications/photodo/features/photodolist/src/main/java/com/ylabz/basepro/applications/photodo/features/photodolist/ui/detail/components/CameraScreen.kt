@@ -3,7 +3,6 @@ package com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.co
 // import kotlinx.coroutines.guava.await // <-- No longer needed
 import android.Manifest
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
@@ -21,15 +20,19 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -38,6 +41,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
@@ -57,7 +61,9 @@ import java.util.Locale
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CameraScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSavePhoto: (Uri) -> Unit,
+    onBack: () -> Unit
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -131,14 +137,31 @@ fun CameraScreen(
         }
 
         Column(modifier = modifier.fillMaxSize()) {
+            // Top bar with Back button
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onBack) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                }
+                Text("Add Photo")
+            }
+
+            // Camera Viewfinder
             Box(modifier = Modifier.weight(1f)) {
-                // Use the new CameraXViewfinder Composable
                 surfaceRequest?.let { request ->
                     CameraXViewfinder(
                         surfaceRequest = request,
                         modifier = Modifier.fillMaxSize()
                     )
                 }
+            }
+
+            // Show captured image preview if it exists
+            savedImageUri?.let { uri ->
+                CapturedImagePreview(imageUri = uri)
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
             // Capture Button
@@ -156,6 +179,9 @@ fun CameraScreen(
                                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                                     savedImageUri = Uri.fromFile(photoFile)
                                     Log.d("CameraCapture", "Image saved in: $savedImageUri")
+                                    // --- THIS IS THE KEY ---
+                                    // Send the URI back to the ViewModel
+                                    onSavePhoto(savedImageUri!!)
                                 }
 
                                 override fun onError(exception: ImageCaptureException) {
@@ -167,24 +193,23 @@ fun CameraScreen(
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Icon(Icons.Default.Camera, contentDescription = "Take photo")
-            }
-
-            // Display the captured image if it exists
-            savedImageUri?.let { uri ->
-                Spacer(modifier = Modifier.height(16.dp))
-                CapturedImagePreview(imageUri = uri)
+                Icon(Icons.Default.Camera, contentDescription = "Take photo", modifier = Modifier.size(24.dp))
+                Text("Take Photo", modifier = Modifier.padding(start = 8.dp))
             }
         }
     } else {
         // Show message if permission is not granted
         Column(
             modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Camera permission is required to use the camera")
+            Text("Camera permission is required.")
             Button(onClick = { cameraPermissionState.launchPermissionRequest() }) {
                 Text("Grant Permission")
+            }
+            Button(onClick = onBack) {
+                Text("Back")
             }
         }
     }
@@ -204,9 +229,9 @@ private fun createFile(context: Context): File {
 }
 
 @Composable
-fun CapturedImagePreview(imageUri: Uri) {
+private fun CapturedImagePreview(imageUri: Uri) {
     val context = LocalContext.current
-    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var bitmap by remember { mutableStateOf<android.graphics.Bitmap?>(null) }
 
     // Load the image from the file
     LaunchedEffect(imageUri) {
@@ -218,18 +243,21 @@ fun CapturedImagePreview(imageUri: Uri) {
     bitmap?.let {
         Image(
             painter = BitmapPainter(it.asImageBitmap()),
-            contentDescription = null,
+            contentDescription = "Captured Photo",
             modifier = Modifier
                 .fillMaxWidth()
-                .height(250.dp)
-                .padding(16.dp),
+                .height(150.dp) // Smaller preview
+                .padding(horizontal = 16.dp),
             contentScale = ContentScale.Crop
         )
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun CameraPreview() {
-    CameraScreen()
+fun CameraScreenPreview() {
+    CameraScreen(
+        onSavePhoto = {},
+        onBack = {}
+    )
 }
