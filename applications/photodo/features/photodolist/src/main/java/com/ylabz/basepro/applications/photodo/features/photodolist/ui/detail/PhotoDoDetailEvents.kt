@@ -1,6 +1,16 @@
 package com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail
 
-sealed class PhotoDoDetailEvent {
-    data object OnAddPhotoClicked : PhotoDoDetailEvent() // <-- ADD THIS LINE
-    // Example: data class OnAddPhotoClicked(val photoUri: String) : PhotoDoDetailEvent()
+/**
+ * Sealed interface for events that can be triggered from the PhotoDo Detail UI
+ */
+sealed interface PhotoDoDetailEvent {
+    /**
+     * Event to add a new photo to the current task list.
+     * @param photoUri The string URI of the saved photo.
+     */
+    data class AddPhoto(val photoUri: String) : PhotoDoDetailEvent
+
+    // Add other events here, e.g.:
+    // data class UpdateTaskStatus(val newStatus: String) : PhotoDoDetailEvent
+    // object DeleteTask : PhotoDoDetailEvent
 }

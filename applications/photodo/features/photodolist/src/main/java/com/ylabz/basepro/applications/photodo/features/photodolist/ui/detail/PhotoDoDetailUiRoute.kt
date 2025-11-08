@@ -37,7 +37,7 @@ fun PhotoDoDetailUiRoute(
             modifier = modifier,
             onSavePhoto = { uri ->
                 // Send the event to the ViewModel
-                viewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked)//PhotoDoDetailEvent.AddPhoto(uri.toString()))
+                viewModel.onEvent(PhotoDoDetailEvent.AddPhoto(uri.toString()))
                 // Hide the camera
                 showCamera = false
             },
