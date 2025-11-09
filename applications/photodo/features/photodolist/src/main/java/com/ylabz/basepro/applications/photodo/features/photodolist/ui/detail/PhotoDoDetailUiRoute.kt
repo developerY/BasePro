@@ -46,13 +46,15 @@ fun PhotoDoDetailUiRoute(
                 DetailCard(
                     modifier = modifier,
                     taskListWithPhotos = loadState.taskListWithPhotos, // <-- Pass the object
-                    //onBackClick = onBackClick,
+                    // --- THIS WAS THE BUG ---
+                    // onBackClick = onBackClick, // <-- Removed this line, DetailCard doesn't need it
+                    // --- END OF BUG FIX ---
                     onCameraClick = {
                         onEvent(PhotoDoDetailEvent.OnCameraClick)
                     },
                     onDeletePhotoClick = { photoId ->
                         onEvent(PhotoDoDetailEvent.OnDeletePhoto(photoId))
-                    },
+                    }
                 )
             }
         }

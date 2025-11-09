@@ -70,7 +70,7 @@ fun DetailCard(
     ) {
         // --- THIS IS THE FIX ---
         // We add our own vertical padding inside the scrollable column
-        Spacer(Modifier.height(16.dp))
+        // Spacer(Modifier.height(16.dp))
         // --- END OF FIX ---
 
         // --- Task Info Section ---
