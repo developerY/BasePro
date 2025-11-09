@@ -59,11 +59,19 @@ fun DetailCard(
 ) {
     Column(
         modifier = modifier
-            .fillMaxSize() // Fill the available space
+            .fillMaxSize() // Fill the available space given by the Scaffold
             .verticalScroll(rememberScrollState()) // Make the whole card scrollable
-            .padding(16.dp), // Add padding around the content
+            // --- THIS IS THE FIX ---
+            // Apply horizontal padding to the column.
+            // The `modifier` already contains the TopAppBar padding.
+            .padding(horizontal = 16.dp),
+        // --- END OF FIX ---
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // --- THIS IS THE FIX ---
+        // We add our own vertical padding inside the scrollable column
+        Spacer(Modifier.height(16.dp))
+        // --- END OF FIX ---
 
         // --- Task Info Section ---
         ElevatedCard(
@@ -116,6 +124,11 @@ fun DetailCard(
                 )
             }
         }
+
+        // --- THIS IS THE FIX ---
+        // Add bottom padding
+        Spacer(Modifier.height(16.dp))
+        // --- END OF FIX ---
     }
 }
 
