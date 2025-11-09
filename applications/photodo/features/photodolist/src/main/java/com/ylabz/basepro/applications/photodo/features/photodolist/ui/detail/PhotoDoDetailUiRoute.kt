@@ -46,7 +46,7 @@ fun PhotoDoDetailUiRoute(
                 DetailCard(
                     modifier = modifier,
                     taskListWithPhotos = loadState.taskListWithPhotos, // <-- Pass the object
-                    onBackClick = onBackClick,
+                    //onBackClick = onBackClick,
                     onCameraClick = {
                         onEvent(PhotoDoDetailEvent.OnCameraClick)
                     },
