@@ -1,9 +1,6 @@
 package com.ylabz.basepro.applications.photodo.ui.navigation.main.entries
 
 import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -15,11 +12,15 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import com.ylabz.basepro.applications.photodo.core.ui.FabState
+// Import the new sealed interface
+import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.DetailLoadState
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailViewModel
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
@@ -33,29 +34,38 @@ private const val TAG = "DetailEntry"
 @Composable
 fun DetailEntry(
     modifier: Modifier = Modifier,
-    isExpandedScreen: Boolean, // <-- 1. PARAMETER ADDED
+    isExpandedScreen: Boolean,
     detailKey: PhotoDoNavKeys.TaskListDetailKey,
     backStack: NavBackStack<NavKey>,
     scrollBehavior: TopAppBarScrollBehavior,
     setTopBar: (@Composable () -> Unit) -> Unit,
-    // setFabState: (FabStateMenu?) -> Unit
+    setFabState: (FabState?) -> Unit
 ) {
-    // NAV_LOG: Log rendering of TaskListDetailKey entry
     Log.d(TAG, "Displaying content for TaskListDetailKey (listId=${detailKey.listId})")
+
     val viewModel: PhotoDoDetailViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // This LaunchedEffect triggers the ViewModel to load the data.
+    // This is safe to call in both single-pane and two-pane modes.
     LaunchedEffect(detailKey.listId) {
-        Log.d(
-            TAG,
-            "TaskListDetailKey LaunchedEffect triggered. Loading list with id: ${detailKey.listId}"
-        )
-        viewModel.loadList(detailKey.listId)
+        Log.d(TAG, "DetailEntry LaunchedEffect: Loading list ${detailKey.listId}")
+        viewModel.loadTaskDetails(detailKey.listId.toLong())
     }
 
-    // This effect now correctly sets the FAB to "Add Item" instead of null.
-    LaunchedEffect(Unit) {
+    // Set the TopBar and FAB state
+    LaunchedEffect(uiState, scrollBehavior) {
         setTopBar {
             TopAppBar(
-                title = { Text("List Details from DetailEntry.kt") },
+                // Set the title based on the new load state
+                title = {
+                    val title = when (val loadState = uiState.loadState) {
+                        is DetailLoadState.Success -> loadState.taskListWithPhotos.taskList.name
+                        is DetailLoadState.Error -> "Error"
+                        DetailLoadState.Loading -> "Loading..."
+                    }
+                    Text(title)
+                },
                 scrollBehavior = scrollBehavior,
                 navigationIcon = {
                     IconButton(onClick = { backStack.removeLastOrNull() }) {
@@ -67,41 +77,15 @@ fun DetailEntry(
                 }
             )
         }
-
-        // ### WHY & WHAT ###
-        // This sets the FAB state when the detail screen is visible.
-        // The text is "Add Item" and the action calls the new onEvent
-        // function in the PhotoDoDetailViewModel. This fixes the bug where
-        // the FAB would disappear on this screen.
-
-        // The FAB is a single "Add Item" button on this screen.
-        // ** FAB LOGIC UPDATED **
-        /* setFabState(
-            FabStateMenu.Menu(
-                mainButtonAction = FabAction(
-                    text = "DetailEntry.kt",
-                    icon = Icons.Default.Add,
-                    onClick = {
-                        Log.d(TAG, "Main button clicked in DetailEntry")
-                    }
-                ),
-                items = listOf(
-                    FabAction(
-                        text = "Item from DetailEntry.kt",
-                        icon = Icons.Default.Add,
-                        onClick = {
-                            Log.d(TAG, "Item button clicked in DetailEntry")
-                            viewModel.onEvent(PhotoDoDetailEvent.OnAddPhotoClicked) }
-                    )
-                )
-            )
-        ) */
-    }
-    Box(modifier = Modifier.fillMaxSize().background(Color.Magenta)) {
-        Column {
-            Text("Source: DetailEntry.kt")
-            PhotoDoDetailUiRoute(viewModel = viewModel)
-        }
+        // No global FAB for this screen
+        setFabState(null)
     }
 
+    // Pass the full state down to the route
+    PhotoDoDetailUiRoute(
+        modifier = modifier.fillMaxSize(),
+        uiState = uiState,
+        onEvent = viewModel::onEvent,
+        onBackClick = { backStack.removeLastOrNull() }
+    )
 }

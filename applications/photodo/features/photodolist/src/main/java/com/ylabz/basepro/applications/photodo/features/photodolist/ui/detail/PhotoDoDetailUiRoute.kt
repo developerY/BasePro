@@ -2,83 +2,57 @@ package com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.components.CameraScreen
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.components.DetailCard
 
 @Composable
 fun PhotoDoDetailUiRoute(
     modifier: Modifier = Modifier,
-    viewModel: PhotoDoDetailViewModel = hiltViewModel(),
-    // We will handle navigation from the NavGraph, so onBack is not needed here
-    // onBack: () -> Unit
+    uiState: PhotoDoDetailUiState, // Receive the new hybrid state
+    onEvent: (PhotoDoDetailEvent) -> Unit,
+    onBackClick: () -> Unit
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
-
-    // --- ADDED STATE ---
-    // State to control whether the camera UI is shown
-    var showCamera by remember { mutableStateOf(false) }
-
-    // --- ADDED LOGIC ---
-    if (showCamera) {
+    // Top-level check for the camera
+    if (uiState.showCamera) {
         CameraScreen(
-            modifier = modifier,
             onSavePhoto = { uri ->
-                // Send the event to the ViewModel
-                viewModel.onEvent(PhotoDoDetailEvent.AddPhoto(uri.toString()))
-                // Hide the camera
-                showCamera = false
+                onEvent(PhotoDoDetailEvent.OnPhotoSaved(uri))
             },
             onBack = {
-                // Hide the camera
-                showCamera = false
+                onEvent(PhotoDoDetailEvent.OnBackFromCamera)
             }
         )
     } else {
-        // --- This is your existing logic ---
-        when (uiState) {
-            is PhotoDoDetailUiState.Loading -> {
-                Box(
-                    modifier = modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
+        // If not showing camera, check the load state
+        when (val loadState = uiState.loadState) {
+            is DetailLoadState.Loading -> {
+                Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
             }
-
-            is PhotoDoDetailUiState.Error -> {
-                Box(
-                    modifier = modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Error: ${uiState.message}",
-                        modifier = Modifier.padding(16.dp)
-                    )
+            is DetailLoadState.Error -> {
+                Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = loadState.message, color = MaterialTheme.colorScheme.error)
                 }
             }
-
-            is PhotoDoDetailUiState.Success -> {
+            is DetailLoadState.Success -> {
+                // We pass the raw TaskListWithPhotos object to the DetailCard
                 DetailCard(
                     modifier = modifier,
-                    state = uiState,
+                    taskListWithPhotos = loadState.taskListWithPhotos, // <-- Pass the object
+                    onBackClick = onBackClick,
                     onCameraClick = {
-                        // --- ADDED LOGIC ---
-                        // Show the camera when the button is clicked
-                        showCamera = true
-                    }
+                        onEvent(PhotoDoDetailEvent.OnCameraClick)
+                    },
+                    onDeletePhotoClick = { photoId ->
+                        onEvent(PhotoDoDetailEvent.OnDeletePhoto(photoId))
+                    },
                 )
             }
         }

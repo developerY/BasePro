@@ -7,8 +7,6 @@ import android.net.Uri
  */
 sealed interface PhotoDoDetailEvent {
 
-    data class AddPhoto(val photoUri: String) : PhotoDoDetailEvent
-
     /**
      * Event triggered when the user saves a new photo from the camera.
      * @param uri The URI of the saved photo.

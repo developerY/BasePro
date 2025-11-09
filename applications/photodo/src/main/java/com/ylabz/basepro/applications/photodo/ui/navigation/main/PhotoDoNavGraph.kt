@@ -190,7 +190,7 @@ fun PhotoDoNavGraph(
                     backStack = backStack,
                     scrollBehavior = scrollBehavior,
                     setTopBar = setTopBar,
-                    // setFabState = setFabState
+                    setFabState = {} //setFabState
                 )
             }
 

@@ -1,23 +1,27 @@
 package com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.components
 
+import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CameraAlt
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.List
-import androidx.compose.material.icons.outlined.Photo
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,145 +31,162 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.ylabz.basepro.applications.photodo.db.entity.PhotoEntity
+// This is the import you correctly identified we would need
 import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
 import com.ylabz.basepro.applications.photodo.db.entity.TaskListWithPhotos
-import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailUiState
 
+/**
+ * This is the main detail card, simplified to be read-only.
+ * It NO LONGER CONTAINS A SCAFFOLD OR TOPAPPBAR.
+ * It now accepts the [TaskListWithPhotos] object directly.
+ */
 @Composable
 fun DetailCard(
     modifier: Modifier = Modifier,
-    state: PhotoDoDetailUiState.Success,
-    onCameraClick: () -> Unit // <-- ADDED: Callback for when the camera button is clicked
+    taskListWithPhotos: TaskListWithPhotos, // <-- Accepts the database model object
+    onBackClick: () -> Unit,
+    onCameraClick: () -> Unit,
+    onDeletePhotoClick: (Long) -> Unit
 ) {
-    Card(
+    Column(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = MaterialTheme.shapes.large
+            .padding(horizontal = 16.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+
+        // Task Title - Read directly from the object
+        Text(
+            text = taskListWithPhotos.taskList.name,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        )
+
+        // Task Description - Read directly from the object
+        Text(
+            text = taskListWithPhotos.taskList.notes ?: "",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp)
+        )
+
+        Spacer(Modifier.height(8.dp))
+        Divider()
+        Spacer(Modifier.height(8.dp))
+
+        // Photos Section
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Section for Task Name
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "Photos",
+                style = MaterialTheme.typography.titleMedium
+            )
+            IconButton(onClick = onCameraClick) {
                 Icon(
-                    imageVector = Icons.Outlined.List,
-                    contentDescription = "Task Name",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(24.dp)
-                )
-                Text(
-                    text = state.taskListWithPhotos.taskList.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(start = 16.dp)
+                    imageVector = Icons.Default.AddAPhoto,
+                    contentDescription = "Add Photo",
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
+        }
 
-            // Section for Status
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Outlined.CheckCircle,
-                    contentDescription = "Task Status",
-                    tint = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.size(24.dp)
+        // Horizontal list of photos
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(vertical = 8.dp)
+        ) {
+            // Read photos directly from the object
+            items(taskListWithPhotos.photos, key = { it.photoId }) { photo ->
+                PhotoItem(
+                    photo = photo,
+                    onDeleteClick = { onDeletePhotoClick(photo.photoId) }
                 )
-                Text(
-                    text = "Status: ${state.taskListWithPhotos.taskList.status}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            }
-
-            Spacer(Modifier.height(8.dp))
-            Divider()
-            Spacer(Modifier.height(8.dp))
-
-            // --- MODIFIED SECTION ---
-            // Section for Photos with Camera Button
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Photos",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                IconButton(onClick = onCameraClick) { // <-- ADDED: Camera button
-                    Icon(
-                        imageVector = Icons.Outlined.CameraAlt,
-                        contentDescription = "Add Photo",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
-            // --- END OF MODIFIED SECTION ---
-
-
-            // A simple horizontal list for photos.
-            // Replace the placeholder with your actual image loading component.
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(5) { // Placeholder for 5 photos
-                    PhotoPlaceholder()
-                }
             }
         }
     }
 }
 
+@Composable
+fun PhotoItem(
+    modifier: Modifier = Modifier,
+    photo: PhotoEntity,
+    onDeleteClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .size(120.dp)
+            .clip(MaterialTheme.shapes.medium)
+    ) {
+        val painter = rememberAsyncImagePainter(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(Uri.parse(photo.uri))
+                .crossfade(true)
+                .build()
+        )
+
+        Image(
+            painter = painter,
+            contentDescription = photo.caption ?: "Task photo",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+        IconButton(
+            onClick = onDeleteClick,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(4.dp)
+                .size(24.dp)
+                .background(Color.Black.copy(alpha = 0.5f), CircleShape)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Delete Photo",
+                tint = Color.White,
+                modifier = Modifier.size(16.dp)
+            )
+        }
+    }
+}
+
+
 @Preview(showBackground = true)
 @Composable
 fun DetailCardPreview() {
-    val sampleTaskList = TaskListEntity(
-        listId = 1,
-        categoryId = 1,
-        name = "Sample Task",
-        status = "In Progress"
-    )
     val samplePhotos = listOf(
         PhotoEntity(photoId = 1, listId = 1, uri = ""),
         PhotoEntity(photoId = 2, listId = 1, uri = ""),
         PhotoEntity(photoId = 3, listId = 1, uri = "")
     )
-    val sampleState = PhotoDoDetailUiState.Success(
-        taskListWithPhotos = TaskListWithPhotos(
-            taskList = sampleTaskList,
-            photos = samplePhotos
-        )
+    val sampleTaskList = TaskListEntity(
+        listId = 1,
+        categoryId = 1,
+        name = "Sample Task Title",
+        notes = "This is a sample description for the task."
     )
+    val sampleState = TaskListWithPhotos(
+        taskList = sampleTaskList,
+        photos = samplePhotos
+    )
+
     DetailCard(
-        state = sampleState,
-        onCameraClick = {} // <-- ADDED: Handle click in preview
+        taskListWithPhotos = sampleState,
+        onBackClick = {},
+        onCameraClick = {},
+        onDeletePhotoClick = {}
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PhotoPlaceholderPreview() {
-    PhotoPlaceholder()
-}
-
-@Composable
-fun PhotoPlaceholder(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .size(100.dp)
-            .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.surfaceVariant),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.Photo,
-            contentDescription = "Photo Placeholder",
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(40.dp)
-        )
-    }
 }
