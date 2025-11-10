@@ -3,16 +3,12 @@ package com.ylabz.basepro.applications.photodo.core.ui
 import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,66 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 
-
-
-private val TAG = "FabMain "
-
-
-
-// In MainScreen.kt
-@OptIn(ExperimentalMaterial3ExpressiveApi::class) // Add this annotation
-@Composable
-fun FabMain(fabState: FabState?) {
-    // A state to control the menu expansion, hoisted here
-    var isFabMenuExpanded by remember { mutableStateOf(false) }
-
-    when (fabState) {
-        is FabState.Single -> {
-            ExtendedFloatingActionButton(
-                onClick = fabState.onClick,
-                text = { Text("${fabState.text} -- FabMain Single") },
-                icon = { Icon(fabState.icon, contentDescription = fabState.text) }
-            )
-        }
-        is FabState.Split -> {
-            FloatingActionButtonMenu(
-                expanded = isFabMenuExpanded,
-                // The main button that toggles the menu
-                button = {
-                    ExtendedFloatingActionButton(
-                        text = { Text("Add List -- FabMain Split") },
-                        icon = { Icon(Icons.Default.Add, contentDescription = "Add List") },
-                        onClick = {
-                            // If the menu is open, the main button performs the primary action.
-                            // If closed, it opens the menu.
-                            if (isFabMenuExpanded) {
-                                fabState.primaryOnClick()
-                                // isFabMenuGCC-Status-Body = ""
-                            }
-                            isFabMenuExpanded = !isFabMenuExpanded
-                        }
-                    )
-                }
-            ) {
-                // This is the secondary menu item that appears when expanded
-                SmallFloatingActionButton(
-                    onClick = {
-                        fabState.secondaryOnClick()
-                        isFabMenuExpanded = false // Close menu after action
-                    },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer
-                ) {
-                    Icon(Icons.Default.Create, contentDescription = "Add Category")
-                }
-            }
-        }
-        is FabState.Hidden, null -> {
-            // Render nothing
-        }
-    }
-}
+private const val TAG = "FabMenu "
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -170,23 +108,4 @@ fun FabMenu(fabStateMenu: FabStateMenu?) {
             // Render nothing.
         }
     }
-}
-
-
-/**
- * Preview --- Starts Here
- */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Preview
-@Composable
-fun FabMainPreview() {
-    val fabState = FabState.Split(
-        primaryText = "Add List",
-        primaryIcon = Icons.Default.Add,
-        primaryOnClick = {},
-        secondaryText = "Add Category",
-        secondaryIcon = Icons.Default.Create,
-        secondaryOnClick = {}
-    )
-    FabMain(fabState)
 }

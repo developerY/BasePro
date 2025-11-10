@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.photodo.core.ui
+package com.ylabz.basepro.applications.photodo.core.ui.nav3fab
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Row
@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.photodo.core.ui.FabState
 
 @Composable
 fun SplitButtonFab(
