@@ -16,11 +16,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
  * A sealed interface to represent all possible states of the Floating Action Button.
  * This allows for different types of FABs (single, split) or for it to be hidden.
  */
-sealed interface FabState {
+sealed interface FabStateOrig {
     /**
      * The FAB is not visible.
      */
-    data object Hidden : FabState
+    data object Hidden : FabStateOrig
 
     /**
      * A standard, single-action Extended FAB.
@@ -32,7 +32,7 @@ sealed interface FabState {
         val text: String,
         val icon: ImageVector,
         val onClick: () -> Unit
-    ) : FabState
+    ) : FabStateOrig
 
     /**
      * A split FAB with a primary and secondary action.
@@ -50,7 +50,7 @@ sealed interface FabState {
         val secondaryText: String,
         val secondaryIcon: ImageVector,
         val secondaryOnClick: () -> Unit
-    ) : FabState
+    ) : FabStateOrig
 }
 
 /**

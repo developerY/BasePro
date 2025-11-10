@@ -18,7 +18,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
-import com.ylabz.basepro.applications.photodo.core.ui.FabState
+import com.ylabz.basepro.applications.photodo.core.ui.FabStateOrig
 // Import the new sealed interface
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.DetailLoadState
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailUiRoute
@@ -39,7 +39,7 @@ fun DetailEntry(
     backStack: NavBackStack<NavKey>,
     scrollBehavior: TopAppBarScrollBehavior,
     setTopBar: (@Composable () -> Unit) -> Unit,
-    setFabState: (FabState?) -> Unit
+    setFabState: (FabStateOrig?) -> Unit
 ) {
     Log.d(TAG, "Displaying content for TaskListDetailKey (listId=${detailKey.listId})")
 

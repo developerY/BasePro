@@ -30,9 +30,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
-import com.ylabz.basepro.applications.photodo.core.ui.FabMenu
+import com.ylabz.basepro.applications.photodo.core.ui.nav3fab.FabMenu
 import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
-import com.ylabz.basepro.applications.photodo.core.ui.MainScreenEvent
+import com.ylabz.basepro.applications.photodo.core.ui.MainScreenEventOrig
 import com.ylabz.basepro.applications.photodo.ui.navigation.NavKeySaver
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 
@@ -76,9 +76,9 @@ fun MainScreen() {
 
     // 2. Define the actions. These lambdas will be captured by the
     //    FabStateMenu defined in HomeScreen.
-    val onAddCategoryClicked = { mainScreenViewModel.postEvent(MainScreenEvent.ShowAddCategorySheet) }
-    val onAddListClicked = { mainScreenViewModel.postEvent(MainScreenEvent.AddList) }
-    val onAddItemClicked = { mainScreenViewModel.postEvent(MainScreenEvent.AddItem) }
+    val onAddCategoryClicked = { mainScreenViewModel.postEvent(MainScreenEventOrig.ShowAddCategorySheet) }
+    val onAddListClicked = { mainScreenViewModel.postEvent(MainScreenEventOrig.AddList) }
+    val onAddItemClicked = { mainScreenViewModel.postEvent(MainScreenEventOrig.AddItem) }
 
     val onNavigate: (NavKey) -> Unit = { navKey ->
         // NAV_LOG: Log top-level tab navigation click

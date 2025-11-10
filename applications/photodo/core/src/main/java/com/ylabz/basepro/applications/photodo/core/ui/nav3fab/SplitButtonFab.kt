@@ -19,11 +19,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.applications.photodo.core.ui.FabState
+import com.ylabz.basepro.applications.photodo.core.ui.FabStateOrig
 
 @Composable
 fun SplitButtonFab(
-    fabState: FabState.Split
+    fabStateOrig: FabStateOrig.Split
 ) {
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -32,11 +32,11 @@ fun SplitButtonFab(
         AnimatedVisibility(visible = isExpanded) {
             ExtendedFloatingActionButton(
                 onClick = {
-                    fabState.secondaryOnClick()
+                    fabStateOrig.secondaryOnClick()
                     isExpanded = false
                 },
-                text = { Text(fabState.secondaryText) },
-                icon = { Icon(fabState.secondaryIcon, contentDescription = null) },
+                text = { Text(fabStateOrig.secondaryText) },
+                icon = { Icon(fabStateOrig.secondaryIcon, contentDescription = null) },
             )
         }
 
@@ -48,14 +48,14 @@ fun SplitButtonFab(
                 // If secondary action is available, this button expands it.
                 // Otherwise, it just performs the primary action.
                 if (isExpanded) {
-                    fabState.primaryOnClick()
+                    fabStateOrig.primaryOnClick()
                 } else {
                     isExpanded = true
                 }
             },
             shape = RoundedCornerShape(16.dp)
         ) {
-            Icon(fabState.primaryIcon, contentDescription = null)
+            Icon(fabStateOrig.primaryIcon, contentDescription = null)
         }
     }
 }
@@ -63,7 +63,7 @@ fun SplitButtonFab(
 @Preview
 @Composable
 fun SplitButtonFabPreview() {
-    val fabState = FabState.Split(
+    val fabStateOrig = FabStateOrig.Split(
         primaryText = "Primary Action",
         primaryIcon = Icons.Default.Add,
         primaryOnClick = {},
@@ -71,5 +71,5 @@ fun SplitButtonFabPreview() {
         secondaryIcon = Icons.Default.Add,
         secondaryOnClick = {}
     )
-    SplitButtonFab(fabState = fabState)
+    SplitButtonFab(fabStateOrig = fabStateOrig)
 }

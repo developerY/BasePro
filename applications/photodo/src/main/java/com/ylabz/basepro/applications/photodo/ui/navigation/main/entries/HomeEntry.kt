@@ -15,7 +15,7 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.ylabz.basepro.applications.photodo.core.ui.FabAction
 import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
-import com.ylabz.basepro.applications.photodo.core.ui.MainScreenEvent
+import com.ylabz.basepro.applications.photodo.core.ui.MainScreenEventOrig
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeUiState
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
@@ -55,12 +55,12 @@ fun HomeEntry(
     // It's key to decoupling the FAB click from the direct action, allowing any screen to
     // request that the bottom sheet be shown.
     LaunchedEffect(Unit) {
-        mainScreenViewModel.events.collectLatest { event : MainScreenEvent ->
+        mainScreenViewModel.events.collectLatest { event : MainScreenEventOrig ->
             when (event) {
 
                 // --- BOTTOM SHEET FLOW: Step 3 ---
                 // When a 'RequestAddCategory' event is received, this is the code that runs.
-                is MainScreenEvent.RequestAddCategory -> {
+                is MainScreenEventOrig.RequestAddCategory -> {
                     Log.d(TAG, "Listener heard RequestAddCategory. Telling HomeViewModel to show sheet.")
 
                     // --- BOTTOM SHEET FLOW: Step 4 ---
@@ -71,7 +71,7 @@ fun HomeEntry(
                     homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked)
                 }
                 // When it's asked to save the data, tell the HomeViewModel
-                is MainScreenEvent.AddCategory -> {
+                is MainScreenEventOrig.AddCategory -> {
                     Log.d(TAG, "Listener heard AddCategory. Telling HomeViewModel to show sheet.")
                     homeViewModel.onEvent(HomeEvent.OnSaveCategory(event.categoryName))
                     // homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked(event.categoryName))
@@ -140,7 +140,7 @@ fun HomeEntry(
                             // for the entire screen.
                             Log.d(TAG, "FAB ACTION: Add Category clicked.")
                             Log.d(TAG, "-> Posting event: MainScreenEvent.RequestAddCategory")
-                            mainScreenViewModel.postEvent(MainScreenEvent.RequestAddCategory)
+                            mainScreenViewModel.postEvent(MainScreenEventOrig.RequestAddCategory)
 
                             // Note: This lambda is for navigation and is separate from the bottom sheet logic.
                             // It's called immediately after posting the event.

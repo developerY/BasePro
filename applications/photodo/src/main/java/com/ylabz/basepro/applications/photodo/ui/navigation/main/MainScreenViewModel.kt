@@ -2,7 +2,7 @@ package com.ylabz.basepro.applications.photodo.ui.navigation.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.applications.photodo.core.ui.MainScreenEvent
+import com.ylabz.basepro.applications.photodo.core.ui.MainScreenEventOrig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -16,10 +16,10 @@ import javax.inject.Inject
 @HiltViewModel
 class MainScreenViewModel @Inject constructor() : ViewModel() {
 
-    private val _events = MutableSharedFlow<MainScreenEvent>()
+    private val _events = MutableSharedFlow<MainScreenEventOrig>()
     val events = _events.asSharedFlow()
 
-    fun postEvent(event: MainScreenEvent) {
+    fun postEvent(event: MainScreenEventOrig) {
         viewModelScope.launch {
             _events.emit(event)
         }
