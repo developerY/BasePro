@@ -15,8 +15,8 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
+import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabState
 import com.ylabz.basepro.applications.photodo.ui.navigation.main.entries.DetailEntry
 import com.ylabz.basepro.applications.photodo.ui.navigation.main.entries.HomeEntry
 import com.ylabz.basepro.applications.photodo.ui.navigation.main.entries.ListEntry
@@ -49,7 +49,7 @@ fun PhotoDoNavGraph(
     isExpandedScreen: Boolean, // <-- ADD THIS
     scrollBehavior: TopAppBarScrollBehavior,
     setTopBar: (@Composable () -> Unit) -> Unit,
-    setFabState: (FabStateMenu?) -> Unit,
+    setFabState: (FabState?) -> Unit,
     onCategorySelected: (Long) -> Unit, // Callback to update the remembered category ID
     onAddCategoryClicked: () -> Unit,
     onAddListClicked: () -> Unit,
@@ -127,7 +127,8 @@ fun PhotoDoNavGraph(
                 HomeEntry(
                     isExpandedScreen = isExpandedScreen,
                     backStack = backStack,
-                    setFabState = setFabState,
+                    setTopBar = setTopBar,
+                     setFabState = setFabState,
                     onCategorySelected = onCategorySelected,
                     onAddCategoryClicked = onAddCategoryClicked,
                     onAddListClicked = onAddListClicked,
@@ -190,7 +191,7 @@ fun PhotoDoNavGraph(
                     backStack = backStack,
                     scrollBehavior = scrollBehavior,
                     setTopBar = setTopBar,
-                    setFabState = {} //setFabState
+                    setFabState =  setFabState
                 )
             }
 

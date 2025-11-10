@@ -4,33 +4,37 @@ package com.ylabz.basepro.applications.photodo.ui.navigation.main.entries
 
 import android.util.Log
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.NoteAdd
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
-import com.ylabz.basepro.applications.photodo.core.ui.FabAction
-import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
-import com.ylabz.basepro.applications.photodo.core.ui.MainScreenEventOrig
-import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
-import com.ylabz.basepro.applications.photodo.features.home.ui.HomeUiState
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
+import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabAction
+import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabState
 import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenViewModel
-import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "HomeEntry"
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeEntry(
+    modifier: Modifier = Modifier,
     isExpandedScreen: Boolean,
     backStack: NavBackStack<NavKey>,
-    setFabState: (FabStateMenu?) -> Unit,
+    setTopBar: (@Composable () -> Unit) -> Unit,
+    setFabState: (FabState?) -> Unit, // Use correct FabState
     onCategorySelected: (Long) -> Unit,
     onAddCategoryClicked: () -> Unit,
     onAddListClicked: () -> Unit,
@@ -49,11 +53,12 @@ fun HomeEntry(
      */
     val homeViewModel: HomeViewModel = hiltViewModel()
     val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
+    val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
     // --- BOTTOM SHEET FLOW: Step 2 ---
     // This LaunchedEffect acts as a listener for global UI events from the MainScreenViewModel.
     // It's key to decoupling the FAB click from the direct action, allowing any screen to
-    // request that the bottom sheet be shown.
+    /* request that the bottom sheet be shown.
     LaunchedEffect(Unit) {
         mainScreenViewModel.events.collectLatest { event : MainScreenEventOrig ->
             when (event) {
@@ -87,101 +92,49 @@ fun HomeEntry(
                 }
             }
         }
-    }
+    }*/
 
-    /**
-     * Side Effect for UI State Updates:
-     * `LaunchedEffect` is crucial here. It runs its block of code only when its keys change.
-     * This prevents an infinite recomposition loop that would occur if `setTopBar` or
-     * `setFabState` were called directly in the composable body, as they modify the
-     * state of the parent (`MainScreen`).
-     */
-    LaunchedEffect(
-        backStack.size,
-        //isExpandedScreen,
-        homeViewModel.uiState.collectAsState().value
-    ) {
-        val currentUiState = homeViewModel.uiState.value
-        val isCategorySelected =
-            currentUiState is HomeUiState.Success && currentUiState.selectedCategory != null
-        val isListSelected = backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey
+    LaunchedEffect(Unit) {
+        setTopBar {
+            TopAppBar(title = { Text("PhotoDo") })//, scrollBehavior = it)
+        }
 
-        // --- FAB Logic for Expanded Screens (e.g., Tablets) ---
-        //if (isExpandedScreen) {
-        // --- LOGIC FOR EXPANDED (OPEN) SCREENS ---
+        // --- THIS IS THE FIX ---
+        // The main button's onClick is now empty. Its only job is to toggle.
+        // The "Add Item" action is moved into the `items` list.
         setFabState(
-            FabStateMenu.Menu(
+            FabState.Menu(
                 mainButtonAction = FabAction(
-                    text = "Add Main Screen",
+                    text = "Add",
                     icon = Icons.Default.Add,
                     onClick = {
-                        Log.d(TAG, "FAB ACTION: Main Button Pressed -- set to hide / show")
-                    } // Main button just opens the menu
+                        // Main button's only job is to open/close the menu.
+                        // This click is handled inside FabMain.
+                        Log.d(TAG, "Main FAB clicked to toggle menu.")
+                    }
                 ),
-                // The menu items are conditional based on the user's selections.
-                items = listOfNotNull(
-                    // "Add Category" is always available.
-                    // Action to add to Column 1 (Category) - Always available
+                items = listOf(
+                    // "Add Item" is now the first item in the menu
                     FabAction(
-                        text = "Category -- list in HomeEntry",
-                        icon = Icons.Default.Create,
-                        //Log.d(TAG, "Add Category from Global FAB Clicked")
-                        //
-                        // --- THE FIX ---
-                        // Its onClick now posts a global event to the message bus.
-                        // The listener above will catch this and handle it.
-                        // This allows any screen to use this same pattern.
-                        //
-                        onClick = {
-                            // --- BOTTOM SHEET FLOW: Step 1 ---
-                            // When the "Add Category" FAB is clicked, it doesn't directly
-                            // show the bottom sheet. Instead, it posts a 'RequestAddCategory'
-                            // event to the shared MainScreenViewModel. This acts as a message bus
-                            // for the entire screen.
-                            Log.d(TAG, "FAB ACTION: Add Category clicked.")
-                            Log.d(TAG, "-> Posting event: MainScreenEvent.RequestAddCategory")
-                            mainScreenViewModel.postEvent(MainScreenEventOrig.RequestAddCategory)
-
-                            // Note: This lambda is for navigation and is separate from the bottom sheet logic.
-                            // It's called immediately after posting the event.
-                            Log.d(TAG, "-> Invoking onAddCategoryClicked lambda.")
-                            onAddCategoryClicked()
-                        }
+                        text = "Add Item",
+                        icon = Icons.Default.Add, // You can change this icon
+                        onClick = onAddItemClicked
                     ),
-                    // "Add List" is only available if a category is selected.
-                    // Action to add to Column 2 (List) - Only if a category is selected
-                    if (isCategorySelected) FabAction(
-                        text = "List",
-                        icon = Icons.AutoMirrored.Filled.NoteAdd,
-                        //Log.d(TAG, "Add List from Global FAB Clicked")
-                        onClick = {
-                            Log.d(TAG, "FAB ACTION: Add List clicked.")
-                            Log.d(TAG, "-> (TODO: Event not implemented yet)")
-                            // TODO: Implement this by posting a RequestAddList event
-                            Log.d(TAG, "-> Invoking onAddListClicked lambda.")
-                            onAddListClicked()
-                        }
-                    ) else null,
-                    // Action to add to Column 3 (Item) - Only if a list is selected
-                    if (isListSelected) FabAction(
-                        text = "Item",
-                        icon = Icons.Default.Add,
-                        // --- THIS IS THE CORRECTED CODE ---
-                        // We post an event to the shared ViewModel.
-                        // This announces that the "Add Item" button was clicked.
-                        // Log.d(TAG, "Add Item from Global FAB Clicked - Posting Event")
-                        onClick = {
-                            Log.d(TAG, "FAB ACTION: Add Item clicked.")
-                            Log.d(TAG, "-> (TODO: Event not implemented yet)")
-                            // TODO: Implement this by posting a RequestAddItem event
-                            Log.d(TAG, "-> Invoking onAddItemClicked lambda.")
-                            onAddItemClicked()
-                        }
-                    ) else null
+                    FabAction(
+                        text = "Add List",
+                        icon = Icons.Default.List,
+                        onClick = onAddListClicked
+                    ),
+                    FabAction(
+                        text = "Add Category",
+                        icon = Icons.Default.Category,
+                        onClick = onAddCategoryClicked
+                    )
                 )
             )
         )
-
+        // --- END OF FIX ---
+    }
         // --- END OF FAB Logic for Expanded Screens ---
 
         // --- FAB Logic for Compact Screens (e.g., Phones) ---
@@ -227,8 +180,8 @@ fun HomeEntry(
                 else -> setFabState(FabStateMenu.Hidden)
             }
         }
-        }*/
-    }
+        }
+    }*/
 
     // In MainScreen.kt -> AppContent()
     PhotoDoHomeUiRoute(

@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.photodo.ui.navigation.main.entries
 
+// Import the new sealed interface
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
@@ -18,12 +19,11 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
-import com.ylabz.basepro.applications.photodo.core.ui.FabStateOrig
-// Import the new sealed interface
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.DetailLoadState
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailViewModel
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
+import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabState
 
 
 private const val TAG = "DetailEntry"
@@ -39,7 +39,7 @@ fun DetailEntry(
     backStack: NavBackStack<NavKey>,
     scrollBehavior: TopAppBarScrollBehavior,
     setTopBar: (@Composable () -> Unit) -> Unit,
-    setFabState: (FabStateOrig?) -> Unit
+    setFabState: (FabState?) -> Unit
 ) {
     Log.d(TAG, "Displaying content for TaskListDetailKey (listId=${detailKey.listId})")
 

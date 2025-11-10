@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.material3.rememberTopAppBarState
@@ -30,9 +31,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
-import com.ylabz.basepro.applications.photodo.core.ui.nav3fab.FabMenu
-import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
-import com.ylabz.basepro.applications.photodo.core.ui.MainScreenEventOrig
 import com.ylabz.basepro.applications.photodo.ui.navigation.NavKeySaver
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 
@@ -45,7 +43,11 @@ private const val TAG = "MainScreen"
 )
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    // This is the shared, STATEFUL ViewModel that holds state for FABs and BottomSheets
+    mainScreenViewModel: MainScreenViewModel = hiltViewModel(),
+    scrollBehavior: TopAppBarScrollBehavior
+) {
     val activity = LocalActivity.current as Activity
     val windowSizeClass = calculateWindowSizeClass(activity)
     val isExpandedScreen = windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
@@ -70,15 +72,15 @@ fun MainScreen() {
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     var topBar: @Composable () -> Unit by remember { mutableStateOf({}) }
-    var fabState: FabStateMenu? by remember { mutableStateOf(null) }
+    // var fabState: FabStateMenu? by remember { mutableStateOf(null) }
 
     val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
 
     // 2. Define the actions. These lambdas will be captured by the
     //    FabStateMenu defined in HomeScreen.
-    val onAddCategoryClicked = { mainScreenViewModel.postEvent(MainScreenEventOrig.ShowAddCategorySheet) }
-    val onAddListClicked = { mainScreenViewModel.postEvent(MainScreenEventOrig.AddList) }
-    val onAddItemClicked = { mainScreenViewModel.postEvent(MainScreenEventOrig.AddItem) }
+    val onAddCategoryClicked = {}// mainScreenViewModel.postEvent(MainScreenEventOrig.ShowAddCategorySheet) }
+    val onAddListClicked = {}// mainScreenViewModel.postEvent(MainScreenEventOrig.AddList) }
+    val onAddItemClicked = {}// mainScreenViewModel.postEvent(MainScreenEventOrig.AddItem) }
 
     val onNavigate: (NavKey) -> Unit = { navKey ->
         // NAV_LOG: Log top-level tab navigation click
@@ -125,16 +127,17 @@ fun MainScreen() {
 
     val appContent = @Composable { modifier: Modifier ->
         key(backStackKey) {
+            val fabstate = null
             PhotoDoNavGraph(
                 modifier = modifier,
                 backStack = backStack,
                 sceneStrategy = listDetailStrategy,
                 isExpandedScreen = isExpandedScreen,
                 scrollBehavior = scrollBehavior,
-                setTopBar = { topBar = it },
+                setTopBar = { topBar = it as @Composable (() -> Unit) },
                 // THIS IS WHERE THE FUNCTION IS CREATED AND PASSED DOWN
                 // setFabState = { newFabState -> currentFabState = newFabState },
-                setFabState = { fabState = it },
+                setFabState = { fabstate },//{ fabState = it },
                 onCategorySelected = { categoryId ->
                     // NAV_LOG: Log when the last selected category ID is updated
                     Log.d(TAG, "onCategorySelected callback triggered. Updating lastSelectedCategoryId to: $categoryId")
@@ -187,9 +190,9 @@ fun MainScreen() {
                     .nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = topBar,
                 floatingActionButton = {
-                    if (fabState != null) {
+                    /*if (fabState != null) {
                         FabMenu(fabStateMenu = fabState!!)
-                    }
+                    }*/
                 }
                 //floatingActionButton = { FabMenu(fabState) }
             ) { padding ->
@@ -211,9 +214,9 @@ fun MainScreen() {
             },
             //floatingActionButton = { FabMenu(fabState) }
             floatingActionButton = {
-                if (fabState != null) {
+                /*if (fabState != null) {
                     FabMenu(fabStateMenu = fabState!!)
-                }
+                }*/
             }
         ) { padding ->
             appContent(Modifier.padding(padding))

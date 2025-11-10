@@ -6,8 +6,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
@@ -17,15 +20,16 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class) // Needed for scrollBehavior
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             PhotoDoTheme {
-
-                // Bottom bar
-
-                MainScreen()
+                // --- THIS IS THE FIX ---
+                // 1. Create the scrollBehavior here at the top level.
+                val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+                MainScreen(scrollBehavior = scrollBehavior)
 
                 //SimpleAdaptiveBottomBar() // Main Composable for Nav3
                 /*
@@ -41,6 +45,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+// This Greeting composable is no longer used by MainActivity
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     val navController = rememberNavController()

@@ -18,12 +18,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
-import com.ylabz.basepro.applications.photodo.core.ui.FabAction
-import com.ylabz.basepro.applications.photodo.core.ui.FabStateMenu
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListEvent
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListViewModel
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
+import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabAction
+import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabState
 
 private const val TAG = "ListEntry"
 
@@ -35,7 +35,7 @@ fun ListEntry(
     backStack: NavBackStack<NavKey>,
     scrollBehavior: TopAppBarScrollBehavior,
     setTopBar: (@Composable () -> Unit) -> Unit,
-    setFabState: (FabStateMenu?) -> Unit,
+    setFabState: (FabState?) -> Unit,
     onCategorySelected: (Long) -> Unit,
     onAddListClicked: () -> Unit, // <-- 1. ADD THIS PARAMETER
     onAddItemClicked: () -> Unit // <-- Make sure this is passed from NavGraph
@@ -76,7 +76,7 @@ fun ListEntry(
         //setFabState(FabState("Add List") { viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked) })
         // THIS IS THE NEW SPLIT FAB LOGIC
         setFabState(
-            FabStateMenu.Single(
+            FabState.Single(
                 action = FabAction(
                     text = "Add List",
                     icon = Icons.Default.Add,
@@ -100,7 +100,7 @@ fun ListEntry(
         val isDetailVisible = backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey
 
         setFabState(
-            FabStateMenu.Menu(
+            FabState.Menu(
                 mainButtonAction = FabAction(
                     text = "ListEntry.kt", // Icon-only FAB
                     icon = Icons.Default.Add,
