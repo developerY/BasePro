@@ -78,9 +78,6 @@ fun MainScreen(
 
     // 2. Define the actions. These lambdas will be captured by the
     //    FabStateMenu defined in HomeScreen.
-    val onAddCategoryClicked = {}// mainScreenViewModel.postEvent(MainScreenEventOrig.ShowAddCategorySheet) }
-    val onAddListClicked = {}// mainScreenViewModel.postEvent(MainScreenEventOrig.AddList) }
-    val onAddItemClicked = {}// mainScreenViewModel.postEvent(MainScreenEventOrig.AddItem) }
 
     val onNavigate: (NavKey) -> Unit = { navKey ->
         // NAV_LOG: Log top-level tab navigation click
@@ -144,9 +141,7 @@ fun MainScreen(
                     lastSelectedCategoryId = categoryId
                 },
                 // Pass the ACTIONS down.
-                onAddCategoryClicked = onAddCategoryClicked,
-                onAddListClicked = onAddListClicked,
-                onAddItemClicked = onAddItemClicked
+                onEvent = {} //mainScreenViewModel::onEvent
             )
         }
     }

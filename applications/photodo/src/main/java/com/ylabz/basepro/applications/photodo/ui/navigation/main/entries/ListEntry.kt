@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListEvent
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListViewModel
@@ -37,8 +38,7 @@ fun ListEntry(
     setTopBar: (@Composable () -> Unit) -> Unit,
     setFabState: (FabState?) -> Unit,
     onCategorySelected: (Long) -> Unit,
-    onAddListClicked: () -> Unit, // <-- 1. ADD THIS PARAMETER
-    onAddItemClicked: () -> Unit // <-- Make sure this is passed from NavGraph
+    onEvent: (HomeEvent) -> Unit
 ) {
     // NAV_LOG: Log rendering of TaskListKey entry
     Log.d(TAG, "Displaying content for TaskListKey (categoryId=${listKey.categoryId})")

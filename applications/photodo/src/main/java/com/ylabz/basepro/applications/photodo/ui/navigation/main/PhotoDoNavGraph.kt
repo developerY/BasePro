@@ -15,6 +15,7 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabState
 import com.ylabz.basepro.applications.photodo.ui.navigation.main.entries.DetailEntry
@@ -51,9 +52,7 @@ fun PhotoDoNavGraph(
     setTopBar: (@Composable () -> Unit) -> Unit,
     setFabState: (FabState?) -> Unit,
     onCategorySelected: (Long) -> Unit, // Callback to update the remembered category ID
-    onAddCategoryClicked: () -> Unit,
-    onAddListClicked: () -> Unit,
-    onAddItemClicked: () -> Unit
+    onEvent: (HomeEvent) -> Unit,
     // REMOVE the updateCurrentTopLevelKey parameter, it's not needed here
     // updateCurrentTopLevelKey: (NavKey) -> Unit
 ) {
@@ -130,9 +129,7 @@ fun PhotoDoNavGraph(
                     setTopBar = setTopBar,
                      setFabState = setFabState,
                     onCategorySelected = onCategorySelected,
-                    onAddCategoryClicked = onAddCategoryClicked,
-                    onAddListClicked = onAddListClicked,
-                    onAddItemClicked = onAddItemClicked
+                    onEvent = onEvent
                 )
             }
 
@@ -164,8 +161,7 @@ fun PhotoDoNavGraph(
                     setTopBar = setTopBar,
                     setFabState = setFabState,
                     onCategorySelected = onCategorySelected,
-                    onAddListClicked = onAddListClicked,
-                    onAddItemClicked = onAddItemClicked
+                    onEvent = onEvent
                 )
             }
 
