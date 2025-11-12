@@ -18,12 +18,12 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
-import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabAction
 import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabState
+import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenEvent
 import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenViewModel
 
 private const val TAG = "HomeEntry"
@@ -37,7 +37,7 @@ fun HomeEntry(
     setTopBar: (@Composable () -> Unit) -> Unit,
     setFabState: (FabState?) -> Unit, // Use correct FabState
     onCategorySelected: (Long) -> Unit,
-    onEvent: (HomeEvent) -> Unit,
+    onEvent: (MainScreenEvent) -> Unit,
 ) {
     // NAV_LOG: Log rendering of HomeFeedKey entry
     Log.d(TAG, "Displaying content for HomeFeedKey")
@@ -78,17 +78,17 @@ fun HomeEntry(
                     FabAction(
                         text = "Add Item",
                         icon = Icons.Default.Add, // You can change this icon
-                        onClick = { onEvent(HomeEvent.OnAddCategoryClicked)}
+                        onClick = { onEvent(MainScreenEvent.OnAddCategoryClicked)}
                     ),
                     FabAction(
                         text = "Add List",
                         icon = Icons.Default.List,
-                        onClick = { onEvent(HomeEvent.OnAddListClicked)}
+                        onClick = { onEvent(MainScreenEvent.OnAddListClicked)}
                     ),
                     FabAction(
                         text = "Add Category",
                         icon = Icons.Default.Category,
-                        onClick = { onEvent(HomeEvent.OnAddCategoryClicked)}
+                        onClick = { onEvent(MainScreenEvent.OnAddCategoryClicked)}
                     )
                 )
             )
@@ -120,7 +120,7 @@ fun HomeEntry(
         // This allows the HomeScreen to notify the MainScreen whenever a new
         // category is selected, keeping the "Tasks" tab in sync.
         onCategorySelected = onCategorySelected,
-        onEvent = onEvent,
+        // onEvent = onEvent,
         // setFabState = setFabState // <-- Pass the FAB setter down
         // setFabState = setFabState
     )
@@ -146,17 +146,17 @@ LaunchedEffect(Unit) {
                 // then update its own state (HomeUiState) to signal that the
                 // bottom sheet should be displayed. The PhotoDoHomeUiRoute is observing
                 // this state and will show the sheet accordingly when the state changes.
-                homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked)
+                homeViewModel.onEvent(MainScreenEvent.OnAddCategoryClicked)
             }
             // When it's asked to save the data, tell the HomeViewModel
             is MainScreenEventOrig.AddCategory -> {
                 Log.d(TAG, "Listener heard AddCategory. Telling HomeViewModel to show sheet.")
-                homeViewModel.onEvent(HomeEvent.OnSaveCategory(event.categoryName))
-                // homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked(event.categoryName))
-                // homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked)
+                homeViewModel.onEvent(MainScreenEvent.OnSaveCategory(event.categoryName))
+                // homeViewModel.onEvent(MainScreenEvent.OnAddCategoryClicked(event.categoryName))
+                // homeViewModel.onEvent(MainScreenEvent.OnAddCategoryClicked)
             }
             /*is MainScreenEvent.AddList -> {
-                ///homeViewModel.onEvent(HomeEvent.OnAddListClicked)
+                ///homeViewModel.onEvent(MainScreenEvent.OnAddListClicked)
             }*/
             // It ignores the AddItem event, as another screen handles that.
             else -> {
@@ -182,7 +182,7 @@ LaunchedEffect(Unit) {
                     Icons.Default.Add
                 ) {
                     Log.d(TAG, "Add Category from Global FAB Clicked -- Closed Screen")
-                    homeViewModel.onEvent(HomeEvent.OnAddCategoryClicked)
+                    homeViewModel.onEvent(MainScreenEvent.OnAddCategoryClicked)
                 })
         )
 
@@ -194,7 +194,7 @@ LaunchedEffect(Unit) {
                 ) {
                     Log.d(TAG, "Add List from Global FAB Clicked -- Closed Screen")
                     /* This would need the list ViewModel */
-                    //homeViewModel.onEvent(HomeEvent.OnAddTaskListClicked)
+                    //homeViewModel.onEvent(MainScreenEvent.OnAddTaskListClicked)
                 })
         )
 

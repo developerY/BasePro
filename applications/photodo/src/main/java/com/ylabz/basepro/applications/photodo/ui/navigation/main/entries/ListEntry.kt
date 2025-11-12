@@ -18,13 +18,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
-import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListEvent
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListViewModel
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabAction
 import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabState
+import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenEvent
 
 private const val TAG = "ListEntry"
 
@@ -38,7 +38,7 @@ fun ListEntry(
     setTopBar: (@Composable () -> Unit) -> Unit,
     setFabState: (FabState?) -> Unit,
     onCategorySelected: (Long) -> Unit,
-    onEvent: (HomeEvent) -> Unit
+    onEvent: (MainScreenEvent) -> Unit,
 ) {
     // NAV_LOG: Log rendering of TaskListKey entry
     Log.d(TAG, "Displaying content for TaskListKey (categoryId=${listKey.categoryId})")

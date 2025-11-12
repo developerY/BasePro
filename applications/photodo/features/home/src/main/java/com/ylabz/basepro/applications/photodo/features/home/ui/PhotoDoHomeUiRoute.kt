@@ -20,7 +20,6 @@ fun PhotoDoHomeUiRoute(
     // The navigation lambda now expects a Long (the categoryId)
     uiState: HomeUiState, // Receives state from HomeEntry
     navTo: (Long) -> Unit,
-    onEvent: (HomeEvent) -> Unit, // Receives event handler from HomeEntry -- onTaskListClick
     onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
     // setFabState: (FabStateMenu?) -> Unit = {}, // <-- ADD THIS PARAMETER
     homeViewModel: HomeViewModel, // -- do not use new hiltViewModel
@@ -30,6 +29,8 @@ fun PhotoDoHomeUiRoute(
     Log.d("ViewModelInstance", "PhotoDoHomeUiRoute is OBSERVING hashCode: ${homeViewModel.hashCode()}")
 
     Log.d(TAG, "Entered PhotoDoHomeUiRoute composable") // <-- BREADCRUMB 1
+
+    val onEvent = homeViewModel::onEvent
 
     when (uiState) {
         is HomeUiState.Loading -> {

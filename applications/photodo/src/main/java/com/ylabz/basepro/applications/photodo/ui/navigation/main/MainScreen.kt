@@ -74,8 +74,6 @@ fun MainScreen(
     var topBar: @Composable () -> Unit by remember { mutableStateOf({}) }
     // var fabState: FabStateMenu? by remember { mutableStateOf(null) }
 
-    val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
-
     // 2. Define the actions. These lambdas will be captured by the
     //    FabStateMenu defined in HomeScreen.
 
@@ -141,7 +139,7 @@ fun MainScreen(
                     lastSelectedCategoryId = categoryId
                 },
                 // Pass the ACTIONS down.
-                onEvent = {} //mainScreenViewModel::onEvent
+                onEvent = mainScreenViewModel::onEvent
             )
         }
     }
