@@ -101,7 +101,7 @@ fun PhotoDoNavGraph(
          * Composable content and adaptive layout metadata.
          */
         entryProvider = entryProvider {
-            val isExpandedScreen = true
+            val isExpandedScreen = isExpandedScreen
 
             /**
              * =================================================================
@@ -124,10 +124,10 @@ fun PhotoDoNavGraph(
                 ))
             {
                 HomeEntry(
-                    isExpandedScreen = isExpandedScreen,
+                    isExpandedScreen = isExpandedScreen, // <-- Use the correct parameter
                     backStack = backStack,
                     setTopBar = setTopBar,
-                     setFabState = setFabState,
+                    setFabState = setFabState,
                     onCategorySelected = onCategorySelected,
                     onEvent = onEvent
                 )
@@ -181,7 +181,7 @@ fun PhotoDoNavGraph(
             entry<PhotoDoNavKeys.TaskListDetailKey>(metadata = ListDetailSceneStrategy.detailPane()) { detailKey ->
                 // Call the extracted composable, passing in the necessary state.
                 DetailEntry(
-                    modifier = modifier,
+                    modifier = Modifier, // <-- FIX #9: Remove the modifier to prevent double padding
                     isExpandedScreen = isExpandedScreen,
                     detailKey = detailKey,
                     backStack = backStack,
@@ -199,7 +199,7 @@ fun PhotoDoNavGraph(
              */
             entry<PhotoDoNavKeys.SettingsKey> {
                 SettingsEntry(
-                    modifier = modifier,
+                    modifier = Modifier, // <-- FIX #10: Remove the modifier
                     scrollBehavior = scrollBehavior,
                     setTopBar = setTopBar,
                     // setFabState = setFabState,

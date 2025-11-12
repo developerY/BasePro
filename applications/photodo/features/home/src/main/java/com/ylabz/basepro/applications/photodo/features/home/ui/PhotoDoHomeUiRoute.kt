@@ -2,6 +2,7 @@ package com.ylabz.basepro.applications.photodo.features.home.ui
 
 import android.util.Log
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -37,44 +38,49 @@ fun PhotoDoHomeUiRoute(
             }
         }
         is HomeUiState.Success -> {
-            HomeScreen(
-                uiState = uiState,
-                onEvent = homeViewModel::onEvent,
-                // When a task list is selected, navigate using its categoryId
-                onSelectList = { taskID ->
-                    Log.d(
-                        "PhotoDoHomeUiRoute",
-                        "STEP2: Navigating to TaskList with categoryId: $taskID"
-                    )
-                    navTo(taskID)
-                },
-                onCategorySelected = onCategorySelected, // <-- PASS THE LAMBDA DOWN
-                // This handles the "Add" button on the empty screen
-                /*onAddList = {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Text("PhotoDoHomeUI Holding the HomeScreen")
+                HomeScreen(
+                    uiState = uiState,
+                    onEvent = homeViewModel::onEvent,
+                    // When a task list is selected, navigate using its categoryId
+                    onSelectList = { taskID ->
+                        Log.d(
+                            "PhotoDoHomeUiRoute",
+                            "STEP2: Navigating to TaskList with categoryId: $taskID"
+                        )
+                        navTo(taskID)
+                    },
+                    onCategorySelected = onCategorySelected, // <-- PASS THE LAMBDA DOWN
+                    // This handles the "Add" button on the empty screen
+                    /*onAddList = {
                     state.selectedCategory?.let { category ->
                         viewModel.onEvent(HomeEvent.OnAddTaskListClicked(category.categoryId))
                     }
                 },*/
-                modifier = modifier,
-                // setFabState = setFabState
-            )
-            // --- THIS IS THE UI LOGIC ---
-            // When the ViewModel's state flag is true, show the sheet.
-            if (uiState.isAddingCategory) {
-                AddCategorySheet(
-                    onAddCategory = { categoryName ->
-                        // Log the event being sent to the ViewModel to save the category
-                        Log.d(TAG, "onAddCategory called with name: '$categoryName'. Posting OnSaveCategory event.")
-                        onEvent(HomeEvent.OnSaveCategory(categoryName))
-                    },
-                    onDismiss = {
-                        // Log the event being sent to the ViewModel to dismiss the sheet
-                        Log.d(TAG, "onDismiss called. Posting OnDismissAddCategory event.")
-                        onEvent(HomeEvent.OnDismissAddCategory)
-                    }
+                    modifier = modifier,
+                    // setFabState = setFabState
                 )
+                // --- THIS IS THE UI LOGIC ---
+                // When the ViewModel's state flag is true, show the sheet.
+                if (uiState.isAddingCategory) {
+                    AddCategorySheet(
+                        onAddCategory = { categoryName ->
+                            // Log the event being sent to the ViewModel to save the category
+                            Log.d(
+                                TAG,
+                                "onAddCategory called with name: '$categoryName'. Posting OnSaveCategory event."
+                            )
+                            onEvent(HomeEvent.OnSaveCategory(categoryName))
+                        },
+                        onDismiss = {
+                            // Log the event being sent to the ViewModel to dismiss the sheet
+                            Log.d(TAG, "onDismiss called. Posting OnDismissAddCategory event.")
+                            onEvent(HomeEvent.OnDismissAddCategory)
+                        }
+                    )
+                }
             }
-
 
         }
         is HomeUiState.Error -> {

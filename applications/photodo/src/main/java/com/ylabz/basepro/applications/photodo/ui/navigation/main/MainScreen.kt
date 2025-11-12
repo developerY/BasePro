@@ -131,7 +131,7 @@ fun MainScreen(
                 sceneStrategy = listDetailStrategy,
                 isExpandedScreen = isExpandedScreen,
                 scrollBehavior = scrollBehavior,
-                setTopBar = { topBar = it as @Composable (() -> Unit) },
+                setTopBar = { topBar = it },
                 // THIS IS WHERE THE FUNCTION IS CREATED AND PASSED DOWN
                 // setFabState = { newFabState -> currentFabState = newFabState },
                 setFabState = { fabstate },//{ fabState = it },

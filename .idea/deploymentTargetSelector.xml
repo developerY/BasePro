@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-07-16T00:13:45.724274Z">
+        <DropdownSelection timestamp="2025-11-12T02:39:15.726440Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=8BQX1E6VA" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ash/.android/avd/Pixel_9a.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -26,7 +26,7 @@
       </SelectionState>
       <SelectionState runConfigName="applications.photodo">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-11-07T22:48:49.222381Z">
+        <DropdownSelection timestamp="2025-11-12T02:53:12.442848Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ash/.android/avd/Pixel_9_Pro_Fold.avd" />
@@ -43,10 +43,10 @@
       </SelectionState>
       <SelectionState runConfigName="applications.ashbike">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-11-07T19:59:35.137627Z">
+        <DropdownSelection timestamp="2025-11-12T02:53:05.019058Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=8BQX1E6VA" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ash/.android/avd/Pixel_9_Pro_Fold.avd" />
             </handle>
           </Target>
         </DropdownSelection>
