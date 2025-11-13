@@ -19,13 +19,13 @@ private const val TAG = "PhotoDoListViewModel"
 
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
-class PhotoDoListViewModel @Inject constructor(
+open class PhotoDoListViewModel @Inject constructor(
     private val photoDoRepo: PhotoDoRepo
 ) : ViewModel() {
 
     private val _categoryId = MutableStateFlow<Long?>(null)
 
-    val uiState: StateFlow<PhotoDoListUiState> = _categoryId.flatMapLatest { categoryId ->
+    open val uiState: StateFlow<PhotoDoListUiState> = _categoryId.flatMapLatest { categoryId ->
         Log.d(TAG, "flatMapLatest triggered with categoryId: $categoryId")
         if (categoryId == null) {
             Log.d(TAG, "categoryId is null, setting state to Loading")
