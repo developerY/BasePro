@@ -44,13 +44,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun AddListBottomSheet(
     onDismiss: () -> Unit,
-    onSaveList: (String) -> Unit
+    onSaveList: (String, String) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var listName by remember { mutableStateOf("") }
+    var listDescription by remember { mutableStateOf("") }
     val isSaveEnabled = listName.isNotBlank()
 
     LaunchedEffect(Unit) {
@@ -62,7 +63,7 @@ fun AddListBottomSheet(
         if (isSaveEnabled) {
             scope.launch {
                 sheetState.hide()
-                onSaveList(listName)
+                onSaveList(listName, listDescription)
             }.invokeOnCompletion {
                 if (!sheetState.isVisible) {
                     onDismiss()
@@ -89,6 +90,16 @@ fun AddListBottomSheet(
                 modifier = Modifier.fillMaxWidth().focusRequester(focusRequester),
                 label = { Text("List Name") },
                 leadingIcon = { Icon(imageVector = Icons.AutoMirrored.Filled.List, contentDescription = "List Name") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Next),
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = listDescription,
+                onValueChange = { listDescription = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Description") },
+                leadingIcon = { Icon(imageVector = Icons.AutoMirrored.Filled.List, contentDescription = "List Description") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { handleSave() })

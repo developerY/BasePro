@@ -44,13 +44,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun AddCategoryBottomSheet(
     onDismiss: () -> Unit,
-    onSaveCategory: (String) -> Unit
+    onSaveCategory: (String, String) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var categoryName by remember { mutableStateOf("") }
+    var categoryDescription by remember { mutableStateOf("") }
     val isSaveEnabled = categoryName.isNotBlank()
 
     LaunchedEffect(Unit) {
@@ -62,7 +63,7 @@ fun AddCategoryBottomSheet(
         if (isSaveEnabled) {
             scope.launch {
                 sheetState.hide()
-                onSaveCategory(categoryName)
+                onSaveCategory(categoryName, categoryDescription)
             }.invokeOnCompletion {
                 if (!sheetState.isVisible) {
                     onDismiss()
@@ -89,6 +90,16 @@ fun AddCategoryBottomSheet(
                 modifier = Modifier.fillMaxWidth().focusRequester(focusRequester),
                 label = { Text("Category Name") },
                 leadingIcon = { Icon(imageVector = Icons.Default.Create, contentDescription = "Category Name") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Next),
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = categoryDescription,
+                onValueChange = { categoryDescription = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Description") },
+                leadingIcon = { Icon(imageVector = Icons.Default.Create, contentDescription = "Category Description") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { handleSave() })
