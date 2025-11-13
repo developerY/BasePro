@@ -19,7 +19,7 @@ private const val TAG = "DetailEntry"
 fun SettingsEntry(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior,
-    setTopBar: (@Composable () -> Unit) -> Unit,
+    setTopBar: (@Composable (TopAppBarScrollBehavior) -> Unit) -> Unit,
     // setFabState: (FabStateMenu?) -> Unit
 ) { // NAV_LOG: Log rendering of SettingsKey entry
     Log.d(TAG, "Displaying content for SettingsKey")

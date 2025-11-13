@@ -38,7 +38,7 @@ fun DetailEntry(
     detailKey: PhotoDoNavKeys.TaskListDetailKey,
     backStack: NavBackStack<NavKey>,
     scrollBehavior: TopAppBarScrollBehavior,
-    setTopBar: (@Composable () -> Unit) -> Unit,
+    setTopBar: (@Composable (TopAppBarScrollBehavior) -> Unit) -> Unit,
     setFabState: (FabState?) -> Unit
 ) {
     Log.d(TAG, "Displaying content for TaskListDetailKey (listId=${detailKey.listId})")

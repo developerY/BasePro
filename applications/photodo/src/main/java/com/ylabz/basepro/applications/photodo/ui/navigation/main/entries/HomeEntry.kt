@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,7 +35,7 @@ fun HomeEntry(
     modifier: Modifier = Modifier,
     isExpandedScreen: Boolean,
     backStack: NavBackStack<NavKey>,
-    setTopBar: (@Composable () -> Unit) -> Unit,
+    setTopBar: (@Composable (TopAppBarScrollBehavior) -> Unit) -> Unit,
     setFabState: (FabState?) -> Unit, // Use correct FabState
     onCategorySelected: (Long) -> Unit,
     onEvent: (MainScreenEvent) -> Unit,

@@ -48,7 +48,7 @@ fun PhotoDoNavGraph(
     sceneStrategy: ListDetailSceneStrategy<NavKey>,
     isExpandedScreen: Boolean, // <-- ADD THIS
     scrollBehavior: TopAppBarScrollBehavior,
-    setTopBar: (@Composable () -> Unit) -> Unit,
+    setTopBar: (@Composable (TopAppBarScrollBehavior) -> Unit) -> Unit,
     setFabState: (FabState?) -> Unit,
     onCategorySelected: (Long) -> Unit, // Callback to update the remembered category ID
     onEvent: (MainScreenEvent) -> Unit,

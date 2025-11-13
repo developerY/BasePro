@@ -35,7 +35,7 @@ fun ListEntry(
     listKey: PhotoDoNavKeys.TaskListKey,
     backStack: NavBackStack<NavKey>,
     scrollBehavior: TopAppBarScrollBehavior,
-    setTopBar: (@Composable () -> Unit) -> Unit,
+    setTopBar: (@Composable (TopAppBarScrollBehavior) -> Unit) -> Unit,
     setFabState: (FabState?) -> Unit,
     onCategorySelected: (Long) -> Unit,
     onEvent: (MainScreenEvent) -> Unit,
