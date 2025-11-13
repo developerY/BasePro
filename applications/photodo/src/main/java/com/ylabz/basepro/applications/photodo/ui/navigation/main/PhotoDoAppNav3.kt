@@ -114,7 +114,7 @@ fun SimpleAdaptiveBottomBar() {
         // When switching tabs, we should clear the back stack to avoid weird states.
         if (currentTab.title != screen.title) {
             currentTab = screen
-            backStack.replaceAll(screen)
+            //backStack.replaceAll(screen)
         }
     }
 
