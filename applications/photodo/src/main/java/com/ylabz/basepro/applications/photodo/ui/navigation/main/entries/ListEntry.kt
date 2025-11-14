@@ -16,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.list.PhotoDoListEvent
@@ -31,6 +33,7 @@ private const val TAG = "ListEntry"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListEntry(
+    modifier: Modifier = Modifier,
     isExpandedScreen: Boolean,
     listKey: PhotoDoNavKeys.TaskListKey,
     backStack: NavBackStack<NavKey>,
@@ -42,10 +45,12 @@ fun ListEntry(
 ) {
     // NAV_LOG: Log rendering of TaskListKey entry
     Log.d(TAG, "Displaying content for TaskListKey (categoryId=${listKey.categoryId})")
-    val viewModel: PhotoDoListViewModel = androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel()
+
+    val viewModel: PhotoDoListViewModel = hiltViewModel()
+
     LaunchedEffect(listKey.categoryId) {
         Log.d(TAG, "TaskListKey LaunchedEffect triggered. Loading category with id: ${listKey.categoryId}")
-        onCategorySelected(listKey.categoryId) // Also update when loading a list directly
+        onCategorySelected(listKey.categoryId) // Also update when loading a list directly -- Inform the parent
         viewModel.loadCategory(listKey.categoryId)
     }
 
@@ -96,7 +101,7 @@ fun ListEntry(
     }
 
 // ** FAB LOGIC UPDATED **
-    LaunchedEffect(backStack.lastOrNull()) {
+LaunchedEffect(backStack.lastOrNull()) {
         val isDetailVisible = backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey
 
         setFabState(
@@ -123,13 +128,56 @@ fun ListEntry(
             )
         )
     }
+ /*
+    LaunchedEffect(Unit) {
+        setTopBar {
+            TopAppBar(
+                title = { Text("Category Lists") }, // You can make this dynamic
+                scrollBehavior = it,
+                navigationIcon = {
+                    IconButton(onClick = { backStack.removeLastOrNull() }) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                }
+            )
+        }
+        setFabState(
+            FabState.Menu(
+                mainButtonAction = FabAction(
+                    text = "Add",
+                    icon = Icons.Default.Add,
+                    onClick = { } // Main button only toggles
+                ),
+                items = listOf(
+                    FabAction(
+                        text = "Add Item",
+                        icon = Icons.Default.Add,
+                        onClick = { onEvent(MainScreenEvent.OnAddItemClicked) }
+                    ),
+                    FabAction(
+                        text = "Add List",
+                        icon = Icons.AutoMirrored.Filled.List,
+                        onClick = { onEvent(MainScreenEvent.OnAddListClicked) }
+                    )
+                )
+            )
+        )
+    }*/
+
+    // UI
     Column {
         Text("Source: ListEntry.kt")
         PhotoDoListUiRoute(
             onTaskClick = { listId ->
                 // NAV_LOG: Log navigation from TaskList to Detail
                 Log.d(TAG, "TaskList onTaskClick triggered. ListId: $listId")
-                val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
+
+                // --- THIS IS THE FIX ---
+                // We must pass the listId as a Long, not a String
+                val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId = listId.toString())
                 Log.d(TAG, " -> Calling backStack.add with TaskListDetailKey($listId)")
                 backStack.add(detailKey)
             },
@@ -141,4 +189,7 @@ fun ListEntry(
             viewModel = viewModel
         )
     }
+
+
+
 }
