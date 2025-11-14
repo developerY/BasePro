@@ -3,6 +3,8 @@ package com.ylabz.basepro.applications.photodo.ui.navigation.main
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
+import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepo
 import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,14 +40,51 @@ data class MainScreenUiState(
  * as described in FAB.md.
  */
 @HiltViewModel
-class MainScreenViewModel @Inject constructor() : ViewModel() {
+class MainScreenViewModel @Inject constructor(
+    private val repository: PhotoDoRepo
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainScreenUiState())
     val uiState: StateFlow<MainScreenUiState> = _uiState.asStateFlow()
 
     // Keep track of the last known FAB state per screen, so we can restore it
     // when a bottom sheet is dismissed.
+    // We store the last-known FAB state so we can restore it when a sheet is dismissed.
     private var lastKnownFabState: FabState? = null
+
+    /**
+     * Allows a navigation entry (like HomeEntry) to set the FAB.
+     * This is called from a LaunchedEffect in the entry.
+     */
+    fun setFabState(fabState: FabState?) {
+        Log.d(TAG, "setFabState called with: $fabState")
+        _uiState.update {
+            // Only update if the sheet is not visible
+            if (it.currentSheet == BottomSheetType.NONE) {
+                lastKnownFabState = fabState
+                it.copy(fabState = fabState)
+            } else {
+                // A sheet is open, just remember this for later
+                lastKnownFabState = fabState
+                it
+            }
+        }
+    }
+
+    /**
+     * Sets the state of the Floating Action Button.
+     * This is called by the navigation entries (e.g., HomeEntry, DetailEntry)
+     * to define the FAB's behavior for the current screen.
+     */
+    fun setFabStateOrig(fabState: FabState?) {
+        // Store this as the "default" FAB for the current screen
+        lastKnownFabState = fabState
+
+        // Only update the UI if a sheet is not currently open
+        if (_uiState.value.currentSheet == BottomSheetType.NONE) {
+            _uiState.update { it.copy(fabState = fabState) }
+        }
+    }
 
     /**
      * Handles events from the UI (e.g., from HomeEntry or from the BottomSheet).
@@ -84,22 +123,16 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
                         )
                     }
                 }
+                is MainScreenEvent.OnSaveCategory -> {
+                    Log.d(TAG, "OnSaveCategory event received")
+                    repository.insertCategory(
+                        CategoryEntity(
+                            name = event.name,
+                            description = event.description
+                        )
+                    )
+                }
             }
-        }
-    }
-
-    /**
-     * Sets the state of the Floating Action Button.
-     * This is called by the navigation entries (e.g., HomeEntry, DetailEntry)
-     * to define the FAB's behavior for the current screen.
-     */
-    fun setFabState(fabState: FabState?) {
-        // Store this as the "default" FAB for the current screen
-        lastKnownFabState = fabState
-
-        // Only update the UI if a sheet is not currently open
-        if (_uiState.value.currentSheet == BottomSheetType.NONE) {
-            _uiState.update { it.copy(fabState = fabState) }
         }
     }
 }

@@ -27,4 +27,9 @@ sealed interface MainScreenEvent {
      * Signals that the user has dismissed the modal bottom sheet.
      */
     data object OnBottomSheetDismissed : MainScreenEvent
+
+    /**
+     * Signals that a category should be saved.
+     */
+    data class OnSaveCategory(val name: String, val description: String) : MainScreenEvent
 }
