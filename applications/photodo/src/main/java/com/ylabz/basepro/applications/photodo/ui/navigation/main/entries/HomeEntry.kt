@@ -29,6 +29,10 @@ import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenViewM
 
 private const val TAG = "HomeEntry"
 
+/**
+ * The composable content for the PhotoDoNavKeys.HomeFeedKey navigation entry.
+ * This is the main "home" screen.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeEntry(
@@ -101,17 +105,20 @@ fun HomeEntry(
     // In MainScreen.kt -> AppContent()
     PhotoDoHomeUiRoute(
         modifier = modifier,
-        navTo = { listId ->
+        // viewModel = viewModel, // viewModel is hoisted, not passed down
+        navTo = { categoryId ->
             Log.d(
                 TAG,
-                "Step3: Navigating from Task List Item to Detail Screen with listId: $listId"
+                "Step3: Navigating from Home to TaskList with categoryId: $categoryId"
             )
 
-            // 1. Create the key for the final detail screen (Pane 3).
+            // 1. Create the key for the task list screen.
+            val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
             val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
 
-            // 2. Add it to the back stack. The adaptive strategy handles the rest.
-            backStack.add(detailKey)
+
+            // 2. Add it to the back stack.
+            backStack.add(listKey)
         },
         homeViewModel = homeViewModel,
         uiState = uiState,
@@ -121,9 +128,18 @@ fun HomeEntry(
         // This allows the HomeScreen to notify the MainScreen whenever a new
         // category is selected, keeping the "Tasks" tab in sync.
         onCategorySelected = onCategorySelected,
+        // onEvent = viewModel::onEvent,
         // onEvent = onEvent,
         // setFabState = setFabState // <-- Pass the FAB setter down
         // setFabState = setFabState
+        /*
+        onTaskListClick = { listId ->
+            // --- THIS IS THE FIX ---
+            // We must pass the listId as a Long, not a String
+            backStack.add(PhotoDoNavKeys.TaskListDetailKey(listId = listId))
+            // --- END OF FIX ---
+        }
+         */
     )
 }
 
