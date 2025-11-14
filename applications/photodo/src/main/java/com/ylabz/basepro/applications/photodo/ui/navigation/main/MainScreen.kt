@@ -1,10 +1,14 @@
 package com.ylabz.basepro.applications.photodo.ui.navigation.main
 
+// --- THIS IS THE CORRECT, REAL IMPORT ---
+// --- END ---
 import FabMain
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -12,9 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-// --- THIS IS THE CORRECT, REAL IMPORT ---
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
-// --- END ---
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -58,6 +60,7 @@ fun NavBackStack<NavKey>.isTopLevelDestinationInBackStack(topLevelDestinations: 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreen(
+    // 1. Get the one and only STATEFUL ViewModel
     mainScreenViewModel: MainScreenViewModel = hiltViewModel(),
     scrollBehavior: TopAppBarScrollBehavior
 ) {
@@ -97,25 +100,80 @@ fun MainScreen(
         )
     }
 
-
     // --- Remembered State for "Add List" ---
     var lastSelectedCategoryId by rememberSaveable { mutableStateOf(1L) }
 
-    // --- UI Logic ---
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = { topBar(scrollBehavior) },
-        floatingActionButton = {
-            // 3. RENDER THE FAB based on the collected state
-            FabMain(
-                fabState = uiState.fabState
+
+    // --- Navigation Handler ---
+    val onNavigate: (NavKey) -> Unit = { navKey ->
+        val keyToNavigate = if (navKey is PhotoDoNavKeys.TaskListKey) {
+            PhotoDoNavKeys.TaskListKey(lastSelectedCategoryId)
+        } else {
+            navKey
+        }
+        if (currentTopLevelKey::class != keyToNavigate::class) {
+            currentTopLevelKey = keyToNavigate
+            // --- THIS IS THE FIX ---
+            // Call your helper function `replace` (one L)
+            // instead of the Java function `replaceAll` (two Ls)
+            backStack.replaceAll({keyToNavigate})
+            //NOTE: Need to fix
+            backStack.replace(keyToNavigate)
+        }
+    }
+
+    // --- 4. Define the app content ONCE ---
+    // This is the NavGraph that contains all the screens
+    val appContent = @Composable { modifier: Modifier ->
+        PhotoDoNavGraph(
+            modifier = modifier,
+            backStack = backStack,
+            sceneStrategy = sceneStrategy,
+            isExpandedScreen = isExpandedScreen,
+            scrollBehavior = scrollBehavior,
+            setTopBar = { topBar = { it(scrollBehavior) } },
+
+            // 5. Pass the VM functions down
+            setFabState = mainScreenViewModel::setFabState,
+            onEvent = mainScreenViewModel::onEvent, // Pass the single event handler
+
+            onCategorySelected = { categoryId ->
+                lastSelectedCategoryId = categoryId
+            }
+        )
+    }
+
+    // --- 6. This is YOUR correct adaptive layout logic ---
+    if (isExpandedScreen) {
+        // **Expanded Layout: Show Navigation Rail**
+        Row(modifier = Modifier.fillMaxSize()) {
+            HomeNavigationRail(
+                currentTopLevelKey = currentTopLevelKey,
+                onNavigate = onNavigate
             )
-        },
-        bottomBar = {
-            // 4. Use the 'isExpandedScreen' boolean to render the bottom bar
-            if (isAtTopLevel && !isExpandedScreen) {
-                PhotoDoHomeBottomBar(
+            Scaffold(
+                // **Expanded Layout: Show Bottom Bar**
+                modifier = Modifier
+                    .weight(1f)
+                    .nestedScroll(scrollBehavior.nestedScrollConnection),
+                topBar = { topBar(scrollBehavior) },
+                floatingActionButton = {
+                    // 7. Render the FAB from the VM state
+                    FabMain(fabState = uiState.fabState)
+                }
+            ) { padding ->
+                appContent(Modifier.padding(padding))
+            }
+        }
+    } else {
+        // **Compact Layout: Show Bottom Bar**
+        Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = { topBar(scrollBehavior) },
+            bottomBar = {
+                HomeBottomBar(
                     currentTopLevelKey = currentTopLevelKey,
+                    // onNavigate = onNavigate // Use the correct lambda name
                     onNavigate = { key ->
                         if (key::class != currentTopLevelKey::class) {
                             currentTopLevelKey = key
@@ -123,59 +181,54 @@ fun MainScreen(
                         }
                     }
                 )
+            },
+            floatingActionButton = {
+                // 7. Render the FAB from the VM state
+                FabMain(fabState = uiState.fabState)
             }
+        ) { padding ->
+            appContent(Modifier.padding(padding))
         }
-    ) { paddingValues ->
-        // 5. This is the correct content. Call PhotoDoNavGraph ONCE.
-        PhotoDoNavGraph(
-            modifier = Modifier.padding(paddingValues),
-            backStack = backStack,
-            sceneStrategy = sceneStrategy, // <-- Pass the correct strategy
-            isExpandedScreen = isExpandedScreen,
-            scrollBehavior = scrollBehavior,
-            setTopBar = setTopBar,
-            setFabState = mainScreenViewModel::setFabState,
-            onEvent = mainScreenViewModel::onEvent,
-            onCategorySelected = { categoryId ->
-                lastSelectedCategoryId = categoryId
-                Log.d(TAG, "Remembered lastSelectedCategoryId: $lastSelectedCategoryId")
-            }
-        )
+    }
+    // --- END OF YOUR CORRECT LAYOUT LOGIC ---
 
-        // G. SHOW BOTTOM SHEETS based on the collected state
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    mainScreenViewModel.onEvent(MainScreenEvent.OnBottomSheetDismissed)
-                },
-                sheetState = modalSheetState
-            ) {
-                when (uiState.currentSheet) {
-                    BottomSheetType.ADD_CATEGORY -> AddCategoryBottomSheet(
-                        onDismiss = {
+    // --- END OF YOUR CORRECT LAYOUT LOGIC ---
+    // G. SHOW BOTTOM SHEETS based on the collected state
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                mainScreenViewModel.onEvent(MainScreenEvent.OnBottomSheetDismissed)
+            },
+            sheetState = modalSheetState
+        ) {
+            when (uiState.currentSheet) {
+                BottomSheetType.ADD_CATEGORY -> AddCategoryBottomSheet(
+                    onDismiss = {
+                        mainScreenViewModel.onEvent(MainScreenEvent.OnBottomSheetDismissed)
+                    },
+                    onSaveCategory = { name: String, description: String ->
+                        mainScreenViewModel.onEvent(MainScreenEvent.OnSaveCategory(name, description))
+                        mainScreenViewModel.onEvent(MainScreenEvent.OnBottomSheetDismissed)
+                    }
+                )
+
+                BottomSheetType.ADD_LIST -> AddListBottomSheet(
+                    onDismiss = { mainScreenViewModel.onEvent(MainScreenEvent.OnBottomSheetDismissed) },
+                    onSaveList = { title: String, description: String ->
+                        // TODO: Implement save list
+                    }
+                )
+
+                BottomSheetType.ADD_ITEM -> AddItemBottomSheet(
+                    onAddClick = {
+                        Log.d(TAG, "Adding Item (Photo) - Not yet implemented")
+                        scope.launch { modalSheetState.hide() }.invokeOnCompletion {
                             mainScreenViewModel.onEvent(MainScreenEvent.OnBottomSheetDismissed)
-                        },
-                        onSaveCategory = { name: String, description: String ->
-                            mainScreenViewModel.onEvent(MainScreenEvent.OnSaveCategory(name, description))
-                            mainScreenViewModel.onEvent(MainScreenEvent.OnBottomSheetDismissed)
                         }
-                    )
-                    BottomSheetType.ADD_LIST -> AddListBottomSheet(
-                        onDismiss = { mainScreenViewModel.onEvent(MainScreenEvent.OnBottomSheetDismissed) },
-                        onSaveList = { title: String, description: String ->
-                            // TODO: Implement save list
-                        }
-                    )
-                    BottomSheetType.ADD_ITEM -> AddItemBottomSheet(
-                        onAddClick = {
-                            Log.d(TAG, "Adding Item (Photo) - Not yet implemented")
-                            scope.launch { modalSheetState.hide() }.invokeOnCompletion {
-                                mainScreenViewModel.onEvent(MainScreenEvent.OnBottomSheetDismissed)
-                            }
-                        }
-                    )
-                    BottomSheetType.NONE -> {}
-                }
+                    }
+                )
+
+                BottomSheetType.NONE -> {}
             }
         }
     }
@@ -184,11 +237,6 @@ fun MainScreen(
 @Composable
 fun AddItemBottomSheet(onAddClick: () -> Unit) {
     Text("Add Item Bottom Sheet")
-}
-
-@Composable
-fun PhotoDoHomeBottomBar(currentTopLevelKey: NavKey, onNavigate: (NavKey) -> Unit) {
-    // TODO: Implement HomeBottomBar
 }
 
 fun <T : Any> MutableList<T>.replaceTop(item: T) {
