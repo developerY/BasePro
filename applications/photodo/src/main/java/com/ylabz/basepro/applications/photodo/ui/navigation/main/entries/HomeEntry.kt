@@ -114,7 +114,7 @@ fun HomeEntry(
 
             // 1. Create the key for the task list screen.
             val listKey = PhotoDoNavKeys.TaskListKey(categoryId)
-            val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
+            //val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
 
 
             // 2. Add it to the back stack.

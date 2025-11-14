@@ -105,7 +105,7 @@ fun MainScreen(
 
 
     // --- Navigation Handler ---
-    val onNavigate: (NavKey) -> Unit = { navKey ->
+    /*val onNavigate: (NavKey) -> Unit = { navKey ->
         val keyToNavigate = if (navKey is PhotoDoNavKeys.TaskListKey) {
             PhotoDoNavKeys.TaskListKey(lastSelectedCategoryId)
         } else {
@@ -116,11 +116,11 @@ fun MainScreen(
             // --- THIS IS THE FIX ---
             // Call your helper function `replace` (one L)
             // instead of the Java function `replaceAll` (two Ls)
-            backStack.replaceAll({keyToNavigate})
+            // backStack.replaceAll({keyToNavigate})
             //NOTE: Need to fix
             backStack.replace(keyToNavigate)
         }
-    }
+    }*/
 
     // --- 4. Define the app content ONCE ---
     // This is the NavGraph that contains all the screens
@@ -149,7 +149,12 @@ fun MainScreen(
         Row(modifier = Modifier.fillMaxSize()) {
             HomeNavigationRail(
                 currentTopLevelKey = currentTopLevelKey,
-                onNavigate = onNavigate
+                onNavigate = { key ->
+                    if (key::class != currentTopLevelKey::class) {
+                        currentTopLevelKey = key
+                        backStack.replace(key)
+                    }
+                }
             )
             Scaffold(
                 // **Expanded Layout: Show Bottom Bar**
