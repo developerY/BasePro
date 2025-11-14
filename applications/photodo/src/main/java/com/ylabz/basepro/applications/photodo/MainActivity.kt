@@ -29,7 +29,11 @@ class MainActivity : ComponentActivity() {
                 // --- THIS IS THE FIX ---
                 // 1. Create the scrollBehavior here at the top level.
                 val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+
+
+                // 2. Pass the scrollBehavior to MainScreen.
                 MainScreen(scrollBehavior = scrollBehavior)
+                // --- END OF FIX ---
 
                 //SimpleAdaptiveBottomBar() // Main Composable for Nav3
                 /*
