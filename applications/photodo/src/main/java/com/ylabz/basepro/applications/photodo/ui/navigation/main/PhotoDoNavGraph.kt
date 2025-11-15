@@ -76,7 +76,13 @@ fun PhotoDoNavGraph(
             Log.d(TAG, "onBack invoked. Current backstack: $currentKey")
             if (isAtRootTaskList) {
                 Log.d(TAG, "Back action: At a root task list, replacing with HomeFeedKey.")
-                backStack.replace(PhotoDoNavKeys.HomeFeedKey)
+
+                // --- THIS IS THE FIX ---
+                // Use clear() and add() to correctly reset the stack
+                backStack.clear()
+                backStack.add(PhotoDoNavKeys.HomeFeedKey)
+                // --- END OF FIX ---
+
             } else {
                 Log.d(TAG, "Back action: Performing default 'removeLastOrNull'.")
                 backStack.removeLastOrNull()
@@ -208,6 +214,6 @@ fun PhotoDoNavGraph(
     )
 }
 
-fun <T : Any> MutableList<T>.replace(item: T) {
+/*fun <T : Any> MutableList<T>.replace(item: T) {
     if (isNotEmpty()) this[lastIndex] = item else add(item)
-}
+}*/
