@@ -270,7 +270,7 @@ fun MainScreen(
                 topBar = { topBar(scrollBehavior) },
                 floatingActionButton = {
                     // 7. Render the FAB from the VM state
-                    FabMain(fabState = uiState.fabState)
+                    FabMain(fabState = currentFabState)
                 }
             ) { padding ->
                 appContent(Modifier.padding(padding))
@@ -284,18 +284,18 @@ fun MainScreen(
             bottomBar = {
                 HomeBottomBar(
                     currentTopLevelKey = currentTopLevelKey,
-                    // onNavigate = onNavigate // Use the correct lambda name
-                    onNavigate = { key ->
+                    onNavigate = onNavigate // Use the correct lambda name
+                    /*onNavigate = { key ->
                         if (key::class != currentTopLevelKey::class) {
                             currentTopLevelKey = key
                             backStack.replaceTop(key)
                         }
-                    }
+                    }*/
                 )
             },
             floatingActionButton = {
                 // 7. Render the FAB from the VM state
-                FabMain(fabState = uiState.fabState)
+                FabMain(fabState = currentFabState)
             }
         ) { padding ->
             appContent(Modifier.padding(padding))
