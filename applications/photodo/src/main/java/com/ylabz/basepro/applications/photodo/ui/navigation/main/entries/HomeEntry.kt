@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -71,7 +72,7 @@ fun HomeEntry(
             FabState.Menu(
                 mainButtonAction = FabAction(
                     text = "Add",
-                    icon = Icons.Default.Add,
+                    icon = Icons.Default.Home,
                     onClick = {
                         // Main button's only job is to open/close the menu.
                         // This click is handled inside FabMain.

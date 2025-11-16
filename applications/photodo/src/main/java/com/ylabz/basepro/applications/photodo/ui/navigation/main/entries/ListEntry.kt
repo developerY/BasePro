@@ -5,6 +5,7 @@ package com.ylabz.basepro.applications.photodo.ui.navigation.main.entries
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.automirrored.filled.NoteAdd
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DeleteSweep
@@ -108,7 +109,7 @@ LaunchedEffect(backStack.lastOrNull()) {
             FabState.Menu(
                 mainButtonAction = FabAction(
                     text = "ListEntry.kt", // Icon-only FAB
-                    icon = Icons.Default.Add,
+                    icon = Icons.AutoMirrored.Filled.List,
                     onClick = {}
                 ),
                 items = listOfNotNull(

@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Details
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,6 +25,7 @@ import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.Det
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailViewModel
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
+import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabAction
 import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabState
 
 
@@ -77,8 +80,52 @@ fun DetailEntry(
                 }
             )
         }
+        setFabState(
+            FabState.Menu(
+                mainButtonAction = FabAction(
+                    text = "ListEntry.kt", // Icon-only FAB
+                    icon = Icons.Default.Details,
+                    onClick = {
+                        Log.d(TAG, "Add from ListEntry.kt FAB clicked")
+                    }
+                ),
+                items = listOfNotNull(
+                    FabAction(
+                        "Item from DetailEntry.kt",
+                        Icons.Default.Add
+                    ) {
+                        Log.d(TAG, "Add Item from FAB clicked (requires Detail ViewModel)")
+                    }
+                    /*
+                    FabAction(
+                            "List from ListEntry.kt",
+                            Icons.AutoMirrored.Filled.NoteAdd
+                        ) {
+                            //viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked)
+                        },
+                    */
+                )
+            )
+        )
         // No global FAB for this screen
-        // setFabState(null)
+        /*setFabState(
+            FabState.Single(
+                action = FabAction(
+                    text = "Add List",
+                    icon = Icons.Default.Add,
+                    onClick = {  }
+                )
+            )
+
+            /*FabState.Split(
+                primaryText = "Add Item",
+                primaryIcon = Icons.Default.Add, // Or a more specific item icon
+                primaryOnClick = { /* TODO: Add item to a default/selected list */ },
+                secondaryText = "Add List",
+                secondaryIcon = Icons.Default.Add, // Or a more specific list icon
+                secondaryOnClick = { viewModel.onEvent(PhotoDoListEvent.OnAddTaskListClicked) }
+            )*/
+        )*/
     }
 
     // Pass the full state down to the route
