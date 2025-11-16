@@ -23,26 +23,29 @@ fun TaskListItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ElevatedCard(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFFB2DFDB))
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = taskList.name,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Text("Source: TaskListItem.kt", style = MaterialTheme.typography.bodySmall)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = taskList.notes ?: "No notes/description",
-                style = MaterialTheme.typography.bodySmall,
-                maxLines = 2
-            )
+    Column() {
+        Text("Source: TaskListItem.kt")
+        ElevatedCard(
+            modifier = modifier
+                .fillMaxWidth()
+                .clickable { onClick() },
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFFB2DFDB))
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = taskList.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Text("Source: TaskListItem.kt", style = MaterialTheme.typography.bodySmall)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = taskList.notes ?: "No notes/description",
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 2
+                )
+            }
         }
     }
 }

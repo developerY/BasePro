@@ -60,84 +60,88 @@ fun PhotoDoTaskCard(
 
     val iconRotation by animateFloatAsState(targetValue = if (expanded) 180f else 0f, label = "ExpandIconRotation")
 
-    Card(
-        onClick = onItemClick, // Main card click navigates to detail
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = containerColor)
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-                .fillMaxWidth()
-                .animateContentSize() // Animate size changes smoothly
+    Column {
+        Text("From PhotoDoTaskCard.kt and shows the list")
+        Card(
+            onClick = onItemClick, // Main card click navigates to detail
+            modifier = modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = containerColor)
         ) {
-            Text("Source: PhotoDoTaskCard.kt")
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .fillMaxWidth()
+                    .animateContentSize() // Animate size changes smoothly
             ) {
-                // Task Name on the left
-                Text(
-                    text = task.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = contentColor,
-                    modifier = Modifier.weight(1f) // Allow text to take available space
-                )
+                Text("Source: PhotoDoTaskCard.kt")
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    // Task Name on the left
+                    Text(
+                        text = task.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = contentColor,
+                        modifier = Modifier.weight(1f) // Allow text to take available space
+                    )
 
-                // Icons on the right
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box { // Wrapper for DropdownMenu positioning
-                        IconButton(onClick = { showMenu = true }) {
+                    // Icons on the right
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box { // Wrapper for DropdownMenu positioning
+                            IconButton(onClick = { showMenu = true }) {
+                                Icon(
+                                    Icons.Filled.MoreVert,
+                                    contentDescription = "More options from PhotoDoTaskCard.kt",
+                                    tint = contentColor
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = showMenu,
+                                onDismissRequest = { showMenu = false }
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text("Delete from PhotoDoTaskCard.kt") },
+                                    onClick = {
+                                        onDeleteClick()
+                                        showMenu = false
+                                    }
+                                )
+                                // Add other options like "Edit" here if needed
+                            }
+                        }
+                        IconButton(onClick = { expanded = !expanded }) {
                             Icon(
-                                Icons.Filled.MoreVert,
-                                contentDescription = "More options from PhotoDoTaskCard.kt",
+                                imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+                                contentDescription = if (expanded) "Collapse from PhotoDoTaskCard.kt" else "Expand from PhotoDoTaskCard.kt",
+                                modifier = Modifier.rotate(iconRotation),
                                 tint = contentColor
                             )
                         }
-                        DropdownMenu(
-                            expanded = showMenu,
-                            onDismissRequest = { showMenu = false }
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text("Delete from PhotoDoTaskCard.kt") },
-                                onClick = {
-                                    onDeleteClick()
-                                    showMenu = false
-                                }
-                            )
-                            // Add other options like "Edit" here if needed
-                        }
-                    }
-                    IconButton(onClick = { expanded = !expanded }) {
-                        Icon(
-                            imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
-                            contentDescription = if (expanded) "Collapse from PhotoDoTaskCard.kt" else "Expand from PhotoDoTaskCard.kt",
-                            modifier = Modifier.rotate(iconRotation),
-                            tint = contentColor
-                        )
                     }
                 }
-            }
 
-            // Task Creation Time - shown below the name
-            Text(
-                text = "Created: ${task.creationDate.toFormattedDate()}",
-                style = MaterialTheme.typography.bodySmall,
-                color = contentColor,
-                modifier = Modifier.padding(top = 4.dp)
-            )
+                // Task Creation Time - shown below the name
+                Text(
+                    text = "Created: ${task.creationDate.toFormattedDate()}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = contentColor,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
 
 
-            // Content to show when expanded
-            AnimatedVisibility(visible = expanded) {
-                Column(modifier = Modifier.padding(top = 8.dp)) {
-                    Text(
-                        text = task.name ?: "No description available.", // Assuming TaskList might have a description
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = contentColor
-                    )
-                    // You can add more complex content here like image previews, sub-tasks etc.
+                // Content to show when expanded
+                AnimatedVisibility(visible = expanded) {
+                    Column(modifier = Modifier.padding(top = 8.dp)) {
+                        Text(
+                            text = task.name
+                                ?: "No description available.", // Assuming TaskList might have a description
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = contentColor
+                        )
+                        // You can add more complex content here like image previews, sub-tasks etc.
+                    }
                 }
             }
         }

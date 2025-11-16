@@ -72,7 +72,7 @@ fun DetailCard(
         // We add our own vertical padding inside the scrollable column
         // Spacer(Modifier.height(16.dp))
         // --- END OF FIX ---
-
+        Text("DetailCard.kt NO Fab")
         // --- Task Info Section ---
         ElevatedCard(
             modifier = Modifier.fillMaxWidth()

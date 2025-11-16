@@ -54,22 +54,25 @@ fun TaskList(
                     onAddClick = {}//onAddList
                 )
             } else {
-                // Log that the grid is being displayed
-                Log.d(TAG, "Displaying ${taskLists.size} task lists in a grid.")
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(150.dp),
-                    contentPadding = PaddingValues(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(taskLists) { taskList ->
-                        TaskListItem(
-                            taskList = taskList,
-                            onClick = {
-                                Log.d(TAG, "STEP1: Clicked on task list: ${taskList.name}")
-                                onSelectList(taskList.listId)
-                            }
-                        )
+                Column() {
+                    // Log that the grid is being displayed
+                    Text("Source: TaskList.kt -- inside the else")
+                    Log.d(TAG, "Displaying ${taskLists.size} task lists in a grid.")
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(150.dp),
+                        contentPadding = PaddingValues(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        items(taskLists) { taskList ->
+                            TaskListItem(
+                                taskList = taskList,
+                                onClick = {
+                                    Log.d(TAG, "STEP1: Clicked on task list: ${taskList.name}")
+                                    onSelectList(taskList.listId)
+                                }
+                            )
+                        }
                     }
                 }
             }
