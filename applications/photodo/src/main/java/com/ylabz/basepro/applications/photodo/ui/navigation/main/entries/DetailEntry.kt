@@ -78,7 +78,7 @@ fun DetailEntry(
             )
         }
         // No global FAB for this screen
-        setFabState(null)
+        // setFabState(null)
     }
 
     // Pass the full state down to the route

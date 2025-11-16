@@ -2,6 +2,7 @@ package com.ylabz.basepro.applications.photodo.ui.navigation.main
 
 import android.util.Log
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -185,15 +186,18 @@ fun PhotoDoNavGraph(
              */
             entry<PhotoDoNavKeys.TaskListDetailKey>(metadata = ListDetailSceneStrategy.detailPane()) { detailKey ->
                 // Call the extracted composable, passing in the necessary state.
-                DetailEntry(
-                    modifier = Modifier, // <-- FIX #9: Remove the modifier to prevent double padding
-                    isExpandedScreen = isExpandedScreen,
-                    detailKey = detailKey,
-                    backStack = backStack,
-                    scrollBehavior = scrollBehavior,
-                    setTopBar = setTopBar,
-                    setFabState =  setFabState
-                )
+                Column() {
+                    Text (" PhotoDoNavGraph.kt --- Fab needs to be set here")
+                    DetailEntry(
+                        modifier = Modifier, // <-- FIX #9: Remove the modifier to prevent double padding
+                        isExpandedScreen = isExpandedScreen,
+                        detailKey = detailKey,
+                        backStack = backStack,
+                        scrollBehavior = scrollBehavior,
+                        setTopBar = setTopBar,
+                        setFabState = setFabState
+                    )
+                }
             }
 
             /**
