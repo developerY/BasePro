@@ -3,7 +3,6 @@ package com.ylabz.basepro.applications.photodo.features.home.ui
 import android.util.Log
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
-import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -11,7 +10,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.ylabz.basepro.applications.photodo.features.home.ui.components.CategoryList
 import com.ylabz.basepro.applications.photodo.features.home.ui.components.TaskList
-import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
@@ -20,6 +18,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     uiState: HomeUiState.Success,
     onEvent: (HomeEvent) -> Unit,
+    navTo: (Long) -> Unit,
     // This is for navigating from a Task in the list to the Task Detail (3rd pane)
     onSelectList: (Long) -> Unit,
     onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
@@ -102,29 +101,10 @@ fun HomeScreen(
         value = navigator.scaffoldValue,
         listPane = {
             CategoryList(
-                categories = uiState.categories,
-                selectedCategory = uiState.selectedCategory,
-                onCategoryClick = { category ->
-                    /* First, update the state for the detail view
-                    onEvent(HomeEvent.OnCategorySelected(category))
-                    // Then, trigger the navigation
-                    onSelectList(category.categoryId)*/
-                    // This updates the state, so the detailPane knows what to show. This is correct.
-                    onEvent(HomeEvent.OnCategorySelected(category.categoryId))
-
-                    // This calls the lambda to update the GLOBAL state in MainScreen
-                    onCategorySelected(category.categoryId) // <-- CALL THE LAMBDA
-
-                    // 2. Replace onSelectList with the navigator call.
-                    // This tells the scaffold to show the detail pane.
-                    // 4. Launch the navigation call in a coroutine
-                    scope.launch {
-                        Log.d("HomeScreen", "Navigating to detail pane")
-                        navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
-                    }
-                },
-                onEvent = onEvent
-            )
+                uiState = uiState,
+                onEvent = onEvent,
+                navTo = navTo,
+                )
         },
         detailPane = {
             // This pane will now become visible and show the correct task list

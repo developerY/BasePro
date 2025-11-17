@@ -24,17 +24,6 @@ enum class BottomSheetType {
 }
 
 /**
- * UI state for the MainScreen.
- *
- * @param fabState The current state of the Floating Action Button.
- * @param currentSheet The bottom sheet (if any) that should be displayed.
- */
-data class MainScreenUiState(
-    val fabState: FabState? = null,
-    val currentSheet: BottomSheetType = BottomSheetType.NONE
-)
-
-/**
  * A stateful ViewModel that holds the UI state for the MainScreen.
  * It acts as the single source of truth for the FAB and bottom sheets,
  * as described in FAB.md.
@@ -92,6 +81,10 @@ class MainScreenViewModel @Inject constructor(
     fun onEvent(event: MainScreenEvent) {
         viewModelScope.launch {
             when (event) {
+                // --- ADD THIS HANDLER ---
+                is MainScreenEvent.OnCategorySelected -> {
+                    _uiState.update { it.copy(lastSelectedCategoryId = event.categoryId) }
+                }
                 MainScreenEvent.OnAddCategoryClicked -> {
                     Log.d(TAG, "OnAddCategoryClicked event received")
                     _uiState.update { it.copy(

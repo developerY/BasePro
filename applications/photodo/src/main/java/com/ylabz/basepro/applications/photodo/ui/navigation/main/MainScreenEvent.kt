@@ -8,6 +8,9 @@ package com.ylabz.basepro.applications.photodo.ui.navigation.main
  * such as showing a bottom sheet.
  */
 sealed interface MainScreenEvent {
+
+    // --- ADD THIS ---
+    data class OnCategorySelected(val categoryId: Long) : MainScreenEvent
     /**
      * Signals that the "Add Category" action was triggered.
      */

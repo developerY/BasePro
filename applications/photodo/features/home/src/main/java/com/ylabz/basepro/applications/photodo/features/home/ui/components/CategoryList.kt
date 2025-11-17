@@ -21,17 +21,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
+import com.ylabz.basepro.applications.photodo.features.home.ui.HomeUiState
 
 @Composable
 fun CategoryList(
-    categories: List<CategoryEntity>,
-    selectedCategory: CategoryEntity?,
-    onCategoryClick: (CategoryEntity) -> Unit,
+    modifier: Modifier = Modifier,
+// 1. STATE: Receive the full Success state
+    uiState: HomeUiState.Success,
+    // 2. EVENTS: Receive the single event handler
     onEvent: (HomeEvent) -> Unit,
-    modifier: Modifier = Modifier
+    navTo: (Long) -> Unit
 ) {
+    // 3. Extract data from the state
+    val categories = uiState.categories
+    val selectedCategory = uiState.selectedCategory
+
     Log.d("CategoryList", "Recomposing with ${categories.size} categories")
 
     // 1. Use contentPadding for better spacing around the list
@@ -50,7 +55,10 @@ fun CategoryList(
                 modifier = Modifier
                     .fillMaxWidth()
                     // Make the *card itself* clickable for selection
-                    .clickable { onCategoryClick(category) },
+                    .clickable {
+                        // 4. ACTION: Send the correct selection event
+                        onEvent(HomeEvent.OnCategorySelected(category.categoryId))
+                    },
                 shape = MaterialTheme.shapes.large,
                 colors = CardDefaults.elevatedCardColors(
                     containerColor = if (category.categoryId == selectedCategory?.categoryId) {
@@ -87,6 +95,7 @@ fun CategoryList(
                         )
                     }
                 }
+
             }
         }
     }

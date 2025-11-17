@@ -25,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -130,10 +129,7 @@ fun MainScreen(
 
     // Remember the last category ID the user interacted with. Default to 1L since we know it has data.
     // --- Remembered State for "Add List" ---
-    var lastSelectedCategoryId by rememberSaveable { mutableLongStateOf(1L) }
-
-    // NAV_LOG: Log recomposition and state values
-    Log.d(TAG, "MainScreen recomposing -> isExpanded: $isExpandedScreen, topLevelKey: ${currentTopLevelKey::class.simpleName}, lastSelectedCategoryId: $lastSelectedCategoryId")
+    // var lastSelectedCategoryId by rememberSaveable { mutableLongStateOf(1L) }
 
     // --- Navigation Handler ---
     // =================================================================
@@ -146,8 +142,9 @@ fun MainScreen(
         // When navigating via BottomBar/Rail, if the target is the List tab,
         // use the last selected category ID instead of the hardcoded one.
         val keyToNavigate = if (navKey is PhotoDoNavKeys.TaskListKey) {
-            Log.d(TAG, "NAVIGATION -START-  -> List tab clicked. Overriding to last selected categoryId: $lastSelectedCategoryId")
-            PhotoDoNavKeys.TaskListKey(lastSelectedCategoryId)
+            Log.d(TAG, "NAVIGATION -START-  -> List tab clicked. Overriding to last selected categoryId: ${uiState.lastSelectedCategoryId}")
+            // Read from the uiState instead of the local variable
+            PhotoDoNavKeys.TaskListKey(uiState.lastSelectedCategoryId)
         } else {
             Log.d(TAG, "NAVIGATION --  -> Tab is not TaskListKey, using original key.")
             navKey
@@ -213,8 +210,7 @@ fun MainScreen(
                 onCategorySelected = { categoryId ->
                     // NAV_LOG: Log when the last selected category ID is updated
                     Log.d(TAG, "onCategorySelected callback triggered. Updating lastSelectedCategoryId to: $categoryId")
-                    lastSelectedCategoryId = categoryId
-                },
+                    mainScreenViewModel.onEvent(MainScreenEvent.OnCategorySelected(categoryId))                },
                 // Pass the ACTIONS down.
                 onEvent = mainScreenViewModel::onEvent
 
