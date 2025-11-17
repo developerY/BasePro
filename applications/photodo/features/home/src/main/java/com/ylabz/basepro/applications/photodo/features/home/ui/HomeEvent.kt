@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.photodo.features.home.ui
 
+import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 
 /**
  * Defines all the user actions and events that can be triggered from the Home screen.
@@ -35,4 +36,9 @@ sealed interface HomeEvent {
      */
     data object OnAddListClicked : HomeEvent
 
+    /**
+     * Event triggered when the user clicks the delete icon for a category.
+     * @param category The category to be deleted.
+     */
+    data class OnDeleteCategoryClicked(val category: CategoryEntity) : HomeEvent
 }

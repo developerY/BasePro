@@ -3,7 +3,6 @@ package com.ylabz.basepro.applications.photodo.features.home.ui.components
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,8 +15,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,12 +22,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
+import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
 
 @Composable
 fun CategoryList(
     categories: List<CategoryEntity>,
     selectedCategory: CategoryEntity?,
     onCategoryClick: (CategoryEntity) -> Unit,
+    onEvent: (HomeEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Log.d("CategoryList", "Recomposing with ${categories.size} categories")
@@ -76,7 +75,10 @@ fun CategoryList(
                     )
 
                     // 3. ADD THE DELETE ICON BUTTON
-                    IconButton(onClick = { /*onCategoryDelete(category)*/ }) {
+                    IconButton(onClick = {
+                        Log.d("CategoryList", "Delete button clicked for ${category.name}")
+                        onEvent(HomeEvent.OnDeleteCategoryClicked(category))
+                    }) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete ${category.name}",
@@ -86,25 +88,6 @@ fun CategoryList(
                     }
                 }
             }
-
-                // list item text
-                ListItem(
-                    headlineContent = {
-                        Column {
-                            Text(text = category.name)
-                            Text("CategoryList.kt", style = MaterialTheme.typography.bodySmall)
-                        }
-                    },
-                    modifier = Modifier.clickable { onCategoryClick(category) },
-                    colors = if (category.categoryId == selectedCategory?.categoryId) {
-                        ListItemDefaults.colors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer
-                        )
-                    } else {
-                        ListItemDefaults.colors()
-                    }
-                )
-            }
         }
     }
-
+}

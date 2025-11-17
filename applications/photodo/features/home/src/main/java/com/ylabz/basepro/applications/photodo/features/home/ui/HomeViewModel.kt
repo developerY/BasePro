@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepo
+import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent.OnDeleteCategoryClicked
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -170,8 +171,14 @@ class HomeViewModel @Inject constructor(
                 }
             }
 
+            is OnDeleteCategoryClicked -> {
+                viewModelScope.launch {
+                    photoDoRepo.deleteCategory(event.category)
+                }
+            }
+
             HomeEvent.OnAddListClicked -> {} //TODO()
-            
+
         }
     }
 
