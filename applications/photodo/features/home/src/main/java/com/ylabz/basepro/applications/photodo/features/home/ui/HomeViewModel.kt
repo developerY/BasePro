@@ -7,11 +7,16 @@ import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepo
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent.OnDeleteCategoryClicked
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,6 +32,9 @@ class HomeViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
+    private val _categorySelectedEvent = MutableSharedFlow<Long>()
+    val categorySelectedEvent: SharedFlow<Long> = _categorySelectedEvent.asSharedFlow()
 
     /*val uiState: StateFlow<HomeUiState> =
         photoDoRepo.getAllCategories() // Updated from getAllProjects
@@ -201,6 +209,7 @@ class HomeViewModel @Inject constructor(
                         taskListsForSelectedCategory = taskLists
                     )
                 }
+                _categorySelectedEvent.emit(categoryId)
                 Log.d(TAG, "UI State updated successfully.")
             } catch (e: Exception) {
                 Log.e(TAG, "Error fetching task lists for category ID $categoryId", e)

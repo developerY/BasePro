@@ -20,7 +20,6 @@ fun PhotoDoHomeUiRoute(
     // The navigation lambda now expects a Long (the categoryId)
     uiState: HomeUiState, // Receives state from HomeEntry
     navTo: (Long) -> Unit,
-    onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
     // setFabState: (FabStateMenu?) -> Unit = {}, // <-- ADD THIS PARAMETER
     homeViewModel: HomeViewModel, // -- do not use new hiltViewModel
     // --- FIX: The signature should never includes the mainScreenViewModel ---
@@ -51,7 +50,7 @@ fun PhotoDoHomeUiRoute(
                         )
                         navTo(taskID)
                     },
-                    onCategorySelected = onCategorySelected, // <-- PASS THE LAMBDA DOWN
+                    // onCategorySelected = onCategorySelected, // <-- PASS THE LAMBDA DOWN
                     // This handles the "Add" button on the empty screen
                     /*onAddList = {
                     state.selectedCategory?.let { category ->

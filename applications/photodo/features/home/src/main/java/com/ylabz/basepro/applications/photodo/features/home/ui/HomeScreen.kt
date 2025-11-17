@@ -22,7 +22,11 @@ fun HomeScreen(
     onEvent: (HomeEvent) -> Unit,
     // This is for navigating from a Task in the list to the Task Detail (3rd pane)
     onSelectList: (Long) -> Unit,
-    onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
+    //onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
+    // ### WHAT: This parameter was added to accept the "setter" function from MainScreen.
+    // ### WHY: This allows HomeScreen to tell MainScreen which FAB to display.
+    // setFabState: (FabStateMenu?) -> Unit, // <-- IT'S A PARAMETER PASSED TO THE FUNCTION
+    // onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
     // ### WHAT: This parameter was added to accept the "setter" in MainScreen.
     // ### WHY: This allows HomeScreen to tell MainScreen which FAB to display.
     // setFabState: (FabStateMenu?) -> Unit, // <-- IT'S A PARAMETER PASSED TO THE FUNCTION
@@ -36,7 +40,7 @@ fun HomeScreen(
     // It checks if a category is selected and calls `setFabState` with the correct
     // FAB configuration ("Add Category" or "Add List"), making the FAB context-aware.
 
-    LaunchedEffect(uiState.selectedCategory) {
+    /* LaunchedEffect(uiState.selectedCategory) {
         if (uiState.selectedCategory == null) {
             // Context: No category is selected.
             // Action: The FAB should add a new category.
@@ -86,7 +90,7 @@ fun HomeScreen(
             )
             )*/
         }
-    }
+    }*/
 
 
     // val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()

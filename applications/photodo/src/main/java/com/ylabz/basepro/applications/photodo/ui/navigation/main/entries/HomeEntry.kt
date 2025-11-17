@@ -27,6 +27,7 @@ import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabAction
 import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabState
 import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenEvent
 import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "HomeEntry"
 
@@ -59,6 +60,12 @@ fun HomeEntry(
     val homeViewModel: HomeViewModel = hiltViewModel()
     val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(homeViewModel.categorySelectedEvent) {
+        homeViewModel.categorySelectedEvent.collectLatest { categoryId ->
+            onCategorySelected(categoryId)
+        }
+    }
 
     LaunchedEffect(Unit) {
         setTopBar {
@@ -135,7 +142,7 @@ fun HomeEntry(
         // parameter of the `AppContent` function. You just need to pass it down.
         // This allows the HomeScreen to notify the MainScreen whenever a new
         // category is selected, keeping the "Tasks" tab in sync.
-        onCategorySelected = onCategorySelected,
+        // onCategorySelected = onCategorySelected,
         // onEvent = viewModel::onEvent,
         // onEvent = onEvent,
         // setFabState = setFabState // <-- Pass the FAB setter down
