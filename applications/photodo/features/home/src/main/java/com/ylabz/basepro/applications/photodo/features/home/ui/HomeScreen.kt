@@ -3,6 +3,7 @@ package com.ylabz.basepro.applications.photodo.features.home.ui
 import android.util.Log
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,6 +11,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.ylabz.basepro.applications.photodo.features.home.ui.components.CategoryList
 import com.ylabz.basepro.applications.photodo.features.home.ui.components.TaskList
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
@@ -18,11 +20,10 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     uiState: HomeUiState.Success,
     onEvent: (HomeEvent) -> Unit,
-    navTo: (Long) -> Unit,
     // This is for navigating from a Task in the list to the Task Detail (3rd pane)
     onSelectList: (Long) -> Unit,
     onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
-    // ### WHAT: This parameter was added to accept the "setter" function from MainScreen.
+    // ### WHAT: This parameter was added to accept the "setter" in MainScreen.
     // ### WHY: This allows HomeScreen to tell MainScreen which FAB to display.
     // setFabState: (FabStateMenu?) -> Unit, // <-- IT'S A PARAMETER PASSED TO THE FUNCTION
 ) {
@@ -95,6 +96,14 @@ fun HomeScreen(
 
     Log.d("HomeScreen", "On HomeScreen recomposing.")
 
+    LaunchedEffect(uiState.selectedCategory) {
+        uiState.selectedCategory?.let {
+            scope.launch {
+                navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
+            }
+        }
+    }
+
     ListDetailPaneScaffold(
         modifier = modifier, // The modifier for the whole screen goes on the scaffold
         directive = navigator.scaffoldDirective,
@@ -103,8 +112,7 @@ fun HomeScreen(
             CategoryList(
                 uiState = uiState,
                 onEvent = onEvent,
-                navTo = navTo,
-                )
+            )
         },
         detailPane = {
             // This pane will now become visible and show the correct task list

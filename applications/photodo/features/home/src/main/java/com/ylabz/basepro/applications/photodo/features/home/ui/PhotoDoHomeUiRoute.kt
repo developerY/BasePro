@@ -44,8 +44,6 @@ fun PhotoDoHomeUiRoute(
                 HomeScreen(
                     uiState = uiState,
                     onEvent = homeViewModel::onEvent,
-                    navTo = navTo,
-                    // When a task list is selected, navigate using its categoryId
                     onSelectList = { taskID ->
                         Log.d(
                             "PhotoDoHomeUiRoute",
