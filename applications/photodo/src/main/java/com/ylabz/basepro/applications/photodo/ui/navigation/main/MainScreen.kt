@@ -7,10 +7,20 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -30,8 +40,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
@@ -278,16 +291,20 @@ fun MainScreen(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = { topBar(scrollBehavior) },
             bottomBar = {
-                HomeBottomBar(
-                    currentTopLevelKey = currentTopLevelKey,
-                    onNavigate = onNavigate // Use the correct lambda name
-                    /*onNavigate = { key ->
+                Column {
+                    HomeBottomBar(
+                        currentTopLevelKey = currentTopLevelKey,
+                        onNavigate = onNavigate
+                        /*onNavigate = { key ->
                         if (key::class != currentTopLevelKey::class) {
                             currentTopLevelKey = key
                             backStack.replaceTop(key)
                         }
                     }*/
-                )
+                    )
+                    // Add the new collapsible debug UI
+                    DebugStackUi(backStackKey = backStackKey)
+                }
             },
             floatingActionButton = {
                 // 7. Render the FAB from the VM state
@@ -342,6 +359,54 @@ fun MainScreen(
 
                 BottomSheetType.NONE -> {}
             }
+        }
+    }
+}
+
+/**
+ * A collapsible UI for displaying the current NavBackStack.
+ */
+@Composable
+private fun DebugStackUi(backStackKey: String) {
+    // State to hold if the debug panel is expanded or not
+    var isDebugExpanded by rememberSaveable { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.DarkGray)
+    ) {
+        // Clickable header to toggle the expanded state
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { isDebugExpanded = !isDebugExpanded }
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = if (isDebugExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                contentDescription = if (isDebugExpanded) "Collapse Debug" else "Expand Debug",
+                tint = Color.White
+            )
+            Text(
+                text = " DEBUG STACK (Tap to toggle)",
+                color = Color.White,
+                style = MaterialTheme.typography.labelMedium,
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        // Conditionally show the stack trace with an animation
+        AnimatedVisibility(visible = isDebugExpanded) {
+            Text(
+                text = "STACK: $backStackKey",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                color = Color.White,
+                style = MaterialTheme.typography.bodySmall
+            )
         }
     }
 }
