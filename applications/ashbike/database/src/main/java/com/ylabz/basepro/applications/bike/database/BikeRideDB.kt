@@ -36,7 +36,7 @@ abstract class BikeRideDatabase : RoomDatabase() {
                 DATABASE_NAME
             )
                 // DEV‑ONLY: drop & re-create when you change your schema
-                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration(false)
                 .build()
     }
 }

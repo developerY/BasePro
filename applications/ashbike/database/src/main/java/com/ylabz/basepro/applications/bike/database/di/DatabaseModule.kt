@@ -27,7 +27,7 @@ object DatabaseModule {
     @Singleton
     fun provideBikeRideDB(@ApplicationContext ctx: Context): BikeRideDatabase =
         Room.databaseBuilder(ctx, BikeRideDatabase::class.java, BikeRideDatabase.DATABASE_NAME)
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(false)
             .build()
 
     @Provides
