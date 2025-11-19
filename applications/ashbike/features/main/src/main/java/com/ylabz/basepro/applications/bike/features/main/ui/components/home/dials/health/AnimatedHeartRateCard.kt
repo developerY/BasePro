@@ -1,6 +1,5 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.health
 
-//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -29,7 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.core.ui.theme.AshBikeTheme
 
 @Composable
 fun AnimatedHeartRateCard(
@@ -74,7 +75,7 @@ fun AnimatedHeartRateCard(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "${heartRate} bpm",
+                text = "$heartRate bpm",
                 style = MaterialTheme.typography.bodyMedium.copy(
                     color = Color.Black,
                     fontWeight = FontWeight.Bold
@@ -87,10 +88,11 @@ fun AnimatedHeartRateCard(
         }
     }
 }
-/*
+
 @Preview
 @Composable
 fun AnimatedHeartRateCardPreview() {
-    AnimatedHeartRateCard(heartRate = 70)
+    AshBikeTheme {
+        AnimatedHeartRateCard(heartRate = 70)
+    }
 }
-*/
