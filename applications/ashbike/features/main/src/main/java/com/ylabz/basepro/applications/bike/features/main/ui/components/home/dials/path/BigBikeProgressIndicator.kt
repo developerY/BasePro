@@ -28,11 +28,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
+import com.ylabz.basepro.core.model.bike.BikeRideInfo
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import kotlin.math.roundToInt
 
 @Composable
@@ -167,5 +171,32 @@ private fun Float.displayKm() = if (this % 1 == 0f) {
     "${"%.1f".format(this)} km"
 }
 
-
-
+@Preview
+@Composable
+private fun BigBikeProgressIndicatorPreview() {
+    BigBikeProgressIndicator(
+        uiState = BikeUiState.Success(
+            bikeData = BikeRideInfo(
+                location = null,
+                currentSpeed = 0.0,
+                averageSpeed = 0.0,
+                maxSpeed = 0.0,
+                currentTripDistance = 25f,
+                totalTripDistance = 100f,
+                remainingDistance = 75f,
+                elevationGain = 0.0,
+                elevationLoss = 0.0,
+                caloriesBurned = 0,
+                rideDuration = "",
+                settings = persistentMapOf(),
+                heading = 0f,
+                elevation = 0.0,
+                isBikeConnected = false,
+                heartbeat = null,
+                batteryLevel = null,
+                motorPower = null
+            )
+        ),
+        onEvent = {}
+    )
+}
