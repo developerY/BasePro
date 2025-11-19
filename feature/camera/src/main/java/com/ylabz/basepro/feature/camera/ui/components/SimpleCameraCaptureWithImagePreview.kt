@@ -49,6 +49,7 @@ import com.ylabz.basepro.feature.camera.ui.CamEvent
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
+import androidx.compose.ui.tooling.preview.Preview as ComposePreview
 
 // import java.util.concurrent.Executors // No longer needed
 
@@ -249,7 +250,7 @@ fun CapturedImagePreview(imageUri: Uri) {
     }
 }
 
-@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@ComposePreview(showBackground = true)
 @Composable
 fun SimpleComposablePreview() {
     SimpleCameraCaptureWithImagePreview(
