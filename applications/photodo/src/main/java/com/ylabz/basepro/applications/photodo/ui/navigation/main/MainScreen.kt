@@ -282,7 +282,12 @@ fun MainScreen(
                     FabMain(fabState = currentFabState)
                 }
             ) { padding ->
-                appContent(Modifier.padding(padding))
+                Column(
+                    modifier = Modifier.padding(padding)
+                ) {
+                    DebugStackUi(backStackKey = backStackKey)
+                    appContent(Modifier.padding(padding))
+                }
             }
         }
     } else {
