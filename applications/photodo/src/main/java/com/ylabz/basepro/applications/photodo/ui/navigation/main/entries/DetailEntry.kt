@@ -6,10 +6,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Details
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -22,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.DetailLoadState
+import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailEvent
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailUiRoute
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailViewModel
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
@@ -77,7 +81,21 @@ fun DetailEntry(
                             contentDescription = "Back"
                         )
                     }
+                },
+                // --- ADDED: DELETE BUTTON ACTIONS SLOT ---
+                actions = {
+                    IconButton(onClick = {
+                        // Trigger the delete event in the ViewModel
+                        viewModel.onEvent(PhotoDoDetailEvent.OnDeleteTaskListClicked)
+                    }) {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = "Delete Task List",
+                            tint = MaterialTheme.colorScheme.error // Best practice for destructive actions
+                        )
+                    }
                 }
+                // --- END ADDED ---
             )
         }
         setFabState(
@@ -95,7 +113,12 @@ fun DetailEntry(
                         Icons.Default.Add
                     ) {
                         Log.d(TAG, "Add Item from FAB clicked (requires Detail ViewModel)")
-                    }
+                    },
+                    FabAction(
+                            text = "Add Photo",
+                    icon = Icons.Default.AddAPhoto,
+                    onClick = { viewModel.onEvent(PhotoDoDetailEvent.OnCameraClick) }
+                )
                     /*
                     FabAction(
                             "List from ListEntry.kt",

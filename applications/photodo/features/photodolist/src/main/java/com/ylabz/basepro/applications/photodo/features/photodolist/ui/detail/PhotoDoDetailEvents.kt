@@ -30,6 +30,12 @@ sealed interface PhotoDoDetailEvent {
     data object OnBackFromCamera : PhotoDoDetailEvent
 
     /**
+     * Event triggered when the user clicks the delete button in the top bar.
+     * This deletes the entire task list currently being viewed.
+     */
+    data object OnDeleteTaskListClicked : PhotoDoDetailEvent // <-- THE NEW EVENT
+
+    /**
      * Event to handle changes to the task list title.
      * @param title The new title.
      */

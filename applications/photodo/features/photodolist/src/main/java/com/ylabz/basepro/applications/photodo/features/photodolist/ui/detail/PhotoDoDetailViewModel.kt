@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.photodo.db.entity.PhotoEntity
+import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
 import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +23,9 @@ class PhotoDoDetailViewModel @Inject constructor(
     private val photoDoRepo: PhotoDoRepo,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    // Internal tracking of the current list being viewed
+    private var currentTaskList: TaskListEntity? = null
 
     private val _uiState = MutableStateFlow(PhotoDoDetailUiState())
     val uiState: StateFlow<PhotoDoDetailUiState> = _uiState.asStateFlow()
@@ -59,6 +63,9 @@ class PhotoDoDetailViewModel @Inject constructor(
                 }
                 .collect { taskListWithPhotos ->
                     if (taskListWithPhotos != null) {
+                        // --- THIS IS WHERE IT IS SET ---
+                        currentTaskList = taskListWithPhotos.taskList // Store the entity for deletion
+                        // ------------------------------
                         // This is now much simpler.
                         // We just pass the object from the database directly to the Success state.
                         _uiState.update {
@@ -94,6 +101,36 @@ class PhotoDoDetailViewModel @Inject constructor(
                     }
                 }
             }
+
+
+            // --- NEW EVENT HANDLER ---
+            PhotoDoDetailEvent.OnDeleteTaskListClicked -> {
+                Log.d(TAG, "OnDeleteTaskListClicked event received.")
+
+                // CRITICAL CHECK: Ensure we have the list entity loaded
+                val listToDelete = currentTaskList
+                if (listToDelete != null) {
+                    viewModelScope.launch {
+                        Log.d(TAG, "Deleting task list: ${listToDelete.name} (ID: ${listToDelete.listId})")
+
+                        // 1. Call the repository to delete the list (and all related photos)
+                        photoDoRepo.deleteTaskList(listToDelete)
+
+                        // 2. IMPORTANT: Once deleted, the screen is stale.
+                        // We must navigate back manually or notify the UI.
+                        // The UI should listen to a side effect/state change to navigate back.
+                        // For simplicity here, we assume the backStack logic in DetailEntry.kt
+                        // will handle navigation once the underlying DB flow stops emitting.
+                        // A more robust solution would use a Channel/SharedFlow to signal navigation.
+
+                        // Set the state to an Error/Loading to force the screen to change/disappear
+                        _uiState.update { it.copy(loadState = DetailLoadState.Error("List deleted.")) }
+                    }
+                } else {
+                    Log.e(TAG, "Attempted to delete task list, but currentTaskList is null.")
+                }
+            }
+            // PHOTOS
             is PhotoDoDetailEvent.OnDeletePhoto -> {
                 viewModelScope.launch {
                     val currentLoadState = _uiState.value.loadState
