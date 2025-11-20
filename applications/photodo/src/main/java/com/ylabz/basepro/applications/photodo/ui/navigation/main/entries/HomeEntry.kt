@@ -61,11 +61,29 @@ fun HomeEntry(
     val mainScreenViewModel: MainScreenViewModel = hiltViewModel()
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
+    // --- START OF FIX: MVI NAVIGATION BRIDGE ---
+    // This LaunchedEffect is the only place we do stack manipulation.
     LaunchedEffect(homeViewModel.categorySelectedEvent) {
         homeViewModel.categorySelectedEvent.collectLatest { categoryId ->
+            // 1. Notify the MainScreen's ViewModel (which stores lastSelectedCategoryId)
             onCategorySelected(categoryId)
+
+            val newTaskListKey = PhotoDoNavKeys.TaskListKey(categoryId)
+
+            // 2. CRITICAL STEP: Clear all existing drill-down items (Columns 2 and 3).
+            // This prevents bloat when switching categories (Family -> Shopping).
+            if (backStack.size > 1) {
+                Log.d(TAG, "Category Selected. Resetting stack from size ${backStack.size}.")
+                // Remove everything after the first item (HomeFeedKey).
+                backStack.subList(1, backStack.size).clear()
+            }
+
+            // 3. Add the new TaskListKey. This adds Column 2 content.
+            // Log.d(TAG, "Adding new TaskListKey($categoryId) to backStack.")
+            // backStack.add(newTaskListKey)
         }
     }
+    // --- END OF FIX ---
 
     LaunchedEffect(Unit) {
         setTopBar {
@@ -116,6 +134,11 @@ fun HomeEntry(
         homeViewModel = homeViewModel,
         uiState = uiState,
         // viewModel = viewModel, // viewModel is hoisted, not passed down
+
+        // The category click event starts inside PhotoDoHomeUiRoute's children,
+        // goes up to PhotoDoHomeUiRoute, and then calls homeViewModel::onEvent.
+        // The resulting navigation is then handled by the LaunchedEffect above.
+
         navTo = { listId ->
             Log.d(TAG, "Step3: Navigating from Task List Item to Detail Screen with listId: $listId")
 

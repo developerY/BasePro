@@ -66,10 +66,7 @@ fun PhotoDoHomeUiRoute(
                     AddCategorySheet(
                         onAddCategory = { categoryName ->
                             // Log the event being sent to the ViewModel to save the category
-                            Log.d(
-                                TAG,
-                                "onAddCategory called with name: '$categoryName'. Posting OnSaveCategory event."
-                            )
+                            Log.d(TAG, "onAddCategory called with name: '$categoryName'. Posting OnSaveCategory event.")
                             onEvent(HomeEvent.OnSaveCategory(categoryName))
                         },
                         onDismiss = {
