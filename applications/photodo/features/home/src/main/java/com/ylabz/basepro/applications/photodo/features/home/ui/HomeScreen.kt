@@ -31,6 +31,46 @@ fun HomeScreen(
     // ### WHY: This allows HomeScreen to tell MainScreen which FAB to display.
     // setFabState: (FabStateMenu?) -> Unit, // <-- IT'S A PARAMETER PASSED TO THE FUNCTION
 ) {
+
+    // val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
+    val navigator = rememberListDetailPaneScaffoldNavigator()
+    val scope = rememberCoroutineScope() // 3. Get a coroutine scope
+
+
+    Log.d("HomeScreen", "On HomeScreen recomposing.")
+
+    LaunchedEffect(uiState.selectedCategory) {
+        uiState.selectedCategory?.let {
+            scope.launch {
+                navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
+            }
+        }
+    }
+
+    ListDetailPaneScaffold(
+        modifier = modifier, // The modifier for the whole screen goes on the scaffold
+        directive = navigator.scaffoldDirective,
+        value = navigator.scaffoldValue,
+        listPane = {
+            CategoryList(
+                uiState = uiState,
+                onEvent = onEvent,
+            )
+        },
+        detailPane = {
+            // This pane will now become visible and show the correct task list
+            // because the uiState was updated by the onEvent call above.
+            TaskList(
+                category = uiState.selectedCategory,
+                taskLists = uiState.taskListsForSelectedCategory,
+                // This is for clicking items in the right-hand pane, which is already correct
+                // This onSelectList is for when a user clicks a task *within* this list,
+                // which correctly triggers the navigation to the 3rd pane.
+                onSelectList = onSelectList
+            )
+        }
+    )
+
     // ### NEW LOGIC: Context-Aware FAB ###
     // This LaunchedEffect observes the selectedCategory. If it changes, the
     // effect will re-run, updating the FAB to match the current context.
@@ -91,44 +131,4 @@ fun HomeScreen(
             )*/
         }
     }*/
-
-
-    // val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
-    val navigator = rememberListDetailPaneScaffoldNavigator()
-    val scope = rememberCoroutineScope() // 3. Get a coroutine scope
-
-
-    Log.d("HomeScreen", "On HomeScreen recomposing.")
-
-    LaunchedEffect(uiState.selectedCategory) {
-        uiState.selectedCategory?.let {
-            scope.launch {
-                navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
-            }
-        }
-    }
-
-    ListDetailPaneScaffold(
-        modifier = modifier, // The modifier for the whole screen goes on the scaffold
-        directive = navigator.scaffoldDirective,
-        value = navigator.scaffoldValue,
-        listPane = {
-            CategoryList(
-                uiState = uiState,
-                onEvent = onEvent,
-            )
-        },
-        detailPane = {
-            // This pane will now become visible and show the correct task list
-            // because the uiState was updated by the onEvent call above.
-            TaskList(
-                category = uiState.selectedCategory,
-                taskLists = uiState.taskListsForSelectedCategory,
-                // This is for clicking items in the right-hand pane, which is already correct
-                // This onSelectList is for when a user clicks a task *within* this list,
-                // which correctly triggers the navigation to the 3rd pane.
-                onSelectList = onSelectList
-            )
-        }
-    )
 }

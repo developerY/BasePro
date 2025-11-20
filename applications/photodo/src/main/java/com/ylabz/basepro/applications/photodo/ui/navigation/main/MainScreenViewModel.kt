@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
+import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
 import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepo
 import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -116,6 +117,31 @@ class MainScreenViewModel @Inject constructor(
                         )
                     }
                 }
+
+                // --- NEW HANDLER FOR SAVING THE LIST ---
+                is MainScreenEvent.OnSaveList -> {
+                    Log.d(TAG, "OnSaveList event received. Title: ${event.title}, CategoryId: ${event.categoryId}")
+
+                    // 1. Create the entity (Assuming TaskListEntity requires these fields)
+                    // 1. Create the TaskListEntity using the user's structure
+                    val newTaskList = TaskListEntity(
+                        // listId is auto-generated
+                        categoryId = event.categoryId,
+                        name = event.title,
+                        notes = event.description,
+                        status = "To-Do", // Default status
+                        priority = 0, // Default priority
+                        creationDate = System.currentTimeMillis(),
+                        dueDate = null
+                    )
+
+                    // 2. Call the repository
+                    repository.insertTaskList(newTaskList)
+
+                    // The sheet dismissal is handled by MainScreen.kt in the onSaveList lambda
+                }
+
+
                 is MainScreenEvent.OnSaveCategory -> {
                     Log.d(TAG, "OnSaveCategory event received")
                     repository.insertCategory(

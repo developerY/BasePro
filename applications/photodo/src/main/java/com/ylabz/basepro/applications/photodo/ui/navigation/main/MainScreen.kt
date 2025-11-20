@@ -349,7 +349,22 @@ fun MainScreen(
                 BottomSheetType.ADD_LIST -> AddListBottomSheet(
                     onDismiss = { mainScreenViewModel.onEvent(MainScreenEvent.OnBottomSheetDismissed) },
                     onSaveList = { title: String, description: String ->
-                        // TODO: Implement save list
+                        // --- NEW LOGIC ---
+                        // Get the current category ID from the ViewModel's state
+                        val categoryId = uiState.lastSelectedCategoryId
+
+                        // 1. Send the save event with all necessary data
+                        mainScreenViewModel.onEvent(
+                            MainScreenEvent.OnSaveList(
+                                title = title,
+                                description = description,
+                                categoryId = categoryId
+                            )
+                        )
+
+                        // 2. Dismiss the sheet (or use the onDismiss handler)
+                        mainScreenViewModel.onEvent(MainScreenEvent.OnBottomSheetDismissed)
+                        // --- END NEW LOGIC ---
                     }
                 )
 

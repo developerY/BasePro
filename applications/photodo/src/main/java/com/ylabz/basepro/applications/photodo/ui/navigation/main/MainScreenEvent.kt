@@ -32,6 +32,16 @@ sealed interface MainScreenEvent {
     data object OnBottomSheetDismissed : MainScreenEvent
 
     /**
+     * Event triggered when the user saves a new Task List.
+     * @param categoryId The ID of the currently selected category (required foreign key).
+     */
+    data class OnSaveList(
+        val title: String,
+        val description: String,
+        val categoryId: Long
+    ) : MainScreenEvent
+
+    /**
      * Signals that a category should be saved.
      */
     data class OnSaveCategory(val name: String, val description: String) : MainScreenEvent
