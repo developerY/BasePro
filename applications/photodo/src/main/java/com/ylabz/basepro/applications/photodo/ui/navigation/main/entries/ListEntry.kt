@@ -178,9 +178,20 @@ LaunchedEffect(backStack.lastOrNull()) {
 
                 // --- THIS IS THE FIX ---
                 // We must pass the listId as a Long, not a String
+                // 1. Create the key
                 val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId = listId.toString())
                 Log.d(TAG, " -> Calling backStack.add with TaskListDetailKey($listId)")
+
+                // --- THIS IS THE FIX ---
+                // If the current top element is *any* Detail Key, remove it (i.e., replace it).
+                if (backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey) {
+                    Log.d(TAG, "Replacing existing Detail Key with new key: $listId")
+                    backStack.removeLastOrNull()
+                }
+                Log.d(TAG, " -> Calling backStack.add with TaskListDetailKey($listId)")
                 backStack.add(detailKey)
+
+                // --- END FIX ---
             },
             /*onTaskClick = { listId ->
                 val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())

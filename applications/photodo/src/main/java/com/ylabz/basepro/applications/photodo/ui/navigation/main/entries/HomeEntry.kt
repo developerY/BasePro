@@ -113,6 +113,8 @@ fun HomeEntry(
     // In MainScreen.kt -> AppContent()
     PhotoDoHomeUiRoute(
         modifier = modifier,
+        homeViewModel = homeViewModel,
+        uiState = uiState,
         // viewModel = viewModel, // viewModel is hoisted, not passed down
         navTo = { listId ->
             Log.d(TAG, "Step3: Navigating from Task List Item to Detail Screen with listId: $listId")
@@ -121,7 +123,22 @@ fun HomeEntry(
             val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
 
             // 2. Add it to the back stack. The adaptive strategy handles the rest.
+            // --- START OF FIX: Universal Replacement/Add Logic ---
+            if (backStack.lastOrNull() == detailKey) {
+                // Do nothing: Already showing this detail screen.
+                Log.d(TAG, "Skipping navigation: Already showing Detail for list $listId")
+                return@PhotoDoHomeUiRoute
+            }
+
+            // If the current top element is *any* Detail Key, remove it (i.e., replace it).
+            if (backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey) {
+                Log.d(TAG, "Replacing existing Detail Key with new key: $listId")
+                backStack.removeLastOrNull()
+            }
+
+            // Add the new detail key. This is a clean add or replacement.
             backStack.add(detailKey)
+            // --- END OF FIX ---
         },
         /*navTo = { categoryId ->
             Log.d(
@@ -134,9 +151,6 @@ fun HomeEntry(
             // 2. Add it to the back stack.
             backStack.add(listKey)
         },*/
-
-        homeViewModel = homeViewModel,
-        uiState = uiState,
         // ### THIS IS THE SOLUTION ###
         // The `onCategorySelected` lambda is already available here as a
         // parameter of the `AppContent` function. You just need to pass it down.
