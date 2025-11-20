@@ -186,7 +186,7 @@ LaunchedEffect(backStack.lastOrNull()) {
                 // If the current top element is *any* Detail Key, remove it (i.e., replace it).
                 if (backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey) {
                     Log.d(TAG, "Replacing existing Detail Key with new key: $listId")
-                    backStack.removeLastOrNull()
+                    // backStack.removeLastOrNull()
                 }
                 Log.d(TAG, " -> Calling backStack.add with TaskListDetailKey($listId)")
                 backStack.add(detailKey)

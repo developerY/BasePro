@@ -139,8 +139,29 @@ fun HomeEntry(
         // goes up to PhotoDoHomeUiRoute, and then calls homeViewModel::onEvent.
         // The resulting navigation is then handled by the LaunchedEffect above.
 
+        // --- COLUMN 1 CLICK HANDLER (Category Selection) ---
+        /* --- COLUMN 1 CLICK HANDLER (Category Selection) ---
+        onCategoryClick = { categoryId ->
+            Log.d(TAG, "Category Clicked: $categoryId. Resetting drill-down.")
+
+            onCategorySelected(categoryId)
+
+            val newTaskListKey = PhotoDoNavKeys.TaskListKey(categoryId)
+
+            if (backStack.size > 1) {
+                backStack.subList(1, backStack.size).clear()
+            }
+
+            backStack.add(newTaskListKey)
+        },*/
+        // --- END COLUMN 1 FIX ---
+
+
+        // --- START OF FIX: TASK LIST CLICK (Column 2 -> Column 3 Replacement) ---
         navTo = { listId ->
             Log.d(TAG, "Step3: Navigating from Task List Item to Detail Screen with listId: $listId")
+
+            val currentTop = backStack.lastOrNull()
 
             // 1. Create the key for the final detail screen (Pane 3).
             val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
@@ -156,7 +177,7 @@ fun HomeEntry(
             // If the current top element is *any* Detail Key, remove it (i.e., replace it).
             if (backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey) {
                 Log.d(TAG, "Replacing existing Detail Key with new key: $listId")
-                backStack.removeLastOrNull()
+                // backStack.removeLastOrNull()
             }
 
             // Add the new detail key. This is a clean add or replacement.
