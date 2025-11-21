@@ -136,6 +136,13 @@ fun MainScreen(
         )
     }*/
 
+    // 1. Observe the categories from the HomeViewModel (you'll need to expose them or the HomeUiState)
+    // Ideally, MainScreenViewModel should hold this "global" state, but for now, let's assume
+    // you can check if the ID is valid.
+
+    // A simpler fix for now: Make the default nullable and handle the null case.
+    var lastSelectedCategoryId by rememberSaveable { mutableStateOf<Long?>(null) }
+
     // Remember the last category ID the user interacted with. Default to 1L since we know it has data.
     // --- Remembered State for "Add List" ---
     // var lastSelectedCategoryId by rememberSaveable { mutableLongStateOf(1L) }
@@ -151,9 +158,21 @@ fun MainScreen(
         // When navigating via BottomBar/Rail, if the target is the List tab,
         // use the last selected category ID instead of the hardcoded one.
         val keyToNavigate = if (navKey is PhotoDoNavKeys.TaskListKey) {
-            Log.d(TAG, "NAVIGATION -START-  -> List tab clicked. Overriding to last selected categoryId: ${uiState.lastSelectedCategoryId}")
+            Log.d(
+                TAG,
+                "NAVIGATION -START-  -> List tab clicked. Overriding to last selected categoryId: ${uiState.lastSelectedCategoryId}"
+            )
             // Read from the uiState instead of the local variable
-            PhotoDoNavKeys.TaskListKey(uiState.lastSelectedCategoryId)
+            // CHECK: Do we have a valid category ID?
+            if (lastSelectedCategoryId != null) {
+                PhotoDoNavKeys.TaskListKey(lastSelectedCategoryId!!)
+            } else {
+                // FALLBACK: If no category is selected (or all deleted),
+                // maybe stay on Home or go to a generic "All Tasks" view?
+                // For now, let's force it to stay on Home if there's no category.
+                Log.w(TAG, "No category selected. Blocking navigation to Tasks tab.")
+                PhotoDoNavKeys.HomeFeedKey
+            }
         } else {
             Log.d(TAG, "NAVIGATION --  -> Tab is not TaskListKey, using original key.")
             navKey
@@ -357,20 +376,26 @@ fun MainScreen(
                     onSaveList = { title: String, description: String ->
                         // --- NEW LOGIC ---
                         // Get the current category ID from the ViewModel's state
-                        val categoryId = uiState.lastSelectedCategoryId
+                        val currentCategoryId = uiState.lastSelectedCategoryId
 
                         // 1. Send the save event with all necessary data
-                        mainScreenViewModel.onEvent(
-                            MainScreenEvent.OnSaveList(
-                                title = title,
-                                description = description,
-                                categoryId = categoryId
+                        if (currentCategoryId != null) {
+                            // YES: Unwrap it (smart cast to Long) and send the event
+                            mainScreenViewModel.onEvent(
+                                MainScreenEvent.OnSaveList(
+                                    title = title,
+                                    description = description,
+                                    categoryId = currentCategoryId
+                                )
                             )
-                        )
+                        } else {
+                            // NO: Do not send the event. Show an error or log it.
+                            Log.e("MainScreen", "Cannot save list. No category selected.")
 
-                        // 2. Dismiss the sheet (or use the onDismiss handler)
-                        mainScreenViewModel.onEvent(MainScreenEvent.OnBottomSheetDismissed)
-                        // --- END NEW LOGIC ---
+                            // 2. Dismiss the sheet (or use the onDismiss handler)
+                            mainScreenViewModel.onEvent(MainScreenEvent.OnBottomSheetDismissed)
+                            // --- END NEW LOGIC ---
+                        }
                     }
                 )
 

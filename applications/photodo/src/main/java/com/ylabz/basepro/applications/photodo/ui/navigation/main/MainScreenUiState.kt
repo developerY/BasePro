@@ -12,5 +12,5 @@ data class MainScreenUiState(
     val fabState: FabState? = null,
     val currentSheet: BottomSheetType = BottomSheetType.NONE,
     // --- ADD THIS ---
-    val lastSelectedCategoryId: Long = 1L // Default to 1L as you did
+    val lastSelectedCategoryId: Long? = null // Default to 1L as you did
 )
