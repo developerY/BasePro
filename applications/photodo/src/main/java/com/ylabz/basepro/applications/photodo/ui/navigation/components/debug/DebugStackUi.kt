@@ -30,7 +30,7 @@ import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabState
 @Composable
 fun DebugStackUi(
     backStackKey: String,
-    categoryId: Long,
+    categoryId: Long?,
     currentListId: String?,
     currentFabState: FabState?
 ) {
