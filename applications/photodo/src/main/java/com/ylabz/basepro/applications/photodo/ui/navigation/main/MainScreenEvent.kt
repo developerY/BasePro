@@ -38,8 +38,20 @@ sealed interface MainScreenEvent {
     data class OnSaveList(
         val title: String,
         val description: String,
+        // CORRECT: Non-nullable. We can't save to the DB without this.
         val categoryId: Long
     ) : MainScreenEvent
+
+
+
+    /**
+     * Event triggered when the user saves a new Item (Photo) to a list.
+
+    data class OnSaveItem(
+        val caption: String,
+        val uri: String, // URI of the captured image
+        val listId: Long // Target list ID (foreign key)
+    ) : MainScreenEvent*/
 
     /**
      * Signals that a category should be saved.

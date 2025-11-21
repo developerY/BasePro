@@ -141,6 +141,22 @@ class MainScreenViewModel @Inject constructor(
                     // The sheet dismissal is handled by MainScreen.kt in the onSaveList lambda
                 }
 
+                /* --- NEW HANDLER FOR SAVING THE ITEM (PHOTO) ---
+                is MainScreenEvent.OnSaveItem -> {
+                    Log.d(TAG, "OnSaveItem event received. Caption: ${event.caption}, ListId: ${event.listId}")
+
+                    // 1. Create the PhotoEntity
+                    val newPhoto = PhotoEntity(
+                        listId = event.listId,
+                        uri = event.uri,
+                        caption = event.caption,
+                        timestamp = System.currentTimeMillis()
+                    )
+
+                    // 2. Call the repository (assuming insertPhoto exists in PhotoDoRepo)
+                    repository.insertPhoto(newPhoto)
+                }*/
+
 
                 is MainScreenEvent.OnSaveCategory -> {
                     Log.d(TAG, "OnSaveCategory event received")
