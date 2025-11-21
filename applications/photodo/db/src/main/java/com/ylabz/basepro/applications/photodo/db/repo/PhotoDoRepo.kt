@@ -27,6 +27,11 @@ interface PhotoDoRepo {
 
     suspend fun deleteTaskList(taskList: TaskListEntity)
 
+    /**
+     * Deletes a TaskListEntity and associated PhotoEntities by its ID.
+     */
+    suspend fun deleteTaskListById(listId: Long)
+
     fun getTaskListById(listId: Long): Flow<TaskListEntity?>
 
     fun getTaskListsForCategory(categoryId: Long): Flow<List<TaskListEntity>>

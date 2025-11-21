@@ -40,6 +40,11 @@ class PhotoDoRepoImpl @Inject constructor(
         photoDoDao.deleteTaskList(taskList)
     }
 
+    override suspend fun deleteTaskListById(listId: Long) {
+        photoDoDao.deleteTaskListById(listId)
+    }
+
+
     override fun getTaskListById(listId: Long): Flow<TaskListEntity?> {
         return photoDoDao.getTaskListById(listId)
     }

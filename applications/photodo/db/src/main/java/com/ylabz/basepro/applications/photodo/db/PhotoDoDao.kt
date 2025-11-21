@@ -37,6 +37,9 @@ interface PhotoDoDao {
     @Delete
     suspend fun deleteTaskList(taskList: TaskListEntity)
 
+    @Query("DELETE FROM task_lists WHERE listId = :listId")
+    suspend fun deleteTaskListById(listId: Long)
+
     @Query("SELECT * FROM task_lists WHERE listId = :listId")
     fun getTaskListById(listId: Long): Flow<TaskListEntity?>
 

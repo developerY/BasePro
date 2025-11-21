@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val TAG = "PhotoDoListViewModel"
@@ -78,9 +79,17 @@ open class PhotoDoListViewModel @Inject constructor(
                 // TODO: Handle delete single task list
             }*/
 
+            // --- NEW HANDLER ---
+            is PhotoDoListEvent.OnDeleteTaskListClicked -> {
+                viewModelScope.launch {
+                    Log.d("ViewModel", "Deleting TaskList with ID: ${event.listId}")
+                    photoDoRepo.deleteTaskListById(event.listId)
+                    // Note: The UI updates automatically when the DB flow emits a new list.
+                }
+            }
+
             PhotoDoListEvent.OnAddTaskListClicked -> {}//TODO()
             PhotoDoListEvent.OnDeleteAllTaskListsClicked -> {}//TODO()
-            is PhotoDoListEvent.OnDeleteTaskListClicked -> {}//TODO()
             is PhotoDoListEvent.OnTaskListClick -> {}//TODO()
         }
     }

@@ -127,6 +127,8 @@ class MockPhotoDoRepo : PhotoDoRepo {
     override fun getCategoryById(categoryId: Long): Flow<CategoryEntity?> = flowOf(null)
     override suspend fun insertTaskList(taskList: TaskListEntity) {}
     override suspend fun deleteTaskList(taskList: TaskListEntity) {}
+    override suspend fun deleteTaskListById(listId: Long) {}
+
     override fun getTaskListById(listId: Long): Flow<TaskListEntity?> = flowOf(null)
     override fun getTaskListsForCategory(categoryId: Long): Flow<List<TaskListEntity>> = flowOf(
         List(5) {
