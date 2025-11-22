@@ -141,7 +141,7 @@ fun MainScreen(
     // you can check if the ID is valid.
 
     // A simpler fix for now: Make the default nullable and handle the null case.
-    var lastSelectedCategoryId by rememberSaveable { mutableStateOf<Long?>(null) }
+    // var lastSelectedCategoryId by rememberSaveable { mutableStateOf<Long?>(null) }
 
     // Remember the last category ID the user interacted with. Default to 1L since we know it has data.
     // --- Remembered State for "Add List" ---
@@ -158,20 +158,19 @@ fun MainScreen(
         // When navigating via BottomBar/Rail, if the target is the List tab,
         // use the last selected category ID instead of the hardcoded one.
         val keyToNavigate = if (navKey is PhotoDoNavKeys.TaskListKey) {
-            Log.d(
-                TAG,
-                "NAVIGATION -START-  -> List tab clicked. Overriding to last selected categoryId: ${uiState.lastSelectedCategoryId}"
-            )
-            // Read from the uiState instead of the local variable
-            // CHECK: Do we have a valid category ID?
-            if (lastSelectedCategoryId != null) {
-                PhotoDoNavKeys.TaskListKey(lastSelectedCategoryId!!)
+            if (uiState.lastSelectedCategoryId != null) {
+                Log.d(
+                    TAG,
+                    "NAVIGATION -START-  -> List tab clicked. Overriding to last selected categoryId: ${uiState.lastSelectedCategoryId}"
+                )
+                // Read from the uiState instead of the local variable
+                // CHECK: Do we have a valid category ID?
+                PhotoDoNavKeys.TaskListKey(uiState.lastSelectedCategoryId!!)
             } else {
-                // FALLBACK: If no category is selected (or all deleted),
-                // maybe stay on Home or go to a generic "All Tasks" view?
-                // For now, let's force it to stay on Home if there's no category.
-                Log.w(TAG, "No category selected. Blocking navigation to Tasks tab.")
-                PhotoDoNavKeys.HomeFeedKey
+                Log.d(TAG, "NAVIGATION --  -> List tab clicked. Using default categoryId: null")
+                // try to set it to first category if you can
+                // NOTE: We need to add this code as not sure how to this ...
+                PhotoDoNavKeys.TaskListKey(null)
             }
         } else {
             Log.d(TAG, "NAVIGATION --  -> Tab is not TaskListKey, using original key.")

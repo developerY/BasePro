@@ -3,7 +3,9 @@ package com.ylabz.basepro.applications.photodo.ui.navigation.main.entries
 // applications/photodo/src/main/java/com/ylabz/basepro/applications/photodo/ui/navigation/main/entries/ListEntry.kt
 
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.automirrored.filled.NoteAdd
@@ -17,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavBackStack
@@ -51,8 +54,10 @@ fun ListEntry(
 
     LaunchedEffect(listKey.categoryId) {
         Log.d(TAG, "TaskListKey LaunchedEffect triggered. Loading category with id: ${listKey.categoryId}")
-        onCategorySelected(listKey.categoryId) // Also update when loading a list directly -- Inform the parent
-        viewModel.loadCategory(listKey.categoryId)
+        if (listKey.categoryId != null) {
+            onCategorySelected(listKey.categoryId) // Also update when loading a list directly -- Inform the parent
+            viewModel.loadCategory(listKey.categoryId)
+        }
     }
 
     /*LaunchedEffect(listKey.categoryId) {
@@ -171,35 +176,45 @@ LaunchedEffect(backStack.lastOrNull()) {
     // UI
     Column {
         Text("Source: ListEntry.kt")
-        PhotoDoListUiRoute(
-            onTaskClick = { listId ->
-                // NAV_LOG: Log navigation from TaskList to Detail
-                Log.d(TAG, "TaskList onTaskClick triggered. ListId: $listId")
+        if (listKey.categoryId != null) {
+            PhotoDoListUiRoute(
+                onTaskClick = { listId ->
+                    // NAV_LOG: Log navigation from TaskList to Detail
+                    Log.d(TAG, "TaskList onTaskClick triggered. ListId: $listId")
 
-                // --- THIS IS THE FIX ---
-                // We must pass the listId as a Long, not a String
-                // 1. Create the key
-                val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId = listId.toString())
-                Log.d(TAG, " -> Calling backStack.add with TaskListDetailKey($listId)")
+                    // --- THIS IS THE FIX ---
+                    // We must pass the listId as a Long, not a String
+                    // 1. Create the key
+                    val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId = listId.toString())
+                    Log.d(TAG, " -> Calling backStack.add with TaskListDetailKey($listId)")
 
-                // --- THIS IS THE FIX ---
-                // If the current top element is *any* Detail Key, remove it (i.e., replace it).
-                if (backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey) {
-                    Log.d(TAG, "Replacing existing Detail Key with new key: $listId")
-                    // backStack.removeLastOrNull()
-                }
-                Log.d(TAG, " -> Calling backStack.add with TaskListDetailKey($listId)")
-                backStack.add(detailKey)
+                    // --- THIS IS THE FIX ---
+                    // If the current top element is *any* Detail Key, remove it (i.e., replace it).
+                    if (backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey) {
+                        Log.d(TAG, "Replacing existing Detail Key with new key: $listId")
+                        // backStack.removeLastOrNull()
+                    }
+                    Log.d(TAG, " -> Calling backStack.add with TaskListDetailKey($listId)")
+                    backStack.add(detailKey)
 
-                // --- END FIX ---
-            },
-            /*onTaskClick = { listId ->
+                    // --- END FIX ---
+                },
+                /*onTaskClick = { listId ->
                 val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())
                 backStack.add(detailKey)
             },*/
-            onEvent = viewModel::onEvent,
-            viewModel = viewModel
-        )
+                onEvent = viewModel::onEvent,
+                viewModel = viewModel
+            )
+        } else {
+            // Null Category: Show Empty State UI
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Please select a category from the Home screen.")
+            }
+        }
     }
 
 

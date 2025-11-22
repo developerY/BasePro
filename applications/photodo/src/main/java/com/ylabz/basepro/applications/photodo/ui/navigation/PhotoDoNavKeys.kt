@@ -25,7 +25,7 @@ sealed class PhotoDoNavKeys : NavKey {
     }
 
     @Serializable
-    data class TaskListKey(val categoryId: Long) : PhotoDoNavKeys(), BottomBarItem {
+    data class TaskListKey(val categoryId: Long?) : PhotoDoNavKeys(), BottomBarItem {
         override val title = "Tasks"
         @Transient
         override val icon = Icons.AutoMirrored.Filled.List
