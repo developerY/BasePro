@@ -5,6 +5,7 @@ package com.ylabz.basepro.applications.photodo.ui.navigation.main.entries
 import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,6 +20,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import com.ylabz.basepro.applications.photodo.features.home.ui.HomeUiState
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
@@ -92,39 +94,60 @@ fun HomeEntry(
         // --- THIS IS THE FIX ---
         // The main button's onClick is now empty. Its only job is to toggle.
         // The "Add Item" action is moved into the `items` list.
-        setFabState(
-            FabState.Menu(
-                mainButtonAction = FabAction(
-                    text = "Add",
-                    icon = Icons.Default.Home,
-                    onClick = {
-                        // Main button's only job is to open/close the menu.
-                        // This click is handled inside FabMain.
-                        Log.d(TAG, "Main FAB clicked to toggle menu.")
-                    }
-                ),
-                items = listOf(
-                    // "Add Item" is now the first item in the menu
-                    /*FabAction(
-                        text = "Add Item",
-                        icon = Icons.Default.Add, // You can change this icon
-                        onClick = { onEvent(MainScreenEvent.OnAddCategoryClicked)}
-                    ),*/
-                    FabAction(
-                        text = "Add List",
-                        icon = Icons.AutoMirrored.Filled.List,
-                        onClick = { onEvent(MainScreenEvent.OnAddListClicked)}
-                    ),
-                    FabAction(
+        val currentState = uiState
+
+        // 1. EMPTY STATE: No categories exist at all.
+        if (currentState is HomeUiState.Success && currentState.categories.isEmpty()) {
+            setFabState(
+                FabState.Single(
+                    action = FabAction(
                         text = "Add Category",
-                        icon = Icons.Default.Category,
-                        onClick = { onEvent(MainScreenEvent.OnAddCategoryClicked)}
+                        icon = Icons.Default.Add,
+                        onClick = { onEvent(MainScreenEvent.OnAddCategoryClicked) }
                     )
                 )
             )
-        )
-        // --- END OF FIX ---
+        } else {
+            // 2. NORMAL STATE: We have categories, show the Menu.
+
+            // Dynamically build the menu items based on selection state
+            val menuItems = mutableListOf<FabAction>()
+
+            // CONDITIONAL: Only show "Add List" if a category is currently selected
+            if (currentState is HomeUiState.Success && currentState.selectedCategory != null) {
+                menuItems.add(
+                    FabAction(
+                        text = "Add List",
+                        icon = Icons.AutoMirrored.Filled.List,
+                        onClick = { onEvent(MainScreenEvent.OnAddListClicked) }
+                    )
+                )
+            }
+
+            // ALWAYS: "Add Category" is always an option in the menu
+            menuItems.add(
+                FabAction(
+                    text = "Add Category",
+                    icon = Icons.Default.Category,
+                    onClick = { onEvent(MainScreenEvent.OnAddCategoryClicked) }
+                )
+            )
+
+            setFabState(
+                FabState.Menu(
+                    mainButtonAction = FabAction(
+                        text = "Add",
+                        icon = Icons.Default.Home,
+                        onClick = {
+                            Log.d(TAG, "Main FAB clicked to toggle menu.")
+                        }
+                    ),
+                    items = menuItems
+                )
+            )
+        }
     }
+    // --- END UPDATED FAB LOGIC ---
 
 
     // In MainScreen.kt -> AppContent()

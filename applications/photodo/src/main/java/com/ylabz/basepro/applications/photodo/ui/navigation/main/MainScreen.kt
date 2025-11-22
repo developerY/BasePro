@@ -159,10 +159,7 @@ fun MainScreen(
         // use the last selected category ID instead of the hardcoded one.
         val keyToNavigate = if (navKey is PhotoDoNavKeys.TaskListKey) {
             if (uiState.lastSelectedCategoryId != null) {
-                Log.d(
-                    TAG,
-                    "NAVIGATION -START-  -> List tab clicked. Overriding to last selected categoryId: ${uiState.lastSelectedCategoryId}"
-                )
+                Log.d(TAG, "NAVIGATION -START-  -> List tab clicked. Overriding to last selected categoryId: ${uiState.lastSelectedCategoryId}")
                 // Read from the uiState instead of the local variable
                 // CHECK: Do we have a valid category ID?
                 PhotoDoNavKeys.TaskListKey(uiState.lastSelectedCategoryId!!)

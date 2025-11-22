@@ -7,7 +7,6 @@ import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepo
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent.OnDeleteCategoryClicked
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -16,7 +15,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -73,11 +71,51 @@ class HomeViewModel @Inject constructor(
                 _uiState.value = HomeUiState.Error("Failed to load categories.")
             }.collect { categories ->
                 Log.d(TAG, "Successfully loaded ${categories.size} categories.")
-                _uiState.value = HomeUiState.Success(
-                    categories = categories,
-                    taskListsForSelectedCategory = emptyList(),
-                    selectedCategory = null
-                )
+
+                // --- FIX: PRESERVE SELECTION STATE ---
+                _uiState.update { currentState ->
+                    if (currentState is HomeUiState.Success) {
+                        // We are already displaying data.
+                        // Check if our currently selected category still exists in the new list.
+                        val currentSelection = currentState.selectedCategory
+                        val stillExists = currentSelection != null && categories.any { it.categoryId == currentSelection.categoryId }
+
+                        // --- FIX: AUTO-SELECT LOGIC ---
+                        val newSelection = if (stillExists) {
+                            // 1. Keep current if it still exists
+                            currentSelection
+                        } else if (categories.isNotEmpty()) {
+                            // 2. If nothing selected (or deleted), Auto-select the FIRST one
+                            Log.d(TAG, "Auto-selecting first category: ${categories.first().name}")
+                            categories.first()
+                        } else {
+                            // 3. List is truly empty
+                            null
+                        }
+                        // ------------------------------
+
+                        // If we kept the selection, we also keep the task lists.
+                        // If selection was cleared, we clear task lists.
+                        val taskLists = if (stillExists) currentState.taskListsForSelectedCategory else emptyList()
+
+                        currentState.copy(
+                            categories = categories,
+                            selectedCategory = newSelection,
+                            taskListsForSelectedCategory = taskLists
+                        )
+                    } else {
+                        // First load: Auto-select first if available
+                        val initialSelection = categories.firstOrNull()
+                        // First load or recovering from Error/Loading state
+                        HomeUiState.Success(
+                            categories = categories,
+                            taskListsForSelectedCategory = emptyList(),
+                            selectedCategory = initialSelection
+                        )
+                    }
+                }
+                // --- END FIX ---
+
             }
         }
     }
