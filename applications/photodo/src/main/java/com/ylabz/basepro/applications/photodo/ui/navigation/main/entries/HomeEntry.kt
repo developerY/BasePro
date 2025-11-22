@@ -4,10 +4,9 @@ package com.ylabz.basepro.applications.photodo.ui.navigation.main.entries
 
 import android.util.Log
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -106,14 +105,14 @@ fun HomeEntry(
                 ),
                 items = listOf(
                     // "Add Item" is now the first item in the menu
-                    FabAction(
+                    /*FabAction(
                         text = "Add Item",
                         icon = Icons.Default.Add, // You can change this icon
                         onClick = { onEvent(MainScreenEvent.OnAddCategoryClicked)}
-                    ),
+                    ),*/
                     FabAction(
                         text = "Add List",
-                        icon = Icons.Default.List,
+                        icon = Icons.AutoMirrored.Filled.List,
                         onClick = { onEvent(MainScreenEvent.OnAddListClicked)}
                     ),
                     FabAction(

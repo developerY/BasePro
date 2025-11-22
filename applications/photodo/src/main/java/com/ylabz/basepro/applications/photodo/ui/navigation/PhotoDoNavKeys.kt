@@ -1,8 +1,8 @@
 package com.ylabz.basepro.applications.photodo.ui.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavKey
@@ -28,7 +28,7 @@ sealed class PhotoDoNavKeys : NavKey {
     data class TaskListKey(val categoryId: Long) : PhotoDoNavKeys(), BottomBarItem {
         override val title = "Tasks"
         @Transient
-        override val icon = Icons.Default.List
+        override val icon = Icons.AutoMirrored.Filled.List
     }
 
     @Serializable
