@@ -28,6 +28,7 @@ import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabAction
 import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabState
 import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenEvent
 import com.ylabz.basepro.applications.photodo.ui.navigation.main.MainScreenViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "HomeEntry"
 
@@ -63,35 +64,32 @@ fun HomeEntry(
 
     // --- SAFE STATE EXTRACTION ---
     // Extract selectedCategory safely. If state is Loading/Error, this is null.
-    val selectedCategory = (uiState as? HomeUiState.Success)?.selectedCategory
+    // val selectedCategory = (uiState as? HomeUiState.Success)?.selectedCategory
     // -----------------------------
 
     // --- START OF FIX: MVI NAVIGATION BRIDGE ---
     // This LaunchedEffect is the only place we do stack manipulation.
     // NEW: Listens to the ACTUAL STATE (Handles clicks, deletes, and auto-selection)
-    LaunchedEffect(selectedCategory, isExpandedScreen) {
+    // --- START OF FIX: MVI NAVIGATION BRIDGE ---
+    // This LaunchedEffect is the only place we do stack manipulation.
+    LaunchedEffect(homeViewModel.categorySelectedEvent) {
+        homeViewModel.categorySelectedEvent.collectLatest { categoryId ->
+            // 1. Notify the MainScreen's ViewModel (which stores lastSelectedCategoryId)
+            onCategorySelected(categoryId)
 
-        if (selectedCategory != null) {
-            Log.d(TAG, "State Change: Category ${selectedCategory.categoryId} is now active. Syncing MainScreen.")
+            val newTaskListKey = PhotoDoNavKeys.TaskListKey(categoryId)
 
-            // 1. Sync the MainScreenViewModel
-            onCategorySelected(selectedCategory.categoryId)
-
-            // 2. Update the BackStack (Navigation)
-            val newTaskListKey = PhotoDoNavKeys.TaskListKey(selectedCategory.categoryId)
-
-            // Only modify stack if it's actually different to avoid infinite loops/re-compositions
-            val currentTop = backStack.lastOrNull()
-            if (currentTop != newTaskListKey) {
-                if (backStack.size > 1) {
-                    backStack.subList(1, backStack.size).clear()
-                }
-                backStack.add(newTaskListKey)
+            // 2. CRITICAL STEP: Clear all existing drill-down items (Columns 2 and 3).
+            // This prevents bloat when switching categories (Family -> Shopping).
+            if (backStack.size > 1) {
+                Log.d(TAG, "Category Selected. Resetting stack from size ${backStack.size}.")
+                // Remove everything after the first item (HomeFeedKey).
+                backStack.subList(1, backStack.size).clear()
             }
-        } else {
-            Log.d(TAG, "State Change: No category selected.")
-            // Optional: You could send an event to MainScreen to clear the selection here
-            // e.g., onCategorySelected(null) -- if you update your event to support nulls.
+
+            // 3. Add the new TaskListKey. This adds Column 2 content.
+            // Log.d(TAG, "Adding new TaskListKey($categoryId) to backStack.")
+            // backStack.add(newTaskListKey)
         }
     }
     // ----------------------
