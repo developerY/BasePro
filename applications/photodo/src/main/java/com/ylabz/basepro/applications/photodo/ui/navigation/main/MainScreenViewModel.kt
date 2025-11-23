@@ -42,6 +42,15 @@ class MainScreenViewModel @Inject constructor(
     // We store the last-known FAB state so we can restore it when a sheet is dismissed.
     private var lastKnownFabState: FabState? = null
 
+    init {
+        // --- ADDED: Collect categories to populate state ---
+        viewModelScope.launch {
+            repository.getAllCategories().collect { categories ->
+                _uiState.update { it.copy(categories = categories) }
+            }
+        }
+    }
+
     /**
      * Allows a navigation entry (like HomeEntry) to set the FAB.
      * This is called from a LaunchedEffect in the entry.

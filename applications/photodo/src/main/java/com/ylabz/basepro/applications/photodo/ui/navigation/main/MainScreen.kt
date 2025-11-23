@@ -42,8 +42,8 @@ import com.ylabz.basepro.applications.photodo.ui.navigation.NavKeySaver
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 import com.ylabz.basepro.applications.photodo.ui.navigation.components.debug.DebugStackUi
 import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabState
+import com.ylabz.basepro.applications.photodo.ui.navigation.main.components.AddListSheet
 import com.ylabz.basepro.core.ui.components.AddCategoryBottomSheet
-import com.ylabz.basepro.core.ui.components.AddListBottomSheet
 import kotlinx.coroutines.launch
 
 private const val TAG = "MainScreen"
@@ -367,7 +367,16 @@ fun MainScreen(
                     }
                 )
 
-                BottomSheetType.ADD_LIST -> AddListBottomSheet(
+                // --- UPDATED CALL SITE ---
+                BottomSheetType.ADD_LIST -> {
+                    AddListSheet(
+                        state = uiState,
+                        onEvent = mainScreenViewModel::onEvent
+                    )
+                }
+                // -------------------------
+
+                /*BottomSheetType.ADD_LIST -> AddListBottomSheet(
                     onDismiss = { mainScreenViewModel.onEvent(MainScreenEvent.OnBottomSheetDismissed) },
                     onSaveList = { title: String, description: String ->
                         // --- NEW LOGIC ---
@@ -393,7 +402,7 @@ fun MainScreen(
                             // --- END NEW LOGIC ---
                         }
                     }
-                )
+                )*/
 
                 BottomSheetType.ADD_ITEM -> AddItemBottomSheet(
                     onAddClick = {

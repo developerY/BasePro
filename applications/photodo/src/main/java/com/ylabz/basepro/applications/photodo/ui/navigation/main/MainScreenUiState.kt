@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.photodo.ui.navigation.main
 
+import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabState
 
 /**
@@ -12,5 +13,7 @@ data class MainScreenUiState(
     val fabState: FabState? = null,
     val currentSheet: BottomSheetType = BottomSheetType.NONE,
     // --- ADD THIS ---
-    val lastSelectedCategoryId: Long? = null // Default to 1L as you did
+    val lastSelectedCategoryId: Long? = null, // Default to 1L as you did
+    // --- ADDED: List of categories for the dropdown ---
+    val categories: List<CategoryEntity> = emptyList(),
 )
