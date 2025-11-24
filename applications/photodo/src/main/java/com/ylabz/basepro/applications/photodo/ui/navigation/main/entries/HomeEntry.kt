@@ -72,8 +72,14 @@ fun HomeEntry(
     // NEW: Listens to the ACTUAL STATE (Handles clicks, deletes, and auto-selection)
     // --- START OF FIX: MVI NAVIGATION BRIDGE ---
     // This LaunchedEffect is the only place we do stack manipulation.
+
+    // --- 1. CLICK NAVIGATION (For Phones & Tablets) ---
+    // Triggers ONLY when user actively clicks a category card.
+    // This is required for Phones to navigate, because we ignore auto-selection.
     LaunchedEffect(homeViewModel.categorySelectedEvent) {
         homeViewModel.categorySelectedEvent.collectLatest { categoryId ->
+            Log.d(TAG, "Event: Category $categoryId clicked. Navigating.")
+
             // 1. Notify the MainScreen's ViewModel (which stores lastSelectedCategoryId)
             onCategorySelected(categoryId)
 
@@ -81,12 +87,13 @@ fun HomeEntry(
 
             // 2. CRITICAL STEP: Clear all existing drill-down items (Columns 2 and 3).
             // This prevents bloat when switching categories (Family -> Shopping).
+            // Navigate (Always add to stack on explicit click)
             if (backStack.size > 1) {
                 Log.d(TAG, "Category Selected. Resetting stack from size ${backStack.size}.")
                 // Remove everything after the first item (HomeFeedKey).
                 backStack.subList(1, backStack.size).clear()
             }
-
+            backStack.add(newTaskListKey)
             // 3. Add the new TaskListKey. This adds Column 2 content.
             // Log.d(TAG, "Adding new TaskListKey($categoryId) to backStack.")
             // backStack.add(newTaskListKey)
