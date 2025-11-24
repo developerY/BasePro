@@ -2,6 +2,7 @@ package com.ylabz.basepro.applications.photodo.features.home.ui
 
 import android.util.Log
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
@@ -39,11 +40,17 @@ fun HomeScreen(
 
     Log.d("HomeScreen", "On HomeScreen recomposing.")
 
+    // --- ADAPTIVE NAVIGATION SYNC ---
+    // Automatically navigate to the Detail pane when a category is selected.
+    // This ensures the UI stays in sync with your ViewModel state.
     LaunchedEffect(uiState.selectedCategory) {
-        uiState.selectedCategory?.let {
+        if (uiState.selectedCategory != null) {
             scope.launch {
                 navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
             }
+        } else {
+            // Optional: If deselected, you could navigate back to List
+            // scope.launch { navigator.navigateTo(ListDetailPaneScaffoldRole.List) }
         }
     }
 
@@ -52,22 +59,30 @@ fun HomeScreen(
         directive = navigator.scaffoldDirective,
         value = navigator.scaffoldValue,
         listPane = {
-            CategoryList(
-                uiState = uiState,
-                onEvent = onEvent,
-            )
+            // 1. EXPRESSIVE MOTION: Wrap in AnimatedPane
+            // This gives you the beautiful M3 entry/exit animations automatically.
+            AnimatedPane {
+                CategoryList(
+                    uiState = uiState,
+                    onEvent = onEvent,
+                )
+            }
         },
         detailPane = {
             // This pane will now become visible and show the correct task list
             // because the uiState was updated by the onEvent call above.
-            TaskList(
-                category = uiState.selectedCategory,
-                taskLists = uiState.taskListsForSelectedCategory,
-                // This is for clicking items in the right-hand pane, which is already correct
-                // This onSelectList is for when a user clicks a task *within* this list,
-                // which correctly triggers the navigation to the 3rd pane.
-                onSelectList = onSelectList
-            )
+            // 2. EXPRESSIVE MOTION: Wrap in AnimatedPane
+            AnimatedPane {
+                // This pane shows the "Task List" for the selected category
+                TaskList(
+                    category = uiState.selectedCategory,
+                    taskLists = uiState.taskListsForSelectedCategory,
+                    // This is for clicking items in the right-hand pane, which is already correct
+                    // This onSelectList is for when a user clicks a task *within* this list,
+                    // which correctly triggers the navigation to the 3rd pane.
+                    onSelectList = onSelectList
+                )
+            }
         }
     )
 
