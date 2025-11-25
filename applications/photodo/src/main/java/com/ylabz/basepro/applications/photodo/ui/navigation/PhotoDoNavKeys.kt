@@ -46,4 +46,9 @@ sealed class PhotoDoNavKeys : NavKey {
 
     @Serializable
     data object NewScreenKey : PhotoDoNavKeys()
+
+    // --- ADD THIS ---
+    // A special key for showing a Task List AS A DETAIL PANE inside the Home Tab.
+    @Serializable
+    data class HomeTaskListKey(val categoryId: Long) : PhotoDoNavKeys()
 }

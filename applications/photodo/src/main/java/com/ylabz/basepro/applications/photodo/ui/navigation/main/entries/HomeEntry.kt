@@ -83,7 +83,7 @@ fun HomeEntry(
             // 1. Notify the MainScreen's ViewModel (which stores lastSelectedCategoryId)
             onCategorySelected(categoryId)
 
-            val newTaskListKey = PhotoDoNavKeys.TaskListKey(categoryId)
+            val newTaskListKey = PhotoDoNavKeys.HomeTaskListKey(categoryId)
 
             // 2. CRITICAL STEP: Clear all existing drill-down items (Columns 2 and 3).
             // This prevents bloat when switching categories (Family -> Shopping).

@@ -171,6 +171,34 @@ fun PhotoDoNavGraph(
                 )
             }
 
+            /**
+             * =================================================================
+             * Entry: Home Task List Screen (`PhotoDoNavKeys.HomeTaskListKey`)
+             * =================================================================
+             * This is a "detail" pane, used specifically when a category is
+             * selected from the Home screen on an expanded display.
+             *
+             * Adaptive Behavior:
+             * - `ListDetailSceneStrategy.detailPane`: Marks this as a detail view.
+             * On compact screens, it covers the screen. On expanded screens,
+             * it appears in the second pane, next to the Home (list) pane.
+             */
+            entry<PhotoDoNavKeys.HomeTaskListKey>(
+                // CRITICAL: This metadata tells Nav3 "Put me on the RIGHT side"
+                metadata = ListDetailSceneStrategy.detailPane()
+            ) { listKey ->
+                // We reuse the existing ListEntry UI, just passing the ID
+                ListEntry(
+                    isExpandedScreen = isExpandedScreen,
+                    listKey = PhotoDoNavKeys.TaskListKey(listKey.categoryId),
+                    backStack = backStack,
+                    scrollBehavior = scrollBehavior,
+                    setTopBar = setTopBar,
+                    setFabState = setFabState,
+                    onCategorySelected = onCategorySelected,
+                    onEvent = onEvent
+                )
+            }
 
 
             /**
