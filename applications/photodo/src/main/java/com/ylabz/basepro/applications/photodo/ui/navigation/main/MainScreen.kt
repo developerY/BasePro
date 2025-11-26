@@ -157,16 +157,15 @@ fun MainScreen(
 
         // When navigating via BottomBar/Rail, if the target is the List tab,
         // use the last selected category ID instead of the hardcoded one.
-        val keyToNavigate = if (navKey is PhotoDoNavKeys.TaskListKey) {
+        val keyToNavigate: NavKey = if (navKey is PhotoDoNavKeys.TaskListKey) {
             if (uiState.lastSelectedCategoryId != null) {
                 Log.d(TAG, "NAVIGATION -START-  -> List tab clicked. Overriding to last selected categoryId: ${uiState.lastSelectedCategoryId}")
                 // Read from the uiState instead of the local variable
                 // CHECK: Do we have a valid category ID?
                 PhotoDoNavKeys.TaskListKey(uiState.lastSelectedCategoryId!!)
             } else {
-                Log.d(TAG, "NAVIGATION --  -> List tab clicked. Using default categoryId: null")
-                // try to set it to first category if you can
-                // NOTE: We need to add this code as not sure how to this ...
+                Log.d(TAG, "NAVIGATION --  -> List tab clicked, but no category is selected. Aborting navigation.")
+                // Abort navigation by returning null
                 PhotoDoNavKeys.TaskListKey(null)
             }
         } else {
@@ -174,27 +173,31 @@ fun MainScreen(
             navKey
         }
 
-        // --- THIS IS THE FIX ---
-        // Check if we are *already* at the root of the stack with this *exact* key.
-        // backStack.firstOrNull() checks the current root.
-        val isAlreadyAtRoot = backStack.firstOrNull() == keyToNavigate && backStack.size == 1
+        if (keyToNavigate != null) {
+            // --- THIS IS THE FIX ---
+            // Check if we are *already* at the root of the stack with this *exact* key.
+            // backStack.firstOrNull() checks the current root.
+            val isAlreadyAtRoot = backStack.firstOrNull() == keyToNavigate && backStack.size == 1
 
-        if (!isAlreadyAtRoot) {
-            // This block now correctly handles:
-            // 1. Switching to a new tab.
-            // 2. Popping to the root of the *current* tab (e.g., from a detail screen).
-            // 3. Switching between two keys of the *same* class (e.g., TaskListKey(2) -> TaskListKey(5)).
-            Log.d(TAG, "NAVIGATION --  -> Navigating to ${keyToNavigate::class.simpleName}. Replacing stack.")
-            currentTopLevelKey = keyToNavigate
-            backStack.replaceAll(keyToNavigate) // Clear history when switching tabs or popping to root
+            if (!isAlreadyAtRoot) {
+                // This block now correctly handles:
+                // 1. Switching to a new tab.
+                // 2. Popping to the root of the *current* tab (e.g., from a detail screen).
+                // 3. Switching between two keys of the *same* class (e.g., TaskListKey(2) -> TaskListKey(5)).
+                Log.d(TAG, "NAVIGATION --  -> Navigating to ${keyToNavigate::class.simpleName}. Replacing stack.")
+                currentTopLevelKey = keyToNavigate
+                backStack.replaceAll(keyToNavigate) // Clear history when switching tabs or popping to root
+            } else {
+                // We are already at the root of the correct tab, so do nothing.
+                Log.d(TAG, "NAVIGATION --  -> Already on top-level tab ${keyToNavigate::class.simpleName} at root. No change.")
+            }
+            // --- END OF FIX ---
+
+            // NAV_LOG: Log navigation
+            Log.d(TAG, "NAVIGATION -DONE- onNavigate triggered with navKey: ${navKey::class.simpleName}")
         } else {
-            // We are already at the root of the correct tab, so do nothing.
-            Log.d(TAG, "NAVIGATION --  -> Already on top-level tab ${keyToNavigate::class.simpleName} at root. No change.")
+            Log.d(TAG, "NAVIGATION -- Aborted.")
         }
-        // --- END OF FIX ---
-
-        // NAV_LOG: Log navigation
-        Log.d(TAG, "NAVIGATION -DONE- onNavigate triggered with navKey: ${navKey::class.simpleName}")
     }
     // =================================================================
     // END OF FIX
@@ -221,24 +224,27 @@ fun MainScreen(
     // This is the NavGraph that contains all the screens
     val appContent = @Composable { modifier: Modifier ->
         key(backStackKey) {
-            PhotoDoNavGraph(
-                modifier = modifier,
-                backStack = backStack,
-                sceneStrategy = listDetailStrategy,
-                isExpandedScreen = isExpandedScreen,
-                scrollBehavior = scrollBehavior,
-                setTopBar = { topBar = { it(scrollBehavior) } },
-                // THIS IS WHERE THE FUNCTION IS CREATED AND PASSED DOWN
-                setFabState = { newFabState -> currentFabState = newFabState },
-                // setFabState = { fabState = it },
-                onCategorySelected = { categoryId ->
-                    // NAV_LOG: Log when the last selected category ID is updated
-                    Log.d(TAG, "onCategorySelected callback triggered. Updating lastSelectedCategoryId to: $categoryId")
-                    mainScreenViewModel.onEvent(MainScreenEvent.OnCategorySelected(categoryId))                },
-                // Pass the ACTIONS down.
-                onEvent = mainScreenViewModel::onEvent
+            if (backStack.isNotEmpty()) {
+                PhotoDoNavGraph(
+                    modifier = modifier,
+                    backStack = backStack,
+                    sceneStrategy = listDetailStrategy,
+                    isExpandedScreen = isExpandedScreen,
+                    scrollBehavior = scrollBehavior,
+                    setTopBar = { topBar = { it(scrollBehavior) } },
+                    // THIS IS WHERE THE FUNCTION IS CREATED AND PASSED DOWN
+                    setFabState = { newFabState -> currentFabState = newFabState },
+                    // setFabState = { fabState = it },
+                    onCategorySelected = { categoryId ->
+                        // NAV_LOG: Log when the last selected category ID is updated
+                        Log.d(TAG, "onCategorySelected callback triggered. Updating lastSelectedCategoryId to: $categoryId")
+                        mainScreenViewModel.onEvent(MainScreenEvent.OnCategorySelected(categoryId))
+                    },
+                    // Pass the ACTIONS down.
+                    onEvent = mainScreenViewModel::onEvent
 
-            )
+                )
+            }
         }
     }
 
