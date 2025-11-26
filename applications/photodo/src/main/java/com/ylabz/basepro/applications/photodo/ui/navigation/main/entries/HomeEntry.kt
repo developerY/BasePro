@@ -4,11 +4,14 @@ package com.ylabz.basepro.applications.photodo.ui.navigation.main.entries
 
 import android.util.Log
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -104,7 +107,28 @@ fun HomeEntry(
 
     LaunchedEffect(Unit) {
         setTopBar {
-            TopAppBar(title = { Text("PhotoDo") })//, scrollBehavior = it)
+            TopAppBar(
+                title = { Text("PhotoDo") },//, scrollBehavior = it)
+                // --- PorterDuff.Mode.ADD NAVIGATION ICON LOGIC ---
+                // --- ADD NAVIGATION ICON LOGIC ---
+                navigationIcon = {
+                    // Show Back Arrow if:
+                    // 1. We are NOT on the root (size > 1 implies we drilled down)
+                    // 2. We are NOT on an expanded screen (Tablets show side-by-side, usually no back needed for Col 2)
+                    if (backStack.isNotEmpty() && !isExpandedScreen) {
+                        IconButton(onClick = {
+                            // Remove the top item (TaskList) to go back to Home
+                            backStack.removeLastOrNull()
+                        }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back to Categories"
+                            )
+                        }
+                    }
+                }
+            )
+            //  ---------------------------------
         }
 
         // --- THIS IS THE FIX ---
