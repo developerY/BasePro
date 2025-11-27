@@ -35,7 +35,7 @@ fun TaskList(
     // Log when the composable is recomposed, showing the state of the data
     Log.d(TAG, "Recomposing with category: ${category?.name ?: "null"}, task list count: ${taskLists.size}")
 
-    Column(modifier = modifier.fillMaxSize().background(Color(0xFFE0F7FA))) {
+    Column(modifier = modifier.fillMaxSize().background(Color(0x832196F3))) {
         Text("Source: TaskList.kt")
         if (category != null) {
             Text(

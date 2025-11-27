@@ -30,7 +30,7 @@ fun TaskListItem(
                 .fillMaxWidth()
                 .clickable { onClick() },
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFFB2DFDB))
+            colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFF3F51B5))
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(

@@ -1,6 +1,7 @@
 package com.ylabz.basepro.applications.photodo.ui.navigation.main
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +13,8 @@ import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -124,19 +127,34 @@ fun PhotoDoNavGraph(
             entry<PhotoDoNavKeys.HomeFeedKey>(
                 metadata = ListDetailSceneStrategy.listPane(
                     detailPlaceholder = {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center)
-                        { Text("Select a category") }
+                        Box(modifier = Modifier.fillMaxSize()
+                            .background(Color.Blue.copy(alpha = 0.3f)),
+                            contentAlignment = Alignment.Center
+                        )
+                        { Text("Detail Place Holder -- Select an Item from list / category") }
                     }
                 ))
             {
-                HomeEntry(
-                    isExpandedScreen = isExpandedScreen, // <-- Use the correct parameter
-                    backStack = backStack,
-                    setTopBar = setTopBar,
-                    setFabState = setFabState,
-                    onCategorySelected = onCategorySelected,
-                    onEvent = onEvent
-                )
+                // DEBUGGING: Added Yellow Background
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Blue.copy(alpha = 0.3f)) // Unique Color 1
+                ) {
+                    Text(
+                        text = " PhotoDoNavGraph.kt --- Fab needs to be set here",
+                        color = Color.Blue, // Distinct Text Color
+                        fontWeight = FontWeight.Bold
+                    )
+                    HomeEntry(
+                        isExpandedScreen = isExpandedScreen, // <-- Use the correct parameter
+                        backStack = backStack,
+                        setTopBar = setTopBar,
+                        setFabState = setFabState,
+                        onCategorySelected = onCategorySelected,
+                        onEvent = onEvent
+                    )
+                }
             }
 
 
@@ -152,23 +170,37 @@ fun PhotoDoNavGraph(
              * - `detailPlaceholder`: A placeholder for the third pane.
              */
             entry<PhotoDoNavKeys.TaskListKey>(
+                //metadata = ListDetailSceneStrategy.detailPane()
                 metadata = ListDetailSceneStrategy.listPane(
-                    detailPlaceholder = {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center)
+                   detailPlaceholder = {
+                        Box(modifier = Modifier.fillMaxSize()
+                            .background(Color.Green.copy(alpha = 0.3f)),
+                            contentAlignment = Alignment.Center
+                        )
                         { Text("Select a list to see details") }
-                    }
-                ))
-            { listKey ->
-                ListEntry(
-                    isExpandedScreen = isExpandedScreen,
-                    listKey = listKey,
-                    backStack = backStack,
-                    scrollBehavior = scrollBehavior,
-                    setTopBar = setTopBar,
-                    setFabState = setFabState,
-                    onCategorySelected = onCategorySelected,
-                    onEvent = onEvent
+                   }
                 )
+            )
+            { listKey ->
+                Box(modifier = Modifier.fillMaxSize()
+                    .background(Color.Green.copy(alpha = 0.3f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ListEntry(
+                        isExpandedScreen = isExpandedScreen,
+                        listKey = listKey,
+                        backStack = backStack,
+                        scrollBehavior = scrollBehavior,
+                        setTopBar = setTopBar,
+                        setFabState = setFabState,
+                        onCategorySelected = onCategorySelected,
+                        onEvent = onEvent
+                    )
+                    Text("ListEntry",
+                        color = Color.Green, // Distinct Text Color
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
 
             /**
