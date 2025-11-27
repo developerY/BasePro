@@ -99,25 +99,44 @@ fun HomeEntry(
             // backStack.add(newTaskListKey) clicking on a category should never show an Item
             // 3. Add the new TaskListKey. This adds Column 2 content.
             // Log.d(TAG, "Adding new TaskListKey($categoryId) to backStack.")
-            // backStack.add(newTaskListKey)
+            backStack.add(newTaskListKey)
         }
     }
     // ----------------------
     // --- END OF FIX ---
 
+    // --- 2. TABLET SYNC (Conditional) ---
+    // This ensures that if you rotate to Tablet mode, the right pane appears.
+    // It is DISABLED on phones to prevent "Auto-Jump" bugs.
+    if (isExpandedScreen) {
+        val selectedCategory = (uiState as? HomeUiState.Success)?.selectedCategory
+        LaunchedEffect(selectedCategory) {
+            if (selectedCategory != null) {
+                Log.d(TAG, "TABLET SYNC: Showing Category ${selectedCategory.categoryId}")
+                onCategorySelected(selectedCategory.categoryId)
+
+                val newTaskListKey = PhotoDoNavKeys.TaskListKey(selectedCategory.categoryId)
+                val currentTop = backStack.lastOrNull()
+
+                if (currentTop != newTaskListKey) {
+                    if (backStack.size > 1) {
+                        backStack.subList(1, backStack.size).clear()
+                    }
+                    backStack.add(newTaskListKey)
+                }
+            }
+        }
+    }
+
     LaunchedEffect(Unit) {
         setTopBar {
             TopAppBar(
-                title = { Text("PhotoDo") },//, scrollBehavior = it)
-                // --- PorterDuff.Mode.ADD NAVIGATION ICON LOGIC ---
-                // --- ADD NAVIGATION ICON LOGIC ---
+                title = { Text("PhotoDo") },
                 navigationIcon = {
-                    // Show Back Arrow if:
-                    // 1. We are NOT on the root (size > 1 implies we drilled down)
-                    // 2. We are NOT on an expanded screen (Tablets show side-by-side, usually no back needed for Col 2)
-                    if (backStack.isNotEmpty() && !isExpandedScreen) {
+                    // FIX: Only show back button if we are drilled down AND on a phone
+                    if (!isExpandedScreen && backStack.size > 1) {
                         IconButton(onClick = {
-                            // Remove the top item (TaskList) to go back to Home
+                            Log.d(TAG, "Back button clicked. Popping stack.")
                             backStack.removeLastOrNull()
                         }) {
                             Icon(
@@ -128,8 +147,9 @@ fun HomeEntry(
                     }
                 }
             )
-            //  ---------------------------------
         }
+            //  ---------------------------------
+
 
         // --- THIS IS THE FIX ---
         // The main button's onClick is now empty. Its only job is to toggle.
@@ -178,9 +198,7 @@ fun HomeEntry(
                     mainButtonAction = FabAction(
                         text = "Add",
                         icon = Icons.Default.Home,
-                        onClick = {
-                            Log.d(TAG, "Main FAB clicked to toggle menu.")
-                        }
+                        onClick = { Log.d(TAG, "Main FAB clicked to toggle menu.") }
                     ),
                     items = menuItems
                 )
@@ -195,6 +213,7 @@ fun HomeEntry(
         modifier = modifier,
         homeViewModel = homeViewModel,
         uiState = uiState,
+        isExpandedScreen = isExpandedScreen,
         // viewModel = viewModel, // viewModel is hoisted, not passed down
 
         // The category click event starts inside PhotoDoHomeUiRoute's children,

@@ -23,6 +23,7 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -213,6 +214,29 @@ fun MainScreen(
                     is PhotoDoNavKeys.TaskListKey -> "TaskList(${navKey.categoryId})"
                     else -> navKey.javaClass.simpleName
                 }
+            }
+        }
+    }
+
+    // --- FIX: RESET STACK ON FOLD For Testing ---
+    // When the device is folded (Expanded -> Compact), we force the stack
+    // back to the root. This ensures the user sees the "List" (Categories)
+    // instead of getting stuck on the "Detail" (Task List).
+// --- FIX: RESET STACK ON FOLD ---
+    LaunchedEffect(isExpandedScreen) {
+        if (!isExpandedScreen) {
+            // LOGGING: See exactly what is in the stack when you fold
+            Log.d(TAG, "Fold Detected. Current Stack Size: ${backStack.size}")
+            backStack.forEachIndexed { index, key ->
+                Log.d(TAG, "Stack [$index]: ${key::class.simpleName}")
+            }
+
+            if (backStack.size > 1) {
+                Log.d(TAG, "Resetting stack to Root (Home).")
+                // Correctly keep the first item (Home), remove the rest (Details)
+                backStack.subList(1, backStack.size).clear()
+            } else {
+                Log.d(TAG, "Stack size is 1. Already at Root (or Navigation was incorrect).")
             }
         }
     }

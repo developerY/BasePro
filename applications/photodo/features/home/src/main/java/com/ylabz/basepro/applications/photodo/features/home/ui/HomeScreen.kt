@@ -1,6 +1,7 @@
 package com.ylabz.basepro.applications.photodo.features.home.ui
 
 import android.util.Log
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
@@ -23,6 +24,7 @@ fun HomeScreen(
     onEvent: (HomeEvent) -> Unit,
     // This is for navigating from a Task in the list to the Task Detail (3rd pane)
     onSelectList: (Long) -> Unit,
+    isExpandedScreen: Boolean,
     //onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
     // ### WHAT: This parameter was added to accept the "setter" function from MainScreen.
     // ### WHY: This allows HomeScreen to tell MainScreen which FAB to display.
@@ -33,58 +35,71 @@ fun HomeScreen(
     // setFabState: (FabStateMenu?) -> Unit, // <-- IT'S A PARAMETER PASSED TO THE FUNCTION
 ) {
 
-    // val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
-    val navigator = rememberListDetailPaneScaffoldNavigator()
-    val scope = rememberCoroutineScope() // 3. Get a coroutine scope
-
 
     Log.d("HomeScreen", "On HomeScreen recomposing.")
+    if (isExpandedScreen) {
 
-    // --- ADAPTIVE NAVIGATION SYNC ---
-    // Automatically navigate to the Detail pane when a category is selected.
-    // This ensures the UI stays in sync with your ViewModel state.
-    LaunchedEffect(uiState.selectedCategory) {
-        if (uiState.selectedCategory != null) {
-            scope.launch {
-                navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
+        // val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
+        val navigator = rememberListDetailPaneScaffoldNavigator()
+        val scope = rememberCoroutineScope() // 3. Get a coroutine scope
+
+        // --- ADAPTIVE NAVIGATION SYNC ---
+        // Automatically navigate to the Detail pane when a category is selected.
+        // This ensures the UI stays in sync with your ViewModel state.
+        LaunchedEffect(uiState.selectedCategory) {
+            if (uiState.selectedCategory != null) {
+                scope.launch {
+                    navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
+                }
+            } else {
+                // Optional: If deselected, you could navigate back to List
+                // scope.launch { navigator.navigateTo(ListDetailPaneScaffoldRole.List) }
             }
-        } else {
-            // Optional: If deselected, you could navigate back to List
-            // scope.launch { navigator.navigateTo(ListDetailPaneScaffoldRole.List) }
         }
+
+        ListDetailPaneScaffold(
+            modifier = modifier, // The modifier for the whole screen goes on the scaffold
+            directive = navigator.scaffoldDirective,
+            value = navigator.scaffoldValue,
+            listPane = {
+                // 1. EXPRESSIVE MOTION: Wrap in AnimatedPane
+                // This gives you the beautiful M3 entry/exit animations automatically.
+                AnimatedPane {
+                    CategoryList(
+                        uiState = uiState,
+                        onEvent = onEvent,
+                    )
+                }
+            },
+            detailPane = {
+                // This pane will now become visible and show the correct task list
+                // because the uiState was updated by the onEvent call above.
+                // 2. EXPRESSIVE MOTION: Wrap in AnimatedPane
+                AnimatedPane {
+                    // This pane shows the "Task List" for the selected category
+                    TaskList(
+                        category = uiState.selectedCategory,
+                        taskLists = uiState.taskListsForSelectedCategory,
+                        // This is for clicking items in the right-hand pane, which is already correct
+                        // This onSelectList is for when a user clicks a task *within* this list,
+                        // which correctly triggers the navigation to the 3rd pane.
+                        onSelectList = onSelectList
+                    )
+                }
+            }
+        )
+    }else {
+
+        // --- PHONE / FOLDED LAYOUT (1 Pane) ---
+        // Just show the Categories.
+        // If you click a category, the Global Nav (HomeEntry) pushes the Task List screen.
+        // This prevents the "Hidden Categories" bug.
+        CategoryList(
+            modifier = modifier.fillMaxSize(),
+            uiState = uiState,
+            onEvent = onEvent
+        )
     }
-
-    ListDetailPaneScaffold(
-        modifier = modifier, // The modifier for the whole screen goes on the scaffold
-        directive = navigator.scaffoldDirective,
-        value = navigator.scaffoldValue,
-        listPane = {
-            // 1. EXPRESSIVE MOTION: Wrap in AnimatedPane
-            // This gives you the beautiful M3 entry/exit animations automatically.
-            AnimatedPane {
-                CategoryList(
-                    uiState = uiState,
-                    onEvent = onEvent,
-                )
-            }
-        },
-        detailPane = {
-            // This pane will now become visible and show the correct task list
-            // because the uiState was updated by the onEvent call above.
-            // 2. EXPRESSIVE MOTION: Wrap in AnimatedPane
-            AnimatedPane {
-                // This pane shows the "Task List" for the selected category
-                TaskList(
-                    category = uiState.selectedCategory,
-                    taskLists = uiState.taskListsForSelectedCategory,
-                    // This is for clicking items in the right-hand pane, which is already correct
-                    // This onSelectList is for when a user clicks a task *within* this list,
-                    // which correctly triggers the navigation to the 3rd pane.
-                    onSelectList = onSelectList
-                )
-            }
-        }
-    )
 
     // ### NEW LOGIC: Context-Aware FAB ###
     // This LaunchedEffect observes the selectedCategory. If it changes, the

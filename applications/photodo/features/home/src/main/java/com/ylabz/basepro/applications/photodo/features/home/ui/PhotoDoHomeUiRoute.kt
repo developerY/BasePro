@@ -22,6 +22,7 @@ fun PhotoDoHomeUiRoute(
     navTo: (Long) -> Unit,
     // setFabState: (FabStateMenu?) -> Unit = {}, // <-- ADD THIS PARAMETER
     homeViewModel: HomeViewModel, // -- do not use new hiltViewModel
+    isExpandedScreen: Boolean,
     // --- FIX: The signature should never includes the mainScreenViewModel ---
 ) {
     // --- ADD THIS HASHCODE LOG ---
@@ -50,6 +51,7 @@ fun PhotoDoHomeUiRoute(
                         )
                         navTo(taskID)
                     },
+                    isExpandedScreen = isExpandedScreen,
                     // onCategorySelected = onCategorySelected, // <-- PASS THE LAMBDA DOWN
                     // This handles the "Add" button on the empty screen
                     /*onAddList = {
