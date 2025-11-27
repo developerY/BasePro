@@ -99,6 +99,7 @@ fun HomeEntry(
             // backStack.add(newTaskListKey) clicking on a category should never show an Item
             // 3. Add the new TaskListKey. This adds Column 2 content.
             // Log.d(TAG, "Adding new TaskListKey($categoryId) to backStack.")
+
             backStack.add(newTaskListKey)
         }
     }
@@ -108,7 +109,7 @@ fun HomeEntry(
     // --- 2. TABLET SYNC (Conditional) ---
     // This ensures that if you rotate to Tablet mode, the right pane appears.
     // It is DISABLED on phones to prevent "Auto-Jump" bugs.
-    if (isExpandedScreen) {
+    /*if (isExpandedScreen) {
         val selectedCategory = (uiState as? HomeUiState.Success)?.selectedCategory
         LaunchedEffect(selectedCategory) {
             if (selectedCategory != null) {
@@ -126,7 +127,7 @@ fun HomeEntry(
                 }
             }
         }
-    }
+    }*/
 
     LaunchedEffect(Unit) {
         setTopBar {
