@@ -149,6 +149,8 @@ class HomeViewModel @Inject constructor(
                 }
 
                 HomeEvent.OnAddListClicked -> { /* Handled by MainScreen */ }
+
+                is HomeEvent.OnEditCategoryClicked -> { /* Handled by MainScreen */ }
             }
         }
     }

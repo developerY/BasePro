@@ -167,6 +167,26 @@ class MainScreenViewModel @Inject constructor(
                 }*/
 
 
+                is MainScreenEvent.OnEditCategoryClicked -> {
+                    _uiState.update { it.copy(
+                        currentSheet = BottomSheetType.ADD_CATEGORY, // Reuse the same sheet
+                        // categoryToEdit = event.category, // Set the data
+                        fabState = FabState.Hidden
+                    )}
+                }
+
+                is MainScreenEvent.OnUpdateCategory -> {
+                    repository.updateCategory(event.category)
+                    _uiState.update { it.copy(
+                        currentSheet = BottomSheetType.NONE,
+                        // categoryToEdit = null
+                    )}
+                }
+
+                /* is MainScreenEvent.OnDeleteCategoryClicked -> {
+                    repository.deleteCategory(event.category)
+                }*/
+
                 is MainScreenEvent.OnSaveCategory -> {
                     Log.d(TAG, "OnSaveCategory event received")
                     repository.insertCategory(

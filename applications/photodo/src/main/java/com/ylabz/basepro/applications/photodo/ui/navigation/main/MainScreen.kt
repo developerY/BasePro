@@ -427,6 +427,9 @@ fun MainScreen(
                             )
                         )
                         mainScreenViewModel.onEvent(MainScreenEvent.OnBottomSheetDismissed)
+                    },
+                    onUpdateCategory = { updatedCategory ->
+                        mainScreenViewModel.onEvent(MainScreenEvent.OnUpdateCategory(updatedCategory))
                     }
                 )
 

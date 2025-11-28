@@ -18,6 +18,13 @@ sealed interface HomeEvent {
      */
     data object OnAddCategoryClicked : HomeEvent
 
+
+    /**
+     * Event triggered when the user clicks the 'Edit' button for a category.
+     * @param category The category to be edited.
+     */
+    data class OnEditCategoryClicked(val category: CategoryEntity) : HomeEvent // Pass up to Main
+
     /**
      * Event triggered when the user dismisses the 'Add Category' bottom sheet.
      */

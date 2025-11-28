@@ -9,7 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.ylabz.basepro.applications.photodo.features.home.ui.components.AddCategorySheet
+import com.ylabz.basepro.applications.photodo.features.home.ui.components.AddCategoryBottomSheet
 
 
 private const val TAG = "PhotoDoHomeUiRoute"
@@ -65,16 +65,24 @@ fun PhotoDoHomeUiRoute(
                 // --- THIS IS THE UI LOGIC ---
                 // When the ViewModel's state flag is true, show the sheet.
                 if (uiState.isAddingCategory) {
-                    AddCategorySheet(
+                    AddCategoryBottomSheet(
                         onAddCategory = { categoryName ->
                             // Log the event being sent to the ViewModel to save the category
-                            Log.d(TAG, "onAddCategory called with name: '$categoryName'. Posting OnSaveCategory event.")
+                            Log.d(
+                                TAG,
+                                "onAddCategory called with name: '$categoryName'. Posting OnSaveCategory event."
+                            )
                             onEvent(HomeEvent.OnSaveCategory(categoryName))
                         },
+
                         onDismiss = {
                             // Log the event being sent to the ViewModel to dismiss the sheet
                             Log.d(TAG, "onDismiss called. Posting OnDismissAddCategory event.")
                             onEvent(HomeEvent.OnDismissAddCategory)
+                        },
+                        categoryToEdit = uiState.categoryToEdit,
+                        onUpdateCategory = { updatedCategory ->
+                            onEvent(HomeEvent.OnUpdateCategory(updatedCategory))
                         }
                     )
                 }

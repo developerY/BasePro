@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
+import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
 
 @Composable
 fun CategoryCard(
@@ -32,6 +34,7 @@ fun CategoryCard(
     isSelected: Boolean,
     onClick: () -> Unit,
     onDeleteClick: () -> Unit,
+    onEvent: (HomeEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val animatedContainerColor by animateColorAsState(
@@ -91,6 +94,15 @@ fun CategoryCard(
                     contentDescription = "Delete",
                     tint = MaterialTheme.colorScheme.error.copy(alpha = 0.8f)
                 )
+            }
+
+            Row {
+                IconButton(onClick = { onEvent(HomeEvent.OnEditCategoryClicked(category)) }) {
+                    Icon(Icons.Default.Edit, "Edit")
+                }
+                IconButton(onClick = { onEvent(HomeEvent.OnDeleteCategoryClicked(category)) }) {
+                    Icon(Icons.Default.Delete, "Delete")
+                }
             }
         }
     }

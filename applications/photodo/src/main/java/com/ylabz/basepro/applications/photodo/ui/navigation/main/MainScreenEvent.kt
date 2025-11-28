@@ -1,5 +1,7 @@
 package com.ylabz.basepro.applications.photodo.ui.navigation.main
 
+import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
+
 /**
  * Defines the shared events that can be sent to the MainScreenViewModel.
  *
@@ -15,6 +17,10 @@ sealed interface MainScreenEvent {
      * Signals that the "Add Category" action was triggered.
      */
     data object OnAddCategoryClicked : MainScreenEvent
+
+    // Edit the Category
+    data class OnEditCategoryClicked(val category: CategoryEntity) : MainScreenEvent // Open sheet
+    data class OnUpdateCategory(val category: CategoryEntity) : MainScreenEvent // Save
 
     /**
      * Signals that the "Add List" action was triggered.

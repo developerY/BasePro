@@ -30,6 +30,10 @@ class PhotoDoRepoImpl @Inject constructor(
         return photoDoDao.getCategoryById(categoryId)
     }
 
+    override suspend fun updateCategory(category: CategoryEntity) {
+        TODO("Not yet implemented")
+    }
+
     // --- TaskList Operations ---
 
     override suspend fun insertTaskList(taskList: TaskListEntity) {

@@ -21,6 +21,9 @@ interface PhotoDoRepo {
 
     fun getCategoryById(categoryId: Long): Flow<CategoryEntity?>
 
+    suspend fun updateCategory(category: CategoryEntity) // <--- Add this
+
+
     // --- TaskList Operations ---
 
     suspend fun insertTaskList(taskList: TaskListEntity)
@@ -47,4 +50,5 @@ interface PhotoDoRepo {
     // --- Relational Operations ---
 
     fun getTaskListWithPhotos(listId: Long): Flow<TaskListWithPhotos?>
+
 }
