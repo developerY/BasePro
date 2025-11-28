@@ -1,8 +1,6 @@
 package com.ylabz.basepro.applications.photodo.features.home.ui.components
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 
@@ -38,20 +35,12 @@ fun CategoryCard(
     modifier: Modifier = Modifier
 ) {
     val animatedContainerColor by animateColorAsState(
-        targetValue = if (isSelected) {
-            MaterialTheme.colorScheme.primaryContainer
-        } else {
-            MaterialTheme.colorScheme.surfaceContainerLow
-        },
-        animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
+        targetValue = if (isSelected) MaterialTheme.colorScheme.primaryContainer
+        else MaterialTheme.colorScheme.surfaceContainerLow,
         label = "CardColor"
     )
-
-    val contentColor = if (isSelected) {
-        MaterialTheme.colorScheme.onPrimaryContainer
-    } else {
-        MaterialTheme.colorScheme.onSurface
-    }
+    val contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
+    else MaterialTheme.colorScheme.onSurface
 
     ElevatedCard(
         modifier = modifier
@@ -61,9 +50,6 @@ fun CategoryCard(
         colors = CardDefaults.elevatedCardColors(
             containerColor = animatedContainerColor,
             contentColor = contentColor
-        ),
-        elevation = CardDefaults.elevatedCardElevation(
-            defaultElevation = if (isSelected) 6.dp else 2.dp
         )
     ) {
         Row(
@@ -72,28 +58,29 @@ fun CategoryCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Big Icon
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.Label,
                 contentDescription = null,
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(40.dp), // Larger icon for phone
                 tint = if (isSelected) contentColor else MaterialTheme.colorScheme.primary
             )
 
             Spacer(modifier = Modifier.width(16.dp))
 
             Column(modifier = Modifier.weight(1f)) {
+                // Title
                 Text(
                     text = category.name,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                     color = contentColor
                 )
+                // Description (Visible ONLY on Phone)
                 if (category.description?.isNotBlank() == true) {
                     Text(
-                        text = category.description ?: "No Description",
+                        text = category.description ?: "no description",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = contentColor.copy(alpha = 0.8f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        color = contentColor.copy(alpha = 0.8f)
                     )
                 }
             }

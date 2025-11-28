@@ -4,9 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Label
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +35,7 @@ fun CategoryListItem(
             .clickable(onClick = onClick),
 
         headlineContent = {
+            // Just the name, bold if selected
             Text(
                 text = category.name,
                 style = MaterialTheme.typography.titleMedium.copy(
@@ -47,14 +45,7 @@ fun CategoryListItem(
                 else MaterialTheme.colorScheme.onSurface
             )
         },
-        leadingContent = {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.Label,
-                contentDescription = null,
-                tint = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
-                else MaterialTheme.colorScheme.primary
-            )
-        },
+        // No description, no leading icon. Just simple text.
         /*trailingContent = {
             IconButton(onClick = onDeleteClick) {
                 Icon(
