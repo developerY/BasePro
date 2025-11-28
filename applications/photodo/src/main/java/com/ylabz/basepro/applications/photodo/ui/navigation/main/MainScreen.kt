@@ -30,7 +30,6 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -39,7 +38,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
-import com.ylabz.basepro.applications.photodo.ui.navigation.NavKeySaver
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 import com.ylabz.basepro.applications.photodo.ui.navigation.components.debug.DebugStackUi
 import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabState
@@ -125,9 +123,9 @@ fun MainScreen(
     //NOTE: **Top-Level Navigation State**
     // (`currentTopLevelKey`): This tracks which main section of the app the user is in (e.g., "Home," "Tasks," or "Settings")
     // The currently selected top-level tab. `rememberSaveable` ensures this state survives process death.
-    var currentTopLevelKey: NavKey by rememberSaveable(stateSaver = NavKeySaver) {
+    /* var currentTopLevelKey: NavKey by rememberSaveable(stateSaver = NavKeySaver) {
         mutableStateOf(PhotoDoNavKeys.HomeFeedKey)
-    }
+    }*/
 
     /*var currentTopLevelKey: NavKey by remember(backStack) {
         mutableStateOf(
@@ -136,6 +134,28 @@ fun MainScreen(
             } ?: PhotoDoNavKeys.HomeFeedKey
         )
     }*/
+
+    // --- FIX: SMART TAB SELECTION ---
+    // 1. Check the TOP of the stack (Are we looking at a TaskList?)
+    // 2. If not, check the ROOT of the stack (Where did we start?)
+    val currentTopLevelKey by remember {
+        derivedStateOf {
+            val top = backStack.lastOrNull()
+            val root = backStack.firstOrNull() ?: PhotoDoNavKeys.HomeFeedKey
+
+            // Helper to find matching tab
+            fun findTab(key: NavKey?): NavKey? {
+                if (key == null) return null
+                return TopLevelDestination.entries.find { dest ->
+                    dest.key::class == key::class
+                }?.key
+            }
+
+            // If looking at Task List (any category), highlight Tasks Tab
+            findTab(top) ?: findTab(root) ?: PhotoDoNavKeys.HomeFeedKey
+        }
+    }
+    // --------------------------------
 
     // 1. Observe the categories from the HomeViewModel (you'll need to expose them or the HomeUiState)
     // Ideally, MainScreenViewModel should hold this "global" state, but for now, let's assume
@@ -174,7 +194,20 @@ fun MainScreen(
             navKey
         }
 
-        if (keyToNavigate != null) {
+        val isSameTab = currentTopLevelKey::class == keyToNavigate::class
+
+        if (!isSameTab) {
+            Log.d(TAG, "Switching Tabs: ${currentTopLevelKey::class.simpleName} -> ${keyToNavigate::class.simpleName}")
+            backStack.clear()
+            backStack.add(keyToNavigate)
+        } else {
+            if (backStack.size > 1) {
+                Log.d(TAG, "Reseeting Tab to Root.")
+                backStack.subList(1, backStack.size).clear()
+            }
+        }
+
+        /*if (keyToNavigate != null) {
             // --- THIS IS THE FIX ---
             // Check if we are *already* at the root of the stack with this *exact* key.
             // backStack.firstOrNull() checks the current root.
@@ -198,7 +231,7 @@ fun MainScreen(
             Log.d(TAG, "NAVIGATION -DONE- onNavigate triggered with navKey: ${navKey::class.simpleName}")
         } else {
             Log.d(TAG, "NAVIGATION -- Aborted.")
-        }
+        } */
     }
     // =================================================================
     // END OF FIX
@@ -222,7 +255,7 @@ fun MainScreen(
     // When the device is folded (Expanded -> Compact), we force the stack
     // back to the root. This ensures the user sees the "List" (Categories)
     // instead of getting stuck on the "Detail" (Task List).
-// --- FIX: RESET STACK ON FOLD ---
+    // --- FIX: RESET STACK ON FOLD ---
     LaunchedEffect(isExpandedScreen) {
         if (!isExpandedScreen) {
             // LOGGING: See exactly what is in the stack when you fold

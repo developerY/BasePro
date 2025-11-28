@@ -99,8 +99,14 @@ fun HomeEntry(
             // backStack.add(newTaskListKey) clicking on a category should never show an Item
             // 3. Add the new TaskListKey. This adds Column 2 content.
             // Log.d(TAG, "Adding new TaskListKey($categoryId) to backStack.")
+            if (!isExpandedScreen) {
+                // 2. Create the destination Key (The root of the Tasks tab)
+                val taskTabKey = PhotoDoNavKeys.TaskListKey(categoryId)
 
-            backStack.add(newTaskListKey)
+                // 3. SWITCH TABS: Clear the stack and start fresh with the Task List
+                backStack.clear()
+                backStack.add(taskTabKey)
+            }
         }
     }
     // ----------------------
