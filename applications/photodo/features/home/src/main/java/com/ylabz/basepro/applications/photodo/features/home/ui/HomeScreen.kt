@@ -68,6 +68,7 @@ fun HomeScreen(
                     CategoryList(
                         uiState = uiState,
                         onEvent = onEvent,
+                        isExpandedScreen = isExpandedScreen,
                     )
                 }
             },
@@ -97,7 +98,8 @@ fun HomeScreen(
         CategoryList(
             modifier = modifier.fillMaxSize(),
             uiState = uiState,
-            onEvent = onEvent
+            onEvent = onEvent,
+            isExpandedScreen = isExpandedScreen
         )
     }
 

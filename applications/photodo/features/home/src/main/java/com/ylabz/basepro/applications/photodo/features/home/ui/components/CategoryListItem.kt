@@ -6,9 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Label
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -18,26 +16,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
-import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
 
 @Composable
 fun CategoryListItem(
     category: CategoryEntity,
     isSelected: Boolean,
-    onEvent: (HomeEvent) -> Unit
+    onClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     ListItem(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(
                 if (isSelected) MaterialTheme.colorScheme.primaryContainer
                 else Color.Transparent
             )
-            .clickable { onEvent(HomeEvent.OnCategorySelected(category.categoryId)) },
+            .clickable(onClick = onClick),
 
         headlineContent = {
             Text(
@@ -57,10 +55,8 @@ fun CategoryListItem(
                 else MaterialTheme.colorScheme.primary
             )
         },
-        trailingContent = {
-            IconButton(
-                onClick = { onEvent(HomeEvent.OnDeleteCategoryClicked(category)) }
-            ) {
+        /*trailingContent = {
+            IconButton(onClick = onDeleteClick) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete ${category.name}",
@@ -68,7 +64,7 @@ fun CategoryListItem(
                     else MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
                 )
             }
-        },
+        },*/
         colors = ListItemDefaults.colors(containerColor = Color.Transparent)
     )
 }

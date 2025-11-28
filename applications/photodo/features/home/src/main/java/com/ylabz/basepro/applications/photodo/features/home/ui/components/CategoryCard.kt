@@ -28,26 +28,35 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
-import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
 
 @Composable
 fun CategoryCard(
     category: CategoryEntity,
     isSelected: Boolean,
-    onEvent: (HomeEvent) -> Unit
+    onClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val animatedContainerColor by animateColorAsState(
-        targetValue = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerLow,
+        targetValue = if (isSelected) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surfaceContainerLow
+        },
         animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
         label = "CardColor"
     )
 
-    val contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+    val contentColor = if (isSelected) {
+        MaterialTheme.colorScheme.onPrimaryContainer
+    } else {
+        MaterialTheme.colorScheme.onSurface
+    }
 
     ElevatedCard(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .clickable { onEvent(HomeEvent.OnCategorySelected(category.categoryId)) },
+            .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.elevatedCardColors(
             containerColor = animatedContainerColor,
@@ -80,7 +89,7 @@ fun CategoryCard(
                 )
                 if (category.description?.isNotBlank() == true) {
                     Text(
-                        text = category.description  ?: "no description",
+                        text = category.description ?: "No Description",
                         style = MaterialTheme.typography.bodyMedium,
                         color = contentColor.copy(alpha = 0.8f),
                         maxLines = 1,
@@ -89,9 +98,7 @@ fun CategoryCard(
                 }
             }
 
-            IconButton(
-                onClick = { onEvent(HomeEvent.OnDeleteCategoryClicked(category)) }
-            ) {
+            IconButton(onClick = onDeleteClick) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete",
