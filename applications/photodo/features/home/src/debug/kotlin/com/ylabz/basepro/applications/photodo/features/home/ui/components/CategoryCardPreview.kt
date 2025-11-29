@@ -32,9 +32,7 @@ fun CategoryCardPreview() {
             CategoryCard(
                 category = sampleCategory,
                 isSelected = false,
-                onClick = {},
                 onEvent = {},
-                onDeleteClick = {},
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -43,9 +41,7 @@ fun CategoryCardPreview() {
             CategoryCard(
                 category = selectedCategory,
                 isSelected = true,
-                onClick = {},
                 onEvent = {},
-                onDeleteClick = {}
             )
         }
     // }
@@ -72,8 +68,7 @@ fun CategoryListItemPreview() {
         CategoryListItem(
             category = sampleCategory,
             isSelected = false,
-            onClick = {},
-            onDeleteClick = {}
+            onEvent = {},
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -82,8 +77,7 @@ fun CategoryListItemPreview() {
         CategoryListItem(
             category = selectedCategory,
             isSelected = true,
-            onClick = {},
-            onDeleteClick = {}
+            onEvent = {}
         )
     }
     // }

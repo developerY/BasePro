@@ -32,8 +32,6 @@ import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
 fun CategoryCard(
     category: CategoryEntity,
     isSelected: Boolean,
-    onClick: () -> Unit,
-    onDeleteClick: () -> Unit,
     onEvent: (HomeEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -48,7 +46,7 @@ fun CategoryCard(
     ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .clickable { onEvent(HomeEvent.OnCategorySelected(category.categoryId)) },
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.elevatedCardColors(
             containerColor = animatedContainerColor,
@@ -61,24 +59,23 @@ fun CategoryCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Big Icon
+            // 1. Icon
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.Label,
                 contentDescription = null,
-                modifier = Modifier.size(40.dp), // Larger icon for phone
+                modifier = Modifier.size(40.dp),
                 tint = if (isSelected) contentColor else MaterialTheme.colorScheme.primary
             )
 
             Spacer(modifier = Modifier.width(16.dp))
 
+            // 2. Text
             Column(modifier = Modifier.weight(1f)) {
-                // Title
                 Text(
                     text = category.name,
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                     color = contentColor
                 )
-                // Description (Visible ONLY on Phone)
                 if (category.description?.isNotBlank() == true) {
                     Text(
                         text = category.description ?: "no description",
@@ -88,20 +85,21 @@ fun CategoryCard(
                 }
             }
 
-            IconButton(onClick = onDeleteClick) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete",
-                    tint = MaterialTheme.colorScheme.error.copy(alpha = 0.8f)
-                )
-            }
-
+            // 3. Actions (Edit & Delete)
             Row {
                 IconButton(onClick = { onEvent(HomeEvent.OnEditCategoryClicked(category)) }) {
-                    Icon(Icons.Default.Edit, "Edit")
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit",
+                        tint = contentColor
+                    )
                 }
                 IconButton(onClick = { onEvent(HomeEvent.OnDeleteCategoryClicked(category)) }) {
-                    Icon(Icons.Default.Delete, "Delete")
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete",
+                        tint = if (isSelected) contentColor else MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
+                    )
                 }
             }
         }
