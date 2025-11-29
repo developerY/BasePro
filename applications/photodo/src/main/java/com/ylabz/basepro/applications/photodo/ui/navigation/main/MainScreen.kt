@@ -38,11 +38,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
+import com.ylabz.basepro.applications.photodo.features.home.ui.components.AddCategoryBottomSheet
 import com.ylabz.basepro.applications.photodo.ui.navigation.PhotoDoNavKeys
 import com.ylabz.basepro.applications.photodo.ui.navigation.components.debug.DebugStackUi
 import com.ylabz.basepro.applications.photodo.ui.navigation.fab.FabState
 import com.ylabz.basepro.applications.photodo.ui.navigation.main.components.AddListSheet
-import com.ylabz.basepro.core.ui.components.AddCategoryBottomSheet
 import kotlinx.coroutines.launch
 
 private const val TAG = "MainScreen"
@@ -416,10 +416,11 @@ fun MainScreen(
         ) {
             when (uiState.currentSheet) {
                 BottomSheetType.ADD_CATEGORY -> AddCategoryBottomSheet(
+                    categoryToEdit = uiState.categoryToEdit, // <--- Pass the category to edit
                     onDismiss = {
                         mainScreenViewModel.onEvent(MainScreenEvent.OnBottomSheetDismissed)
                     },
-                    onSaveCategory = { name: String, description: String ->
+                    onSaveCategory = { name, description ->
                         mainScreenViewModel.onEvent(
                             MainScreenEvent.OnSaveCategory(
                                 name,
@@ -430,7 +431,8 @@ fun MainScreen(
                     },
                     onUpdateCategory = { updatedCategory ->
                         mainScreenViewModel.onEvent(MainScreenEvent.OnUpdateCategory(updatedCategory))
-                    }
+                    },
+                    onAddCategory = TODO()
                 )
 
                 // --- UPDATED CALL SITE ---

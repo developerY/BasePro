@@ -16,4 +16,5 @@ data class MainScreenUiState(
     val lastSelectedCategoryId: Long? = null, // Default to 1L as you did
     // --- ADDED: List of categories for the dropdown ---
     val categories: List<CategoryEntity> = emptyList(),
+    val categoryToEdit: CategoryEntity? = null
 )

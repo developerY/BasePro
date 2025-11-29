@@ -247,7 +247,10 @@ fun HomeEntry(
 
         // --- START OF FIX: TASK LIST CLICK (Column 2 -> Column 3 Replacement) ---
         navTo = { listId ->
-            Log.d(TAG, "Step3: Navigating from Task List Item to Detail Screen with listId: $listId")
+            Log.d(
+                TAG,
+                "Step3: Navigating from Task List Item to Detail Screen with listId: $listId"
+            )
 
             val currentTop = backStack.lastOrNull()
 
@@ -271,6 +274,18 @@ fun HomeEntry(
             // Add the new detail key. This is a clean add or replacement.
             backStack.add(detailKey)
             // --- END OF FIX ---
+        },
+        onCategoryClick = {
+            Log.d(TAG, "Category Clicked: $it. Resetting drill-down.")
+            onCategorySelected(it)
+            val newTaskListKey = PhotoDoNavKeys.TaskListKey(it)
+
+            if (backStack.size > 1) {
+                backStack.subList(1, backStack.size).clear()
+
+                // backStack.add(newTaskListKey)
+            }
+
         },
         /*navTo = { categoryId ->
             Log.d(

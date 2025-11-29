@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepo
-import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent.OnDeleteCategoryClicked
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -36,6 +35,7 @@ class HomeViewModel @Inject constructor(
 
     // 2. Input: UI State for Bottom Sheet
     private val _isAddingCategory = MutableStateFlow(false)
+    private val _categoryToEdit = MutableStateFlow<CategoryEntity?>(null)
 
     // 3. Side Effect: Navigation Event
     private val _categorySelectedEvent = MutableSharedFlow<Long>()
@@ -129,17 +129,42 @@ class HomeViewModel @Inject constructor(
                     _categorySelectedEvent.emit(event.categoryId)
                 }
 
-                HomeEvent.OnAddCategoryClicked -> _isAddingCategory.value = true
-                HomeEvent.OnDismissAddCategory -> _isAddingCategory.value = false
+                HomeEvent.OnAddCategoryClicked -> {
+                    // Clear any previous edit state when opening for "Add"
+                    _categoryToEdit.value = null
+                    _isAddingCategory.value = true
+                    // Update UI state accordingly
+                }
+
+                is HomeEvent.OnEditCategoryClicked -> {
+                    // Set the category to edit and open sheet
+                    _categoryToEdit.value = event.category
+                    _isAddingCategory.value = true
+                    // Update UI state via your pipeline or direct update
+                    updateStateForEdit(event.category)
+                }
+
+                is HomeEvent.OnUpdateCategory -> {
+                    photoDoRepo.updateCategory(event.category)
+                    _isAddingCategory.value = false
+                    _categoryToEdit.value = null
+                    clearEditState()
+                }
+
+                HomeEvent.OnDismissAddCategory -> {
+                    _isAddingCategory.value = false
+                    _categoryToEdit.value = null
+                    clearEditState()
+                }
 
                 is HomeEvent.OnSaveCategory -> {
                     // Save to DB
-                    addCategory(event.categoryName)
+                    addCategory(event.categoryName, event.categoryDescription)
                     // Close sheet
                     _isAddingCategory.value = false
                 }
 
-                is OnDeleteCategoryClicked -> {
+                is HomeEvent.OnDeleteCategoryClicked -> {
                     photoDoRepo.deleteCategory(event.category)
                     // No extra logic needed!
                     // 1. DB updates categoriesFlow
@@ -150,14 +175,38 @@ class HomeViewModel @Inject constructor(
 
                 HomeEvent.OnAddListClicked -> { /* Handled by MainScreen */ }
 
-                is HomeEvent.OnEditCategoryClicked -> { /* Handled by MainScreen */ }
             }
         }
     }
 
-    fun addCategory(name: String) {
+    private fun addCategory(name: String, description: String) {
         viewModelScope.launch {
-            photoDoRepo.insertCategory(CategoryEntity(name = name))
+            photoDoRepo.insertCategory(CategoryEntity(name = name, description = description))
         }
+    }
+
+    // Helper to update the specific state fields if you aren't using a single combined flow
+    private fun updateStateForEdit(category: CategoryEntity) {
+        // If using _uiState MutableStateFlow:
+        /*
+        _uiState.update { currentState ->
+           (currentState as? HomeUiState.Success)?.copy(
+               isAddingCategory = true,
+               categoryToEdit = category
+           ) ?: currentState
+        }
+        */
+    }
+
+    private fun clearEditState() {
+        // If using _uiState MutableStateFlow:
+        /*
+        _uiState.update { currentState ->
+           (currentState as? HomeUiState.Success)?.copy(
+               isAddingCategory = false,
+               categoryToEdit = null
+           ) ?: currentState
+        }
+        */
     }
 }

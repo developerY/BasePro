@@ -21,6 +21,7 @@ fun PhotoDoHomeUiRoute(
     uiState: HomeUiState, // Receives state from HomeEntry
     navTo: (Long) -> Unit,
     // setFabState: (FabStateMenu?) -> Unit = {}, // <-- ADD THIS PARAMETER
+    onCategoryClick: (Long) -> Unit,
     homeViewModel: HomeViewModel, // -- do not use new hiltViewModel
     isExpandedScreen: Boolean,
     // --- FIX: The signature should never includes the mainScreenViewModel ---
@@ -30,7 +31,12 @@ fun PhotoDoHomeUiRoute(
 
     Log.d(TAG, "Entered PhotoDoHomeUiRoute composable") // <-- BREADCRUMB 1
 
-    val onEvent = homeViewModel::onEvent
+    val onEvent: (HomeEvent) -> Unit = { event ->
+        homeViewModel.onEvent(event)
+        if (event is HomeEvent.OnCategorySelected) {
+            onCategoryClick(event.categoryId)
+        }
+    }
 
     when (uiState) {
         is HomeUiState.Loading -> {
@@ -65,29 +71,43 @@ fun PhotoDoHomeUiRoute(
                 // --- THIS IS THE UI LOGIC ---
                 // When the ViewModel's state flag is true, show the sheet.
                 if (uiState.isAddingCategory) {
+
+                    // --- UPDATED CALL SITE ---
+                    // Now follows the pattern: Pass State + Event Handler
                     AddCategoryBottomSheet(
+                        uiState = uiState,
+                        onEvent = onEvent
+                    )
+                    // -------------------------
+
+                    // --- UPDATED SHEET WIRING ---
+                    /* AddCategoryBottomSheet(
+                        // 1. Pass the category to edit (null if adding new)
+                        categoryToEdit = uiState.categoryToEdit,
+
+                        // 2. Simple Add (for the top part of your sheet)
                         onAddCategory = { categoryName ->
-                            // Log the event being sent to the ViewModel to save the category
-                            Log.d(
-                                TAG,
-                                "onAddCategory called with name: '$categoryName'. Posting OnSaveCategory event."
-                            )
-                            onEvent(HomeEvent.OnSaveCategory(categoryName))
+                            onEvent(HomeEvent.OnSaveCategory(categoryName, "New Category"))
                         },
 
+                        // 3. Dismiss
                         onDismiss = {
-                            // Log the event being sent to the ViewModel to dismiss the sheet
-                            Log.d(TAG, "onDismiss called. Posting OnDismissAddCategory event.")
                             onEvent(HomeEvent.OnDismissAddCategory)
                         },
-                        categoryToEdit = uiState.categoryToEdit,
-                        onUpdateCategory = { updatedCategory ->
-                            onEvent(HomeEvent.OnUpdateCategory(updatedCategory))
+
+                        // 4. Save New (Detailed)
+                        onSaveCategory = { name, description ->
+                            onEvent(HomeEvent.OnSaveCategory(name, description))
+                        },
+
+                        // 5. Update Existing
+                        onUpdateCategory = { category ->
+                            onEvent(HomeEvent.OnUpdateCategory(category))
                         }
-                    )
+                    ) */
+                    // ----------------------------
                 }
             }
-
         }
         is HomeUiState.Error -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

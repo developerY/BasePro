@@ -35,13 +35,19 @@ sealed interface HomeEvent {
      * This event carries the new category's name.
      * @param categoryName The name of the new category to be created.
      */
-    data class OnSaveCategory(val categoryName: String) : HomeEvent
+    data class OnSaveCategory(val categoryName: String, val categoryDescription: String) : HomeEvent
 
     /**
      * Event triggered when the user clicks the 'Add List' button in the FAB.
      * This tells the ViewModel to add a new list to the currently selected category.
      */
     data object OnAddListClicked : HomeEvent
+
+    /**
+     * Event triggered when the user clicks the 'Update' button in the bottom sheet.
+     * This event carries the updated category data.
+     */
+    data class OnUpdateCategory(val category: CategoryEntity) : HomeEvent
 
     /**
      * Event triggered when the user clicks the delete icon for a category.

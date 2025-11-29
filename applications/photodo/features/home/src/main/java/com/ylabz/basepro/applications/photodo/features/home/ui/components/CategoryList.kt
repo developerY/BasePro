@@ -59,7 +59,8 @@ fun CategoryList(
                         category = category,
                         isSelected = isSelected,
                         onClick = { onEvent(HomeEvent.OnCategorySelected(category.categoryId)) },
-                        onDeleteClick = { onEvent(HomeEvent.OnDeleteCategoryClicked(category)) }
+                        onDeleteClick = { onEvent(HomeEvent.OnDeleteCategoryClicked(category)) },
+                        onEvent = onEvent
                     )
                 }
             }
