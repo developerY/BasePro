@@ -9,7 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.ylabz.basepro.applications.photodo.features.home.ui.components.AddCategoryBottomSheet
+import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 
 
 private const val TAG = "PhotoDoHomeUiRoute"
@@ -22,6 +22,10 @@ fun PhotoDoHomeUiRoute(
     navTo: (Long) -> Unit,
     // setFabState: (FabStateMenu?) -> Unit = {}, // <-- ADD THIS PARAMETER
     onCategoryClick: (Long) -> Unit,
+    // --- ADD THIS CALLBACK ---
+    // This allows us to bubble the "Edit" request up to MainScreen
+    onEditCategory: (CategoryEntity) -> Unit,
+    // -------------------------
     homeViewModel: HomeViewModel, // -- do not use new hiltViewModel
     isExpandedScreen: Boolean,
     // --- FIX: The signature should never includes the mainScreenViewModel ---
@@ -32,9 +36,18 @@ fun PhotoDoHomeUiRoute(
     Log.d(TAG, "Entered PhotoDoHomeUiRoute composable") // <-- BREADCRUMB 1
 
     val onEvent: (HomeEvent) -> Unit = { event ->
+        // 1. Notify local VM (for selection, etc.)
         homeViewModel.onEvent(event)
+
+        // 2. Intercept Navigation
         if (event is HomeEvent.OnCategorySelected) {
             onCategoryClick(event.categoryId)
+        }
+
+        // 3. Intercept Edit Request
+        if (event is HomeEvent.OnEditCategoryClicked) {
+            Log.d(TAG, "Intercepted Edit Request for: ${event.category.name}")
+            onEditCategory(event.category)
         }
     }
 
@@ -48,15 +61,10 @@ fun PhotoDoHomeUiRoute(
             Column(modifier = Modifier.fillMaxSize()) {
                 Text("PhotoDoHomeUI Holding the HomeScreen")
                 HomeScreen(
+                    modifier = modifier,
                     uiState = uiState,
                     onEvent = homeViewModel::onEvent,
-                    onSelectList = { taskID ->
-                        Log.d(
-                            "PhotoDoHomeUiRoute",
-                            "STEP2: Navigating to TaskList with categoryId: $taskID"
-                        )
-                        navTo(taskID)
-                    },
+                    onSelectList = { taskID -> navTo(taskID)},
                     isExpandedScreen = isExpandedScreen,
                     // onCategorySelected = onCategorySelected, // <-- PASS THE LAMBDA DOWN
                     // This handles the "Add" button on the empty screen
@@ -64,19 +72,18 @@ fun PhotoDoHomeUiRoute(
                     state.selectedCategory?.let { category ->
                         viewModel.onEvent(HomeEvent.OnAddTaskListClicked(category.categoryId))
                     }
-                },*/
-                    modifier = modifier,
+                    },*/
                     // setFabState = setFabState
                 )
                 // --- THIS IS THE UI LOGIC ---
                 // When the ViewModel's state flag is true, show the sheet.
-                if (uiState.isAddingCategory) {
+                /* if (uiState.isAddingCategory) {
 
                     // --- UPDATED CALL SITE ---
                     // Now follows the pattern: Pass State + Event Handler
                     AddCategoryBottomSheet(
                         uiState = uiState,
-                        onEvent = onEvent
+                        onEvent = onEvent,
                     )
                     // -------------------------
 
@@ -106,7 +113,7 @@ fun PhotoDoHomeUiRoute(
                         }
                     ) */
                     // ----------------------------
-                }
+                } */
             }
         }
         is HomeUiState.Error -> {

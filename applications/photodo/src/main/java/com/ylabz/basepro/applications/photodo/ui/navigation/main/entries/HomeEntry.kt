@@ -23,6 +23,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeUiState
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeViewModel
 import com.ylabz.basepro.applications.photodo.features.home.ui.PhotoDoHomeUiRoute
@@ -244,6 +245,23 @@ fun HomeEntry(
         },*/
         // --- END COLUMN 1 FIX ---
 
+        onCategoryClick = { categoryId ->
+            // ... (Keep existing logic) ...
+            homeViewModel.onEvent(HomeEvent.OnCategorySelected(categoryId))
+            if (!isExpandedScreen) {
+                val newTaskListKey = PhotoDoNavKeys.TaskListKey(categoryId)
+                if (backStack.size > 1) { backStack.subList(1, backStack.size).clear() }
+                backStack.add(newTaskListKey)
+            }
+        },
+
+        // --- IMPLEMENT NEW CALLBACK ---
+        onEditCategory = { category ->
+            // Bubble the event up to MainScreen, which owns the BottomSheet
+            onEvent(MainScreenEvent.OnEditCategoryClicked(category))
+        },
+        // ------------------------------
+
 
         // --- START OF FIX: TASK LIST CLICK (Column 2 -> Column 3 Replacement) ---
         navTo = { listId ->
@@ -268,24 +286,12 @@ fun HomeEntry(
             // If the current top element is *any* Detail Key, remove it (i.e., replace it).
             if (backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey) {
                 Log.d(TAG, "Replacing existing Detail Key with new key: $listId")
-                // backStack.removeLastOrNull()
+                backStack.removeLastOrNull()
             }
 
             // Add the new detail key. This is a clean add or replacement.
             backStack.add(detailKey)
             // --- END OF FIX ---
-        },
-        onCategoryClick = {
-            Log.d(TAG, "Category Clicked: $it. Resetting drill-down.")
-            onCategorySelected(it)
-            val newTaskListKey = PhotoDoNavKeys.TaskListKey(it)
-
-            if (backStack.size > 1) {
-                backStack.subList(1, backStack.size).clear()
-
-                // backStack.add(newTaskListKey)
-            }
-
         },
         /*navTo = { categoryId ->
             Log.d(

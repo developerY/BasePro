@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddCategoryBottomSheet(
+fun AddCatBottomSheet(
     onDismiss: () -> Unit,
     onSaveCategory: (String, String) -> Unit
 ) {
