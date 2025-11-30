@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
-// Adjust this import based on your actual Theme location
+import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
 
 @Preview(showBackground = true, name = "Category Card (Folded/Phone)")
 @Composable
@@ -26,25 +26,47 @@ fun CategoryCardPreview() {
         description = "High priority office tasks."
     )
 
-    // PhotoDoTheme {
+    // Dummy data for the accordion
+    val sampleTasks = listOf(
+        TaskListEntity(
+            listId = 101,
+            categoryId = 2,
+            name = "Q4 Planning",
+            status = "To-Do",
+            priority = 1
+        ),
+        TaskListEntity(
+            listId = 102,
+            categoryId = 2,
+            name = "Expense Report",
+            status = "Done",
+            priority = 0
+        )
+    )
+
+    //PhotoDoTheme {
         Column(modifier = Modifier.padding(16.dp)) {
-            // Unselected State
+            // Unselected State (Collapsed)
             CategoryCard(
                 category = sampleCategory,
                 isSelected = false,
+                taskLists = emptyList(),
                 onEvent = {},
+                onTaskListClick = {}
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Selected State
+            // Selected State (Expanded with Accordion)
             CategoryCard(
                 category = selectedCategory,
                 isSelected = true,
+                taskLists = sampleTasks,
                 onEvent = {},
+                onTaskListClick = {}
             )
         }
-    // }
+    //}
 }
 
 @Preview(showBackground = true, name = "Category List Item (Unfolded/Tablet)")
@@ -62,23 +84,23 @@ fun CategoryListItemPreview() {
         description = "Random thoughts"
     )
 
-    // PhotoDoTheme {
-    Column(modifier = Modifier.padding(16.dp)) {
-        // Unselected State
-        CategoryListItem(
-            category = sampleCategory,
-            isSelected = false,
-            onEvent = {},
-        )
+    //PhotoDoTheme {
+        Column(modifier = Modifier.padding(16.dp)) {
+            // Unselected State
+            CategoryListItem(
+                category = sampleCategory,
+                isSelected = false,
+                onEvent = {}
+            )
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        // Selected State
-        CategoryListItem(
-            category = selectedCategory,
-            isSelected = true,
-            onEvent = {}
-        )
-    }
-    // }
+            // Selected State
+            CategoryListItem(
+                category = selectedCategory,
+                isSelected = true,
+                onEvent = {}
+            )
+        }
+    //}
 }

@@ -57,7 +57,9 @@ fun CategoryList(
                     CategoryCard(
                         category = category,
                         isSelected = isSelected,
-                        onEvent = onEvent
+                        taskLists = uiState.taskListsForSelectedCategory.filter { it.categoryId == category.categoryId },
+                        onEvent = onEvent,
+                        onTaskListClick = {},
                     )
                 }
             }
