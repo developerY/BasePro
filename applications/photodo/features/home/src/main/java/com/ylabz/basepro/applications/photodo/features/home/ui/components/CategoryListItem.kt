@@ -49,27 +49,37 @@ fun CategoryListItem(
                 else MaterialTheme.colorScheme.onSurface
             )
         },
-        trailingContent = {
-            // Compact Actions for Tablet
-            androidx.compose.foundation.layout.Row {
-                IconButton(onClick = { onEvent(HomeEvent.OnEditCategoryClicked(category)) }) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit",
-                        tint = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
-                        else MaterialTheme.colorScheme.onSurface
-                    )
-                }
-                IconButton(onClick = { onEvent(HomeEvent.OnDeleteCategoryClicked(category)) }) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete",
-                        tint = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
-                        else MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
-                    )
-                }
-            }
-        },
+        trailingContent = {},
         colors = ListItemDefaults.colors(containerColor = Color.Transparent)
     )
+}
+
+@Composable
+fun TrainlingContent(
+    modifier: Modifier = Modifier,
+    category: CategoryEntity,
+    isSelected: Boolean,
+    onEvent: (HomeEvent) -> Unit,
+) {
+
+        // Compact Actions for Tablet
+        androidx.compose.foundation.layout.Row {
+            IconButton(onClick = { onEvent(HomeEvent.OnEditCategoryClicked(category)) }) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit",
+                    tint = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
+                    else MaterialTheme.colorScheme.onSurface
+                )
+            }
+            IconButton(onClick = { onEvent(HomeEvent.OnDeleteCategoryClicked(category)) }) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete",
+                    tint = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
+                    else MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
+                )
+            }
+        }
+
 }
