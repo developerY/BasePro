@@ -81,7 +81,7 @@ fun AddCategoryBottomSheet(
         scope.launch { sheetState.hide() }.invokeOnCompletion {
             if (!sheetState.isVisible) {
                 if (isEditing) {
-                    val updated = categoryToEdit!!.copy(
+                    val updated = categoryToEdit.copy(
                         name = categoryName,
                         description = categoryDescription
                     )
