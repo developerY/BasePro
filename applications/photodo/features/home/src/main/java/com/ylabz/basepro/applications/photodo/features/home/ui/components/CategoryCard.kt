@@ -77,28 +77,7 @@ fun CategoryCard(
             defaultElevation = if (isSelected) 8.dp else 2.dp
         )
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(gradientBrush) // Apply the unique gradient
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // 2. BIG ICON: A visual anchor for the category
-            Surface(
-                shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f), // Semi-transparent
-                modifier = Modifier.size(56.dp)
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Default.FolderOpen,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-            }
+        extracted(gradientBrush)
 
             Spacer(modifier = Modifier.width(16.dp))
 
@@ -166,4 +145,31 @@ fun CategoryCard(
             }
         }
     }
+
+@Composable
+private fun extracted(gradientBrush: Brush) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(gradientBrush) // Apply the unique gradient
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // 2. BIG ICON: A visual anchor for the category
+        Surface(
+            shape = MaterialTheme.shapes.large,
+            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f), // Semi-transparent
+            modifier = Modifier.size(56.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Default.FolderOpen,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+        }
+    }
+}
 }
