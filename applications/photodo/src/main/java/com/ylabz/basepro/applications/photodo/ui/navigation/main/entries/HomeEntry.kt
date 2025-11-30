@@ -284,10 +284,10 @@ fun HomeEntry(
             }
 
             // If the current top element is *any* Detail Key, remove it (i.e., replace it).
-            if (backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey) {
+            /*if (backStack.lastOrNull() is PhotoDoNavKeys.TaskListDetailKey) {
                 Log.d(TAG, "Replacing existing Detail Key with new key: $listId")
                 backStack.removeLastOrNull()
-            }
+            }*/
 
             // Add the new detail key. This is a clean add or replacement.
             backStack.add(detailKey)
