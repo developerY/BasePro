@@ -32,8 +32,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -58,6 +62,20 @@ fun CategoryCard(
     // onTaskListClick: (Long) -> Unit,
     // --------------------
 ) {
+    // --- 1. LOCAL EXPANSION STATE ---
+    // This controls the accordion visibility independently of selection
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
+
+    // --- 2. AUTO-COLLAPSE LOGIC ---
+    // If this card loses selection (user clicked another card), we must collapse it
+    // because the parent list will stop sending us the 'taskLists' data.
+    LaunchedEffect(isSelected) {
+        if (!isSelected) {
+            isExpanded = false
+        }
+    }
+
+
     // Animate the container color slightly when selected
     val containerColor by animateColorAsState(
         targetValue = if (isSelected) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surfaceContainer,
@@ -77,9 +95,10 @@ fun CategoryCard(
 
     ElevatedCard(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxWidth(),
+            // --- 3. BODY CLICK (SELECT ONLY) ---
             // Click expands/selects the card
-            .clickable { onEvent(HomeEvent.OnCategorySelected(category.categoryId)) },
+            // .clickable { onEvent(HomeEvent.OnCategorySelected(category.categoryId)) },
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.elevatedCardColors(containerColor = containerColor),
         elevation = CardDefaults.elevatedCardElevation(
@@ -193,7 +212,7 @@ fun CategoryCard(
             }
 
             // --- ACCORDION SECTION ---
-            AnimatedVisibility(visible = isSelected) {
+            AnimatedVisibility(visible = isExpanded && isSelected) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
