@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.photodo.db.entity.PhotoEntity
 import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
 import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepo
+import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.DetailLoadState.Error
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -124,7 +125,7 @@ class PhotoDoDetailViewModel @Inject constructor(
                         // A more robust solution would use a Channel/SharedFlow to signal navigation.
 
                         // Set the state to an Error/Loading to force the screen to change/disappear
-                        _uiState.update { it.copy(loadState = DetailLoadState.Error("List deleted.")) }
+                        _uiState.update { it.copy(loadState = Error("List deleted.")) }
                     }
                 } else {
                     Log.e(TAG, "Attempted to delete task list, but currentTaskList is null.")
@@ -154,6 +155,16 @@ class PhotoDoDetailViewModel @Inject constructor(
             }
             PhotoDoDetailEvent.OnBackFromCamera -> {
                 _uiState.update { it.copy(showCamera = false) }
+            }
+
+            PhotoDoDetailEvent.OnAddItemClicked ->  {
+                Log.d(TAG, "OnAddItemClicked event received.")
+                //_uiState.update { it.copy(showAddItemDialog = true) }
+            }
+            is PhotoDoDetailEvent.OnItemCheckedChange -> {
+                viewModelScope.launch {
+                    Log.d(TAG, "OnItemCheckedChange event received for item: ${event.item.text}")
+                }
             }
         }
     }

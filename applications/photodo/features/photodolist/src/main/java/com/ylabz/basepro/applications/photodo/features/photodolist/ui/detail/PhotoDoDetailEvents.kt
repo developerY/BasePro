@@ -1,6 +1,7 @@
 package com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail
 
 import android.net.Uri
+import com.ylabz.basepro.applications.photodo.db.entity.TaskItemEntity
 
 /**
  * Defines the events that can be triggered from the PhotoDoDetail screen.
@@ -34,6 +35,10 @@ sealed interface PhotoDoDetailEvent {
      * This deletes the entire task list currently being viewed.
      */
     data object OnDeleteTaskListClicked : PhotoDoDetailEvent // <-- THE NEW EVENT
+
+    // --- NEW EVENTS FOR CHECKLIST ---
+    data object OnAddItemClicked : PhotoDoDetailEvent
+    data class OnItemCheckedChange(val item: TaskItemEntity, val isChecked: Boolean) : PhotoDoDetailEvent
 
     /**
      * Event to handle changes to the task list title.
