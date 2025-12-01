@@ -52,10 +52,13 @@ interface PhotoDoDao {
     // --- Task Item Operations (Checklist) ---
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTaskItem(item: TaskItemEntity) // <--- Added
+    suspend fun insertTaskItem(item: TaskItemEntity)
 
     @Update
-    suspend fun updateTaskItem(item: TaskItemEntity) // <--- Added
+    suspend fun updateTaskItem(item: TaskItemEntity)
+
+    @Delete
+    suspend fun deleteTaskItem(item: TaskItemEntity)
 
 
     // --- Photo Operations ---

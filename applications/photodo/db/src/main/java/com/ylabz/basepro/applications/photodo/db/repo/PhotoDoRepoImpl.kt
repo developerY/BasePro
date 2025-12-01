@@ -66,6 +66,10 @@ class PhotoDoRepoImpl @Inject constructor(
         photoDoDao.updateTaskItem(item)
     }
 
+    override suspend fun deleteTaskItem(item: TaskItemEntity) {
+        photoDoDao.deleteTaskItem(item)
+    }
+
     // --- Photo Operations ---
 
     override suspend fun insertPhoto(photo: PhotoEntity) {

@@ -45,6 +45,7 @@ interface PhotoDoRepo {
     suspend fun insertTaskItem(item: TaskItemEntity) // <--- Added
 
     suspend fun updateTaskItem(item: TaskItemEntity) // <--- Added
+    suspend fun deleteTaskItem(item: TaskItemEntity)
 
     // --- Photo Operations ---
 
