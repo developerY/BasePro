@@ -2,6 +2,7 @@ package com.ylabz.basepro.applications.photodo.db.repo
 
 import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 import com.ylabz.basepro.applications.photodo.db.entity.PhotoEntity
+import com.ylabz.basepro.applications.photodo.db.entity.TaskItemEntity
 import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
 import com.ylabz.basepro.applications.photodo.db.entity.TaskListWithPhotos
 import kotlinx.coroutines.flow.Flow
@@ -38,6 +39,12 @@ interface PhotoDoRepo {
     fun getTaskListById(listId: Long): Flow<TaskListEntity?>
 
     fun getTaskListsForCategory(categoryId: Long): Flow<List<TaskListEntity>>
+
+    // --- Task Item Operations (Checklist) ---
+
+    suspend fun insertTaskItem(item: TaskItemEntity) // <--- Added
+
+    suspend fun updateTaskItem(item: TaskItemEntity) // <--- Added
 
     // --- Photo Operations ---
 

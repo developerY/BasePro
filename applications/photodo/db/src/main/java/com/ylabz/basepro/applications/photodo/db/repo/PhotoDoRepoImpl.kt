@@ -3,6 +3,7 @@ package com.ylabz.basepro.applications.photodo.db.repo
 import com.ylabz.basepro.applications.photodo.db.PhotoDoDao
 import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 import com.ylabz.basepro.applications.photodo.db.entity.PhotoEntity
+import com.ylabz.basepro.applications.photodo.db.entity.TaskItemEntity
 import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
 import com.ylabz.basepro.applications.photodo.db.entity.TaskListWithPhotos
 import kotlinx.coroutines.flow.Flow
@@ -55,6 +56,14 @@ class PhotoDoRepoImpl @Inject constructor(
 
     override fun getTaskListsForCategory(categoryId: Long): Flow<List<TaskListEntity>> {
         return photoDoDao.getTaskListsForCategory(categoryId)
+    }
+
+    override suspend fun insertTaskItem(item: TaskItemEntity) {
+        photoDoDao.insertTaskItem(item)
+    }
+
+    override suspend fun updateTaskItem(item: TaskItemEntity) {
+        photoDoDao.updateTaskItem(item)
     }
 
     // --- Photo Operations ---

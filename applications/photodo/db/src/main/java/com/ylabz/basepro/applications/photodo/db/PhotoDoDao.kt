@@ -6,8 +6,10 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 import com.ylabz.basepro.applications.photodo.db.entity.PhotoEntity
+import com.ylabz.basepro.applications.photodo.db.entity.TaskItemEntity
 import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
 import com.ylabz.basepro.applications.photodo.db.entity.TaskListWithPhotos
 import kotlinx.coroutines.flow.Flow
@@ -45,6 +47,16 @@ interface PhotoDoDao {
 
     @Query("SELECT * FROM task_lists WHERE categoryId = :categoryId ORDER BY creationDate DESC")
     fun getTaskListsForCategory(categoryId: Long): Flow<List<TaskListEntity>>
+
+
+    // --- Task Item Operations (Checklist) ---
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTaskItem(item: TaskItemEntity) // <--- Added
+
+    @Update
+    suspend fun updateTaskItem(item: TaskItemEntity) // <--- Added
+
 
     // --- Photo Operations ---
 
