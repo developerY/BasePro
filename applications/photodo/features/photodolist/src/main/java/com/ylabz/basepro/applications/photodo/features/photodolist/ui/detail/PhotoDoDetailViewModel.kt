@@ -176,6 +176,15 @@ class PhotoDoDetailViewModel @Inject constructor(
                     photoDoRepo.updateTaskItem(updatedItem)
                 }
             }
+
+            is PhotoDoDetailEvent.OnDeleteItem -> {
+                viewModelScope.launch {
+                    Log.d(TAG, "Deleting task item: ${event.item.text}")
+                    photoDoRepo.deleteTaskItem(event.item)
+                }
+            }
+
+
         }
     }
 }

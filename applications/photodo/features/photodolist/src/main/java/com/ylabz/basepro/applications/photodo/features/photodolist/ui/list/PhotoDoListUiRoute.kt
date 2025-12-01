@@ -146,6 +146,7 @@ class MockPhotoDoRepo : PhotoDoRepo {
 
     override suspend fun insertTaskItem(item: TaskItemEntity) {}
     override suspend fun updateTaskItem(item: TaskItemEntity) {}
+    override suspend fun deleteTaskItem(item: TaskItemEntity) {}
 
     override suspend fun insertPhoto(photo: PhotoEntity) {}
     override suspend fun deletePhoto(photo: PhotoEntity) {}

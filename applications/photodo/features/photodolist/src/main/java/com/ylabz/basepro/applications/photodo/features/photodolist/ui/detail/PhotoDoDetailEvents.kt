@@ -39,6 +39,7 @@ sealed interface PhotoDoDetailEvent {
     // --- NEW EVENTS FOR CHECKLIST ---
     data object OnAddItemClicked : PhotoDoDetailEvent
     data class OnItemCheckedChange(val item: TaskItemEntity, val isChecked: Boolean) : PhotoDoDetailEvent
+    data class OnDeleteItem(val item: TaskItemEntity) : PhotoDoDetailEvent
 
     /**
      * Event to handle changes to the task list title.
