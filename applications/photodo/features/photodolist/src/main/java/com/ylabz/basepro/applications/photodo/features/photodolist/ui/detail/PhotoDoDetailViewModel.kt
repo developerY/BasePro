@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.photodo.db.entity.PhotoEntity
+import com.ylabz.basepro.applications.photodo.db.entity.TaskItemEntity
 import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
 import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepo
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.DetailLoadState.Error
@@ -157,13 +158,22 @@ class PhotoDoDetailViewModel @Inject constructor(
                 _uiState.update { it.copy(showCamera = false) }
             }
 
-            PhotoDoDetailEvent.OnAddItemClicked ->  {
-                Log.d(TAG, "OnAddItemClicked event received.")
-                //_uiState.update { it.copy(showAddItemDialog = true) }
+            // --- NEW EVENTS ---
+            PhotoDoDetailEvent.OnAddItemClicked -> {
+                viewModelScope.launch {
+                    val newItem = TaskItemEntity(
+                        listId = listId,
+                        text = "New Item", // Placeholder
+                        isChecked = false
+                    )
+                    photoDoRepo.insertTaskItem(newItem)
+                }
             }
+
             is PhotoDoDetailEvent.OnItemCheckedChange -> {
                 viewModelScope.launch {
-                    Log.d(TAG, "OnItemCheckedChange event received for item: ${event.item.text}")
+                    val updatedItem = event.item.copy(isChecked = event.isChecked)
+                    photoDoRepo.updateTaskItem(updatedItem)
                 }
             }
         }

@@ -20,6 +20,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 import com.ylabz.basepro.applications.photodo.db.entity.PhotoEntity
+import com.ylabz.basepro.applications.photodo.db.entity.TaskItemEntity
 import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
 import com.ylabz.basepro.applications.photodo.db.entity.TaskListWithPhotos
 import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepo
@@ -142,6 +143,10 @@ class MockPhotoDoRepo : PhotoDoRepo {
             )
         }
     )
+
+    override suspend fun insertTaskItem(item: TaskItemEntity) {}
+    override suspend fun updateTaskItem(item: TaskItemEntity) {}
+
     override suspend fun insertPhoto(photo: PhotoEntity) {}
     override suspend fun deletePhoto(photo: PhotoEntity) {}
     override fun getPhotosForTaskList(listId: Long): Flow<List<PhotoEntity>> = flowOf(emptyList())
