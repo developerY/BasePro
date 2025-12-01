@@ -159,11 +159,11 @@ class PhotoDoDetailViewModel @Inject constructor(
             }
 
             // --- NEW EVENTS ---
-            PhotoDoDetailEvent.OnAddItemClicked -> {
+            is PhotoDoDetailEvent.OnAddItemClicked -> {
                 viewModelScope.launch {
                     val newItem = TaskItemEntity(
                         listId = listId,
-                        text = "New Item", // Placeholder
+                        text = event.text, // Placeholder
                         isChecked = false
                     )
                     photoDoRepo.insertTaskItem(newItem)

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -22,8 +23,13 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -36,6 +42,9 @@ fun DetailCard(
     taskListWithPhotos: TaskListWithPhotos, // UI State for this component
     onEvent: (PhotoDoDetailEvent) -> Unit,  // Single Event Handler
 ) {
+    // --- Local State for the "New Item" text field ---
+    var newItemText by remember { mutableStateOf("") }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -117,13 +126,37 @@ fun DetailCard(
                     }
                 }
 
-                IconButton(
-                    onClick = { onEvent(PhotoDoDetailEvent.OnAddItemClicked) }, // Trigger Event
+                // --- ADD ITEM ROW ---
+                Row(
                     modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(8.dp)
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(Icons.Default.Add, "Add Item")
+                    OutlinedTextField(
+                        value = newItemText,
+                        onValueChange = { newItemText = it },
+                        label = { Text("New Item") },
+                        modifier = Modifier.weight(1f),
+                        singleLine = true
+                    )
+
+                    Spacer(Modifier.width(8.dp))
+
+                    IconButton(
+                        onClick = {
+                            if (newItemText.isNotBlank()) {
+                                onEvent(PhotoDoDetailEvent.OnAddItemClicked(newItemText))
+                                newItemText = "" // Clear input after adding
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add Item",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             }
         }
