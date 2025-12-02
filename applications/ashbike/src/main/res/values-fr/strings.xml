@@ -1,0 +1,35 @@
+<resources>
+
+    <!-- ... other strings ... -->
+    <string name="top_bar_title_ashbike">AshBike</string>
+    <string name="top_bar_title_trips">Trajets</string>
+    <!-- <string name="top_bar_title_settings">Paramètres</string> REMOVED -->
+    <string name="top_bar_title_ride_details">Détails du trajet</string>
+    <!-- <string name="top_bar_back_button_description">Retour</string> REMOVED -->
+
+    <!-- <string name="bike_bottom_nav_home">Accueil</string> REMOVED -->
+    <string name="bike_bottom_nav_ride">Rouler</string>
+    <!-- <string name="bike_bottom_nav_settings">Paramètres</string> REMOVED -->
+    <!-- other strings specific to ashbike -->
+
+    <string name="app_name">AshBike</string>
+
+    <!-- Title for the weather detail dialog -->
+    <string name="weather_details_title">Détails météo</string>
+
+    <!-- Formatting for the main temperature display -->
+    <string name="temperature_format">%1$d°C</string>
+
+    <!-- “Feels like” label -->
+    <string name="feels_like_format">Ressenti %1$d°C</string>
+
+    <!-- Humidity, note the double %% to escape a literal percent sign -->
+    <string name="humidity_format">Humidité : %1$d%%</string>
+
+    <!-- Wind speed and direction -->
+    <string name="wind_format">Vent : %1$dkm/h à %2$d°</string>
+
+    <!-- Content description for accessibility -->
+    <string name="weather_content_desc">Météo actuelle : %1$s, %2$d°C</string>
+
+</resources>
