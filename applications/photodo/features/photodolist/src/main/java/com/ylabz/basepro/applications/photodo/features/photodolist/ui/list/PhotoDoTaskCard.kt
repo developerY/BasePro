@@ -7,17 +7,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,16 +33,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-// Helper function from PhotoDoListUiRoute, can be kept here or moved to a common util file
 private fun Long.toFormattedDate(): String {
     val date = Date(this)
-    val format = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+    val format = SimpleDateFormat("MMM dd, yyyy • h:mm a", Locale.getDefault())
     return format.format(date)
 }
 
@@ -54,94 +57,114 @@ fun PhotoDoTaskCard(
     var expanded by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
 
-    // Using MaterialTheme colors for consistency
-    val containerColor = MaterialTheme.colorScheme.surfaceVariant
-    val contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+    // Rotate the arrow icon when expanded
+    val iconRotation by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        label = "ExpandIconRotation"
+    )
 
-    val iconRotation by animateFloatAsState(targetValue = if (expanded) 180f else 0f, label = "ExpandIconRotation")
-
-    Column {
-        Text("From PhotoDoTaskCard.kt and shows the list")
-        Card(
-            onClick = onItemClick, // Main card click navigates to detail
-            modifier = modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = containerColor)
+    // Use ElevatedCard for a nice lift and shadow
+    ElevatedCard(
+        onClick = onItemClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp) // Separation between list items
+            .animateContentSize(),    // Smooth expansion animation
+        shape = MaterialTheme.shapes.large, // Rounded corners (16.dp)
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-                    .fillMaxWidth()
-                    .animateContentSize() // Animate size changes smoothly
+            // --- Header Row: Title, Date, and Actions ---
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Source: PhotoDoTaskCard.kt")
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    // Task Name on the left
+                // Left Side: Title and Date
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = task.name,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = contentColor,
-                        modifier = Modifier.weight(1f) // Allow text to take available space
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface
                     )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = task.creationDate.toFormattedDate(),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
 
-                    // Icons on the right
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box { // Wrapper for DropdownMenu positioning
-                            IconButton(onClick = { showMenu = true }) {
-                                Icon(
-                                    Icons.Filled.MoreVert,
-                                    contentDescription = "More options from PhotoDoTaskCard.kt",
-                                    tint = contentColor
-                                )
-                            }
-                            DropdownMenu(
-                                expanded = showMenu,
-                                onDismissRequest = { showMenu = false }
-                            ) {
-                                DropdownMenuItem(
-                                    text = { Text("Delete from PhotoDoTaskCard.kt") },
-                                    onClick = {
-                                        onDeleteClick()
-                                        showMenu = false
-                                    }
-                                )
-                                // Add other options like "Edit" here if needed
-                            }
-                        }
-                        IconButton(onClick = { expanded = !expanded }) {
+                // Right Side: Actions (Expand + Menu)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    // Expand Button
+                    IconButton(
+                        onClick = { expanded = !expanded },
+                        modifier = Modifier.rotate(iconRotation)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ExpandMore,
+                            contentDescription = if (expanded) "Collapse" else "Expand",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    // More Menu
+                    Box {
+                        IconButton(onClick = { showMenu = true }) {
                             Icon(
-                                imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
-                                contentDescription = if (expanded) "Collapse from PhotoDoTaskCard.kt" else "Expand from PhotoDoTaskCard.kt",
-                                modifier = Modifier.rotate(iconRotation),
-                                tint = contentColor
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "Options",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Delete") },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Default.Delete,
+                                        contentDescription = null
+                                    )
+                                },
+                                onClick = {
+                                    onDeleteClick()
+                                    showMenu = false
+                                }
                             )
                         }
                     }
                 }
+            }
 
-                // Task Creation Time - shown below the name
-                Text(
-                    text = "Created: ${task.creationDate.toFormattedDate()}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = contentColor,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
+            // --- Expanded Content: Description/Notes ---
+            AnimatedVisibility(visible = expanded) {
+                Column(modifier = Modifier.padding(top = 16.dp)) {
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    Spacer(modifier = Modifier.height(12.dp))
 
-
-                // Content to show when expanded
-                AnimatedVisibility(visible = expanded) {
-                    Column(modifier = Modifier.padding(top = 8.dp)) {
-                        Text(
-                            text = task.name
-                                ?: "No description available.", // Assuming TaskList might have a description
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = contentColor
-                        )
-                        // You can add more complex content here like image previews, sub-tasks etc.
-                    }
+                    Text(
+                        text = "Description",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = if (!task.notes.isNullOrBlank()) task.notes!! else "No description provided.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }
