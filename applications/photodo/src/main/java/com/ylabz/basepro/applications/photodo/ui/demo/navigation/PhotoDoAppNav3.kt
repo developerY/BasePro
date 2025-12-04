@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.photodo.ui.navigation.main // Change this to your package name
+package com.ylabz.basepro.applications.photodo.ui.demo.navigation // Change this to your package name
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -51,7 +51,7 @@ import kotlinx.serialization.Transient
 
 // --- STEP 1: DEFINE DESTINATIONS (UPDATED) ---
 @Serializable
-sealed class AppScreen(val title: String) : NavKey {
+private sealed class AppScreen(val title: String) : NavKey {
     @Transient
     abstract val icon: ImageVector
 
@@ -86,7 +86,7 @@ sealed class AppScreen(val title: String) : NavKey {
 private val topLevelScreens = listOf(AppScreen.Home, AppScreen.Search, AppScreen.Profile)
 
 // Updated Saver to handle all AppScreen types.
-val AppScreenSaver = Saver<AppScreen, String>(
+private val AppScreenSaver = Saver<AppScreen, String>(
     save = { it.title },
     restore = { title -> topLevelScreens.find { it.title == title } ?: AppScreen.Home }
 )
@@ -96,7 +96,7 @@ val AppScreenSaver = Saver<AppScreen, String>(
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3AdaptiveApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SimpleAdaptiveBottomBar() {
+private fun SimpleAdaptiveBottomBar() {
     val activity = LocalActivity.current as Activity
     val windowSizeClass = calculateWindowSizeClass(activity)
     val isExpandedScreen = windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
@@ -151,7 +151,7 @@ fun SimpleAdaptiveBottomBar() {
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-fun AppContent(
+private fun AppContent(
     backStack: NavBackStack<NavKey>,
     sceneStrategy: ListDetailSceneStrategy<NavKey>
 ) {
@@ -184,7 +184,7 @@ fun AppContent(
 }
 
 @Composable
-fun AppBottomBar(currentTab: AppScreen, onNavigate: (AppScreen) -> Unit) {
+private fun AppBottomBar(currentTab: AppScreen, onNavigate: (AppScreen) -> Unit) {
     NavigationBar {
         topLevelScreens.forEach { screen ->
             val isSelected = currentTab.title == screen.title
@@ -199,7 +199,7 @@ fun AppBottomBar(currentTab: AppScreen, onNavigate: (AppScreen) -> Unit) {
 }
 
 @Composable
-fun AppNavigationRail(currentTab: AppScreen, onNavigate: (AppScreen) -> Unit) {
+private fun AppNavigationRail(currentTab: AppScreen, onNavigate: (AppScreen) -> Unit) {
     NavigationRail {
         topLevelScreens.forEach { screen ->
             val isSelected = currentTab.title == screen.title
@@ -216,7 +216,7 @@ fun AppNavigationRail(currentTab: AppScreen, onNavigate: (AppScreen) -> Unit) {
 // --- STEP 4: ADD NEW SCREEN COMPOSABLES ---
 
 @Composable
-fun ListScreen(onItemClick: (Int) -> Unit) {
+private fun ListScreen(onItemClick: (Int) -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -231,14 +231,14 @@ fun ListScreen(onItemClick: (Int) -> Unit) {
 }
 
 @Composable
-fun DetailScreen(id: Int) {
+private fun DetailScreen(id: Int) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text = "Detail for item #$id", style = MaterialTheme.typography.headlineLarge)
     }
 }
 
 @Composable
-fun ScreenContent(name: String) {
+private fun ScreenContent(name: String) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text = name, style = MaterialTheme.typography.headlineLarge)
     }
