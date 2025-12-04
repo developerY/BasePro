@@ -2,7 +2,9 @@ package com.ylabz.basepro.applications.photodo.features.home.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -61,7 +63,6 @@ fun CategoryCard(
 ) {
     // Extract values for ease of use
     val (category, isSelected, taskLists) = uiState
-
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
     // Auto-collapse if selection is lost
@@ -75,11 +76,31 @@ fun CategoryCard(
     val hasHighPriority = taskLists.any { it.priority > 0 }
     // --------------------------
 
+    // 1. ANIMATE COLOR: Darker when unselected, brighter/tinted when selected
     val containerColor by animateColorAsState(
-        targetValue = if (isSelected) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surfaceContainer,
+        targetValue = if (isSelected)
+            MaterialTheme.colorScheme.surfaceContainerHighest // Lighter/Prominent
+        else
+            MaterialTheme.colorScheme.surface, // Flatter/Receded
         animationSpec = tween(durationMillis = 300),
         label = "CardBackground"
     )
+
+    // 2. ANIMATE SCALE: Slight zoom when selected
+    val scale by animateFloatAsState(
+        targetValue = if (isSelected) 1.02f else 1f,
+        animationSpec = tween(durationMillis = 300),
+        label = "Scale"
+    )
+
+    // 3. BORDER: The strongest visual cue
+    val borderStroke = if (isSelected) {
+        BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+    } else {
+        BorderStroke(0.dp, Color.Transparent)
+    }
+
+    // --- POP VISUALS END ---
 
     val coverGradient = remember(category.name) {
         val hash = category.name.hashCode()
