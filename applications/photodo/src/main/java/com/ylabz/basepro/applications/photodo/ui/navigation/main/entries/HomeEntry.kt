@@ -107,6 +107,14 @@ fun HomeEntry(
                 // 3. SWITCH TABS: Clear the stack and start fresh with the Task List
                 backStack.clear()
                 backStack.add(taskTabKey)
+            } else {
+                // Tablet logic: Clear drill-down to show new detail
+                if (backStack.size > 1) {
+                    backStack.subList(1, backStack.size).clear()
+                }
+                // Note: On tablets, we don't necessarily "navigate"
+                // because the detail pane updates via state,
+                // but you might want to ensure the TaskListKey is present.
             }
         }
     }
@@ -247,12 +255,13 @@ fun HomeEntry(
 
         onCategoryClick = { categoryId ->
             // ... (Keep existing logic) ...
+            // ONLY trigger the event. Do NOT manipulate backStack here.
             homeViewModel.onEvent(HomeEvent.OnCategorySelected(categoryId))
-            if (!isExpandedScreen) {
+            /*if (!isExpandedScreen) {
                 val newTaskListKey = PhotoDoNavKeys.TaskListKey(categoryId)
                 if (backStack.size > 1) { backStack.subList(1, backStack.size).clear() }
                 backStack.add(newTaskListKey)
-            }
+            }*/
         },
 
         // --- IMPLEMENT NEW CALLBACK ---
