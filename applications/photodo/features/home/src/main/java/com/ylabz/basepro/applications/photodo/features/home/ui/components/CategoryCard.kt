@@ -2,11 +2,15 @@ package com.ylabz.basepro.applications.photodo.features.home.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,9 +50,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -64,6 +71,7 @@ fun CategoryCard(
     // Extract values for ease of use
     val (category, isSelected, taskLists) = uiState
     var isExpanded by rememberSaveable { mutableStateOf(false) }
+    val haptics = LocalHapticFeedback.current // 1. Haptics access
 
     // Auto-collapse if selection is lost
     LaunchedEffect(isSelected) {
@@ -76,29 +84,46 @@ fun CategoryCard(
     val hasHighPriority = taskLists.any { it.priority > 0 }
     // --------------------------
 
-    // 1. ANIMATE COLOR: Darker when unselected, brighter/tinted when selected
+    // --- EXPRESSIVE MOTION & SHAPE ---
+
+    // 2. SPRING ANIMATION: "Bouncy" scale (StiffnessLow + DampingRatioLowBouncy)
+    // This creates that "alive" feeling when the card is tapped.
+    val scale by animateFloatAsState(
+        targetValue = if (isSelected) 1.05f else 1f, // Increased scale for more drama
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioLowBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "ExpressiveScale"
+    )
+
+    // 3. SHAPE MORPH: Animate corner radius
+    // Unselected = 16dp (Medium), Selected = 32dp (Extra Large)
+    // This physically changes the silhouette of the focused item.
+    val cornerRadius by animateIntAsState(
+        targetValue = if (isSelected) 32 else 12,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+        label = "ShapeMorph"
+    )
+    val cardShape = RoundedCornerShape(cornerRadius.dp)
+
+    // 4. COLOR SPRING: Ensure color changes are also fluid
     val containerColor by animateColorAsState(
-        targetValue = if (isSelected)
-            MaterialTheme.colorScheme.surfaceContainerHighest // Lighter/Prominent
-        else
-            MaterialTheme.colorScheme.surface, // Flatter/Receded
-        animationSpec = tween(durationMillis = 300),
+        targetValue = if (isSelected) MaterialTheme.colorScheme.surfaceContainerHighest else MaterialTheme.colorScheme.surface,
+        animationSpec = spring(stiffness = Spring.StiffnessLow),
         label = "CardBackground"
     )
 
-    // 2. ANIMATE SCALE: Slight zoom when selected
-    val scale by animateFloatAsState(
-        targetValue = if (isSelected) 1.02f else 1f,
-        animationSpec = tween(durationMillis = 300),
-        label = "Scale"
-    )
-
-    // 3. BORDER: The strongest visual cue
     val borderStroke = if (isSelected) {
         BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
     } else {
         BorderStroke(0.dp, Color.Transparent)
     }
+
+    // ---------------------------------
 
     // --- POP VISUALS END ---
 
@@ -113,7 +138,16 @@ fun CategoryCard(
     ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onEvent(HomeEvent.OnCategorySelected(category.categoryId)) },
+            .scale(scale)
+            .border(borderStroke, shape = cardShape) // Use animated shape
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null // Remove default ripple if you want pure spring feel, or keep it
+            ) {
+                // Effects
+                haptics.performHapticFeedback(HapticFeedbackType.LongPress) // Physical feedback
+                onEvent(HomeEvent.OnCategorySelected(category.categoryId))
+            },
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.elevatedCardColors(containerColor = containerColor),
         elevation = CardDefaults.elevatedCardElevation(
@@ -122,7 +156,9 @@ fun CategoryCard(
     ) {
         Column {
             Row(
-                modifier = Modifier.fillMaxWidth().height(130.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(130.dp)
             ) {
                 // 1. COVER IMAGE
                 Box(
@@ -151,14 +187,20 @@ fun CategoryCard(
 
                 // 2. CONTENT
                 Column(
-                    modifier = Modifier.weight(1f).padding(12.dp)
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(12.dp)
                 ) {
                     // Title Row
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = category.name,
-                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onSurface,
+                            // 5. TYPOGRAPHY: Bigger and bolder title when selected
+                            style = if (isSelected)
+                                MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold)
+                            else
+                                MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+                            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.weight(1f)
@@ -215,42 +257,60 @@ fun CategoryCard(
 
             // ... (Actions Row and Accordion remain the same as previous code) ...
             // I'll include the Actions Row here for completeness of the 'Column' block
-
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    onClick = {
-                        if (!isSelected) onEvent(HomeEvent.OnCategorySelected(category.categoryId))
-                        isExpanded = !isExpanded
+// ACTIONS (Visible only on selection)
+            AnimatedVisibility(visible = isSelected) {
+                Column {
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick = {
+                                if (!isSelected) onEvent(HomeEvent.OnCategorySelected(category.categoryId))
+                                isExpanded = !isExpanded
+                            }
+                        ) {
+                            Icon(
+                                imageVector = if (isExpanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+                                contentDescription = "Expand",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        IconButton(
+                            onClick = { onEvent(HomeEvent.OnEditCategoryClicked(category)) },
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Edit,
+                                "Edit",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        IconButton(
+                            onClick = { onEvent(HomeEvent.OnDeleteCategoryClicked(category)) },
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Delete,
+                                "Delete",
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
                     }
-                ) {
-                    Icon(
-                        imageVector = if (isExpanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
-                        contentDescription = "Expand",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                IconButton(
-                    onClick = { onEvent(HomeEvent.OnEditCategoryClicked(category)) },
-                    modifier = Modifier.size(32.dp)
-                ) {
-                    Icon(Icons.Default.Edit, "Edit", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                IconButton(
-                    onClick = { onEvent(HomeEvent.OnDeleteCategoryClicked(category)) },
-                    modifier = Modifier.size(32.dp)
-                ) {
-                    Icon(Icons.Default.Delete, "Delete", tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(20.dp))
                 }
             }
 
 
             // ... (Accordion Section remains the same) ...
+            // ACTIONS (Visible only on selection)
             AnimatedVisibility(visible = isSelected && isExpanded) {
                 Column(
                     modifier = Modifier
@@ -270,7 +330,8 @@ fun CategoryCard(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clickable { onEvent(HomeEvent.OnTaskListSelected(taskList.listId)) }                                    .padding(vertical = 8.dp),
+                                    .clickable { onEvent(HomeEvent.OnTaskListSelected(taskList.listId)) }
+                                    .padding(vertical = 8.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
