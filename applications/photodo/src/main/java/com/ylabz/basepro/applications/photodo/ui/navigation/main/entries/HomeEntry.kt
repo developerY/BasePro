@@ -87,35 +87,26 @@ fun HomeEntry(
             // 1. Notify the MainScreen's ViewModel (which stores lastSelectedCategoryId)
             onCategorySelected(categoryId)
 
-            val newTaskListKey = PhotoDoNavKeys.HomeTaskListKey(categoryId)
+            // 2. TABLET LOGIC (Split Screen)
+            // On a big screen, we DO want to update the right-hand pane immediately.
+            if (isExpandedScreen) {
+                Log.d(TAG, "Tablet: Updating detail pane for Category $categoryId")
 
-            // 2. CRITICAL STEP: Clear all existing drill-down items (Columns 2 and 3).
-            // This prevents bloat when switching categories (Family -> Shopping).
-            // Navigate (Always add to stack on explicit click)
-            if (backStack.size > 1) {
-                Log.d(TAG, "Category Selected. Resetting stack from size ${backStack.size}.")
-                // Remove everything after the first item (HomeFeedKey).
-                backStack.subList(1, backStack.size).clear()
-            }
-            // backStack.add(newTaskListKey) clicking on a category should never show an Item
-            // 3. Add the new TaskListKey. This adds Column 2 content.
-            // Log.d(TAG, "Adding new TaskListKey($categoryId) to backStack.")
-            if (!isExpandedScreen) {
-                // 2. Create the destination Key (The root of the Tasks tab)
-                val taskTabKey = PhotoDoNavKeys.TaskListKey(categoryId)
+                val newTaskListKey = PhotoDoNavKeys.HomeTaskListKey(categoryId)
 
-                // 3. SWITCH TABS: Clear the stack and start fresh with the Task List
-                backStack.clear()
-                backStack.add(taskTabKey)
-            } else {
-                // Tablet logic: Clear drill-down to show new detail
+                // Clear previous drill-downs to avoid stacking multiple detail panes
                 if (backStack.size > 1) {
                     backStack.subList(1, backStack.size).clear()
                 }
-                // Note: On tablets, we don't necessarily "navigate"
-                // because the detail pane updates via state,
-                // but you might want to ensure the TaskListKey is present.
+
+                // Show the new list on the right
+                backStack.add(newTaskListKey)
             }
+
+            // 3. PHONE LOGIC (Closed)
+            // We do NOTHING here.
+            // We removed the `if (!isExpandedScreen) { backStack.add(...) }` block.
+            // Result: User stays on Home, Card highlights, no forced jump.
         }
     }
     // ----------------------
