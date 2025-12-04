@@ -49,6 +49,12 @@ fun PhotoDoHomeUiRoute(
             Log.d(TAG, "Intercepted Edit Request for: ${event.category.name}")
             onEditCategory(event.category)
         }
+
+        // --- NEW INTERCEPTION ---
+        if (event is HomeEvent.OnTaskListSelected) {
+            navTo(event.listId)
+        }
+        // ------------------------
     }
 
     when (uiState) {

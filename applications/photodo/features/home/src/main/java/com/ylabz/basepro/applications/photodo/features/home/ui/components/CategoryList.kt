@@ -39,6 +39,7 @@ fun CategoryList(
         ) { category ->
 
             val isSelected = category.categoryId == uiState.selectedCategory?.categoryId
+            val tasks = if (isSelected) uiState.taskListsForSelectedCategory else emptyList()
 
             if (isExpandedScreen) {
                 // TABLET: Show clean List Items
@@ -55,11 +56,13 @@ fun CategoryList(
                 Column() {
                     Text("Cat Card")
                     CategoryCard(
-                        category = category,
-                        isSelected = isSelected,
-                        taskLists = uiState.taskListsForSelectedCategory.filter { it.categoryId == category.categoryId },
-                        onEvent = onEvent,
-                        onTaskListClick = {},
+                        // Construct the UI State object
+                        uiState = CategoryCardUiState(
+                            category = category,
+                            isSelected = isSelected,
+                            taskLists = tasks
+                        ),
+                        onEvent = onEvent
                     )
                 }
             }

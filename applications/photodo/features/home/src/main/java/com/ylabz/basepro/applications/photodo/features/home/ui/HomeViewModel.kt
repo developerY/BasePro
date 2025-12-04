@@ -175,6 +175,8 @@ class HomeViewModel @Inject constructor(
 
                 HomeEvent.OnAddListClicked -> { /* Handled by MainScreen */ }
 
+                is HomeEvent.OnTaskListSelected -> { /* Navigation handled by UI Route */ }
+
             }
         }
     }

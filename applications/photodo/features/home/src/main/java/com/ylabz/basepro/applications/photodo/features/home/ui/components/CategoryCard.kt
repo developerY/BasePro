@@ -51,19 +51,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
-import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
 
 @Composable
 fun CategoryCard(
-    modifier: Modifier = Modifier,
-    category: CategoryEntity,
-    isSelected: Boolean,
-    taskLists: List<TaskListEntity> = emptyList(),
+    uiState: CategoryCardUiState, // <--- CLEAN SINGLE STATE
     onEvent: (HomeEvent) -> Unit,
-    onTaskListClick: (Long) -> Unit,
+    modifier: Modifier = Modifier
 ) {
+    // Extract values for ease of use
+    val (category, isSelected, taskLists) = uiState
+
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
     // Auto-collapse if selection is lost
@@ -71,7 +69,7 @@ fun CategoryCard(
         if (!isSelected) isExpanded = false
     }
 
-    // --- CALCULATE METADATA ---
+    // ... (Metadata calculation, Colors, Gradient logic remains the same) ...
     val totalLists = taskLists.size
     val activeCount = taskLists.count { it.status != "Done" }
     val hasHighPriority = taskLists.any { it.priority > 0 }
@@ -251,8 +249,7 @@ fun CategoryCard(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clickable { onTaskListClick(taskList.listId) }
-                                    .padding(vertical = 8.dp),
+                                    .clickable { onEvent(HomeEvent.OnTaskListSelected(taskList.listId)) }                                    .padding(vertical = 8.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(

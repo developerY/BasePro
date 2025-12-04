@@ -10,6 +10,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
+// Assuming UiState is in the same package or imported. If not, add import:
+// import com.ylabz.basepro.applications.photodo.features.home.ui.CategoryCardUiState
 
 @Preview(showBackground = true, name = "Category Card (Folded/Phone)")
 @Composable
@@ -26,47 +28,48 @@ fun CategoryCardPreview() {
         description = "High priority office tasks."
     )
 
-    // Dummy data for the accordion
     val sampleTasks = listOf(
         TaskListEntity(
-            listId = 101,
-            categoryId = 2,
+            listId = 101L,
+            categoryId = 2L,
             name = "Q4 Planning",
             status = "To-Do",
             priority = 1
         ),
         TaskListEntity(
-            listId = 102,
-            categoryId = 2,
+            listId = 102L,
+            categoryId = 2L,
             name = "Expense Report",
             status = "Done",
             priority = 0
         )
     )
 
-    //PhotoDoTheme {
+    // PhotoDoTheme {
         Column(modifier = Modifier.padding(16.dp)) {
             // Unselected State (Collapsed)
             CategoryCard(
-                category = sampleCategory,
-                isSelected = false,
-                taskLists = emptyList(),
-                onEvent = {},
-                onTaskListClick = {}
+                uiState = CategoryCardUiState(
+                    category = sampleCategory,
+                    isSelected = false,
+                    taskLists = emptyList()
+                ),
+                onEvent = {}
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Selected State (Expanded with Accordion)
             CategoryCard(
-                category = selectedCategory,
-                isSelected = true,
-                taskLists = sampleTasks,
-                onEvent = {},
-                onTaskListClick = {}
+                uiState = CategoryCardUiState(
+                    category = selectedCategory,
+                    isSelected = true,
+                    taskLists = sampleTasks
+                ),
+                onEvent = {}
             )
         }
-    //}
+    // }
 }
 
 @Preview(showBackground = true, name = "Category List Item (Unfolded/Tablet)")
@@ -102,5 +105,5 @@ fun CategoryListItemPreview() {
                 onEvent = {}
             )
         }
-    //}
+    // }
 }

@@ -54,4 +54,6 @@ sealed interface HomeEvent {
      * @param category The category to be deleted.
      */
     data class OnDeleteCategoryClicked(val category: CategoryEntity) : HomeEvent
+
+    data class OnTaskListSelected(val listId: Long) : HomeEvent
 }
