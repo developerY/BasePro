@@ -2,11 +2,14 @@ package com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail
 
 import android.net.Uri
 import com.ylabz.basepro.applications.photodo.db.entity.TaskItemEntity
+import com.ylabz.basepro.applications.photodo.db.entity.TaskListEntity
 
 /**
  * Defines the events that can be triggered from the PhotoDoDetail screen.
  */
 sealed interface PhotoDoDetailEvent {
+
+    data class OnEditList(val taskList: TaskListEntity) : PhotoDoDetailEvent
 
     /**
      * Event triggered when the user saves a new photo from the camera.
