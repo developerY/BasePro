@@ -184,7 +184,12 @@ class PhotoDoDetailViewModel @Inject constructor(
                 }
             }
 
-
+            is PhotoDoDetailEvent.OnEditList -> {
+                Log.d(TAG, "Editing task list: ${event.taskList.name}")
+                viewModelScope.launch {
+                    //photoDoRepo.updateTaskList(event.taskList)
+                }
+            }//TODO()
         }
     }
 }

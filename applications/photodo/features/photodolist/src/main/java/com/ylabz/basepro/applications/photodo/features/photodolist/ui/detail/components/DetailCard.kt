@@ -168,22 +168,33 @@ fun DetailCard(
 
         // --- 3. PHOTOS SECTION (UPDATED UI) ---
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            SectionTitle(text = "Photos")
+            // New Header Row with Add Button
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                SectionTitle(text = "Photos", modifier = Modifier.padding(bottom = 0.dp))
+                IconButton(
+                    onClick = {
+                        haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
+                        onEvent(PhotoDoDetailEvent.OnCameraClick)
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.CameraAlt,
+                        contentDescription = "Add Photo",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
 
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
             ) {
-                // Add Photo Button
-                item {
-                    ExpressiveAddPhotoCard(
-                        onClick = {
-                            haptics.performHapticFeedback(HapticFeedbackType.ContextClick)
-                            // Correctly calls the event from your system code
-                            onEvent(PhotoDoDetailEvent.OnCameraClick)
-                        }
-                    )
-                }
+                // REMOVED: The large "Add Photo" card item is gone.
+
                 // Photo List
                 items(photos, key = { it.photoId }) { photo ->
                     PhotoItem(
@@ -358,49 +369,15 @@ fun ExpressiveChecklistItem(
     }
 }
 
-@Composable
-fun ExpressiveAddPhotoCard(onClick: () -> Unit) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.95f else 1f,
-        label = "scale"
-    )
-
-    Box(
-        modifier = Modifier
-            .size(100.dp)
-            .scale(scale)
-            .clip(RoundedCornerShape(20.dp))
-            .background(MaterialTheme.colorScheme.primaryContainer)
-            .clickable(interactionSource = interactionSource, indication = null) { onClick() },
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(
-                imageVector = Icons.Default.CameraAlt,
-                contentDescription = "Take Photo",
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.size(32.dp)
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Add",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-        }
-    }
-}
+// REMOVED: ExpressiveAddPhotoCard is no longer needed.
 
 @Composable
-fun SectionTitle(text: String) {
+fun SectionTitle(text: String, modifier: Modifier = Modifier) {
     Text(
         text = text,
         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
         color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
+        modifier = modifier.padding(start = 4.dp, bottom = 4.dp)
     )
 }
 
