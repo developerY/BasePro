@@ -13,7 +13,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.ylabz.basepro.applications.photodo.features.home.ui.components.CategoryList
 import com.ylabz.basepro.applications.photodo.features.home.ui.components.TaskList
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
 
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
@@ -22,9 +22,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     uiState: HomeUiState.Success,
     onEvent: (HomeEvent) -> Unit,
-    // This is for navigating from a Task in the list to the Task Detail (3rd pane)
-    onSelectList: (Long) -> Unit,
-    isExpandedScreen: Boolean,
+    navigationEffects: Flow<HomeNavigationEffect> // Pass the side-effect flow
     //onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
     // ### WHAT: This parameter was added to accept the "setter" function from MainScreen.
     // ### WHY: This allows HomeScreen to tell MainScreen which FAB to display.
@@ -37,7 +35,7 @@ fun HomeScreen(
 
 
     Log.d("HomeScreen", "On HomeScreen recomposing.")
-    if (isExpandedScreen) {
+    if (uiState.isExpandedScreen) {
 
         // val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
         val navigator = rememberListDetailPaneScaffoldNavigator()
@@ -46,14 +44,26 @@ fun HomeScreen(
         // --- ADAPTIVE NAVIGATION SYNC ---
         // Automatically navigate to the Detail pane when a category is selected.
         // This ensures the UI stays in sync with your ViewModel state.
+        // --- EFFECT HANDLING ---
+        // Listen for "Go To Detail" commands from the ViewModel
+        LaunchedEffect(navigationEffects) {
+            navigationEffects.collect { effect ->
+                when (effect) {
+                    is HomeNavigationEffect.NavigateToDetailPane -> {
+                        // Navigate to the detail pane (right side)
+                        navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
+                        // Note: If you need to navigate to a NEW screen (Screen C),
+                        // you would trigger a callback to the MainActivity here.
+                    }
+                }
+            }
+        }
+
+        // --- SYNC STATE ---
+        // Ensure navigator aligns with selected category
         LaunchedEffect(uiState.selectedCategory) {
             if (uiState.selectedCategory != null) {
-                scope.launch {
-                    navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
-                }
-            } else {
-                // Optional: If deselected, you could navigate back to List
-                // scope.launch { navigator.navigateTo(ListDetailPaneScaffoldRole.List) }
+                navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
             }
         }
 
@@ -68,7 +78,7 @@ fun HomeScreen(
                     CategoryList(
                         uiState = uiState,
                         onEvent = onEvent,
-                        isExpandedScreen = isExpandedScreen,
+                        isExpandedScreen = true,
                     )
                 }
             },
@@ -84,7 +94,10 @@ fun HomeScreen(
                         // This is for clicking items in the right-hand pane, which is already correct
                         // This onSelectList is for when a user clicks a task *within* this list,
                         // which correctly triggers the navigation to the 3rd pane.
-                        onSelectList = onSelectList
+                        // Pure Event Passing
+                        onSelectList = { listId ->
+                            onEvent(HomeEvent.OnTaskListSelected(listId))
+                        }
                     )
                 }
             }
@@ -99,7 +112,7 @@ fun HomeScreen(
             modifier = modifier.fillMaxSize(),
             uiState = uiState,
             onEvent = onEvent,
-            isExpandedScreen = isExpandedScreen
+            isExpandedScreen = false
         )
     }
 
