@@ -365,7 +365,8 @@ fun MainScreen(
                         currentListId = currentListId,
                         currentFabState = currentFabState
                     )
-                    appContent(Modifier.padding(padding))
+                    // appContent(Modifier.padding(padding))
+                    appContent(Modifier.fillMaxSize())
                 }
             }
         }
