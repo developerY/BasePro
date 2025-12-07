@@ -186,7 +186,10 @@ class HomeViewModel @Inject constructor(
 
                 HomeEvent.OnAddListClicked -> { /* Handled by MainScreen */ }
 
-                is HomeEvent.OnTaskListSelected -> { /* Navigation handled by UI Route */ }
+                is HomeEvent.OnTaskListSelected -> {
+                /* Navigation handled by UI Route */
+                    _navigationEffect.send(HomeNavigationEffect.NavigateToDetailPane(event.listId))
+                }
                 is HomeEvent.OnScreenLayoutChanged -> {
                     _isExpandedScreen.value = event.isExpanded
                 }
