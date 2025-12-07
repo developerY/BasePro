@@ -12,7 +12,7 @@ targetSdk = "35"                # Android Target SDK version
 minSdk = "34"                   # Android Minimum SDK version
 
 # Kotlin & Related Tools
-kotlin = "2.2.20"               # Kotlin programming language version
+kotlin = "2.2.21"               # Kotlin programming language version
 ksp = "2.2.20-2.0.3"            # Kotlin Symbol Processing API version
 kotlinxSerializationCore = "1.9.0"  # Kotlinx Serialization library version (used for core and json)
 immutableCollections = "0.4.0"  # Kotlinx Immutable Collections library version
@@ -22,42 +22,42 @@ coreKtx = "1.17.0"              # AndroidX Core KTX, Kotlin extensions for Andro
 appCompat = "1.7.1"             # AndroidX AppCompat, for backward-compatible versions of Android components
 
 # AndroidX - Lifecycle
-lifecycle = "2.9.3"             # AndroidX Lifecycle components (ViewModel, LiveData, Runtime)
-lifecycleService = "2.9.3"      # AndroidX Lifecycle Service component
+lifecycle = "2.10.0"             # AndroidX Lifecycle components (ViewModel, LiveData, Runtime)
+lifecycleService = "2.10.0"      # AndroidX Lifecycle Service component
 
 # AndroidX - Activity
-activityCompose = "1.11.0"      # AndroidX Activity Compose, for Jetpack Compose in Activities
+activityCompose = "1.12.1"      # AndroidX Activity Compose, for Jetpack Compose in Activities
 
 # AndroidX - Navigation (old and we need to remove)
-androidxNavigation = "2.9.4"    # AndroidX Navigation component (Compose)
+androidxNavigation = "2.9.6"    # AndroidX Navigation component (Compose)
 # # AndroidX - Navigation (Nav3)
-nav3Core = "1.0.0-alpha10"      # Navigation 3 Core libraries version
-lifecycleViewmodelNav3 = "2.10.0-alpha04" # Navigation 3 ViewModel support
-material3AdaptiveNav3 = "1.0.0-alpha03" # Navigation 3 Material3 Adaptive Layouts (Snapshot)
+nav3Core = "1.0.0"      # Navigation 3 Core libraries version
+lifecycleViewmodelNav3 = "2.10.0" # Navigation 3 ViewModel support
+material3AdaptiveNav3 = "1.3.0-alpha05" # Navigation 3 Material3 Adaptive Layouts (Snapshot)
 # material3Adaptive = "1.0.0-alpha06"                # AndroidX Test Runner
 
 # Jetpack Compose
-composeBom = "2025.09.00"       # Jetpack Compose Bill of Materials (BOM)
+composeBom = "2025.12.00"       # Jetpack Compose Bill of Materials (BOM)
 composeMaterial = "1.7.8"       # Jetpack Compose Material (used for icons, wear material)
 # Note: androidx.compose.material3 uses the BoM version.
 # Note: androidx.compose.ui:ui-tooling-preview uses the BoM version.
-composeMaterial3Expressive = "1.5.0-alpha04"                # AndroidX Test Runner
+composeMaterial3Expressive = "1.5.0-alpha10"                # AndroidX Test Runner
 
 # Dependency Injection - Hilt
-hilt = "2.57.1"                 # Hilt, a dependency injection library for Android
+hilt = "2.57.2"                 # Hilt, a dependency injection library for Android
 hiltLifecycleViewModel = "1.3.0" # Hilt AndroidX Lifecycle ViewModel integration
 hiltNavigationCompose = "1.3.0" # Hilt Jetpack Compose Navigation integration
 hiltWork = "1.3.0"              # Hilt WorkManager integration
 
 # Data Persistence
-room = "2.8.0"                  # AndroidX Room, an abstraction layer over SQLite
-datastore = "1.1.7"             # AndroidX DataStore, for persistent data storage
+room = "2.8.4"                  # AndroidX Room, an abstraction layer over SQLite
+datastore = "1.2.0"             # AndroidX DataStore, for persistent data storage
 
 # Background Processing
-work = "2.10.4"                 # AndroidX WorkManager, for background tasks
+work = "2.11.0"                 # AndroidX WorkManager, for background tasks
 
 # Networking
-okhttp = "5.1.0"                # Square OkHttp, HTTP client
+okhttp = "5.3.2"                # Square OkHttp, HTTP client
 squareupRetrofit = "3.0.0"      # Square Retrofit, type-safe HTTP client for Android and Java
 
 # UI Components & Utilities
@@ -69,23 +69,23 @@ coil = "2.7.0"                  # Coil, an image loading library for Android
 accompanistPermissions = "0.37.3" # Accompanist Permissions library
 
 # Camera
-cameraX = "1.5.1"               # AndroidX CameraX libraries
+cameraX = "1.5.2"               # AndroidX CameraX libraries
 
 # Maps & Location
-mapsCompose = "6.10.0"          # Maps Compose library for Jetpack Compose
+mapsCompose = "6.12.2"          # Maps Compose library for Jetpack Compose
 mapsplatformSecretsPlugin = "2.0.1" # Gradle plugin for Maps API key secrets
 playServicesMaps = "19.2.0"     # Google Play Services Maps SDK
 playServicesLocation = "21.3.0" # Google Play Services Location SDK
 
 # Health Connect
-healthConnect = "1.1.0-rc03"    # Health Connect client library
+healthConnect = "1.1.0"    # Health Connect client library
 
 # Wear OS
 playServicesWearable = "19.0.0" # Google Play Services for Wear OS
 wearComposeMaterial = "1.7.8"   # Wear OS Jetpack Compose Material library (used by icons too)
-wearComposeMaterial3 = "1.5.1"  # Wear OS Jetpack Compose Material3 library
+wearComposeMaterial3 = "1.5.6"  # Wear OS Jetpack Compose Material3 library
 wearToolingPreview = "1.0.0"    # Wear OS Tooling Preview library
-coreSplashscreen = "1.0.1"      # AndroidX Core Splashscreen library
+coreSplashscreen = "1.2.0"      # AndroidX Core Splashscreen library
 tiles = "1.5.0"                 # Wear OS Tiles libraries (tiles, tiles-material, tiles-tooling, tiles-tooling-preview)
 horologist = "0.7.15"           # Horologist libraries for Wear OS
 watchfaceComplicationsDataSourceKtx = "1.2.1" # Wear OS Watchface Complications KTX library
@@ -98,8 +98,8 @@ mlkitTextRecognition = "16.0.1" # ML Kit Text Recognition library
 playServicesCodeScanner = "16.1.0" # Google Play Services Code Scanner (QR Scanner)
 
 # Firebase
-firebaseBom = "34.2.0"          # Firebase Bill of Materials (BOM)
-googleGmsGoogleServices = "4.4.3" # Google Services Gradle plugin
+firebaseBom = "34.6.0"          # Firebase Bill of Materials (BOM)
+googleGmsGoogleServices = "4.4.4" # Google Services Gradle plugin
 googleFirebaseCrashlytics = "3.0.6" # Firebase Crashlytics Gradle plugin
 
 # GraphQL (Apollo)

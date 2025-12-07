@@ -56,4 +56,8 @@ sealed interface HomeEvent {
     data class OnDeleteCategoryClicked(val category: CategoryEntity) : HomeEvent
 
     data class OnTaskListSelected(val listId: Long) : HomeEvent
+    // data class OnTaskListDeleted(val listId: Long) : HomeEvent
+
+    // Navigation & Layout (The missing pieces)
+    data class OnScreenLayoutChanged(val isExpanded: Boolean) : HomeEvent
 }

@@ -7,6 +7,7 @@ import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
 import com.ylabz.basepro.applications.photodo.db.repo.PhotoDoRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -40,6 +42,13 @@ class HomeViewModel @Inject constructor(
     // 3. Side Effect: Navigation Event
     private val _categorySelectedEvent = MutableSharedFlow<Long>()
     val categorySelectedEvent: SharedFlow<Long> = _categorySelectedEvent.asSharedFlow()
+
+    private val _isExpandedScreen = MutableStateFlow(false) // New
+
+    // 2. One-Time Events (Side Effects)
+    // Used to tell the UI to Navigate (e.g. slide to detail pane)
+    private val _navigationEffect = Channel<HomeNavigationEffect>(Channel.BUFFERED)
+    val navigationEffect = _navigationEffect.receiveAsFlow()
 
     // --- REACTIVE PIPELINE (Replaces loadInitialData) ---
 
@@ -90,15 +99,17 @@ class HomeViewModel @Inject constructor(
         categoriesFlow,
         activeCategoryFlow,
         taskListsFlow,
-        _isAddingCategory
-    ) { categories, selectedCategory, taskLists, isAdding ->
+        _isAddingCategory,
+        _isExpandedScreen // <--- PASS IT IN HERE
+    ) { categories, selectedCategory, taskLists, isAdding,isExpanded ->
 
         // Map to Success state (or Loading if we wanted to add that logic)
         HomeUiState.Success(
             categories = categories,
             selectedCategory = selectedCategory,
             taskListsForSelectedCategory = taskLists,
-            isAddingCategory = isAdding
+            isAddingCategory = isAdding,
+            isExpandedScreen = isExpanded // <--- ASSIGN IT HERE
         )
     }.stateIn(
         scope = viewModelScope,
@@ -176,7 +187,9 @@ class HomeViewModel @Inject constructor(
                 HomeEvent.OnAddListClicked -> { /* Handled by MainScreen */ }
 
                 is HomeEvent.OnTaskListSelected -> { /* Navigation handled by UI Route */ }
-
+                is HomeEvent.OnScreenLayoutChanged -> {
+                    _isExpandedScreen.value = event.isExpanded
+                }
             }
         }
     }
@@ -211,4 +224,10 @@ class HomeViewModel @Inject constructor(
         }
         */
     }
+}
+
+
+// Helper Sealed Class for One-Off Navigation Events
+sealed interface HomeNavigationEffect {
+    data class NavigateToDetailPane(val listId: Long) : HomeNavigationEffect
 }

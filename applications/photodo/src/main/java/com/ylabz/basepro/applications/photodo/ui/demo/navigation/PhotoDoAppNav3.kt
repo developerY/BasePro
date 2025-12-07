@@ -52,7 +52,6 @@ import kotlinx.serialization.Transient
 // --- STEP 1: DEFINE DESTINATIONS (UPDATED) ---
 @Serializable
 private sealed class AppScreen(val title: String) : NavKey {
-    @Transient
     abstract val icon: ImageVector
 
     @Serializable
@@ -102,7 +101,7 @@ private fun SimpleAdaptiveBottomBar() {
     val isExpandedScreen = windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
 
     // The back stack now holds the generic NavKey type to accommodate different screen types.
-    val backStack = rememberNavBackStack<NavKey>(AppScreen.Home)
+    val backStack = rememberNavBackStack(AppScreen.Home)
     var currentTab: AppScreen by rememberSaveable(stateSaver = AppScreenSaver) {
         mutableStateOf(AppScreen.Home)
     }

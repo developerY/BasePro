@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.ylabz.basepro.applications.photodo.db.entity.CategoryEntity
@@ -35,7 +36,40 @@ fun PhotoDoHomeUiRoute(
 
     Log.d(TAG, "Entered PhotoDoHomeUiRoute composable") // <-- BREADCRUMB 1
 
+    // 1. SYNC LAYOUT STATE
+    // Tell the ViewModel about the screen size so it can update HomeUiState
+    LaunchedEffect(isExpandedScreen) {
+        homeViewModel.onEvent(HomeEvent.OnScreenLayoutChanged(isExpandedScreen))
+    }
+
+    // 2. HANDLE PHONE NAVIGATION
+    // If we are NOT on an expanded screen, we listen for navigation effects here
+    // and trigger the external navigation controller.
+    // if (isExpandedScreen) {
+        LaunchedEffect(homeViewModel.navigationEffect) {
+            homeViewModel.navigationEffect.collect { effect ->
+                when (effect) {
+                    is HomeNavigationEffect.NavigateToDetailPane -> {
+                        Log.d(TAG, "Phone Navigation triggered for list: ${effect.listId}")
+                        navTo(effect.listId)
+                    }
+                }
+            }
+        }
+    //}
+
+    // 3. EVENT INTERCEPTOR
+    // We wrap the onEvent to intercept "Edit" actions (which need to go up to MainScreen),
+    // but pass everything else to the ViewModel.
     val onEvent: (HomeEvent) -> Unit = { event ->
+        if (event is HomeEvent.OnEditCategoryClicked) {
+            onEditCategory(event.category)
+        } else {
+            homeViewModel.onEvent(event)
+        }
+    }
+
+    val onEventOld: (HomeEvent) -> Unit = { event ->
         // 1. Notify local VM (for selection, etc.)
         homeViewModel.onEvent(event)
 
@@ -57,6 +91,7 @@ fun PhotoDoHomeUiRoute(
         // ------------------------
     }
 
+    // 4. RENDER
     when (uiState) {
         is HomeUiState.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -65,22 +100,20 @@ fun PhotoDoHomeUiRoute(
         }
         is HomeUiState.Success -> {
             Column(modifier = Modifier.fillMaxSize()) {
-                Text("PhotoDoHomeUI Holding the HomeScreen")
+                // Optional: Keep for debugging, remove for production
+                // Text("PhotoDoHomeUI Holding the HomeScreen")
+
                 HomeScreen(
                     modifier = modifier,
                     uiState = uiState,
-                    onEvent = homeViewModel::onEvent,
-                    onSelectList = { taskID -> navTo(taskID)},
-                    isExpandedScreen = isExpandedScreen,
-                    // onCategorySelected = onCategorySelected, // <-- PASS THE LAMBDA DOWN
-                    // This handles the "Add" button on the empty screen
-                    /*onAddList = {
-                    state.selectedCategory?.let { category ->
-                        viewModel.onEvent(HomeEvent.OnAddTaskListClicked(category.categoryId))
-                    }
-                    },*/
-                    // setFabState = setFabState
+                    onEvent = onEvent,
+                    // We pass the flow down.
+                    // The HomeScreen will ONLY collect this if isExpandedScreen is true.
+                    // navigationEffects = homeViewModel.navigationEffect
                 )
+
+
+
                 // --- THIS IS THE UI LOGIC ---
                 // When the ViewModel's state flag is true, show the sheet.
                 /* if (uiState.isAddingCategory) {
