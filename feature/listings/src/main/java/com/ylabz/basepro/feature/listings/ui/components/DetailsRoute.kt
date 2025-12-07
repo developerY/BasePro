@@ -1,4 +1,4 @@
-package com.ylabz.basepro.listings.ui.components
+package com.ylabz.basepro.feature.listings.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
