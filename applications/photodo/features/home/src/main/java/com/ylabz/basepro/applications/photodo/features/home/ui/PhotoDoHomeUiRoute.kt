@@ -45,7 +45,7 @@ fun PhotoDoHomeUiRoute(
     // 2. HANDLE PHONE NAVIGATION
     // If we are NOT on an expanded screen, we listen for navigation effects here
     // and trigger the external navigation controller.
-    if (!isExpandedScreen) {
+    // if (isExpandedScreen) {
         LaunchedEffect(homeViewModel.navigationEffect) {
             homeViewModel.navigationEffect.collect { effect ->
                 when (effect) {
@@ -56,7 +56,7 @@ fun PhotoDoHomeUiRoute(
                 }
             }
         }
-    }
+    //}
 
     // 3. EVENT INTERCEPTOR
     // We wrap the onEvent to intercept "Edit" actions (which need to go up to MainScreen),
@@ -109,7 +109,7 @@ fun PhotoDoHomeUiRoute(
                     onEvent = onEvent,
                     // We pass the flow down.
                     // The HomeScreen will ONLY collect this if isExpandedScreen is true.
-                    navigationEffects = homeViewModel.navigationEffect
+                    // navigationEffects = homeViewModel.navigationEffect
                 )
 
 

@@ -99,15 +99,17 @@ class HomeViewModel @Inject constructor(
         categoriesFlow,
         activeCategoryFlow,
         taskListsFlow,
-        _isAddingCategory
-    ) { categories, selectedCategory, taskLists, isAdding ->
+        _isAddingCategory,
+        _isExpandedScreen // <--- PASS IT IN HERE
+    ) { categories, selectedCategory, taskLists, isAdding,isExpanded ->
 
         // Map to Success state (or Loading if we wanted to add that logic)
         HomeUiState.Success(
             categories = categories,
             selectedCategory = selectedCategory,
             taskListsForSelectedCategory = taskLists,
-            isAddingCategory = isAdding
+            isAddingCategory = isAdding,
+            isExpandedScreen = isExpanded // <--- ASSIGN IT HERE
         )
     }.stateIn(
         scope = viewModelScope,

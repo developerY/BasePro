@@ -13,7 +13,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.ylabz.basepro.applications.photodo.features.home.ui.components.CategoryList
 import com.ylabz.basepro.applications.photodo.features.home.ui.components.TaskList
-import kotlinx.coroutines.flow.Flow
 
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
@@ -22,7 +21,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     uiState: HomeUiState.Success,
     onEvent: (HomeEvent) -> Unit,
-    navigationEffects: Flow<HomeNavigationEffect> // Pass the side-effect flow
+    //navigationEffects: Flow<HomeNavigationEffect> // Pass the side-effect flow
     //onCategorySelected: (Long) -> Unit, // <-- ADD THIS PARAMETER
     // ### WHAT: This parameter was added to accept the "setter" function from MainScreen.
     // ### WHY: This allows HomeScreen to tell MainScreen which FAB to display.
@@ -46,7 +45,7 @@ fun HomeScreen(
         // This ensures the UI stays in sync with your ViewModel state.
         // --- EFFECT HANDLING ---
         // Listen for "Go To Detail" commands from the ViewModel
-        LaunchedEffect(navigationEffects) {
+        /*LaunchedEffect(navigationEffects) {
             navigationEffects.collect { effect ->
                 when (effect) {
                     is HomeNavigationEffect.NavigateToDetailPane -> {
@@ -57,7 +56,7 @@ fun HomeScreen(
                     }
                 }
             }
-        }
+        }*/
 
         // --- SYNC STATE ---
         // Ensure navigator aligns with selected category
