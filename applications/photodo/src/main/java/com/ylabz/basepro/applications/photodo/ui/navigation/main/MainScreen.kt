@@ -83,7 +83,7 @@ fun MainScreen(
     // --- Navigation State ---
     // NOTE: **Bottom Navigation State**
     // The actual navigation history for the NavDisplay.
-    val backStack = rememberNavBackStack<NavKey>(PhotoDoNavKeys.HomeFeedKey)
+    val backStack = rememberNavBackStack(PhotoDoNavKeys.HomeFeedKey)
     // NOTE: **Adaptive Navigation State**
     val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
 
