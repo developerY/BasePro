@@ -32,7 +32,6 @@ import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
@@ -56,6 +55,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -63,6 +63,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.ylabz.basepro.applications.photodo.db.entity.PhotoEntity
 import com.ylabz.basepro.applications.photodo.db.entity.TaskListWithPhotos
 import com.ylabz.basepro.applications.photodo.features.photodolist.ui.detail.PhotoDoDetailEvent
@@ -227,13 +228,14 @@ fun PhotoItem(
             .clip(RoundedCornerShape(20.dp))
             .background(MaterialTheme.colorScheme.surfaceContainer)
     ) {
-        // Placeholder for image loading (e.g. Coil)
-        Icon(
-            imageVector = Icons.Default.Image,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
-            modifier = Modifier.align(Alignment.Center)
+        // --- FIX: USE COIL TO LOAD THE IMAGE ---
+        AsyncImage(
+            model = photo.uri, // Assuming your PhotoEntity has a 'uri' string field
+            contentDescription = "Task photo",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
         )
+        // ---------------------------------------
 
         // Delete Button Overlay
         Box(
