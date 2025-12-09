@@ -1,6 +1,7 @@
 package com.ylabz.basepro.applications.bike.ui.navigation.main
 
-import android.util.Log
+// import androidx.compose.material3.NavigationBarItemDefaults // No longer needed for custom colors
+// import androidx.compose.ui.graphics.Color // No longer needed for custom colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.automirrored.twotone.List
@@ -11,22 +12,19 @@ import androidx.compose.material.icons.twotone.Settings
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-// import androidx.compose.material3.NavigationBarItemDefaults // No longer needed for custom colors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-// import androidx.compose.ui.graphics.Color // No longer needed for custom colors
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.ylabz.basepro.applications.bike.R
 import com.ylabz.basepro.applications.bike.ui.navigation.graphs.AshBikeTabRoutes
+import com.ylabz.basepro.ashbike.mobile.R
 import com.ylabz.basepro.core.ui.R as CoreUiR
 
 private data class TabInfo(

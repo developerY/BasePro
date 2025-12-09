@@ -13,7 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.ylabz.basepro.applications.bike.R
+import com.ylabz.basepro.ashbike.mobile.R
 import com.ylabz.basepro.core.ui.BikeScreen
 import com.ylabz.basepro.core.ui.R as CoreUiR
 
