@@ -61,6 +61,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.ylabz.basepro.applications.photodo.features.home.ui.HomeEvent
+import kotlin.math.absoluteValue
 
 @Composable
 fun CategoryCard(
@@ -128,7 +129,7 @@ fun CategoryCard(
     // --- POP VISUALS END ---
 
     val coverGradient = remember(category.name) {
-        val hash = category.name.hashCode()
+        val hash = category.name.hashCode().absoluteValue
         val hue = (hash % 360).toFloat()
         val color1 = Color.hsv(hue, 0.6f, 0.8f)
         val color2 = Color.hsv((hue + 40) % 360, 0.5f, 0.9f)
