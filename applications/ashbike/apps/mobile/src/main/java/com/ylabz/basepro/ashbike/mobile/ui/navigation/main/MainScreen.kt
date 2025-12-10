@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.ui.navigation.main
+package com.ylabz.basepro.ashbike.mobile.ui.navigation.main
 
 //import androidx.compose.ui.tooling.preview.Preview
 import android.Manifest
@@ -28,14 +28,15 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeViewModel
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsUiState
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsViewModel
-import com.ylabz.basepro.applications.bike.ui.navigation.graphs.AshBikeTabRoutes
-import com.ylabz.basepro.applications.bike.ui.navigation.graphs.bikeNavGraph
+import com.ylabz.basepro.ashbike.mobile.ui.navigation.graphs.AshBikeTabRoutes
+import com.ylabz.basepro.ashbike.mobile.ui.navigation.graphs.bikeNavGraph
 
 // The @RequiresPermission annotation can be helpful for static analysis
 // but the runtime check is the most crucial part.
@@ -60,7 +61,7 @@ fun MainScreen(
 
     // --- Service Binding Logic ---
     val bikeViewModel: BikeViewModel = hiltViewModel() // Instance for MainScreen and its children
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     DisposableEffect(lifecycleOwner, bikeViewModel) { // Added bikeViewModel as a key
         val observer = LifecycleEventObserver { _, event ->

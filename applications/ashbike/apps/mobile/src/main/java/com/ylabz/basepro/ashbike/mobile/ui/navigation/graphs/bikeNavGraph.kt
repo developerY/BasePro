@@ -1,5 +1,6 @@
-package com.ylabz.basepro.applications.bike.ui.navigation.graphs
+package com.ylabz.basepro.ashbike.mobile.ui.navigation.graphs
 
+import android.Manifest
 import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.collectAsState
@@ -28,7 +29,7 @@ import com.ylabz.basepro.feature.places.ui.CoffeeShopUIState
 import com.ylabz.basepro.feature.places.ui.CoffeeShopViewModel
 
 // Define BikeNavGraph as an extension function on NavGraphBuilder
-@RequiresPermission(allOf = [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION])
+@RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
 fun NavGraphBuilder.bikeNavGraph(
     modifier: Modifier = Modifier,
     navHostController: NavHostController,

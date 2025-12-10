@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike
+package com.ylabz.basepro.ashbike.mobile
 
 //import androidx.compose.ui.tooling.preview.Preview
 import android.Manifest
@@ -38,7 +38,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.ylabz.basepro.applications.bike.features.settings.ui.SettingsViewModel
-import com.ylabz.basepro.applications.bike.ui.navigation.root.RootNavGraph
+import com.ylabz.basepro.ashbike.mobile.ui.navigation.root.RootNavGraph
 import com.ylabz.basepro.core.ui.theme.AshBikeTheme
 import dagger.hilt.android.AndroidEntryPoint
 

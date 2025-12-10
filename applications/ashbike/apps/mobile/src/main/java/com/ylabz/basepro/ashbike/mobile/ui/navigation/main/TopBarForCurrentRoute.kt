@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.ui.navigation.main
+package com.ylabz.basepro.ashbike.mobile.ui.navigation.main
 
 // import androidx.compose.material.icons.filled.ArrowBack // Keep one, automirrored is usually better
 import androidx.compose.material.icons.Icons

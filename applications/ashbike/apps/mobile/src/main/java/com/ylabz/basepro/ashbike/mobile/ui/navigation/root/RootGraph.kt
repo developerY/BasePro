@@ -1,8 +1,8 @@
-package com.ylabz.basepro.applications.bike.ui.navigation.root
+package com.ylabz.basepro.ashbike.mobile.ui.navigation.root
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import com.ylabz.basepro.applications.bike.ui.navigation.main.MainScreen
+import com.ylabz.basepro.ashbike.mobile.ui.navigation.main.MainScreen
 
 
 @Composable

@@ -1,9 +1,9 @@
-package com.ylabz.basepro.applications.bike.ui.navigation.main
+package com.ylabz.basepro.ashbike.mobile.ui.navigation.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 // Import the use case from its new package
-import com.ylabz.basepro.applications.bike.ui.navigation.main.usecase.GetUnsyncedRidesCountUseCase
+import com.ylabz.basepro.ashbike.mobile.ui.navigation.main.usecase.GetUnsyncedRidesCountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
