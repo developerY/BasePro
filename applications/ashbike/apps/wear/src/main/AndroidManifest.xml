@@ -43,10 +43,10 @@
         </service>
 
 
-        <!-- service
+        <service
             android:name=".service.ExerciseService"
             android:exported="false"
-            android:foregroundServiceType="location|dataSync|health" /-->
+            android:foregroundServiceType="location|dataSync|health" />
 
         <uses-library
             android:name="com.google.android.wearable"

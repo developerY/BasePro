@@ -49,8 +49,8 @@ fun WearApp(greetingName: String) {
             contentAlignment = Alignment.Center
         ) {
             TimeText()
-            Greeting(greetingName = greetingName)
-            // WearBikeScreen()
+            // Greeting(greetingName = greetingName)
+            WearBikeScreen()
         }
     }
 }
