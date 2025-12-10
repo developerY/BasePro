@@ -83,12 +83,20 @@ healthConnect = "1.1.0"    # Health Connect client library
 # Wear OS
 playServicesWearable = "19.0.0" # Google Play Services for Wear OS
 wearComposeMaterial = "1.7.8"   # Wear OS Jetpack Compose Material library (used by icons too)
-wearComposeMaterial3 = "1.5.6"  # Wear OS Jetpack Compose Material3 library
+wearComposeMaterial3 = "1.6.0-alpha06"  # Wear OS Jetpack Compose Material3 library
 wearToolingPreview = "1.0.0"    # Wear OS Tooling Preview library
 coreSplashscreen = "1.2.0"      # AndroidX Core Splashscreen library
 tiles = "1.5.0"                 # Wear OS Tiles libraries (tiles, tiles-material, tiles-tooling, tiles-tooling-preview)
 horologist = "0.7.15"           # Horologist libraries for Wear OS
 watchfaceComplicationsDataSourceKtx = "1.2.1" # Wear OS Watchface Complications KTX library
+
+
+# FIX: Wear Compose uses its own versioning, NOT the same as Mobile Compose (1.7.8)
+wearCompose = "1.4.1"
+# ADD: Health Services (The "MAD" way to track rides)
+healthServices = "1.1.0-alpha05"
+# ADD: Ongoing Activity
+wearOngoing = "1.1.0"
 
 # Google Play Services (Miscellaneous)
 playServicesCoroutines = "1.10.2" # Kotlin Coroutines support for Google Play Services
@@ -229,7 +237,7 @@ google-play-services-wearable = { group = "com.google.android.gms", name = "play
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 
 # Wear OS - Compose
-androidx-wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "wearComposeMaterial" }
+# androidx-wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "wearComposeMaterial" }
 androidx-wear-compose-material-icons = { group = "androidx.wear.compose", name = "compose-material-icons", version.ref = "wearComposeMaterial" }
 androidx-wear-compose-material3 = { module = "androidx.wear.compose:compose-material3", version.ref = "wearComposeMaterial3" }
 androidx-wear-compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "wearComposeMaterial" } # Uses wearComposeMaterial version
@@ -251,6 +259,10 @@ horologist-compose-tools = { group = "com.google.android.horologist", name = "ho
 horologist-tiles = { group = "com.google.android.horologist", name = "horologist-tiles", version.ref = "horologist" }
 horologist-composables = { module = "com.google.android.horologist:horologist-composables", version.ref = "horologist" }
 horologist-compose-material = { module = "com.google.android.horologist:horologist-compose-material", version.ref = "horologist" }
+
+# Wear OS Health Services & Ongoing Activity
+androidx-health-services-client = { module = "androidx.health:health-services-client", version.ref = "healthServices" }
+androidx-wear-ongoing = { module = "androidx.wear:wear-ongoing", version.ref = "wearOngoing" }
 
 # ML Kit & Scanning
 mlkit-text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "mlkitTextRecognition" }
