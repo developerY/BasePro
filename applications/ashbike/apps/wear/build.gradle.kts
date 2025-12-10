@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.ylabz.basepro.ashbike.wear"
-        minSdk = 30 // Health Services requires Min SDK 30
+        minSdk = 35 // Health Services requires Min SDK 30
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
@@ -79,6 +79,10 @@ dependencies {
     implementation(libs.androidx.wear.compose.foundation)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)
+
+    // Permission
+    implementation(libs.google.accompanist.permissions)
+
 
     // 5. Horologist (Google's best practices library for Wear)
     implementation(libs.horologist.compose.tools)

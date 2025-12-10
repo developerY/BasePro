@@ -5,6 +5,8 @@
 
 package com.ylabz.basepro.ashbike.wear.presentation
 
+
+// --- CRITICAL CHANGE: Use Material 3 Imports ---
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,6 +26,13 @@ import androidx.wear.compose.material.TimeText
 import com.ylabz.basepro.ashbike.wear.R
 import com.ylabz.basepro.ashbike.wear.presentation.theme.BaseProTheme
 import dagger.hilt.android.AndroidEntryPoint
+
+// import androidx.wear.compose.material3.Text
+// import androidx.wear.compose.material3.TimeText // Note: TimeText is often still pulled from M2 or Horologist depending on version, check your resolution.
+// For pure M3 1.0.0, TimeText is not yet native in material3 package, you usually use the one from Horologist or M2, but wrapped correctly.
+// A common pattern in M3 transition is to use Horologist for the scaffold/time text.
+
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
