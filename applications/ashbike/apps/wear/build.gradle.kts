@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.ylabz.basepro.ashbike.wear"
-        minSdk = 35 // Health Services requires Min SDK 30
+        minSdk = 30 // Health Services requires Min SDK 30
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
@@ -68,6 +68,7 @@ dependencies {
 
     // Lifecycle Service (Required for the service to bind to lifecycle)
     implementation(libs.androidx.lifecycle.service)
+    implementation(libs.androidx.wear.compose.navigation)
 
     // 4. Standard Wear OS & Compose UI
     implementation(libs.google.play.services.wearable)
@@ -75,7 +76,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.wear.compose.material3)
-    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.wear.compose.foundation)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)
 
