@@ -68,6 +68,7 @@ dependencies {
 
     // Lifecycle Service (Required for the service to bind to lifecycle)
     implementation(libs.androidx.lifecycle.service)
+    implementation(libs.androidx.wear.compose.navigation)
 
     // 4. Standard Wear OS & Compose UI
     implementation(libs.google.play.services.wearable)
@@ -75,9 +76,13 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.wear.compose.material3)
-    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.wear.compose.foundation)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)
+
+    // Permission
+    implementation(libs.google.accompanist.permissions)
+
 
     // 5. Horologist (Google's best practices library for Wear)
     implementation(libs.horologist.compose.tools)

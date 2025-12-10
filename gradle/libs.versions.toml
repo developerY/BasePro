@@ -13,7 +13,7 @@ minSdk = "34"                   # Android Minimum SDK version
 
 # Kotlin & Related Tools
 kotlin = "2.2.21"               # Kotlin programming language version
-ksp = "2.2.20-2.0.3"            # Kotlin Symbol Processing API version
+ksp = "2.3.3"                   # Kotlin Symbol Processing API version
 kotlinxSerializationCore = "1.9.0"  # Kotlinx Serialization library version (used for core and json)
 immutableCollections = "0.4.0"  # Kotlinx Immutable Collections library version
 
@@ -81,18 +81,17 @@ playServicesLocation = "21.3.0" # Google Play Services Location SDK
 healthConnect = "1.1.0"    # Health Connect client library
 
 # Wear OS
+# Define distinct versions for the different Wear tracks
+wearComposeMaterial3 = "1.6.0-alpha06"
+wearComposeNavigation = "1.6.0-alpha06" # Navigation usually lags slightly behind M3
+wearCompose = "1.6.0-alpha06" # Stable core
+
 playServicesWearable = "19.0.0" # Google Play Services for Wear OS
-wearComposeMaterial = "1.7.8"   # Wear OS Jetpack Compose Material library (used by icons too)
-wearComposeMaterial3 = "1.6.0-alpha06"  # Wear OS Jetpack Compose Material3 library
 wearToolingPreview = "1.0.0"    # Wear OS Tooling Preview library
 coreSplashscreen = "1.2.0"      # AndroidX Core Splashscreen library
 tiles = "1.5.0"                 # Wear OS Tiles libraries (tiles, tiles-material, tiles-tooling, tiles-tooling-preview)
 horologist = "0.7.15"           # Horologist libraries for Wear OS
 watchfaceComplicationsDataSourceKtx = "1.2.1" # Wear OS Watchface Complications KTX library
-
-
-# FIX: Wear Compose uses its own versioning, NOT the same as Mobile Compose (1.7.8)
-wearCompose = "1.4.1"
 # ADD: Health Services (The "MAD" way to track rides)
 healthServices = "1.1.0-alpha05"
 # ADD: Ongoing Activity
@@ -120,7 +119,6 @@ espressoCore = "3.7.0"          # AndroidX Espresso, for Android UI testing
 uiautomator = "2.3.0"           # AndroidX UI Automator, for UI testing across apps
 androidxProfiling = "1.4.1"     # Version for AndroidX Benchmark, Baseline Profile, ProfileInstaller
 runner = "1.7.0"
-composeFoundation = "1.2.1"
 
 
 
@@ -237,12 +235,11 @@ google-play-services-wearable = { group = "com.google.android.gms", name = "play
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 
 # Wear OS - Compose
-# androidx-wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "wearComposeMaterial" }
-androidx-wear-compose-material-icons = { group = "androidx.wear.compose", name = "compose-material-icons", version.ref = "wearComposeMaterial" }
 androidx-wear-compose-material3 = { module = "androidx.wear.compose:compose-material3", version.ref = "wearComposeMaterial3" }
-androidx-wear-compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "wearComposeMaterial" } # Uses wearComposeMaterial version
+androidx-wear-compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "wearComposeNavigation" } # Uses wearComposeMaterial version
 androidx-wear-tooling-preview = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wearToolingPreview" }
-# androidx-wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "wearComposeFoundation" } # If needed
+# OPTIONAL: Add Foundation (useful for scaling lazy lists etc)
+androidx-wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "wearCompose" }
 
 # Wear OS - Tiles
 androidx-tiles = { group = "androidx.wear.tiles", name = "tiles", version.ref = "tiles" }
@@ -296,8 +293,6 @@ androidx-runner = { group = "androidx.test", name = "runner", version.ref = "run
 # Testing - Benchmarking & Profiling
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxProfiling" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "androidxProfiling" }
-androidx-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "composeFoundation" }
-
 
 [plugins]
 # Core Android & Kotlin Plugins
