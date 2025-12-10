@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.ui.navigation.main.usecase
+package com.ylabz.basepro.ashbike.mobile.ui.navigation.main.usecase
 
 import com.ylabz.basepro.applications.bike.database.BikeRideRepo
 import kotlinx.coroutines.flow.Flow

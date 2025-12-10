@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.ui.navigation.graphs
+package com.ylabz.basepro.ashbike.mobile.ui.navigation.graphs
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

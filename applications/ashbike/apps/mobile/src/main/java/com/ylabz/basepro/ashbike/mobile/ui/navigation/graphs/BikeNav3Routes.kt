@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.ui.navigation.graphs
+package com.ylabz.basepro.ashbike.mobile.ui.navigation.graphs
 
 // These are your NavKeys for the NavDisplay system
 

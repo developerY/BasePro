@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.ui.navigation.main
+package com.ylabz.basepro.ashbike.mobile.ui.navigation.main
 
 // import androidx.compose.material3.NavigationBarItemDefaults // No longer needed for custom colors
 // import androidx.compose.ui.graphics.Color // No longer needed for custom colors
@@ -23,7 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.ylabz.basepro.applications.bike.ui.navigation.graphs.AshBikeTabRoutes
+import com.ylabz.basepro.ashbike.mobile.ui.navigation.graphs.AshBikeTabRoutes
 import com.ylabz.basepro.ashbike.mobile.R
 import com.ylabz.basepro.core.ui.R as CoreUiR
 
