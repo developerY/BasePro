@@ -112,6 +112,7 @@ espressoCore = "3.7.0"          # AndroidX Espresso, for Android UI testing
 uiautomator = "2.3.0"           # AndroidX UI Automator, for UI testing across apps
 androidxProfiling = "1.4.1"     # Version for AndroidX Benchmark, Baseline Profile, ProfileInstaller
 runner = "1.7.0"
+composeFoundation = "1.2.1"
 
 
 
@@ -283,6 +284,7 @@ androidx-runner = { group = "androidx.test", name = "runner", version.ref = "run
 # Testing - Benchmarking & Profiling
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxProfiling" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "androidxProfiling" }
+androidx-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "composeFoundation" }
 
 
 [plugins]
