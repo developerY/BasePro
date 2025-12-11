@@ -97,8 +97,8 @@ class ExerciseService : LifecycleService() {
     private fun processUpdate(update: ExerciseUpdate) {
         val latestMetrics = update.latestMetrics
         val hr = latestMetrics.getData(DataType.HEART_RATE_BPM).lastOrNull()?.value ?: 0.0
-        val dist = 0.0 //latestMetrics.getData(DataType.DISTANCE_TOTAL).()?.value ?: 0.0
-        val cals = 0.0 // latestMetrics.getData(DataType.CALORIES_TOTAL).lastOrNull()?.value ?: 0.0
+        val dist = latestMetrics.getData(DataType.DISTANCE_TOTAL)?.total ?: 0.0
+        val cals = latestMetrics.getData(DataType.CALORIES_TOTAL)?.total ?: 0.0
         val speed = latestMetrics.getData(DataType.SPEED).lastOrNull()?.value ?: 0.0
 
         _exerciseMetrics.value = _exerciseMetrics.value.copy(

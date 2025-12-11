@@ -42,6 +42,7 @@ import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 // --- PERMISSIONS IMPORT ---
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.ylabz.basepro.ashbike.wear.presentation.components.WearSpeedometer
 // --- APP IMPORTS ---
 import com.ylabz.basepro.ashbike.wear.service.ExerciseMetrics
 import com.ylabz.basepro.ashbike.wear.service.ExerciseService
@@ -125,47 +126,61 @@ fun BikeControlContent() {
         onDispose { context.unbindService(connection) }
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    // Use a Box to layer the Speedometer BEHIND the buttons, or arrange vertically
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = "AshBike Live",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Data Stats with M3 Typography
-        Text(
-            text = "HR: ${metrics.heartRate.toInt()} bpm",
-            style = MaterialTheme.typography.bodyLarge
-        )
-        Text(
-            text = "Speed: ${String.format("%.1f", metrics.speed * 3.6)} km/h",
-            style = MaterialTheme.typography.bodyLarge
-        )
-        Text(
-            text = "Dist: ${String.format("%.2f", metrics.distance / 1000)} km",
-            style = MaterialTheme.typography.bodyLarge
+        // The Speedometer fills the screen background
+        WearSpeedometer(
+            currentSpeed = metrics.speed.toFloat() * 3.6f, // Convert m/s to km/h
+            modifier = Modifier.fillMaxSize()
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        // Overlay specific stats or buttons if needed, or place them below
 
-        // Controls Row
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Button(
-                onClick = { service?.startExercise() },
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-            ) {
-                Text("Go")
-            }
-            Button(
-                onClick = { service?.stopExercise() },
-                colors = ButtonDefaults.filledTonalButtonColors() // M3 style secondary button
-            ) {
-                Text("Stop")
+        Column(
+            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "AshBike Live",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Data Stats with M3 Typography
+            Text(
+                text = "HR: ${metrics.heartRate.toInt()} bpm",
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Text(
+                text = "Speed: ${String.format("%.1f", metrics.speed * 3.6)} km/h",
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Text(
+                text = "Dist: ${String.format("%.2f", metrics.distance / 1000)} km",
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Controls Row
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Button(
+                    onClick = { service?.startExercise() },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Text("Go")
+                }
+                Button(
+                    onClick = { service?.stopExercise() },
+                    colors = ButtonDefaults.filledTonalButtonColors() // M3 style secondary button
+                ) {
+                    Text("Stop")
+                }
             }
         }
     }
