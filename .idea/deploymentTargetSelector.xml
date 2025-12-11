@@ -54,16 +54,19 @@
       </SelectionState>
       <SelectionState runConfigName="applications.ashbike.apps.mobile">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-12-11T00:25:22.381769Z">
+        <DropdownSelection timestamp="2025-12-11T23:41:54.162886Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ash/.android/avd/Wear_OS_XL_Round.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ash/.android/avd/Pixel_9a.avd" />
             </handle>
           </Target>
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
       <SelectionState runConfigName="applications.ashbike.apps.wear">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="applications.ashbike.apps.glass">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

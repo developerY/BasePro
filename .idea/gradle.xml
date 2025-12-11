@@ -14,6 +14,7 @@
             <option value="$PROJECT_DIR$/applications" />
             <option value="$PROJECT_DIR$/applications/ashbike" />
             <option value="$PROJECT_DIR$/applications/ashbike/apps" />
+            <option value="$PROJECT_DIR$/applications/ashbike/apps/glass" />
             <option value="$PROJECT_DIR$/applications/ashbike/apps/mobile" />
             <option value="$PROJECT_DIR$/applications/ashbike/apps/wear" />
             <option value="$PROJECT_DIR$/applications/ashbike/benchmark" />
