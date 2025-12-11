@@ -22,7 +22,7 @@ private val AppColorScheme = ColorScheme(
     onTertiary = Color.White,
     onTertiaryContainer = Color.Black,
     onSurfaceVariant = Color.White,
-    onSurface = Color(0xFF1C1C1C), // Slightly darker
+    onSurface = Color.White, // (0xFF1C1C1C), // Slightly darker
     onBackground = Color.White,
     background = Color.Black,
 )

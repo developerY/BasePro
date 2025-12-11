@@ -28,26 +28,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-// --- MATERIAL 3 IMPORTS ---
 import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
-// --- NAVIGATION IMPORTS ---
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
-// --- PERMISSIONS IMPORT ---
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.ylabz.basepro.ashbike.wear.presentation.components.WearSpeedometer
-// --- APP IMPORTS ---
 import com.ylabz.basepro.ashbike.wear.service.ExerciseMetrics
 import com.ylabz.basepro.ashbike.wear.service.ExerciseService
 
-// 1. The Root App Component with Navigation & Scaffold
+// 1. Root App Component
 @Composable
 fun AshBikeApp() {
     val navController = rememberSwipeDismissableNavController()
@@ -66,7 +62,7 @@ fun AshBikeApp() {
     }
 }
 
-// 2. The Main Screen (Handles Permissions & Service)
+// 2. Stateful Screen (Handles Logic & Permissions)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun WearBikeScreen() {
@@ -87,11 +83,35 @@ fun WearBikeScreen() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background), // M3 Background
+                .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
             if (permissionState.allPermissionsGranted) {
-                BikeControlContent()
+                // Connect to Service
+                val context = LocalContext.current
+                var service by remember { mutableStateOf<ExerciseService?>(null) }
+                val metrics by service?.exerciseMetrics?.collectAsState(initial = ExerciseMetrics())
+                    ?: remember { mutableStateOf(ExerciseMetrics()) }
+
+                DisposableEffect(context) {
+                    val connection = object : ServiceConnection {
+                        override fun onServiceConnected(className: ComponentName, binder: IBinder) {
+                            service = (binder as ExerciseService.LocalBinder).getService()
+                        }
+                        override fun onServiceDisconnected(arg0: ComponentName) { service = null }
+                    }
+                    val intent = Intent(context, ExerciseService::class.java)
+                    context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
+                    onDispose { context.unbindService(connection) }
+                }
+
+                // Pass data to Stateless UI
+                BikeControlContent(
+                    metrics = metrics,
+                    onStart = { service?.startExercise() },
+                    onStop = { service?.stopExercise() }
+                )
+
             } else {
                 PermissionRationaleContent(
                     onRequestPermission = { permissionState.launchMultiplePermissionRequest() }
@@ -101,92 +121,75 @@ fun WearBikeScreen() {
     }
 }
 
-// 3. The Active Ride UI (Material 3)
+// 3. Stateless UI (Previewable!)
 @Composable
-fun BikeControlContent() {
-    val context = LocalContext.current
-    var service by remember { mutableStateOf<ExerciseService?>(null) }
-
-    // Collect metrics safely
-    val metrics by service?.exerciseMetrics?.collectAsState(initial = ExerciseMetrics())
-        ?: remember { mutableStateOf(ExerciseMetrics()) }
-
-    // Bind to Service (Only runs once permissions are granted)
-    DisposableEffect(context) {
-        val connection = object : ServiceConnection {
-            override fun onServiceConnected(className: ComponentName, binder: IBinder) {
-                service = (binder as ExerciseService.LocalBinder).getService()
-            }
-            override fun onServiceDisconnected(arg0: ComponentName) {
-                service = null
-            }
-        }
-        val intent = Intent(context, ExerciseService::class.java)
-        context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
-        onDispose { context.unbindService(connection) }
-    }
-
-    // Use a Box to layer the Speedometer BEHIND the buttons, or arrange vertically
+fun BikeControlContent(
+    metrics: ExerciseMetrics,
+    onStart: () -> Unit,
+    onStop: () -> Unit
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        // The Speedometer fills the screen background
+        // Background Speedometer
         WearSpeedometer(
             currentSpeed = metrics.speed.toFloat() * 3.6f, // Convert m/s to km/h
             modifier = Modifier.fillMaxSize()
         )
 
-        // Overlay specific stats or buttons if needed, or place them below
-
+        // Overlay Stats
         Column(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween, // Spread items out
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "AshBike Live",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(8.dp))
+            // Top: Heart Rate
+            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(top = 30.dp)) {
+                Text(
+                    text = "HR",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                Text(
+                    text = "${metrics.heartRate.toInt()}",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
 
-            // Data Stats with M3 Typography
-            Text(
-                text = "HR: ${metrics.heartRate.toInt()} bpm",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                text = "Speed: ${String.format("%.1f", metrics.speed * 3.6)} km/h",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                text = "Dist: ${String.format("%.2f", metrics.distance / 1000)} km",
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Controls Row
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                Button(
-                    onClick = { service?.startExercise() },
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                ) {
-                    Text("Go")
-                }
-                Button(
-                    onClick = { service?.stopExercise() },
-                    colors = ButtonDefaults.filledTonalButtonColors() // M3 style secondary button
-                ) {
-                    Text("Stop")
+            // Bottom: Distance & Controls
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(bottom = 20.dp)
+            ) {
+                Text(
+                    text = String.format("%.2f km", metrics.distance / 1000),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Button(
+                        onClick = onStart,
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                        modifier = Modifier.height(40.dp)
+                    ) {
+                        Text("Go")
+                    }
+                    Button(
+                        onClick = onStop,
+                        colors = ButtonDefaults.filledTonalButtonColors(),
+                        modifier = Modifier.height(40.dp)
+                    ) {
+                        Text("Stop")
+                    }
                 }
             }
         }
     }
 }
 
-// 4. Permission Rationale UI (Material 3)
 @Composable
 fun PermissionRationaleContent(onRequestPermission: () -> Unit) {
     Column(
@@ -195,11 +198,11 @@ fun PermissionRationaleContent(onRequestPermission: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Tracking requires sensor access.",
+            text = "Need Permissions",
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.titleSmall
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = onRequestPermission) {
             Text("Grant")
         }

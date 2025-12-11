@@ -59,7 +59,7 @@ fun WearApp(greetingName: String) {
         ) {
             TimeText()
             // Greeting(greetingName = greetingName)
-            WearBikeScreen()
+            AshBikeApp()
         }
     }
 }
