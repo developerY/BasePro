@@ -88,6 +88,16 @@
 
         </activity>
 
+        <activity
+            android:name=".features.glass.GlassesMainActivity"
+            android:exported="true"
+            android:label="Glass Display"
+            android:requiredDisplayCategory="xr_projected">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
         <!-- CORRECTED: Service Declaration -->
         <service
             android:name="com.ylabz.basepro.applications.bike.features.main.service.BikeForegroundService"
