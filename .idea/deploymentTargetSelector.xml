@@ -68,6 +68,14 @@
       </SelectionState>
       <SelectionState runConfigName="applications.ashbike.apps.glass">
         <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2025-12-12T20:19:51.300024Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ash/.android/avd/Pixel_9_Pro_Fold.avd" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
       </SelectionState>
     </selectionStates>
   </component>

@@ -5,14 +5,14 @@ plugins {
 }
 
 android {
-    namespace = "com.ylabz.basepro.ashbike.glass"
+    namespace = "com.ylabz.basepro.ashbike.xr"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.ylabz.basepro.ashbike.glass"
-        minSdk = 36
+        applicationId = "com.ylabz.basepro.ashbike.xr"
+        minSdk = 35
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -30,11 +30,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "21"
+        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -50,11 +50,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-
-    // XR
-    implementation(libs.androidx.glimmer)
-    implementation(libs.androidx.projected)
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

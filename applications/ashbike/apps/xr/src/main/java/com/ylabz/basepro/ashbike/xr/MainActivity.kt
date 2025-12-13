@@ -1,11 +1,9 @@
-package com.ylabz.basepro.ashbike.glass
+package com.ylabz.basepro.ashbike.xr
 
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -13,16 +11,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.ylabz.basepro.ashbike.glass.ui.theme.BaseProTheme
+import com.ylabz.basepro.ashbike.xr.ui.theme.BaseProTheme
 
-@RequiresApi(Build.VERSION_CODES.BAKLAVA)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             BaseProTheme {
-                //ConnectionScreen()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
                         name = "Android",

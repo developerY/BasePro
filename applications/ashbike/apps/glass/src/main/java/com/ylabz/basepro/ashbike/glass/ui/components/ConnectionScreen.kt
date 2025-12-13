@@ -46,41 +46,34 @@ fun ConnectionScreen() {
                 style = MaterialTheme.typography.titleLarge
             )
             Spacer(modifier = Modifier.height(32.dp))
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                val scope = rememberCoroutineScope()
-                val isGlassesConnected by ProjectedContext.isProjectedDeviceConnected(
-                    context,
-                    scope.coroutineContext
-                ).collectAsStateWithLifecycle(initialValue = false)
-                Button(
-                    onClick = {
-                        val options = ProjectedContext.createProjectedActivityOptions(context)
-                        val intent = Intent(context, MainActivity::class.java)
-                        context.startActivity(intent, options.toBundle())
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isGlassesConnected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
-                    ),
-                    enabled = isGlassesConnected
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.launch),
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                }
-                Spacer(modifier = Modifier.height(32.dp))
+            val scope = rememberCoroutineScope()
+            val isGlassesConnected by ProjectedContext.isProjectedDeviceConnected(
+                context,
+                scope.coroutineContext
+            ).collectAsStateWithLifecycle(initialValue = false)
+            Button(
+                onClick = {
+                    val options = ProjectedContext.createProjectedActivityOptions(context)
+                    val intent = Intent(context, MainActivity::class.java)
+                    context.startActivity(intent, options.toBundle())
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isGlassesConnected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                ),
+                enabled = isGlassesConnected
+            ) {
                 Text(
-                    text = stringResource(id = R.string.status_prefix) + if (isGlassesConnected) stringResource(
-                        id = R.string.status_connected
-                    ) else stringResource(id = R.string.status_disconnected),
-                    style = MaterialTheme.typography.titleMedium
-                )
-            } else {
-                Text(
-                    text = stringResource(id = R.string.unsupported_android_version),
-                    style = MaterialTheme.typography.titleMedium
+                    text = stringResource(id = R.string.launch),
+                    style = MaterialTheme.typography.headlineMedium
                 )
             }
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                text = stringResource(id = R.string.status_prefix) + if (isGlassesConnected) stringResource(
+                    id = R.string.status_connected
+                ) else stringResource(id = R.string.status_disconnected),
+                style = MaterialTheme.typography.titleMedium
+            )
         }
     }
 }
