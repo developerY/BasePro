@@ -1,9 +1,9 @@
 package com.ylabz.basepro.ashbike.mobile.features.glass.ui
 
 // Import your internal Activity
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -27,7 +27,8 @@ import androidx.xr.projected.experimental.ExperimentalProjectedApi
 import com.ylabz.basepro.ashbike.mobile.features.glass.GlassesMainActivity
 import com.ylabz.basepro.ashbike.mobile.features.glass.R
 
-@RequiresApi(Build.VERSION_CODES.BAKLAVA)
+//@RequiresApi(Build.VERSION_CODES.BAKLAVA)
+@SuppressLint("NewApi")
 @OptIn(ExperimentalProjectedApi::class)
 @Composable
 fun LaunchGlassButton(
