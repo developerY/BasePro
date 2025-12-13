@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.features.core.ui.components.DeviceCapabilities
 import com.ylabz.basepro.applications.bike.features.main.R
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
@@ -46,8 +47,9 @@ import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dial
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.bike.BikeBatteryLevels
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.SpeedAndProgressCard
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatsRow
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.LaunchGlassButton
 import com.ylabz.basepro.core.model.bike.RideState
-import com.ylabz.basepro.core.model.yelp.BusinessInfo // Added import
+import com.ylabz.basepro.core.model.yelp.BusinessInfo
 import com.ylabz.basepro.core.ui.NavigationCommand
 
 @Composable
@@ -137,7 +139,6 @@ fun BikeDashboardContent(
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
-
                     AnimatedVisibility(
                         visible = expanded,
                         enter = expandVertically() + fadeIn(),
@@ -164,6 +165,16 @@ fun BikeDashboardContent(
                                 batteryLevel = batteryLevel,
                                 onConnectClick = { /* TODO */ }
                             )
+
+                            Text("The Button is here")
+                            // Just a place holder -- drop this here.
+                            // It will be invisible 99% of the time,
+                            // and appear magically when glasses are plugged in.
+                            // Only render the Launch button if we are on API 36+ (Android 16 / Baklava)
+                            // Note: XR features typically start at API 35 (Android 15), but this adheres to your request for 36.
+                            if (DeviceCapabilities.supportsGlassFeatures) {
+                                LaunchGlassButton()
+                            }
                         }
                     }
                 }
@@ -171,7 +182,7 @@ fun BikeDashboardContent(
         }
 
         // Slidable Google Map Panel, aligned to the bottom of the Box
-        androidx.compose.animation.AnimatedVisibility(
+        AnimatedVisibility(
             visible = isMapPanelVisible,
             modifier = Modifier.align(Alignment.BottomCenter), // Ensures it's at the bottom of the Box
             enter = slideInVertically(initialOffsetY = { fullHeight -> fullHeight }) + fadeIn(),
