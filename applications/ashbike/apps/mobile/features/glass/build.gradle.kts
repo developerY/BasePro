@@ -57,6 +57,9 @@ dependencies {
     // Note: Glimmer handles its own Material-like components, but if you need standard M3:
     implementation(libs.androidx.material3)
 
+    // Icons
+    implementation(libs.androidx.material.icons.extended)
+
     // --- XR / Glass (Glimmer) ---
     // Specifically required for GlimmerTheme, Button, Card, surface, etc.
     implementation(libs.androidx.glimmer)

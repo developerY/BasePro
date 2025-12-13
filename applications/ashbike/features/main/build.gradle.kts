@@ -45,6 +45,7 @@ dependencies {
     implementation(project(":applications:ashbike:features:trips"))
     implementation(project(":applications:ashbike:features:core"))
     implementation(project(":applications:ashbike:database"))
+    implementation(project(":applications:ashbike:apps:mobile:features:glass"))
 
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
