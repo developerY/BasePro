@@ -4,6 +4,7 @@ package com.ylabz.basepro.ashbike.mobile.features.glass.ui
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
+import android.widget.Toast
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -27,6 +28,7 @@ import androidx.xr.projected.ProjectedContext
 import androidx.xr.projected.experimental.ExperimentalProjectedApi
 import com.ylabz.basepro.ashbike.mobile.features.glass.GlassesMainActivity
 import com.ylabz.basepro.ashbike.mobile.features.glass.R
+import com.ylabz.basepro.ashbike.mobile.features.glass.state.BikeStateManager
 
 //@RequiresApi(Build.VERSION_CODES.BAKLAVA)
 @SuppressLint("NewApi")
@@ -39,6 +41,9 @@ fun LaunchGlassButton(
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return
 
     val context = LocalContext.current
+
+    // 1. Observe the "Alive" state from the Glass
+    val isGlassSessionActive by BikeStateManager.isGlassActive.collectAsStateWithLifecycle()
 
     // 1. Observe connection (so button disables if you unplug)
     val scope = rememberCoroutineScope()
@@ -66,12 +71,16 @@ fun LaunchGlassButton(
                 // C. Launch!
                 // The 'options.toBundle()' is what redirects it to the glasses
                 context.startActivity(intent, options.toBundle())
+
+                // OPTIONAL: Immediate "Click" feedback (Toast)
+                Toast.makeText(context, "Projecting to Headset...", Toast.LENGTH_SHORT).show()
             },
             modifier = modifier,
             // Use a distinct color so the user knows this is a "special" action
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.tertiary
             )
+
         ) {
             Icon(Icons.Default.Visibility, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
