@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -20,14 +21,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.xr.projected.ProjectedContext
 import androidx.xr.projected.experimental.ExperimentalProjectedApi
 import com.ylabz.basepro.ashbike.mobile.features.glass.GlassesMainActivity
-import com.ylabz.basepro.ashbike.mobile.features.glass.R
 import com.ylabz.basepro.ashbike.mobile.features.glass.state.BikeStateManager
 
 //@RequiresApi(Build.VERSION_CODES.BAKLAVA)
@@ -78,14 +78,21 @@ fun LaunchGlassButton(
             modifier = modifier,
             // Use a distinct color so the user knows this is a "special" action
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.tertiary
+                // 2. CHANGE COLOR based on status
+                containerColor = if (isGlassSessionActive)
+                    Color(0xFF4CAF50) // Green when running
+                else
+                    MaterialTheme.colorScheme.primary // Purple/Default when idle
             )
 
         ) {
-            Icon(Icons.Default.Visibility, contentDescription = null)
+            // 3. CHANGE ICON & TEXT
+            Icon(
+                if (isGlassSessionActive) Icons.Default.CheckCircle else Icons.Default.Visibility,
+                contentDescription = null
+            )
             Spacer(modifier = Modifier.width(8.dp))
-            // Ensure you have this string in your library's strings.xml
-            Text(stringResource(R.string.launch_glass_mode))
+            Text(if (isGlassSessionActive) "Glass Active" else "Start Glass Mode")
         }
     }
     else {
