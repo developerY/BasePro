@@ -3,18 +3,10 @@ package com.ylabz.basepro.ashbike.mobile.features.glass
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.xr.glimmer.Button
-import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.GlimmerTheme
-import androidx.xr.glimmer.Text
-import androidx.xr.glimmer.surface
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.HomeScreen
 
 class GlassesMainActivity : ComponentActivity() {
     private lateinit var audioInterface: AudioInterface
@@ -47,27 +39,6 @@ class GlassesMainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun HomeScreen(modifier: Modifier = Modifier, onClose: () -> Unit) {
-    Box(
-        modifier = modifier
-            .surface(focusable = false).fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Card(
-            title = { Text(stringResource(id = R.string.app_name)) },
-            action = {
-                Button(onClick = {
-                    onClose()
-                }) {
-                    Text(stringResource(id = R.string.close))
-                }
-            }
-        ) {
-            Text(stringResource(id = R.string.hello_ai_glasses))
-        }
-    }
-}
 
 @Preview(device = "id:ai_glasses_device", backgroundColor = 0x00FF00)
 @Composable

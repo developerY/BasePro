@@ -38,6 +38,8 @@ fun LaunchGlassButton(
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return
 
     val context = LocalContext.current
+
+    // 1. Observe connection (so button disables if you unplug)
     val scope = rememberCoroutineScope()
 
     // 2. Observe Connection State
@@ -51,8 +53,17 @@ fun LaunchGlassButton(
     if (isGlassesConnected) {
         Button(
             onClick = {
+                // --- THIS IS THE "MAKE IT WORK" PART ---
+
+                // A. Create the "Projection" options
+                // This bundle contains the instructions to target the external display
                 val options = ProjectedContext.createProjectedActivityOptions(context)
+
+                // B. Create the Intent for your Glass Activity
                 val intent = Intent(context, GlassesMainActivity::class.java)
+
+                // C. Launch!
+                // The 'options.toBundle()' is what redirects it to the glasses
                 context.startActivity(intent, options.toBundle())
             },
             modifier = modifier,
