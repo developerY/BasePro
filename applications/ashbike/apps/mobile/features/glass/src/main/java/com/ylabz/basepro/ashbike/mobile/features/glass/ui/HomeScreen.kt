@@ -1,5 +1,6 @@
 package com.ylabz.basepro.ashbike.mobile.features.glass.ui
 
+// Glimmer Imports
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,15 +10,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-// Keep your existing Glimmer imports
+import androidx.compose.ui.unit.sp
 import androidx.xr.glimmer.Button
 import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.Text
@@ -25,11 +26,15 @@ import androidx.xr.glimmer.surface
 import com.ylabz.basepro.ashbike.mobile.features.glass.R
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, onClose: () -> Unit) {
-    // 1. Local UI State for the Gear
-    // We use 'remember' so the glasses remember the gear as you click
-    var currentGear by remember { mutableIntStateOf(1) }
-    val maxGear = 12
+fun HomeScreen(
+    currentGear: Int,
+    onGearChange: (Int) -> Unit,
+    onOpenGearList: () -> Unit,
+    onClose: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    // We use this to force focus onto the "+" button when the screen loads
+    val focusRequester = remember { FocusRequester() }
 
     Box(
         modifier = modifier
@@ -38,54 +43,60 @@ fun HomeScreen(modifier: Modifier = Modifier, onClose: () -> Unit) {
         contentAlignment = Alignment.Center
     ) {
         Card(
-            // Updated title
-            title = { Text("Ride Control") },
+            title = { Text("AshBike Control") },
             action = {
                 Button(onClick = onClose) {
                     Text(stringResource(id = R.string.close))
                 }
             }
         ) {
-            // 2. Vertical Stack (Gear Number on top of Buttons)
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(text = "Current Gear")
 
-                // Display the gear number nicely
-                // You might want to style this to be larger eventually
-                Text(text = "$currentGear")
+                // Big text for visibility
+                Text(text = "$currentGear", fontSize = 60.sp)
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                // 3. Horizontal Row for the Buttons
+                // Primary Controls
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // GEAR DOWN
+                    // DOWN BUTTON
                     Button(
-                        onClick = {
-                            if (currentGear > 1) currentGear--
-                        }
+                        onClick = { onGearChange(currentGear - 1) }
                     ) {
                         Text("-")
                     }
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    // GEAR UP
+                    // UP BUTTON (Default Focus)
                     Button(
-                        onClick = {
-                            if (currentGear < maxGear) currentGear++
-                        }
+                        onClick = { onGearChange(currentGear + 1) },
+                        modifier = Modifier.focusRequester(focusRequester)
                     ) {
                         Text("+")
                     }
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Secondary Control: Open the Full List
+                Button(onClick = onOpenGearList) {
+                    Text("Select from List")
+                }
             }
         }
+    }
+
+    // Force focus to the "+" button on start so trackpad works immediately
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
     }
 }
 

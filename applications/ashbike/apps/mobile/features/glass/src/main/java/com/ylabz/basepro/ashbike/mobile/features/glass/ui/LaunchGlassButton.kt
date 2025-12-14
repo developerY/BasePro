@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -76,6 +77,21 @@ fun LaunchGlassButton(
             Spacer(modifier = Modifier.width(8.dp))
             // Ensure you have this string in your library's strings.xml
             Text(stringResource(R.string.launch_glass_mode))
+        }
+    }
+    else {
+        Button(
+            onClick = {}, // No action needed
+            enabled = false, // FIX: This automatically grays out the button and text
+            modifier = modifier
+        ) {
+            // FIX: Switch icon to indicate "Off" state
+            Icon(Icons.Default.VisibilityOff, contentDescription = null)
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            // Clear text indicating why it is disabled
+            Text("Glass Not Connected")
         }
     }
 }

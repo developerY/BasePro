@@ -2,6 +2,7 @@
     <string name="app_name">Glasses</string>
     <string name="hello_ai_glasses">Hello, AI AshBike Glasses!</string>
     <string name="launch_glass_mode">Start Glass Mode</string>
+    <string name="connection_status">Connection Status:</string>
     <string name="launch">Launch</string>
     <string name="status_prefix">Status:</string>
     <string name="status_connected">Connected</string>

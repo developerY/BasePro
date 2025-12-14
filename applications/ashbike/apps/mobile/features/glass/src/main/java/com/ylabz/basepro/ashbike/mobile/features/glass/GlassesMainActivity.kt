@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.xr.glimmer.GlimmerTheme
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.HomeScreen
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassApp
 
 class GlassesMainActivity : ComponentActivity() {
     private lateinit var audioInterface: AudioInterface
@@ -19,7 +19,7 @@ class GlassesMainActivity : ComponentActivity() {
         lifecycle.addObserver(audioInterface)
         setContent {
             GlimmerTheme {
-                HomeScreen(onClose = {
+                GlassApp(onClose = {
                     audioInterface.speak("Goodbye!")
                     finish()
                 })
@@ -44,6 +44,6 @@ class GlassesMainActivity : ComponentActivity() {
 @Composable
 fun DefaultPreview() {
     GlimmerTheme {
-        HomeScreen(onClose = {})
+        GlassApp(onClose = {})
     }
 }
