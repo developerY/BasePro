@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.hilt.gradle)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -52,6 +54,10 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     // Note: Glimmer handles its own Material-like components, but if you need standard M3:
     implementation(libs.androidx.material3)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)   // Hilt compiler dependency for annotation processing
 
     // Icons
     implementation(libs.androidx.material.icons.extended)
