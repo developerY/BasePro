@@ -49,7 +49,7 @@ fun BikeDashboard(
                 BikeStatCard(
                     icon = Icons.Default.Settings, // Gear Icon
                     label = "Gear",
-                    value = "working ", //"${uiState.glassGear}", // Connected to Glass Data
+                    value = "${uiState.glassGear}", // Connected to Glass Data
                     modifier = Modifier.weight(1f)
                 )
             }

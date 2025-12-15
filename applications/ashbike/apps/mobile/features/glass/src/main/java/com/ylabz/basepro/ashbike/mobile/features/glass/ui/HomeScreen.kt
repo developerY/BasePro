@@ -28,12 +28,12 @@ import com.ylabz.basepro.ashbike.mobile.features.glass.data.GlassBikeRepository
 
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
     currentGear: Int,
     onGearChange: (Int) -> Unit,
     onOpenGearList: () -> Unit,
     onClose: () -> Unit,
     repository: GlassBikeRepository,
-    modifier: Modifier = Modifier
 ) {
 
     // We use this to force focus onto the "+" button when the screen loads

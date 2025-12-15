@@ -153,11 +153,11 @@ fun BikeDashboardContent(
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            StatsSection(
+                            /*StatsSection(
                                 uiState = uiState,
                                 sectionType = StatsSectionType.EBIKE,
                                 onEvent = onBikeEvent
-                            )
+                            )*/
 
                             BikeDashboard(
                                 uiState = uiState,
