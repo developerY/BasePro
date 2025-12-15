@@ -1,12 +1,15 @@
-package com.ylabz.basepro.ashbike.mobile.features.glass.state
+package com.ylabz.basepro.ashbike.mobile.features.glass.data
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
+import javax.inject.Singleton
 
 // A Singleton object that lives as long as the app is running
-object BikeStateManager {
+@Singleton // 1. Tells Hilt to share ONE instance across Phone and Glass
+class GlassBikeRepository @Inject constructor() { // 2. Tells Hilt how to create it
 
     // 1. New State: Is the Glass UI currently running?
     private val _isGlassActive = MutableStateFlow(false)

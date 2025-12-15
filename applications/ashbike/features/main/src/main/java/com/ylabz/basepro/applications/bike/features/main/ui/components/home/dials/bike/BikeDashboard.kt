@@ -10,13 +10,16 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.LaunchGlassButton
 
 
 @Composable
 fun BikeDashboard(
     modifier: Modifier = Modifier,
-    //uiState: BikeUiState.Success, // Assumes this now has .glassGear
-    //onBikeEvent: (BikeEvent) -> Unit,
+    uiState: BikeUiState.Success, // Assumes this now has .glassGear
+    onBikeEvent: (BikeEvent) -> Unit,
     isBikeConnected: Boolean,
     batteryLevel: Int?,
 ) {
@@ -60,9 +63,11 @@ fun BikeDashboard(
             )
 
 
-            /*LaunchGlassButton(
-                isActive = uiState.isGlassActive,
-                onClick = { onBikeEvent(BikeEvent.LaunchGlass) }
-            )*/
+            LaunchGlassButton(
+                modifier = Modifier.fillMaxWidth(),
+                isGlassSessionActive = uiState.isGlassActive,
+                // change to onEvent
+                onButtonClick = {}// onBikeEvent(BikeEvent.LaunchGlass) },
+            )
 
         }

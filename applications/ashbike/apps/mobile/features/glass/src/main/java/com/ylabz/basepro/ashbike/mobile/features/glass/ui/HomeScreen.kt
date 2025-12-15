@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,13 +19,12 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.xr.glimmer.Button
 import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.Text
 import androidx.xr.glimmer.surface
 import com.ylabz.basepro.ashbike.mobile.features.glass.R
-import com.ylabz.basepro.ashbike.mobile.features.glass.state.BikeStateManager
+import com.ylabz.basepro.ashbike.mobile.features.glass.data.GlassBikeRepository
 
 @Composable
 fun HomeScreen(
@@ -34,10 +32,9 @@ fun HomeScreen(
     onGearChange: (Int) -> Unit,
     onOpenGearList: () -> Unit,
     onClose: () -> Unit,
+    repository: GlassBikeRepository,
     modifier: Modifier = Modifier
 ) {
-    // 1. Observe the Shared State
-    val currentGear by BikeStateManager.currentGear.collectAsStateWithLifecycle()
 
     // We use this to force focus onto the "+" button when the screen loads
     val focusRequester = remember { FocusRequester() }
@@ -77,7 +74,7 @@ fun HomeScreen(
                     Button(
                         onClick = {
                             onGearChange(currentGear - 1)
-                            BikeStateManager.gearDown()
+                            repository.gearDown()
                         }
                     ) {
                         Text("-")
@@ -89,7 +86,7 @@ fun HomeScreen(
                     Button(
                         onClick = {
                             onGearChange(currentGear + 1)
-                            BikeStateManager.gearUp()
+                            repository.gearUp()
                         },
                         modifier = Modifier.focusRequester(focusRequester)
                     ) {

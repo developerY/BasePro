@@ -28,14 +28,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.xr.projected.ProjectedContext
 import androidx.xr.projected.experimental.ExperimentalProjectedApi
 import com.ylabz.basepro.ashbike.mobile.features.glass.GlassesMainActivity
-import com.ylabz.basepro.ashbike.mobile.features.glass.state.BikeStateManager
 
 //@RequiresApi(Build.VERSION_CODES.BAKLAVA)
 @SuppressLint("NewApi")
 @OptIn(ExperimentalProjectedApi::class)
 @Composable
 fun LaunchGlassButton(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isGlassSessionActive: Boolean,
+    onButtonClick: () -> Unit
 ) {
     // 1. Safety Check: If not Android 15 (Vanilla Ice Cream), don't render anything
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return
@@ -43,7 +44,7 @@ fun LaunchGlassButton(
     val context = LocalContext.current
 
     // 1. Observe the "Alive" state from the Glass
-    val isGlassSessionActive by BikeStateManager.isGlassActive.collectAsStateWithLifecycle()
+    // val isGlassSessionActive by BikeStateManager.isGlassActive.collectAsStateWithLifecycle()
 
     // 1. Observe connection (so button disables if you unplug)
     val scope = rememberCoroutineScope()

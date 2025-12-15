@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.ylabz.basepro.ashbike.mobile.features.glass.data.GlassBikeRepository
 
 
 // Simple Enum to handle local navigation
@@ -14,7 +15,10 @@ enum class ScreenState {
 }
 
 @Composable
-fun GlassApp(onClose: () -> Unit) {
+fun GlassApp(
+    onClose: () -> Unit,
+    repository: GlassBikeRepository
+) {
     // Top-level state for the app
     var currentScreen by remember { mutableStateOf(ScreenState.HOME) }
     var currentGear by remember { mutableIntStateOf(1) }
@@ -30,7 +34,8 @@ fun GlassApp(onClose: () -> Unit) {
                     if (newGear in 1..maxGear) currentGear = newGear
                 },
                 onOpenGearList = { currentScreen = ScreenState.GEAR_LIST },
-                onClose = onClose
+                onClose = onClose,
+                repository = repository
             )
         }
         ScreenState.GEAR_LIST -> {

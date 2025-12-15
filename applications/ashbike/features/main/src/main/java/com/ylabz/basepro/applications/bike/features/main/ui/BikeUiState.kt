@@ -12,7 +12,10 @@ sealed class BikeUiState {
         val bikeData: BikeRideInfo,
         val showSetDistanceDialog: Boolean = false,
         val showGpsCountdown: Boolean = true, // Add the new property
-        val locationEnergyLevel: LocationEnergyLevel = LocationEnergyLevel.BALANCED // <<< ADD THIS LINE
+        val locationEnergyLevel: LocationEnergyLevel = LocationEnergyLevel.BALANCED, // <<< ADD THIS LINE
+        // Add these two:
+        val glassGear: Int = 1,
+        val isGlassActive: Boolean = false
     ) : BikeUiState()
 
     data class Error(val message: String) : BikeUiState()

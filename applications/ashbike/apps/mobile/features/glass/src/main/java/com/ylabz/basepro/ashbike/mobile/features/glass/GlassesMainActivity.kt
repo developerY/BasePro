@@ -3,13 +3,18 @@ package com.ylabz.basepro.ashbike.mobile.features.glass
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.xr.glimmer.GlimmerTheme
-import com.ylabz.basepro.ashbike.mobile.features.glass.state.BikeStateManager
+import com.ylabz.basepro.ashbike.mobile.features.glass.data.GlassBikeRepository
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassApp
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+
+@AndroidEntryPoint // <--- Required for Hilt injection
 class GlassesMainActivity : ComponentActivity() {
+
+    // Inject the shared repository instance
+    @Inject lateinit var repository: GlassBikeRepository
     private lateinit var audioInterface: AudioInterface
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,15 +27,18 @@ class GlassesMainActivity : ComponentActivity() {
         lifecycle.addObserver(audioInterface)
 
         // 1a. Session State: Tracks if the app process is alive
-        BikeStateManager.setGlassActive(true)
+        repository.setGlassActive(true)
 
         setContent {
             GlimmerTheme {
-                GlassApp(onClose = {
+                GlassApp(
+                    onClose = {
                     audioInterface.speak("Goodbye!")
                     // Delay slightly or ensure speak finishes if possible, then finish
                     finish()
-                })
+                },
+                    repository = repository
+                )
             }
         }
     }
@@ -56,15 +64,6 @@ class GlassesMainActivity : ComponentActivity() {
         super.onDestroy()
         // 2a. Tell the phone we are gone.
         // 4. Cleanup: Tell the phone the connection is fully closed
-        BikeStateManager.setGlassActive(false)
-    }
-}
-
-
-@Preview(device = "id:ai_glasses_device", backgroundColor = 0x00FF00)
-@Composable
-fun DefaultPreview() {
-    GlimmerTheme {
-        GlassApp(onClose = {})
+        repository.setGlassActive(false)
     }
 }

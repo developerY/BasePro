@@ -56,6 +56,9 @@ dependencies {
     // Icons
     implementation(libs.androidx.material.icons.extended)
 
+    // Hilt
+    implementation(libs.hilt.android)
+
     // --- XR / Glass (Glimmer) ---
     // Specifically required for GlimmerTheme, Button, Card, surface, etc.
     implementation(libs.androidx.glimmer)

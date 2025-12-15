@@ -37,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ylabz.basepro.applications.bike.features.main.R
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
@@ -47,7 +46,6 @@ import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dial
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.bike.BikeDashboard
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.SpeedAndProgressCard
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatsRow
-import com.ylabz.basepro.ashbike.mobile.features.glass.state.BikeStateManager
 import com.ylabz.basepro.core.model.bike.RideState
 import com.ylabz.basepro.core.model.yelp.BusinessInfo
 import com.ylabz.basepro.core.ui.NavigationCommand
@@ -62,10 +60,6 @@ fun BikeDashboardContent(
     placeName: String?, // Added parameter
     onFindCafes: () -> Unit // Added parameter
 ) {
-
-    // 1. Observe the Shared State from the Glass Module
-    // This value will update instantly when the user taps the glasses trackpad
-    val currentGear by BikeStateManager.currentGear.collectAsStateWithLifecycle()
 
     var isMapPanelVisible by rememberSaveable { mutableStateOf(false) }
     val bikeRideInfo = uiState.bikeData
@@ -166,6 +160,9 @@ fun BikeDashboardContent(
                             )
 
                             BikeDashboard(
+                                uiState = uiState,
+                                onBikeEvent = onBikeEvent,
+                                // navTo = navTo,
                                 isBikeConnected = isBikeConnected,
                                 batteryLevel = batteryLevel
                             )

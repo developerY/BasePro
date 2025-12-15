@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.database.repository.AppSettingsRepository
 import com.ylabz.basepro.applications.bike.features.main.service.BikeForegroundService
-import com.ylabz.basepro.applications.bike.features.main.util.combine
+import com.ylabz.basepro.ashbike.mobile.features.glass.data.GlassBikeRepository
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
@@ -23,9 +23,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,7 +34,9 @@ import javax.inject.Inject
 class BikeViewModel @Inject constructor(
     private val application: Application, // <-- Inject Application here
     private val weatherUseCase: WeatherUseCase, // Inject WeatherUseCase here
-    private val appSettingsRepository: AppSettingsRepository
+    private val appSettingsRepository: AppSettingsRepository,
+    // 1. INJECT THE GLASS REPO (Even if it's an object, injecting it is cleaner for testing)
+    private val glassRepository: GlassBikeRepository
 ) : ViewModel() {
 
     // --- Navigation Channel ---
@@ -93,7 +95,9 @@ class BikeViewModel @Inject constructor(
         val weather: BikeWeatherInfo?,
         val showDialog: Boolean,
         val showGpsCountdown: Boolean,
-        val gpsAccuracy: LocationEnergyLevel
+        val gpsAccuracy: LocationEnergyLevel,
+        val glassGear: Int,       // <--- NEW
+        val isGlassActive: Boolean // <--- NEW
     )
 
     private fun observeServiceData() {
@@ -102,17 +106,35 @@ class BikeViewModel @Inject constructor(
             bikeService?.let { service ->
                 Log.d("BikeViewModel", "Starting to collect from service.rideInfo.")
 
-                combine(
-                    service.rideInfo.sample(1000L).onEach { rideInfo ->
-                    },
-                    _uiPathDistance,
-                    _weatherInfo,
+                // 1. HELPER FLOW A: Group the Glass Data (Reduces 2 flows -> 1 flow)
+                val glassStateFlow = combine(
+                    glassRepository.currentGear,
+                    glassRepository.isGlassActive
+                ) { gear, active ->
+                    Pair(gear, active) // Or create a data class GlassState(gear, active)
+                }
+
+                // 2. HELPER FLOW B: Group the UI Flags (Reduces 3 flows -> 1 flow)
+                val uiFlagsFlow = combine(
                     _showSetDistanceDialog,
                     _showGpsCountdownFlow,
-                    appSettingsRepository.gpsAccuracyFlow.onEach { newLevel ->
-                        Log.d("BikeViewModel_DEBUG", "gpsAccuracyFlow from repo emitted: $newLevel")
-                    }
-                ) { rideInfo, totalDistance, weather, showDialog, showCountdown, gpsAccuracy ->
+                    _uiPathDistance
+                ) { showDialog, showCountdown, distance ->
+                    Triple(showDialog, showCountdown, distance)
+                }
+
+                // 3. MAIN COMBINE: Now we only have 5 inputs! (Safe & Clean)
+                combine(
+                    service.rideInfo.sample(1000L),
+                    _weatherInfo,
+                    appSettingsRepository.gpsAccuracyFlow,
+                    glassStateFlow, // The grouped Glass data
+                    uiFlagsFlow     // The grouped UI flags
+                ) { rideInfo, weather, gpsAccuracy, glassState, uiFlags ->
+
+                    // Unpack the helper objects
+                    val (glassGear, isGlassActive) = glassState
+                    val (showDialog, showCountdown, totalDistance) = uiFlags
                     // Log inside the combine lambda
                     Log.d(
                         "BikeViewModel_DEBUG",
@@ -124,7 +146,9 @@ class BikeViewModel @Inject constructor(
                         weather,
                         showDialog,
                         showCountdown,
-                        gpsAccuracy
+                        gpsAccuracy,
+                        glassGear,     // Pass to data holder
+                        isGlassActive  // Pass to data holder
                     )
                 }
                     // 2. MAP: This block's job is to transform the raw data into the final UI State.
@@ -139,7 +163,11 @@ class BikeViewModel @Inject constructor(
                             ),
                             showSetDistanceDialog = data.showDialog,
                             showGpsCountdown = data.showGpsCountdown,
-                            locationEnergyLevel = data.gpsAccuracy // <<< USE data.gpsAccuracy HERE
+                            locationEnergyLevel = data.gpsAccuracy, // <<< USE data.gpsAccuracy HERE
+                            // 4. POPULATE UI STATE
+                            // (Ensure you added these fields to BikeUiState.Success data class)
+                            glassGear = data.glassGear,
+                            isGlassActive = data.isGlassActive
                         )
                         // Log the state being emitted and the key gpsAccuracy value from CombinedData
                         Log.d(
@@ -233,6 +261,15 @@ class BikeViewModel @Inject constructor(
                 )
                 // TODO: Add any ViewModel-specific logic for this event if required in the future.
             }
+
+            // 5. HANDLE GLASS EVENTS
+            // If the Phone UI has controls to change gears (e.g. testing buttons), handle them here.
+            // If the 'Launch' logic is purely UI-side (Activity start), you might not need an event here,
+            // but if you want to track it or reset state:
+            /*
+            BikeEvent.GearUp -> glassRepository.gearUp()
+            BikeEvent.GearDown -> glassRepository.gearDown()
+            */
         }
     }
 
