@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.bike
+package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.bike.unused
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,15 +17,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.ashbike.mobile.features.glass.state.BikeStateManager.currentGear
 
 @Composable
-fun BikeGearsIndicator(modifier: Modifier = Modifier) {
+fun BikeGearsIndicatorNotUsed(
+    modifier: Modifier = Modifier
+
+) {
 
     // --- ADDED: Live Gear Display Box ---
     // This Gray Box mimics the style of your other stats
@@ -61,7 +62,7 @@ fun BikeGearsIndicator(modifier: Modifier = Modifier) {
                 )
                 // The Live Number
                 Text(
-                    text = "${currentGear.collectAsState().value}",
+                    text = "not used ",// "${currentGear.collectAsState().value}",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
