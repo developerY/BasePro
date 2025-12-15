@@ -44,12 +44,10 @@ import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.SlidableGoogleMap
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.StatsSection
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.StatsSectionType
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.bike.BikeBatteryLevels
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.bike.BikeGearsIndicator
+import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.bike.BikeDashboard
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.SpeedAndProgressCard
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main.StatsRow
 import com.ylabz.basepro.ashbike.mobile.features.glass.state.BikeStateManager
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.LaunchGlassButton
 import com.ylabz.basepro.core.model.bike.RideState
 import com.ylabz.basepro.core.model.yelp.BusinessInfo
 import com.ylabz.basepro.core.ui.NavigationCommand
@@ -167,23 +165,10 @@ fun BikeDashboardContent(
                                 onEvent = onBikeEvent
                             )
 
-                            BikeBatteryLevels(
-                                isConnected = isBikeConnected,
-                                batteryLevel = batteryLevel,
-                                onConnectClick = { /* TODO */ }
+                            BikeDashboard(
+                                isBikeConnected = isBikeConnected,
+                                batteryLevel = batteryLevel
                             )
-
-                            BikeGearsIndicator()
-
-
-                            // Just a place holder -- drop this here.
-                            // It will be invisible 99% of the time,
-                            // and appear magically when glasses are plugged in.
-                            // Only render the Launch button if we are on API 36+ (Android 16 / Baklava)
-                            // Note: XR features typically start at API 35 (Android 15), but this adheres to your request for 36.
-                            //if (DeviceCapabilities.supportsGlassFeatures) {
-                                LaunchGlassButton()
-                            //}
                         }
                     }
                 }
