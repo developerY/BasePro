@@ -66,6 +66,13 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
 
+    // Nav3
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.material3.adaptive.navigation3)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3) // Added for ViewModel scoping
+    implementation(libs.kotlinx.serialization.json) // Added for @Serializable NavKey
+
     // --- XR / Glass (Glimmer) ---
     // Specifically required for GlimmerTheme, Button, Card, surface, etc.
     implementation(libs.androidx.glimmer)

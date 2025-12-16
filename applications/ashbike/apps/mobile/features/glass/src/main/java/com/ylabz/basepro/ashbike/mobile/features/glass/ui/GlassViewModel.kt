@@ -1,10 +1,8 @@
-package com.ylabz.basepro.ashbike.mobile.features.glass
+package com.ylabz.basepro.ashbike.mobile.features.glass.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.ashbike.mobile.features.glass.data.GlassBikeRepository
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassUiEvent
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
