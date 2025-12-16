@@ -36,8 +36,7 @@ class GlassesMainActivity : ComponentActivity() {
                     audioInterface.speak("Goodbye!")
                     // Delay slightly or ensure speak finishes if possible, then finish
                     finish()
-                },
-                    repository = repository
+                }
                 )
             }
         }

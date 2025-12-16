@@ -1,11 +1,12 @@
 package com.ylabz.basepro.ashbike.mobile.features.glass.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.ylabz.basepro.ashbike.mobile.features.glass.data.GlassBikeRepository
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ylabz.basepro.ashbike.mobile.features.glass.GlassViewModel
 
 
 // Simple Enum to handle local navigation
@@ -17,32 +18,34 @@ enum class ScreenState {
 @Composable
 fun GlassApp(
     onClose: () -> Unit,
-    repository: GlassBikeRepository
+    viewModel: GlassViewModel = hiltViewModel(),
 ) {
+
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     // Top-level state for the app
     var currentScreen by remember { mutableStateOf(ScreenState.HOME) }
-    var currentGear by remember { mutableIntStateOf(1) }
-    val maxGear = 12
+
+
 
     // Simple Navigation Switcher
     when (currentScreen) {
         ScreenState.HOME -> {
             HomeScreen(
-                currentGear = currentGear,
+                currentGear = uiState.currentGear,
                 onGearChange = { newGear ->
                     // Boundary checks
-                    if (newGear in 1..maxGear) currentGear = newGear
+                    if (newGear in 1..12) uiState.currentGear = newGear
                 },
                 onOpenGearList = { currentScreen = ScreenState.GEAR_LIST },
                 onClose = onClose,
-                repository = repository
+                // repository = repository
             )
         }
         ScreenState.GEAR_LIST -> {
             GearSelectionScreen(
-                currentGear = currentGear,
+                currentGear = uiState.currentGear,
                 onGearSelected = { selectedGear ->
-                    currentGear = selectedGear
+                    uiState.currentGear = selectedGear
                     currentScreen = ScreenState.HOME // Go back after selection
                 }
             )

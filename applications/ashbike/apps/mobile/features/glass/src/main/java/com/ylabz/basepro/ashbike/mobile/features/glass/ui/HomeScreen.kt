@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -24,7 +25,6 @@ import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.Text
 import androidx.xr.glimmer.surface
 import com.ylabz.basepro.ashbike.mobile.features.glass.R
-import com.ylabz.basepro.ashbike.mobile.features.glass.data.GlassBikeRepository
 
 @Composable
 fun HomeScreen(
@@ -33,8 +33,9 @@ fun HomeScreen(
     onGearChange: (Int) -> Unit,
     onOpenGearList: () -> Unit,
     onClose: () -> Unit,
-    repository: GlassBikeRepository,
+    // repository: GlassBikeRepository,
 ) {
+
 
     // We use this to force focus onto the "+" button when the screen loads
     val focusRequester = remember { FocusRequester() }
@@ -74,7 +75,7 @@ fun HomeScreen(
                     Button(
                         onClick = {
                             onGearChange(currentGear - 1)
-                            repository.gearDown()
+                            //repository.gearDown()
                         }
                     ) {
                         Text("-")
@@ -86,11 +87,26 @@ fun HomeScreen(
                     Button(
                         onClick = {
                             onGearChange(currentGear + 1)
-                            repository.gearUp()
+                            //repository.gearUp()
                         },
                         modifier = Modifier.focusRequester(focusRequester)
                     ) {
                         Text("+")
+                    }
+                }
+
+                // --- NEW SUSPENSION ROW ---
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Suspension:", style = MaterialTheme.typography.labelMedium)
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Button(
+                        onClick = {
+                            // onEvent(GlassUiEvent.ToggleSuspension)
+                        }
+                    ) {
+                        // Shows: "Open", "Trail", or "Lock"
+                        Text("Suspension Setting ... ")//state.suspension.label)
                     }
                 }
 

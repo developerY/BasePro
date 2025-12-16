@@ -3,12 +3,12 @@ package com.ylabz.basepro.ashbike.mobile.features.glass
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.ashbike.mobile.features.glass.data.GlassBikeRepository
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassEvent
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassUiEvent
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,25 +25,33 @@ class GlassViewModel @Inject constructor(
         // Listen to the shared repository
         viewModelScope.launch {
             // 3. Use 'repository' instance, not the class name
-            repository.currentGear.collect { gear ->
-                _uiState.update { it.copy(currentGear = gear) }
+            // Combine Gear AND Suspension updates
+            combine(
+                repository.currentGear,
+                repository.suspensionState
+            ) { gear, susp ->
+                GlassUiState(currentGear = gear, suspension = susp)
+            }.collect { newState ->
+                _uiState.value = newState
             }
         }
     }
 
-    fun onEvent(event: GlassEvent) {
+    fun onEvent(event: GlassUiEvent) {
         when(event) {
             // 4. Call methods on the injected instance
-            GlassEvent.GearUp -> repository.gearUp()
-            GlassEvent.GearDown -> repository.gearDown()
+            GlassUiEvent.GearUp -> repository.gearUp()
+            GlassUiEvent.GearDown -> repository.gearDown()
 
             // For now, these might be handled by the UI/Activity directly,
             // or you can add logic here if needed.
-            GlassEvent.CloseApp -> { /* handled in UI/Activity */ }
-            is GlassEvent.SelectGear -> {
+            GlassUiEvent.CloseApp -> { /* handled in UI/Activity */ }
+            is GlassUiEvent.SelectGear -> {
                 // If you want the list to update the gear:
                 // repository.setGear(event.gear)
             }
+
+            GlassUiEvent.ToggleSuspension -> repository.toggleSuspension()
         }
     }
 }

@@ -32,4 +32,19 @@ class GlassBikeRepository @Inject constructor() { // 2. Tells Hilt how to create
             if (current > 1) current - 1 else current
         }
     }
+
+    // 1. New State for Suspension
+    private val _suspensionState = MutableStateFlow(SuspensionState.OPEN)
+    val suspensionState = _suspensionState.asStateFlow()
+
+    // 2. Logic to cycle modes: Open -> Trail -> Lock -> Open
+    fun toggleSuspension() {
+        _suspensionState.update { current ->
+            when (current) {
+                SuspensionState.OPEN -> SuspensionState.TRAIL
+                SuspensionState.TRAIL -> SuspensionState.LOCK
+                SuspensionState.LOCK -> SuspensionState.OPEN
+            }
+        }
+    }
 }
