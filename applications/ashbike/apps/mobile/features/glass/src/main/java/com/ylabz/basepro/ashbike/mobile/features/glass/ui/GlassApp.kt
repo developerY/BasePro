@@ -30,20 +30,26 @@ fun GlassApp(
     when (currentScreen) {
         ScreenState.HOME -> {
             HomeScreen(
-                currentGear = uiState.currentGear,
-                onGearChange = { newGear ->
-                    // Boundary checks
-                    if (newGear in 1..12) uiState.currentGear = newGear
-                },
-                onOpenGearList = { currentScreen = ScreenState.GEAR_LIST },
-                onClose = onClose,
-                // repository = repository
+                uiState = uiState,
+                onEvent = { event ->
+                    // ROUTING LOGIC:
+                    when (event) {
+                        // 1. Navigation Events -> Handle Locally
+                        GlassUiEvent.OpenGearList -> currentScreen = ScreenState.GEAR_LIST
+                        GlassUiEvent.CloseApp -> onClose()
+
+                        // 2. Business Events -> Send to ViewModel
+                        else -> viewModel.onEvent(event)
+                    }
+                }
             )
         }
         ScreenState.GEAR_LIST -> {
+            // Preserving your logic for Gear Selection
             GearSelectionScreen(
                 currentGear = uiState.currentGear,
                 onGearSelected = { selectedGear ->
+                    // Send change to VM, then nav back
                     uiState.currentGear = selectedGear
                     currentScreen = ScreenState.HOME // Go back after selection
                 }

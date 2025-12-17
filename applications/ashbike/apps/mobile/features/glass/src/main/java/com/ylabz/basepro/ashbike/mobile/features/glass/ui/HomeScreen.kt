@@ -25,16 +25,12 @@ import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.Text
 import androidx.xr.glimmer.surface
 import com.ylabz.basepro.ashbike.mobile.features.glass.R
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.nav.MainGlassNavigation
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    currentGear: Int,
-    onGearChange: (Int) -> Unit,
-    onOpenGearList: () -> Unit,
-    onClose: () -> Unit,
-    // repository: GlassBikeRepository,
+    uiState: GlassUiState,           // DATA IN
+    onEvent: (GlassUiEvent) -> Unit  // EVENTS OUT
 ) {
 
 
@@ -50,7 +46,8 @@ fun HomeScreen(
         Card(
             title = { Text("AshBike Control") },
             action = {
-                Button(onClick = onClose) {
+                // Fires the CloseApp event
+                Button(onClick = { onEvent(GlassUiEvent.CloseApp) }) {
                     Text(stringResource(id = R.string.close))
                 }
             }
@@ -62,8 +59,8 @@ fun HomeScreen(
                 Text(text = "Current Gear")
 
                 // Big text for visibility
-                Text(text = "Current Gear", fontSize = 24.sp)
-                Text(text = "$currentGear", fontSize = 60.sp) // Shows the synced value
+                // DATA: Bind to uiState
+                Text(text = "${uiState.currentGear}", fontSize = 60.sp)
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -72,24 +69,16 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // DOWN BUTTON
-                    Button(
-                        onClick = {
-                            onGearChange(currentGear - 1)
-                            //repository.gearDown()
-                        }
-                    ) {
+                    // DOWN
+                    Button(onClick = { onEvent(GlassUiEvent.GearDown) }) {
                         Text("-")
                     }
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    // UP BUTTON (Default Focus)
+                    // UP
                     Button(
-                        onClick = {
-                            onGearChange(currentGear + 1)
-                            //repository.gearUp()
-                        },
+                        onClick = { onEvent(GlassUiEvent.GearUp) },
                         modifier = Modifier.focusRequester(focusRequester)
                     ) {
                         Text("+")
@@ -113,8 +102,9 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+
                 // Secondary Control: Open the Full List
-                Button(onClick = onOpenGearList) {
+                Button(onClick = { onEvent(GlassUiEvent.OpenGearList) }) {
                     Text("Select from List")
                 }
             }
