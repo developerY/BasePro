@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ylabz.basepro.ashbike.mobile.features.glass.GlassViewModel
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.nav.MainGlassNavigation
 
 
 // Simple Enum to handle local navigation
@@ -30,7 +31,7 @@ fun GlassApp(
     // Simple Navigation Switcher
     when (currentScreen) {
         ScreenState.HOME -> {
-            HomeScreenTest(
+            MainGlassNavigation(
                 currentGear = uiState.currentGear,
                 onGearChange = { newGear ->
                     // Boundary checks

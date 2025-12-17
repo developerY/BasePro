@@ -30,10 +30,18 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.HomeScreen
 import kotlinx.coroutines.launch
 
 @Composable
-fun MainGlassNavigation() {
+fun MainGlassNavigation(
+    modifier: Modifier = Modifier,
+    currentGear: Int,
+    onGearChange: (Int) -> Unit,
+    onOpenGearList: () -> Unit,
+    onClose: () -> Unit,
+    // repository: GlassBikeRepository,
+) {
     val pageCount = 3
     val pagerState = rememberPagerState(pageCount = { pageCount })
     val coroutineScope = rememberCoroutineScope()
@@ -92,7 +100,20 @@ fun MainGlassNavigation() {
             modifier = Modifier.fillMaxSize()
         ) { pageIndex ->
             when (pageIndex) {
-                0 -> NotificationsPage() // Left
+                0 -> HomeScreen(
+                    currentGear = currentGear,
+                    onGearChange = { newGear ->
+                        //onEvent(GlassUiEvent.OnGearChange(newGear))
+                    },
+                    onOpenGearList = {
+                        //onEvent(GlassUiEvent.OnOpenGearList)
+                    },
+                    onClose = onClose,
+                    // Note: Try to avoid passing repository here if possible;
+                    // pass specific data from state instead.
+                    // But if HomeScreen needs raw repo access, you can keep it.
+                    // repository = null
+                ) //NotificationsPage() // Left
                 1 -> DashboardPage()     // Center (Start here normally)
                 2 -> SettingsPage()      // Right
             }
