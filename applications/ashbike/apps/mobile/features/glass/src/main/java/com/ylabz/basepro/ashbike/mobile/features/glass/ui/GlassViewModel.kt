@@ -20,15 +20,17 @@ class GlassViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
-        // Listen to the shared repository
         viewModelScope.launch {
-            // 3. Use 'repository' instance, not the class name
-            // Combine Gear AND Suspension updates
+            // Combine flows from Repository to update UI automatically
             combine(
                 repository.currentGear,
                 repository.suspensionState
             ) { gear, susp ->
-                GlassUiState(currentGear = gear, suspension = susp)
+                // Create new state whenever either value changes
+                _uiState.value.copy(
+                    currentGear = gear,
+                    suspension = susp
+                )
             }.collect { newState ->
                 _uiState.value = newState
             }
@@ -40,6 +42,7 @@ class GlassViewModel @Inject constructor(
             // 4. Call methods on the injected instance
             GlassUiEvent.GearUp -> repository.gearUp()
             GlassUiEvent.GearDown -> repository.gearDown()
+            GlassUiEvent.ToggleSuspension -> repository.toggleSuspension()
 
             // For now, these might be handled by the UI/Activity directly,
             // or you can add logic here if needed.
@@ -49,7 +52,10 @@ class GlassViewModel @Inject constructor(
                 // repository.setGear(event.gear)
             }
 
-            GlassUiEvent.ToggleSuspension -> repository.toggleSuspension()
+            // Navigation events are handled by the Compose UI layer (GlassApp),
+            // but we list them here to be exhaustive or if we wanted to log them.
+            GlassUiEvent.CloseApp -> {}
+            GlassUiEvent.OpenGearList -> {}
         }
     }
 }
