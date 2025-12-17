@@ -27,49 +27,8 @@ import androidx.xr.glimmer.surface
 import com.ylabz.basepro.ashbike.mobile.features.glass.R
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.nav.MainGlassNavigation
 
-
-@Composable
-fun HomeScreenTest(
-    modifier: Modifier = Modifier,
-    currentGear: Int,
-    onGearChange: (Int) -> Unit,
-    onOpenGearList: () -> Unit,
-    onClose: () -> Unit,
-    // repository: GlassBikeRepository,
-) {
-
-    // We use this to force focus
-    MainGlassNavigation(
-        currentGear = currentGear,
-        onGearChange = { newGear ->
-            //onEvent(GlassUiEvent.OnGearChange(newGear))
-        },
-        onOpenGearList = {
-            //onEvent(GlassUiEvent.OnOpenGearList)
-        },
-        onClose = onClose,
-        // Note: Try to avoid passing repository here if possible;
-        // pass specific data from state instead.
-        // But if HomeScreen needs raw repo access, you can keep it.
-        // repository = null
-
-    )
-}
-
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier,
-    currentGear: Int,
-    onGearChange: (Int) -> Unit,
-    onOpenGearList: () -> Unit,
-    onClose: () -> Unit,
-    // repository: GlassBikeRepository,
-) {
-    MainGlassNavigation()
-}
-
-@Composable
-fun HomeScreenFull(
     modifier: Modifier = Modifier,
     currentGear: Int,
     onGearChange: (Int) -> Unit,
