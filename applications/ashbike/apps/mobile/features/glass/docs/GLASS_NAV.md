@@ -100,6 +100,20 @@ override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
 
 ```
 
+com.seacatz.ashbike
+├── data/
+├── domain/
+├── ui/
+│    ├── components/      (Buttons, MetricCards)
+│    ├── screens/
+│    │    ├── dashboard/  (LiveDashboardView.kt)
+│    │    ├── settings/   (SettingsView.kt)
+│    │    └── summary/    (RideSummaryView.kt)
+│    ├── navigation/      <-- PUT IT HERE
+│    │    └── GlassNavigation.kt
+│    └── theme/
+└── MainActivity.kt
+
 ## Summary Checklist
 
 * [ ] **Avoid Deep Stacks:** Try to keep the app to 2 levels max (Main View -> Detail View).
