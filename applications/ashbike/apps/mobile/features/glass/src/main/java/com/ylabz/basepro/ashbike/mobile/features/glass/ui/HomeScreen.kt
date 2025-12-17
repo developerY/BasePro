@@ -54,11 +54,22 @@ fun HomeScreenTest(
         // repository = null
 
     )
-
 }
 
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
+    currentGear: Int,
+    onGearChange: (Int) -> Unit,
+    onOpenGearList: () -> Unit,
+    onClose: () -> Unit,
+    // repository: GlassBikeRepository,
+) {
+    MainGlassNavigation()
+}
+
+@Composable
+fun HomeScreenFull(
     modifier: Modifier = Modifier,
     currentGear: Int,
     onGearChange: (Int) -> Unit,
