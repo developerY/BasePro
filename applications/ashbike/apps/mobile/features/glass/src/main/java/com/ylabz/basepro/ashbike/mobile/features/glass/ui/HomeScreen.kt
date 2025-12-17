@@ -25,9 +25,26 @@ import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.Text
 import androidx.xr.glimmer.surface
 import com.ylabz.basepro.ashbike.mobile.features.glass.R
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.nav.MainGlassNavigation
+
 
 @Composable
-fun HomeScreen(
+fun HomeScreenTest(
+    modifier: Modifier = Modifier,
+    currentGear: Int,
+    onGearChange: (Int) -> Unit,
+    onOpenGearList: () -> Unit,
+    onClose: () -> Unit,
+    // repository: GlassBikeRepository,
+) {
+
+    // We use this to force focus
+    MainGlassNavigation()
+
+}
+
+@Composable
+fun HomeScreenFull(
     modifier: Modifier = Modifier,
     currentGear: Int,
     onGearChange: (Int) -> Unit,

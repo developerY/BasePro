@@ -30,7 +30,7 @@ fun GlassApp(
     // Simple Navigation Switcher
     when (currentScreen) {
         ScreenState.HOME -> {
-            HomeScreen(
+            HomeScreenTest(
                 currentGear = uiState.currentGear,
                 onGearChange = { newGear ->
                     // Boundary checks

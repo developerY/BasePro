@@ -3,14 +3,14 @@ package com.ylabz.basepro.ashbike.mobile.features.glass.ui
 import androidx.compose.runtime.Composable
 
 @Composable
-fun GlassScreen(
+fun GlassScreenNOTUSED(
     uiState: GlassUiState,
     onEvent: (GlassUiEvent) -> Unit,
     onClose: () -> Unit
 ) {
     when (uiState.currentScreen) {
         ScreenState.HOME -> {
-            HomeScreen(
+            HomeScreenTest(
                 currentGear = uiState.currentGear,
                 onGearChange = { newGear ->
                     //onEvent(GlassUiEvent.OnGearChange(newGear))
