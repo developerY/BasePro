@@ -12,6 +12,12 @@ class BikeRepositoryImpl @Inject constructor(
     // private val bikeBluetoothDataSource: BikeBluetoothDataSource
 ) : BikeRepository {
 
+    // 1. The Backing Field
+    private val _isGlassConnected = MutableStateFlow(false)
+
+    // 2. The Public Stream
+    override val isGlassConnected = _isGlassConnected.asStateFlow()
+
     private val _currentGear = MutableStateFlow(1)
     override val currentGear = _currentGear.asStateFlow()
 
@@ -20,6 +26,12 @@ class BikeRepositoryImpl @Inject constructor(
 
     private val _isConnected = MutableStateFlow(false)
     override val isConnected = _isConnected.asStateFlow()
+
+    // 3. The Action
+    // This is usually called by a Service that detects the Glass accessory
+    override suspend fun updateGlassConnectionState(isConnected: Boolean) {
+        _isGlassConnected.emit(isConnected)
+    }
 
     override suspend fun gearUp() {
         if (_currentGear.value < 12) {
@@ -45,5 +57,17 @@ class BikeRepositoryImpl @Inject constructor(
 
     override suspend fun setGear(gear: Int) {
         if (gear in 1..12) _currentGear.value = gear
+    }
+
+    override suspend fun connectToBike(address: String) {
+        // TODO("Not yet implemented")
+        // AshBike HW not ready
+        // Log.d("BikeRepositoryImpl", "connectToBike called with address: $address")
+    }
+
+    override suspend fun disconnectBike() {
+        // TODO("Not yet implemented")
+        // AshBike HW not ready
+        // Log.d("BikeRepositoryImpl", "disconnectBike called")
     }
 }
