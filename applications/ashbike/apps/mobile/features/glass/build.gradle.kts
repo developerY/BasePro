@@ -61,6 +61,7 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
+    implementation(libs.androidx.lifecycle.process)
     ksp(libs.hilt.android.compiler)   // Hilt compiler dependency for annotation processing
     implementation(libs.hilt.navigation.compose) // viewmodel injection
 

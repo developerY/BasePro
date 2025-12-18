@@ -3,6 +3,7 @@ package com.ylabz.basepro.ashbike.mobile.features.glass
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.xr.glimmer.GlimmerTheme
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassApp
@@ -78,20 +79,9 @@ class GlassesMainActivity : ComponentActivity() {
         super.onDestroy()
         // 2a. Tell the phone we are gone.
         // 4. Cleanup: Tell the phone the connection is fully closed
-
-        // 3. CLEANUP: Set state to FALSE when app is killed/closed
-        // We use GlobalScope or a non-cancellable scope here because
-        // lifecycleScope is cancelled immediately in onDestroy.
-        // HOWEVER, since the repo is a Singleton, simply launching in
-        // lifecycleScope might be too late if the repo is cleared.
-        //
-        // Better approach: Launch a cleanup job before super.onDestroy()
-        // or rely on the socket disconnection if using Bluetooth.
-        // For local simulation:
-
-        // Note: In a real app, you might want to use ProcessLifecycleOwner
-        // or a Service to guarantee this runs, but for this demo:
-        kotlinx.coroutines.GlobalScope.launch {
+        // Best Practice: Use the Process scope.
+        // This survives the Activity destruction but is tied to the App lifecycle.
+        ProcessLifecycleOwner.get().lifecycleScope.launch {
             repository.updateGlassConnectionState(false)
         }
     }
