@@ -1,8 +1,8 @@
 package com.ylabz.basepro.core.data.di
 
-import com.ylabz.basepro.core.data.repository.bikeConnectivity.BikeConnectivityRepository
-import com.ylabz.basepro.core.data.repository.bikeConnectivity.BikeConnectivityRepositoryImpl
-import com.ylabz.basepro.core.data.repository.bikeConnectivity.DemoBikeConnectivityRepositoryImpl
+import com.ylabz.basepro.core.data.repository.bike.BikeConnectivityRepository
+import com.ylabz.basepro.core.data.repository.bike.BikeConnectivityRepositoryImpl
+import com.ylabz.basepro.core.data.repository.bike.DemoBikeConnectivityRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

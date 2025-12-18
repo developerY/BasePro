@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.xr.glimmer.GlimmerTheme
-import com.ylabz.basepro.ashbike.mobile.features.glass.data.GlassBikeRepository
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassApp
+import com.ylabz.basepro.core.data.repository.bike.BikeRepository
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -14,7 +14,7 @@ import javax.inject.Inject
 class GlassesMainActivity : ComponentActivity() {
 
     // Inject the shared repository instance
-    @Inject lateinit var repository: GlassBikeRepository
+    @Inject lateinit var repository: BikeRepository
     private lateinit var audioInterface: AudioInterface
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +27,7 @@ class GlassesMainActivity : ComponentActivity() {
         lifecycle.addObserver(audioInterface)
 
         // 1a. Session State: Tracks if the app process is alive
-        repository.setGlassActive(true)
+        repository.setConnection(true)
 
         setContent {
             GlimmerTheme {

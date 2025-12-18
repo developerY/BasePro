@@ -1,6 +1,7 @@
 package com.ylabz.basepro.ashbike.mobile.features.glass.ui
 
-import com.ylabz.basepro.ashbike.mobile.features.glass.data.SuspensionState
+import com.ylabz.basepro.core.model.bike.SuspensionState
+
 
 data class GlassUiState(
     var currentGear: Int = 1,

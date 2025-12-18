@@ -1,4 +1,4 @@
-package com.ylabz.basepro.core.data.repository.bikeConnectivity
+package com.ylabz.basepro.core.data.repository.bike
 
 import android.util.Log
 import com.ylabz.basepro.core.model.bike.BikeMotorData

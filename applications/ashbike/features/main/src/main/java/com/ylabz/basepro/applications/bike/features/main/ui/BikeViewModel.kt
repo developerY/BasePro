@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.database.repository.AppSettingsRepository
 import com.ylabz.basepro.applications.bike.features.main.service.BikeForegroundService
-import com.ylabz.basepro.ashbike.mobile.features.glass.data.GlassBikeRepository
+import com.ylabz.basepro.core.data.repository.bike.BikeRepository
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
@@ -36,7 +36,7 @@ class BikeViewModel @Inject constructor(
     private val weatherUseCase: WeatherUseCase, // Inject WeatherUseCase here
     private val appSettingsRepository: AppSettingsRepository,
     // 1. INJECT THE GLASS REPO (Even if it's an object, injecting it is cleaner for testing)
-    private val glassRepository: GlassBikeRepository
+    private val bikeRepository: BikeRepository
 ) : ViewModel() {
 
     // --- Navigation Channel ---
@@ -108,8 +108,8 @@ class BikeViewModel @Inject constructor(
 
                 // 1. HELPER FLOW A: Group the Glass Data (Reduces 2 flows -> 1 flow)
                 val glassStateFlow = combine(
-                    glassRepository.currentGear,
-                    glassRepository.isGlassActive
+                    bikeRepository.currentGear,
+                    bikeRepository.isConnected
                 ) { gear, active ->
                     Pair(gear, active) // Or create a data class GlassState(gear, active)
                 }

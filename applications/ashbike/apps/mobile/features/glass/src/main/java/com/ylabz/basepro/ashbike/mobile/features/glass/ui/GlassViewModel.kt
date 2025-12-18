@@ -2,7 +2,7 @@ package com.ylabz.basepro.ashbike.mobile.features.glass.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ylabz.basepro.ashbike.mobile.features.glass.data.GlassBikeRepository
+import com.ylabz.basepro.core.data.repository.bike.BikeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel // 1. Add this annotation
 class GlassViewModel @Inject constructor(
-    private val repository: GlassBikeRepository // 2. Inject the repository instance
+    private val repository: BikeRepository // 2. Inject the repository instance
 ) : ViewModel() {
 
     // UI State for the Glass Screen
@@ -40,9 +40,9 @@ class GlassViewModel @Inject constructor(
     fun onEvent(event: GlassUiEvent) {
         when(event) {
             // 4. Call methods on the injected instance
-            GlassUiEvent.GearUp -> repository.gearUp()
-            GlassUiEvent.GearDown -> repository.gearDown()
-            GlassUiEvent.ToggleSuspension -> repository.toggleSuspension()
+            GlassUiEvent.GearUp -> { viewModelScope.launch { repository.gearUp() } }
+            GlassUiEvent.GearDown -> { viewModelScope.launch { repository.gearDown() } }
+            GlassUiEvent.ToggleSuspension -> { viewModelScope.launch { repository.toggleSuspension() } }
 
             // For now, these might be handled by the UI/Activity directly,
             // or you can add logic here if needed.

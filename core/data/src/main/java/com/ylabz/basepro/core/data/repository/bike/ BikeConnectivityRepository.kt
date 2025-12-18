@@ -1,4 +1,4 @@
-package com.ylabz.basepro.core.data.repository.bikeConnectivity
+package com.ylabz.basepro.core.data.repository.bike
 
 import com.ylabz.basepro.core.model.bike.BikeMotorData
 import kotlinx.coroutines.flow.Flow
