@@ -111,7 +111,7 @@ mlkitTextRecognition = "16.0.1" # ML Kit Text Recognition library
 playServicesCodeScanner = "16.1.0" # Google Play Services Code Scanner (QR Scanner)
 
 # Firebase
-firebaseBom = "34.6.0"          # Firebase Bill of Materials (BOM)
+firebaseBom = "34.7.0"          # Firebase Bill of Materials (BOM)
 googleGmsGoogleServices = "4.4.4" # Google Services Gradle plugin
 googleFirebaseCrashlytics = "3.0.6" # Firebase Crashlytics Gradle plugin
 
@@ -277,6 +277,7 @@ gms-play-services-code-scanner = { module = "com.google.android.gms:play-service
 
 # Firebase - BOM & Services
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-ai = { group = "com.google.firebase", name = "firebase-ai" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" } # Version managed by BOM
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" } # Version managed by BOM
 # firebase-auth = { group = "com.google.firebase", name = "firebase-auth" } # Example: Add if using Firebase Auth (version from BOM)

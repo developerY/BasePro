@@ -27,6 +27,7 @@ import com.ylabz.basepro.applications.bike.database.repository.UserProfileReposi
 import com.ylabz.basepro.applications.bike.features.main.R
 import com.ylabz.basepro.applications.bike.features.main.usecase.CalculateCaloriesUseCase
 import com.ylabz.basepro.applications.bike.features.main.usecase.UserStats
+import com.ylabz.basepro.core.data.repository.bike.BikeRepository
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import com.ylabz.basepro.core.model.bike.RideState
@@ -65,6 +66,8 @@ class BikeForegroundService : LifecycleService() {
 
     @Inject
     lateinit var appSettingsRepository: AppSettingsRepository
+
+    @Inject lateinit var bikeRepository: BikeRepository // Inject the Shared Repo
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationProcessingThread: HandlerThread
@@ -310,7 +313,7 @@ class BikeForegroundService : LifecycleService() {
             // currentRidePath remains emptyList() if not a formal ride
         }
 
-        _rideInfo.value = _rideInfo.value.copy(
+        val newInfo = _rideInfo.value.copy(
             location = LatLng(location.latitude, location.longitude),
             currentSpeed = speedKph,
             currentTripDistance = displayDistanceKm,
@@ -327,6 +330,14 @@ class BikeForegroundService : LifecycleService() {
             gpsUpdateIntervalMillis = currentActualGpsIntervalMillis,
             ridePath = currentRidePath // Assign the mapped GpsFix list or emptyList
         )
+
+        // 1. Update Local State (for Notification)
+        _rideInfo.value = newInfo
+
+        // 2. PUSH TO REPOSITORY (So Glass can see it!)
+        lifecycleScope.launch {
+            bikeRepository.updateRideInfo(newInfo)
+        }
 
         if (isFormalRideActive) {
             startForegroundService()

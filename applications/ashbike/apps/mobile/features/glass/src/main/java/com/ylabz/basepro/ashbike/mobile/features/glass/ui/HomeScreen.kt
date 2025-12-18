@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -85,14 +84,14 @@ fun HomeScreen(
                     }
                 }
 
-                // --- NEW SUSPENSION ROW ---
+                /* --- NEW SUSPENSION ROW ---
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("Suspension:", style = MaterialTheme.typography.labelMedium)
                     Spacer(modifier = Modifier.width(8.dp))
 
                     Button(
                         onClick = {
-                            // onEvent(GlassUiEvent.ToggleSuspension)
+                            onEvent(GlassUiEvent.ToggleSuspension)
                         }
                     ) {
                         // Shows: "Open", "Trail", or "Lock"
@@ -107,6 +106,7 @@ fun HomeScreen(
                 Button(onClick = { onEvent(GlassUiEvent.OpenGearList) }) {
                     Text("Select from List")
                 }
+                */
             }
         }
     }

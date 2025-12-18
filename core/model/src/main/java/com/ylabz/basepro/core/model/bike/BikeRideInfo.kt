@@ -5,6 +5,7 @@ import com.ylabz.basepro.core.model.location.GpsFix // Added import
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.persistentMapOf
 
 enum class RideState {
     NotStarted,
@@ -48,7 +49,36 @@ data class BikeRideInfo(
     val lastGpsUpdateTime: Long = 0L,
     val gpsUpdateIntervalMillis: Long = 0L,
     val ridePath: List<GpsFix> = emptyList() // Added ridePath field
-)
+) {
+    // --- ADD THIS COMPANION OBJECT ---
+    companion object {
+        fun initial(): BikeRideInfo {
+            return BikeRideInfo(
+                location = null,
+                currentSpeed = 0.0,
+                averageSpeed = 0.0,
+                maxSpeed = 0.0,
+                currentTripDistance = 0f,
+                totalTripDistance = null,
+                remainingDistance = null,
+                elevationGain = 0.0,
+                elevationLoss = 0.0,
+                caloriesBurned = 0,
+                rideDuration = "00:00",
+                settings = persistentMapOf(), // Requires kotlinx.collections.immutable dependency
+                heading = 0f,
+                elevation = 0.0,
+                isBikeConnected = false,
+                heartbeat = null,
+                batteryLevel = null,
+                motorPower = null,
+                rideState = RideState.NotStarted,
+                bikeWeatherInfo = null,
+                ridePath = emptyList()
+            )
+        }
+    }
+}
 
 
 // Represents basic health information (e.g., from Google Health Connect).
