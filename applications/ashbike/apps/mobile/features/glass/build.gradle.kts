@@ -68,14 +68,15 @@ dependencies {
     // Icons
     implementation(libs.androidx.material.icons.extended)
 
-    // Hilt
-    implementation(libs.hilt.android)
-
     // --- XR / Glass (Glimmer) ---
     // Specifically required for GlimmerTheme, Button, Card, surface, etc.
     implementation(libs.androidx.glimmer)
     // Usually required for the projection/session capability in XR
     implementation(libs.androidx.projected)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.ai)
 
     // --- Debugging ---
     debugImplementation(libs.androidx.ui.tooling)
