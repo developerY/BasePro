@@ -1,5 +1,6 @@
 package com.ylabz.basepro.core.data.repository.bike
 
+import android.util.Log
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.SuspensionState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +17,7 @@ class BikeRepositoryImpl @Inject constructor() : BikeRepository {
 
     override suspend fun updateRideInfo(info: BikeRideInfo) {
         // This is called ~1 time per second by BikeForegroundService
+        Log.d("DEBUG_PATH", "2. REPO: Received speed ${info.currentSpeed}. Emitting...") // <--- ADD THIS
         _rideInfo.emit(info)
     }
 

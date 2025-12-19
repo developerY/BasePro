@@ -336,6 +336,7 @@ class BikeForegroundService : LifecycleService() {
 
         // 2. PUSH TO REPOSITORY (So Glass can see it!)
         lifecycleScope.launch {
+            Log.d("DEBUG_PATH", "1. SERVICE: Pushing speed ${newInfo.currentSpeed} to Repo") // <--- ADD THIS
             bikeRepository.updateRideInfo(newInfo)
         }
 

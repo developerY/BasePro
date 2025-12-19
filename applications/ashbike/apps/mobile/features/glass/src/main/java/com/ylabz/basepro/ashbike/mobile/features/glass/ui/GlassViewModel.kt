@@ -24,12 +24,15 @@ class GlassViewModel @Inject constructor(
             // Combine flows from Repository to update UI automatically
             combine(
                 repository.currentGear,
-                repository.suspensionState
-            ) { gear, susp ->
+                repository.suspensionState,
+                repository.rideInfo // <--- ADD THIS
+            ) { gear, susp, info ->
                 // Create new state whenever either value changes
                 _uiState.value.copy(
                     currentGear = gear,
-                    suspension = susp
+                    suspension = susp,
+                            // Format the speed from the Repository info
+                    currentSpeed = String.format("%.1f", info.currentSpeed)
                 )
             }.collect { newState ->
                 _uiState.value = newState
