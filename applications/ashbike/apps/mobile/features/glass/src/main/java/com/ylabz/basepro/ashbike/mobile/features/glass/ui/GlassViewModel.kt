@@ -27,12 +27,17 @@ class GlassViewModel @Inject constructor(
                 repository.suspensionState,
                 repository.rideInfo // <--- ADD THIS
             ) { gear, susp, info ->
+
+                // Helper to format "350.0" -> "350° N"
+                val bearingText = formatBearing(info.heading)
+
                 // Create new state whenever either value changes
                 _uiState.value.copy(
                     currentGear = gear,
                     suspension = susp,
                             // Format the speed from the Repository info
-                    currentSpeed = String.format("%.1f", info.currentSpeed)
+                    currentSpeed = String.format("%.1f", info.currentSpeed),
+                    heading = bearingText // <--- Map it here
                 )
             }.collect { newState ->
                 _uiState.value = newState
@@ -60,5 +65,13 @@ class GlassViewModel @Inject constructor(
             GlassUiEvent.CloseApp -> {}
             GlassUiEvent.OpenGearList -> {}
         }
+    }
+
+    // --- HELPER: Convert Degrees to Direction ---
+    private fun formatBearing(bearing: Float): String {
+        if (bearing < 0) return "---"
+        val directions = arrayOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")
+        val index = ((bearing + 22.5) / 45.0).toInt() and 7
+        return "${bearing.toInt()}° ${directions[index]}"
     }
 }

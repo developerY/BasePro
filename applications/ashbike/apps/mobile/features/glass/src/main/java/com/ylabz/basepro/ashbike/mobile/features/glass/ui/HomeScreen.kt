@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,6 +74,16 @@ fun HomeScreen(
                             fontSize = 32.sp,
                             fontWeight = FontWeight.Bold
                         )
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        // --- NEW: HEADING ---
+                        // Display: "350° N"
+                        Text(
+                            text = uiState.heading,
+                            fontSize = 16.sp,
+                            color = MaterialTheme.colorScheme.primary, // Make it pop slightly
+                            fontWeight = FontWeight.Medium
+                        )
                     }
                 }
 
@@ -130,10 +139,10 @@ fun HomeScreen(
         }
     }
 
-    // Force focus to the "+" button on start so trackpad works immediately
+    /*Force focus to the "+" button on start so trackpad works immediately
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
-    }
+    }*/
 }
 
 @Composable
