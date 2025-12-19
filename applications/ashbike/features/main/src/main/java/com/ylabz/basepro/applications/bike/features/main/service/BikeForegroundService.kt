@@ -515,12 +515,25 @@ class BikeForegroundService : LifecycleService() {
         formalRideElevationGainMeters = 0.0
         formalRideElevationLossMeters = 0.0
 
-        _rideInfo.value = getInitialRideInfo().copy(
+        // 1. Create the Reset Info Object
+        val resetInfo = getInitialRideInfo().copy(
             location = _rideInfo.value.location, 
             bikeWeatherInfo = _rideInfo.value.bikeWeatherInfo, 
             rideState = RideState.NotStarted,
             ridePath = emptyList() // Ensure path is cleared on full reset
         )
+
+        // 2. Update Local Service State
+        _rideInfo.value = resetInfo
+
+        // 3. --- ADD THIS: PUSH RESET TO REPOSITORY ---
+        // This clears the Glass UI back to "0.0" instantly
+        lifecycleScope.launch {
+            bikeRepository.updateRideInfo(resetInfo)
+        }
+        // ---------------------------------------------
+
+
         caloriesCalculationJob?.cancel()
         startOrRestartCalorieCalculation(isFormalRideActive = false)
         stopForeground(STOP_FOREGROUND_REMOVE)
