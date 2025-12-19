@@ -100,6 +100,7 @@ class BikeViewModel @Inject constructor(
         val isGlassActive: Boolean // <--- NEW
     )
 
+    // NOTE: The BikeViewModel starts it but GlassViewModel also uses it. We might want it to start elsewhere?
     private fun observeServiceData() {
         Log.d("BikeViewModel", "observeServiceData called.")
         viewModelScope.launch {

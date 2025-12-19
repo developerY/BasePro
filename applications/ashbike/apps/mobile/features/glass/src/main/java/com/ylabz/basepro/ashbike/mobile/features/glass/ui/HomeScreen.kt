@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -17,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.glimmer.Button
@@ -28,24 +31,21 @@ import com.ylabz.basepro.ashbike.mobile.features.glass.R
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    uiState: GlassUiState,           // DATA IN
-    onEvent: (GlassUiEvent) -> Unit  // EVENTS OUT
+    uiState: GlassUiState,
+    onEvent: (GlassUiEvent) -> Unit
 ) {
-
-
-    // We use this to force focus onto the "+" button when the screen loads
     val focusRequester = remember { FocusRequester() }
 
     Box(
         modifier = modifier
-            .surface(focusable = false)
+            .surface(focusable = false) // Glimmer Surface
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+        // MAIN CONTAINER CARD
         Card(
             title = { Text("AshBike Control") },
             action = {
-                // Fires the CloseApp event
                 Button(onClick = { onEvent(GlassUiEvent.CloseApp) }) {
                     Text(stringResource(id = R.string.close))
                 }
@@ -53,29 +53,47 @@ fun HomeScreen(
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(horizontal = 16.dp)
             ) {
-                Text(text = "Current Gear")
 
-                // Big text for visibility
-                // DATA: Bind to uiState
-                Text(text = "${uiState.currentGear}", fontSize = 60.sp)
+                // --- NEW: SPEED CARD ---
+                // We nest a smaller card here for the speedometer
+                Card(
+                    modifier = Modifier.padding(bottom = 12.dp),
+                    // You could add an icon here if you wanted
+                    // leadingIcon = { Icon(Icons.Default.Speed, "") }
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "Speed (mph)",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = uiState.currentSpeed,
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                // --- EXISTING: GEAR CONTROLS ---
+                Text(text = "Gear", style = MaterialTheme.typography.labelMedium)
+                Text(text = "${uiState.currentGear}", fontSize = 48.sp) // Reduced size slightly to fit
 
-                // Primary Controls
+                Spacer(modifier = Modifier.height(12.dp))
+
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // DOWN
                     Button(onClick = { onEvent(GlassUiEvent.GearDown) }) {
                         Text("-")
                     }
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    // UP
                     Button(
                         onClick = { onEvent(GlassUiEvent.GearUp) },
                         modifier = Modifier.focusRequester(focusRequester)
@@ -83,6 +101,7 @@ fun HomeScreen(
                         Text("+")
                     }
                 }
+
 
                 /* --- NEW SUSPENSION ROW ---
                 Row(verticalAlignment = Alignment.CenterVertically) {
