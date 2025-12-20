@@ -11,6 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.Explore
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -93,19 +96,45 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                // --- LEFT: TELEMETRY (Speed & Heading) ---
+                // --- LEFT: TELEMETRY ---
                 Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 12.dp),
+                    modifier = Modifier.weight(1f).padding(end = 12.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    // We can use a visual container for the speed
                     Card(modifier = Modifier.fillMaxWidth()) {
                         MetricDisplay(
                             label = "SPEED (MPH)",
                             value = uiState.currentSpeed,
-                            subValue = uiState.heading // e.g. "350° N"
+                            // HERE IS THE NEW "DATA ROW"
+                            bottomContent = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp) // Space between items
+                                ) {
+
+                                    // 1. COMPASS
+                                    DataPill(
+                                        icon = Icons.Default.Explore,
+                                        text = uiState.heading,
+                                        color = Color.White
+                                    )
+
+                                    // 2. POWER (Watts) - Yellow
+                                    DataPill(
+                                        icon = Icons.Default.Bolt,
+                                        text = "${uiState.motorPower} W",
+                                        color = Color(0xFFFFD600) // Amber/Gold
+                                    )
+
+                                    // 3. HEART RATE - Red (Optional, if you want it)
+                                    /* DataPill(
+                                        icon = Icons.Default.Favorite,
+                                        text = uiState.heartRate,
+                                        color = GlassColors.WarningRed
+                                    )
+                                    */
+                                }
+                            }
                         )
                     }
                 }

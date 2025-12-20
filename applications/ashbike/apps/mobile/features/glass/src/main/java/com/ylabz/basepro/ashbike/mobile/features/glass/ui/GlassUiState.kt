@@ -8,6 +8,8 @@ data class GlassUiState(
     val suspension: SuspensionState = SuspensionState.OPEN, // <--- NEW
     val currentSpeed: String = "0.0", // <--- Add this
     val heading: String = "---", // <--- NEW: Compass Direction
+    val motorPower: String = "--",   // <--- NEW: Watts
+    val heartRate: String = "--",    // <--- NEW: BPM
     // Add other Glass-specific fields here later (e.g., Speed, Heart Rate)
     val connectionStatus: String = "Connected", // Glass connection is redundant
     val isBikeConnected: Boolean = false, // <--- New field

@@ -41,7 +41,11 @@ class GlassViewModel @Inject constructor(
                             // Format the speed from the Repository info
                     currentSpeed = String.format("%.1f", info.currentSpeed),
                     heading = bearingText, // <--- Map it here
-                    isBikeConnected = isBikeConnected // <--- Update the state
+                    // 1. Format Power (Watts)
+                    motorPower = info.motorPower?.let { "%.0f".format(it) } ?: "--",
+                    // 2. Format Heart Rate (BPM)
+                    heartRate = info.heartbeat?.toString() ?: "--", // <--- Add BPM
+                    isBikeConnected = isBikeConnected ,// <--- Update the state
                 )
             }.collect { newState ->
                 _uiState.value = newState

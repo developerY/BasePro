@@ -18,12 +18,13 @@ import androidx.xr.glimmer.Text
 fun MetricDisplay(
     label: String,
     value: String,
-    subValue: String? = null,
     highlightColor: Color = GlassColors.NeonCyan,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    // The "Slot" - allows us to pass any complex UI into the bottom area
+    bottomContent: @Composable () -> Unit
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
-        // Label (Small, Uppercase)
+        // LABEL
         Text(
             text = label.uppercase(),
             style = MaterialTheme.typography.labelSmall,
@@ -31,24 +32,18 @@ fun MetricDisplay(
             fontSize = 10.sp,
             fontWeight = FontWeight.Bold
         )
-        // Main Value (Huge, Colored)
+        // VALUE
         Text(
             text = value,
-            style = MaterialTheme.typography.displayMedium, // Bigger font
+            style = MaterialTheme.typography.displayMedium,
             color = highlightColor,
             fontSize = 42.sp,
             fontWeight = FontWeight.ExtraBold
         )
-        // Sub Value (e.g., Heading)
-        if (subValue != null) {
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = subValue,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.White,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
-            )
-        }
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        // BOTTOM CONTENT (The new Data Row)
+        bottomContent()
     }
 }

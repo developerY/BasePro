@@ -1,6 +1,7 @@
 package com.ylabz.basepro.ashbike.mobile.features.glass.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -17,6 +21,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.DataPill
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.BatteryStatusDisplay
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.BikeConnectionStatus
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.GearControlPanel
@@ -62,20 +67,7 @@ fun StatusIndicatorsPreview() {
     }
 }
 
-@Preview(name = "Metric Display (Speed)", showBackground = true, backgroundColor = 0xFF000000)
-@Composable
-fun MetricDisplayPreview() {
-    MaterialTheme {
-        Box(modifier = Modifier.padding(20.dp).background(Color.Black)) {
-            MetricDisplay(
-                label = "SPEED (MPH)",
-                value = "37.0",
-                subValue = "113° SE",
-                highlightColor = GlassColors.NeonCyan
-            )
-        }
-    }
-}
+
 
 @Preview(name = "Gear Control Panel", showBackground = true, backgroundColor = 0xFF000000)
 @Composable
@@ -191,5 +183,24 @@ fun HomeScreenScreen2Preview() {
             uiState = sampleState,
             onEvent = {}
         )
+    }
+}
+
+@Preview(name = "Telemetry Card with Power")
+@Composable
+fun TelemetryPreview() {
+    MaterialTheme {
+        Box(modifier = Modifier.background(Color.Black).padding(20.dp)) {
+            MetricDisplay(
+                label = "SPEED",
+                value = "24.5",
+                bottomContent = {
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        DataPill(Icons.Default.Explore, "350° N", Color.White)
+                        DataPill(Icons.Default.Bolt, "250 W", Color(0xFFFFD600))
+                    }
+                }
+            )
+        }
     }
 }
