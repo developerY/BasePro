@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -68,9 +69,7 @@ fun HomeScreen(
                     ) {
                         // Status Text
                         // 1. BIKE CONNECTION (New Component)
-                        BikeConnectionStatus(
-                            isConnected = uiState.isBikeConnected
-                        )
+                        BikeConnectionStatus(isConnected = uiState.isBikeConnected)
 
                         // Vertical Space (Fixed: changed width to height)
                         Spacer(modifier = Modifier.height(4.dp))
@@ -127,12 +126,11 @@ fun HomeScreen(
                                     )
 
                                     // 3. HEART RATE - Red (Optional, if you want it)
-                                    /* DataPill(
+                                    DataPill(
                                         icon = Icons.Default.Favorite,
                                         text = uiState.heartRate,
                                         color = GlassColors.WarningRed
                                     )
-                                    */
                                 }
                             }
                         )
