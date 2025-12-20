@@ -2,6 +2,9 @@ package com.ylabz.basepro.ashbike.mobile.features.glass.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -11,6 +14,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.BatteryStatusDisplay
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.GearControlPanel
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.GlassColors
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.HomeScreen
@@ -77,5 +81,23 @@ fun HomeScreenScreenPreview() {
             uiState = sampleState,
             onEvent = {} // No-op
         )
+    }
+}
+
+@Preview(name = "Battery States",
+    device = "id:ai_glasses_device"
+)
+@Composable
+fun BatteryPreview() {
+    MaterialTheme {
+        Column(modifier = Modifier.padding(20.dp).background(Color.Black)) {
+            BatteryStatusDisplay(level = 85) // Green
+            Spacer(Modifier.height(8.dp))
+            BatteryStatusDisplay(level = 40) // Orange
+            Spacer(Modifier.height(8.dp))
+            BatteryStatusDisplay(level = 10) // Red
+            Spacer(Modifier.height(8.dp))
+            BatteryStatusDisplay(level = null) // Gray
+        }
     }
 }

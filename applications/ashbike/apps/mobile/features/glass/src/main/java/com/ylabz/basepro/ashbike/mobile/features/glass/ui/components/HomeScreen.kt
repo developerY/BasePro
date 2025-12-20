@@ -4,12 +4,15 @@ package com.ylabz.basepro.ashbike.mobile.features.glass.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,7 +54,16 @@ fun HomeScreen(
                     Text("ASHBIKE", color = Color.White, fontWeight = FontWeight.Bold)
                     Spacer(Modifier.weight(1f))
                     // Status Pill (e.g. Battery or Connection)
-                    Text("● CONNECTED", color = GlassColors.NeonGreen, fontSize = 10.sp)
+                    Column(
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        Text("● CONNECTED", color = GlassColors.NeonGreen, fontSize = 10.sp)
+                        Spacer(modifier = Modifier.width(7.dp))
+                        // Right: Battery Indicator
+                        BatteryStatusDisplay(
+                            level = uiState.batteryLevel
+                        )
+                    }
                 }
             },
             action = {
@@ -98,6 +110,11 @@ fun HomeScreen(
                     )
                 }
             }
+        }
+        // 2. FORCE FOCUS ON LAUNCH
+        // This tells the system: "Ignore everything else, look at the Plus button."
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
         }
     }
 }
