@@ -9,7 +9,8 @@ data class GlassUiState(
     val currentSpeed: String = "0.0", // <--- Add this
     val heading: String = "---", // <--- NEW: Compass Direction
     // Add other Glass-specific fields here later (e.g., Speed, Heart Rate)
-    val connectionStatus: String = "Connected",
+    val connectionStatus: String = "Connected", // Glass connection is redundant
+    val isBikeConnected: Boolean = false, // <--- New field
     val batteryLevel: Int? = null, // <--- NEW: Null means unknown/disconnected
     val currentScreen: ScreenState = ScreenState.HOME
 )

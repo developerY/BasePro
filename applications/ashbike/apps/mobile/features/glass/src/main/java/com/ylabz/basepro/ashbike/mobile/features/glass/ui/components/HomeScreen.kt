@@ -64,11 +64,9 @@ fun HomeScreen(
                         horizontalAlignment = Alignment.End
                     ) {
                         // Status Text
-                        Text(
-                            "● CONNECTED",
-                            color = GlassColors.NeonGreen,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold
+                        // 1. BIKE CONNECTION (New Component)
+                        BikeConnectionStatus(
+                            isConnected = uiState.isBikeConnected
                         )
 
                         // Vertical Space (Fixed: changed width to height)

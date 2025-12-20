@@ -25,8 +25,11 @@ class GlassViewModel @Inject constructor(
             combine(
                 repository.currentGear,
                 repository.suspensionState,
-                repository.rideInfo // <--- ADD THIS
-            ) { gear, susp, info ->
+                repository.rideInfo, // <--- ADD THIS
+                repository.isConnected // <--- Watch the Bike Connection
+            ) { gear, susp, info, isBikeConnected ->
+
+                // Update the UI State ->
 
                 // Helper to format "350.0" -> "350° N"
                 val bearingText = formatBearing(info.heading)
@@ -37,7 +40,8 @@ class GlassViewModel @Inject constructor(
                     suspension = susp,
                             // Format the speed from the Repository info
                     currentSpeed = String.format("%.1f", info.currentSpeed),
-                    heading = bearingText // <--- Map it here
+                    heading = bearingText, // <--- Map it here
+                    isBikeConnected = isBikeConnected // <--- Update the state
                 )
             }.collect { newState ->
                 _uiState.value = newState
