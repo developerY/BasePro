@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -49,17 +49,32 @@ fun HomeScreen(
                 .padding(8.dp)
                 .fillMaxSize(), // Fill the available HUD space
             title = {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    // You could add an App Icon here
+                // HEADER ROW
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    // LEFT: APP TITLE
                     Text("ASHBIKE", color = Color.White, fontWeight = FontWeight.Bold)
-                    Spacer(Modifier.weight(1f))
-                    // Status Pill (e.g. Battery or Connection)
+
+                    Spacer(Modifier.weight(1f)) // Pushes status to the right
+
+                    // RIGHT: STATUS COLUMN (Connected + Battery)
                     Column(
                         horizontalAlignment = Alignment.End
                     ) {
-                        Text("● CONNECTED", color = GlassColors.NeonGreen, fontSize = 10.sp)
-                        Spacer(modifier = Modifier.width(7.dp))
-                        // Right: Battery Indicator
+                        // Status Text
+                        Text(
+                            "● CONNECTED",
+                            color = GlassColors.NeonGreen,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        // Vertical Space (Fixed: changed width to height)
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        // Battery Component
                         BatteryStatusDisplay(
                             level = uiState.batteryLevel
                         )
