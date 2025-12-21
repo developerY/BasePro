@@ -135,9 +135,11 @@ fun HomeScreen(
                                 focusRequester = focusRequester // Only focus if visible
                             )
                         } else {
-                            // OPTION B: Disconnected -> Show Stats
-                            RideStatsDisplayPanel(
+                            // OPTION B: DISCONNECTED -> FULL STATS LIST
+                            RideStatsList(
                                 distance = uiState.tripDistance,
+                                duration = uiState.rideDuration,
+                                avgSpeed = uiState.averageSpeed,
                                 calories = uiState.calories,
                                 modifier = Modifier.fillMaxSize()
                             )

@@ -15,6 +15,8 @@ data class GlassUiState(
     val connectionStatus: String = "Connected", // Glass connection is redundant
     val tripDistance: String = "0.0", // <--- NEW
     val calories: String = "0",       // <--- NEW
+    val rideDuration: String = "00:00", // <--- NEW
+    val averageSpeed: String = "0.0",   // <--- NEW
     val isBikeConnected: Boolean = false, // <--- New field
     val batteryLevel: Int? = null, // <--- NEW: Null means unknown/disconnected
     val currentScreen: ScreenState = ScreenState.HOME

@@ -47,6 +47,10 @@ class GlassViewModel @Inject constructor(
                     heartRate = info.heartbeat?.toString() ?: "--", // <--- Add BPM
                     tripDistance = String.format("%.1f", info.currentTripDistance), // e.g. "12.5"
                     calories = info.caloriesBurned.toString(), // e.g. "350"
+                    // Format Duration (assuming info.rideDuration is already a String "HH:MM:SS" or similar)
+                    rideDuration = info.rideDuration,
+                    // Format Avg Speed
+                    averageSpeed = String.format("%.1f", info.averageSpeed),
                     isBikeConnected = isBikeConnected ,// <--- Update the state
                 )
             }.collect { newState ->
