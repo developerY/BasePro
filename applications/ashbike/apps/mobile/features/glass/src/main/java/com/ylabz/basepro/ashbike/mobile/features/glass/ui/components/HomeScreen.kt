@@ -95,6 +95,7 @@ fun HomeScreen(
             ) {
 
                 // --- LEFT: TELEMETRY ---
+                // 1. LEFT: SPEED CARD (Always Visible)
                 Box(
                     modifier = Modifier.weight(1f).padding(end = 12.dp),
                     contentAlignment = Alignment.Center
@@ -137,23 +138,35 @@ fun HomeScreen(
                 }
 
                 // --- RIGHT: CONTROLS (Gear Shifting) ---
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    GearControlPanel(
-                        currentGear = uiState.currentGear,
-                        onGearUp = { onEvent(GlassUiEvent.GearUp) },
-                        onGearDown = { onEvent(GlassUiEvent.GearDown) },
-                        focusRequester = focusRequester
-                    )
+                // 2. RIGHT: DYNAMIC PANEL (Gears OR Stats)
+                Box(modifier = Modifier.weight(1f).padding(start = 6.dp, bottom = 6.dp)) {
+
+                    if (uiState.isBikeConnected) {
+                        // OPTION A: BIKE CONNECTED -> SHOW GEARS
+                        GearControlPanel(
+                            currentGear = uiState.currentGear,
+                            onGearUp = { onEvent(GlassUiEvent.GearUp) },
+                            onGearDown = { onEvent(GlassUiEvent.GearDown) },
+                            focusRequester = focusRequester
+                        )
+                    } else {
+                        // OPTION B: DISCONNECTED -> SHOW STATS
+                        RideStatsPanel(
+                            distance = uiState.tripDistance,
+                            calories = uiState.calories,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                 }
             }
         }
         // 2. FORCE FOCUS ON LAUNCH
         // This tells the system: "Ignore everything else, look at the Plus button."
-        LaunchedEffect(Unit) {
-            focusRequester.requestFocus()
+        // only if the bike BLE is connected
+        LaunchedEffect(uiState.isBikeConnected) {
+            if (uiState.isBikeConnected) {
+                focusRequester.requestFocus()
+            }
         }
     }
 }

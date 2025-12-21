@@ -45,6 +45,8 @@ class GlassViewModel @Inject constructor(
                     motorPower = info.motorPower?.let { "%.0f".format(it) } ?: "--",
                     // 2. Format Heart Rate (BPM)
                     heartRate = info.heartbeat?.toString() ?: "--", // <--- Add BPM
+                    tripDistance = String.format("%.1f", info.currentTripDistance), // e.g. "12.5"
+                    calories = info.caloriesBurned.toString(), // e.g. "350"
                     isBikeConnected = isBikeConnected ,// <--- Update the state
                 )
             }.collect { newState ->
