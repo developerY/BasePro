@@ -220,3 +220,20 @@ fun QuadHudPreview() {
         HomeScreen(uiState = sampleState, onEvent = {})
     }
 }
+
+@Preview(name = "HUD - Disconnected (Stats Mode)", widthDp = 640, heightDp = 360)
+@Composable
+fun HudDisconnectedPreview() {
+    val sampleState = GlassUiState(
+        currentSpeed = "12.4",
+        heading = "90° E",
+        isBikeConnected = false, // <--- Disconnected
+        tripDistance = "15.2",
+        calories = "450",
+        motorPower = "0", // Likely 0 if disconnected
+        heartRate = "130"
+    )
+    MaterialTheme {
+        HomeScreen(uiState = sampleState, onEvent = {})
+    }
+}

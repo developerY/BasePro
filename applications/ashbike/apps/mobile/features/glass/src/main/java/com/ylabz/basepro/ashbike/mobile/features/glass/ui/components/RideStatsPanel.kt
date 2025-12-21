@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Straighten
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.glimmer.Card
-import androidx.xr.glimmer.Icon
+import androidx.xr.glimmer.Icon // <--- CORRECT GLIMMER IMPORT
 import androidx.xr.glimmer.Text
 
 @Composable
@@ -41,8 +42,9 @@ fun RideStatsPanel(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                // GLIMMER ICON
                 Icon(
-                    imageVector = Icons.Default.Straighten, // Ruler icon
+                    imageVector = Icons.Default.Straighten, // Ruler
                     contentDescription = null,
                     tint = GlassColors.NeonCyan,
                     modifier = Modifier.width(20.dp)
@@ -51,9 +53,10 @@ fun RideStatsPanel(
                 Column {
                     Text(
                         text = "DISTANCE",
-                        style = androidx.compose.material3.MaterialTheme.typography.labelSmall,
+                        style = MaterialTheme.typography.labelSmall,
                         color = GlassColors.TextSecondary,
-                        fontSize = 8.sp
+                        fontSize = 8.sp,
+                        fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = "$distance km",
@@ -64,7 +67,7 @@ fun RideStatsPanel(
                 }
             }
 
-            // Divider (Optional, or just space)
+            // Optional Divider/Spacer
             Spacer(modifier = Modifier.height(4.dp))
 
             // 2. CALORIES ROW
@@ -72,8 +75,9 @@ fun RideStatsPanel(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                // GLIMMER ICON
                 Icon(
-                    imageVector = Icons.Default.LocalFireDepartment, // Fire icon
+                    imageVector = Icons.Default.LocalFireDepartment, // Fire
                     contentDescription = null,
                     tint = Color(0xFFFF9800), // Orange
                     modifier = Modifier.width(20.dp)
@@ -82,9 +86,10 @@ fun RideStatsPanel(
                 Column {
                     Text(
                         text = "CALORIES",
-                        style = androidx.compose.material3.MaterialTheme.typography.labelSmall,
+                        style = MaterialTheme.typography.labelSmall,
                         color = GlassColors.TextSecondary,
-                        fontSize = 8.sp
+                        fontSize = 8.sp,
+                        fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = "$calories kcal",

@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.glimmer.Button
 import androidx.xr.glimmer.Card
+import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.Text
 import androidx.xr.glimmer.surface
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassUiEvent
@@ -87,85 +86,73 @@ fun HomeScreen(
                 }
             }
         ) {
-            // LAYOUT: Side-by-Side (Left: Speed, Right: Gear)
-            Row(
-                modifier = Modifier.fillMaxSize().padding(top = 8.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                // --- LEFT: TELEMETRY ---
-                // 1. LEFT: SPEED CARD (Always Visible)
-                Box(
-                    modifier = Modifier.weight(1f).padding(end = 12.dp),
-                    contentAlignment = Alignment.Center
+            Column(modifier = Modifier.fillMaxSize().padding(top = 8.dp)) {
+                // LAYOUT: Side-by-Side (Left: Speed, Right: Gear) ]
+                // --- ROW 1: TOP SECTION ---
+                Row(
+                    modifier = Modifier.weight(0.65f).fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Card(modifier = Modifier.fillMaxWidth()) {
-                        MetricDisplay(
-                            label = "SPEED (MPH)",
-                            value = uiState.currentSpeed,
-                            // HERE IS THE NEW "DATA ROW"
-                            bottomContent = {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(12.dp) // Space between items
-                                ) {
 
-                                    // 1. COMPASS
-                                    DataPill(
-                                        icon = Icons.Default.Explore,
-                                        text = uiState.heading,
-                                        color = Color.White
-                                    )
-
-                                    // 2. POWER (Watts) - Yellow
-                                    DataPill(
-                                        icon = Icons.Default.Bolt,
-                                        text = "${uiState.motorPower} W",
-                                        color = Color(0xFFFFD600) // Amber/Gold
-                                    )
-
-                                    // 3. HEART RATE - Red (Optional, if you want it)
-                                    /* DataPill(
-                                        icon = Icons.Default.Favorite,
-                                        text = uiState.heartRate,
-                                        color = GlassColors.WarningRed
-                                    )*/
+                    // --- LEFT: TELEMETRY ---
+                    // 1. LEFT: SPEED CARD (Always Visible)
+                    // LEFT: SPEED (Always Visible)
+                    Box(modifier = Modifier.weight(1f).padding(end = 6.dp, bottom = 6.dp)) {
+                        Card(modifier = Modifier.fillMaxSize()) {
+                            MetricDisplay(
+                                label = "SPEED",
+                                value = uiState.currentSpeed,
+                                bottomContent = {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = androidx.compose.material.icons.Icons.Default.Explore,
+                                            contentDescription = null,
+                                        )
+                                        Text(
+                                            text = uiState.heading,
+                                            color = Color.White,
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
-                }
 
-                // --- RIGHT: CONTROLS (Gear Shifting) ---
-                // 2. RIGHT: DYNAMIC PANEL (Gears OR Stats)
-                Box(modifier = Modifier.weight(1f).padding(start = 6.dp, bottom = 6.dp)) {
-
-                    if (uiState.isBikeConnected) {
-                        // OPTION A: BIKE CONNECTED -> SHOW GEARS
-                        GearControlPanel(
-                            currentGear = uiState.currentGear,
-                            onGearUp = { onEvent(GlassUiEvent.GearUp) },
-                            onGearDown = { onEvent(GlassUiEvent.GearDown) },
-                            focusRequester = focusRequester
-                        )
-                    } else {
-                        // OPTION B: DISCONNECTED -> SHOW STATS
-                        RideStatsPanel(
-                            distance = uiState.tripDistance,
-                            calories = uiState.calories,
-                            modifier = Modifier.fillMaxSize()
-                        )
+                    // --- RIGHT: CONTROLS (Gear Shifting) ---
+                    // 2. RIGHT: DYNAMIC PANEL (Gears OR Stats)
+                    // RIGHT: DYNAMIC PANEL (Gears OR Stats)
+                    Box(modifier = Modifier.weight(1f).padding(start = 6.dp, bottom = 6.dp)) {
+                        if (uiState.isBikeConnected) {
+                            // OPTION A: Connected -> Show Gears
+                            GearControlPanel(
+                                currentGear = uiState.currentGear,
+                                onGearUp = { onEvent(GlassUiEvent.GearUp) },
+                                onGearDown = { onEvent(GlassUiEvent.GearDown) },
+                                focusRequester = focusRequester // Only focus if visible
+                            )
+                        } else {
+                            // OPTION B: Disconnected -> Show Stats
+                            RideStatsPanel(
+                                distance = uiState.tripDistance,
+                                calories = uiState.calories,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
                     }
                 }
             }
-        }
-        // 2. FORCE FOCUS ON LAUNCH
-        // This tells the system: "Ignore everything else, look at the Plus button."
-        // only if the bike BLE is connected
-        LaunchedEffect(uiState.isBikeConnected) {
-            if (uiState.isBikeConnected) {
-                focusRequester.requestFocus()
+            // 2. FORCE FOCUS ON LAUNCH
+            // This tells the system: "Ignore everything else, look at the Plus button."
+            // only if the bike BLE is connected
+            // Only request focus if the bike is connected (and thus the Gear buttons exist)
+            LaunchedEffect(uiState.isBikeConnected) {
+                if (uiState.isBikeConnected) {
+                    focusRequester.requestFocus()
+                }
             }
         }
     }
