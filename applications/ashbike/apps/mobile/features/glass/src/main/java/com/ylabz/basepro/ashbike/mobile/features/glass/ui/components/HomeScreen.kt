@@ -136,7 +136,7 @@ fun HomeScreen(
                             )
                         } else {
                             // OPTION B: Disconnected -> Show Stats
-                            RideStatsPanel(
+                            RideStatsDisplayPanel(
                                 distance = uiState.tripDistance,
                                 calories = uiState.calories,
                                 modifier = Modifier.fillMaxSize()
