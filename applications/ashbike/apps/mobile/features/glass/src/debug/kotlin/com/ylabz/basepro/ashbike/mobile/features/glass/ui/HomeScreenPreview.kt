@@ -18,8 +18,12 @@ fun HomeScreenPreview() {
     val sampleState = GlassUiState(
         currentGear = 4,
         currentSpeed = "18.5",
+        distance = "12.4",
+        heading = "NW",
+        motorPower = "250",
         suspension = SuspensionState.TRAIL,
-        connectionStatus = "Connected"
+        isBikeConnected = true,
+        batteryLevel = 85
     )
 
     // 2. Wrap in Theme (MaterialTheme or your AppTheme)
