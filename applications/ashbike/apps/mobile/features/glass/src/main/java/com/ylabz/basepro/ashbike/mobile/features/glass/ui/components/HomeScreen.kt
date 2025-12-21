@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.DirectionsBike
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.runtime.Composable
@@ -125,12 +124,12 @@ fun HomeScreen(
                                         color = Color(0xFFFFD600) // Amber/Gold
                                     )
 
-                                    // 3. DISTANCE - Cyan
-                                    DataPill(
-                                        icon = Icons.AutoMirrored.Filled.DirectionsBike,
-                                        text = "${uiState.distance} mi",
-                                        color = GlassColors.NeonCyan
-                                    )
+                                    // 3. HEART RATE - Red (Optional, if you want it)
+                                    /* DataPill(
+                                        icon = Icons.Default.Favorite,
+                                        text = uiState.heartRate,
+                                        color = GlassColors.WarningRed
+                                    )*/
                                 }
                             }
                         )
