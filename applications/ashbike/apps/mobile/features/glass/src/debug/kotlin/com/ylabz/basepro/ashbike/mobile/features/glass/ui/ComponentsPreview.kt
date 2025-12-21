@@ -21,14 +21,13 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.DataPill
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.BatteryStatusDisplay
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.BikeConnectionStatus
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.DataPill
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.GearControlPanel
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.GlassColors
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.HomeScreen
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.MetricDisplay
-import com.ylabz.basepro.core.model.bike.SuspensionState // Ensure this matches your actual package
+import com.ylabz.basepro.core.model.bike.SuspensionState
 
 // -------------------------------------------------------------------------
 // 1. COMPONENT PREVIEWS (Isolate the pieces)
@@ -202,5 +201,22 @@ fun TelemetryPreview() {
                 }
             )
         }
+    }
+}
+
+@Preview(name = "Quad Layout HUD", device = "id:ai_glasses_device")
+@Composable
+fun QuadHudPreview() {
+    val sampleState = GlassUiState(
+        currentSpeed = "24.5",
+        heading = "350° N",
+        currentGear = 7,
+        motorPower = "250",
+        heartRate = "145", // Orange Zone
+        isBikeConnected = true,
+        batteryLevel = 90
+    )
+    MaterialTheme {
+        HomeScreen(uiState = sampleState, onEvent = {})
     }
 }

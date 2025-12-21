@@ -11,10 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bolt
-import androidx.compose.material.icons.filled.Explore
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -38,6 +38,7 @@ fun HomeScreen(
     uiState: GlassUiState,
     onEvent: (GlassUiEvent) -> Unit
 ) {
+    // 1. Focus Requester: Controls the Gear "+" button for physical button/trackpad input
     val focusRequester = remember { FocusRequester() }
 
     Box(
@@ -53,31 +54,27 @@ fun HomeScreen(
                 .padding(8.dp)
                 .fillMaxSize(), // Fill the available HUD space
             title = {
-                // HEADER ROW
+                // HEADER ROW: Title (Left) and Status (Right)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     // LEFT: APP TITLE
-                    Text("ASHBIKE", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text("ASHBIKE", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+
 
                     Spacer(Modifier.weight(1f)) // Pushes status to the right
 
+                    // STATUS COLUMN: Bike Link & Battery
                     // RIGHT: STATUS COLUMN (Connected + Battery)
-                    Column(
-                        horizontalAlignment = Alignment.End
-                    ) {
+                    Column(horizontalAlignment = Alignment.End) {
                         // Status Text
                         // 1. BIKE CONNECTION (New Component)
                         BikeConnectionStatus(isConnected = uiState.isBikeConnected)
-
                         // Vertical Space (Fixed: changed width to height)
                         Spacer(modifier = Modifier.height(4.dp))
-
                         // Battery Component
-                        BatteryStatusDisplay(
-                            level = uiState.batteryLevel
-                        )
+                        BatteryStatusDisplay(level = uiState.batteryLevel)
                     }
                 }
             },
@@ -88,66 +85,95 @@ fun HomeScreen(
                 }
             }
         ) {
-            // LAYOUT: Side-by-Side (Left: Speed, Right: Gear)
-            Row(
-                modifier = Modifier.fillMaxSize().padding(top = 8.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            // --- QUAD GRID LAYOUT ---
+            Column(modifier = Modifier.fillMaxSize().padding(top = 8.dp)) {
 
-                // --- LEFT: TELEMETRY ---
-                Box(
-                    modifier = Modifier.weight(1f).padding(end = 12.dp),
-                    contentAlignment = Alignment.Center
+                // --- TOP ROW: SPEED (Left) & GEAR (Right) ---
+                // ROW 1: PRIMARY METRICS (Speed & Gear) - 65% Height
+                Row(
+                    modifier = Modifier.weight(0.65f).fillMaxWidth(), // Takes 65% height
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Card(modifier = Modifier.fillMaxWidth()) {
-                        MetricDisplay(
-                            label = "SPEED (MPH)",
-                            value = uiState.currentSpeed,
-                            // HERE IS THE NEW "DATA ROW"
-                            bottomContent = {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(12.dp) // Space between items
-                                ) {
-
-                                    // 1. COMPASS
-                                    DataPill(
-                                        icon = Icons.Default.Explore,
-                                        text = uiState.heading,
-                                        color = Color.White
-                                    )
-
-                                    // 2. POWER (Watts) - Yellow
-                                    DataPill(
-                                        icon = Icons.Default.Bolt,
-                                        text = "${uiState.motorPower} W",
-                                        color = Color(0xFFFFD600) // Amber/Gold
-                                    )
-
-                                    // 3. HEART RATE - Red (Optional, if you want it)
-                                    DataPill(
-                                        icon = Icons.Default.Favorite,
-                                        text = uiState.heartRate,
-                                        color = GlassColors.WarningRed
+                    // Speed Card
+                    Box(modifier = Modifier.weight(1f).padding(4.dp)) {
+                        Card(modifier = Modifier.fillMaxSize()) {
+                            // FIX IS HERE: Use the bottomContent slot
+                            MetricDisplay(
+                                label = "SPEED",
+                                value = uiState.currentSpeed,
+                                bottomContent = {
+                                    // Put the Heading here inside the slot
+                                    Text(
+                                        text = uiState.heading, // e.g. "350° N"
+                                        color = Color.White,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Medium
                                     )
                                 }
-                            }
+                            )
+                        }
+                    }
+
+                    // 2. GEAR CONTROL (Top Right)
+                    Box(modifier = Modifier.weight(1f).padding(4.dp)) {
+                        GearControlPanel(
+                            currentGear = uiState.currentGear,
+                            onGearUp = { onEvent(GlassUiEvent.GearUp) },
+                            onGearDown = { onEvent(GlassUiEvent.GearDown) },
+                            focusRequester = focusRequester
                         )
                     }
                 }
 
-                // --- RIGHT: CONTROLS (Gear Shifting) ---
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.Center
+                // --- BOTTOM ROW: POWER (Left) & HEART RATE (Right) ---
+                // ROW 2: SECONDARY METRICS (Power & HR) - 35% Height
+                Row(
+                    modifier = Modifier.weight(0.35f).fillMaxWidth(), // Takes 35% height
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    GearControlPanel(
-                        currentGear = uiState.currentGear,
-                        onGearUp = { onEvent(GlassUiEvent.GearUp) },
-                        onGearDown = { onEvent(GlassUiEvent.GearDown) },
-                        focusRequester = focusRequester
-                    )
+
+                    // 3. POWER CARD (Bottom Left)
+                    Box(modifier = Modifier.weight(1f).padding(end = 6.dp)) {
+                        Card(modifier = Modifier.fillMaxSize()) {
+                            // Simple Power Layout using Glimmer Icon
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "POWER",
+                                    style = androidx.compose.material3.MaterialTheme.typography.labelSmall,
+                                    color = GlassColors.TextSecondary,
+                                    fontSize = 8.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = Icons.Default.Bolt,
+                                        contentDescription = "Watts",
+                                        tint = Color(0xFFFFD600), // Gold/Amber
+                                        modifier = Modifier.width(20.dp)
+                                    )
+                                    Spacer(Modifier.width(4.dp))
+                                    Text(
+                                        text = "${uiState.motorPower} W",
+                                        fontSize = 24.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    // 4. HEART RATE CARD (Bottom Right)
+                    Box(modifier = Modifier.weight(1f).padding(start = 6.dp)) {
+                        HeartRateCard(
+                            heartRate = uiState.heartRate,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                 }
             }
         }
