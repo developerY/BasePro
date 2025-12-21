@@ -11,6 +11,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.xr.glimmer.Icon
+import androidx.xr.glimmer.Text
 
 @Composable
 fun DataPill(
@@ -19,14 +21,14 @@ fun DataPill(
     color: Color
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        androidx.compose.material3.Icon(
+        Icon(
             imageVector = icon,
             contentDescription = null,
             tint = color.copy(alpha = 0.8f),
             modifier = Modifier.size(12.dp)
         )
         Spacer(Modifier.width(4.dp))
-        androidx.xr.glimmer.Text(
+        Text(
             text = text,
             color = color,
             fontSize = 12.sp,
