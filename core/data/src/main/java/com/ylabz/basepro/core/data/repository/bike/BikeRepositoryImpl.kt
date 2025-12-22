@@ -71,4 +71,25 @@ class BikeRepositoryImpl @Inject constructor() : BikeRepository {
     override suspend fun updateGlassConnectionState(isConnected: Boolean) {
         _isGlassConnected.emit(isConnected)
     }
+
+
+    override suspend fun toggleSimulatedConnection() {
+        val currentInfo = _rideInfo.value
+
+        // 1. Calculate the new state
+        val newConnectionState = !currentInfo.isBikeConnected
+
+        // 2. CRITICAL: Update the dedicated connection flow
+        _isConnected.emit(newConnectionState)
+
+        // 3. Update the RideInfo flow (for the HUD details)
+        _rideInfo.emit(
+            currentInfo.copy(
+                isBikeConnected = newConnectionState,
+                // Fake data for simulation:
+                batteryLevel = if (newConnectionState) 100 else null,
+                motorPower = if (newConnectionState) 250.0f else 0.0f
+            )
+        )
+    }
 }

@@ -263,6 +263,11 @@ class BikeViewModel @Inject constructor(
                 // TODO: Add any ViewModel-specific logic for this event if required in the future.
             }
 
+            is BikeEvent.SimulatedConnection -> {
+                viewModelScope.launch {
+                    bikeRepository.toggleSimulatedConnection() }
+            }
+
             // 5. HANDLE GLASS EVENTS
             // If the Phone UI has controls to change gears (e.g. testing buttons), handle them here.
             // If the 'Launch' logic is purely UI-side (Activity start), you might not need an event here,
