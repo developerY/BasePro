@@ -136,7 +136,7 @@ fun HomeScreen(
                             )
                         } else {
                             // OPTION B: DISCONNECTED -> FULL STATS LIST
-                            RideStatScrolList(
+                            RideStatsStack(
                                 distance = uiState.tripDistance,
                                 duration = uiState.rideDuration,
                                 avgSpeed = uiState.averageSpeed,
