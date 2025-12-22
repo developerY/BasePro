@@ -23,10 +23,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.BatteryStatusDisplay
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.BikeConnectionStatus
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.DataPill
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.GearControlPanel
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.HomeScreen
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.MetricDisplay
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.stage.DataPill
 import com.ylabz.basepro.core.model.bike.SuspensionState
 
 // -------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-package com.ylabz.basepro.ashbike.mobile.features.glass.ui.components
+package com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.stage
 
 
 // Glimmer Imports
@@ -23,6 +23,7 @@ import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.Text
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassUiEvent
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassUiState
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.GlassColors
 
 
 @Composable
