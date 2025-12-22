@@ -2,6 +2,7 @@ package com.ylabz.basepro.core.data.repository.bike
 
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.SuspensionState
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 interface BikeRepository {
@@ -12,7 +13,7 @@ interface BikeRepository {
     val suspensionState: StateFlow<SuspensionState>
 
     // Connection Status
-    val isConnected: StateFlow<Boolean>      // Bike Bluetooth Connection
+    val isConnected: Flow<Boolean>      // Bike Bluetooth Connection
     val isGlassConnected: StateFlow<Boolean> // Smart Glasses Connection
 
     // --- ACTIONS (The "How") ---

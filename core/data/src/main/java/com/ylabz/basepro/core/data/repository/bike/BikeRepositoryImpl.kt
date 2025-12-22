@@ -3,8 +3,11 @@ package com.ylabz.basepro.core.data.repository.bike
 import android.util.Log
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.SuspensionState
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -12,9 +15,29 @@ import javax.inject.Singleton
 class BikeRepositoryImpl @Inject constructor() : BikeRepository {
 
     // --- 1. RIDE INFO (Speed, Distance, GPS) ---
+    // --- 1. THE SINGLE SOURCE OF TRUTH ---
+    // This holds ALL state: speed, gears, AND connection status
     private val _rideInfo = MutableStateFlow(BikeRideInfo.initial())
     override val rideInfo = _rideInfo.asStateFlow()
 
+    // --- 2. DERIVED PROPERTIES (No manual syncing needed!) ---
+
+    // We "map" the rideInfo. whenever rideInfo changes, this updates automatically.
+    // distinctUntilChanged() ensures we don't emit 'true' multiple times in a row.
+    override val isConnected : Flow<Boolean> = _rideInfo
+        .map { it.isBikeConnected }
+        .distinctUntilChanged()
+
+    override suspend fun updateConnectionState(isConnected: Boolean) {
+        // Instead of updating a separate flag, we update the MASTER object
+        val current = _rideInfo.value
+        if (current.isBikeConnected != isConnected) {
+            _rideInfo.emit(current.copy(isBikeConnected = isConnected))
+        }
+    }
+
+
+    // --- 3. UPDATED FUNCTIONS ---
     override suspend fun updateRideInfo(info: BikeRideInfo) {
         // This is called ~1 time per second by BikeForegroundService
         Log.d("DEBUG_PATH", "2. REPO: Received speed ${info.currentSpeed}. Emitting...") // <--- ADD THIS
@@ -57,39 +80,28 @@ class BikeRepositoryImpl @Inject constructor() : BikeRepository {
         _suspensionState.emit(nextState)
     }
 
-    // --- 4. CONNECTIONS ---
-    private val _isConnected = MutableStateFlow(false)
-    override val isConnected = _isConnected.asStateFlow()
-
     private val _isGlassConnected = MutableStateFlow(false)
     override val isGlassConnected = _isGlassConnected.asStateFlow()
 
-    override suspend fun updateConnectionState(isConnected: Boolean) {
-        _isConnected.emit(isConnected)
-    }
 
     override suspend fun updateGlassConnectionState(isConnected: Boolean) {
         _isGlassConnected.emit(isConnected)
     }
 
-
+    // Just for video
     override suspend fun toggleSimulatedConnection() {
-        val currentInfo = _rideInfo.value
+        val current = _rideInfo.value
+        val newStatus = !current.isBikeConnected
 
-        // 1. Calculate the new state
-        val newConnectionState = !currentInfo.isBikeConnected
-
-        // 2. CRITICAL: Update the dedicated connection flow
-        _isConnected.emit(newConnectionState)
-
-        // 3. Update the RideInfo flow (for the HUD details)
+        // We only emit ONCE to _rideInfo.
+        // The 'isConnected' flow above will update automatically because it watches _rideInfo.
         _rideInfo.emit(
-            currentInfo.copy(
-                isBikeConnected = newConnectionState,
-                // Fake data for simulation:
-                batteryLevel = if (newConnectionState) 100 else null,
-                motorPower = if (newConnectionState) 250.0f else 0.0f
+            current.copy(
+                isBikeConnected = newStatus,
+                batteryLevel = if (newStatus) 100 else null,
+                motorPower = if (newStatus) 250.0f else 0.0f
             )
         )
     }
+
 }
