@@ -36,12 +36,35 @@ class BikeRepositoryImpl @Inject constructor() : BikeRepository {
         }
     }
 
+    // 3. SIMULATION FLAG (New!)
+    // This tracks if we are forcing the connection manually
+    private var isSimulatingConnection = false
+
 
     // --- 3. UPDATED FUNCTIONS ---
     override suspend fun updateRideInfo(info: BikeRideInfo) {
         // This is called ~1 time per second by BikeForegroundService
         Log.d("DEBUG_PATH", "2. REPO: Received speed ${info.currentSpeed}. Emitting...") // <--- ADD THIS
-        _rideInfo.emit(info)
+        // INTERCEPTOR LOGIC:
+        // If the Service sends us data, we check if we are simulating.
+        // If we are simulating, we overwrite the service's "disconnected" status
+        // with our "connected" status.
+
+        // SIMULATION GUARD:
+        // If we are simulating, we IGNORE the "disconnected" signal from the real service
+        // and force our fake "connected" data instead.
+
+        val finalInfo = if (isSimulatingConnection) {
+            info.copy(
+                isBikeConnected = true, // Force True
+                batteryLevel = 100,     // Force Battery
+                motorPower = 250.0f     // Force Power
+            )
+        } else {
+            info // Pass real data through unchanged
+        }
+
+        _rideInfo.emit(finalInfo)
     }
 
     // --- 2. GEARS ---
@@ -90,8 +113,13 @@ class BikeRepositoryImpl @Inject constructor() : BikeRepository {
 
     // Just for video
     override suspend fun toggleSimulatedConnection() {
+        // 1. Toggle our internal flag
+        isSimulatingConnection = !isSimulatingConnection
+
+        // 2. Use the flag as the source of truth
+        val newStatus = isSimulatingConnection
+
         val current = _rideInfo.value
-        val newStatus = !current.isBikeConnected
 
         // We only emit ONCE to _rideInfo.
         // The 'isConnected' flow above will update automatically because it watches _rideInfo.
