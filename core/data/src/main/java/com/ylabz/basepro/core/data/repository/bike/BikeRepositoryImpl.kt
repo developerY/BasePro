@@ -103,12 +103,26 @@ class BikeRepositoryImpl @Inject constructor() : BikeRepository {
         _suspensionState.emit(nextState)
     }
 
+    // --- GLASS STATE ---
+    // 1. Hardware Connection (set by DisplayManager/Service)
     private val _isGlassConnected = MutableStateFlow(false)
     override val isGlassConnected = _isGlassConnected.asStateFlow()
 
+    // 2. Software State (Is the UI actually showing?)
+    private val _isProjectionActive = MutableStateFlow(false)
+    override val isProjectionActive = _isProjectionActive.asStateFlow()
 
+    override fun setProjectionActive(isActive: Boolean) {
+        _isProjectionActive.value = isActive
+    }
+
+    // Update this to use the same logic as your other updates
     override suspend fun updateGlassConnectionState(isConnected: Boolean) {
         _isGlassConnected.emit(isConnected)
+        // Safety: If glasses unplug, projection must stop
+        if (!isConnected) {
+            _isProjectionActive.emit(false)
+        }
     }
 
     // Just for video

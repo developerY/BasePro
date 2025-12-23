@@ -56,7 +56,7 @@ fun BikeDashboard(
             // --------------------------------------------------
 
             // "Tap to Connect" Button (Existing)
-            BikeBatteryLevels(
+            BikeCard(
                 isConnected = isBikeConnected,
                 batteryLevel = batteryLevel,
                 onConnectClick = { onBikeEvent(BikeEvent.SimulatedConnection) }
