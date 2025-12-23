@@ -11,17 +11,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.database.repository.AppSettingsRepository
 import com.ylabz.basepro.applications.bike.features.main.service.BikeForegroundService
-import com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.glass.GlassButtonState
 import com.ylabz.basepro.core.data.repository.bike.BikeRepository
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,7 +27,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.sample
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -223,18 +219,6 @@ class BikeViewModel @Inject constructor(
             }
         }
     }
-
-    // Combine the flows to determine the single button state
-    val glassButtonState: Flow<GlassButtonState> = combine(
-        bikeRepository.isGlassConnected,
-        bikeRepository.isProjectionActive
-    ) { isConnected, isProjecting ->
-        when {
-            !isConnected -> GlassButtonState.NO_GLASSES
-            !isProjecting -> GlassButtonState.READY_TO_START
-            else -> GlassButtonState.PROJECTING
-        }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), GlassButtonState.NO_GLASSES)
 
     // The context parameter is now gone!
     fun onEvent(event: BikeEvent) {

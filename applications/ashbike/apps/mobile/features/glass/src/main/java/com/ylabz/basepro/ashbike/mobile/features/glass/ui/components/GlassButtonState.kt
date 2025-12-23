@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.glass
+package com.ylabz.basepro.ashbike.mobile.features.glass.ui.components
 
 // Define the 3 states clearly
 enum class GlassButtonState {
