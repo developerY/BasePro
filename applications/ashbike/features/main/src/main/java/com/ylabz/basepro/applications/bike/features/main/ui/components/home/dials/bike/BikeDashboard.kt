@@ -3,7 +3,6 @@ package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dia
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ElectricBolt
 import androidx.compose.material.icons.filled.PedalBike
@@ -13,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.LaunchGlassButton
 
 
 @Composable
@@ -58,17 +56,11 @@ fun BikeDashboard(
 
             // "Tap to Connect" Button (Existing)
             BikeCard(
+                uiState = uiState,
+                onBikeEvent = onBikeEvent,
                 isConnected = isBikeConnected,
                 batteryLevel = batteryLevel,
                 onConnectClick = { onBikeEvent(BikeEvent.SimulatedConnection) }
-            )
-
-
-            // 2. INSERT THE GLASS BUTTON HERE
-            LaunchGlassButton(
-                buttonState = uiState.glassButtonState, // Read from UI State
-                onButtonClick = { onBikeEvent(BikeEvent.ToggleGlassProjection) },
-                modifier = Modifier.fillMaxWidth().padding(top = 12.dp)
             )
 
         }

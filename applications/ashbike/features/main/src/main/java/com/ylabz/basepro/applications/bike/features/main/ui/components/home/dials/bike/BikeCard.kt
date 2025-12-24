@@ -16,9 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
+import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.LaunchGlassButton
 
 @Composable
 fun BikeCard(
+    uiState: BikeUiState.Success,
+    onBikeEvent: (BikeEvent) -> Unit,
     isConnected: Boolean,
     batteryLevel: Int?,
     onConnectClick: () -> Unit
@@ -64,6 +69,13 @@ fun BikeCard(
                 // Show a centered, Material button to connect
                 BikeConnectionButton(onConnectClick, isConnected)
             }
+
+            // 2. INSERT THE GLASS BUTTON HERE
+            LaunchGlassButton(
+                buttonState = uiState.glassButtonState, // Read from UI State
+                onButtonClick = { onBikeEvent(BikeEvent.ToggleGlassProjection) },
+                modifier = Modifier.fillMaxWidth().padding(top = 12.dp)
+            )
         }
     }
 }
