@@ -2,35 +2,38 @@ package com.ylabz.basepro.applications.bike.features.main.ui
 
 import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.xr.projected.ProjectedContext
+import androidx.xr.projected.experimental.ExperimentalProjectedApi
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.ylabz.basepro.applications.bike.features.main.ui.components.ErrorScreen
 import com.ylabz.basepro.applications.bike.features.main.ui.components.LoadingScreen
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.BikeDashboardContent
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.WaitingForGpsScreen
-import com.ylabz.basepro.applications.bike.features.trips.ui.components.haversineMeters
+import com.ylabz.basepro.ashbike.mobile.features.glass.GlassesMainActivity
 import com.ylabz.basepro.core.ui.BikeScreen
 import com.ylabz.basepro.core.ui.NavigationCommand
 import com.ylabz.basepro.feature.heatlh.ui.HealthViewModel
 import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
-
-import com.ylabz.basepro.core.model.yelp.BusinessInfo // Ensure this import is present if not transitive
 import com.ylabz.basepro.feature.places.ui.CoffeeShopEvent
 import com.ylabz.basepro.feature.places.ui.CoffeeShopUIState
 import com.ylabz.basepro.feature.places.ui.CoffeeShopViewModel
 
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalProjectedApi::class)
 @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
 @Composable
 fun BikeUiRoute(
@@ -55,6 +58,38 @@ fun BikeUiRoute(
     )
 
     val context = LocalContext.current
+
+    // --- INSERT SIDE EFFECT HANDLER HERE ---
+    // This listens for "One-time" commands from the ViewModel (Start/Stop Glass)
+    LaunchedEffect(viewModel) {
+        viewModel.sideEffects.collect { effect ->
+            when (effect) {
+                is BikeSideEffect.LaunchGlassProjection -> {
+                    // Safety check for Android 15 (Vanilla Ice Cream)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                        try {
+                            val options = ProjectedContext.createProjectedActivityOptions(context)
+                            val intent = Intent(context, GlassesMainActivity::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            context.startActivity(intent, options.toBundle())
+                            Toast.makeText(context, "Projecting to Headset...", Toast.LENGTH_SHORT).show()
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "Projection Failed: ${e.message}", Toast.LENGTH_LONG).show()
+                        }
+                    } else {
+                        Toast.makeText(context, "Requires Android 15+", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                is BikeSideEffect.StopGlassProjection -> {
+                    val intent = Intent("com.ylabz.basepro.ACTION_STOP_GLASS")
+                    context.sendBroadcast(intent)
+                    Toast.makeText(context, "Stopping Projection...", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+    // ---------------------------------------
+
     val permissionState = rememberPermissionState(
         Manifest.permission.ACCESS_FINE_LOCATION
     )
