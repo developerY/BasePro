@@ -14,39 +14,26 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class BikeSimulationReceiver : BroadcastReceiver() {
 
-    @Inject
-    lateinit var repository: BikeRepository
+    @Inject lateinit var repository: BikeRepository
 
     override fun onReceive(context: Context, intent: Intent) {
-        // Use IO scope for repository operations
         val scope = CoroutineScope(Dispatchers.IO)
 
-        when (intent.action) {
-            // COMMAND 1: SIMULATE BIKE DATA
-            "com.ylabz.ashbike.SIM_BIKE" -> {
-                val isConnected = intent.getBooleanExtra("connected", false)
-                val speed = intent.getFloatExtra("speed", 0f).toDouble()
-                val battery = intent.getIntExtra("battery", 100)
+        if (intent.action == "com.ylabz.ashbike.SIM_BIKE") {
+            val isConnected = intent.getBooleanExtra("connected", false)
+            val speed = intent.getFloatExtra("speed", 0f).toDouble()
+            val battery = intent.getIntExtra("battery", 100)
 
-                // Construct the "Fake" Data Object
-                val simInfo = BikeRideInfo.initial().copy(
-                    isBikeConnected = isConnected,
-                    currentSpeed = if (isConnected) speed else 0.0,
-                    batteryLevel = if (isConnected) battery else null,
-                    motorPower = if (isConnected) 250f else 0f
-                )
+            // Only simulate the Bike. Glass is handled by real Android APIs.
+            val simInfo = BikeRideInfo.initial().copy(
+                isBikeConnected = isConnected,
+                currentSpeed = if (isConnected) speed else 0.0,
+                batteryLevel = if (isConnected) battery else null,
+                motorPower = if (isConnected) 250f else 0f
+            )
 
-                scope.launch {
-                    repository.updateRideInfo(simInfo)
-                }
-            }
-
-            // COMMAND 2: SIMULATE GLASS CONNECTION
-            "com.ylabz.ashbike.SIM_GLASS" -> {
-                val isConnected = intent.getBooleanExtra("connected", false)
-                scope.launch {
-                    repository.updateGlassConnectionState(isConnected)
-                }
+            scope.launch {
+                repository.updateRideInfo(simInfo)
             }
         }
     }

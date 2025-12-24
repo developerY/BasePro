@@ -97,13 +97,4 @@ class BikeRepositoryImpl @Inject constructor() : BikeRepository {
         _isProjectionActive.value = isActive
     }
 
-    // Update this to use the same logic as your other updates
-    override suspend fun updateGlassConnectionState(isConnected: Boolean) {
-        _isGlassConnected.emit(isConnected)
-        // Safety: If glasses unplug, projection must stop
-        if (!isConnected) {
-            _isProjectionActive.emit(false)
-        }
-    }
-
 }

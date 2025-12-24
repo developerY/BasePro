@@ -1,7 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.bike
 
 //import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,55 +25,63 @@ fun BikeCard(
     onBikeEvent: (BikeEvent) -> Unit,
     isConnected: Boolean,
     batteryLevel: Int?,
-    onConnectClick: () -> Unit
 ) {
-    // Example colors—adjust to your theme
-    val disconnectedColor = Color(0xFF2196F3)
-    val connectedColor = Color(0xFF4CAF50)
+    // Visuals based on state
+    val containerColor = if (isConnected)
+        Color(0xFF4CAF50) // Green (Connected)
+    else
+        MaterialTheme.colorScheme.surfaceVariant // Gray (Disconnected)
 
-    val backgroundColor = if (isConnected) connectedColor else disconnectedColor
+    val contentColor = if (isConnected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
 
-    val displayText = if (isConnected) {
+    val statusText = if (isConnected) {
         "Battery: ${batteryLevel ?: 0}%"
     } else {
-        "Tap to Connect Bike"
+        "No Bike Connected" // Passive text, not a call to action
     }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .clickable {
-                if (!isConnected) {
-                    onConnectClick()
-                }
-            },
-        colors = CardDefaults.cardColors(containerColor = backgroundColor)
+            .padding(16.dp),
+        // REMOVED: .clickable {} — The card is now read-only for the Bike part
+        colors = CardDefaults.cardColors(
+            containerColor = containerColor,
+            contentColor = contentColor
+        )
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // 1. BIKE STATUS (Read-Only)
+            Text(
+                text = statusText,
+                style = MaterialTheme.typography.titleMedium
+            )
+
             if (isConnected && batteryLevel != null) {
-                // Show a battery bar or 10-segment indicator
-                Text(
-                    text = displayText,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.White
-                )
                 Spacer(Modifier.height(8.dp))
-                // 10-segment example or an interpolated bar
+                // Your existing battery indicator
                 SegmentedBatteryIndicator(batteryLevel = batteryLevel)
             } else {
-                // Show a centered, Material button to connect
-                BikeConnectionButton(onConnectClick, isConnected)
+                /* Optional: Add a subtle icon indicating "Waiting for signal..."
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = "(Looking for BLE Signal...)",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = contentColor.copy(alpha = 0.7f)
+                )*/
             }
 
-            // 2. INSERT THE GLASS BUTTON HERE
+            Spacer(Modifier.height(16.dp))
+
+            // 2. GLASS CONTROL (Still Interactive!)
+            // This button MUST remain clickable because it launches the Activity
             LaunchGlassButton(
-                buttonState = uiState.glassButtonState, // Read from UI State
+                buttonState = uiState.glassButtonState,
                 onButtonClick = { onBikeEvent(BikeEvent.ToggleGlassProjection) },
-                modifier = Modifier.fillMaxWidth().padding(top = 12.dp)
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }

@@ -292,10 +292,6 @@ class BikeViewModel @Inject constructor(
                 // TODO: Add any ViewModel-specific logic for this event if required in the future.
             }
 
-            is BikeEvent.SimulatedConnection -> {
-                viewModelScope.launch {
-                    bikeRepository.toggleSimulatedConnection() }
-            }
 
             is BikeEvent.ToggleGlassProjection -> {
                 // Check current state safely

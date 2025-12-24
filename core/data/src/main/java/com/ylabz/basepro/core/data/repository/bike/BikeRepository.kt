@@ -29,7 +29,6 @@ interface BikeRepository {
     // Called by Services (BikeForegroundService / GlassService) to update raw data
     suspend fun updateRideInfo(info: BikeRideInfo)
     suspend fun updateConnectionState(isConnected: Boolean)
-    suspend fun updateGlassConnectionState(isConnected: Boolean)
 
     //only for debug
     // suspend fun toggleSimulatedConnection() // <--- NEW

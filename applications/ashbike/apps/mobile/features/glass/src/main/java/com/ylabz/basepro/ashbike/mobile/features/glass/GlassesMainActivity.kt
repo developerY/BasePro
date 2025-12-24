@@ -3,7 +3,6 @@ package com.ylabz.basepro.ashbike.mobile.features.glass
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.xr.glimmer.GlimmerTheme
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassApp
@@ -29,13 +28,6 @@ class GlassesMainActivity : ComponentActivity() {
             getString(R.string.hello_ai_glasses)
         )
         lifecycle.addObserver(audioInterface)
-
-        // 1a. Session State: Tracks if the app process is alive
-        // 1. LAUNCH COROUTINE: Set state to TRUE when app starts
-        // We use lifecycleScope.launch because updateGlassConnectionState is a suspend function
-        lifecycleScope.launch {
-            repository.updateGlassConnectionState(true)
-        }
 
         setContent {
             GlimmerTheme {
@@ -81,8 +73,5 @@ class GlassesMainActivity : ComponentActivity() {
         // 4. Cleanup: Tell the phone the connection is fully closed
         // Best Practice: Use the Process scope.
         // This survives the Activity destruction but is tied to the App lifecycle.
-        ProcessLifecycleOwner.get().lifecycleScope.launch {
-            repository.updateGlassConnectionState(false)
-        }
     }
 }
