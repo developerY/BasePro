@@ -18,9 +18,3 @@ sealed class BikeEvent {
     // Navigation Events
     data class NavigateToSettingsRequested(val cardKey: String?) : BikeEvent()
 }
-
-// 2. DEFINE SIDE EFFECTS (For one-off actions like "Start Activity")
-sealed interface BikeSideEffect {
-    object LaunchGlassProjection : BikeSideEffect
-    object StopGlassProjection : BikeSideEffect
-}

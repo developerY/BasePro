@@ -17,7 +17,6 @@ import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -28,7 +27,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -41,10 +39,6 @@ class BikeViewModel @Inject constructor(
     // 1. INJECT THE GLASS REPO (Even if it's an object, injecting it is cleaner for testing)
     private val bikeRepository: BikeRepository
 ) : ViewModel() {
-
-    // --- Side Effects Channel (For launching Activities) ---
-    private val _sideEffects = Channel<BikeSideEffect>()
-    val sideEffects = _sideEffects.receiveAsFlow()
 
     // --- Navigation Channel ---
     private val _navigateTo = MutableSharedFlow<String>()
@@ -129,13 +123,12 @@ class BikeViewModel @Inject constructor(
                     bikeRepository.currentGear,
                     bikeRepository.isConnected,       // Simulated Data Connection
                     bikeRepository.isGlassConnected,  // Hardware Connection
-                    bikeRepository.isProjectionActive // Software State
-                ) { gear, simActive, hwConnected, isProjecting ->
+                ) { gear, simActive, hwConnected ->
 
                     // CALCULATE BUTTON STATE
                     val btnState = when {
                         !hwConnected -> GlassButtonState.NO_GLASSES
-                        isProjecting -> GlassButtonState.PROJECTING
+                        // isProjecting -> GlassButtonState.PROJECTING
                         else -> GlassButtonState.READY_TO_START
                     }
 
@@ -302,9 +295,8 @@ class BikeViewModel @Inject constructor(
                     when (currentState) {
                         GlassButtonState.READY_TO_START -> {
                             // 1. Tell Repo we are starting
-                            bikeRepository.setProjectionActive(true)
+                            bikeRepository.isGlassConnected(true)
                             // 2. Tell UI to launch Activity
-                            _sideEffects.send(BikeSideEffect.LaunchGlassProjection)
                         }
                         GlassButtonState.PROJECTING -> {
                             // 1. Tell Repo we stopped

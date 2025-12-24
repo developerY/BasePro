@@ -32,7 +32,7 @@ fun LaunchGlassButton(
             "No Glasses Connected",
             Icons.Default.UsbOff,
             MaterialTheme.colorScheme.surfaceVariant, // Gray
-            false
+            true
         )
         GlassButtonState.READY_TO_START -> Quad(
             "Start Glass Mode",
