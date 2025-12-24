@@ -10,7 +10,7 @@ sealed class BikeEvent {
     // 1. ADD THE TOGGLE EVENT
     object ToggleGlassProjection : BikeEvent()
 
-    // Not used anymore -- object SimulatedConnection : BikeEvent()
+    object SimulatedConnection : BikeEvent()
 
 
     // Added for Option 2: Semantic Event for navigation
