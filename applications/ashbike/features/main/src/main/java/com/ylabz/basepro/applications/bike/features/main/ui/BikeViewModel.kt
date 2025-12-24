@@ -11,11 +11,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.database.repository.AppSettingsRepository
 import com.ylabz.basepro.applications.bike.features.main.service.BikeForegroundService
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.GlassButtonState
 import com.ylabz.basepro.core.data.repository.bike.BikeRepository
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -26,6 +28,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -38,6 +41,10 @@ class BikeViewModel @Inject constructor(
     // 1. INJECT THE GLASS REPO (Even if it's an object, injecting it is cleaner for testing)
     private val bikeRepository: BikeRepository
 ) : ViewModel() {
+
+    // --- Side Effects Channel (For launching Activities) ---
+    private val _sideEffects = Channel<BikeSideEffect>()
+    val sideEffects = _sideEffects.receiveAsFlow()
 
     // --- Navigation Channel ---
     private val _navigateTo = MutableSharedFlow<String>()
@@ -62,6 +69,13 @@ class BikeViewModel @Inject constructor(
 
     // 1. ADD THIS NEW STATE FLOW FOR THE DIALOG
     private val _showGpsCountdownFlow = MutableStateFlow(true)
+
+    // Helper Data Class to group Glass inputs
+    data class GlassState(
+        val gear: Int,
+        val isSimulatedActive: Boolean,
+        val buttonState: GlassButtonState // <--- The calculated state
+    )
 
 
     // --- Service Connection ---
@@ -89,6 +103,7 @@ class BikeViewModel @Inject constructor(
 
 
     // A temporary data holder class to make the logic cleaner
+// Update CombinedData to hold the new state
     data class CombinedData(
         val rideInfo: BikeRideInfo,
         val totalDistance: Float?,
@@ -96,8 +111,9 @@ class BikeViewModel @Inject constructor(
         val showDialog: Boolean,
         val showGpsCountdown: Boolean,
         val gpsAccuracy: LocationEnergyLevel,
-        val glassGear: Int,       // <--- NEW
-        val isGlassActive: Boolean // <--- NEW
+        val glassGear: Int,
+        val isGlassActive: Boolean,
+        val glassButtonState: GlassButtonState // <--- Added
     )
 
     // NOTE: The BikeViewModel starts it but GlassViewModel also uses it. We might want it to start elsewhere?
@@ -108,11 +124,22 @@ class BikeViewModel @Inject constructor(
                 Log.d("BikeViewModel", "Starting to collect from service.rideInfo.")
 
                 // 1. HELPER FLOW A: Group the Glass Data (Reduces 2 flows -> 1 flow)
+                // 1. UPDATED GLASS FLOW: Calculates the 3-State Logic
                 val glassStateFlow = combine(
                     bikeRepository.currentGear,
-                    bikeRepository.isConnected
-                ) { gear, active ->
-                    Pair(gear, active) // Or create a data class GlassState(gear, active)
+                    bikeRepository.isConnected,       // Simulated Data Connection
+                    bikeRepository.isGlassConnected,  // Hardware Connection
+                    bikeRepository.isProjectionActive // Software State
+                ) { gear, simActive, hwConnected, isProjecting ->
+
+                    // CALCULATE BUTTON STATE
+                    val btnState = when {
+                        !hwConnected -> GlassButtonState.NO_GLASSES
+                        isProjecting -> GlassButtonState.PROJECTING
+                        else -> GlassButtonState.READY_TO_START
+                    }
+
+                    GlassState(gear, simActive, btnState)
                 }
 
                 // 2. HELPER FLOW B: Group the UI Flags (Reduces 3 flows -> 1 flow)
@@ -134,7 +161,7 @@ class BikeViewModel @Inject constructor(
                 ) { rideInfo, weather, gpsAccuracy, glassState, uiFlags ->
 
                     // Unpack the helper objects
-                    val (glassGear, isGlassActive) = glassState
+                    // val (glassGear, isGlassActive) = glassState
                     val (showDialog, showCountdown, totalDistance) = uiFlags
                     // Log inside the combine lambda
                     Log.d(
@@ -148,8 +175,10 @@ class BikeViewModel @Inject constructor(
                         showDialog,
                         showCountdown,
                         gpsAccuracy,
-                        glassGear,     // Pass to data holder
-                        isGlassActive  // Pass to data holder
+                        // Pass Glass Data
+                        glassGear = glassState.gear,
+                        isGlassActive = glassState.isSimulatedActive,
+                        glassButtonState = glassState.buttonState // <--- Pass to Holder
                     )
                 }
                     // 2. MAP: This block's job is to transform the raw data into the final UI State.
@@ -263,9 +292,28 @@ class BikeViewModel @Inject constructor(
                 // TODO: Add any ViewModel-specific logic for this event if required in the future.
             }
 
-            is BikeEvent.SimulatedConnection -> {
+            is BikeEvent.ToggleGlassProjection -> {
+                // Check current state safely
+                val currentState = (_uiState.value as? BikeUiState.Success)?.glassButtonState
+                    ?: return
+
                 viewModelScope.launch {
-                    bikeRepository.toggleSimulatedConnection() }
+                    when (currentState) {
+                        GlassButtonState.READY_TO_START -> {
+                            // 1. Tell Repo we are starting
+                            bikeRepository.setProjectionActive(true)
+                            // 2. Tell UI to launch Activity
+                            _sideEffects.send(BikeSideEffect.LaunchGlassProjection)
+                        }
+                        GlassButtonState.PROJECTING -> {
+                            // 1. Tell Repo we stopped
+                            bikeRepository.setProjectionActive(false)
+                            // 2. Tell UI to kill Activity
+                            _sideEffects.send(BikeSideEffect.StopGlassProjection)
+                        }
+                        GlassButtonState.NO_GLASSES -> { /* Do nothing */ }
+                    }
+                }
             }
 
             // 5. HANDLE GLASS EVENTS

@@ -1,5 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.main.ui
 
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.GlassButtonState
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 
@@ -8,6 +9,7 @@ sealed class BikeUiState {
     object WaitingForGps : BikeUiState()
     object Loading : BikeUiState()
     object Idle : BikeUiState()
+
     data class Success(
         val bikeData: BikeRideInfo,
         val showSetDistanceDialog: Boolean = false,
@@ -15,7 +17,11 @@ sealed class BikeUiState {
         val locationEnergyLevel: LocationEnergyLevel = LocationEnergyLevel.BALANCED, // <<< ADD THIS LINE
         // Add these two:
         val glassGear: Int = 1,
-        val isGlassActive: Boolean = false
+        val isGlassActive: Boolean = false,
+
+        // 2. ADD THE BUTTON STATE
+        val glassButtonState: GlassButtonState = GlassButtonState.NO_GLASSES
+
     ) : BikeUiState()
 
     data class Error(val message: String) : BikeUiState()
