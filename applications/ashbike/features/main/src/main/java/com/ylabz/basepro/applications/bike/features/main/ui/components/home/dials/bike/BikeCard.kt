@@ -1,6 +1,8 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.bike
 
 //import androidx.compose.ui.tooling.preview.Preview
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +21,7 @@ import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.LaunchGlassButton
 
+@RequiresApi(Build.VERSION_CODES.BAKLAVA)
 @Composable
 fun BikeCard(
     uiState: BikeUiState.Success,
@@ -79,6 +82,7 @@ fun BikeCard(
             // 2. GLASS CONTROL (Still Interactive!)
             // This button MUST remain clickable because it launches the Activity
             LaunchGlassButton(
+                isGlassSessionActive = uiState.isGlassActive,
                 buttonState = uiState.glassButtonState,
                 onButtonClick = { onBikeEvent(BikeEvent.ToggleGlassProjection) },
                 modifier = Modifier.fillMaxWidth()
