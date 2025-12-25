@@ -1,8 +1,6 @@
 package com.ylabz.basepro.ashbike.mobile.features.glass.ui
 
-import android.content.Intent
 import android.os.Build
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
@@ -28,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.xr.projected.ProjectedContext
 import androidx.xr.projected.experimental.ExperimentalProjectedApi
-import com.ylabz.basepro.ashbike.mobile.features.glass.GlassesMainActivity
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.GlassButtonState
 
 
@@ -47,7 +44,7 @@ fun LaunchGlassButton(
             "No Glasses Connected",
             Icons.Default.UsbOff,
             MaterialTheme.colorScheme.surfaceVariant, // Gray
-            true
+            false
         )
         GlassButtonState.READY_TO_START -> Quad(
             "Start Glass Mode",
@@ -84,23 +81,7 @@ fun LaunchGlassButton(
     // The button is only visible when the hardware is detected
     if (isGlassesConnected) {
         Button(
-            onClick = {
-                // --- THIS IS THE "MAKE IT WORK" PART ---
-
-                // A. Create the "Projection" options
-                // This bundle contains the instructions to target the external display
-                val options = ProjectedContext.createProjectedActivityOptions(context)
-
-                // B. Create the Intent for your Glass Activity
-                val intent = Intent(context, GlassesMainActivity::class.java)
-
-                // C. Launch!
-                // The 'options.toBundle()' is what redirects it to the glasses
-                context.startActivity(intent, options.toBundle())
-
-                // OPTIONAL: Immediate "Click" feedback (Toast)
-                Toast.makeText(context, "Projecting to Headset...", Toast.LENGTH_SHORT).show()
-            },
+            onClick = onButtonClick, // CHANGED: Now delegates to the ViewModel via callback
             modifier = modifier,
             // Use a distinct color so the user knows this is a "special" action
             colors = ButtonDefaults.buttonColors(

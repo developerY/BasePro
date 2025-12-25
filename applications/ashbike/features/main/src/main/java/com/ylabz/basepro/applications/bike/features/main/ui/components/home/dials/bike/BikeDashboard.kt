@@ -1,5 +1,7 @@
 package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dials.bike
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +16,7 @@ import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
 
 
+@RequiresApi(Build.VERSION_CODES.BAKLAVA)
 @Composable
 fun BikeDashboard(
     modifier: Modifier = Modifier,

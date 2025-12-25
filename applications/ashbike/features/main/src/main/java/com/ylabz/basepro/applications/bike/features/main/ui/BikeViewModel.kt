@@ -17,6 +17,7 @@ import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import com.ylabz.basepro.core.model.weather.BikeWeatherInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -27,9 +28,16 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+// 1. Define the Side Effects (One-time events sent to UI)
+sealed interface BikeSideEffect {
+    data object LaunchGlassProjection : BikeSideEffect
+    data class ShowToast(val message: String) : BikeSideEffect
+}
 
 @HiltViewModel
 class BikeViewModel @Inject constructor(
@@ -39,6 +47,11 @@ class BikeViewModel @Inject constructor(
     // 1. INJECT THE GLASS REPO (Even if it's an object, injecting it is cleaner for testing)
     private val bikeRepository: BikeRepository
 ) : ViewModel() {
+
+    // 2. Create a Channel for Side Effects
+    // Channels are perfect for one-off events (navigation, toasts)
+    private val _effects = Channel<BikeSideEffect>()
+    val effects = _effects.receiveAsFlow()
 
     // --- Navigation Channel ---
     private val _navigateTo = MutableSharedFlow<String>()
@@ -287,8 +300,10 @@ class BikeViewModel @Inject constructor(
 
 
             is BikeEvent.ToggleGlassProjection -> {
+                // Perform any business logic checks here (e.g., isConnected?)
                 viewModelScope.launch {
-                    bikeRepository.toggleSimulatedConnection()
+                    // Tell the UI to launch the activity
+                    _effects.send(BikeSideEffect.LaunchGlassProjection)
                 }
             }
 

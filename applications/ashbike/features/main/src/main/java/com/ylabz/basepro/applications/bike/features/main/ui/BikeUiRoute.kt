@@ -4,14 +4,17 @@ import android.Manifest
 import android.content.Intent
 import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.xr.projected.ProjectedContext
 import androidx.xr.projected.experimental.ExperimentalProjectedApi
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
@@ -19,6 +22,7 @@ import com.ylabz.basepro.applications.bike.features.main.ui.components.ErrorScre
 import com.ylabz.basepro.applications.bike.features.main.ui.components.LoadingScreen
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.BikeDashboardContent
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.WaitingForGpsScreen
+import com.ylabz.basepro.ashbike.mobile.features.glass.GlassesMainActivity
 import com.ylabz.basepro.core.ui.BikeScreen
 import com.ylabz.basepro.core.ui.NavigationCommand
 import com.ylabz.basepro.feature.heatlh.ui.HealthViewModel
@@ -53,6 +57,28 @@ fun BikeUiRoute(
     )
 
     val context = LocalContext.current
+
+    // 1. Listen for Side Effects
+    // This runs in the coroutine scope of the Composable
+    LaunchedEffect(key1 = true) {
+        viewModel.effects.collect { effect ->
+            when (effect) {
+                is BikeSideEffect.LaunchGlassProjection -> {
+                    // 2. Execute Android Framework Logic Here (The "Dirty" work)
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                        val options = ProjectedContext.createProjectedActivityOptions(context)
+                        val intent = Intent(context, GlassesMainActivity::class.java)
+                        context.startActivity(intent, options.toBundle())
+                    } else {
+                        Toast.makeText(context, "Requires Android 15+", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                is BikeSideEffect.ShowToast -> {
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
     val permissionState = rememberPermissionState(
         Manifest.permission.ACCESS_FINE_LOCATION
