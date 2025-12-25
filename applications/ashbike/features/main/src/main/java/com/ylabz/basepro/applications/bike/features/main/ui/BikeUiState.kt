@@ -28,6 +28,11 @@ sealed class BikeUiState {
 }
 
 
+sealed interface BikeSideEffect {
+    data object LaunchGlassProjection : BikeSideEffect
+    data class ShowToast(val message: String) : BikeSideEffect
+}
+
 /*
 "Theme" to listOf("Light", "Dark", "System Default"),
         "Language" to listOf("English", "Spanish", "French"),

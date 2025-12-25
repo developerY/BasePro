@@ -60,15 +60,20 @@ fun BikeUiRoute(
 
     // 1. Listen for Side Effects
     // This runs in the coroutine scope of the Composable
+    // --- BEST PRACTICE: Handle Side Effects Here ---
     LaunchedEffect(key1 = true) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 is BikeSideEffect.LaunchGlassProjection -> {
-                    // 2. Execute Android Framework Logic Here (The "Dirty" work)
+                    // This is where Android Framework code lives
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                        val options = ProjectedContext.createProjectedActivityOptions(context)
-                        val intent = Intent(context, GlassesMainActivity::class.java)
-                        context.startActivity(intent, options.toBundle())
+                        try {
+                            val options = ProjectedContext.createProjectedActivityOptions(context)
+                            val intent = Intent(context, GlassesMainActivity::class.java)
+                            context.startActivity(intent, options.toBundle())
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "Projection Failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
                     } else {
                         Toast.makeText(context, "Requires Android 15+", Toast.LENGTH_SHORT).show()
                     }

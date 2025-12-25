@@ -34,10 +34,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 // 1. Define the Side Effects (One-time events sent to UI)
-sealed interface BikeSideEffect {
-    data object LaunchGlassProjection : BikeSideEffect
-    data class ShowToast(val message: String) : BikeSideEffect
-}
 
 @HiltViewModel
 class BikeViewModel @Inject constructor(
