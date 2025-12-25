@@ -76,6 +76,9 @@ class BikeRepositoryImpl @Inject constructor() : BikeRepository {
     override suspend fun toggleSimulatedConnection() {
         val currentInfo = _rideInfo.value
 
+        Log.d("BikeRepositoryImpl", "toggleSimulatedConnection called. Current state: ${currentInfo.isBikeConnected}")
+
+
         // 1. Calculate the new state
         val newConnectionState = !currentInfo.isBikeConnected
 

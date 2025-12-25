@@ -14,6 +14,8 @@ sealed class BikeEvent {
     // Glass / XR Controls
     object ToggleGlassProjection : BikeEvent()
 
+
+
     // Added for Option 2: Semantic Event for navigations
     // Navigation Events
     data class NavigateToSettingsRequested(val cardKey: String?) : BikeEvent()

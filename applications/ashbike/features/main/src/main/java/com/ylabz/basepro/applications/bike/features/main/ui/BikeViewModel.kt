@@ -287,25 +287,8 @@ class BikeViewModel @Inject constructor(
 
 
             is BikeEvent.ToggleGlassProjection -> {
-                // Check current state safely
-                val currentState = (_uiState.value as? BikeUiState.Success)?.glassButtonState
-                    ?: return
-
                 viewModelScope.launch {
-                    when (currentState) {
-                        GlassButtonState.READY_TO_START -> {
-                            // 1. Tell Repo we are starting
-                            bikeRepository.isGlassConnected(true)
-                            // 2. Tell UI to launch Activity
-                        }
-                        GlassButtonState.PROJECTING -> {
-                            // 1. Tell Repo we stopped
-                            bikeRepository.setProjectionActive(false)
-                            // 2. Tell UI to kill Activity
-                            _sideEffects.send(BikeSideEffect.StopGlassProjection)
-                        }
-                        GlassButtonState.NO_GLASSES -> { /* Do nothing */ }
-                    }
+                    bikeRepository.toggleSimulatedConnection()
                 }
             }
 
