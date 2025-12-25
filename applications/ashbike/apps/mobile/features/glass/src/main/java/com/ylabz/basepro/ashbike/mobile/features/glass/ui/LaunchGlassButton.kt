@@ -1,6 +1,7 @@
 package com.ylabz.basepro.ashbike.mobile.features.glass.ui
 
 import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -13,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -25,6 +27,13 @@ fun LaunchGlassButton(
     onButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    // Debug Recomposition
+    SideEffect {
+        Log.d("DEBUG_GLASS", "3. UI Recomposition: Button State = $buttonState")
+    }
+
+
     // 1. Safety Check for Android 15
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return
 

@@ -107,12 +107,18 @@ class BikeViewModel @Inject constructor(
                     bikeRepository.isGlassSessionActive // App Running? (Flow<Boolean>)
                 ) { gear, simActive, hwConnected, sessionActive ->
 
+                    // --- LOGGING THE INPUTS ---
+                    Log.d("DEBUG_GLASS", "2. VM Combine Input: HW=$hwConnected, Session=$sessionActive")
+
                     // --- THE 3-STATE LOGIC ---
                     val btnState = when {
                         !hwConnected -> GlassButtonState.NO_GLASSES
                         sessionActive -> GlassButtonState.PROJECTING
                         else -> GlassButtonState.READY_TO_START
                     }
+
+                    // --- LOGGING THE OUTPUT ---
+                    Log.d("DEBUG_GLASS", "2. VM Calculated State: $btnState")
 
                     GlassState(gear, simActive, btnState)
                 }
@@ -151,6 +157,7 @@ class BikeViewModel @Inject constructor(
                         showCountdown,
                         gpsAccuracy,
                         // Pass Glass Data
+                        // --- MAPPING GLASS STATE ---
                         glassGear = glassState.gear,
                         isGlassActive = glassState.isSimulatedActive,
                         glassButtonState = glassState.buttonState // <--- Pass to Holder

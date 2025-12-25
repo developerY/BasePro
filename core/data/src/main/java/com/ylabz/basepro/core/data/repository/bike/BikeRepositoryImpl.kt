@@ -76,19 +76,22 @@ class BikeRepositoryImpl @Inject constructor() : BikeRepository {
     override val isGlassSessionActive = _isGlassSessionActive.asStateFlow()
 
     override suspend fun updateGlassConnectionState(isConnected: Boolean) {
+        Log.d("DEBUG_GLASS", "1. Repo: Hardware Connection Changed -> $isConnected") // <--- LOG
         _isGlassConnected.emit(isConnected)
 
         // Logic: If hardware is unplugged, the session must be dead.
         if (!isConnected) {
+            Log.d("DEBUG_GLASS", "1. Repo: Hardware Disconnect -> Forcing Session FALSE") // <--- LOG
             _isGlassSessionActive.emit(false)
         }
     }
 
     override suspend fun updateGlassSessionState(isActive: Boolean) {
+        Log.d("DEBUG_GLASS", "1. Repo: Session State Request -> $isActive. (Hardware Connected: ${_isGlassConnected.value})") // <--- LOG
+
         // We only allow setting active to true if hardware is actually connected
         if (isActive && !_isGlassConnected.value) {
-            Log.w("BikeRepository", "Cannot set Glass Session Active: Hardware disconnected")
-            _isGlassSessionActive.emit(false)
+            Log.w("DEBUG_GLASS", "1. Repo: REJECTED Session Active. Hardware is disconnected.") // <--- LOG            _isGlassSessionActive.emit(false)
             return
         }
         _isGlassSessionActive.emit(isActive)
