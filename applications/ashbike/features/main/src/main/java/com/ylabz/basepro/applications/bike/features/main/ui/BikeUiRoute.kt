@@ -19,7 +19,6 @@ import androidx.xr.projected.ProjectedContext
 import androidx.xr.projected.experimental.ExperimentalProjectedApi
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
-import com.ylabz.basepro.applications.bike.features.main.service.BikeServiceManager
 import com.ylabz.basepro.applications.bike.features.main.ui.components.ErrorScreen
 import com.ylabz.basepro.applications.bike.features.main.ui.components.LoadingScreen
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.BikeDashboardContent
@@ -40,7 +39,6 @@ import com.ylabz.basepro.feature.places.ui.CoffeeShopViewModel
 fun BikeUiRoute(
     modifier: Modifier = Modifier,
     navTo: (NavigationCommand) -> Unit,
-    serviceManager: BikeServiceManager, // Inject (or get from ViewModel if you prefer)
     viewModel: BikeViewModel
 ) {
     val healthViewModel = hiltViewModel<HealthViewModel>()
@@ -64,9 +62,9 @@ fun BikeUiRoute(
     // 1. Handle Service Binding Lifecycle
     // This ensures we bind when the screen opens and unbind when it closes
     DisposableEffect(Unit) {
-        serviceManager.bindService(context)
+        viewModel.bikeServiceManager.bindService(context)
         onDispose {
-            serviceManager.unbindService(context)
+            viewModel.bikeServiceManager.unbindService(context)
         }
     }
 

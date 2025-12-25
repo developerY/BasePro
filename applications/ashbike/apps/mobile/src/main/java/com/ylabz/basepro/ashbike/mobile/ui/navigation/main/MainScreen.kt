@@ -1,9 +1,10 @@
 package com.ylabz.basepro.ashbike.mobile.ui.navigation.main
 
 //import androidx.compose.ui.tooling.preview.Preview
+// import androidx.compose.ui.graphics.vector.ImageVector // No longer directly used here
 import android.Manifest
 import android.content.pm.PackageManager
-import android.util.Log // Added import
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -13,7 +14,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -22,12 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-// import androidx.compose.ui.graphics.vector.ImageVector // No longer directly used here
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -60,28 +57,12 @@ fun MainScreen(
     }
 
     // --- Service Binding Logic ---
+    // --- SHARED BIKE VIEWMODEL ---
+    // We instantiate it here to scope it to the MainScreen (so it survives tab changes).
+    // The actual Service Binding is now handled inside BikeUiRoute, so we don't need
+    // to bind/unbind here anymore.
     val bikeViewModel: BikeViewModel = hiltViewModel() // Instance for MainScreen and its children
     val lifecycleOwner = LocalLifecycleOwner.current
-
-    DisposableEffect(lifecycleOwner, bikeViewModel) { // Added bikeViewModel as a key
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_START -> {
-                    bikeViewModel.bindToService(context)
-                }
-
-                Lifecycle.Event.ON_STOP -> {
-                    bikeViewModel.unbindFromService(context)
-                }
-
-                else -> {}
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
 
     val locationPermissions = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,

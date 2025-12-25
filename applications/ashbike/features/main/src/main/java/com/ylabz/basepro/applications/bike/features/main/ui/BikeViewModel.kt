@@ -32,7 +32,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BikeViewModel @Inject constructor(
-    private val bikeServiceManager: BikeServiceManager, // <--- Injected Manager
+    val bikeServiceManager: BikeServiceManager, // <--- Injected Manager
     private val weatherUseCase: WeatherUseCase, // Inject WeatherUseCase here
     private val appSettingsRepository: AppSettingsRepository,
     // 1. INJECT THE GLASS REPO (Even if it's an object, injecting it is cleaner for testing)
