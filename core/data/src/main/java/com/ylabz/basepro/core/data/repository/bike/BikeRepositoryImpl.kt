@@ -61,15 +61,37 @@ class BikeRepositoryImpl @Inject constructor() : BikeRepository {
     private val _isConnected = MutableStateFlow(false)
     override val isConnected = _isConnected.asStateFlow()
 
-    private val _isGlassConnected = MutableStateFlow(false)
-    override val isGlassConnected = _isGlassConnected.asStateFlow()
-
     override suspend fun updateConnectionState(isConnected: Boolean) {
         _isConnected.emit(isConnected)
     }
 
+
+    // --- 5. GLASS STATE (Updated) ---
+    // Hardware State (Plugged in?)
+    private val _isGlassConnected = MutableStateFlow(false)
+    override val isGlassConnected = _isGlassConnected.asStateFlow()
+
+    // Software State (App Running?)
+    private val _isGlassSessionActive = MutableStateFlow(false)
+    override val isGlassSessionActive = _isGlassSessionActive.asStateFlow()
+
     override suspend fun updateGlassConnectionState(isConnected: Boolean) {
         _isGlassConnected.emit(isConnected)
+
+        // Logic: If hardware is unplugged, the session must be dead.
+        if (!isConnected) {
+            _isGlassSessionActive.emit(false)
+        }
+    }
+
+    override suspend fun updateGlassSessionState(isActive: Boolean) {
+        // We only allow setting active to true if hardware is actually connected
+        if (isActive && !_isGlassConnected.value) {
+            Log.w("BikeRepository", "Cannot set Glass Session Active: Hardware disconnected")
+            _isGlassSessionActive.emit(false)
+            return
+        }
+        _isGlassSessionActive.emit(isActive)
     }
 
 

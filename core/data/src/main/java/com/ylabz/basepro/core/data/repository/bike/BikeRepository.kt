@@ -14,7 +14,9 @@ interface BikeRepository {
 
     // Connection Status
     val isConnected: Flow<Boolean>      // Bike Bluetooth Connection
-    val isGlassConnected: StateFlow<Boolean> // Smart Glasses Connection
+    // --- GLASS STATES (Updated for 3-State Logic) ---
+    val isGlassConnected: StateFlow<Boolean>     // 1. Hardware plugged in?
+    val isGlassSessionActive: StateFlow<Boolean> // 2. Projection App running?
 
     // --- ACTIONS (The "How") ---
     // Called by ViewModels (Phone/Glass) to change physical state
@@ -27,7 +29,9 @@ interface BikeRepository {
     // Called by Services (BikeForegroundService / GlassService) to update raw data
     suspend fun updateRideInfo(info: BikeRideInfo)
     suspend fun updateConnectionState(isConnected: Boolean)
+    // Glass Updates
     suspend fun updateGlassConnectionState(isConnected: Boolean)
+    suspend fun updateGlassSessionState(isActive: Boolean) // <--- NEW
 
 
     //only for debug

@@ -104,12 +104,13 @@ class BikeViewModel @Inject constructor(
                     bikeRepository.currentGear,
                     bikeRepository.isConnected,       // Simulated Data Connection
                     bikeRepository.isGlassConnected,  // Hardware Connection
-                ) { gear, simActive, hwConnected ->
+                    bikeRepository.isGlassSessionActive // App Running? (Flow<Boolean>)
+                ) { gear, simActive, hwConnected, sessionActive ->
 
-                    // CALCULATE BUTTON STATE
+                    // --- THE 3-STATE LOGIC ---
                     val btnState = when {
                         !hwConnected -> GlassButtonState.NO_GLASSES
-                        // isProjecting -> GlassButtonState.PROJECTING
+                        sessionActive -> GlassButtonState.PROJECTING
                         else -> GlassButtonState.READY_TO_START
                     }
 
