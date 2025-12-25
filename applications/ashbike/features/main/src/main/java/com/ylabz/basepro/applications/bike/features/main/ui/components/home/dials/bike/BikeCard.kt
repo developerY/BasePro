@@ -82,7 +82,6 @@ fun BikeCard(
             // 2. GLASS CONTROL (Still Interactive!)
             // This button MUST remain clickable because it launches the Activity
             LaunchGlassButton(
-                isGlassSessionActive = uiState.isGlassActive,
                 buttonState = uiState.glassButtonState,
                 onButtonClick = { onBikeEvent(BikeEvent.ToggleGlassProjection) },
                 modifier = Modifier.fillMaxWidth()

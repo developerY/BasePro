@@ -1,123 +1,80 @@
 package com.ylabz.basepro.ashbike.mobile.features.glass.ui
 
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.CastConnected
+import androidx.compose.material.icons.filled.PermDeviceInformation
 import androidx.compose.material.icons.filled.UsbOff
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.xr.projected.ProjectedContext
-import androidx.xr.projected.experimental.ExperimentalProjectedApi
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.GlassButtonState
 
-
-@RequiresApi(Build.VERSION_CODES.BAKLAVA)
-@OptIn(ExperimentalProjectedApi::class)
 @Composable
 fun LaunchGlassButton(
-    isGlassSessionActive : Boolean,
     buttonState: GlassButtonState,
     onButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Determine visuals based on the 3-State Enum
-    val (text, icon, containerColor, enabled) = when (buttonState) {
-        GlassButtonState.NO_GLASSES -> Quad(
-            "No Glasses Connected",
-            Icons.Default.UsbOff,
-            MaterialTheme.colorScheme.surfaceVariant, // Gray
-            false
-        )
-        GlassButtonState.READY_TO_START -> Quad(
-            "Start Glass Mode",
-            Icons.Default.Visibility,
-            MaterialTheme.colorScheme.primary, // Purple/App Color
-            true
-        )
-        GlassButtonState.PROJECTING -> Quad(
-            "Glass Active (Tap to Stop)",
-            Icons.Default.CheckCircle,
-            Color(0xFF4CAF50), // Green
-            true
-        )
-    }
-
-    // 1. Safety Check: If not Android 15 (Vanilla Ice Cream), don't render anything
+    // 1. Safety Check for Android 15
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return
 
-    val context = LocalContext.current
+    // 2. Define the Visuals for each State
+    data class StateVisuals(
+        val text: String,
+        val icon: ImageVector,
+        val containerColor: Color,
+        val contentColor: Color,
+        val enabled: Boolean
+    )
 
-    // 1. Observe the "Alive" state from the Glass
-    // val isGlassSessionActive by BikeStateManager.isGlassActive.collectAsStateWithLifecycle()
-
-    // 1. Observe connection (so button disables if you unplug)
-    val scope = rememberCoroutineScope()
-
-    // 2. Observe Connection State
-    // We observe this using the XR library to react instantly to plug/unplug events
-    val isGlassesConnected by remember(context, scope) {
-        ProjectedContext.isProjectedDeviceConnected(context, scope.coroutineContext)
-    }.collectAsStateWithLifecycle(initialValue = false)
-
-    // 3. Conditional Rendering
-    // The button is only visible when the hardware is detected
-    if (isGlassesConnected) {
-        Button(
-            onClick = onButtonClick, // CHANGED: Now delegates to the ViewModel via callback
-            modifier = modifier,
-            // Use a distinct color so the user knows this is a "special" action
-            colors = ButtonDefaults.buttonColors(
-                // 2. CHANGE COLOR based on status
-                containerColor = if (isGlassSessionActive)
-                    Color(0xFF4CAF50) // Green when running
-                else
-                    MaterialTheme.colorScheme.primary // Purple/Default when idle
-            )
-
-        ) {
-            // 3. CHANGE ICON & TEXT
-            Icon(
-                if (isGlassSessionActive) Icons.Default.CheckCircle else Icons.Default.Visibility,
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(if (isGlassSessionActive) "Glass Active" else "Start Glass Mode")
-        }
+    val visuals = when (buttonState) {
+        GlassButtonState.NO_GLASSES -> StateVisuals(
+            text = "Connect Glasses",
+            icon = Icons.Default.UsbOff,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f),
+            enabled = true
+        )
+        GlassButtonState.READY_TO_START -> StateVisuals(
+            text = "Start Projection",
+            icon = Icons.Default.PermDeviceInformation, // Or generic "Glasses" icon
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            enabled = true
+        )
+        GlassButtonState.PROJECTING -> StateVisuals(
+            text = "Projecting Active",
+            icon = Icons.Default.CastConnected,
+            containerColor = Color(0xFF4CAF50), // Bike Green
+            contentColor = Color.White,
+            enabled = true // Kept enabled so user can click to "Stop" or "Open Controls"
+        )
     }
-    else {
-        Button(
-            onClick = {}, // No action needed
-            enabled = false, // FIX: This automatically grays out the button and text
-            modifier = modifier
-        ) {
-            // FIX: Switch icon to indicate "Off" state
-            Icon(Icons.Default.VisibilityOff, contentDescription = null)
 
-            Spacer(modifier = Modifier.width(8.dp))
-
-            // Clear text indicating why it is disabled
-            Text("Glass Not Connected")
-        }
+    // 3. Render
+    Button(
+        onClick = onButtonClick,
+        enabled = visuals.enabled,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = visuals.containerColor,
+            contentColor = visuals.contentColor,
+            disabledContainerColor = visuals.containerColor,
+            disabledContentColor = visuals.contentColor
+        ),
+        modifier = modifier
+    ) {
+        Icon(visuals.icon, contentDescription = null)
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(visuals.text)
     }
 }
-
-// Simple data holder for the 'when' block
-private data class Quad(val t: String, val i: ImageVector, val c: Color, val e: Boolean)

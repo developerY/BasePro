@@ -15,12 +15,11 @@ sealed class BikeUiState {
         val showSetDistanceDialog: Boolean = false,
         val showGpsCountdown: Boolean = true, // Add the new property
         val locationEnergyLevel: LocationEnergyLevel = LocationEnergyLevel.BALANCED, // <<< ADD THIS LINE
-        // Add these two:
-        val glassGear: Int = 1,
-        val isGlassActive: Boolean = false,
 
-        // 2. ADD THE BUTTON STATE
-        val glassButtonState: GlassButtonState = GlassButtonState.NO_GLASSES
+        // --- GLASS STATE ---
+        val glassGear: Int = 1,
+        val isGlassActive: Boolean = false, // (Optional: keep for legacy or other UI logic)
+        val glassButtonState: GlassButtonState = GlassButtonState.NO_GLASSES // <--- NEW SOURCE OF TRUTH
 
     ) : BikeUiState()
 
