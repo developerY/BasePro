@@ -56,7 +56,7 @@ fun NavGraphBuilder.bikeNavGraph(
                         }
                     }
                 },
-                viewModel = bikeViewModel
+                viewModel = bikeViewModel,
             )
         }
         // Add other destinations specific to the Home tab inside this navigation block if needed

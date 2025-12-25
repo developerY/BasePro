@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,6 +19,7 @@ import androidx.xr.projected.ProjectedContext
 import androidx.xr.projected.experimental.ExperimentalProjectedApi
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
+import com.ylabz.basepro.applications.bike.features.main.service.BikeServiceManager
 import com.ylabz.basepro.applications.bike.features.main.ui.components.ErrorScreen
 import com.ylabz.basepro.applications.bike.features.main.ui.components.LoadingScreen
 import com.ylabz.basepro.applications.bike.features.main.ui.components.home.BikeDashboardContent
@@ -38,6 +40,7 @@ import com.ylabz.basepro.feature.places.ui.CoffeeShopViewModel
 fun BikeUiRoute(
     modifier: Modifier = Modifier,
     navTo: (NavigationCommand) -> Unit,
+    serviceManager: BikeServiceManager, // Inject (or get from ViewModel if you prefer)
     viewModel: BikeViewModel
 ) {
     val healthViewModel = hiltViewModel<HealthViewModel>()
@@ -57,6 +60,15 @@ fun BikeUiRoute(
     )
 
     val context = LocalContext.current
+
+    // 1. Handle Service Binding Lifecycle
+    // This ensures we bind when the screen opens and unbind when it closes
+    DisposableEffect(Unit) {
+        serviceManager.bindService(context)
+        onDispose {
+            serviceManager.unbindService(context)
+        }
+    }
 
     // 1. Listen for Side Effects
     // This runs in the coroutine scope of the Composable

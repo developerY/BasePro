@@ -1,16 +1,11 @@
 package com.ylabz.basepro.applications.bike.features.main.ui
 
-import android.app.Application
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
-import android.os.IBinder
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.database.repository.AppSettingsRepository
 import com.ylabz.basepro.applications.bike.features.main.service.BikeForegroundService
+import com.ylabz.basepro.applications.bike.features.main.service.BikeServiceManager
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.GlassButtonState
 import com.ylabz.basepro.core.data.repository.bike.BikeRepository
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
@@ -37,7 +32,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BikeViewModel @Inject constructor(
-    private val application: Application, // <-- Inject Application here
+    private val bikeServiceManager: BikeServiceManager, // <--- Injected Manager
     private val weatherUseCase: WeatherUseCase, // Inject WeatherUseCase here
     private val appSettingsRepository: AppSettingsRepository,
     // 1. INJECT THE GLASS REPO (Even if it's an object, injecting it is cleaner for testing)
@@ -52,10 +47,6 @@ class BikeViewModel @Inject constructor(
     // --- Navigation Channel ---
     private val _navigateTo = MutableSharedFlow<String>()
     val navigateTo: SharedFlow<String> = _navigateTo.asSharedFlow()
-
-    // --- State for the Service Connection ---
-    private val _bound = MutableStateFlow(false)
-    private var bikeService: BikeForegroundService? = null // Renamed property
 
     // --- State exposed to the UI ---
     private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.WaitingForGps)
@@ -80,33 +71,8 @@ class BikeViewModel @Inject constructor(
         val buttonState: GlassButtonState // <--- The calculated state
     )
 
-
-    // --- Service Connection ---
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            Log.d("BikeViewModel", "Service Connected. Name: $name")
-            val binder = service as BikeForegroundService.LocalBinder
-            bikeService = binder.getService() // Updated usage
-            _bound.value = true
-            Log.d(
-                "BikeViewModel",
-                "BikeForegroundService instance obtained: $bikeService"
-            ) // Updated usage
-            // CORRECT PLACE: Start both observers after bikeService is guaranteed to be non-null.
-            observeServiceData()
-            fetchWeatherForDashboard()
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            Log.d("BikeViewModel", "Service Disconnected. Name: $name")
-            _bound.value = false
-            bikeService = null // Updated usage
-        }
-    }
-
-
     // A temporary data holder class to make the logic cleaner
-// Update CombinedData to hold the new state
+    // Update CombinedData to hold the new state
     data class CombinedData(
         val rideInfo: BikeRideInfo,
         val totalDistance: Float?,
@@ -119,11 +85,17 @@ class BikeViewModel @Inject constructor(
         val glassButtonState: GlassButtonState // <--- Added
     )
 
+    init {
+        observeBikeData()
+        fetchWeatherForDashboard()
+    }
+
+
+
     // NOTE: The BikeViewModel starts it but GlassViewModel also uses it. We might want it to start elsewhere?
-    private fun observeServiceData() {
+    private fun observeBikeData() {
         Log.d("BikeViewModel", "observeServiceData called.")
         viewModelScope.launch {
-            bikeService?.let { service ->
                 Log.d("BikeViewModel", "Starting to collect from service.rideInfo.")
 
                 // 1. HELPER FLOW A: Group the Glass Data (Reduces 2 flows -> 1 flow)
@@ -155,7 +127,7 @@ class BikeViewModel @Inject constructor(
 
                 // 3. MAIN COMBINE: Now we only have 5 inputs! (Safe & Clean)
                 combine(
-                    service.rideInfo.sample(1000L),
+                    bikeServiceManager.rideInfo.sample(1000L), // <--- Use Manager Flow
                     _weatherInfo,
                     appSettingsRepository.gpsAccuracyFlow,
                     glassStateFlow, // The grouped Glass data
@@ -199,7 +171,8 @@ class BikeViewModel @Inject constructor(
                             // 4. POPULATE UI STATE
                             // (Ensure you added these fields to BikeUiState.Success data class)
                             glassGear = data.glassGear,
-                            isGlassActive = data.isGlassActive
+                            isGlassActive = data.isGlassActive,
+                            glassButtonState = data.glassButtonState // Ensure this field exists in BikeUiState.Success
                         )
                         // Log the state being emitted and the key gpsAccuracy value from CombinedData
                         Log.d(
@@ -224,29 +197,26 @@ class BikeViewModel @Inject constructor(
                         ) // Added _DEBUG to tag
                         _uiState.value = state
                     }
-            } ?: run {
-                Log.w("BikeViewModel", "observeServiceData: bikeService is null, cannot collect.")
             }
-        }
+
     }
 
 
     private fun fetchWeatherForDashboard() {
-        // This check prevents re-fetching if the service reconnects
+        // Prevent re-fetching
         if (_weatherInfo.value != null) return
 
         viewModelScope.launch {
-            // Now we know bikeService is not null when this is called.
-            val location =
-                bikeService?.rideInfo?.first { it.location != null }?.location ?: return@launch
-
+            // Use Manager to get location safely
             try {
-                // CORRECTED: Use the class-level property directly, which Kotlin can now resolve.
-                // The previous `this.` was ambiguous inside the coroutine scope.
+                // We wait for the first valid location from the service manager
+                val rideInfo = bikeServiceManager.rideInfo.first { it.location != null }
+                val location = rideInfo.location ?: return@launch
+
                 _weatherInfo.value = weatherUseCase(location.latitude, location.longitude)
-                Log.d("BikeViewModel", "Weather fetched successfully for dashboard.")
+                Log.d("BikeViewModel", "Weather fetched successfully.")
             } catch (e: Exception) {
-                Log.e("BikeViewModel", "Error fetching weather for dashboard", e)
+                Log.e("BikeViewModel", "Error fetching weather", e)
             }
         }
     }
@@ -265,13 +235,10 @@ class BikeViewModel @Inject constructor(
                 _showSetDistanceDialog.value = false
             }
 
-            BikeEvent.StartRide -> {
-                sendCommandToService(BikeForegroundService.ACTION_START_RIDE)
-            }
-
+            BikeEvent.StartRide -> bikeServiceManager.sendCommand(BikeForegroundService.ACTION_START_RIDE)
             BikeEvent.StopRide -> {
-                sendCommandToService(BikeForegroundService.ACTION_STOP_RIDE)
-                _uiPathDistance.value = null // Resetting the UI path distance
+                bikeServiceManager.sendCommand(BikeForegroundService.ACTION_STOP_RIDE)
+                _uiPathDistance.value = null
             }
 
             BikeEvent.OnBikeClick -> {
@@ -291,6 +258,10 @@ class BikeViewModel @Inject constructor(
                     "BikeViewModel",
                     "NavigateToSettingsRequested event received. CardKey: ${event.cardKey}"
                 )
+                // TODO: Add any ViewModel-specific logic for this event if required in the future.
+                viewModelScope.launch {
+                    _navigateTo.emit("settings/${event.cardKey}")
+                }
                 // TODO: Add any ViewModel-specific logic for this event if required in the future.
             }
 
@@ -314,66 +285,4 @@ class BikeViewModel @Inject constructor(
         }
     }
 
-    // This function now uses the injected 'application' context
-    private fun sendCommandToService(action: String) {
-        Log.d("BikeViewModel", "sendCommandToService: $action")
-        val intent =
-            Intent(application, BikeForegroundService::class.java).apply { this.action = action }
-        application.startService(intent) // Ensures service is running if not already
-    }
-
-    // --- Service Lifecycle Management ---
-    // Note: bind/unbind still need the Activity/Fragment context, which is fine
-    // because these methods are called directly from the UI layer's lifecycle.
-    fun bindToService(context: Context) {
-        if (!_bound.value) {
-            Log.d("BikeViewModel", "bindToService called. Current bound state: ${_bound.value}")
-            Intent(context, BikeForegroundService::class.java).also { intent ->
-                try {
-                    Log.d("BikeViewModel", "Attempting to start service.")
-                    context.startService(intent) // Good to ensure it's started, especially if it might not be running
-                    Log.d("BikeViewModel", "Attempting to bind service.")
-                    val didBind =
-                        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-                    Log.d("BikeViewModel", "bindService call returned: $didBind")
-                    if (!didBind) {
-                        Log.e(
-                            "BikeViewModel",
-                            "bindService returned false. Service may not be available or manifest declaration missing."
-                        )
-                    }
-                } catch (e: Exception) {
-                    Log.e("BikeViewModel", "Exception during bindToService: ${e.message}", e)
-                }
-            }
-        } else {
-            Log.d("BikeViewModel", "bindToService called, but already bound.")
-        }
-    }
-
-    fun unbindFromService(context: Context) {
-        Log.d(
-            "BikeViewModel",
-            "unbindFromService called. Current internal _bound state: ${_bound.value}"
-        )
-        try {
-            // Always attempt to unbind. The Android system tracks the actual binding.
-            // If it's not bound, context.unbindService will throw IllegalArgumentException.
-            context.unbindService(serviceConnection)
-            Log.d("BikeViewModel", "context.unbindService() called successfully.")
-        } catch (e: IllegalArgumentException) {
-            // This is expected if the service was already unbound or was never bound with this connection.
-            Log.w(
-                "BikeViewModel",
-                "IllegalArgumentException during unbindService: ${e.message}. Service might have been already unbound or not registered."
-            )
-        } catch (e: Exception) {
-            // Catch any other unexpected exceptions during unbinding.
-            Log.e("BikeViewModel", "Generic exception during unbindFromService: ${e.message}", e)
-        }
-        // Regardless of whether unbindService threw an exception (e.g., already unbound),
-        // update our internal state to reflect that we've processed the unbind request.
-        _bound.value = false
-        bikeService = null
-    }
 }
