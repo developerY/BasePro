@@ -90,7 +90,12 @@ class BikeViewModel @Inject constructor(
         fetchWeatherForDashboard()
     }
 
-
+    // Add this function
+    fun updateGlassConnection(isConnected: Boolean) {
+        viewModelScope.launch {
+            bikeRepository.updateGlassConnectionState(isConnected)
+        }
+    }
 
     // NOTE: The BikeViewModel starts it but GlassViewModel also uses it. We might want it to start elsewhere?
     private fun observeBikeData() {

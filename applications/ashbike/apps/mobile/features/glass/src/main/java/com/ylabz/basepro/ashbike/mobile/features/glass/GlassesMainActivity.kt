@@ -52,6 +52,7 @@ class GlassesMainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
+        ProjectionState.setProjecting(true)
         // Do things to make the user aware that this activity is active (for
         // example, play audio), when the display state is off
         // 2. User Feedback: Confirm the system is ready/visible
@@ -61,6 +62,7 @@ class GlassesMainActivity : ComponentActivity() {
 
     override fun onStop() {
         super.onStop()
+        ProjectionState.setProjecting(false)
         //Stop all the data source access
         // 3. Battery Saving: If you had heavy sensors (like Camera), pause them here.
         // For simple data syncing, you can often leave it running.

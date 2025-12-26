@@ -2,6 +2,7 @@ package com.ylabz.basepro.applications.bike.features.main.ui
 
 import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
@@ -26,11 +27,10 @@ import com.ylabz.basepro.applications.bike.features.main.ui.components.home.Wait
 import com.ylabz.basepro.ashbike.mobile.features.glass.GlassesMainActivity
 import com.ylabz.basepro.core.ui.BikeScreen
 import com.ylabz.basepro.core.ui.NavigationCommand
-import com.ylabz.basepro.feature.heatlh.ui.HealthViewModel
-import com.ylabz.basepro.feature.nfc.ui.NfcViewModel
 import com.ylabz.basepro.feature.places.ui.CoffeeShopEvent
 import com.ylabz.basepro.feature.places.ui.CoffeeShopUIState
 import com.ylabz.basepro.feature.places.ui.CoffeeShopViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalProjectedApi::class)
@@ -41,26 +41,31 @@ fun BikeUiRoute(
     navTo: (NavigationCommand) -> Unit,
     viewModel: BikeViewModel
 ) {
-    val healthViewModel = hiltViewModel<HealthViewModel>()
-    val nfcViewModel = hiltViewModel<NfcViewModel>()
+    // val healthViewModel = hiltViewModel<HealthViewModel>()
+    // val nfcViewModel = hiltViewModel<NfcViewModel>()
     val coffeeShopViewModel = hiltViewModel<CoffeeShopViewModel>() // Added CoffeeShopViewModel
 
     val bikeUiState by viewModel.uiState.collectAsState()
     val cafeUiState by coffeeShopViewModel.uiState.collectAsState() // Added Cafe UI State
-
-    Log.d(
-        "BikeUiRoute_InstanceTest",
-        "BikeUiRoute using BikeViewModel instance: ${viewModel.hashCode()}"
-    )
-    Log.d(
-        "BikeUiRoute_StateLog",
-        "BikeUiRoute recomposing with bikeUiState: ${bikeUiState::class.java.simpleName}, cafeUiState: ${cafeUiState::class.java.simpleName}"
-    )
-
     val context = LocalContext.current
 
-    // 1. Handle Service Binding Lifecycle
-    // This ensures we bind when the screen opens and unbind when it closes
+    // --- 2. GLASS CONNECTION LISTENER (The Fix) ---
+    // This listens to the hardware: Is the cable plugged in?
+    LaunchedEffect(Unit) {
+        // Only run on Android 15+ (Baklava/VanillaIceCream)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+            // "this.coroutineContext" is valid here inside LaunchedEffect
+            ProjectedContext.isProjectedDeviceConnected(context, this.coroutineContext)
+                .collectLatest { isConnected ->
+                    viewModel.updateGlassConnection(isConnected)
+                }
+        } else {
+            // Fallback for older devices
+            viewModel.updateGlassConnection(false)
+        }
+    }
+
+    // --- 3. LIFECYCLE: Bind/Unbind Bike Service ---
     DisposableEffect(Unit) {
         viewModel.bikeServiceManager.bindService(context)
         onDispose {
@@ -68,24 +73,27 @@ fun BikeUiRoute(
         }
     }
 
-    // 1. Listen for Side Effects
-    // This runs in the coroutine scope of the Composable
-    // --- BEST PRACTICE: Handle Side Effects Here ---
+    // --- 4. SIDE EFFECTS: Launching Activities & Toasts ---
+    // This listens for "One-off" commands from the ViewModel
     LaunchedEffect(key1 = true) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 is BikeSideEffect.LaunchGlassProjection -> {
-                    // This is where Android Framework code lives
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                    // LOGIC: Attempt to launch on the external glass display
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
                         try {
+                            // This specifically targets the Glasses
                             val options = ProjectedContext.createProjectedActivityOptions(context)
-                            val intent = Intent(context, GlassesMainActivity::class.java)
+                            val intent = Intent(context, GlassesMainActivity::class.java).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
                             context.startActivity(intent, options.toBundle())
                         } catch (e: Exception) {
-                            Toast.makeText(context, "Projection Failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                            Log.e("BikeUiRoute", "Projection Launch Failed", e)
+                            Toast.makeText(context, "Projection Failed: ${e.message}", Toast.LENGTH_LONG).show()
                         }
                     } else {
-                        Toast.makeText(context, "Requires Android 15+", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Glasses require Android 15+", Toast.LENGTH_SHORT).show()
                     }
                 }
                 is BikeSideEffect.ShowToast -> {
@@ -112,6 +120,7 @@ fun BikeUiRoute(
         }
     }
 
+    // --- G. UI RENDER LOGIC ---
     when (val currentBikeUiState = bikeUiState) {
         is BikeUiState.WaitingForGps -> {
             WaitingForGpsScreen(
@@ -149,8 +158,12 @@ fun BikeUiRoute(
             }
 
 
+            // Check if we actually have a valid location before showing Dashboard
+            val hasValidLocation = currentBikeUiState.bikeData.location?.let {
+                it.latitude != 0.0 || it.longitude != 0.0
+            } ?: false
 
-            if (currentBikeUiState.bikeData.location != null && (currentBikeUiState.bikeData.location?.latitude != 0.0 || currentBikeUiState.bikeData.location?.longitude != 0.0)) {
+            if (hasValidLocation) {
                 BikeDashboardContent(
                     modifier = modifier.fillMaxSize(),
                     uiState = currentBikeUiState,

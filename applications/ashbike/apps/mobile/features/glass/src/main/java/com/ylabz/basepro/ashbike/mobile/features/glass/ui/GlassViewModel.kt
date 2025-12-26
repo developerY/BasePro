@@ -76,7 +76,6 @@ class GlassViewModel @Inject constructor(
 
             // Navigation events are handled by the Compose UI layer (GlassApp),
             // but we list them here to be exhaustive or if we wanted to log them.
-            GlassUiEvent.CloseApp -> {}
             GlassUiEvent.OpenGearList -> {}
         }
     }

@@ -33,7 +33,6 @@ fun LaunchGlassButton(
         Log.d("DEBUG_GLASS", "3. UI Recomposition: Button State = $buttonState")
     }
 
-
     // 1. Safety Check for Android 15
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return
 
