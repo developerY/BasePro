@@ -51,7 +51,7 @@ fun LaunchGlassButton(
             icon = Icons.Default.UsbOff,
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f),
-            enabled = true
+            enabled = false
         )
         GlassButtonState.READY_TO_START -> StateVisuals(
             text = "Start Projection",

@@ -52,17 +52,34 @@ class GlassesMainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        ProjectionState.setProjecting(true)
+        // ProjectionState.setProjecting(true)
         // Do things to make the user aware that this activity is active (for
         // example, play audio), when the display state is off
         // 2. User Feedback: Confirm the system is ready/visible
         // This runs on first launch AND when the screen wakes up from sleep
         // audioInterface.speak(getString(R.string.hello_ai_glasses))
+        // This updates the flow that BikeViewModel is watching
+        // --- THE FIX: Tell the Repository "I am here!" ---
+        lifecycleScope.launch {
+            // This updates the flow that BikeViewModel is watching
+            repository.updateGlassSessionState(true)
+        }
     }
 
     override fun onStop() {
         super.onStop()
-        ProjectionState.setProjecting(false)
+        // ProjectionState.setProjecting(false)
+        //Stop all the data source access
+        // 3. Battery Saving: If you had heavy sensors (like Camera), pause them here.
+        // For simple data syncing, you can often leave it running.
+        // If AudioInterface is an Observer, it might auto-mute here.
+
+        // --- THE FIX: Tell the Repository "I am gone!" ---
+        lifecycleScope.launch {
+            // This resets the button on the phone to "Start Projection"
+            repository.updateGlassSessionState(false)
+        }
+        // ProjectionState.setProjecting(false)
         //Stop all the data source access
         // 3. Battery Saving: If you had heavy sensors (like Camera), pause them here.
         // For simple data syncing, you can often leave it running.
