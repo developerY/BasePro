@@ -26,18 +26,18 @@ import com.ylabz.basepro.ashbike.mobile.features.glass.ui.LaunchGlassButton
 fun BikeCard(
     uiState: BikeUiState.Success,
     onBikeEvent: (BikeEvent) -> Unit,
-    isConnected: Boolean,
+    isBikeConnected: Boolean,
     batteryLevel: Int?,
 ) {
     // Visuals based on state
-    val containerColor = if (isConnected)
+    val containerColor = if (isBikeConnected)
         Color(0xFF4CAF50) // Green (Connected)
     else
         MaterialTheme.colorScheme.surfaceVariant // Gray (Disconnected)
 
-    val contentColor = if (isConnected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
+    val contentColor = if (isBikeConnected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
 
-    val statusText = if (isConnected) {
+    val statusText = if (isBikeConnected) {
         "Battery: ${batteryLevel ?: 0}%"
     } else {
         "No Bike Connected" // Passive text, not a call to action
@@ -63,7 +63,7 @@ fun BikeCard(
                 style = MaterialTheme.typography.titleMedium
             )
 
-            if (isConnected && batteryLevel != null) {
+            if (isBikeConnected && batteryLevel != null) {
                 Spacer(Modifier.height(8.dp))
                 // Your existing battery indicator
                 SegmentedBatteryIndicator(batteryLevel = batteryLevel)

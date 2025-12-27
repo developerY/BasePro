@@ -40,7 +40,7 @@ class BikeRepositoryImpl @Inject constructor() : BikeRepository {
         _rideInfo.emit(connectedVideoInfo)
 
         // 4. ALSO Emit to the separate connection Flow (Glass observes this too)
-        _isConnected.emit(true)
+        // _isConnected.emit(true)
     }
 
     // --- 2. GEARS ---
@@ -81,7 +81,7 @@ class BikeRepositoryImpl @Inject constructor() : BikeRepository {
 
     // --- 4. CONNECTIONS ---
     private val _isConnected = MutableStateFlow(false)
-    override val isConnected = _isConnected.asStateFlow()
+    override val isBikeConnected = _isConnected.asStateFlow()
 
     // This is called from BikeForegroundService
     // NFC -2- BLE Connection State

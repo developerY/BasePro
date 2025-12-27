@@ -13,7 +13,7 @@ interface BikeRepository {
     val suspensionState: StateFlow<SuspensionState>
 
     // Connection Status
-    val isConnected: Flow<Boolean>      // Bike Bluetooth Connection
+    val isBikeConnected: Flow<Boolean>      // Bike Bluetooth Connection
     // --- GLASS STATES (Updated for 3-State Logic) ---
     val isGlassConnected: StateFlow<Boolean>     // 1. Hardware plugged in?
     val isGlassSessionActive: StateFlow<Boolean> // 2. Projection App running?

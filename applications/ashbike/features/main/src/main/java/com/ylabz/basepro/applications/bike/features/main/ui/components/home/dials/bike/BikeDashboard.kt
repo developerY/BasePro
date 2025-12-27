@@ -61,7 +61,7 @@ fun BikeDashboard(
             BikeCard(
                 uiState = uiState,
                 onBikeEvent = onBikeEvent,
-                isConnected = isBikeConnected,
+                isBikeConnected = isBikeConnected,
                 batteryLevel = batteryLevel,
             )
 

@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -110,7 +109,7 @@ class BikeViewModel @Inject constructor(
                 // 1. UPDATED GLASS FLOW: Calculates the 3-State Logic
                 val glassStateFlow = combine(
                     bikeRepository.currentGear,
-                    bikeRepository.isConnected,       // Simulated Data Connection
+                    bikeRepository.isBikeConnected,       // Simulated Data Connection
                     bikeRepository.isGlassConnected,  // Hardware Connection
                     bikeRepository.isGlassSessionActive // App Running? (Flow<Boolean>)
                 ) { gear, simActive, hwConnected, sessionActive ->
@@ -142,7 +141,7 @@ class BikeViewModel @Inject constructor(
 
                 // 3. MAIN COMBINE: Now we only have 5 inputs! (Safe & Clean)
                 combine(
-                    bikeServiceManager.rideInfo.sample(1000L), // <--- Use Manager Flow
+                    bikeRepository.rideInfo, // <--- Uses Repo Data (25.0 from Simulator) // bikeServiceManager.rideInfo.sample(1000L), // <--- Use Manager Flow
                     _weatherInfo,
                     appSettingsRepository.gpsAccuracyFlow,
                     glassStateFlow, // The grouped Glass data
