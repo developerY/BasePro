@@ -32,8 +32,4 @@ interface BikeRepository {
     // Glass Updates
     suspend fun updateGlassConnectionState(isConnected: Boolean)
     suspend fun updateGlassSessionState(isActive: Boolean) // <--- NEW
-
-
-    //only for debug
-    suspend fun toggleSimulatedConnection() // <--- NEW
 }

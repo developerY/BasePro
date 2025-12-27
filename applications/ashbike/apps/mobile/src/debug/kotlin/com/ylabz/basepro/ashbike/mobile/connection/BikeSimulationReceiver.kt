@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.ylabz.basepro.core.data.repository.bike.BikeRepository
-import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,8 +12,8 @@ import javax.inject.Inject
 
 /**
  * A Backdoor Receiver to drive the app via ADB.
- * Commands:
- * 1. adb shell am broadcast -a com.ylabz.ashbike.SIM_BIKE --ez connected true --ef speed 25.0
+ * Command:
+ * adb shell am broadcast -a com.ylabz.ashbike.SIM_BIKE --ez connected true --ei battery 85
  */
 @AndroidEntryPoint
 class BikeSimulationReceiver : BroadcastReceiver() {
@@ -29,13 +28,19 @@ class BikeSimulationReceiver : BroadcastReceiver() {
                 val isConnected = intent.getBooleanExtra("connected", false)
                 val battery = intent.getIntExtra("battery", 100)
 
-                // Inject the fake data directly into the Repo
                 scope.launch {
+                    // CRITICAL FIX:
+                    // 1. Get the CURRENT state (Preserve GPS Speed, Distance, etc.)
+                    val currentInfo = repository.rideInfo.value
+
+                    // 2. Only modify the E-Bike hardware fields
                     repository.updateRideInfo(
-                        BikeRideInfo.initial().copy(
+                        currentInfo.copy(
                             isBikeConnected = isConnected,
                             batteryLevel = if (isConnected) battery else null,
                             motorPower = if (isConnected) 250f else 0f
+                            // We do NOT touch currentSpeed, distance, or duration here.
+                            // Those are kept from the running GPS service.
                         )
                     )
                 }

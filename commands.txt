@@ -1,0 +1,2 @@
+adb shell am broadcast -a com.ylabz.ashbike.SIM_BIKE --ez connected true --ei battery 90
+adb shell am broadcast -a com.ylabz.ashbike.SIM_BIKE --ez connected false
