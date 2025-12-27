@@ -1,4 +1,4 @@
-package com.ylabz.basepro.applications.bike.features.main.ui
+package com.ylabz.basepro.core.data.repository.bike
 
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import kotlin.random.Random
@@ -27,7 +27,7 @@ class DemoModeSimulator {
 
         // 3. Random Motor Power (210W - 290W)
         val randomMotor = if (demoToggle) {
-            Random.nextInt(210, 290).toFloat()
+            Random.Default.nextInt(210, 290).toFloat()
         } else {
             0f
         }

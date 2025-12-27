@@ -11,14 +11,36 @@ import javax.inject.Singleton
 @Singleton // CRITICAL: Ensures the state survives across Screens and Services
 class BikeRepositoryImpl @Inject constructor() : BikeRepository {
 
+    // 1. The Simulator lives here (Single Instance)
+    private val demoSimulator = DemoModeSimulator()
+
     // --- 1. RIDE INFO (Speed, Distance, GPS) ---
     private val _rideInfo = MutableStateFlow(BikeRideInfo.initial())
     override val rideInfo = _rideInfo.asStateFlow()
 
+
+    /**
+     * This is the "Heartbeat" of the app.
+     * It is called ~1 time per second by BikeForegroundService.
+     */
     override suspend fun updateRideInfo(info: BikeRideInfo) {
         // This is called ~1 time per second by BikeForegroundService
         Log.d("DEBUG_PATH", "2. REPO: Received speed ${info.currentSpeed}. Emitting...") // <--- ADD THIS
-        _rideInfo.emit(info)
+
+
+        // PROCESSING: Real Data + Demo Logic = Synchronized Video Data
+        // The simulator creates the 'fake' speed, distance, and heartbeat here.
+        val videoReadyInfo = demoSimulator.process(info)
+
+        // 2. FORCE CONNECTED STATE FOR VIDEO (The missing link!)
+        val connectedVideoInfo = videoReadyInfo.copy(isBikeConnected = true)
+
+        // Emit the 'Fake' data to the rest of the app
+        // 3. Emit the data
+        _rideInfo.emit(connectedVideoInfo)
+
+        // 4. ALSO Emit to the separate connection Flow (Glass observes this too)
+        _isConnected.emit(true)
     }
 
     // --- 2. GEARS ---
@@ -63,9 +85,9 @@ class BikeRepositoryImpl @Inject constructor() : BikeRepository {
 
     // This is called from BikeForegroundService
     // NFC -2- BLE Connection State
-    /* override suspend fun updateConnectionState(isConnected: Boolean) {
+    override suspend fun updateConnectionState(isConnected: Boolean) {
         _isConnected.emit(isConnected)
-    }*/
+    }
 
 
     // --- 5. GLASS STATE (Updated) ---

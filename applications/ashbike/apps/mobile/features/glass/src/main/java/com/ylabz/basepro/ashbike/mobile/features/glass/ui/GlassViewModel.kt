@@ -26,8 +26,7 @@ class GlassViewModel @Inject constructor(
                 repository.currentGear,
                 repository.suspensionState,
                 repository.rideInfo, // <--- ADD THIS
-                repository.isConnected // <--- Watch the Bike Connection
-            ) { gear, susp, info, isBikeConnected ->
+            ) { gear, susp, info ->
 
                 // Update the UI State ->
 
@@ -51,7 +50,7 @@ class GlassViewModel @Inject constructor(
                     rideDuration = info.rideDuration,
                     // Format Avg Speed
                     averageSpeed = String.format("%.1f", info.averageSpeed),
-                    isBikeConnected = isBikeConnected ,// <--- Update the state
+                    isBikeConnected = info.isBikeConnected ,// <--- Update the state
                 )
             }.collect { newState ->
                 _uiState.value = newState
