@@ -28,6 +28,7 @@ import com.ylabz.basepro.applications.bike.features.main.R
 import com.ylabz.basepro.applications.bike.features.main.usecase.CalculateCaloriesUseCase
 import com.ylabz.basepro.applications.bike.features.main.usecase.UserStats
 import com.ylabz.basepro.core.data.repository.bike.BikeRepository
+import com.ylabz.basepro.core.data.repository.bike.DemoModeSimulator
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import com.ylabz.basepro.core.model.bike.RideState
@@ -107,6 +108,10 @@ class BikeForegroundService : LifecycleService() {
     val rideInfo = _rideInfo.asStateFlow()
 
     private var currentActualGpsIntervalMillis: Long = 0L // Stores the actual interval used
+
+    // 1. Instantiate the Simulator
+    // NOTE: Remove after video.
+    private val demoSimulator = DemoModeSimulator()
 
 
     inner class LocalBinder : Binder() {
@@ -331,13 +336,22 @@ class BikeForegroundService : LifecycleService() {
             ridePath = currentRidePath // Assign the mapped GpsFix list or emptyList
         )
 
+        // =================================================================
+        // DEMO VIDEO LOGIC: INTERCEPT HERE
+        // =================================================================
+        // This takes the Real Emulator Speed + Toggles the Connection
+        val videoReadyInfo = demoSimulator.process(newInfo)
+        // =================================================================
+
+        val newRideInfo = videoReadyInfo
+
         // 1. Update Local State (for Notification)
-        _rideInfo.value = newInfo
+        _rideInfo.value = newRideInfo
 
         // 2. PUSH TO REPOSITORY (So Glass can see it!)
         lifecycleScope.launch {
-            Log.d("DEBUG_PATH", "1. SERVICE: Pushing speed ${newInfo.currentSpeed} to Repo") // <--- ADD THIS
-            bikeRepository.updateRideInfo(newInfo)
+            Log.d("DEBUG_PATH", "1. SERVICE: Pushing speed ${newRideInfo.currentSpeed} to Repo") // <--- ADD THIS
+            bikeRepository.updateRideInfo(newRideInfo)
         }
 
         if (isFormalRideActive) {

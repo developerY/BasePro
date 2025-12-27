@@ -26,21 +26,8 @@ class BikeRepositoryImpl @Inject constructor() : BikeRepository {
     override suspend fun updateRideInfo(info: BikeRideInfo) {
         // This is called ~1 time per second by BikeForegroundService
         Log.d("DEBUG_PATH", "2. REPO: Received speed ${info.currentSpeed}. Emitting...") // <--- ADD THIS
+        _rideInfo.emit(info) // or info if you prefer real data
 
-
-        // PROCESSING: Real Data + Demo Logic = Synchronized Video Data
-        // The simulator creates the 'fake' speed, distance, and heartbeat here.
-        val videoReadyInfo = demoSimulator.process(info)
-
-        // 2. FORCE CONNECTED STATE FOR VIDEO (The missing link!)
-        val connectedVideoInfo = videoReadyInfo.copy(isBikeConnected = true)
-
-        // Emit the 'Fake' data to the rest of the app
-        // 3. Emit the data
-        _rideInfo.emit(connectedVideoInfo)
-
-        // 4. ALSO Emit to the separate connection Flow (Glass observes this too)
-        // _isConnected.emit(true)
     }
 
     // --- 2. GEARS ---
