@@ -41,6 +41,7 @@ class BikeViewModel @Inject constructor(
 
     // 2. Create a Channel for Side Effects
     // Channels are perfect for one-off events (navigation, toasts)
+    // --- Side Effects & Navigation ---
     private val _effects = Channel<BikeSideEffect>()
     val effects = _effects.receiveAsFlow()
 
@@ -49,6 +50,7 @@ class BikeViewModel @Inject constructor(
     val navigateTo: SharedFlow<String> = _navigateTo.asSharedFlow()
 
     // --- State exposed to the UI ---
+    // --- State ---
     private val _uiState = MutableStateFlow<BikeUiState>(BikeUiState.WaitingForGps)
     val uiState: StateFlow<BikeUiState> = _uiState.asStateFlow()
 
@@ -103,6 +105,9 @@ class BikeViewModel @Inject constructor(
         viewModelScope.launch {
                 Log.d("BikeViewModel", "Starting to collect from service.rideInfo.")
 
+            // 1. INSTANTIATE THE DEMO SIMULATOR
+            val demoSimulator = DemoModeSimulator()
+
                 // 1. HELPER FLOW A: Group the Glass Data (Reduces 2 flows -> 1 flow)
                 // 1. UPDATED GLASS FLOW: Calculates the 3-State Logic
                 val glassStateFlow = combine(
@@ -144,7 +149,15 @@ class BikeViewModel @Inject constructor(
                     appSettingsRepository.gpsAccuracyFlow,
                     glassStateFlow, // The grouped Glass data
                     uiFlagsFlow     // The grouped UI flags
-                ) { rideInfo, weather, gpsAccuracy, glassState, uiFlags ->
+                ) { originalRideInfo, weather, gpsAccuracy, glassState, uiFlags ->
+
+                    // ====================================================
+                    // DEMO HACK: AUTO-TOGGLE EVERY UPDATE
+                    // VIDEO MODE HACK: FORCE CONNECTED STATE
+                    // CALL EXTERNAL DEMO LOGIC
+                    // ====================================================
+                    val videoRideInfo = demoSimulator.process(originalRideInfo)
+                    // ====================================================
 
                     // Unpack the helper objects
                     // val (glassGear, isGlassActive) = glassState
@@ -152,10 +165,10 @@ class BikeViewModel @Inject constructor(
                     // Log inside the combine lambda
                     Log.d(
                         "BikeViewModel_DEBUG",
-                        "Combine lambda. rideInfo.location: ${rideInfo.location}, gpsAccuracy (from settings): $gpsAccuracy, showGpsCountdown: $showCountdown"
+                        "Combine lambda. rideInfo.location: ${videoRideInfo.location}, gpsAccuracy (from settings): $gpsAccuracy, showGpsCountdown: $showCountdown"
                     )
                     CombinedData(
-                        rideInfo,
+                        rideInfo = videoRideInfo, // <--- USE THE HACKED DATA HERE,
                         totalDistance,
                         weather,
                         showDialog,
