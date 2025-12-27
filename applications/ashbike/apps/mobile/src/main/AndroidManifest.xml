@@ -105,12 +105,12 @@
             android:foregroundServiceType="location" />
 
 
-        <receiver
+        <!--receiver
             android:name="com.ylabz.basepro.ashbike.mobile.connection.BikeSimulationReceiver"
             android:exported="true"> <intent-filter>
             <action android:name="com.ylabz.ashbike.SIM_BIKE" />
         </intent-filter>
-        </receiver>
+        </receiver -->
 
         <!-- Google Maps API Key -->
         <!--meta-data

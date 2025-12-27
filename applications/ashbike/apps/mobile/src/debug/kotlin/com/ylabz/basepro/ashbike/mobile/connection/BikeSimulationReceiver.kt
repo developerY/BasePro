@@ -16,7 +16,7 @@ import javax.inject.Inject
  * adb shell am broadcast -a com.ylabz.ashbike.SIM_BIKE --ez connected true --ei battery 85
  */
 @AndroidEntryPoint
-class BikeSimulationReceiver : BroadcastReceiver() {
+class BikeSimulationReceiver_not_used : BroadcastReceiver() {
 
     @Inject lateinit var repository: BikeRepository
 

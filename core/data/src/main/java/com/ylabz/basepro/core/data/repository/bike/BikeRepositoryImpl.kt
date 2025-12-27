@@ -61,9 +61,11 @@ class BikeRepositoryImpl @Inject constructor() : BikeRepository {
     private val _isConnected = MutableStateFlow(false)
     override val isConnected = _isConnected.asStateFlow()
 
-    override suspend fun updateConnectionState(isConnected: Boolean) {
+    // This is called from BikeForegroundService
+    // NFC -2- BLE Connection State
+    /* override suspend fun updateConnectionState(isConnected: Boolean) {
         _isConnected.emit(isConnected)
-    }
+    }*/
 
 
     // --- 5. GLASS STATE (Updated) ---

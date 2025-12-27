@@ -28,7 +28,8 @@ interface BikeRepository {
     // --- SYSTEM UPDATES ---
     // Called by Services (BikeForegroundService / GlassService) to update raw data
     suspend fun updateRideInfo(info: BikeRideInfo)
-    suspend fun updateConnectionState(isConnected: Boolean)
+    // NFC -2- BLE
+    // suspend fun updateConnectionState(isConnected: Boolean)
     // Glass Updates
     suspend fun updateGlassConnectionState(isConnected: Boolean)
     suspend fun updateGlassSessionState(isActive: Boolean) // <--- NEW
