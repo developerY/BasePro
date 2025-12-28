@@ -13,9 +13,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Explore
-import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -23,12 +24,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.xr.glimmer.Button
 import androidx.xr.glimmer.Card
+import androidx.xr.glimmer.GlimmerTheme
 import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.Text
 import androidx.xr.glimmer.surface
@@ -48,7 +47,7 @@ fun HomeScreen(
         modifier = modifier
             .surface(focusable = false)
             .fillMaxSize()
-            .background(Color.Black),
+            .background(GlimmerTheme.colors.surface), // Use Theme color (Black),
         contentAlignment = Alignment.Center
     ) {
         Card(
@@ -69,9 +68,8 @@ fun HomeScreen(
                             // 1. The Label
                             Text(
                                 text = "GEAR ${uiState.currentGear}",
-                                color = Color(0xFF4CAF50),
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 20.sp
+                                color = GlimmerTheme.colors.positive,
+                                style = GlimmerTheme.typography.titleLarge // Bolder, wider
                             )
 
                             Spacer(Modifier.width(16.dp))
@@ -85,7 +83,9 @@ fun HomeScreen(
                                     containerColor = Color.DarkGray
                                 ) */
                             ) {
-                                Icon(androidx.compose.material.icons.Icons.Default.Remove, contentDescription = "Down")
+                                // FIX: Use Rounded Icons
+                                Icon(Icons.Rounded.Remove, contentDescription = "Down")
+                                // Icon(androidx.compose.material.icons.Icons.Default.Remove, contentDescription = "Down")
                             }
 
                             Spacer(Modifier.width(8.dp))
@@ -101,16 +101,14 @@ fun HomeScreen(
                                     containerColor = Color.White
                                 )*/
                             ) {
-                                Icon(androidx.compose.material.icons.Icons.Default.Add, contentDescription = "Up")
-                            }
+                                Icon(Icons.Rounded.Add, contentDescription = "Up")                            }
                         }
                     } else {
                         // CASE B: DISCONNECTED -> Show App Title
                         Text(
                             text = "ASHBIKE",
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp
+                            color = GlimmerTheme.colors.primary, // Or keep White
+                            style = GlimmerTheme.typography.titleSmall
                         )
                     }
 
@@ -131,7 +129,7 @@ fun HomeScreen(
             action = {
                 // Exit Button
                 Button(onClick = { onEvent(GlassUiEvent.CloseApp) }) {
-                    Text("EXIT", fontSize = 12.sp)
+                    Text("EXIT", style = GlimmerTheme.typography.bodyMedium)
                 }
             }
         ) {
@@ -143,7 +141,6 @@ fun HomeScreen(
                     modifier = Modifier.weight(0.65f).fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-
                     // LEFT CARD: SPEED (Always Visible)
                     Box(modifier = Modifier.weight(1f).padding(end = 6.dp, bottom = 6.dp)) {
                         Card(modifier = Modifier.fillMaxSize()) {
@@ -153,14 +150,13 @@ fun HomeScreen(
                                 bottomContent = {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Icon(
-                                            imageVector = androidx.compose.material.icons.Icons.Default.Explore,
+                                            imageVector = Icons.Default.Explore,
                                             contentDescription = null,
                                         )
                                         Text(
                                             text = uiState.formattedHeading,
-                                            color = Color.White,
-                                            fontSize = 16.sp,
-                                            fontWeight = FontWeight.Medium
+                                            color = GlimmerTheme.colors.surface,
+                                            style = GlimmerTheme.typography.bodyLarge
                                         )
                                     }
                                 }

@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Straighten
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,10 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.xr.glimmer.Card
+import androidx.xr.glimmer.GlimmerTheme
 import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.Text
 
@@ -55,19 +53,39 @@ fun RideStatScrolList(
             verticalArrangement = Arrangement.spacedBy(4.dp) // Space between items
         ) {
             item {
-                GlassListItem(Icons.Default.Straighten, "DISTANCE", "$distance km", GlassColors.NeonCyan)
+                GlassListItem(
+                    Icons.Default.Straighten,
+                    "DISTANCE",
+                    "$distance km",
+                    GlimmerTheme.colors.secondary
+                )
                 ListDivider()
             }
             item {
-                GlassListItem(Icons.Default.AvTimer, "DURATION", duration, Color.White)
+                GlassListItem(
+                    Icons.Default.AvTimer,
+                    "DURATION",
+                    duration,
+                    GlimmerTheme.colors.surface
+                )
                 ListDivider()
             }
             item {
-                GlassListItem(Icons.Default.Speed, "AVG SPEED", "$avgSpeed mph", Color.White)
+                GlassListItem(
+                    Icons.Default.Speed,
+                    "AVG SPEED",
+                    "$avgSpeed mph",
+                    GlimmerTheme.colors.surface
+                )
                 ListDivider()
             }
             item {
-                GlassListItem(Icons.Default.LocalFireDepartment, "CALORIES", calories, Color(0xFFFF9800))
+                GlassListItem(
+                    Icons.Default.LocalFireDepartment,
+                    "CALORIES",
+                    calories,
+                    GlimmerTheme.colors.negative // Or custom Orange if strictly needed
+                )
                 // No divider on the last item usually
             }
         }
@@ -91,8 +109,9 @@ private fun GlassListItem(
             .height(48.dp) // Taller touch/focus target for easier scrolling
             .onFocusChanged { isFocused = it.isFocused }
             .focusable() // <--- CRITICAL: Makes it selectable so the list scrolls
+            // Glimmer typically handles focus via outline, but simple background highlight is okay
             .background(
-                color = if (isFocused) Color.White.copy(alpha = 0.1f) else Color.Transparent,
+                color = if (isFocused) GlimmerTheme.colors.surface.copy(alpha = 0.1f) else Color.Transparent,
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(horizontal = 8.dp)
@@ -111,17 +130,13 @@ private fun GlassListItem(
         Column(verticalArrangement = Arrangement.Center) {
             Text(
                 text = value,
-                color = Color.White,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1
+                color = GlimmerTheme.colors.surface,
+                style = GlimmerTheme.typography.titleMedium
             )
             Text(
                 text = label,
-                color = GlassColors.TextSecondary,
-                style = MaterialTheme.typography.labelSmall,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold
+                color = GlimmerTheme.colors.primary,
+                style = GlimmerTheme.typography.titleSmall
             )
         }
     }
@@ -132,6 +147,7 @@ private fun ListDivider() {
     HorizontalDivider(
         modifier = Modifier.padding(start = 48.dp, end = 8.dp),
         thickness = 1.dp,
-        color = Color.White.copy(alpha = 0.1f)
+        // Use Glimmer's Outline Variant for subtle dividers
+        color = GlimmerTheme.colors.outlineVariant.copy(alpha = 0.5f)
     )
 }
