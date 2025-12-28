@@ -32,8 +32,9 @@ data class GlassUiState(
     // COMPUTED PROPERTIES (The Logic is Here!)
     // =================================================================
 
+    // 1. ALWAYS SHOW SPEED (From Phone GPS)
     val formattedSpeed: String
-        get() = if (isBikeConnected) String.format("%.1f", rawSpeed) else "--"
+        get() = String.format("%.1f", rawSpeed) // Removed 'if(connected)' check
 
     // 2. The Logic: State decides the "Zone"
     val batteryZone: BatteryZone
@@ -66,12 +67,15 @@ data class GlassUiState(
             "--"
         }
 
+    // 2. ALWAYS SHOW HEADING (From Phone Compass)
     val formattedHeading: String
         get() {
-            if (!isBikeConnected) return "---"
             val directions = arrayOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")
-            val index = ((rawHeading + 22.5) / 45.0).toInt() and 7
-            return "${rawHeading.toInt()}° ${directions[index]}"
+            // Handle NaN or infinite values safely
+            val validHeading = if (rawHeading.isNaN()) 0f else rawHeading
+            val index = ((validHeading + 22.5) / 45.0).toInt() and 7
+            return "${validHeading.toInt()}° ${directions[index]}"
         }
+
 }
 

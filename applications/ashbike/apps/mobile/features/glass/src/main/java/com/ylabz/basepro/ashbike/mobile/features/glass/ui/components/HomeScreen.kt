@@ -36,84 +36,81 @@ fun HomeScreen(
     uiState: GlassUiState,
     onEvent: (GlassUiEvent) -> Unit
 ) {
+    // 1. RESTORE FOCUS REQUESTER
     val focusRequester = remember { FocusRequester() }
 
     Box(
         modifier = modifier
             .surface(focusable = false)
             .fillMaxSize()
-            .background(Color.Black), // Pure black is transparent on AR
+            .background(Color.Black),
         contentAlignment = Alignment.Center
     ) {
-        // MAIN HUD CONTAINER
         Card(
             modifier = Modifier
                 .padding(8.dp)
-                .fillMaxSize(), // Fill the available HUD space
+                .fillMaxSize(),
             title = {
-                // HEADER ROW
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    // LEFT: APP TITLE
-                    Text("ASHBIKE", color = Color.White, fontWeight = FontWeight.Bold)
+                    // 2. DYNAMIC HEADER TITLE
+                    // Replaces "ASHBIKE" with "GEAR X" when connected
+                    if (uiState.isBikeConnected) {
+                        Text(
+                            text = "GEAR ${uiState.currentGear}",
+                            color = Color(0xFF4CAF50), // Green for Active
+                            fontWeight = FontWeight.Bold
+                        )
+                    } else {
+                        Text(
+                            text = "ASHBIKE",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
 
-                    Spacer(Modifier.weight(1f)) // Pushes status to the right
+                    Spacer(Modifier.weight(1f))
 
-                    // RIGHT: STATUS COLUMN (Connected + Battery)
-                    Column(
-                        horizontalAlignment = Alignment.End
-                    ) {
-                        // Status Text
-                        // 1. BIKE CONNECTION (New Component)
+                    // RIGHT: STATUS COLUMN
+                    Column(horizontalAlignment = Alignment.End) {
                         BikeConnectionStatus(isConnected = uiState.isBikeConnected)
-
-                        // Vertical Space (Fixed: changed width to height)
                         Spacer(modifier = Modifier.height(4.dp))
-
-                        // Battery Component
                         BatteryStatusDisplay(
-                            zone = uiState.batteryZone,          // Pass the calculated zone
-                            levelText = uiState.formattedBattery, // Pass the text
+                            zone = uiState.batteryZone,
+                            levelText = uiState.formattedBattery, // Updated to use Text property
                             modifier = Modifier.padding(end = 8.dp)
                         )
                     }
                 }
             },
             action = {
-                // Subtle Close Button
                 Button(onClick = { onEvent(GlassUiEvent.CloseApp) }) {
                     Text("EXIT", fontSize = 12.sp)
                 }
             }
         ) {
             Column(modifier = Modifier.fillMaxSize().padding(top = 8.dp)) {
-                // LAYOUT: Side-by-Side (Left: Speed, Right: Gear) ]
-                // --- ROW 1: TOP SECTION ---
                 Row(
                     modifier = Modifier.weight(0.65f).fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
 
-                    // --- LEFT: TELEMETRY ---
-                    // 1. LEFT: SPEED CARD (Always Visible)
-                    // LEFT: SPEED (Always Visible)
+                    // --- LEFT CARD: SPEED (Always Visible) ---
                     Box(modifier = Modifier.weight(1f).padding(end = 6.dp, bottom = 6.dp)) {
                         Card(modifier = Modifier.fillMaxSize()) {
                             MetricDisplay(
                                 label = "SPEED",
-                                value = uiState.formattedSpeed,
+                                value = uiState.formattedSpeed, // NOW SHOWS ALWAYS
                                 bottomContent = {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
                                         Icon(
                                             imageVector = androidx.compose.material.icons.Icons.Default.Explore,
                                             contentDescription = null,
                                         )
                                         Text(
-                                            text = uiState.formattedHeading,
+                                            text = uiState.formattedHeading, // NOW SHOWS ALWAYS
                                             color = Color.White,
                                             fontSize = 16.sp,
                                             fontWeight = FontWeight.Medium
@@ -124,21 +121,18 @@ fun HomeScreen(
                         }
                     }
 
-                    // --- RIGHT: CONTROLS (Gear Shifting) ---
-                    // 2. RIGHT: DYNAMIC PANEL (Gears OR Stats)
-                    // RIGHT: DYNAMIC PANEL (Gears OR Stats)
+                    // --- RIGHT CARD: DYNAMIC CONTENT ---
                     Box(modifier = Modifier.weight(1f).padding(start = 6.dp, bottom = 6.dp)) {
                         if (uiState.isBikeConnected) {
-                            // OPTION A: Connected -> Show Gears
+                            // CASE A: CONNECTED -> Show Gear Controls (For Focus!)
                             GearControlPanel(
                                 currentGear = uiState.currentGear,
                                 onGearUp = { onEvent(GlassUiEvent.GearUp) },
                                 onGearDown = { onEvent(GlassUiEvent.GearDown) },
-                                focusRequester = focusRequester // Only focus if visible
+                                focusRequester = focusRequester // <--- ATTACHED HERE
                             )
                         } else {
-                            // OPTION B: DISCONNECTED -> FULL STATS LIST
-                            // RideStatsStack - RideStatScrolList
+                            // CASE B: DISCONNECTED -> Show Stats List
                             RideStatScrolList(
                                 distance = uiState.tripDistance,
                                 duration = uiState.rideDuration,
@@ -150,10 +144,9 @@ fun HomeScreen(
                     }
                 }
             }
-            // 2. FORCE FOCUS ON LAUNCH
-            // This tells the system: "Ignore everything else, look at the Plus button."
-            // only if the bike BLE is connected
-            // Only request focus if the bike is connected (and thus the Gear buttons exist)
+
+            // 3. REQUEST FOCUS LOGIC
+            // Automatically grab focus on the "Gear Up" button when the bike connects
             LaunchedEffect(uiState.isBikeConnected) {
                 if (uiState.isBikeConnected) {
                     focusRequester.requestFocus()
