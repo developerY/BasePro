@@ -21,7 +21,34 @@ sealed class BikeUiState {
         val isGlassActive: Boolean = false, // (Optional: keep for legacy or other UI logic)
         val glassButtonState: GlassButtonState = GlassButtonState.NO_GLASSES // <--- NEW SOURCE OF TRUTH
 
-    ) : BikeUiState()
+    ) : BikeUiState() {
+
+        // =====================================================================
+        // COMPUTED PROPERTIES (The "Brain" for your UI formatting)
+        // =====================================================================
+
+        val formattedBattery: String
+            get() = if (bikeData.isBikeConnected) {
+                bikeData.batteryLevel?.let { "$it%" } ?: "--%"
+            } else {
+                "--%"
+            }
+
+        val formattedMotor: String
+            get() = if (bikeData.isBikeConnected) {
+                // Show power only if > 0
+                bikeData.motorPower?.takeIf { it > 0 }?.let { "${it.toInt()} W" } ?: "-- W"
+            } else {
+                "-- W"
+            }
+
+        val formattedGear: String
+            get() = if (bikeData.isBikeConnected) {
+                "$glassGear"
+            } else {
+                "--"
+            }
+}
 
     data class Error(val message: String) : BikeUiState()
 }

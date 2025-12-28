@@ -35,7 +35,8 @@ fun BikeDashboard(
                 BikeStatCard(
                     icon = Icons.Default.ElectricBolt, // Or your Battery icon
                     label = "Battery",
-                    value = "-- B",//"${uiState.bikeData.batteryLevel}%",
+                    // Logic: If not null, show "100%", otherwise show "--%"
+                    value = uiState.formattedBattery,
                     modifier = Modifier.weight(1f) // Equal width
                 )
 
@@ -43,15 +44,15 @@ fun BikeDashboard(
                 BikeStatCard(
                     icon = Icons.Default.PedalBike, // Or your Motor icon
                     label = "Motor",
-                    value = "-- W", // Replace with real motor power if available
-                    modifier = Modifier.weight(1f)
+                    // Logic: takeIf { it > 0 } returns null if 0, triggering the "--" fallback
+                    value = uiState.formattedMotor,                    modifier = Modifier.weight(1f)
                 )
 
                 // 3. Gear Stat (From Glass)
                 BikeStatCard(
                     icon = Icons.Default.Settings, // Gear Icon
                     label = "Gear",
-                    value = "${uiState.glassGear}", // Connected to Glass Data
+                    value = uiState.formattedGear, // Connected to Glass Data
                     modifier = Modifier.weight(1f)
                 )
             }
