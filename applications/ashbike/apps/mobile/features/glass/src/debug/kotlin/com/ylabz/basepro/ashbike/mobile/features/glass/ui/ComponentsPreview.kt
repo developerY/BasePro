@@ -33,10 +33,6 @@ import com.ylabz.basepro.core.model.bike.SuspensionState
 // 1. COMPONENT PREVIEWS (Isolate the pieces)
 // -------------------------------------------------------------------------
 
-// -------------------------------------------------------------------------
-// 1. STATUS ICONS PREVIEW (New!)
-// -------------------------------------------------------------------------
-
 @Preview(name = "Status Indicators", showBackground = true, backgroundColor = 0xFF000000)
 @Composable
 fun StatusIndicatorsPreview() {
@@ -51,7 +47,8 @@ fun StatusIndicatorsPreview() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 BikeConnectionStatus(isConnected = true)
                 Spacer(Modifier.width(10.dp))
-                BatteryStatusDisplay(level = 85)
+                // UPDATED: Pass Zone + Text manually for preview
+                BatteryStatusDisplay(zone = BatteryZone.GOOD, levelText = "85%")
             }
 
             Spacer(Modifier.height(20.dp))
@@ -60,20 +57,20 @@ fun StatusIndicatorsPreview() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 BikeConnectionStatus(isConnected = false)
                 Spacer(Modifier.width(10.dp))
-                BatteryStatusDisplay(level = 15)
+                // UPDATED: Pass Zone + Text manually for preview
+                BatteryStatusDisplay(zone = BatteryZone.CRITICAL, levelText = "15%")
             }
         }
     }
 }
 
-
-
 @Preview(name = "Gear Control Panel", showBackground = true, backgroundColor = 0xFF000000)
 @Composable
 fun GearControlPanelPreview() {
     MaterialTheme {
-        Box(modifier = Modifier.padding(20.dp).background(Color.Black)) {
-            // We need a FocusRequester for the preview, even if we don't click it
+        Box(modifier = Modifier
+            .padding(20.dp)
+            .background(Color.Black)) {
             val focusRequester = remember { FocusRequester() }
 
             GearControlPanel(
@@ -98,16 +95,16 @@ fun GearControlPanelPreview() {
 fun HomeScreenScreenPreview() {
     val sampleState = GlassUiState(
         currentGear = 7,
-        currentSpeed = "24.5",
-        heading = "350° N",
+        rawSpeed = 24.5,
+        rawHeading = 350f,
         suspension = SuspensionState.TRAIL,
-        connectionStatus = "Connected"
+        isBikeConnected = true
     )
 
     MaterialTheme {
         HomeScreen(
             uiState = sampleState,
-            onEvent = {} // No-op
+            onEvent = {}
         )
     }
 }
@@ -120,15 +117,18 @@ fun HomeScreenScreenPreview() {
 fun BatteryPreview() {
     MaterialTheme {
         Column(
-            modifier = Modifier.padding(20.dp).background(Color.Black)
+            modifier = Modifier
+                .padding(20.dp)
+                .background(Color.Black)
         ) {
-            BatteryStatusDisplay(level = 85) // Green
+            // UPDATED: Use the Enum + Text API
+            BatteryStatusDisplay(zone = BatteryZone.GOOD, levelText = "85%")
             Spacer(Modifier.height(8.dp))
-            BatteryStatusDisplay(level = 40) // Orange
+            BatteryStatusDisplay(zone = BatteryZone.WARNING, levelText = "40%")
             Spacer(Modifier.height(8.dp))
-            BatteryStatusDisplay(level = 10) // Red
+            BatteryStatusDisplay(zone = BatteryZone.CRITICAL, levelText = "10%")
             Spacer(Modifier.height(8.dp))
-            BatteryStatusDisplay(level = null) // Gray
+            BatteryStatusDisplay(zone = BatteryZone.UNKNOWN, levelText = "--")
         }
     }
 }
@@ -140,26 +140,28 @@ fun BatteryPreview() {
 @Composable
 fun HeaderPreview() {
     MaterialTheme {
-        Column(modifier = Modifier.background(Color.Black).padding(10.dp)) {
+        Column(modifier = Modifier
+            .background(Color.Black)
+            .padding(10.dp)) {
             // Connected State
             BikeConnectionStatus(isConnected = true)
-            BatteryStatusDisplay(level = 88)
+            BatteryStatusDisplay(zone = BatteryZone.GOOD, levelText = "88%")
 
             Spacer(Modifier.height(20.dp))
 
             // Disconnected State
             BikeConnectionStatus(isConnected = false)
-            BatteryStatusDisplay(level = 12)
+            BatteryStatusDisplay(zone = BatteryZone.CRITICAL, levelText = "12%")
         }
     }
 }
 
 // -------------------------------------------------------------------------
-// 3. FULL SCREEN HUD PREVIEW
+// 3. FULL SCREEN HUD PREVIEW (Example 2)
 // -------------------------------------------------------------------------
 
 @Preview(
-    name = "Full HUD (640x360)",
+    name = "Full HUD (640x360) - Active",
     showBackground = true,
     backgroundColor = 0xFF000000,
     widthDp = 640,
@@ -169,12 +171,11 @@ fun HeaderPreview() {
 fun HomeScreenScreen2Preview() {
     val sampleState = GlassUiState(
         currentGear = 7,
-        currentSpeed = "24.5",
-        heading = "350° N",
+        rawSpeed = 24.5,
+        rawHeading = 350f,
         suspension = SuspensionState.TRAIL,
-        connectionStatus = "Connected",
-        isBikeConnected = true, // Shows Green Bike Icon
-        batteryLevel = 92       // Shows Green Battery
+        isBikeConnected = true,
+        rawBattery = 92 // This will be calculated to BatteryZone.GOOD automatically inside HomeScreen
     )
 
     MaterialTheme {
@@ -189,7 +190,9 @@ fun HomeScreenScreen2Preview() {
 @Composable
 fun TelemetryPreview() {
     MaterialTheme {
-        Box(modifier = Modifier.background(Color.Black).padding(20.dp)) {
+        Box(modifier = Modifier
+            .background(Color.Black)
+            .padding(20.dp)) {
             MetricDisplay(
                 label = "SPEED",
                 value = "24.5",
@@ -208,13 +211,13 @@ fun TelemetryPreview() {
 @Composable
 fun QuadHudPreview() {
     val sampleState = GlassUiState(
-        currentSpeed = "24.5",
-        heading = "350° N",
+        rawSpeed = 24.5,
+        rawHeading = 350f,
         currentGear = 7,
-        motorPower = "250",
-        heartRate = "145", // Orange Zone
+        rawMotorPower = 250.0,
+        rawHeartRate = 145,
         isBikeConnected = true,
-        batteryLevel = 90
+        rawBattery = 90
     )
     MaterialTheme {
         HomeScreen(uiState = sampleState, onEvent = {})
@@ -225,13 +228,13 @@ fun QuadHudPreview() {
 @Composable
 fun HudDisconnectedPreview() {
     val sampleState = GlassUiState(
-        currentSpeed = "12.4",
-        heading = "90° E",
-        isBikeConnected = false, // <--- Disconnected
+        rawSpeed = 12.4,
+        rawHeading = 90f,
+        isBikeConnected = false,
         tripDistance = "15.2",
         calories = "450",
-        motorPower = "0", // Likely 0 if disconnected
-        heartRate = "130"
+        rawMotorPower = 0.0,
+        rawHeartRate = 130
     )
     MaterialTheme {
         HomeScreen(uiState = sampleState, onEvent = {})

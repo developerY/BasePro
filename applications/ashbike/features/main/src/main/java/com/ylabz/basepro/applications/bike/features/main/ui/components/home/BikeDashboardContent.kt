@@ -163,8 +163,6 @@ fun BikeDashboardContent(
                                 uiState = uiState,
                                 onBikeEvent = onBikeEvent,
                                 // navTo = navTo,
-                                isBikeConnected = isBikeConnected,
-                                batteryLevel = batteryLevel
                             )
                         }
                     }

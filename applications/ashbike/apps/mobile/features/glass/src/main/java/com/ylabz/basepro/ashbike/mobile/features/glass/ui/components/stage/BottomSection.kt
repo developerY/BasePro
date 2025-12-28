@@ -59,7 +59,7 @@ fun BottomSection(
                             // Icon(Icons.Default.Bolt, "Watts", tint = Color(0xFFFFD600), modifier = Modifier.width(20.dp))
                             Spacer(Modifier.width(4.dp))
                             Text(
-                                "${uiState.motorPower} W",
+                                "${uiState.formattedPower} W",
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
@@ -70,7 +70,7 @@ fun BottomSection(
             }
             // Heart Rate
             Box(modifier = Modifier.weight(1f).padding(start = 6.dp)) {
-                HeartRateCard(heartRate = uiState.heartRate, modifier = Modifier.fillMaxSize())
+                HeartRateCard(heartRate = uiState.formattedHeartRate, modifier = Modifier.fillMaxSize())
             }
         }
     }

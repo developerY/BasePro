@@ -28,29 +28,28 @@ class GlassViewModel @Inject constructor(
                 repository.rideInfo, // <--- ADD THIS
             ) { gear, susp, info ->
 
-                // Update the UI State ->
-
-                // Helper to format "350.0" -> "350° N"
-                val bearingText = formatBearing(info.heading)
-
-                // Create new state whenever either value changes
+                // -------------------------------------------------------------
+                // UPDATE STATE WITH RAW DATA
+                // Formatting logic (e.g. "--") is now handled inside GlassUiState
+                // -------------------------------------------------------------
                 _uiState.value.copy(
+                    // 1. Connection & System
+                    isBikeConnected = info.isBikeConnected,
                     currentGear = gear,
                     suspension = susp,
-                            // Format the speed from the Repository info
-                    currentSpeed = String.format("%.1f", info.currentSpeed),
-                    heading = bearingText, // <--- Map it here
-                    // 1. Format Power (Watts)
-                    motorPower = info.motorPower?.let { "%.0f".format(it) } ?: "--",
-                    // 2. Format Heart Rate (BPM)
-                    heartRate = info.heartbeat?.toString() ?: "--", // <--- Add BPM
-                    tripDistance = String.format("%.1f", info.currentTripDistance), // e.g. "12.5"
-                    calories = info.caloriesBurned.toString(), // e.g. "350"
-                    // Format Duration (assuming info.rideDuration is already a String "HH:MM:SS" or similar)
+                    rawBattery = info.batteryLevel, // Pass raw Int?
+
+                    // 2. Sensor Data (Pass Raw Numbers)
+                    rawSpeed = info.currentSpeed,   // Pass Double
+                    rawHeading = info.heading,      // Pass Float
+                    rawMotorPower = info.motorPower?.toDouble(), // Pass Double?
+                    rawHeartRate = info.heartbeat,  // Pass Int?
+
+                    // 3. Trip Stats (Keep as formatted strings if your UIState expects strings for these)
+                    tripDistance = String.format("%.1f", info.currentTripDistance),
+                    calories = info.caloriesBurned.toString(),
                     rideDuration = info.rideDuration,
-                    // Format Avg Speed
-                    averageSpeed = String.format("%.1f", info.averageSpeed),
-                    isBikeConnected = info.isBikeConnected ,// <--- Update the state
+                    averageSpeed = String.format("%.1f", info.averageSpeed)
                 )
             }.collect { newState ->
                 _uiState.value = newState
@@ -77,13 +76,5 @@ class GlassViewModel @Inject constructor(
             // but we list them here to be exhaustive or if we wanted to log them.
             GlassUiEvent.OpenGearList -> {}
         }
-    }
-
-    // --- HELPER: Convert Degrees to Direction ---
-    private fun formatBearing(bearing: Float): String {
-        if (bearing < 0) return "---"
-        val directions = arrayOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")
-        val index = ((bearing + 22.5) / 45.0).toInt() and 7
-        return "${bearing.toInt()}° ${directions[index]}"
     }
 }

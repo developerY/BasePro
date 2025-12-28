@@ -74,7 +74,9 @@ fun HomeScreen(
 
                         // Battery Component
                         BatteryStatusDisplay(
-                            level = uiState.batteryLevel
+                            zone = uiState.batteryZone,          // Pass the calculated zone
+                            levelText = uiState.formattedBattery, // Pass the text
+                            modifier = Modifier.padding(end = 8.dp)
                         )
                     }
                 }
@@ -101,7 +103,7 @@ fun HomeScreen(
                         Card(modifier = Modifier.fillMaxSize()) {
                             MetricDisplay(
                                 label = "SPEED",
-                                value = uiState.currentSpeed,
+                                value = uiState.formattedSpeed,
                                 bottomContent = {
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically
@@ -111,7 +113,7 @@ fun HomeScreen(
                                             contentDescription = null,
                                         )
                                         Text(
-                                            text = uiState.heading,
+                                            text = uiState.formattedHeading,
                                             color = Color.White,
                                             fontSize = 16.sp,
                                             fontWeight = FontWeight.Medium

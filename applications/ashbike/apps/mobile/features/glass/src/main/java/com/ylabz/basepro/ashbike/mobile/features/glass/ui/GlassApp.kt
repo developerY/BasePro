@@ -47,14 +47,14 @@ fun GlassApp(
         }
         ScreenState.GEAR_LIST -> {
             // Preserving your logic for Gear Selection
-            GearSelectionScreen(
+            /*GearSelectionScreen(
                 currentGear = uiState.currentGear,
                 onGearSelected = { selectedGear ->
                     // Send change to VM, then nav back
                     uiState.currentGear = selectedGear
                     currentScreen = ScreenState.HOME // Go back after selection
                 }
-            )
+            )*/
         }
     }
 }

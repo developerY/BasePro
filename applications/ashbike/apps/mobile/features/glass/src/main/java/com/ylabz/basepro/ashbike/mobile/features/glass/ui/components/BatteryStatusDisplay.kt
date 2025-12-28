@@ -18,39 +18,37 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.Text
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.BatteryZone // Import your new Enum
 
 @Composable
 fun BatteryStatusDisplay(
-    level: Int?,
+    zone: BatteryZone, // <--- Accepts the Enum, not the Int
+    levelText: String, // <--- Accepts the pre-formatted text (e.g. "85%" or "--")
     modifier: Modifier = Modifier
 ) {
-    // 1. Determine Color & Icon based on Level
-    val (icon, color) = when {
-        level == null -> Pair(Icons.AutoMirrored.Filled.BatteryUnknown, Color.Gray)
-        level > 50 -> Pair(Icons.Default.BatteryFull, GlassColors.NeonGreen)
-        level > 20 -> Pair(Icons.Default.BatteryStd, Color(0xFFFF9800)) // Orange
-        else -> Pair(Icons.Default.BatteryAlert, GlassColors.WarningRed)
+    // 1. Pure Visual Mapping (Style Only)
+    val (icon, color) = when (zone) {
+        BatteryZone.UNKNOWN -> Pair(Icons.AutoMirrored.Filled.BatteryUnknown, Color.Gray)
+        BatteryZone.GOOD -> Pair(Icons.Default.BatteryFull, GlassColors.NeonGreen)
+        BatteryZone.WARNING -> Pair(Icons.Default.BatteryStd, Color(0xFFFF9800))
+        BatteryZone.CRITICAL -> Pair(Icons.Default.BatteryAlert, GlassColors.WarningRed)
     }
 
-    // 2. Render
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // The Icon
         Icon(
             imageVector = icon,
             contentDescription = "Battery",
             tint = color,
-            // Glass icons often need to be slightly larger to be legible
             modifier = Modifier.width(16.dp)
         )
 
         Spacer(modifier = Modifier.width(4.dp))
 
-        // The Percentage Text
         Text(
-            text = if (level != null) "$level%" else "--",
+            text = levelText,
             color = color,
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,

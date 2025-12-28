@@ -22,8 +22,6 @@ fun BikeDashboard(
     modifier: Modifier = Modifier,
     uiState: BikeUiState.Success, // Assumes this now has .glassGear
     onBikeEvent: (BikeEvent) -> Unit,
-    isBikeConnected: Boolean,
-    batteryLevel: Int?,
 ) {
 
             // --- NEW: 3-Column Row for Battery, Motor, Gear ---
@@ -61,9 +59,7 @@ fun BikeDashboard(
             // "Tap to Connect" Button (Existing)
             BikeCard(
                 uiState = uiState,
-                onBikeEvent = onBikeEvent,
-                isBikeConnected = isBikeConnected,
-                batteryLevel = batteryLevel,
+                onBikeEvent = onBikeEvent
             )
 
         }
