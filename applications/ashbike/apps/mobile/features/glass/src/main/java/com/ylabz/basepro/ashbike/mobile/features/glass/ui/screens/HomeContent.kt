@@ -72,12 +72,13 @@ private fun SpeedPanel(speed: String, heading: String) {
                     imageVector = Icons.Rounded.Explore,
                     contentDescription = null,
                     modifier = Modifier.size(32.dp),
-                    tint = GlimmerTheme.colors.onSurfaceVariant
+                    // Use Secondary (Darker Blue) for Icons to distinguish from Text
+                    tint = GlimmerTheme.colors.secondary
                 )
                 Text(
                     text = heading,
                     style = GlimmerTheme.typography.titleMedium,
-                    color = GlimmerTheme.colors.onSurface
+                    // No Color set -> Defaults to Calculated White
                 )
             }
         }

@@ -50,7 +50,8 @@ fun GlassListItem(
             .focusable() // <--- CRITICAL: Makes it selectable so the list scrolls
             // Glimmer typically handles focus via outline, but simple background highlight is okay
             .background(
-                color = if (isFocused) GlimmerTheme.colors.surface.copy(alpha = 0.1f) else Color.Transparent,
+                // Allowed: Use 'outlineVariant' for focus highlight (subtle grey)
+                color = if (isFocused) GlimmerTheme.colors.outlineVariant else Color.Transparent,
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(vertical = 4.dp, horizontal = 4.dp) // Tighter padding
@@ -70,7 +71,7 @@ fun GlassListItem(
             // VALUE (e.g., "12.5 km")
             Text(
                 text = value,
-                color = GlimmerTheme.colors.surface,
+                // No Color set -> Defaults to Calculated White
                 style = GlimmerTheme.typography.bodySmall,
                         maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -78,7 +79,8 @@ fun GlassListItem(
             // LABEL (e.g., "DISTANCE")
             Text(
                 text = label,
-                color = GlimmerTheme.colors.secondary,
+                // No Color set -> Defaults to Calculated White (or maybe Gray if Glimmer handles disabled)
+                // Since we can't use custom colors, we let the Typography style carry the weight.
                 style = GlimmerTheme.typography.bodySmall,
                 maxLines = 1,
                 overflow = TextOverflow.Clip

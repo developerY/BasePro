@@ -41,7 +41,7 @@ fun HomeHeader(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = "GEAR ${uiState.currentGear}",
-                    color = GlimmerTheme.colors.positive,
+                    color = GlimmerTheme.colors.positive, // Allowed: Green
                     style = GlimmerTheme.typography.titleLarge
                 )
                 Spacer(Modifier.width(16.dp))
@@ -61,7 +61,7 @@ fun HomeHeader(
             Text(
                 text = "ASHBIKE",
                 color = GlimmerTheme.colors.primary,
-                style = GlimmerTheme.typography.headlineSmall
+                style = GlimmerTheme.typography.titleSmall
             )
         }
 

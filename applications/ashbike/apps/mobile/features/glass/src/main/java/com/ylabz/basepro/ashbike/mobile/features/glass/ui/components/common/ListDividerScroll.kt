@@ -13,6 +13,8 @@ fun ListDividerScroll() {
         modifier = Modifier.padding(start = 32.dp, end = 8.dp),
         thickness = 0.5.dp,
         // Use Glimmer's Outline Variant for subtle dividers
-        color = GlimmerTheme.colors.outlineVariant.copy(alpha = 0.3f)
+        // color = GlimmerTheme.colors.outlineVariant.copy(alpha = 0.3f)
+        // Allowed: Use 'outlineVariant' for dividers
+        color = GlimmerTheme.colors.outlineVariant
     )
 }

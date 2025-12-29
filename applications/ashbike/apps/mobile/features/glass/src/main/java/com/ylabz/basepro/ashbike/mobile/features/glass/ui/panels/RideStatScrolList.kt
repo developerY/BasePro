@@ -38,7 +38,7 @@ fun RideStatScrolList(
                     Icons.Default.Straighten,
                     "DISTANCE",
                     "$distance km",
-                    GlimmerTheme.colors.secondary
+                    GlimmerTheme.colors.secondary // Icon: Dark Blue
                 )
                 ListDividerScroll()
             }
@@ -47,7 +47,7 @@ fun RideStatScrolList(
                     Icons.Default.AvTimer,
                     "DURATION",
                     duration,
-                    GlimmerTheme.colors.surface
+                    GlimmerTheme.colors.secondary
                 )
                 ListDividerScroll()
             }
@@ -56,7 +56,7 @@ fun RideStatScrolList(
                     Icons.Default.Speed,
                     "AVG SPEED",
                     "$avgSpeed mph",
-                    GlimmerTheme.colors.surface
+                    GlimmerTheme.colors.secondary
                 )
                 ListDividerScroll()
             }
