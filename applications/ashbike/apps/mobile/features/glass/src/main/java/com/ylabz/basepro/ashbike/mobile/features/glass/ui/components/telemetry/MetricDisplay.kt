@@ -35,7 +35,9 @@ fun MetricDisplay(
         // VALUE
         Text(
             text = value,
-            // Use Display styles for large data numbers
+            // FIX: Use headlineLarge if displayMedium is too big,
+            // but displayMedium is standard for Hero numbers.
+            // If it clips, switch to headlineLarge.
             style = MaterialTheme.typography.displayMedium,
             color = highlightColor,
         )
