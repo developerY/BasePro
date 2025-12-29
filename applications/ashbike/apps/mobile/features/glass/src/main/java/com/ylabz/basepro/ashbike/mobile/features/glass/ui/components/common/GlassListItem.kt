@@ -72,8 +72,8 @@ fun GlassListItem(
             Text(
                 text = value,
                 // No Color set -> Defaults to Calculated White
-                style = GlimmerTheme.typography.bodySmall,
-                        maxLines = 1,
+                style = GlimmerTheme.typography.bodyLarge, // Strict: Largest Body
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             // LABEL (e.g., "DISTANCE")
@@ -81,7 +81,7 @@ fun GlassListItem(
                 text = label,
                 // No Color set -> Defaults to Calculated White (or maybe Gray if Glimmer handles disabled)
                 // Since we can't use custom colors, we let the Typography style carry the weight.
-                style = GlimmerTheme.typography.bodySmall,
+                style = GlimmerTheme.typography.bodySmall, // Strict: Smallest Body
                 maxLines = 1,
                 overflow = TextOverflow.Clip
             )

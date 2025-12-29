@@ -4,7 +4,6 @@ package com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.telemetry
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,8 +28,11 @@ fun MetricDisplay(
         Text(
             text = label.uppercase(),
             // Glimmer typography is optimized for legibility
-            style = MaterialTheme.typography.labelSmall,
-            color = GlassColors.TextSecondary,
+            style = GlimmerTheme.typography.bodySmall, // Strict: Smallest Body
+            // We can't set color to onSurfaceVariant as it's not exposed,
+            // so we rely on default or explicit Theme colors if needed.
+            // But Glimmer handles default text color automatically.
+            color = GlassColors.TextSecondary, // might remove
         )
         // VALUE
         Text(
@@ -38,7 +40,7 @@ fun MetricDisplay(
             // FIX: Use headlineLarge if displayMedium is too big,
             // but displayMedium is standard for Hero numbers.
             // If it clips, switch to headlineLarge.
-            style = MaterialTheme.typography.displayMedium,
+            style = GlimmerTheme.typography.titleLarge, // Strict: Largest Title
             color = highlightColor,
         )
 

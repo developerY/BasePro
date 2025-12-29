@@ -63,6 +63,7 @@ private fun SpeedPanel(speed: String, heading: String) {
             MetricDisplay(
                 label = "SPEED",
                 value = speed,
+                highlightColor = GlimmerTheme.colors.primary,
                 bottomContent = {}
             )
 
@@ -77,7 +78,7 @@ private fun SpeedPanel(speed: String, heading: String) {
                 )
                 Text(
                     text = heading,
-                    style = GlimmerTheme.typography.titleMedium,
+                    style = GlimmerTheme.typography.titleMedium // Strict: Second-Largest Title
                     // No Color set -> Defaults to Calculated White
                 )
             }

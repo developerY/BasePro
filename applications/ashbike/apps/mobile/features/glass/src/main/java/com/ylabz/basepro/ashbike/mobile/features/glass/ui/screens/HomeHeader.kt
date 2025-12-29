@@ -61,7 +61,7 @@ fun HomeHeader(
             Text(
                 text = "ASHBIKE",
                 color = GlimmerTheme.colors.primary,
-                style = GlimmerTheme.typography.titleSmall
+                style = GlimmerTheme.typography.titleLarge
             )
         }
 
