@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -45,7 +44,7 @@ fun GlassListItem(
             // FIX: Use defaultMinSize + Padding instead of fixed height
             // This prevents clipping if the Glimmer font is tall
             //.height(48.dp) // Taller touch/focus target for easier scrolling
-            .defaultMinSize(minHeight = 48.dp)
+            // .defaultMinSize(minHeight = 48.dp)
             .onFocusChanged { isFocused = it.isFocused }
             .focusable() // <--- CRITICAL: Makes it selectable so the list scrolls
             // Glimmer typically handles focus via outline, but simple background highlight is okay
@@ -60,10 +59,10 @@ fun GlassListItem(
             imageVector = icon,
             contentDescription = null,
             tint = iconTint,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(20.dp)
         )
 
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(8.dp))
 
         // TEXT CONTENT
         Column(verticalArrangement = Arrangement.Center) {
@@ -74,7 +73,7 @@ fun GlassListItem(
             )
             Text(
                 text = label,
-                color = GlimmerTheme.colors.primary,
+                color = GlimmerTheme.colors.secondary,
                 style = GlimmerTheme.typography.titleSmall
             )
         }

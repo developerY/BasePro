@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.GlimmerTheme
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.common.GlassListItem
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.common.ListDivider
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.common.ListDividerScroll
 
 @Composable
 fun RideStatScrolList(
@@ -31,7 +31,7 @@ fun RideStatScrolList(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 4.dp), // Slight padding for focus ring
-            verticalArrangement = Arrangement.spacedBy(4.dp) // Space between items
+            verticalArrangement = Arrangement.SpaceEvenly // Distribute nicely
         ) {
             item {
                 GlassListItem(
@@ -40,7 +40,7 @@ fun RideStatScrolList(
                     "$distance km",
                     GlimmerTheme.colors.secondary
                 )
-                ListDivider()
+                ListDividerScroll()
             }
             item {
                 GlassListItem(
@@ -49,7 +49,7 @@ fun RideStatScrolList(
                     duration,
                     GlimmerTheme.colors.surface
                 )
-                ListDivider()
+                ListDividerScroll()
             }
             item {
                 GlassListItem(
@@ -58,7 +58,7 @@ fun RideStatScrolList(
                     "$avgSpeed mph",
                     GlimmerTheme.colors.surface
                 )
-                ListDivider()
+                ListDividerScroll()
             }
             item {
                 GlassListItem(
