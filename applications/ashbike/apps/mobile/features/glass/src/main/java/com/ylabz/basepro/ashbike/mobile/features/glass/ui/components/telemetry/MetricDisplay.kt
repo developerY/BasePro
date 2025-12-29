@@ -11,7 +11,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.xr.glimmer.GlimmerTheme
 import androidx.xr.glimmer.Text
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.theme.GlassColors
 
 @Composable
 fun MetricDisplay(
@@ -32,7 +31,8 @@ fun MetricDisplay(
             // We can't set color to onSurfaceVariant as it's not exposed,
             // so we rely on default or explicit Theme colors if needed.
             // But Glimmer handles default text color automatically.
-            color = GlassColors.TextSecondary, // might remove
+            // color = GlassColors.TextSecondary, // might remove
+            color = GlimmerTheme.colors.outline // Use outline color for subtle labels
         )
         // VALUE
         Text(
