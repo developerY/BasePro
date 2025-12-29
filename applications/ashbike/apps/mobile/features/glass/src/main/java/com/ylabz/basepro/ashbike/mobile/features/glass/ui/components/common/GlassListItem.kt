@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.xr.glimmer.GlimmerTheme
 import androidx.xr.glimmer.Icon
@@ -52,7 +53,7 @@ fun GlassListItem(
                 color = if (isFocused) GlimmerTheme.colors.surface.copy(alpha = 0.1f) else Color.Transparent,
                 shape = RoundedCornerShape(8.dp)
             )
-            .padding(horizontal = 8.dp)
+            .padding(vertical = 4.dp, horizontal = 4.dp) // Tighter padding
     ) {
         // LEADING ICON
         Icon(
@@ -66,15 +67,21 @@ fun GlassListItem(
 
         // TEXT CONTENT
         Column(verticalArrangement = Arrangement.Center) {
+            // VALUE (e.g., "12.5 km")
             Text(
                 text = value,
                 color = GlimmerTheme.colors.surface,
-                style = GlimmerTheme.typography.titleMedium
+                style = GlimmerTheme.typography.bodySmall,
+                        maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
+            // LABEL (e.g., "DISTANCE")
             Text(
                 text = label,
                 color = GlimmerTheme.colors.secondary,
-                style = GlimmerTheme.typography.titleSmall
+                style = GlimmerTheme.typography.bodySmall,
+                maxLines = 1,
+                overflow = TextOverflow.Clip
             )
         }
     }
