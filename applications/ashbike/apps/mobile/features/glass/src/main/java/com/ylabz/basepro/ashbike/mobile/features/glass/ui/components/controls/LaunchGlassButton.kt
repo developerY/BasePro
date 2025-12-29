@@ -1,4 +1,4 @@
-package com.ylabz.basepro.ashbike.mobile.features.glass.ui
+package com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.controls
 
 import android.os.Build
 import android.util.Log
@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.GlassButtonState
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.model.GlassButtonState
 
 @Composable
 fun LaunchGlassButton(

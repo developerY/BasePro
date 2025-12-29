@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeEvent
 import com.ylabz.basepro.applications.bike.features.main.ui.BikeUiState
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.LaunchGlassButton
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.controls.LaunchGlassButton
 
 @RequiresApi(Build.VERSION_CODES.S) // Adjusted to S (Android 12) or use your BAKLAVA import
 @Composable

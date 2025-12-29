@@ -3,7 +3,7 @@ package com.ylabz.basepro.ashbike.mobile.features.glass.ui
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.HomeScreen
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.screens.HomeScreen
 import com.ylabz.basepro.core.model.bike.SuspensionState
 
 /**

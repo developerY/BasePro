@@ -1,4 +1,4 @@
-package com.ylabz.basepro.ashbike.mobile.features.glass.ui.components
+package com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.status
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.Text
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.BatteryZone // Import your new Enum
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.theme.GlassColors
 
 @Composable
 fun BatteryStatusDisplay(

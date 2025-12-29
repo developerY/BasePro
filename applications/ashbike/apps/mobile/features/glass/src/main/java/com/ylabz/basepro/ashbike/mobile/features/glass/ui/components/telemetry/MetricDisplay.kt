@@ -1,4 +1,4 @@
-package com.ylabz.basepro.ashbike.mobile.features.glass.ui.components
+package com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.telemetry
 
 // Glimmer Imports
 import androidx.compose.foundation.layout.Column
@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.xr.glimmer.GlimmerTheme
 import androidx.xr.glimmer.Text
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.theme.GlassColors
 
 @Composable
 fun MetricDisplay(

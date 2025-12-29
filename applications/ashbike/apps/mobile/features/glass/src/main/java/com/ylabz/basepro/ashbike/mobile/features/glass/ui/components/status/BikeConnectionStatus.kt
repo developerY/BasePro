@@ -1,4 +1,4 @@
-package com.ylabz.basepro.ashbike.mobile.features.glass.ui.components
+package com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.status
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,10 +9,12 @@ import androidx.compose.material.icons.filled.LinkOff
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.Text
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.theme.GlassColors
 
 @Composable
 fun BikeConnectionStatus(
@@ -42,7 +44,7 @@ fun BikeConnectionStatus(
             text = text,
             color = color,
             fontSize = 10.sp,
-            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+            fontWeight = FontWeight.Bold
         )
     }
 }

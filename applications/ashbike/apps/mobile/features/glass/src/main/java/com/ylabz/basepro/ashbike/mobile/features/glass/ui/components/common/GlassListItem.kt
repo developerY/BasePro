@@ -1,4 +1,4 @@
-package com.ylabz.basepro.ashbike.mobile.features.glass.ui.components
+package com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable

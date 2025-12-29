@@ -23,7 +23,7 @@ import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.Text
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassUiEvent
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassUiState
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.GlassColors
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.theme.GlassColors
 
 
 @Composable

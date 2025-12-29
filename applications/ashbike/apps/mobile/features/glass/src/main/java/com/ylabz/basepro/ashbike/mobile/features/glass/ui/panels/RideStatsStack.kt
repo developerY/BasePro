@@ -1,7 +1,8 @@
-package com.ylabz.basepro.ashbike.mobile.features.glass.ui.components
+package com.ylabz.basepro.ashbike.mobile.features.glass.ui.panels
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.Text
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.theme.GlassColors
 
 @Composable
 fun RideStatsStack(
@@ -44,7 +46,7 @@ fun RideStatsStack(
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp), // Gap between cards
-        contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 8.dp)
+        contentPadding = PaddingValues(bottom = 8.dp)
     ) {
         // CARD 1: Distance
         item {

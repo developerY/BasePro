@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.database.repository.AppSettingsRepository
 import com.ylabz.basepro.applications.bike.features.main.service.BikeForegroundService
 import com.ylabz.basepro.applications.bike.features.main.service.BikeServiceManager
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.GlassButtonState
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.model.GlassButtonState
 import com.ylabz.basepro.core.data.repository.bike.BikeRepository
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel

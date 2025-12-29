@@ -1,4 +1,4 @@
-package com.ylabz.basepro.ashbike.mobile.features.glass.ui.components
+package com.ylabz.basepro.ashbike.mobile.features.glass.ui.screens
 
 // Glimmer Imports
 import androidx.compose.foundation.background
@@ -33,6 +33,10 @@ import androidx.xr.glimmer.Text
 import androidx.xr.glimmer.surface
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassUiEvent
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassUiState
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.status.BatteryStatusDisplay
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.status.BikeConnectionStatus
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.telemetry.MetricDisplay
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.panels.RideStatScrolList
 
 @Composable
 fun HomeScreen(

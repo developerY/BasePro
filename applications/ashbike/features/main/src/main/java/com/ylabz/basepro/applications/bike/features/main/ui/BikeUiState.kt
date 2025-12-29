@@ -1,6 +1,6 @@
 package com.ylabz.basepro.applications.bike.features.main.ui
 
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.GlassButtonState
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.model.GlassButtonState
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 

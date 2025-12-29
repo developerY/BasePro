@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.sp
 import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.Text
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.GlassColors
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.MetricDisplay
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.theme.GlassColors
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.telemetry.MetricDisplay
 
 @Composable
 fun RideStatsDisplayPanel(

@@ -1,4 +1,4 @@
-package com.ylabz.basepro.ashbike.mobile.features.glass.ui.components
+package com.ylabz.basepro.ashbike.mobile.features.glass.ui.panels
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.GlimmerTheme
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.common.GlassListItem
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.common.ListDivider
 
 @Composable
 fun RideStatScrolList(

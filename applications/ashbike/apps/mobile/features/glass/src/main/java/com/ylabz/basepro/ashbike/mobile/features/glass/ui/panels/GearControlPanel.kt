@@ -1,4 +1,4 @@
-package com.ylabz.basepro.ashbike.mobile.features.glass.ui.components
+package com.ylabz.basepro.ashbike.mobile.features.glass.ui.panels
 
 // Glimmer Imports
 
@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.glimmer.Button
 import androidx.xr.glimmer.Text
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.theme.GlassColors
 
 @Composable
 fun GearControlPanel(
