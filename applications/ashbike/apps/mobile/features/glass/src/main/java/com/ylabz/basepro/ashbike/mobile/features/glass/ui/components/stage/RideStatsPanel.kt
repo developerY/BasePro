@@ -26,7 +26,7 @@ import androidx.xr.glimmer.Text
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.theme.GlassColors
 
 @Composable
-fun RideStatsPanel(
+fun RideStatsPanel_not_used(
     distance: String,
     calories: String,
     modifier: Modifier = Modifier
