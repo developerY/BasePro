@@ -1,5 +1,6 @@
 package com.ylabz.basepro.ashbike.mobile.features.glass.newui.elements
 
+// 1. IMPORT GLIMMER ICON
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
@@ -15,11 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.xr.glimmer.GlimmerTheme
+import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.Text
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.BatteryZone
 
 @Composable
 fun BatteryBadge(
+    // Ensure this matches where you defined the Enum (inside GlassUiState or outside)
     zone: BatteryZone,
     level: String,
     modifier: Modifier = Modifier
@@ -32,7 +35,13 @@ fun BatteryBadge(
     }
 
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        // Icon(icon, null, tint = tint, modifier = Modifier.width(16.dp))
+        // 2. USE GLIMMER ICON
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = tint,
+            modifier = Modifier.width(16.dp)
+        )
         Spacer(Modifier.width(4.dp))
         Text(level, color = tint, style = GlimmerTheme.typography.bodySmall)
     }
@@ -45,7 +54,13 @@ fun ConnectionBadge(active: Boolean, modifier: Modifier = Modifier) {
     val text = if (active) "BLE CNX" else "NO BLE"
 
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        // Icon(icon, null, tint = color, modifier = Modifier.width(16.dp))
+        // 3. RESTORED & FIXED ICON
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = color,
+            modifier = Modifier.width(16.dp)
+        )
         Spacer(Modifier.width(4.dp))
         Text(text, color = color, style = GlimmerTheme.typography.bodySmall)
     }
