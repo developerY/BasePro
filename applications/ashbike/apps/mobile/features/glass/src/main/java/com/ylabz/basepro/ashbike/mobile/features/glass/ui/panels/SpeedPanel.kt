@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Explore
 import androidx.compose.runtime.Composable
@@ -19,14 +18,15 @@ import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.GlimmerTheme
 import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.Text
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassUiState
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.components.telemetry.MetricDisplay
 
 @Composable
 fun SpeedPanel(speed: String, heading: String) {
-    Card(modifier = Modifier.fillMaxSize()) {
+    // Allow card to wrap content height so text isn't cut off
+    Card(modifier = Modifier.fillMaxSize().wrapContentHeight()) {
         Row(
-            modifier = Modifier.fillMaxSize().fillMaxWidth()
+            modifier = Modifier.fillMaxSize()
+                .fillMaxWidth()
                 .padding(vertical = 16.dp), // Add breathing room
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
