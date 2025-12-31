@@ -3,7 +3,7 @@ package com.ylabz.basepro.ashbike.mobile.features.glass.newui.sections
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AvTimer
 import androidx.compose.material.icons.rounded.LocalFireDepartment
@@ -11,10 +11,23 @@ import androidx.compose.material.icons.rounded.Speed
 import androidx.compose.material.icons.rounded.Straighten
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.GlimmerTheme
-import com.ylabz.basepro.ashbike.mobile.features.glass.newui.elements.ListRow
+import androidx.xr.glimmer.Icon
+import androidx.xr.glimmer.ListItem
+import androidx.xr.glimmer.Text
+import androidx.xr.glimmer.list.VerticalList
+
+
+/**
+ * The documentation explicitly states: "Warning: Don't use LazyColumn in your AI glasses activities."
+ *
+ */
 
 @Composable
 fun StatsBoard(
@@ -22,43 +35,48 @@ fun StatsBoard(
     duration: String,
     avgSpeed: String,
     calories: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    listFocusRequester: FocusRequester? = null
 ) {
     Card(modifier = modifier) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+        // CORRECT: Use VerticalList instead of LazyColumn
+        VerticalList(
+            modifier = Modifier
+                .fillMaxSize()
+                .then(if (listFocusRequester != null) Modifier.focusRequester(listFocusRequester) else Modifier),
             contentPadding = PaddingValues(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            // Item 1: Distance
             item {
-                ListRow(
+                GlimmerStatItem(
                     icon = Icons.Rounded.Straighten,
                     label = "DISTANCE",
                     value = "$distance km",
                     accent = GlimmerTheme.colors.secondary
                 )
             }
-
+            // Item 2: Duration
             item {
-                ListRow(
+                GlimmerStatItem(
                     icon = Icons.Rounded.AvTimer,
                     label = "DURATION",
                     value = duration,
                     accent = GlimmerTheme.colors.secondary
                 )
             }
-
+            // Item 3: Avg Speed
             item {
-                ListRow(
+                GlimmerStatItem(
                     icon = Icons.Rounded.Speed,
                     label = "AVG SPEED",
                     value = "$avgSpeed mph",
                     accent = GlimmerTheme.colors.secondary
                 )
             }
-
+            // Item 4: Calories
             item {
-                ListRow(
+                GlimmerStatItem(
                     icon = Icons.Rounded.LocalFireDepartment,
                     label = "CALORIES",
                     value = calories,
@@ -67,4 +85,41 @@ fun StatsBoard(
             }
         }
     }
+}
+
+// Helper wrapper to map your data to the official ListItem
+@Composable
+private fun GlimmerStatItem(
+    icon: ImageVector,
+    label: String,
+    value: String,
+    accent: Color
+) {
+    // Using the 'Focusable' overload (no onClick needed for read-only)
+    ListItem(
+        // LEADING ICON
+        leadingIcon = {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = accent,
+                modifier = Modifier.size(24.dp)
+            )
+        },
+        // SUPPORTING LABEL (The descriptor, e.g. "DISTANCE")
+        supportingLabel = {
+            Text(
+                text = label,
+                style = GlimmerTheme.typography.bodySmall,
+                color = GlimmerTheme.colors.outline
+            )
+        },
+        // CONTENT (The main value, e.g. "12.5 km")
+        content = {
+            Text(
+                text = value,
+                style = GlimmerTheme.typography.bodyLarge
+            )
+        }
+    )
 }
