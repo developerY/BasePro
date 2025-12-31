@@ -1,6 +1,7 @@
 package com.ylabz.basepro.ashbike.mobile.features.glass.newui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import androidx.xr.glimmer.Button
 import androidx.xr.glimmer.Card
@@ -25,6 +27,7 @@ import com.ylabz.basepro.ashbike.mobile.features.glass.newui.sections.StatsBoard
 import com.ylabz.basepro.ashbike.mobile.features.glass.newui.sections.VelocityDash
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassUiEvent
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassUiState
+import kotlinx.coroutines.delay
 
 @Composable
 fun AshGlassLayout(
@@ -33,7 +36,8 @@ fun AshGlassLayout(
     onEvent: (GlassUiEvent) -> Unit
 ) {
     // New Focus Requester for the Gear controls
-    val gearFocus = remember { FocusRequester() }
+    // val gearFocus = remember { FocusRequester() }
+    val statsFocus = remember { FocusRequester() } // 1. New Focus Requester for List
 
     Box(
         modifier = modifier
@@ -53,7 +57,7 @@ fun AshGlassLayout(
                     batteryText = uiState.formattedBattery,
                     onGearUp = { onEvent(GlassUiEvent.GearUp) },
                     onGearDown = { onEvent(GlassUiEvent.GearDown) },
-                    focusRequester = gearFocus
+                    // focusRequester = gearFocus
                 )
             },
             action = {
@@ -66,16 +70,20 @@ fun AshGlassLayout(
             // Speed is Item 0, Stats are Item 1.
             // Allows the speed card to push up when you want to see stats.
             // wrapContentHeight() ensures it only takes the space it needs.
+            // FIXED COLUMN LAYOUT
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+
+
                 // 1. FIXED TOP: VELOCITY DASH
                 // ITEM A: The Big Speedometer
                 // 1. FIXED TOP: VELOCITY DASH
                 // wrapContentHeight() ensures it only takes the space it needs.
+                // 1. VELOCITY DASH (Non-focusable display)
                 Box(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
                     VelocityDash(
                         speed = uiState.formattedSpeed,
@@ -83,11 +91,20 @@ fun AshGlassLayout(
                     )
                 }
 
+
                 // ITEM B: The Detailed Stats
                 // 2. SCROLLABLE BOTTOM: STATS BOARD
                 // weight(1f) tells it to fill all remaining vertical space.
                 // The scrolling happens INSIDE StatsBoard now.
-                Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
+                // 2. STATS BOARD (Focus Target)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        // 2. Apply Focus logic here so D-Pad/Scroll works immediately
+                        .focusRequester(statsFocus)
+                        .focusable()
+                ) {
                     StatsBoard(
                         distance = uiState.tripDistance,
                         duration = uiState.rideDuration,
@@ -100,8 +117,15 @@ fun AshGlassLayout(
         }
     }
 
-    // Auto-focus logic
+    // 3. Request Focus on the Stats List on launch
+    LaunchedEffect(Unit) {
+        delay(200) // Wait 200ms for UI to build
+        // We delay slightly to ensure layout is ready, or just call it directly
+        statsFocus.requestFocus()
+    }
+
+    /* Auto-focus logic
     LaunchedEffect(uiState.isBikeConnected) {
         if (uiState.isBikeConnected) gearFocus.requestFocus()
-    }
+    }*/
 }

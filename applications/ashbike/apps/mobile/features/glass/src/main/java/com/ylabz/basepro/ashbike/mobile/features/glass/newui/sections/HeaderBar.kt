@@ -14,8 +14,6 @@ import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import androidx.xr.glimmer.Button
 import androidx.xr.glimmer.GlimmerTheme
@@ -34,7 +32,7 @@ fun HeaderBar(
     batteryText: String,
     onGearUp: () -> Unit,
     onGearDown: () -> Unit,
-    focusRequester: FocusRequester
+    // focusRequester: FocusRequester
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -54,7 +52,7 @@ fun HeaderBar(
             Spacer(Modifier.width(8.dp))
             Button(
                 onClick = onGearUp,
-                modifier = Modifier.size(40.dp).focusRequester(focusRequester)
+                modifier = Modifier.size(40.dp)// .focusRequester(focusRequester)
             ) {
                 Icon(Icons.Rounded.Add, contentDescription = "Up")
             }
