@@ -58,26 +58,30 @@ fun HeaderBar(
             ) {
                 Icon(Icons.Rounded.Add, contentDescription = "Up")
             }
-        } else {
+        }
+        /* else {
             // MODE: BRANDING
             Text(
                 text = "ASHBIKE",
                 color = GlimmerTheme.colors.primary,
                 style = GlimmerTheme.typography.titleLarge
             )
-        }
+        } */
 
         Spacer(Modifier.weight(1f))
 
         // STATUS COLUMN
-        Column(horizontalAlignment = Alignment.End) {
-            ConnectionBadge(active = isConnected)
-            Spacer(modifier = Modifier.height(4.dp))
-            BatteryBadge(
-                zone = batteryZone,
-                level = batteryText,
-                modifier = Modifier.padding(end = 8.dp)
-            )
+        // 2. RIGHT SIDE: Status Badges (Only when connected)
+        if (isConnected) {
+            Column(horizontalAlignment = Alignment.End) {
+                ConnectionBadge(active = isConnected)
+                Spacer(modifier = Modifier.height(4.dp))
+                BatteryBadge(
+                    zone = batteryZone,
+                    level = batteryText,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+            }
         }
     }
 }
