@@ -3,10 +3,11 @@ package com.ylabz.basepro.ashbike.mobile.features.glass.newui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -64,14 +65,18 @@ fun AshGlassLayout(
             // 2. INFINITE SCROLL DASHBOARD
             // Speed is Item 0, Stats are Item 1.
             // Allows the speed card to push up when you want to see stats.
-            LazyColumn(
+            // wrapContentHeight() ensures it only takes the space it needs.
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                // 1. FIXED TOP: VELOCITY DASH
                 // ITEM A: The Big Speedometer
-                item {
+                // 1. FIXED TOP: VELOCITY DASH
+                // wrapContentHeight() ensures it only takes the space it needs.
+                Box(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
                     VelocityDash(
                         speed = uiState.formattedSpeed,
                         heading = uiState.formattedHeading
@@ -79,7 +84,10 @@ fun AshGlassLayout(
                 }
 
                 // ITEM B: The Detailed Stats
-                item {
+                // 2. SCROLLABLE BOTTOM: STATS BOARD
+                // weight(1f) tells it to fill all remaining vertical space.
+                // The scrolling happens INSIDE StatsBoard now.
+                Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
                     StatsBoard(
                         distance = uiState.tripDistance,
                         duration = uiState.rideDuration,
