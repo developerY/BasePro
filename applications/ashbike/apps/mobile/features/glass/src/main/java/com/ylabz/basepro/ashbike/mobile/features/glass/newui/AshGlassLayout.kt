@@ -19,11 +19,11 @@ import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.GlimmerTheme
 import androidx.xr.glimmer.Text
 import androidx.xr.glimmer.surface
+import com.ylabz.basepro.ashbike.mobile.features.glass.newui.sections.HeaderBar
+import com.ylabz.basepro.ashbike.mobile.features.glass.newui.sections.StatsBoard
+import com.ylabz.basepro.ashbike.mobile.features.glass.newui.sections.VelocityDash
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassUiEvent
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassUiState
-//import com.ylabz.basepro.ashbike.mobile.features.glass.newui.sections.HeaderBar
-//import com.ylabz.basepro.ashbike.mobile.features.glass.newui.sections.StatsBoard
-//import com.ylabz.basepro.ashbike.mobile.features.glass.newui.sections.VelocityDash
 
 @Composable
 fun AshGlassLayout(
@@ -45,7 +45,7 @@ fun AshGlassLayout(
             modifier = Modifier.padding(8.dp).fillMaxSize(),
             title = {
                 // 1. TOP HEADER (Replaced 'HomeHeader')
-                /*HeaderBar(
+                HeaderBar(
                     isConnected = uiState.isBikeConnected,
                     gear = uiState.currentGear,
                     batteryZone = uiState.batteryZone,
@@ -53,7 +53,7 @@ fun AshGlassLayout(
                     onGearUp = { onEvent(GlassUiEvent.GearUp) },
                     onGearDown = { onEvent(GlassUiEvent.GearDown) },
                     focusRequester = gearFocus
-                )*/
+                )
             },
             action = {
                 Button(onClick = { onEvent(GlassUiEvent.CloseApp) }) {
@@ -72,21 +72,21 @@ fun AshGlassLayout(
             ) {
                 // ITEM A: The Big Speedometer
                 item {
-                    /*VelocityDash(
+                    VelocityDash(
                         speed = uiState.formattedSpeed,
                         heading = uiState.formattedHeading
-                    )*/
+                    )
                 }
 
                 // ITEM B: The Detailed Stats
                 item {
-                    /*StatsBoard(
+                    StatsBoard(
                         distance = uiState.tripDistance,
                         duration = uiState.rideDuration,
                         avgSpeed = uiState.averageSpeed,
                         calories = uiState.calories,
                         modifier = Modifier.fillMaxWidth()
-                    )*/
+                    )
                 }
             }
         }
