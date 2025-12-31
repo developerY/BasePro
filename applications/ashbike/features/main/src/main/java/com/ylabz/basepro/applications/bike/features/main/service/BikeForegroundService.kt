@@ -343,7 +343,7 @@ class BikeForegroundService : LifecycleService() {
         val videoReadyInfo = demoSimulator.process(newInfo)
         // =================================================================
 
-        val newRideInfo = videoReadyInfo
+        val newRideInfo = newInfo // videoReadyInfo
 
         // 1. Update Local State (for Notification)
         _rideInfo.value = newRideInfo
