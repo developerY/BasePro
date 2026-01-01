@@ -11,6 +11,7 @@ import androidx.compose.material.icons.rounded.Explore
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.unit.dp
 import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.GlimmerTheme
@@ -27,6 +28,8 @@ fun VelocityDash(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                // ADD THIS: Explicitly disable focus for this component
+                .focusProperties { canFocus = false }
                 .padding(vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically

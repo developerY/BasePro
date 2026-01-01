@@ -1,5 +1,6 @@
 package com.ylabz.basepro.ashbike.mobile.features.glass.newui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
 import androidx.xr.glimmer.Button
 import androidx.xr.glimmer.Card
@@ -43,7 +45,10 @@ fun AshGlassLayout(
         modifier = modifier
             .surface(focusable = false)
             .fillMaxSize()
-            .background(GlimmerTheme.colors.surface),
+            .background(GlimmerTheme.colors.surface)
+            .onFocusChanged {
+                if (it.isFocused) Log.d("FOCUS_DEBUG", "Speed Card got Focus!")
+            },
         contentAlignment = Alignment.Center
     ) {
         Card(
@@ -117,12 +122,25 @@ fun AshGlassLayout(
         }
     }
 
-    // 3. Request Focus on the Stats List on launch
+    // 1. The Trigger
     LaunchedEffect(Unit) {
+        Log.d("FOCUS_DEBUG", "Requesting focus now...")
+        delay(300) // Increase to 300ms or 500ms temporarily to test
+
+        try {
+            statsFocus.requestFocus()
+            Log.d("FOCUS_DEBUG", "Request sent.")
+        } catch (e: Exception) {
+            Log.e("FOCUS_DEBUG", "Focus request failed: ${e.message}")
+        }
+    }
+
+    // 3. Request Focus on the Stats List on launch
+    /* LaunchedEffect(Unit) {
         delay(200) // Wait 200ms for UI to build
         // We delay slightly to ensure layout is ready, or just call it directly
         statsFocus.requestFocus()
-    }
+    } */
 
     /* Auto-focus logic
     LaunchedEffect(uiState.isBikeConnected) {
