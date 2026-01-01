@@ -16,7 +16,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.GlimmerTheme
 import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.ListItem
@@ -38,14 +37,15 @@ fun StatsBoard(
     modifier: Modifier = Modifier,
     listFocusRequester: FocusRequester? = null
 ) {
-    Card(modifier = modifier) {
+    // Card(modifier = modifier) {
         // CORRECT: Use VerticalList instead of LazyColumn
         VerticalList(
             modifier = Modifier
                 .fillMaxSize()
                 .then(if (listFocusRequester != null) Modifier.focusRequester(listFocusRequester) else Modifier),
-            contentPadding = PaddingValues(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            // REDUCE PADDING: Was 8.dp, change to 4.dp or 2.dp
+            contentPadding = PaddingValues(2.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             // Item 1: Distance
             item {
@@ -84,7 +84,7 @@ fun StatsBoard(
                 )
             }
         }
-    }
+    // }
 }
 
 // Helper wrapper to map your data to the official ListItem

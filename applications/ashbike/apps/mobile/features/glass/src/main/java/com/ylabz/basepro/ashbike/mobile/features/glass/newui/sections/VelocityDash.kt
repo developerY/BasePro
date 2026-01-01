@@ -30,7 +30,8 @@ fun VelocityDash(
                 .fillMaxWidth()
                 // ADD THIS: Explicitly disable focus for this component
                 .focusProperties { canFocus = false }
-                .padding(vertical = 12.dp),
+                // REDUCE PADDING: Was 12.dp, change to 4.dp or 8.dp
+                .padding(vertical = 4.dp),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {

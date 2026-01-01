@@ -76,11 +76,12 @@ fun AshGlassLayout(
             // Allows the speed card to push up when you want to see stats.
             // wrapContentHeight() ensures it only takes the space it needs.
             // FIXED COLUMN LAYOUT
+            // REDUCE SPACING: Was 16.dp, change to 4.dp or 8.dp
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(top = 4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
 
 
