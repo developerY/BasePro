@@ -5,6 +5,7 @@ import android.os.Binder
 import android.os.IBinder
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
+import com.ylabz.basepro.applications.bike.features.main.service.BikeForegroundService
 import com.ylabz.basepro.applications.bike.features.main.service.BikeServiceManager
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,7 +20,7 @@ class BikeWearService : LifecycleService() {
     @Inject
     lateinit var bikeServiceManager: BikeServiceManager
 
-    // State exposed to the UI (e.g. WearBikeScreen)
+    // Expose the real BikeRideInfo state
     private val _exerciseState = MutableStateFlow(BikeRideInfo.initial())
     val exerciseState = _exerciseState.asStateFlow()
 
@@ -36,16 +37,13 @@ class BikeWearService : LifecycleService() {
 
     override fun onCreate() {
         super.onCreate()
-
-        // 1. Start/Bind the shared BikeForegroundService logic
-        // This makes the watch run the exact same logic as the phone
+        // 1. Bind to the logic engine
         bikeServiceManager.bindService(this)
 
-        // 2. Observe the data stream from that service
+        // 2. Pipe data from engine to UI state
         lifecycleScope.launch {
-            bikeServiceManager.rideInfo.collect { realRideInfo ->
-                // 3. Pipe the real data to our local state
-                _exerciseState.value = realRideInfo
+            bikeServiceManager.rideInfo.collect { rideInfo ->
+                _exerciseState.value = rideInfo
             }
         }
     }
@@ -54,5 +52,17 @@ class BikeWearService : LifecycleService() {
         super.onDestroy()
         // Prevent leaks
         bikeServiceManager.unbindService(this)
+    }
+
+    // --- Added Methods for UI Actions ---
+
+    fun startRide() {
+        // Tells the underlying service to start recording a formal ride
+        bikeServiceManager.sendCommand(BikeForegroundService.ACTION_START_RIDE)
+    }
+
+    fun stopRide() {
+        // Tells the underlying service to stop and save the ride
+        bikeServiceManager.sendCommand(BikeForegroundService.ACTION_STOP_RIDE)
     }
 }

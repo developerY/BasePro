@@ -40,8 +40,8 @@ import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.ylabz.basepro.ashbike.wear.presentation.components.WearSpeedometer
-import com.ylabz.basepro.ashbike.wear.service.ExerciseMetrics
-import com.ylabz.basepro.ashbike.wear.service.ExerciseServiceDemo
+import com.ylabz.basepro.ashbike.wear.service.BikeWearService
+import com.ylabz.basepro.core.model.bike.BikeRideInfo
 
 // 1. Root App Component
 @Composable
@@ -66,11 +66,12 @@ fun AshBikeApp() {
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun WearBikeScreen() {
-    // Define required permissions
+    // Define required permissions for the underlying BikeForegroundService
     val permissionsToRequest = buildList {
         add(Manifest.permission.BODY_SENSORS)
         add(Manifest.permission.ACTIVITY_RECOGNITION)
         add(Manifest.permission.ACCESS_FINE_LOCATION)
+        add(Manifest.permission.ACCESS_COARSE_LOCATION)
         if (Build.VERSION.SDK_INT >= 33) {
             add(Manifest.permission.POST_NOTIFICATIONS)
         }
@@ -89,27 +90,30 @@ fun WearBikeScreen() {
             if (permissionState.allPermissionsGranted) {
                 // Connect to Service
                 val context = LocalContext.current
-                var service by remember { mutableStateOf<ExerciseServiceDemo?>(null) }
-                val metrics by service?.exerciseMetrics?.collectAsState(initial = ExerciseMetrics())
-                    ?: remember { mutableStateOf(ExerciseMetrics()) }
+                var service by remember { mutableStateOf<BikeWearService?>(null) }
+
+                // Collect the REAL BikeRideInfo state
+                val rideInfo by service?.exerciseState?.collectAsState(initial = BikeRideInfo.initial())
+                    ?: remember { mutableStateOf(BikeRideInfo.initial()) }
 
                 DisposableEffect(context) {
                     val connection = object : ServiceConnection {
                         override fun onServiceConnected(className: ComponentName, binder: IBinder) {
-                            service = (binder as ExerciseServiceDemo.LocalBinder).getService()
+                            service = (binder as BikeWearService.LocalBinder).getService()
                         }
                         override fun onServiceDisconnected(arg0: ComponentName) { service = null }
                     }
-                    val intent = Intent(context, ExerciseServiceDemo::class.java)
+                    val intent = Intent(context, BikeWearService::class.java)
+                    // BIND_AUTO_CREATE starts the service if it's not running
                     context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
                     onDispose { context.unbindService(connection) }
                 }
 
                 // Pass data to Stateless UI
                 BikeControlContent(
-                    metrics = metrics,
-                    onStart = { service?.startExercise() },
-                    onStop = { service?.stopExercise() }
+                    rideInfo = rideInfo,
+                    onStart = { service?.startRide() },
+                    onStop = { service?.stopRide() }
                 )
 
             } else {
@@ -121,10 +125,10 @@ fun WearBikeScreen() {
     }
 }
 
-// 3. Stateless UI (Previewable!)
+// 3. Stateless UI
 @Composable
 fun BikeControlContent(
-    metrics: ExerciseMetrics,
+    rideInfo: BikeRideInfo,
     onStart: () -> Unit,
     onStop: () -> Unit
 ) {
@@ -134,14 +138,15 @@ fun BikeControlContent(
     ) {
         // Background Speedometer
         WearSpeedometer(
-            currentSpeed = metrics.speed.toFloat() * 3.6f, // Convert m/s to km/h
+            // BikeRideInfo provides speed in km/h automatically from BikeForegroundService
+            currentSpeed = rideInfo.currentSpeed.toFloat(),
             modifier = Modifier.fillMaxSize()
         )
 
         // Overlay Stats
         Column(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceBetween, // Spread items out
+            verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Top: Heart Rate
@@ -152,7 +157,8 @@ fun BikeControlContent(
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Text(
-                    text = "${metrics.heartRate.toInt()}",
+                    // Handle nullable heartbeat
+                    text = "${rideInfo.heartbeat ?: "--"}",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onBackground
                 )
@@ -164,7 +170,8 @@ fun BikeControlContent(
                 modifier = Modifier.padding(bottom = 20.dp)
             ) {
                 Text(
-                    text = String.format("%.2f km", metrics.distance / 1000),
+                    // BikeRideInfo.currentTripDistance is already in Kilometers
+                    text = String.format("%.2f km", rideInfo.currentTripDistance),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.secondary
                 )
