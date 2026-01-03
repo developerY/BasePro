@@ -3,7 +3,6 @@ package com.ylabz.basepro.ashbike.mobile.features.glass.newui.sections
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AvTimer
 import androidx.compose.material.icons.rounded.LocalFireDepartment
@@ -103,7 +102,7 @@ private fun GlimmerStatItem(
                 imageVector = icon,
                 contentDescription = null,
                 tint = accent,
-                modifier = Modifier.size(24.dp)
+                //modifier = Modifier.size(24.dp)
             )
         },
         // SUPPORTING LABEL (The descriptor, e.g. "DISTANCE")
