@@ -21,7 +21,7 @@ class TTSHelper(context: Context) : DefaultLifecycleObserver {
     private val pendingMessages = mutableListOf<Triple<String, Boolean, (() -> Unit)?>>()
     private val callbacks = mutableMapOf<String, () -> Unit>()
 
-    // Hold reference to request to release it later
+    // Hold the focus request object to release it cleanly later
     private var focusRequest: AudioFocusRequest? = null
 
     override fun onCreate(owner: LifecycleOwner) {
@@ -31,7 +31,7 @@ class TTSHelper(context: Context) : DefaultLifecycleObserver {
                 if (status == TextToSpeech.SUCCESS) {
                     setupEngine()
                 } else {
-                    Log.e("TTSHelper", "Initialization failed: $status")
+                    Log.e("TTSHelper", "Init failed: $status")
                 }
             }
         }
@@ -43,6 +43,7 @@ class TTSHelper(context: Context) : DefaultLifecycleObserver {
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTSHelper", "Language not supported")
             } else {
+                // 1. Set Audio Attributes directly (Clean API)
                 val audioAttributes = AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
@@ -54,18 +55,19 @@ class TTSHelper(context: Context) : DefaultLifecycleObserver {
 
                     override fun onDone(utteranceId: String?) {
                         callbacks.remove(utteranceId)?.invoke()
-                        // Optional: Abandon focus after speech is done if you want music to return to full volume immediately
-                        // abandonAudioFocus()
+                        // Optional: abandonAudioFocus() here if you want music to return immediately
                     }
 
+                    // 2. Minimal Required Override for Abstract Class (Keep empty)
                     @Deprecated("Deprecated in Java")
                     override fun onError(utteranceId: String?) {
-                        callbacks.remove(utteranceId)
+                        // This method is abstract in the parent class, so we MUST override it.
+                        // But we don't need to put logic here.
                     }
 
                     override fun onError(utteranceId: String?, errorCode: Int) {
                         callbacks.remove(utteranceId)
-                        Log.e("TTSHelper", "Error in utterance: $errorCode")
+                        Log.e("TTSHelper", "Error ($errorCode): $utteranceId")
                     }
                 })
 
@@ -95,8 +97,8 @@ class TTSHelper(context: Context) : DefaultLifecycleObserver {
         tts?.speak(text, queueMode, null, utteranceId)
     }
 
+    // 3. CLEAN AUDIO FOCUS (No 'if' checks, No suppressions)
     private fun requestAudioFocus() {
-        // AudioFocusRequest is only available on Android O (API 26) and above
         focusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
             .setAudioAttributes(
                 AudioAttributes.Builder()
@@ -104,7 +106,7 @@ class TTSHelper(context: Context) : DefaultLifecycleObserver {
                     .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                     .build()
             )
-            .setOnAudioFocusChangeListener { /* Handle interruptions if needed */ }
+            .setOnAudioFocusChangeListener { /* Handle ducking/pausing if needed */ }
             .build()
 
         audioManager.requestAudioFocus(focusRequest!!)
@@ -130,6 +132,6 @@ class TTSHelper(context: Context) : DefaultLifecycleObserver {
         tts = null
         isReady = false
         callbacks.clear()
-        abandonAudioFocus() // Good citizen cleanup
+        abandonAudioFocus()
     }
 }
