@@ -62,7 +62,7 @@
             android:foregroundServiceType="location|health" />
 
         <service
-            android:name=".service.ExerciseService"
+            android:name=".service.BikeWearService"
             android:exported="false" />
 
         <uses-library
