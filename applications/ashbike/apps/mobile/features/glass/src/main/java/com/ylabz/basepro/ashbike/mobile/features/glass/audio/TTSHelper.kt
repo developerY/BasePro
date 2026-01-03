@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
+import android.os.Build
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.util.Log
@@ -11,19 +12,18 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import java.util.Locale
 
-/**
- * Robust TTS Helper for Google AI Glasses.
- * Handles lifecycle, audio focus, and provides completion callbacks.
- */
 class TTSHelper(context: Context) : DefaultLifecycleObserver {
 
     private val appContext = context.applicationContext
     private var tts: TextToSpeech? = null
     private var isReady = false
-    
+
     private val audioManager = appContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     private val pendingMessages = mutableListOf<Triple<String, Boolean, (() -> Unit)?>>()
     private val callbacks = mutableMapOf<String, () -> Unit>()
+
+    // Hold reference to request to release it later
+    private var focusRequest: AudioFocusRequest? = null
 
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
@@ -32,7 +32,7 @@ class TTSHelper(context: Context) : DefaultLifecycleObserver {
                 if (status == TextToSpeech.SUCCESS) {
                     setupEngine()
                 } else {
-                    Log.e("TTSHelper", "Initialization failed with status: $status")
+                    Log.e("TTSHelper", "Initialization failed: $status")
                 }
             }
         }
@@ -44,7 +44,6 @@ class TTSHelper(context: Context) : DefaultLifecycleObserver {
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTSHelper", "Language not supported")
             } else {
-                // Optimization for Glasses: Use specific audio attributes for navigation/guidance
                 val audioAttributes = AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
@@ -53,30 +52,30 @@ class TTSHelper(context: Context) : DefaultLifecycleObserver {
 
                 setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                     override fun onStart(utteranceId: String?) {}
+
                     override fun onDone(utteranceId: String?) {
                         callbacks.remove(utteranceId)?.invoke()
+                        // Optional: Abandon focus after speech is done if you want music to return to full volume immediately
+                        // abandonAudioFocus()
                     }
-                    @Deprecated("Deprecated in Java", ReplaceWith("onError(utteranceId, errorCode)"))
+
+                    @Deprecated("Deprecated in Java")
                     override fun onError(utteranceId: String?) {
                         callbacks.remove(utteranceId)
                     }
+
                     override fun onError(utteranceId: String?, errorCode: Int) {
                         callbacks.remove(utteranceId)
+                        Log.e("TTSHelper", "Error in utterance: $errorCode")
                     }
                 })
-                
+
                 isReady = true
                 processPendingMessages()
             }
         }
     }
 
-    /**
-     * Speaks the text. If the engine isn't ready, it queues the message.
-     * @param text The string to read aloud.
-     * @param flush If true, interrupts current speech. If false, adds to queue.
-     * @param onComplete Optional callback invoked when this specific utterance finishes.
-     */
     fun speak(text: String, flush: Boolean = true, onComplete: (() -> Unit)? = null) {
         if (!isReady) {
             synchronized(pendingMessages) {
@@ -86,7 +85,7 @@ class TTSHelper(context: Context) : DefaultLifecycleObserver {
             return
         }
 
-        val utteranceId = "GH_${System.currentTimeMillis()}"
+        val utteranceId = "MSG_${System.currentTimeMillis()}"
         if (onComplete != null) {
             callbacks[utteranceId] = onComplete
         }
@@ -98,13 +97,36 @@ class TTSHelper(context: Context) : DefaultLifecycleObserver {
     }
 
     private fun requestAudioFocus() {
-        val request = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
-            .setAudioAttributes(AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
-                .build())
-            .build()
-        audioManager.requestAudioFocus(request)
+        // AudioFocusRequest is only available on Android O (API 26) and above
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            focusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
+                .setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                        .build()
+                )
+                .setOnAudioFocusChangeListener { /* Handle interruptions if needed */ }
+                .build()
+
+            audioManager.requestAudioFocus(focusRequest!!)
+        } else {
+            @Suppress("DEPRECATION")
+            audioManager.requestAudioFocus(
+                null,
+                AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK
+            )
+        }
+    }
+
+    private fun abandonAudioFocus() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            focusRequest?.let { audioManager.abandonAudioFocusRequest(it) }
+        } else {
+            @Suppress("DEPRECATION")
+            audioManager.abandonAudioFocus(null)
+        }
     }
 
     private fun processPendingMessages() {
@@ -123,5 +145,6 @@ class TTSHelper(context: Context) : DefaultLifecycleObserver {
         tts = null
         isReady = false
         callbacks.clear()
+        abandonAudioFocus() // Good citizen cleanup
     }
 }
