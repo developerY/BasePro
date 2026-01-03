@@ -41,7 +41,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.ylabz.basepro.ashbike.wear.presentation.components.WearSpeedometer
 import com.ylabz.basepro.ashbike.wear.service.ExerciseMetrics
-import com.ylabz.basepro.ashbike.wear.service.ExerciseService
+import com.ylabz.basepro.ashbike.wear.service.ExerciseServiceDemo
 
 // 1. Root App Component
 @Composable
@@ -89,18 +89,18 @@ fun WearBikeScreen() {
             if (permissionState.allPermissionsGranted) {
                 // Connect to Service
                 val context = LocalContext.current
-                var service by remember { mutableStateOf<ExerciseService?>(null) }
+                var service by remember { mutableStateOf<ExerciseServiceDemo?>(null) }
                 val metrics by service?.exerciseMetrics?.collectAsState(initial = ExerciseMetrics())
                     ?: remember { mutableStateOf(ExerciseMetrics()) }
 
                 DisposableEffect(context) {
                     val connection = object : ServiceConnection {
                         override fun onServiceConnected(className: ComponentName, binder: IBinder) {
-                            service = (binder as ExerciseService.LocalBinder).getService()
+                            service = (binder as ExerciseServiceDemo.LocalBinder).getService()
                         }
                         override fun onServiceDisconnected(arg0: ComponentName) { service = null }
                     }
-                    val intent = Intent(context, ExerciseService::class.java)
+                    val intent = Intent(context, ExerciseServiceDemo::class.java)
                     context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
                     onDispose { context.unbindService(connection) }
                 }

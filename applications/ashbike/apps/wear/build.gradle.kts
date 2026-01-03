@@ -50,6 +50,7 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:data"))
     implementation(project(":core:util"))
+    implementation(project(":applications:ashbike:features:main"))
     // implementation(project(":applications:ashbike:database")) // Optional: for local DB
 
 
