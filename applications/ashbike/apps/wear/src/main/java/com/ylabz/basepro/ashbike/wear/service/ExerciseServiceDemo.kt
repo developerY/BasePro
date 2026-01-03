@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ExerciseService : LifecycleService() {
+class ExerciseServiceDemo : LifecycleService() {
 
     private val binder = LocalBinder()
 
@@ -35,7 +35,7 @@ class ExerciseService : LifecycleService() {
     }
 
     inner class LocalBinder : Binder() {
-        fun getService(): ExerciseService = this@ExerciseService
+        fun getService(): ExerciseServiceDemo = this@ExerciseServiceDemo
     }
 
     fun startExercise() {
@@ -84,7 +84,7 @@ class ExerciseService : LifecycleService() {
     fun stopExercise() {
         lifecycleScope.launch {
             try {
-                HealthServices.getClient(this@ExerciseService)
+                HealthServices.getClient(this@ExerciseServiceDemo)
                     .exerciseClient
                     .endExercise()
                 _exerciseMetrics.value = ExerciseMetrics() // Reset
