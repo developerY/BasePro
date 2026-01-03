@@ -9,7 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material3.MaterialTheme
 import com.ylabz.basepro.ashbike.wear.presentation.theme.BaseProTheme
-import com.ylabz.basepro.ashbike.wear.service.ExerciseMetrics
+// 1. Import the correct model
+import com.ylabz.basepro.core.model.bike.BikeRideInfo
 
 @Preview(
     device = "id:wearos_small_round",
@@ -28,11 +29,15 @@ import com.ylabz.basepro.ashbike.wear.service.ExerciseMetrics
 )
 @Composable
 fun WearBikeScreenPreview() {
-    val mockMetrics = ExerciseMetrics(
-        heartRate = 145.0,
-        speed = 25.0 / 3.6, // ~25 km/h (stored as m/s)
-        distance = 12500.0, // 12.5 km
-        calories = 450.0
+    // 2. Create mock data using the real BikeRideInfo model
+    // Note: BikeRideInfo stores speed in km/h and distance in km, so no conversion math is needed here.
+    val mockRideInfo = BikeRideInfo.initial().copy(
+        heartbeat = 145,
+        currentSpeed = 25.0,        // 25 km/h
+        currentTripDistance = 12.5f, // 12.5 km
+        caloriesBurned = 450,
+        rideDuration = "45:30",
+        isBikeConnected = true
     )
 
     BaseProTheme {
@@ -42,8 +47,9 @@ fun WearBikeScreenPreview() {
                 .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
+            // 3. Pass mockRideInfo to the 'rideInfo' parameter
             BikeControlContent(
-                metrics = mockMetrics,
+                rideInfo = mockRideInfo,
                 onStart = {},
                 onStop = {}
             )
