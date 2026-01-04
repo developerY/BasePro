@@ -34,7 +34,7 @@ import com.ylabz.basepro.core.model.bike.BikeRideInfo
 fun WearBikeScreen() {
     // Define required permissions for the underlying BikeForegroundService
     val permissionsToRequest = buildList {
-        add(Manifest.permission.BODY_SENSORS)
+        add(Manifest.permission.BODY_SENSORS) // <--- Must be here
         add(Manifest.permission.ACTIVITY_RECOGNITION)
         add(Manifest.permission.ACCESS_FINE_LOCATION)
         add(Manifest.permission.ACCESS_COARSE_LOCATION)

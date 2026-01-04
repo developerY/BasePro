@@ -29,6 +29,7 @@ import com.ylabz.basepro.applications.bike.features.main.usecase.CalculateCalori
 import com.ylabz.basepro.applications.bike.features.main.usecase.UserStats
 import com.ylabz.basepro.core.data.repository.bike.BikeRepository
 import com.ylabz.basepro.core.data.repository.bike.DemoModeSimulator
+import com.ylabz.basepro.core.data.repository.sensor.heart.HeartRateRepository
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.LocationEnergyLevel
 import com.ylabz.basepro.core.model.bike.RideState
@@ -77,6 +78,10 @@ class BikeForegroundService : LifecycleService() {
 
     // --- StateFlow for current energy level ---
     private lateinit var currentEnergyLevelState: StateFlow<LocationEnergyLevel>
+
+    // 2. INJECT THE HEART RATE REPOSITORY
+    @Inject
+    lateinit var heartRateRepository: HeartRateRepository
 
 
     // --- Continuous Tracking State (Session-long) ---
@@ -142,6 +147,23 @@ class BikeForegroundService : LifecycleService() {
         userStatsFlow = userProfileRepository.weightFlow.map { weightString ->
             val weightKg = weightString.toFloatOrNull() ?: 70f
             UserStats(heightCm = 0f, weightKg = weightKg)
+        }
+
+        // 3. START COLLECTING HEART RATE HERE
+        lifecycleScope.launch {
+            // This collects from the repository (WearHealth or BLE)
+            // and updates the main Ride Info state.
+            heartRateRepository.heartRate.collect { bpm ->
+                val current = _rideInfo.value
+
+                // Optimization: Only update flow if value changed
+                if (current.heartbeat != bpm) {
+                    _rideInfo.value = current.copy(
+                        heartbeat = bpm
+                    )
+                    Log.v("BikeForegroundService", "❤ Heart Rate: $bpm")
+                }
+            }
         }
 
         lifecycleScope.launch {
