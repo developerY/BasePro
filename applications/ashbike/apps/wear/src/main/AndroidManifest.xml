@@ -16,7 +16,7 @@
 
 
     <application
-        android:name=".presentation.WearApplication"
+        android:name=".app.WearApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
