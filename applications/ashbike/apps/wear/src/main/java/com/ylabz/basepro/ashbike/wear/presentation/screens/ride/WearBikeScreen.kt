@@ -24,7 +24,6 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.ylabz.basepro.ashbike.wear.presentation.BikeControlContent
 import com.ylabz.basepro.ashbike.wear.presentation.PermissionRationaleContent
 import com.ylabz.basepro.ashbike.wear.service.BikeWearService
 import com.ylabz.basepro.core.model.bike.BikeRideInfo

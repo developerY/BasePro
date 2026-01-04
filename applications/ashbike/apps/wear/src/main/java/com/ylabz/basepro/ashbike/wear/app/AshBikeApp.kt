@@ -6,7 +6,7 @@ import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
-import com.ylabz.basepro.ashbike.wear.presentation.WearBikeScreen
+import com.ylabz.basepro.ashbike.wear.presentation.screens.ride.WearBikeScreen
 import com.ylabz.basepro.ashbike.wear.presentation.screens.ride.WearBikeViewModel
 
 // 1. Root App Component

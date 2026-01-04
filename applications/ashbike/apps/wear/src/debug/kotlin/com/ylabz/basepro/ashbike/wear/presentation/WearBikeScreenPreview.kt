@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material3.MaterialTheme
+import com.ylabz.basepro.ashbike.wear.presentation.screens.ride.BikeControlContent
 import com.ylabz.basepro.ashbike.wear.presentation.theme.BaseProTheme
 // 1. Import the correct model
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
