@@ -1,4 +1,4 @@
-package com.ylabz.basepro.core.data.repository.sensor
+package com.ylabz.basepro.core.data.repository.sensor.heart
 
 import kotlinx.coroutines.flow.Flow
 

@@ -1,6 +1,7 @@
-package com.ylabz.basepro.core.data.repository.sensor
+package com.ylabz.basepro.core.data.repository.sensor.heart
 
 import android.util.Log
+import com.ylabz.basepro.core.data.repository.sensor.heart.HeartRateRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -50,10 +51,10 @@ class BleHeartRateRepository @Inject constructor() : HeartRateRepository {
 
             // Calculate simulation physics
             // 1. Add small random noise (+/- 0 to 2 bpm)
-            val noise = Random.nextInt(0, 3)
+            val noise = Random.Default.nextInt(0, 3)
 
             // 2. Apply trend
-            if (Random.nextBoolean()) {
+            if (Random.Default.nextBoolean()) {
                 currentBpm += (trend * noise)
             }
 
