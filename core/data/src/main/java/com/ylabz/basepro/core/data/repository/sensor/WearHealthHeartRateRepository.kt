@@ -10,9 +10,11 @@ import androidx.health.services.client.data.DataType
 import androidx.health.services.client.data.DeltaDataType
 import androidx.health.services.client.unregisterMeasureCallback
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -27,7 +29,7 @@ class WearHealthHeartRateRepository @Inject constructor(
 ) : HeartRateRepository {
 
     override val heartRate: Flow<Int> = callbackFlow {
-        Log.d("WearHealthRepo", "Initializing Heart Rate Flow via Health Services")
+        Log.d("WearHealthRepo", "Initializing Heart Rate Flow")
 
         // Safety Check: If this code accidentally runs on a Phone, this might throw.
         // In a real app, you might wrap this in a try-catch or hardware check.
@@ -36,31 +38,40 @@ class WearHealthHeartRateRepository @Inject constructor(
 
         val callback = object : MeasureCallback {
             override fun onAvailabilityChanged(dataType: DeltaDataType<*, *>, availability: Availability) {
-                // Handle availability (e.g. sensor off wrist)
+                // Handle sensor availability changes (e.g. ACQUIRING vs ACQUIRED)
             }
 
             override fun onDataReceived(data: DataPointContainer) {
                 val heartRateSamples = data.getData(DataType.HEART_RATE_BPM)
+                // Get the newest sample
                 val latest = heartRateSamples.lastOrNull()
                 if (latest != null) {
                     val bpm = latest.value.toInt()
+                    // Send to the flow
                     trySend(bpm)
                 }
             }
         }
 
-        Log.d("WearHealthRepo", "Registering Callback...")
+        Log.d("WearHealthRepo", "Registering Listener...")
+
+        // 1. Registration is a suspend function, so we simply call it.
+        // We catch errors here in case the device doesn't support the sensor.
         try {
             measureClient.registerMeasureCallback(DataType.HEART_RATE_BPM, callback)
+            Log.d("WearHealthRepo", "Listener Registered")
         } catch (e: Exception) {
-            Log.e("WearHealthRepo", "Failed to register listener", e)
-            close(e)
+            Log.e("WearHealthRepo", "Registration failed", e)
+            close(e) // Close flow if we can't register
         }
 
+        // 2. awaitClose keeps the flow alive until the collector stops listening.
         awaitClose {
-            Log.d("WearHealthRepo", "Unregistering Callback")
-            // 2. FIX: Use runBlocking to call the suspend unregister function inside the non-suspend awaitClose block.
-            // Since we are on Dispatchers.IO (see below), this is safe and won't block the UI.
+            Log.d("WearHealthRepo", "Unregistering Listener")
+
+            // 3. CRITICAL FIX: 'awaitClose' is synchronous, but 'unregister' is suspend.
+            // We use runBlocking here to bridge the gap.
+            // This is safe because we force this whole flow to run on Dispatchers.IO below.
             runBlocking {
                 try {
                     measureClient.unregisterMeasureCallback(DataType.HEART_RATE_BPM, callback)
@@ -70,4 +81,6 @@ class WearHealthHeartRateRepository @Inject constructor(
             }
         }
     }
+        // 4. Force execution on IO thread so runBlocking doesn't freeze the main UI
+        .flowOn(Dispatchers.IO)
 }
