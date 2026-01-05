@@ -26,7 +26,7 @@ lifecycle = "2.10.0"             # AndroidX Lifecycle components (ViewModel, Liv
 lifecycleService = "2.10.0"      # AndroidX Lifecycle Service component
 
 # AndroidX - Activity
-activityCompose = "1.12.1"      # AndroidX Activity Compose, for Jetpack Compose in Activities
+activityCompose = "1.12.2"      # AndroidX Activity Compose, for Jetpack Compose in Activities
 
 # AndroidX - Navigation (old and we need to remove)
 androidxNavigation = "2.9.6"    # AndroidX Navigation component (Compose)
@@ -37,11 +37,11 @@ material3AdaptiveNav3 = "1.3.0-alpha05" # Navigation 3 Material3 Adaptive Layout
 # material3Adaptive = "1.0.0-alpha06"                # AndroidX Test Runner
 
 # Jetpack Compose
-composeBom = "2025.12.00"       # Jetpack Compose Bill of Materials (BOM)
+composeBom = "2025.12.01"       # Jetpack Compose Bill of Materials (BOM)
 composeMaterial = "1.7.8"       # Jetpack Compose Material (used for icons, wear material)
 # Note: androidx.compose.material3 uses the BoM version.
 # Note: androidx.compose.ui:ui-tooling-preview uses the BoM version.
-composeMaterial3Expressive = "1.5.0-alpha10"                # AndroidX Test Runner
+composeMaterial3Expressive = "1.5.0-alpha11"                # AndroidX Test Runner
 
 # Dependency Injection - Hilt
 hilt = "2.57.2"                 # Hilt, a dependency injection library for Android
@@ -82,9 +82,9 @@ healthConnect = "1.1.0"    # Health Connect client library
 
 # Wear OS
 # Define distinct versions for the different Wear tracks
-wearComposeMaterial3 = "1.6.0-alpha06"
-wearComposeNavigation = "1.6.0-alpha06" # Navigation usually lags slightly behind M3
-wearCompose = "1.6.0-alpha06" # Stable core
+wearComposeMaterial3 = "1.6.0-alpha07"
+wearComposeNavigation = "1.6.0-alpha07" # Navigation usually lags slightly behind M3
+wearCompose = "1.6.0-alpha07" # Stable core
 
 playServicesWearable = "19.0.0" # Google Play Services for Wear OS
 wearToolingPreview = "1.0.0"    # Wear OS Tooling Preview library
@@ -98,7 +98,7 @@ healthServices = "1.1.0-alpha05"
 wearOngoing = "1.1.0"
 
 #glass
-glimmer = "1.0.0-alpha02"
+glimmer = "1.0.0-alpha03"
 
 #XR
 projectedXR = "1.0.0-alpha03"

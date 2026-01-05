@@ -33,8 +33,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
-    kotlinOptions {
-        jvmTarget = "21" // Aligned with feature:nav3 (will use jvmToolchain if this causes issues)
+    kotlin {
+        jvmToolchain(21)
     }
 }
 
