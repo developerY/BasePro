@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -25,7 +26,6 @@ import com.ylabz.basepro.applications.bike.features.main.ui.components.home.main
 import com.ylabz.basepro.core.model.bike.RideState
 import com.ylabz.basepro.core.ui.theme.iconColorBikeActive
 import com.ylabz.basepro.core.ui.theme.iconColorCalories
-import com.ylabz.basepro.core.ui.theme.iconColorHeartRate
 
 enum class StatsSectionType {
     HEALTH, EBIKE
@@ -35,58 +35,63 @@ enum class StatsSectionType {
 fun StatsSection(
     uiState: BikeUiState.Success,
     sectionType: StatsSectionType,
-    onEvent: (BikeEvent) -> Unit, // Assuming onEvent is needed and of this type
+    onEvent: (BikeEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val bikeData = uiState.bikeData
-    LocalContext.current // For string resources with formatting
+    LocalContext.current
 
     val isBikeComputerOn = bikeData.rideState == RideState.Riding
     val currentCardColor =
         if (isBikeComputerOn) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
     val currentContentColor =
         if (isBikeComputerOn) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
-    //val unavailableText = stringResource(R.string.feature_main_text_unavailable_compact)
 
     val currentStats: List<StatItem> = when (sectionType) {
-        StatsSectionType.HEALTH -> listOf(
-            StatItem(
-                icon = Icons.Filled.Favorite,
-                label = stringResource(R.string.feature_main_label_heart_rate),
-                value = if (bikeData.heartbeat != null) "$bikeData.heartbeat bpm" else "-- bpm",
-                /*value = bikeData.heartbeat?.takeIf { it > 0 }?.let { hr ->
-                    String.format(Locale.getDefault(), stringResource(R.string.feature_main_value_bpm_format), hr)
-                } ?: unavailableText,*/
-                activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorHeartRate else null
-            ),
-            StatItem(
-                icon = Icons.Filled.LocalFireDepartment,
-                label = stringResource(R.string.feature_main_label_calories),
-                value = bikeData.caloriesBurned.toString(),
-                /*value = bikeData.caloriesBurned.takeIf { it > 0 }?.let { calories ->
-                    String.format(Locale.getDefault(), stringResource(R.string.feature_main_value_kcal_format), calories)
-                } ?: unavailableText,*/
-                activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorCalories else null
+        StatsSectionType.HEALTH -> {
+            // --- DYNAMIC HEART RATE COLOR LOGIC ---
+            val hr = bikeData.heartbeat
+            val heartRateColor = if (hr != null && isBikeComputerOn) {
+                when {
+                    hr < 100 -> Color(0xFF4CAF50) // Green (Warm up)
+                    hr < 130 -> Color(0xFFFFC107) // Yellow (Fat Burn)
+                    hr < 160 -> Color(0xFFFF9800) // Orange (Cardio)
+                    else -> Color(0xFFF44336)     // Red (Peak)
+                }
+            } else {
+                // Fallback if null or bike computer is off
+                if (isBikeComputerOn) Color.Gray else null
+            }
+            // --------------------------------------
+
+            listOf(
+                StatItem(
+                    icon = Icons.Filled.Favorite,
+                    label = stringResource(R.string.feature_main_label_heart_rate),
+                    value = if (hr != null) "$hr bpm" else "-- bpm",
+                    // Apply dynamic color here
+                    activeColor = heartRateColor
+                ),
+                StatItem(
+                    icon = Icons.Filled.LocalFireDepartment,
+                    label = stringResource(R.string.feature_main_label_calories),
+                    value = bikeData.caloriesBurned.toString(),
+                    activeColor = if (isBikeComputerOn) MaterialTheme.colorScheme.iconColorCalories else null
+                )
             )
-        )
+        }
 
         StatsSectionType.EBIKE -> listOf(
             StatItem(
                 icon = Icons.AutoMirrored.Filled.BatteryUnknown,
                 label = stringResource(R.string.feature_main_label_battery),
-                value = if (bikeData.isBikeConnected && bikeData.batteryLevel != null) "$bikeData.batteryLevel%" else "--%",
-                /*value = if (bikeData.isBikeConnected && bikeData.batteryLevel != null) {
-                    String.format(Locale.getDefault(), stringResource(R.string.feature_main_value_percentage_format), bikeData.batteryLevel)
-                } else unavailableText,*/
+                value = if (bikeData.isBikeConnected && bikeData.batteryLevel != null) "${bikeData.batteryLevel}%" else "--%",
                 activeColor = if (isBikeComputerOn && bikeData.isBikeConnected) MaterialTheme.colorScheme.primary else null
             ),
             StatItem(
                 icon = Icons.Filled.ElectricBike,
                 label = stringResource(R.string.feature_main_label_motor),
-                value = if (bikeData.isBikeConnected && bikeData.motorPower != null) "$bikeData.motorPower W" else "-- W",
-                /*value = if (bikeData.isBikeConnected && bikeData.motorPower != null && bikeData.motorPower > 0f) {
-                    String.format(Locale.getDefault(), stringResource(R.string.feature_main_value_watts_format), bikeData.motorPower)
-                } else unavailableText,*/
+                value = if (bikeData.isBikeConnected && bikeData.motorPower != null) "${bikeData.motorPower} W" else "-- W",
                 activeColor = if (isBikeComputerOn && bikeData.isBikeConnected) MaterialTheme.colorScheme.iconColorBikeActive else null
             )
         )
@@ -101,10 +106,8 @@ fun StatsSection(
         currentStats.forEach { stat ->
             StatCard(
                 modifier = Modifier.weight(1f),
-                // StatCard should internally use statItem.activeColor if present,
-                // or fallback to a general content color.
-                // If StatCard needs explicit tint, adjust here:
                 icon = stat.icon,
+                // Use the calculated activeColor, or fallback to default content color
                 tint = stat.activeColor ?: currentContentColor,
                 label = stat.label,
                 value = stat.value,
