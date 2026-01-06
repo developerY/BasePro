@@ -64,9 +64,9 @@
             android:exported="false"
             android:foregroundServiceType="location|health" />
 
-        <service
+        <!-- service
             android:name=".service.BikeWearService"
-            android:exported="false" />
+            android:exported="false" /-->
 
         <uses-library
             android:name="com.google.android.wearable"
