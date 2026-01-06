@@ -41,7 +41,7 @@
         </service>
 
         <service
-            android:name=".tile.MainTileService"
+            android:name=".tile.AshBikeTileService"
             android:exported="true"
             android:label="@string/tile_label"
             android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER">
