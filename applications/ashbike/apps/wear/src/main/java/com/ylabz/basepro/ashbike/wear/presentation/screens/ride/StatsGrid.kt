@@ -60,7 +60,7 @@ fun StatsGridPage(info: BikeRideInfo) {
             )
             GridStatItem(
                 label = "TIME",
-                value = formatDuration(info.rideDuration.toLong() ?: 0L),
+                value = info.rideDuration,// formatDuration(info.rideDuration ?: "0:0"),
                 unit = "min"
             )
         }
