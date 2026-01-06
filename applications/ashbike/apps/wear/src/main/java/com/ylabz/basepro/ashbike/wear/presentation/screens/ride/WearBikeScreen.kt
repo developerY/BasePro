@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavHostController
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -31,7 +32,9 @@ import com.ylabz.basepro.core.model.bike.BikeRideInfo
 // 2. Stateful Screen (Handles Logic & Permissions)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun WearBikeScreen() {
+fun WearBikeScreen(
+    navController: NavHostController
+) {
     // Define required permissions for the underlying BikeForegroundService
     val permissionsToRequest = buildList {
         add(Manifest.permission.BODY_SENSORS) // <--- Must be here

@@ -17,14 +17,30 @@ fun AshBikeApp(
     val navController = rememberSwipeDismissableNavController()
 
     // AppScaffold is the root container for M3 Wear apps
-    AppScaffold {
+    // Handles the clock (TimeText) so it stays put while you swipe pages below it.
+    AppScaffold(
+        /*timeText = {
+            // The M3 TimeText component defaults to curved text on round screens
+            TimeText { time() }
+        }*/
+    ) {
+        // 3. NAV HOST: The Content Container
+        // Handles the "Swipe Right to Go Back" gesture automatically.
         SwipeDismissableNavHost(
             navController = navController,
-            startDestination = "ride_screen"
+            startDestination = "active_ride"
         ) {
-            composable("ride_screen") {
-                // This screen handles its own permissions and service binding
-                WearBikeScreen()
+
+            // --- SCREEN 1: The Ride (Pager) ---
+            composable("active_ride") {
+                // We will put the Gauge + Stats Pager here next
+                WearBikeScreen(navController)
+                //ActiveRideRoute(navController)
+            }
+
+            // --- SCREEN 2: Summary (Example) ---
+            composable("summary") {
+                // SummaryScreen()
             }
         }
     }
