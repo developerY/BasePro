@@ -18,7 +18,7 @@ import com.ylabz.basepro.core.model.bike.BikeRideInfo
 
 // --- PAGE 1: The New Stats Grid ---
 @Composable
-fun StatsGridPage(info: BikeRideInfo) {
+fun StatsSquareGridPage(info: BikeRideInfo) {
     Column(
         modifier = Modifier
             .fillMaxSize()
