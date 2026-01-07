@@ -51,7 +51,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:util"))
     implementation(project(":applications:ashbike:features:main"))
-    // implementation(project(":applications:ashbike:database")) // Optional: for local DB
+    implementation(project(":applications:ashbike:database")) // Optional: for local DB
 
 
 
@@ -80,6 +80,11 @@ dependencies {
     implementation(libs.androidx.wear.compose.foundation)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)
+
+    // Room
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
 
     // Permission
     implementation(libs.google.accompanist.permissions)
