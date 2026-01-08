@@ -10,7 +10,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material3.MaterialTheme
 import com.ylabz.basepro.ashbike.wear.presentation.screens.ride.BikeControlContent
 import com.ylabz.basepro.ashbike.wear.presentation.theme.BaseProTheme
-// 1. Import the correct model
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 
 @Preview(
@@ -26,16 +25,14 @@ import com.ylabz.basepro.core.model.bike.BikeRideInfo
 @Preview(
     device = "id:wearos_xl_round",
     showSystemUi = true,
-    name = "Active Ride - Slow"
+    name = "Active Ride - XL"
 )
 @Composable
 fun WearBikeScreenPreview() {
-    // 2. Create mock data using the real BikeRideInfo model
-    // Note: BikeRideInfo stores speed in km/h and distance in km, so no conversion math is needed here.
     val mockRideInfo = BikeRideInfo.initial().copy(
         heartbeat = 145,
-        currentSpeed = 25.0,        // 25 km/h
-        currentTripDistance = 12.5f, // 12.5 km
+        currentSpeed = 25.0,
+        currentTripDistance = 12.5f,
         caloriesBurned = 450,
         rideDuration = "45:30",
         isBikeConnected = true
@@ -48,11 +45,12 @@ fun WearBikeScreenPreview() {
                 .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
-            // 3. Pass mockRideInfo to the 'rideInfo' parameter
             BikeControlContent(
                 rideInfo = mockRideInfo,
                 onStart = {},
-                onStop = {}
+                onStop = {},
+                // ✅ FIX: Added the missing callback required for the History Pager
+                onHistoryClick = {}
             )
         }
     }
