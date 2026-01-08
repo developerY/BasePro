@@ -41,6 +41,13 @@ fun RideHistoryPage(
                 )
             }
 
+            items(historyList) { ride ->
+                HistoryItemCard(
+                    ride = ride,
+                    onClick = { onRideClick(ride.id) } // Pass ID up
+                )
+            }
+
             if (historyList.isEmpty()) {
                 item {
                     Text(

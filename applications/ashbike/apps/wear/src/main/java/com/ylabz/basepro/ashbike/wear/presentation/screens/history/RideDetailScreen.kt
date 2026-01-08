@@ -1,14 +1,25 @@
 package com.ylabz.basepro.ashbike.wear.presentation.screens.history
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.material3.*
+import androidx.wear.compose.material3.Button
+import androidx.wear.compose.material3.ButtonDefaults
+import androidx.wear.compose.material3.ListHeader
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.ScreenScaffold
+import androidx.wear.compose.material3.Text
+import androidx.wear.compose.material3.TextConfigurationDefaults.TextAlign
 
 @Composable
 fun RideDetailScreen(
@@ -25,15 +36,19 @@ fun RideDetailScreen(
             state = listState,
             modifier = Modifier.fillMaxSize()
         ) {
-            val current = ride
-            if (current != null) {
+            val currentRide= ride
+            if (currentRide!= null) {
+                // 1. HEADER
                 item { ListHeader { Text("Ride Details") } }
 
-                item { Text("Distance: ${current.totalDistance} km") }
-                item { Text("Calories: ${current.caloriesBurned}") }
+                // 2. STATS (Add as many rows as you want)
+                item { DetailRow("Distance", "${currentRide.totalDistance} km") }
+                item { DetailRow("Calories", "${currentRide.caloriesBurned}") }
+                item { DetailRow("Duration", "${(currentRide.endTime - currentRide.startTime)/1000/60} min") }
+                item { DetailRow("Avg Speed", "${currentRide.averageSpeed} km/h") }
 
                 // Duration Calculation
-                val durationMin = (current.endTime - current.startTime) / 1000 / 60
+                val durationMin = (currentRide.endTime - currentRide.startTime) / 1000 / 60
                 item { Text("Duration: $durationMin min") }
 
                 item { Spacer(modifier = Modifier.height(20.dp)) }
@@ -49,7 +64,9 @@ fun RideDetailScreen(
                             containerColor = MaterialTheme.colorScheme.error,
                             contentColor = MaterialTheme.colorScheme.onError
                         ),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 20.dp)
                     ) {
                         Text("Delete Ride")
                     }
@@ -59,4 +76,15 @@ fun RideDetailScreen(
             }
         }
     }
+}
+
+@Composable
+fun DetailRow(label: String, value: String) {
+    Text(
+        text = "$label: $value",
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        textAlign = TextAlign,
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+    )
 }
