@@ -35,12 +35,22 @@ fun AshBikeApp(
             // --- SCREEN 1: The Ride (Pager) ---
             composable("active_ride") {
                 // We will put the Gauge + Stats Pager here next
-                WearBikeScreen(navController)
+                // Pass the navigation capability down to the screen
+                WearBikeScreen(
+                    // Pass the navigation capability down to the screen
+                    onNavigateToDetail = { rideId ->
+                        navController.navigate("ride_detail/$rideId")
+                    }
+                )
                 //ActiveRideRoute(navController)
             }
 
             // 2. THE NEW DETAIL SCREEN
-            composable("ride_detail/{rideId}") { backStackEntry ->
+            composable(
+                "ride_detail/{rideId}"
+                // (Optional: standard Compose args setup if strictly needed,
+                // but simple string interpolation works for simple IDs)
+            ) { backStackEntry ->
                 val rideId = backStackEntry.arguments?.getString("rideId")
                 if (rideId != null) {
                     RideDetailScreen(
