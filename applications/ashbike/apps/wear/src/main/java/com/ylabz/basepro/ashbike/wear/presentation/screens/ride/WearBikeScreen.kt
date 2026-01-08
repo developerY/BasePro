@@ -62,39 +62,47 @@ fun WearBikeScreen(
                 var service by remember { mutableStateOf<BikeForegroundService?>(null) }
 
                 // 3. COLLECT STATE (Uses 'rideState' from shared service)
-                val rideInfo by service?.rideInfo?.collectAsState(initial = BikeRideInfo.initial())
-                    ?: remember { mutableStateOf(BikeRideInfo.initial()) }
+                // 1. Collect Data (Binding is still needed for Reading Data)
+                val rideInfoState = service?.rideInfo?.collectAsState()
+                val rideInfo = rideInfoState?.value ?: BikeRideInfo.initial()
 
                 DisposableEffect(context) {
                     val connection = object : ServiceConnection {
                         override fun onServiceConnected(className: ComponentName, binder: IBinder) {
-                            // 4. CAST TO SHARED BINDER
                             service = (binder as BikeForegroundService.LocalBinder).getService()
                         }
-                        override fun onServiceDisconnected(arg0: ComponentName) {
-                            service = null
-                        }
+                        override fun onServiceDisconnected(arg0: ComponentName) { service = null }
                     }
-
-                    // 5. UPDATE INTENT TARGET
+                    // Bind to the shared service to read data
                     val intent = Intent(context, BikeForegroundService::class.java)
-
-                    // Start Foreground Service ensures it keeps running even if UI is closed
-                    if (Build.VERSION.SDK_INT >= 26) {
-                        context.startForegroundService(intent)
-                    } else {
-                        context.startService(intent)
-                    }
                     context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
 
                     onDispose { context.unbindService(connection) }
                 }
 
+                // 2. Helper function to send Commands
+                fun sendServiceCommand(action: String) {
+                    val intent = Intent(context, BikeForegroundService::class.java).apply {
+                        this.action = action
+                    }
+                    if (Build.VERSION.SDK_INT >= 26) {
+                        context.startForegroundService(intent)
+                    } else {
+                        context.startService(intent)
+                    }
+                }
+
                 // Pass data to Stateless UI (Which now contains the Pager)
                 BikeControlContent(
                     rideInfo = rideInfo,
-                    onStart = { service?.startFormalRide() }, // Shared service usually uses toggleRide
-                    onStop = { service?.stopAndFinalizeFormalRide() }   // Shared service usually uses finishRide
+
+                    // 3. TRIGGER COMMANDS VIA INTENTS
+                    onStart = {
+                        sendServiceCommand(BikeForegroundService.ACTION_START_RIDE)
+                    },
+                    onStop = {
+                        sendServiceCommand(BikeForegroundService.ACTION_STOP_RIDE)
+                    }
                 )
 
             } else {
