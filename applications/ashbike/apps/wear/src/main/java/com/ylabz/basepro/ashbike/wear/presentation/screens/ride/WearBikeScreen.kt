@@ -1,5 +1,6 @@
 package com.ylabz.basepro.ashbike.wear.presentation.screens.ride
 
+// 1. IMPORT THE SHARED SERVICE
 import android.Manifest
 import android.content.ComponentName
 import android.content.Context
@@ -25,8 +26,8 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.ylabz.basepro.applications.bike.features.main.service.BikeForegroundService
 import com.ylabz.basepro.ashbike.wear.presentation.PermissionRationaleContent
-import com.ylabz.basepro.ashbike.wear.service.BikeWearService
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 
 // 2. Stateful Screen (Handles Logic & Permissions)
@@ -37,18 +38,15 @@ fun WearBikeScreen(
 ) {
     // Define required permissions for the underlying BikeForegroundService
     val permissionsToRequest = buildList {
-        add(Manifest.permission.BODY_SENSORS) // <--- Must be here
+        add(Manifest.permission.BODY_SENSORS)
         add(Manifest.permission.ACTIVITY_RECOGNITION)
         add(Manifest.permission.ACCESS_FINE_LOCATION)
         add(Manifest.permission.ACCESS_COARSE_LOCATION)
-        if (Build.VERSION.SDK_INT >= 33) {
-            add(Manifest.permission.POST_NOTIFICATIONS)
-        }
+        add(Manifest.permission.POST_NOTIFICATIONS)
     }
 
     val permissionState = rememberMultiplePermissionsState(permissions = permissionsToRequest)
 
-    // ScreenScaffold handles the scroll state and time text (if needed) for this specific screen
     ScreenScaffold {
         Box(
             modifier = Modifier
@@ -59,30 +57,44 @@ fun WearBikeScreen(
             if (permissionState.allPermissionsGranted) {
                 // Connect to Service
                 val context = LocalContext.current
-                var service by remember { mutableStateOf<BikeWearService?>(null) }
 
-                // Collect the REAL BikeRideInfo state
-                val rideInfo by service?.exerciseState?.collectAsState(initial = BikeRideInfo.initial())
+                // 2. UPDATE VARIABLE TYPE to BikeForegroundService
+                var service by remember { mutableStateOf<BikeForegroundService?>(null) }
+
+                // 3. COLLECT STATE (Uses 'rideState' from shared service)
+                val rideInfo by service?.rideInfo?.collectAsState(initial = BikeRideInfo.initial())
                     ?: remember { mutableStateOf(BikeRideInfo.initial()) }
 
                 DisposableEffect(context) {
                     val connection = object : ServiceConnection {
                         override fun onServiceConnected(className: ComponentName, binder: IBinder) {
-                            service = (binder as BikeWearService.LocalBinder).getService()
+                            // 4. CAST TO SHARED BINDER
+                            service = (binder as BikeForegroundService.LocalBinder).getService()
                         }
-                        override fun onServiceDisconnected(arg0: ComponentName) { service = null }
+                        override fun onServiceDisconnected(arg0: ComponentName) {
+                            service = null
+                        }
                     }
-                    val intent = Intent(context, BikeWearService::class.java)
-                    // BIND_AUTO_CREATE starts the service if it's not running
+
+                    // 5. UPDATE INTENT TARGET
+                    val intent = Intent(context, BikeForegroundService::class.java)
+
+                    // Start Foreground Service ensures it keeps running even if UI is closed
+                    if (Build.VERSION.SDK_INT >= 26) {
+                        context.startForegroundService(intent)
+                    } else {
+                        context.startService(intent)
+                    }
                     context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
+
                     onDispose { context.unbindService(connection) }
                 }
 
-                // Pass data to Stateless UI
+                // Pass data to Stateless UI (Which now contains the Pager)
                 BikeControlContent(
                     rideInfo = rideInfo,
-                    onStart = { service?.startRide() },
-                    onStop = { service?.stopRide() }
+                    onStart = { service?.startFormalRide() }, // Shared service usually uses toggleRide
+                    onStop = { service?.stopAndFinalizeFormalRide() }   // Shared service usually uses finishRide
                 )
 
             } else {
