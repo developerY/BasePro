@@ -6,6 +6,7 @@ import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
+import com.ylabz.basepro.ashbike.wear.presentation.screens.history.RideDetailScreen
 import com.ylabz.basepro.ashbike.wear.presentation.screens.ride.WearBikeScreen
 import com.ylabz.basepro.ashbike.wear.presentation.screens.ride.WearBikeViewModel
 
@@ -36,6 +37,17 @@ fun AshBikeApp(
                 // We will put the Gauge + Stats Pager here next
                 WearBikeScreen(navController)
                 //ActiveRideRoute(navController)
+            }
+
+            // 2. THE NEW DETAIL SCREEN
+            composable("ride_detail/{rideId}") { backStackEntry ->
+                val rideId = backStackEntry.arguments?.getString("rideId")
+                if (rideId != null) {
+                    RideDetailScreen(
+                        rideId = rideId,
+                        onDeleteSuccess = { navController.popBackStack() }
+                    )
+                }
             }
 
             // --- SCREEN 2: Summary (Example) ---
