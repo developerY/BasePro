@@ -11,6 +11,7 @@ import androidx.wear.compose.foundation.pager.HorizontalPager
 import androidx.wear.compose.foundation.pager.rememberPagerState
 import androidx.wear.compose.material3.HorizontalPageIndicator
 import androidx.wear.compose.material3.MaterialTheme
+import com.ylabz.basepro.ashbike.wear.presentation.screens.history.RideHistoryPage
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 
 // 3. Stateless UI Wrapper (The Pager)
@@ -21,7 +22,7 @@ fun BikeControlContent(
     onStop: () -> Unit
 ) {
     // 1. Create the PagerState (from Foundation)
-    val pagerState = rememberPagerState(pageCount = { 2 })
+    val pagerState = rememberPagerState(pageCount = { 3 })
 
     Box(modifier = Modifier.fillMaxSize()) {
         HorizontalPager(
@@ -31,6 +32,7 @@ fun BikeControlContent(
             when (page) {
                 0 -> MainGaugePage(rideInfo, onStart, onStop)
                 1 -> StatsGridPage(rideInfo)
+                2 -> RideHistoryPage()
             }
         }
 

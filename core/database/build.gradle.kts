@@ -43,6 +43,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:model"))
+    implementation(project(":applications:ashbike:database")) // Optional: for local DB
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
