@@ -3,7 +3,6 @@ package com.ylabz.basepro.ashbike.wear.presentation.screens.history
 // Add these imports
 // ... imports including hiltViewModel
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -14,15 +13,14 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.material3.CardDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
-import androidx.wear.compose.material3.TitleCard
 
 @Composable
 fun RideHistoryPage(
-    viewModel: RideHistoryViewModel = hiltViewModel()
+    viewModel: RideHistoryViewModel = hiltViewModel(),
+    onRideClick: (String) -> Unit // <--- Add this
 ) {
     val historyList by viewModel.historyList.collectAsState()
     val listState = rememberScalingLazyListState()
@@ -56,7 +54,7 @@ fun RideHistoryPage(
                     // Reuse the Card we made earlier
                     HistoryItemCard(
                         ride = ride,
-                        onClick = { /* Todo: Open Detail */ }
+                        onClick = { onRideClick(ride.id) } // Trigger callback
                     )
                 }
             }
