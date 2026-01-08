@@ -7,10 +7,13 @@ import com.ylabz.basepro.applications.bike.database.BikeRideDao
 import com.ylabz.basepro.applications.bike.database.mapper.toBikeRide
 import com.ylabz.basepro.core.model.bike.BikeRide
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
@@ -18,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RideHistoryViewModel @Inject constructor(
-    bikeDao: BikeRideDao
+    val bikeDao: BikeRideDao
 ) : ViewModel() {
 
     val historyList: StateFlow<List<RideHistoryUiItem>> = bikeDao.getAllRidesWithLocations()
@@ -35,6 +38,18 @@ class RideHistoryViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
+
+    // 2. NEW: Get Single Ride (for Details)
+    fun getRide(rideId: String): Flow<BikeRide?> {
+        return bikeDao.getRideWithLocations(rideId).map { it?.toBikeRide() }
+    }
+
+    // 3. NEW: Delete Ride
+    fun deleteRide(rideId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            bikeDao.deleteRide(rideId)
+        }
+    }
 
     // Convert YOUR Domain Model to the simple strings needed for the UI
     private fun BikeRide.toUiModel(): RideHistoryUiItem {
