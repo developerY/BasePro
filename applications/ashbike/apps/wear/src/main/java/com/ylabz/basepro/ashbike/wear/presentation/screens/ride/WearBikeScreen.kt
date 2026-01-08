@@ -6,7 +6,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.os.Build
 import android.os.IBinder
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -21,7 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavHostController
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -34,7 +33,8 @@ import com.ylabz.basepro.core.model.bike.BikeRideInfo
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun WearBikeScreen(
-    navController: NavHostController
+    viewModel: WearBikeViewModel = hiltViewModel(), // Uses your Service VM
+    onNavigateToDetail: (String) -> Unit // <--- Received from App
 ) {
     // Define required permissions for the underlying BikeForegroundService
     val permissionsToRequest = buildList {
@@ -85,24 +85,16 @@ fun WearBikeScreen(
                     val intent = Intent(context, BikeForegroundService::class.java).apply {
                         this.action = action
                     }
-                    if (Build.VERSION.SDK_INT >= 26) {
-                        context.startForegroundService(intent)
-                    } else {
-                        context.startService(intent)
-                    }
+                    context.startForegroundService(intent)
                 }
 
                 // Pass data to Stateless UI (Which now contains the Pager)
                 BikeControlContent(
                     rideInfo = rideInfo,
-
                     // 3. TRIGGER COMMANDS VIA INTENTS
-                    onStart = {
-                        sendServiceCommand(BikeForegroundService.ACTION_START_RIDE)
-                    },
-                    onStop = {
-                        sendServiceCommand(BikeForegroundService.ACTION_STOP_RIDE)
-                    }
+                    onStart = viewModel::startRide,
+                    onStop = viewModel::stopRide,
+                    onHistoryClick = onNavigateToDetail // <--- Connect the dots!
                 )
 
             } else {

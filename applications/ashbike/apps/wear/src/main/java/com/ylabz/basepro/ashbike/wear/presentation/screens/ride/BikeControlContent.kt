@@ -19,7 +19,8 @@ import com.ylabz.basepro.core.model.bike.BikeRideInfo
 fun BikeControlContent(
     rideInfo: BikeRideInfo,
     onStart: () -> Unit,
-    onStop: () -> Unit
+    onStop: () -> Unit,
+    onHistoryClick: (String) -> Unit // <--- Add this
 ) {
     // 1. Create the PagerState (from Foundation)
     val pagerState = rememberPagerState(pageCount = { 3 })
@@ -32,7 +33,7 @@ fun BikeControlContent(
             when (page) {
                 0 -> MainGaugePage(rideInfo, onStart, onStop)
                 1 -> StatsGridPage(rideInfo)
-                2 -> RideHistoryPage()
+                2 -> RideHistoryPage(onRideClick = onHistoryClick)
             }
         }
 
