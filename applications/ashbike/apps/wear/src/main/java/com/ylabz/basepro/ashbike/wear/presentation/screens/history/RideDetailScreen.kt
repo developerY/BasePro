@@ -21,7 +21,8 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.TextConfigurationDefaults.TextAlign
-import com.ylabz.basepro.ashbike.wear.presentation.screens.ride.HeartRateGraph
+import com.ylabz.basepro.ashbike.wear.presentation.screens.health.HeartRateGraph
+import com.ylabz.basepro.ashbike.wear.presentation.screens.health.HeartRateZoneChart
 
 @Composable
 fun RideDetailScreen(
@@ -64,6 +65,15 @@ fun RideDetailScreen(
                     )
                 }
                 // -----------------------
+
+                // 2. The Zone Chart (Distribution)
+                item {
+                    HeartRateZoneChart(
+                        heartRates = mockHeartRates,
+                        maxHeartRate = 190, // You can fetch user's max HR from profile later
+                        modifier = Modifier.padding(vertical = 12.dp)
+                    )
+                }
 
                 // 2. STATS (Add as many rows as you want)
                 item { DetailRow("Distance", "${currentRide.totalDistance} km") }
