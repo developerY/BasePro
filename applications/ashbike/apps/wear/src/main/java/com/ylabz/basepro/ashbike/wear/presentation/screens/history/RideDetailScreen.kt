@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -20,6 +21,7 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.TextConfigurationDefaults.TextAlign
+import com.ylabz.basepro.ashbike.wear.presentation.screens.ride.HeartRateGraph
 
 @Composable
 fun RideDetailScreen(
@@ -31,6 +33,12 @@ fun RideDetailScreen(
     val ride by viewModel.getRide(rideId).collectAsState(initial = null)
     val listState = rememberScalingLazyListState()
 
+    // MOCK DATA: Simulating a heart rate history for the graph
+    // (Replace this with real data from your DB entity later)
+    val mockHeartRates = remember {
+        listOf(80, 85, 90, 110, 135, 140, 138, 145, 150, 148, 130, 120, 110)
+    }
+
     ScreenScaffold(scrollState = listState) {
         ScalingLazyColumn(
             state = listState,
@@ -40,6 +48,22 @@ fun RideDetailScreen(
             if (currentRide!= null) {
                 // 1. HEADER
                 item { ListHeader { Text("Ride Details") } }
+
+                // --- NEW: THE GRAPH ---
+                item {
+                    Text(
+                        "Heart Rate",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+                item {
+                    HeartRateGraph(
+                        dataPoints = mockHeartRates, // Pass real data here eventually
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+                // -----------------------
 
                 // 2. STATS (Add as many rows as you want)
                 item { DetailRow("Distance", "${currentRide.totalDistance} km") }
