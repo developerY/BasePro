@@ -24,6 +24,7 @@ import androidx.wear.compose.material3.TextConfigurationDefaults.TextAlign
 import com.ylabz.basepro.ashbike.wear.presentation.screens.health.HeartRateGraph
 import com.ylabz.basepro.ashbike.wear.presentation.screens.health.HeartRateSummaryCard
 import com.ylabz.basepro.ashbike.wear.presentation.screens.health.HeartRateZoneChart
+import com.ylabz.basepro.ashbike.wear.presentation.screens.ride.ElevationGraph
 
 @Composable
 fun RideDetailScreen(
@@ -39,6 +40,14 @@ fun RideDetailScreen(
     // (Replace this with real data from your DB entity later)
     val mockHeartRates = remember {
         listOf(80, 85, 90, 110, 135, 140, 138, 145, 150, 148, 130, 120, 110)
+    }
+
+    // MOCK DATA: Simulating a hill climb (Flat -> Climb -> Descent -> Flat)
+    val mockElevation = remember {
+        listOf(
+            10f, 12f, 15f, 15f, 18f, 25f, 40f, 60f, 85f, 100f, // Climb
+            90f, 80f, 60f, 40f, 30f, 20f, 15f, 12f, 10f        // Descent
+        )
     }
 
     ScreenScaffold(scrollState = listState) {
@@ -83,6 +92,23 @@ fun RideDetailScreen(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                 }
+
+
+                // --- NEW: Elevation Profile ---
+                item {
+                    Text(
+                        "Elevation Profile",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+                item {
+                    ElevationGraph(
+                        elevations = mockElevation, // Use ride.locations.map { it.elevation } later
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+
 
                 // 2. STATS (Add as many rows as you want)
                 item { DetailRow("Distance", "${currentRide.totalDistance} km") }
