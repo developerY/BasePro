@@ -22,6 +22,7 @@ import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.TextConfigurationDefaults.TextAlign
 import com.ylabz.basepro.ashbike.wear.presentation.screens.health.HeartRateGraph
+import com.ylabz.basepro.ashbike.wear.presentation.screens.health.HeartRateSummaryCard
 import com.ylabz.basepro.ashbike.wear.presentation.screens.health.HeartRateZoneChart
 
 @Composable
@@ -72,6 +73,14 @@ fun RideDetailScreen(
                         heartRates = mockHeartRates,
                         maxHeartRate = 190, // You can fetch user's max HR from profile later
                         modifier = Modifier.padding(vertical = 12.dp)
+                    )
+                }
+
+                item {
+                    HeartRateSummaryCard(
+                        heartRates = mockHeartRates, // Or real DB data
+                        maxHeartRate = 190,
+                        modifier = Modifier.padding(bottom = 8.dp)
                     )
                 }
 
