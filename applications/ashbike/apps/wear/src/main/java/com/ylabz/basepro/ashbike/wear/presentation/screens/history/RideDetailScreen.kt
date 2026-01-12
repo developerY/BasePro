@@ -25,6 +25,9 @@ import com.ylabz.basepro.ashbike.wear.presentation.screens.health.HeartRateGraph
 import com.ylabz.basepro.ashbike.wear.presentation.screens.health.HeartRateSummaryCard
 import com.ylabz.basepro.ashbike.wear.presentation.screens.health.HeartRateZoneChart
 import com.ylabz.basepro.ashbike.wear.presentation.screens.ride.ElevationGraph
+import com.ylabz.basepro.ashbike.wear.presentation.screens.ride.GeoPoint
+import com.ylabz.basepro.ashbike.wear.presentation.screens.ride.RoutePreview
+
 
 @Composable
 fun RideDetailScreen(
@@ -50,6 +53,19 @@ fun RideDetailScreen(
         )
     }
 
+    // MOCK DATA: A simple "Loop" shape
+    val mockRoute = remember {
+        listOf(
+            GeoPoint(0.0, 0.0),
+            GeoPoint(0.1, 0.2),
+            GeoPoint(0.2, 0.5),
+            GeoPoint(0.3, 0.2),
+            GeoPoint(0.4, 0.0),
+            GeoPoint(0.2, -0.2),
+            GeoPoint(0.0, 0.0)
+        )
+    }
+
     ScreenScaffold(scrollState = listState) {
         ScalingLazyColumn(
             state = listState,
@@ -59,6 +75,15 @@ fun RideDetailScreen(
             if (currentRide!= null) {
                 // 1. HEADER
                 item { ListHeader { Text("Ride Details") } }
+
+                // --- NEW: Route Map ---
+                item {
+                    RoutePreview(
+                        pathPoints = mockRoute, // Use ride.locations.map { GeoPoint(it.lat, it.lng) }
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+                // ----------------------
 
                 // --- NEW: THE GRAPH ---
                 item {
@@ -108,6 +133,8 @@ fun RideDetailScreen(
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
                 }
+
+
 
 
                 // 2. STATS (Add as many rows as you want)
