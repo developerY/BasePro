@@ -47,6 +47,7 @@ fun WearBikeScreenPreview() {
         ) {
             BikeControlContent(
                 rideInfo = mockRideInfo,
+                isRecording = true,
                 onStart = {},
                 onStop = {},
                 // ✅ FIX: Added the missing callback required for the History Pager

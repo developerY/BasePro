@@ -4,11 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ylabz.basepro.applications.bike.features.main.service.BikeForegroundService
 import com.ylabz.basepro.applications.bike.features.main.service.BikeServiceManager
+import com.ylabz.basepro.core.model.bike.RideState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -18,15 +19,17 @@ class WearBikeViewModel @Inject constructor(
     private val bikeServiceManager: BikeServiceManager
 ) : ViewModel() {
 
-    // Combine the two streams: Info + State
+    // 1. Local Source of Truth for "Are we recording?"
+    private val _localRideState = MutableStateFlow(RideState.NotStarted)
+
+    // 2. Combine Service Data + Local State
     val uiState: StateFlow<WearBikeUiState> = combine(
         bikeServiceManager.rideInfo,
-        bikeServiceManager.rideState // <--- You need to expose this from Manager
+        _localRideState
     ) { info, state ->
         WearBikeUiState(
             rideInfo = info,
-            rideState = state, // Pass the separate state
-            isServiceBound = true
+            rideState = state
         )
     }.stateIn(
         scope = viewModelScope,
@@ -34,6 +37,14 @@ class WearBikeViewModel @Inject constructor(
         initialValue = WearBikeUiState()
     )
 
-    fun startRide() = bikeServiceManager.sendCommand(BikeForegroundService.ACTION_START_RIDE)
-    fun stopRide() = bikeServiceManager.sendCommand(BikeForegroundService.ACTION_STOP_RIDE)
+    // 3. Update local state immediately when user clicks
+    fun startRide() {
+        _localRideState.value = RideState.Riding
+        bikeServiceManager.sendCommand(BikeForegroundService.ACTION_START_RIDE)
+    }
+
+    fun stopRide() {
+        _localRideState.value = RideState.Ended // Or NotStarted, depending on logic
+        bikeServiceManager.sendCommand(BikeForegroundService.ACTION_STOP_RIDE)
+    }
 }
