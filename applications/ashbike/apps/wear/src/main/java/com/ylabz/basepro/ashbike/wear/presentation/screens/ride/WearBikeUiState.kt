@@ -4,18 +4,18 @@ import com.ylabz.basepro.core.model.bike.BikeRideInfo
 import com.ylabz.basepro.core.model.bike.RideState
 
 data class WearBikeUiState(
-    // The raw domain data
     val rideInfo: BikeRideInfo = BikeRideInfo.initial(),
 
-    // UI-specific flags (e.g., service connection, permissions)
+    // NEW: Store state separately here, since it isn't in BikeRideInfo
+    val rideState: RideState = RideState.NotStarted,
+
     val isServiceBound: Boolean = false,
     val errorMessage: String? = null
 ) {
-    // Helper: The UI just calls "state.isRecording" without knowing about enums
+    // Now this works because we reference the local 'rideState'
     val isRecording: Boolean
-        get() = rideInfo.state == RideState.Riding
+        get() = rideState == RideState.Riding
 
-    // Helper: Formatted speed for display (Optional, but clean)
     val formattedSpeed: String
         get() = String.format("%.1f", rideInfo.currentSpeed)
 }
