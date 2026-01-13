@@ -18,6 +18,7 @@ import com.ylabz.basepro.core.model.bike.BikeRideInfo
 @Composable
 fun BikeControlContent(
     rideInfo: BikeRideInfo,
+    isRecording: Boolean,
     onStart: () -> Unit,
     onStop: () -> Unit,
     onHistoryClick: (String) -> Unit // <--- Add this
@@ -31,7 +32,7 @@ fun BikeControlContent(
             modifier = Modifier.fillMaxSize()
         ) { page ->
             when (page) {
-                0 -> MainGaugePage(rideInfo, onStart, onStop)
+                0 -> MainGaugePage(rideInfo, isRecording, onStart, onStop)
                 1 -> StatsGridPage(rideInfo)
                 2 -> RideHistoryPage(onRideClick = onHistoryClick)
             }
