@@ -66,7 +66,8 @@ fun WearBikeScreen(
                 // 1. Collect Data (Binding is still needed for Reading Data)
                 val rideInfoState = service?.rideInfo?.collectAsState()
                 val rideInfo = rideInfoState?.value ?: BikeRideInfo.initial()
-                val isRecording by viewModel.isRecording.collectAsState() // <--- Easy!
+                // 1. Collect the single UI State
+                val uiState by viewModel.uiState.collectAsState() // <--- Easy!
 
 
                 DisposableEffect(context) {
@@ -94,7 +95,7 @@ fun WearBikeScreen(
                 // Pass data to Stateless UI (Which now contains the Pager)
                 BikeControlContent(
                     rideInfo = rideInfo,
-                    isRecording = isRecording,
+                    isRecording = uiState.isRecording,
                     // 3. TRIGGER COMMANDS VIA INTENTS
                     onStart = viewModel::startRide,
                     onStop = viewModel::stopRide,
