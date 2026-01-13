@@ -63,6 +63,7 @@ dependencies {
     // 3. Health Services (The MAD way to track rides on Wear)
     // Health Services (The MAD way to track rides)
     implementation(libs.androidx.health.services.client)
+    implementation(libs.androidx.material.icons.extended)
 
     // Ongoing Activity (The icon at the bottom of the watch face)
     implementation(libs.androidx.wear.ongoing)
