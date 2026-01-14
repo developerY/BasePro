@@ -9,8 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material3.MaterialTheme
 import com.ylabz.basepro.ashbike.wear.presentation.screens.ride.BikeControlContent
+import com.ylabz.basepro.ashbike.wear.presentation.screens.ride.WearBikeUiState // Make sure this is imported
 import com.ylabz.basepro.ashbike.wear.presentation.theme.BaseProTheme
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
+import com.ylabz.basepro.core.model.bike.RideState
 
 @Preview(
     device = "id:wearos_small_round",
@@ -29,13 +31,22 @@ import com.ylabz.basepro.core.model.bike.BikeRideInfo
 )
 @Composable
 fun WearBikeScreenPreview() {
+    // 1. Create the Mock Data
     val mockRideInfo = BikeRideInfo.initial().copy(
         heartbeat = 145,
         currentSpeed = 25.0,
-        currentTripDistance = 12.5f,
+        currentTripDistance = 12.5F, // Note: usually Double in model
         caloriesBurned = 450,
         rideDuration = "45:30",
-        isBikeConnected = true
+        // isBikeConnected = true // (If this field exists in your model)
+    )
+
+    // 2. Wrap it in the UI State
+    val mockUiState = WearBikeUiState(
+        rideInfo = mockRideInfo,
+        // Set state to Riding so the "Stop" button appears (simulating isRecording=true)
+        rideState = RideState.Riding,
+        isServiceBound = true
     )
 
     BaseProTheme {
@@ -45,13 +56,10 @@ fun WearBikeScreenPreview() {
                 .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
+            // 3. Use the new signature
             BikeControlContent(
-                rideInfo = mockRideInfo,
-                isRecording = true,
-                onStart = {},
-                onStop = {},
-                // ✅ FIX: Added the missing callback required for the History Pager
-                onHistoryClick = {}
+                uiState = mockUiState,
+                onEvent = {} // Empty lambda for preview
             )
         }
     }
