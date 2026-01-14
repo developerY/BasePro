@@ -13,23 +13,24 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
-
+// WearBikeViewModel.kt
 @HiltViewModel
 class WearBikeViewModel @Inject constructor(
     private val bikeServiceManager: BikeServiceManager
 ) : ViewModel() {
 
-    // 1. Local Source of Truth for "Are we recording?"
+    // 1. Internal State
     private val _localRideState = MutableStateFlow(RideState.NotStarted)
 
-    // 2. Combine Service Data + Local State
+    // 2. Exposed UI State (Merged)
     val uiState: StateFlow<WearBikeUiState> = combine(
         bikeServiceManager.rideInfo,
         _localRideState
     ) { info, state ->
         WearBikeUiState(
             rideInfo = info,
-            rideState = state
+            rideState = state,
+            isServiceBound = true
         )
     }.stateIn(
         scope = viewModelScope,
@@ -37,14 +38,23 @@ class WearBikeViewModel @Inject constructor(
         initialValue = WearBikeUiState()
     )
 
-    // 3. Update local state immediately when user clicks
-    fun startRide() {
-        _localRideState.value = RideState.Riding
-        bikeServiceManager.sendCommand(BikeForegroundService.ACTION_START_RIDE)
-    }
-
-    fun stopRide() {
-        _localRideState.value = RideState.Ended // Or NotStarted, depending on logic
-        bikeServiceManager.sendCommand(BikeForegroundService.ACTION_STOP_RIDE)
+    // 3. The Single Entry Point for Actions
+    fun onEvent(event: WearBikeEvent) {
+        when (event) {
+            is WearBikeEvent.StartRide -> {
+                _localRideState.value = RideState.Riding
+                bikeServiceManager.sendCommand(BikeForegroundService.ACTION_START_RIDE)
+            }
+            is WearBikeEvent.StopRide -> {
+                _localRideState.value = RideState.Ended // Or NotStarted
+                bikeServiceManager.sendCommand(BikeForegroundService.ACTION_STOP_RIDE)
+            }
+            is WearBikeEvent.OnHistoryClick -> {
+                // Navigation is usually a "One-time Event" (Effect),
+                // but for simplicity here we assume the UI observes this or handles nav
+                // via a callback.
+                // Log.d("VM", "Navigate to ${event.rideId}")
+            }
+        }
     }
 }
