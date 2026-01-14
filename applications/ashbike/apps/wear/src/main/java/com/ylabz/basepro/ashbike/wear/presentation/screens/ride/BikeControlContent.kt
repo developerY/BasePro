@@ -17,13 +17,11 @@ import com.ylabz.basepro.core.model.bike.BikeRideInfo
 // 3. Stateless UI Wrapper (The Pager)
 @Composable
 fun BikeControlContent(
-    rideInfo: BikeRideInfo,
-    isRecording: Boolean,
-    onStart: () -> Unit,
-    onStop: () -> Unit,
-    onHistoryClick: (String) -> Unit // <--- Add this
+    uiState: WearBikeUiState,
+    onEvent: (WearBikeEvent) -> Unit
 ) {
-    // 1. Create the PagerState (from Foundation)
+    // UI-only state (like pager position) is fine to stay in Compose
+    // because it doesn't affect business logic.
     val pagerState = rememberPagerState(pageCount = { 3 })
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -32,19 +30,24 @@ fun BikeControlContent(
             modifier = Modifier.fillMaxSize()
         ) { page ->
             when (page) {
-                0 -> MainGaugePage(rideInfo, isRecording, onStart, onStop)
-                1 -> StatsGridPage(rideInfo)
-                2 -> RideHistoryPage(onRideClick = onHistoryClick)
+                0 -> MainGaugePage(
+                    uiState = uiState,
+                    onEvent = onEvent
+                )
+                1 -> StatsGridPage(
+                    uiState = uiState // Assuming this needs state too
+                )
+                2 -> RideHistoryPage(
+                    onRideClick = { rideId -> onEvent(WearBikeEvent.OnHistoryClick(rideId)) }
+                )
             }
         }
 
-        // 2. The Indicator (Matches your signature)
         HorizontalPageIndicator(
-            pagerState = pagerState, // <--- Matching the signature param
+            pagerState = pagerState,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 8.dp),
-            // OPTIONAL: Match AshBike branding
             selectedColor = MaterialTheme.colorScheme.primary,
             unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
         )
