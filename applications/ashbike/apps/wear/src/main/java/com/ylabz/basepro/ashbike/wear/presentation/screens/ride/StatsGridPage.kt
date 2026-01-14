@@ -16,10 +16,11 @@ import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
-import com.ylabz.basepro.core.model.bike.BikeRideInfo
 
 @Composable
-fun StatsGridPage(info: BikeRideInfo) {
+fun StatsGridPage(uiState: WearBikeUiState) {
+    // Extract the data we need from the state
+    val info = uiState.rideInfo
     // The state required for scrolling behavior
     val listState = rememberScalingLazyListState()
 
