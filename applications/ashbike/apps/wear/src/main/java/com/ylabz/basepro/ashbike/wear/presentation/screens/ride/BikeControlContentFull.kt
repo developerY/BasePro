@@ -16,7 +16,6 @@ import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
-import com.ylabz.basepro.ashbike.wear.presentation.components.WearSpeedometer
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
 
 // 3. Stateless UI
