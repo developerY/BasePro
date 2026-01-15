@@ -36,6 +36,8 @@ fun WearBikeScreen(
     viewModel: WearBikeViewModel = hiltViewModel(), // Uses your Service VM
     onNavigateToDetail: (String) -> Unit // <--- Received from App
 ) {
+
+    val uiState by viewModel.uiState.collectAsState()
     // Define required permissions for the underlying BikeForegroundService
     val permissionsToRequest = buildList {
         add(Manifest.permission.BODY_SENSORS)
@@ -94,12 +96,15 @@ fun WearBikeScreen(
 
                 // Pass data to Stateless UI (Which now contains the Pager)
                 BikeControlContent(
-                    rideInfo = rideInfo,
-                    isRecording = uiState.isRecording,
-                    // 3. TRIGGER COMMANDS VIA INTENTS
-                    onStart = viewModel::startRide,
-                    onStop = viewModel::stopRide,
-                    onHistoryClick = onNavigateToDetail // <--- Connect the dots!
+                    uiState = uiState,
+                    onEvent = { event ->
+                        // Intercept navigation events here, pass rest to VM
+                        if (event is WearBikeEvent.OnHistoryClick) {
+                            onNavigateToDetail(event.rideId)
+                        } else {
+                            viewModel.onEvent(event)
+                        }
+                    }
                 )
 
             } else {
