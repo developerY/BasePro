@@ -34,7 +34,7 @@ object DatabaseModule {
             PhotoDoDB::class.java,
             "photodo_database"
         )
-        .fallbackToDestructiveMigration() // Handles schema changes gracefully during dev
+            .fallbackToDestructiveMigration(false) // Handles schema changes gracefully during dev
         .addCallback(callback.get())
         .build()
     }
