@@ -1,3 +1,7 @@
+import com.android.build.api.dsl.LibraryExtension
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -6,7 +10,7 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-android {
+extensions.configure<LibraryExtension> {
     namespace = "com.ylabz.vbasepro.applications.photodo.photodolist"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
@@ -36,8 +40,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
-    kotlin {
-        jvmToolchain(21)
+}
+
+// 2. Configure Kotlin (Separately)
+// Use specific task configuration which is the safest way in 2024+
+tasks.withType<KotlinCompile>().configureEach {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_21)
     }
 }
 
