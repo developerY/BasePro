@@ -116,7 +116,7 @@ googleGmsGoogleServices = "4.4.4" # Google Services Gradle plugin
 googleFirebaseCrashlytics = "3.0.6" # Firebase Crashlytics Gradle plugin
 
 # GraphQL (Apollo)
-apollo = "3.8.6"                # Apollo GraphQL client version
+apollo = "4.0.0-beta.7"                # Apollo GraphQL client version
 
 # Testing & Profiling
 junit = "4.13.2"                # JUnit 4, a framework for Java tests
