@@ -6,7 +6,7 @@
 
 [versions]
 # Build & SDK Configuration
-agp = "8.13.2"                  # Android Gradle Plugin version
+agp = "9.0.0"                  # Android Gradle Plugin version
 compileSdk = "36"               # Android Compile SDK version
 targetSdk = "35"                # Android Target SDK version
 minSdk = "34"                   # Android Minimum SDK version
