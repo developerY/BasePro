@@ -9,10 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material3.MaterialTheme
 import com.ylabz.basepro.ashbike.wear.presentation.screens.ride.BikeControlContent
-import com.ylabz.basepro.ashbike.wear.presentation.screens.ride.WearBikeUiState // Make sure this is imported
+import com.ylabz.basepro.ashbike.wear.presentation.screens.ride.WearBikeUiState
 import com.ylabz.basepro.ashbike.wear.presentation.theme.BaseProTheme
 import com.ylabz.basepro.core.model.bike.BikeRideInfo
-import com.ylabz.basepro.core.model.bike.RideState
 
 @Preview(
     device = "id:wearos_small_round",
@@ -45,7 +44,7 @@ fun WearBikeScreenPreview() {
     val mockUiState = WearBikeUiState(
         rideInfo = mockRideInfo,
         // Set state to Riding so the "Stop" button appears (simulating isRecording=true)
-        rideState = RideState.Riding,
+        // rideState = RideState.Riding,
         isServiceBound = true
     )
 
