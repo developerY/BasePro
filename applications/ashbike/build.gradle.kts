@@ -94,6 +94,13 @@ android {
     }
 }
 
+baselineProfile {
+    // This suppresses the warning about AGP 9.0.0
+    warnings {
+        maxAgpVersion = false
+    }
+}
+
 dependencies {
     // Core + shared
     implementation(project(""":core:data"""))
