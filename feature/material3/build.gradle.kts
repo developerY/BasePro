@@ -1,6 +1,9 @@
+import com.android.build.api.dsl.LibraryExtension
+
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    // REMOVE this to fix the AGP 9.0 crash:
+    // alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
@@ -8,12 +11,13 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
-android {
+// FIX: Use strict configuration to avoid deprecation warnings
+extensions.configure<LibraryExtension> {
     namespace = "com.ylabz.basepro.feature.material3"
     compileSdk = 36
 
     defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt() // UPDATED
+        minSdk = libs.versions.minSdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -26,19 +30,23 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            consumerProguardFiles("proguard-rules.pro") // Added this line
+            consumerProguardFiles("proguard-rules.pro")
         }
-        // This debug block ensures a fast development cycle
         debug {
             isMinifyEnabled = false
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
-    kotlin {
-        jvmToolchain(21)
+}
+
+// FIX: Use 'java' block for Toolchain (works without the kotlin-android plugin)
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
@@ -48,8 +56,6 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
     implementation(project(":core:util"))
-
-
 
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.navigation3.runtime)
@@ -65,7 +71,6 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
-    // kapt(libs.hilt.compiler)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
@@ -80,7 +85,7 @@ dependencies {
     implementation("androidx.compose.material3.adaptive:adaptive-navigation:1.2.0-beta01")*/
 
     // implementation(libs.androidx.material3)
-    // implementation(libs.androidx.material3.adaptive) // <-- This line is now active
+    // implementation(libs.androidx.material3.adaptive)
     implementation(libs.androidx.material3.adaptive.navigation3)
     debugImplementation(libs.androidx.ui.tooling)
 
