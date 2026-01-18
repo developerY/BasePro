@@ -1,18 +1,20 @@
+import com.android.build.api.dsl.LibraryExtension
+
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
 }
 
-android {
+// FIX: Use 'configure<LibraryExtension>' instead of 'android {}'
+// This fixes the "deprecated" warning in AGP 9.0+
+extensions.configure<LibraryExtension> {
     namespace = "com.ylabz.basepro.feature.camera"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt() // UPDATED
-
+        minSdk = libs.versions.minSdk.get().toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -24,19 +26,23 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            consumerProguardFiles("proguard-rules.pro") // Added this line
+            consumerProguardFiles("proguard-rules.pro")
         }
-        // This debug block ensures a fast development cycle
         debug {
             isMinifyEnabled = false
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
-    kotlin {
-        jvmToolchain(21)
+}
+
+// JVM Toolchain (Standard Java block)
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
@@ -59,7 +65,7 @@ dependencies {
     // Permissions
     implementation(libs.google.accompanist.permissions)
 
-    // Add Camera
+    // CameraX
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
@@ -73,13 +79,10 @@ dependencies {
     implementation(libs.hilt.android)
 
     ksp(libs.hilt.android.compiler)
-    // kapt(libs.hilt.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.tooling.preview)
-
-
 }
