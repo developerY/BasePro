@@ -12,7 +12,7 @@ targetSdk = "35"                # Android Target SDK version
 minSdk = "34"                   # Android Minimum SDK version
 
 # Kotlin & Related Tools
-kotlin = "2.2.21"               # Kotlin programming language version
+kotlin = "2.3.0"               # Kotlin programming language version
 ksp = "2.3.3"                   # Kotlin Symbol Processing API version
 kotlinxSerializationCore = "1.9.0"  # Kotlinx Serialization library version (used for core and json)
 immutableCollections = "0.4.0"  # Kotlinx Immutable Collections library version
