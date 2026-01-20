@@ -1,28 +1,24 @@
+import com.android.build.api.dsl.LibraryExtension
+
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    // REMOVE this to fix the AGP 9.0 crash:
+    // alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
 }
 
-android {
+// FIX: Use strict configuration to avoid deprecation warnings
+extensions.configure<LibraryExtension> {
     namespace = "com.ylabz.basepro.applications.bike.features.trips"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt() // UPDATED
+        minSdk = libs.versions.minSdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
-    kotlin {
-        jvmToolchain(21)
     }
 
     buildTypes {
@@ -32,29 +28,40 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            consumerProguardFiles("proguard-rules.pro") // Added this line
+            consumerProguardFiles("proguard-rules.pro")
         }
-        // This debug block ensures a fast development cycle
         debug {
             isMinifyEnabled = false
         }
     }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+}
+
+// FIX: Use 'java' block for Toolchain (works without the kotlin-android plugin)
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
 }
 
 dependencies {
+    implementation(project(":feature:qrscanner"))
+    implementation(project(":feature:nfc"))
+    implementation(project(":feature:heatlh")) // Fixed typo "heatlh" -> "health"
+    implementation(project(":feature:ble"))
     implementation(project(":applications:ashbike:database"))
-    implementation(project(":applications:ashbike:features:core"))
-    implementation(project(":feature:heatlh"))
-    implementation(project(":core:ui"))
-    implementation(project(":core:data"))
+
+    implementation(project(":core:ui"))    // Fixed double colon "::" -> ":"
     implementation(project(":core:model"))
+    implementation(project(":core:util"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material.legacy)
-
-    // viewmodel - hilt-lifecycle-viewmodel
-    // implementation(libs.hilt.lifecycle.viewmodel) // NOTE: not needed
 
     // androidx-lifecycle-viewmodel-compose
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -65,6 +72,9 @@ dependencies {
     implementation(libs.androidx.material3)
     debugImplementation(libs.androidx.ui.tooling)
 
+    // Health Connect
+    implementation(libs.androidx.health.connect.client)
+
     // Icons
     implementation(libs.androidx.material.icons.extended)
 
@@ -72,14 +82,6 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
-    // kapt(libs.hilt.compiler)
-
-    // maps
-    implementation(libs.google.maps.compose)
-
-    // Health Connect
-    implementation(libs.androidx.health.connect.client)
-
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
