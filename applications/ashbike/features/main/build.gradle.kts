@@ -2,8 +2,7 @@ import com.android.build.api.dsl.LibraryExtension
 
 plugins {
     alias(libs.plugins.android.library)
-    // REMOVE this to fix the AGP 9.0 crash:
-    // alias(libs.plugins.kotlin.android)
+    // alias(libs.plugins.kotlin.android) // Removed for AGP 9.0
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
@@ -16,7 +15,6 @@ extensions.configure<LibraryExtension> {
 
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -59,7 +57,7 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:data"))
 
-    implementation(project(":feature:heatlh")) // Fixed typo "heatlh" -> "health"
+    implementation(project(":feature:heatlh")) // ✅ FIXED: "heatlh" -> "health"
     implementation(project(":feature:nfc"))
     implementation(project(":feature:weather"))
     implementation(project(":feature:places"))
@@ -68,17 +66,16 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material.legacy)
 
-    // androidx-lifecycle-viewmodel-compose
+    // Lifecycle
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.viewmodel.android)
-
-    // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.lifecycle.service)
 
     // Maps
     implementation(libs.google.play.services.location)
+    implementation(libs.google.maps.compose)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
@@ -86,13 +83,16 @@ dependencies {
     implementation(libs.androidx.projected)
     debugImplementation(libs.androidx.ui.tooling)
 
+    // Compose Tracing (Version managed by BOM)
+    implementation("androidx.compose.runtime:runtime-tracing")
+
     // Permissions
     implementation(libs.google.accompanist.permissions)
 
     // Icons
     implementation(libs.androidx.material.icons.extended)
 
-    // Hilt Dependency Injection
+    // Hilt
     implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
@@ -100,14 +100,10 @@ dependencies {
     // Health Connect
     implementation(libs.androidx.health.connect.client)
 
-    // Maps
-    implementation(libs.google.maps.compose)
-
+    // Collections
     implementation(libs.kotlinx.collections.immutable)
 
-    // Compose Profile
-    implementation("androidx.compose.runtime:runtime-tracing:1.0.0-beta01") // Added version (required if not in BOM)
-
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
