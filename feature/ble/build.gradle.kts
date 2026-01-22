@@ -2,8 +2,8 @@ import com.android.build.api.dsl.LibraryExtension
 
 plugins {
     alias(libs.plugins.android.library)
-    // REMOVE this to fix the AGP 9.0 crash:
-    // alias(libs.plugins.kotlin.android)
+    // REMOVE this to fix the AGP 9.0 crash: But we need it back
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
