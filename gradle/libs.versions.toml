@@ -14,7 +14,7 @@ minSdk = "34"                   # Android Minimum SDK version
 # Kotlin & Related Tools
 kotlin = "2.3.0"               # Kotlin programming language version
 ksp = "2.3.3"                   # Kotlin Symbol Processing API version
-kotlinxSerializationCore = "1.9.0"  # Kotlinx Serialization library version (used for core and json)
+kotlinxSerializationCore = "1.10.0"  # Kotlinx Serialization library version (used for core and json)
 immutableCollections = "0.4.0"  # Kotlinx Immutable Collections library version
 
 # AndroidX - Core & AppCompat
@@ -33,18 +33,18 @@ androidxNavigation = "2.9.6"    # AndroidX Navigation component (Compose)
 # # AndroidX - Navigation (Nav3)
 nav3Core = "1.0.0"      # Navigation 3 Core libraries version
 lifecycleViewmodelNav3 = "2.10.0" # Navigation 3 ViewModel support
-material3AdaptiveNav3 = "1.3.0-alpha05" # Navigation 3 Material3 Adaptive Layouts (Snapshot)
+material3AdaptiveNav3 = "1.3.0-alpha06" # Navigation 3 Material3 Adaptive Layouts (Snapshot)
 # material3Adaptive = "1.0.0-alpha06"                # AndroidX Test Runner
 
 # Jetpack Compose
-composeBom = "2025.12.01"       # Jetpack Compose Bill of Materials (BOM)
+composeBom = "2026.01.00"       # Jetpack Compose Bill of Materials (BOM)
 composeMaterial = "1.7.8"       # Jetpack Compose Material (used for icons, wear material)
 # Note: androidx.compose.material3 uses the BoM version.
 # Note: androidx.compose.ui:ui-tooling-preview uses the BoM version.
-composeMaterial3Expressive = "1.5.0-alpha11"                # AndroidX Test Runner
+composeMaterial3Expressive = "1.5.0-alpha12"                # AndroidX Test Runner
 
 # Dependency Injection - Hilt
-hilt = "2.57.2"                 # Hilt, a dependency injection library for Android
+hilt = "2.59"                 # Hilt, a dependency injection library for Android
 hiltLifecycleViewModel = "1.3.0" # Hilt AndroidX Lifecycle ViewModel integration
 hiltNavigationCompose = "1.3.0" # Hilt Jetpack Compose Navigation integration
 hiltWork = "1.3.0"              # Hilt WorkManager integration
@@ -72,9 +72,9 @@ accompanistPermissions = "0.37.3" # Accompanist Permissions library
 cameraX = "1.5.2"               # AndroidX CameraX libraries
 
 # Maps & Location
-mapsCompose = "6.12.2"          # Maps Compose library for Jetpack Compose
+mapsCompose = "7.0.0"          # Maps Compose library for Jetpack Compose
 mapsplatformSecretsPlugin = "2.0.1" # Gradle plugin for Maps API key secrets
-playServicesMaps = "19.2.0"     # Google Play Services Maps SDK
+playServicesMaps = "20.0.0"     # Google Play Services Maps SDK
 playServicesLocation = "21.3.0" # Google Play Services Location SDK
 
 # Health Connect
@@ -82,9 +82,9 @@ healthConnect = "1.1.0"    # Health Connect client library
 
 # Wear OS
 # Define distinct versions for the different Wear tracks
-wearComposeMaterial3 = "1.6.0-alpha07"
-wearComposeNavigation = "1.6.0-alpha07" # Navigation usually lags slightly behind M3
-wearCompose = "1.6.0-alpha07" # Stable core
+wearComposeMaterial3 = "1.6.0-alpha08"
+wearComposeNavigation = "1.6.0-alpha08" # Navigation usually lags slightly behind M3
+wearCompose = "1.6.0-alpha08" # Stable core
 
 playServicesWearable = "19.0.0" # Google Play Services for Wear OS
 wearToolingPreview = "1.0.0"    # Wear OS Tooling Preview library
@@ -98,7 +98,7 @@ healthServices = "1.1.0-alpha05"
 wearOngoing = "1.1.0"
 
 #glass
-glimmer = "1.0.0-alpha03"
+glimmer = "1.0.0-alpha04"
 
 #XR
 projectedXR = "1.0.0-alpha03"
@@ -111,7 +111,7 @@ mlkitTextRecognition = "16.0.1" # ML Kit Text Recognition library
 playServicesCodeScanner = "16.1.0" # Google Play Services Code Scanner (QR Scanner)
 
 # Firebase
-firebaseBom = "34.7.0"          # Firebase Bill of Materials (BOM)
+firebaseBom = "34.8.0"          # Firebase Bill of Materials (BOM)
 googleGmsGoogleServices = "4.4.4" # Google Services Gradle plugin
 googleFirebaseCrashlytics = "3.0.6" # Firebase Crashlytics Gradle plugin
 
