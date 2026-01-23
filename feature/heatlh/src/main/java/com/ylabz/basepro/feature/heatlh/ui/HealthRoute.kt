@@ -5,7 +5,6 @@ import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -33,8 +32,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.HealthConnectClient
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.ylabz.basepro.feature.heatlh.R
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.ylabz.basepro.feature.health.R
 import com.ylabz.basepro.feature.heatlh.ui.components.ErrorScreen
 
 @Composable
