@@ -2,7 +2,7 @@ import com.android.build.api.dsl.LibraryExtension
 
 plugins {
     alias(libs.plugins.android.library)
-    // alias(libs.plugins.kotlin.android) // Removed for AGP 9.0
+    alias(libs.plugins.kotlin.android) // Removed for AGP 9.0
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)

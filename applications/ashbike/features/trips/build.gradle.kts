@@ -3,7 +3,7 @@ import com.android.build.api.dsl.LibraryExtension
 plugins {
     alias(libs.plugins.android.library)
     // REMOVE this to fix the AGP 9.0 crash:
-    // alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
@@ -59,6 +59,9 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:util"))
 
+    implementation(project(":applications:ashbike:features:core"))
+
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material.legacy)
@@ -71,6 +74,9 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.material3)
     debugImplementation(libs.androidx.ui.tooling)
+
+    // maps
+    implementation(libs.google.maps.compose)
 
     // Health Connect
     implementation(libs.androidx.health.connect.client)
