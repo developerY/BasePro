@@ -42,6 +42,10 @@
     <string name="bike_action_stop">Detener</string>
     <string name="bike_dialog_set_distance_title">Introducir distancia total (km)</string>
     <string name="bike_dialog_set_distance_label">Distancia en km</string>
+    <string name="bike_configuration">Bike Configuration</string>
+    <string name="motor_assistance">Motor Assistance</string>
+    <string name="advanced_bike_settings">Advanced Bike Settings</string>
+    <string name="gearing_level">Gearing Level: %1$d</string>
 
 
 </resources>

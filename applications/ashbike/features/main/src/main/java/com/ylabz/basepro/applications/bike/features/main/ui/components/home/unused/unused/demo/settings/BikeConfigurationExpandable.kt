@@ -28,7 +28,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.applications.bike.features.main.R
 
 
 @Composable
@@ -57,7 +59,7 @@ fun BikeConfigurationExpandable(
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = "Bike Configuration",
+                    text = stringResource(R.string.bike_configuration),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Spacer(modifier = Modifier.weight(1f))
@@ -79,7 +81,7 @@ fun BikeConfigurationExpandable(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Motor Assistance")
+                        Text(stringResource(R.string.motor_assistance))
                         Spacer(modifier = Modifier.weight(1f))
                         Switch(
                             checked = motorAssistance,
@@ -91,7 +93,7 @@ fun BikeConfigurationExpandable(
 
                     // E.g., Gearing slider
                     var gearingLevel by remember { mutableStateOf(5f) }
-                    Text("Gearing Level: ${gearingLevel.toInt()}")
+                    Text(stringResource(R.string.gearing_level, gearingLevel.toInt()))
                     Slider(
                         value = gearingLevel,
                         onValueChange = { gearingLevel = it },
@@ -102,7 +104,7 @@ fun BikeConfigurationExpandable(
 
                     // Button to advanced screen
                     Button(onClick = onAdvancedClick) {
-                        Text("Advanced Bike Settings")
+                        Text(stringResource(R.string.advanced_bike_settings))
                     }
                 }
             }

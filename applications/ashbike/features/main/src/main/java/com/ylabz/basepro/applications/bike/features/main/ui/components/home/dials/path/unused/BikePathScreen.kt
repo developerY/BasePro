@@ -2,7 +2,6 @@ package com.ylabz.basepro.applications.bike.features.main.ui.components.home.dia
 
 //import androidx.compose.ui.tooling.preview.Preview
 import android.Manifest
-import android.R
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -50,6 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
+import com.ylabz.basepro.applications.bike.features.main.R
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -160,16 +160,16 @@ fun BikePathScreen(
                         IconButton(onClick = { isPreferencesExpanded = !isPreferencesExpanded }) {
                             Icon(
                                 painter = if (isPreferencesExpanded)
-                                    painterResource(R.drawable.arrow_up_float)
+                                    painterResource(R.drawable.ic_bike)//.arrow_up_float)
                                 else
-                                    painterResource(R.drawable.arrow_down_float),
+                                    painterResource(R.drawable.ic_bike),//.arrow_down_float),
                                 contentDescription = "Expand or Collapse",
                                 tint = Color.Gray
                             )
                         }
                         IconButton(onClick = { isPreferencesFlipped = !isPreferencesFlipped }) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_menu_rotate),
+                                painter = painterResource(R.drawable.ic_bike),//ic_menu_rotate),
                                 contentDescription = "Flip Card",
                                 tint = Color.Gray
                             )
