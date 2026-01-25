@@ -21,8 +21,7 @@ fun CameraUIRoute(
     navTo: (String) -> Unit,
     viewModel: CamViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
-    when (uiState) {
+    when (val uiState = viewModel.uiState.collectAsState().value) {
         is CamUIState.Loading -> {
             LoadingScreen()
         }

@@ -104,7 +104,7 @@ fun SimpleCameraCaptureWithImagePreview(
             // Await the camera provider (Suspends, doesn't block)
             val cameraProvider = ProcessCameraProvider.awaitInstance(context)
             // Set up the preview use case
-            previewUseCase.setSurfaceProvider(null)
+            previewUseCase.surfaceProvider = null
 
             // Connect the Preview UseCase to the Viewfinder surface
             previewUseCase.setSurfaceProvider(ContextCompat.getMainExecutor(context)) { request ->
