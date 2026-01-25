@@ -3,7 +3,7 @@ package com.ylabz.basepro.feature.settings.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.ylabz.basepro.feature.settings.ui.components.ErrorScreen
 import com.ylabz.basepro.feature.settings.ui.components.LoadingScreen
 import com.ylabz.basepro.feature.settings.ui.components.SettingsCompose
@@ -15,9 +15,7 @@ fun SettingsUiRoute(
     navTo: (String) -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
-
-    when (uiState) {
+    when (val uiState = viewModel.uiState.collectAsState().value) {
         is SettingsUiState.Loading -> {
             LoadingScreen()
         }
