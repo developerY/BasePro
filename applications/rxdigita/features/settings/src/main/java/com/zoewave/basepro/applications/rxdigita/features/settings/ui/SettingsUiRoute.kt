@@ -20,9 +20,7 @@ fun SettingsUiRoute(
     viewModel: SettingsViewModel = hiltViewModel()
     // Add other ViewModels like NfcViewModel, BluetoothLeViewModel if needed for rxdigita settings
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
-
-    when (uiState) {
+    when (val uiState = viewModel.uiState.collectAsState().value) {
         is SettingsUiState.Loading -> {
             Text(modifier = modifier, text = "Loading Settings for RxDigita...")
         }
