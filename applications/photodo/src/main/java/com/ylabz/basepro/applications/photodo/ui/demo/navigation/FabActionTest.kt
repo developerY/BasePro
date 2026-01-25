@@ -105,7 +105,7 @@ fun TestFabInApp() {
 
     Scaffold(
         floatingActionButton = {
-            com.ylabz.basepro.applications.photodo.ui.demo.navigation.ExpandingFabMenu(menuItems)
+            ExpandingFabMenu(menuItems)
         }
     ) { innerPadding ->
         Box(

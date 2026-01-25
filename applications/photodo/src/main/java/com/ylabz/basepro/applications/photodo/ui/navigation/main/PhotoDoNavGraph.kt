@@ -246,7 +246,7 @@ fun PhotoDoNavGraph(
              */
             entry<PhotoDoNavKeys.TaskListDetailKey>(metadata = ListDetailSceneStrategy.detailPane()) { detailKey ->
                 // Call the extracted composable, passing in the necessary state.
-                Column() {
+                Column {
                     Text (" PhotoDoNavGraph.kt --- Fab needs to be set here")
                     DetailEntry(
                         modifier = Modifier, // <-- FIX #9: Remove the modifier to prevent double padding

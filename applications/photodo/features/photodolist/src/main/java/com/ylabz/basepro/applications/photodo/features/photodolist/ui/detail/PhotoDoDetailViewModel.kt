@@ -45,7 +45,7 @@ class PhotoDoDetailViewModel @Inject constructor(
     fun loadTaskDetails(id: Long) {
         if (id == 0L) {
             Log.e(TAG, "Invalid listId (0), cannot load details.")
-            _uiState.update { it.copy(loadState = DetailLoadState.Error("Invalid Task ID")) }
+            _uiState.update { it.copy(loadState = Error("Invalid Task ID")) }
             return
         }
         if (id == this.listId) {
@@ -61,7 +61,7 @@ class PhotoDoDetailViewModel @Inject constructor(
             photoDoRepo.getTaskListWithPhotos(id)
                 .catch { e ->
                     Log.e(TAG, "Error loading task details", e)
-                    _uiState.update { it.copy(loadState = DetailLoadState.Error(e.message ?: "Unknown error")) }
+                    _uiState.update { it.copy(loadState = Error(e.message ?: "Unknown error")) }
                 }
                 .collect { taskListWithPhotos ->
                     if (taskListWithPhotos != null) {
@@ -75,7 +75,7 @@ class PhotoDoDetailViewModel @Inject constructor(
                         }
                     } else {
                         _uiState.update {
-                            it.copy(loadState = DetailLoadState.Error("Task not found"))
+                            it.copy(loadState = Error("Task not found"))
                         }
                     }
                 }

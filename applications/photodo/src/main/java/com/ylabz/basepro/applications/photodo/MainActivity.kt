@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
 // This Greeting composable is no longer used by MainActivity
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
-    val navController = rememberNavController()
+    rememberNavController()
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background

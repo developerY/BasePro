@@ -270,7 +270,7 @@ fun HomeEntry(
                 "Step3: Navigating from Task List Item to Detail Screen with listId: $listId"
             )
 
-            val currentTop = backStack.lastOrNull()
+            backStack.lastOrNull()
 
             // 1. Create the key for the final detail screen (Pane 3).
             val detailKey = PhotoDoNavKeys.TaskListDetailKey(listId.toString())

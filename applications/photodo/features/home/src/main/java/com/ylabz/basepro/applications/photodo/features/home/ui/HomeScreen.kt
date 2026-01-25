@@ -38,7 +38,7 @@ fun HomeScreen(
 
         // val navigator = rememberListDetailPaneScaffoldNavigator<Nothing>()
         val navigator = rememberListDetailPaneScaffoldNavigator()
-        val scope = rememberCoroutineScope() // 3. Get a coroutine scope
+        rememberCoroutineScope() // 3. Get a coroutine scope
 
         // --- ADAPTIVE NAVIGATION SYNC ---
         // Automatically navigate to the Detail pane when a category is selected.

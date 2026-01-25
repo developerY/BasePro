@@ -57,7 +57,7 @@ open class PhotoDoListViewModel @Inject constructor(
     }
 
     fun onEvent(event: PhotoDoListEvent) {
-        val currentCategoryId = _categoryId.value ?: return
+        _categoryId.value ?: return
 
         when (event) {
             /*is PhotoDoListEvent.OnDeleteAllTasksClicked -> {
