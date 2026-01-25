@@ -7,7 +7,7 @@ import java.time.Instant
 import java.time.ZoneOffset
 import java.util.UUID
 
-class FakeSleepSessionData() {
+class FakeSleepSessionData {
 
     fun getFakeSleepData(): List<SleepSessionData> {
         return listOf(
