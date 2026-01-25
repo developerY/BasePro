@@ -78,7 +78,7 @@ fun WeatherBadgeContent(
             //MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
         }
     }
-    val transition = updateTransition(targetState = expanded, label = "")
+    updateTransition(targetState = expanded, label = "")
 
     ElevatedCard(
         modifier = Modifier

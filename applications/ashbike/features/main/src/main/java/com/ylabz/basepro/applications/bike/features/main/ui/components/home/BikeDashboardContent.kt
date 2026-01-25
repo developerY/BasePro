@@ -69,8 +69,8 @@ fun BikeDashboardContent(
         onDispose { view.keepScreenOn = false }
     }
 
-    val isBikeConnected = bikeRideInfo.isBikeConnected
-    val batteryLevel = bikeRideInfo.batteryLevel
+    bikeRideInfo.isBikeConnected
+    bikeRideInfo.batteryLevel
     val rideState = bikeRideInfo.rideState
     val currRiding = rideState == RideState.Riding
 

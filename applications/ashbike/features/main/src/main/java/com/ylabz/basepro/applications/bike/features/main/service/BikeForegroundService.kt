@@ -362,7 +362,7 @@ class BikeForegroundService : LifecycleService() {
         // DEMO VIDEO LOGIC: INTERCEPT HERE
         // =================================================================
         // This takes the Real Emulator Speed + Toggles the Connection
-        val videoReadyInfo = demoSimulator.process(newInfo)
+        demoSimulator.process(newInfo)
         // =================================================================
 
         val newRideInfo = newInfo // videoReadyInfo
