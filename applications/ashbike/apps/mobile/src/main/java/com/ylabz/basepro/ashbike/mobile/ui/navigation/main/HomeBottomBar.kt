@@ -86,9 +86,7 @@ fun HomeBottomBar(
             finalIndex
         }
 
-    NavigationBar(
-        // contentColor = MaterialTheme.colorScheme.primary // This is for the content of the NavigationBar itself, not items usually
-    ) {
+    NavigationBar {
         tabs.forEachIndexed { index, tabInfo ->
             val displayTitle = stringResource(id = tabInfo.titleResId)
             val isSelected = selectedItemIndex == index

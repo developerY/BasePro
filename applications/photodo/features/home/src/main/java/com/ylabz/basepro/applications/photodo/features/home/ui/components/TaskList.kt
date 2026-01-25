@@ -54,7 +54,7 @@ fun TaskList(
                     onAddClick = {}//onAddList
                 )
             } else {
-                Column() {
+                Column {
                     // Log that the grid is being displayed
                     Text("Source: TaskList.kt -- inside the else")
                     Log.d(TAG, "Displaying ${taskLists.size} task lists in a grid.")

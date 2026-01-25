@@ -23,7 +23,7 @@ fun TaskListItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column() {
+    Column {
         Text("Source: TaskListItem.kt")
         ElevatedCard(
             modifier = modifier

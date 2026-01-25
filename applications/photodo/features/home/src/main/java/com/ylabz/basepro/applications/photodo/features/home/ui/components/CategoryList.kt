@@ -53,7 +53,7 @@ fun CategoryList(
                 }
             } else {
                 // PHONE: Show expressive Cards
-                Column() {
+                Column {
                     Text("Cat Card")
                     CategoryCard(
                         // Construct the UI State object

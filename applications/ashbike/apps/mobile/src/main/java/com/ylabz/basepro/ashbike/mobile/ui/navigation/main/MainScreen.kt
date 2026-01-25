@@ -62,7 +62,7 @@ fun MainScreen(
     // The actual Service Binding is now handled inside BikeUiRoute, so we don't need
     // to bind/unbind here anymore.
     val bikeViewModel: BikeViewModel = hiltViewModel() // Instance for MainScreen and its children
-    val lifecycleOwner = LocalLifecycleOwner.current
+    LocalLifecycleOwner.current
 
     val locationPermissions = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
