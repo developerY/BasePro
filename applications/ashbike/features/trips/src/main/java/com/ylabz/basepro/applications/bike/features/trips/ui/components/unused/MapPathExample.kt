@@ -75,7 +75,7 @@ fun MapPathScreenNOTUSED(
             // 1) background + grid
             Canvas(Modifier.fillMaxSize()) {
                 drawRect(brush = backgroundGradient)
-                val cols = 10;
+                val cols = 10
                 val rows = 10
                 val stepX = size.width / cols
                 val stepY = size.height / rows

@@ -30,7 +30,7 @@ fun RidePathMapOrig(
 ) {
     var cafesVisible by rememberSaveable { mutableStateOf(false) }
     var cafesFetched by rememberSaveable { mutableStateOf(false) }
-    val textMeasurer = rememberTextMeasurer()
+    rememberTextMeasurer()
 
     Card(
         modifier = modifier,
@@ -66,7 +66,7 @@ fun RidePathMapOrig(
                     }
                 }
                 val minSpeed = pathSegments.minOfOrNull { it.speedKmh } ?: 0.0
-                val maxSpeed = pathSegments.maxOfOrNull { it.speedKmh }?.coerceAtLeast(minSpeed + 0.1) ?: 1.0
+                pathSegments.maxOfOrNull { it.speedKmh }?.coerceAtLeast(minSpeed + 0.1) ?: 1.0
 
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     // Drawing logic remains the same...
