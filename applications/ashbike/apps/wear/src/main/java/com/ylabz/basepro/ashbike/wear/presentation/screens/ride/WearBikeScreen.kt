@@ -37,7 +37,6 @@ fun WearBikeScreen(
     onNavigateToDetail: (String) -> Unit // <--- Received from App
 ) {
 
-    val uiState by viewModel.uiState.collectAsState()
     // Define required permissions for the underlying BikeForegroundService
     val permissionsToRequest = buildList {
         add(Manifest.permission.BODY_SENSORS)
@@ -67,7 +66,7 @@ fun WearBikeScreen(
                 // 3. COLLECT STATE (Uses 'rideState' from shared service)
                 // 1. Collect Data (Binding is still needed for Reading Data)
                 val rideInfoState = service?.rideInfo?.collectAsState()
-                val rideInfo = rideInfoState?.value ?: BikeRideInfo.initial()
+                rideInfoState?.value ?: BikeRideInfo.initial()
                 // 1. Collect the single UI State
                 val uiState by viewModel.uiState.collectAsState() // <--- Easy!
 

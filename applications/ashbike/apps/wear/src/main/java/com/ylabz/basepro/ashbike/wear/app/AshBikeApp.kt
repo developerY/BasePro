@@ -19,12 +19,7 @@ fun AshBikeApp(
 
     // AppScaffold is the root container for M3 Wear apps
     // Handles the clock (TimeText) so it stays put while you swipe pages below it.
-    AppScaffold(
-        /*timeText = {
-            // The M3 TimeText component defaults to curved text on round screens
-            TimeText { time() }
-        }*/
-    ) {
+    AppScaffold {
         // 3. NAV HOST: The Content Container
         // Handles the "Swipe Right to Go Back" gesture automatically.
         SwipeDismissableNavHost(
