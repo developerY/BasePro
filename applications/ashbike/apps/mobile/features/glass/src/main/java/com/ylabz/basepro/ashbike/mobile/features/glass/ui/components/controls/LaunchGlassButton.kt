@@ -18,7 +18,9 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.ylabz.basepro.ashbike.mobile.features.glass.R
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.model.GlassButtonState
 
 @Composable
@@ -47,21 +49,21 @@ fun LaunchGlassButton(
 
     val visuals = when (buttonState) {
         GlassButtonState.NO_GLASSES -> StateVisuals(
-            text = "Connect Glasses",
+            text = stringResource(R.string.connect_glasses),
             icon = Icons.Default.UsbOff,
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f),
             enabled = false
         )
         GlassButtonState.READY_TO_START -> StateVisuals(
-            text = "Start Projection",
+            text = stringResource(R.string.start_projection),
             icon = Icons.Default.PermDeviceInformation, // Or generic "Glasses" icon
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
             enabled = true
         )
         GlassButtonState.PROJECTING -> StateVisuals(
-            text = "Projecting Active",
+            text = stringResource(R.string.projecting_active),
             icon = Icons.Default.CastConnected,
             containerColor = Color(0xFF4CAF50), // Bike Green
             contentColor = Color.White,

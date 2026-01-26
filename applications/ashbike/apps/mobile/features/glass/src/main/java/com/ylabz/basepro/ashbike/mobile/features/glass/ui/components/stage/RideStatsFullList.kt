@@ -19,12 +19,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.Text
+import com.ylabz.basepro.ashbike.mobile.features.glass.R
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.theme.GlassColors
 
 @Composable
@@ -45,7 +47,7 @@ fun RideStatsFullList(
             // 1. Distance
             StatRow(
                 icon = Icons.Default.Straighten,
-                label = "DIST",
+                label = stringResource(R.string.dist),
                 value = "$distance km",
                 color = GlassColors.NeonCyan
             )
@@ -53,7 +55,7 @@ fun RideStatsFullList(
             // 2. Duration
             StatRow(
                 icon = Icons.Default.AvTimer,
-                label = "TIME",
+                label = stringResource(R.string.time),
                 value = duration,
                 color = Color.White
             )
@@ -61,7 +63,7 @@ fun RideStatsFullList(
             // 3. Avg Speed
             StatRow(
                 icon = Icons.Default.Speed,
-                label = "AVG",
+                label = stringResource(R.string.avg),
                 value = "$avgSpeed mph",
                 color = Color.White
             )
@@ -69,8 +71,8 @@ fun RideStatsFullList(
             // 4. Calories
             StatRow(
                 icon = Icons.Default.LocalFireDepartment,
-                label = "CAL",
-                value = "$calories",
+                label = stringResource(R.string.cal),
+                value = calories,
                 color = Color(0xFFFF9800) // Orange
             )
         }

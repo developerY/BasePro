@@ -16,11 +16,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.Text
+import com.ylabz.basepro.ashbike.mobile.features.glass.R
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassUiEvent
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.GlassUiState
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.theme.GlassColors
@@ -48,7 +50,7 @@ fun BottomSection(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            "POWER",
+                            stringResource(R.string.power),
                             style = MaterialTheme.typography.labelSmall,
                             color = GlassColors.TextSecondary,
                             fontSize = 8.sp,

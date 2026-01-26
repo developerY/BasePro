@@ -9,11 +9,13 @@ import androidx.compose.material.icons.filled.LinkOff
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.Text
+import com.ylabz.basepro.ashbike.mobile.features.glass.R
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.theme.GlassColors
 
 @Composable
@@ -23,7 +25,7 @@ fun BikeConnectionStatus(
 ) {
     val color = if (isConnected) GlassColors.NeonGreen else GlassColors.WarningRed
     val icon = if (isConnected) Icons.AutoMirrored.Filled.DirectionsBike else Icons.Default.LinkOff
-    val text = if (isConnected) "BLE CNX" else "NO BLE CNX"
+    val text = if (isConnected) stringResource(R.string.ble_cnx) else stringResource(R.string.no_ble_cnx)
 
     Row(
         modifier = modifier,
@@ -32,7 +34,7 @@ fun BikeConnectionStatus(
         // Cool Bike Icon
         Icon(
             imageVector = icon,
-            contentDescription = "Bike Connection",
+            contentDescription = stringResource(R.string.bike_connection),
             tint = color,
             modifier = Modifier.width(18.dp) // Slightly larger than text
         )
