@@ -14,11 +14,13 @@ import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.xr.glimmer.Button
 import androidx.xr.glimmer.GlimmerTheme
 import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.Text
+import com.ylabz.basepro.ashbike.mobile.features.glass.R
 import com.ylabz.basepro.ashbike.mobile.features.glass.newui.elements.BatteryBadge
 import com.ylabz.basepro.ashbike.mobile.features.glass.newui.elements.ConnectionBadge
 import com.ylabz.basepro.ashbike.mobile.features.glass.ui.BatteryZone
@@ -41,7 +43,7 @@ fun HeaderBar(
         if (isConnected) {
             // MODE: CONTROLS
             Text(
-                text = "GEAR $gear",
+                text = stringResource(R.string.gear, gear), // $gear
                 color = GlimmerTheme.colors.positive,
                 style = GlimmerTheme.typography.titleLarge
             )

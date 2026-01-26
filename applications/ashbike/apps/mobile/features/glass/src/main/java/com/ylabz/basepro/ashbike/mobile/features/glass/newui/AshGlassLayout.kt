@@ -18,12 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.xr.glimmer.Button
 import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.GlimmerTheme
 import androidx.xr.glimmer.Text
 import androidx.xr.glimmer.surface
+import com.ylabz.basepro.ashbike.mobile.features.glass.R
 import com.ylabz.basepro.ashbike.mobile.features.glass.newui.sections.HeaderBar
 import com.ylabz.basepro.ashbike.mobile.features.glass.newui.sections.StatsBoard
 import com.ylabz.basepro.ashbike.mobile.features.glass.newui.sections.VelocityDash
@@ -67,7 +69,7 @@ fun AshGlassLayout(
             },
             action = {
                 Button(onClick = { onEvent(GlassUiEvent.CloseApp) }) {
-                    Text("EXIT", style = GlimmerTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.exit), style = GlimmerTheme.typography.bodyMedium)
                 }
             }
         ) {

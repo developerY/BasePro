@@ -14,12 +14,14 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.xr.glimmer.GlimmerTheme
 import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.ListItem
 import androidx.xr.glimmer.Text
 import androidx.xr.glimmer.list.VerticalList
+import com.ylabz.basepro.ashbike.mobile.features.glass.R
 
 
 /**
@@ -50,7 +52,7 @@ fun StatsBoard(
             item {
                 GlimmerStatItem(
                     icon = Icons.Rounded.Straighten,
-                    label = "DISTANCE",
+                    label = stringResource(R.string.distance),
                     value = "$distance km",
                     accent = GlimmerTheme.colors.secondary
                 )
@@ -59,7 +61,7 @@ fun StatsBoard(
             item {
                 GlimmerStatItem(
                     icon = Icons.Rounded.AvTimer,
-                    label = "DURATION",
+                    label = stringResource(R.string.duration),
                     value = duration,
                     accent = GlimmerTheme.colors.secondary
                 )
@@ -68,7 +70,7 @@ fun StatsBoard(
             item {
                 GlimmerStatItem(
                     icon = Icons.Rounded.Speed,
-                    label = "AVG SPEED",
+                    label = stringResource(R.string.avg_speed),
                     value = "$avgSpeed mph",
                     accent = GlimmerTheme.colors.secondary
                 )
@@ -77,7 +79,7 @@ fun StatsBoard(
             item {
                 GlimmerStatItem(
                     icon = Icons.Rounded.LocalFireDepartment,
-                    label = "CALORIES",
+                    label = stringResource(R.string.calories),
                     value = calories,
                     accent = GlimmerTheme.colors.negative
                 )
