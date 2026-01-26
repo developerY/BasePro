@@ -5,7 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.ylabz.basepro.ashbike.mobile.features.glass.ui.panels.RideStatsList
+import com.ylabz.basepro.ashbike.mobile.features.glass.ui.panels.drafts.RideStatsList
 
 @Preview(name = "Stats List (Disconnected)", device = "id:ai_glasses_device")
 @Composable
