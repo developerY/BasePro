@@ -1,4 +1,4 @@
-package com.ylabz.basepro.ashbike.mobile.features.glass.ui.panels
+package com.ylabz.basepro.ashbike.mobile.features.glass.ui.panels.drafts
 
 // Glimmer Imports
 
