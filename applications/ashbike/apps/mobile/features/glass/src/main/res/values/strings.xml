@@ -9,4 +9,26 @@
     <string name="status_disconnected">Disconnected</string>
     <string name="unsupported_android_version">This version of Android is not supported</string>
     <string name="close">Close</string>
+    <string name="exit">EXIT</string>
+    <string name="power">POWER</string>
+    <string name="heart_rate">HEART RATE</string>
+    <string name="gear">GEAR %1$d</string>
+    <string name="distance">DISTANCE</string>
+    <string name="duration">DURATION</string>
+    <string name="avg_speed">AVG SPEED</string>
+    <string name="calories">CALORIES</string>
+    <string name="speed">SPEED</string>
+    <string name="connect_glasses">Connect Glasses</string>
+    <string name="start_projection">Start Projection</string>
+    <string name="projecting_active">Projecting Active</string>
+    <string name="distance_km">DISTANCE (KM)</string>
+    <string name="kcal">%1$s kcal</string>
+    <string name="dist">DIST</string>
+    <string name="time">TIME</string>
+    <string name="avg">AVG</string>
+    <string name="cal">CAL</string>
+    <string name="battery">Battery</string>
+    <string name="ble_cnx">BLE CNX</string>
+    <string name="no_ble_cnx">NO BLE CNX</string>
+    <string name="bike_connection">Bike Connection</string>
 </resources>
