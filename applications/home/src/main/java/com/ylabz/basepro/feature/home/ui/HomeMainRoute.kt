@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.ylabz.basepro.feature.home.ui.components.HomeMainScreen
 
 @Composable
@@ -19,8 +19,7 @@ fun HomeMainRoute(
     navTo: (String) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
-    when (uiState) {
+    when (val uiState = viewModel.uiState.collectAsState().value) {
         is HomeUiState.Loading -> {
             LoadingScreen()
         }

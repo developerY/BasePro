@@ -4,7 +4,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 // TODO: You'''ll need to define the properties for Success if it'''s a data class, or adjust its usage.
 sealed interface SettingsUiState {
@@ -20,9 +20,7 @@ fun SettingsUiRoute(
     viewModel: SettingsViewModel = hiltViewModel()
     // Add other ViewModels like NfcViewModel, BluetoothLeViewModel if needed for rxdigita settings
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
-
-    when (uiState) {
+    when (val uiState = viewModel.uiState.collectAsState().value) {
         is SettingsUiState.Loading -> {
             Text(modifier = modifier, text = "Loading Settings for RxDigita...")
         }
