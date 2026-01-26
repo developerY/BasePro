@@ -16,7 +16,7 @@ import javax.inject.Singleton
 @Singleton
 class DemoWeatherRepoImpl @Inject constructor() : WeatherRepo {
 
-    override suspend fun openCurrentWeatherByCity(location: String): OpenWeatherResponse? {
+    override suspend fun openCurrentWeatherByCity(location: String): OpenWeatherResponse {
         // Ignore location, return a demo response
         return demoResponse(lat = 0.0, lon = 0.0, name = location)
     }
@@ -24,7 +24,7 @@ class DemoWeatherRepoImpl @Inject constructor() : WeatherRepo {
     override suspend fun openCurrentWeatherByCoords(
         lat: Double,
         lon: Double
-    ): OpenWeatherResponse? {
+    ): OpenWeatherResponse {
         // Return a demo response for the given coords
         return demoResponse(lat = lat, lon = lon, name = "Demoville")
     }

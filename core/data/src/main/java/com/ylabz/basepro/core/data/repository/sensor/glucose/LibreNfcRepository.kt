@@ -29,7 +29,7 @@ class LibreNfcRepository @Inject constructor(
         Log.i("LibreRepository", "Waiting for user to tap sensor...")
     }
 
-    private fun parseLibreData(data: String): GlucoseReading? {
+    private fun parseLibreData(data: String): GlucoseReading {
         // --- LIBRE PROTOCOL IMPLEMENTATION ---
         // 1. The Libre uses ISO 15693 (NfcV).
         // 2. You need to send specific commands (0x02 read blocks) to read the memory.

@@ -27,7 +27,7 @@ class DemoModeSimulator {
 
         // 3. Random Motor Power (210W - 290W)
         val randomMotor = if (demoToggle) {
-            Random.Default.nextInt(210, 290).toFloat()
+            Random.nextInt(210, 290).toFloat()
         } else {
             0f
         }

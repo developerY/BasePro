@@ -51,10 +51,10 @@ class BleHeartRateRepository @Inject constructor() : HeartRateRepository {
 
             // Calculate simulation physics
             // 1. Add small random noise (+/- 0 to 2 bpm)
-            val noise = Random.Default.nextInt(0, 3)
+            val noise = Random.nextInt(0, 3)
 
             // 2. Apply trend
-            if (Random.Default.nextBoolean()) {
+            if (Random.nextBoolean()) {
                 currentBpm += (trend * noise)
             }
 
