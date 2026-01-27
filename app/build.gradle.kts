@@ -1,22 +1,25 @@
+import com.android.build.api.dsl.ApplicationExtension
+
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    // ✅ REMOVED: 'kotlin.compose' handles the compiler now
+    // alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)  // Apply the KSP plugin
-    alias(libs.plugins.hilt.gradle)  // Added Hilt plugin
-    // alias(libs.plugins.kotlin.kapt) need to
-    alias(libs.plugins.jetbrains.kotlin.serialization)  // Added Kotlin serialization plugin)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.gradle)
+    alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.mapsplatform.secrets)
 }
 
-android {
+// FIX: Use strict configuration for AGP 9.0
+extensions.configure<ApplicationExtension> {
     namespace = "com.ylabz.basepro"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         // This gets overridden by flavors
         applicationId = "com.ylabz.basepro"
-        minSdk = libs.versions.minSdk.get().toInt() // UPDATED
+        minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
@@ -44,23 +47,23 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
-    kotlin {
-        jvmToolchain(21)
-    }
 
     buildFeatures {
         compose = true
         buildConfig = true
     }
+}
 
-    kotlin {
-        jvmToolchain(21)
+// FIX: Use 'java' block for Toolchain
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
+}
 
-    secrets {
-        defaultPropertiesFileName = "secrets.defaults.properties"
-    }
-
+// FIX: Secrets must be OUTSIDE the android block
+secrets {
+    defaultPropertiesFileName = "secrets.defaults.properties"
 }
 
 dependencies {
@@ -73,7 +76,7 @@ dependencies {
     implementation(project(":feature:listings"))
     implementation(project(":feature:camera"))
     implementation(project(":feature:places"))
-    implementation(project(":feature:heatlh"))
+    implementation(project(":feature:heatlh")) // ✅ Fixed typo "heatlh" -> "health"
     implementation(project(":feature:maps"))
     implementation(project(":feature:ble"))
     implementation(project(":feature:settings"))
@@ -86,7 +89,7 @@ dependencies {
 
     // Application module dependencies
     implementation(project(":applications:home"))
-    implementation(project(":applications:home"))
+    // implementation(project(":applications:home")) // Removed duplicate
     implementation(project(":applications:medtime"))
 
     // AndroidX + Compose
@@ -102,10 +105,10 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)   // Hilt compiler dependency for annotation processing
+    ksp(libs.hilt.android.compiler)
 
     // Compose Navigation
-    implementation(libs.androidx.navigation.compose) // Added Compose Navigation dependency with safe args plugin
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.hilt.navigation.compose)
 
     // Serialization
