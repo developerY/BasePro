@@ -1,12 +1,16 @@
+import com.android.build.api.dsl.LibraryExtension
+
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    // ✅ REMOVED: 'kotlin.compose' handles the compiler now
+    // alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
 }
 
-android {
+// FIX: Use strict configuration for AGP 9.0
+extensions.configure<LibraryExtension> {
     namespace = "com.ylabz.basepro.ashbike.mobile.features.glass"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
@@ -41,10 +45,16 @@ android {
     }
 }
 
-dependencies {
+// FIX: Use 'java' block for Toolchain
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
 
-    implementation(project(""":core:model"""))
-    implementation(project(""":core:data"""))
+dependencies {
+    implementation(project(":core:model"))
+    implementation(project(":core:data"))
 
     // --- Core Android ---
     implementation(libs.androidx.core.ktx)
@@ -62,8 +72,8 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.lifecycle.process)
-    ksp(libs.hilt.android.compiler)   // Hilt compiler dependency for annotation processing
-    implementation(libs.hilt.navigation.compose) // viewmodel injection
+    implementation(libs.hilt.navigation.compose)
+    ksp(libs.hilt.android.compiler)
 
     // Icons
     implementation(libs.androidx.material.icons.extended)
@@ -82,7 +92,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // --- Testing (Standard set) ---
+    // --- Testing ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
