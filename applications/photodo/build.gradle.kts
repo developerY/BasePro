@@ -1,20 +1,24 @@
+import com.android.build.api.dsl.ApplicationExtension
+
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    // ✅ REMOVED: 'kotlin.compose' handles the compiler now
+    // alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.gradle)
     alias(libs.plugins.ksp)
     alias(libs.plugins.mapsplatform.secrets)
-    alias(libs.plugins.jetbrains.kotlin.serialization) // Added Kotlinx Serialization plugin
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
-android {
+// FIX: Use strict configuration for AGP 9.0
+extensions.configure<ApplicationExtension> {
     namespace = "com.ylabz.basepro.applications.photodo"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.ylabz.basepro.applications.photodo"
-        minSdk =  libs.versions.minSdk.get().toInt() // UPDATED
+        minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
@@ -30,45 +34,45 @@ android {
                 "proguard-rules.pro"
             )
         }
-        // This debug block ensures a fast development cycle
         debug {
             isMinifyEnabled = false
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
-    kotlin {
-        jvmToolchain(21)
-    }
-
 
     buildFeatures {
         compose = true
         buildConfig = true
     }
+}
 
-
-    secrets {
-        defaultPropertiesFileName = "secrets.defaults.properties"
+// FIX: Use 'java' block for Toolchain
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
-dependencies {
+// FIX: Secrets must be OUTSIDE the android block
+secrets {
+    defaultPropertiesFileName = "secrets.defaults.properties"
+}
 
+dependencies {
+    // Project Modules
     implementation(project(":core:util"))
+    implementation(project(":core:ui"))
     implementation(project(":applications:photodo:db"))
     implementation(project(":applications:photodo:core"))
     implementation(project(":applications:photodo:features:home"))
     implementation(project(":applications:photodo:features:photodolist"))
     implementation(project(":applications:photodo:features:settings"))
 
-    // androidx-lifecycle-viewmodel-compose
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.android)
-
-    // AndroidX + Compose
+    // AndroidX + Compose (Core)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -77,26 +81,26 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material3.expressive)
-    //implementation(libs.androidx.compose.material3.adaptive) // Added to resolve runtime crash
+
+    // Lifecycle
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.android)
 
     // Hilt
     implementation(libs.hilt.android)
-    // implementation(project(":applications:photodo:features:main"))
-    implementation(project(":core:ui"))
-    ksp(libs.hilt.android.compiler)   // Hilt compiler dependency for annotation processing
-    // Hilt Dependency Injection
-    // kapt(libs.hilt.compiler)
+    ksp(libs.hilt.android.compiler)
 
-    // Compose Navigation
-    implementation(libs.androidx.navigation.compose) // Added Compose Navigation dependency with safe args plugin
+    // Navigation (Compose + Nav3)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.hilt.navigation.compose)
 
-    // Nav3
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.material3.adaptive.navigation3)
-    implementation(libs.androidx.lifecycle.viewmodel.navigation3) // Added for ViewModel scoping
-    implementation(libs.kotlinx.serialization.json) // Added for @Serializable NavKey
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+
+    // Serialization (Required for Nav3 Type Safety)
+    implementation(libs.kotlinx.serialization.json)
 
     // Window Size
     implementation(libs.androidx.material3.window.size)
@@ -104,8 +108,7 @@ dependencies {
     // Icons
     implementation(libs.androidx.material.icons.extended)
 
-
-
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -113,5 +116,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    debugImplementation(libs.androidx.ui.tooling.preview)
 }
